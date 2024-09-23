@@ -1,7 +1,7 @@
 {
   "name": "create-app",
-  "$schema": "../node_modules/nx/schemas/project-schema.json",
-  "sourceRoot": "packages/src",
+  "$schema": "../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "packages/create-app/src",
   "projectType": "library",
   "release": {
     "version": {
@@ -17,10 +17,10 @@
       "executor": "@nx/js:tsc",
       "outputs": ["{options.outputPath}"],
       "options": {
-        "outputPath": "dist/packages",
-        "main": "packages/src/index.ts",
-        "tsConfig": "packages/tsconfig.lib.json",
-        "assets": ["packages/*.md"]
+        "outputPath": "dist/packages/create-app",
+        "main": "packages/create-app/src/index.ts",
+        "tsConfig": "packages/create-app/tsconfig.lib.json",
+        "assets": ["packages/create-app/*.md"]
       }
     },
     "nx-release-publish": {

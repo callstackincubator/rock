@@ -15,7 +15,7 @@
     "skipDefaultLibCheck": true,
     "baseUrl": ".",
     "paths": {
-      "@callstack/create-rnef-app": ["packages/src/index.ts"]
+      "@callstack/create-rnef-app": ["packages/create-app/src/index.ts"]
     }
   },
   "exclude": ["node_modules", "tmp"]
