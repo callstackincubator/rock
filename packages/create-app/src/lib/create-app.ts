@@ -11,6 +11,7 @@ import {
 } from '@clack/prompts';
 import minimist from 'minimist';
 import { validateProjectName } from './validate-project-name';
+import editTemplate  from './edit-template';
 
 function cancelAndExit() {
   cancel('Operation cancelled.');
@@ -152,7 +153,9 @@ async function create() {
   }
 
   // Remove existing folder if exists
-  fs.rmSync(distFolder, { recursive: true });
+  if (fs.existsSync(distFolder)) {
+    fs.rmSync(distFolder, { recursive: true });
+  }
 
   const templateName = 'basic';
   // const srcFolder = path.join(__dirname, '..', `template-${templateName}`);
@@ -170,6 +173,8 @@ async function create() {
     version,
     packageName,
   });
+
+  await editTemplate(projectName, distFolder)
 
   const nextSteps = [
     `cd ${targetDir}`,
