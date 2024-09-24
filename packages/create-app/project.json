@@ -17,10 +17,10 @@
       "executor": "@nx/js:tsc",
       "outputs": ["{options.outputPath}"],
       "options": {
-        "outputPath": "packages/create-app/dist",
+        "outputPath": "dist/packages/create-app",
         "main": "packages/create-app/src/index.ts",
         "tsConfig": "packages/create-app/tsconfig.lib.json",
-        "assets": ["packages/create-app/*.md"]
+        "assets": ["packages/create-app/*.md", "packages/create-app/src/template-basic/**/*"]
       }
     },
     "nx-release-publish": {

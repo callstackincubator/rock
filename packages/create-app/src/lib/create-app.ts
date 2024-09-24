@@ -158,11 +158,8 @@ async function create() {
   }
 
   const templateName = 'basic';
-  // const srcFolder = path.join(__dirname, '..', `template-${templateName}`);
-  // FIXME: hardcoded path, files are not included in the `dist/` folder
-  const srcFolder =
-    '/Users/szymonrybczak/callstack/rnef/packages/create-app/src/template-basic';
-
+  const srcFolder = path.join(__dirname, '..', `template-${templateName}`);
+  
   if (!fs.existsSync(srcFolder)) {
     throw new Error(`Invalid input: template "${templateName}" not found.`);
   }
