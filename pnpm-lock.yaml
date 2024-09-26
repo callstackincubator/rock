@@ -87,6 +87,10 @@ importers:
       tslib:
         specifier: ^2.3.0
         version: 2.7.0
+    devDependencies:
+      jest-util:
+        specifier: ^29.0.0
+        version: 29.7.0
 
   packages/create-app:
     dependencies:
