@@ -1,8 +1,4 @@
-import {
-  PackageManagerInfo,
-  parsePackageInfo,
-  parsePackageManagerFromUserAgent,
-} from '../parsers';
+import { parsePackageInfo, parsePackageManagerFromUserAgent } from '../parsers';
 
 describe('parsePackageInfo', () => {
   test('handles simple package name: foo', () => {
