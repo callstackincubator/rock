@@ -1,10 +1,24 @@
 import * as fs from 'node:fs';
 import * as path from 'node:path';
 
+type PluginType = (config: ConfigType) => {
+  name: string;
+  commands: ConfigType['commands'];
+};
+
 type ConfigType = {
   projectConfig?: object;
-  plugins?: object;
-  commands: Array<{
+  plugins?: Record<string, PluginType>;
+  commands?: Array<{
+    name: string;
+    description: string;
+    action: (config: ConfigType) => void;
+  }>;
+};
+
+type ConfigOutput = {
+  projectConfig?: object;
+  commands?: Array<{
     name: string;
     description: string;
     action: (config: ConfigType) => void;
@@ -13,7 +27,7 @@ type ConfigType = {
 
 const extensions = ['.js', '.ts', '.mjs'];
 
-const findUp = async <T>(dir: string, name: string): Promise<T> => {
+const importUp = async <T>(dir: string, name: string): Promise<T> => {
   const filePath = path.join(dir, name);
 
   for (const ext of extensions) {
@@ -28,11 +42,25 @@ const findUp = async <T>(dir: string, name: string): Promise<T> => {
     throw new Error(`${name} not found in any parent directory of ${dir}`);
   }
 
-  return findUp(parentDir, name);
+  return importUp(parentDir, name);
 };
 
 export async function getConfig(
   dir: string = process.cwd()
-): Promise<ConfigType | null> {
-  return findUp<ConfigType>(dir, 'rnef.config');
+): Promise<ConfigOutput> {
+  const config = await importUp<ConfigType>(dir, 'rnef.config');
+
+  if (config.plugins) {
+    for (const plugin in config.plugins) {
+      const pluginOutput = config.plugins[plugin](config);
+      config.commands = [
+        ...(config.commands || []),
+        ...(pluginOutput.commands || []),
+      ];
+    }
+
+    delete config.plugins;
+  }
+
+  return config;
 }

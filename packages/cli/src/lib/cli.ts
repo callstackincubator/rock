@@ -12,7 +12,8 @@ program
 export const cli = async () => {
   const config = await getConfig();
 
-  config?.commands?.forEach((command) => {
+  // Register commands from the config
+  config.commands?.forEach((command) => {
     program
       .command(command.name)
       .description(command.description || '')
