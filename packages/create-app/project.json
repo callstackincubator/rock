@@ -20,10 +20,7 @@
         "outputPath": "dist/packages/create-app",
         "main": "packages/create-app/src/index.ts",
         "tsConfig": "packages/create-app/tsconfig.lib.json",
-        "assets": [
-          "packages/create-app/*.md",
-          "packages/create-app/src/template-basic/**/*"
-        ]
+        "assets": ["packages/create-app/*.md"]
       }
     },
     "nx-release-publish": {
