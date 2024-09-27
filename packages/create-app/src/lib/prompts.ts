@@ -45,10 +45,12 @@ export function printByeMessage(targetDir: string) {
     process.env['npm_config_user_agent']
   );
 
+  const pkgManagerCommand = pkgManager?.name ?? 'npm';
+
   const nextSteps = [
     `cd ${targetDir}`,
-    `${pkgManager} install`,
-    `${pkgManager} run start`,
+    `${pkgManagerCommand} install`,
+    `${pkgManagerCommand} run start`,
   ].join('\n');
 
   note(nextSteps, 'Next steps');
@@ -60,6 +62,26 @@ export async function promptProjectName() {
     await text({
       message: 'What is your app named?',
       validate: validateProjectName,
+    })
+  );
+}
+
+export async function promptTemplate(templates: string[]): Promise<string> {
+  if (templates.length === 0) {
+    throw new Error('No templates found');
+  }
+
+  if (templates.length === 1) {
+    return templates[0];
+  }
+
+  return checkCancel<string>(
+    await select({
+      message: 'Select a template:',
+      options: templates.map((template) => ({
+        value: template,
+        label: template,
+      })),
     })
   );
 }

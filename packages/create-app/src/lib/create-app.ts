@@ -10,9 +10,10 @@ import {
   promptProjectName,
   printWelcomeMessage,
   printByeMessage,
+  promptTemplate,
 } from './prompts';
 import { copyDir, isEmptyDir, removeDir, resolveAbsolutePath } from './fs';
-import { parseCliOptions } from './parse-args';
+import { parseCliOptions } from './parse-cli-options';
 
 const TEMPLATES = ['default'];
 
@@ -32,7 +33,7 @@ async function create() {
   printWelcomeMessage();
 
   const projectName =
-    (options.dir || options.projectName) ?? (await promptProjectName());
+    (options.dir || options.name) ?? (await promptProjectName());
   const { targetDir } = parsePackageInfo(projectName);
   const absoluteTargetDir = resolveAbsolutePath(targetDir);
 
@@ -49,11 +50,17 @@ async function create() {
 
   removeDir(absoluteTargetDir);
 
-  const templateName = TEMPLATES[0];
-  // TODO: figure monorepo workaround
-  const srcDir = path.join(__dirname, '..', `rnef-template-${templateName}`);
+  const templateName = options.template ?? (await promptTemplate(TEMPLATES));
+  const srcDir = path.join(
+    __dirname,
+    // Workaround for getting the template from within the monorepo
+    // TODO: implement downloading templates from NPM
+    '../../../../../templates',
+    `rnef-template-${templateName}`
+  );
+
   if (!fs.existsSync(srcDir)) {
-    throw new Error(`Invalid input: template "${templateName}" not found.`);
+    throw new Error(`Invalid template: template "${templateName}" not found.`);
   }
 
   copyDir(srcDir, absoluteTargetDir);

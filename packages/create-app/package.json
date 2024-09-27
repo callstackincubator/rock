@@ -1,6 +1,12 @@
 {
   "name": "@callstack/create-rnef-app",
   "version": "0.0.1",
+  "type": "commonjs",
+  "main": "./src/index.js",
+  "typings": "./src/index.d.ts",
+  "bin": {
+    "create-rnef-app": "./src/bin.js"
+  },
   "dependencies": {
     "@clack/prompts": "^0.7.0",
     "minimist": "^1.2.8",
@@ -8,8 +14,5 @@
   },
   "devDependencies": {
     "@types/minimist": "^1.2.5"
-  },
-  "type": "commonjs",
-  "main": "./src/index.js",
-  "typings": "./src/index.d.ts"
+  }
 }

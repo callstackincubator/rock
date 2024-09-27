@@ -1,7 +1,8 @@
 import minimist from 'minimist';
 
 export type CliOptions = {
-  projectName?: string;
+  name?: string;
+  template?: string;
   help?: boolean;
   version?: boolean;
   dir?: string;
@@ -14,7 +15,8 @@ export function parseCliOptions(argv: string[]): CliOptions {
   });
 
   return {
-    projectName: options._[0],
+    name: options._[0],
+    template: options.template,
     help: options.help,
     version: options.version,
     dir: options.dir,
