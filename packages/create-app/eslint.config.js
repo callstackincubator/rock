@@ -10,6 +10,7 @@ module.exports = [
         {
           ignoredFiles: ['{projectRoot}/eslint.config.{js,cjs,mjs}'],
           // TODO: @nx/dependency-checks incorrectly reports unused dependencies
+          // See: https://github.com/callstack/rnef/issues/8
           checkObsoleteDependencies: false,
         },
       ],
