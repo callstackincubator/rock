@@ -2,7 +2,6 @@
   "name": "test-helpers",
   "version": "0.0.1",
   "dependencies": {
-    "jest-util": "^29.7.0",
     "tslib": "^2.3.0"
   },
   "type": "commonjs",
