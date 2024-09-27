@@ -1,5 +1,5 @@
 {
-  "name": "@rnef/cli",
+  "name": "@callstack/rnef-cli",
   "version": "0.0.1",
   "dependencies": {
     "commander": "^12.1.0",

@@ -1,4 +1,4 @@
-import { cli } from '../src/lib/cli';
+import { cli } from '../cli';
 
 describe('cli', () => {
   it('should throw when config not found', async () => {
