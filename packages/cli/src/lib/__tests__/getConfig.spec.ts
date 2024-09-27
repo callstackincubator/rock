@@ -1,5 +1,5 @@
-import { getConfig } from '../src/lib/getConfig';
-import { cleanup, writeFiles, getTempDirectory } from '../jest/helpers';
+import { getConfig } from '../getConfig';
+import { cleanup, writeFiles, getTempDirectory } from '../../../jest/helpers';
 
 const DIR = getTempDirectory('test_config');
 
@@ -16,10 +16,10 @@ test.each([['.js'], ['.mjs'], ['.ts']])(
   async (ext) => {
     writeFiles(DIR, {
       [`rnef.config${ext}`]: `module.exports = {
-      projectConfig: {}
+      plugins: {}
     }`,
     });
-    expect(await getConfig(DIR)).toMatchObject({ projectConfig: {} });
+    expect(await getConfig(DIR)).toMatchObject({ commands: [] });
   }
 );
 

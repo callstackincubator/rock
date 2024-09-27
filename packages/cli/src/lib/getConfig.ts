@@ -1,28 +1,24 @@
 import * as fs from 'node:fs';
 import * as path from 'node:path';
 
-type PluginType = (config: ConfigType) => {
+type PluginType = () => {
   name: string;
-  commands: ConfigType['commands'];
+  commands: CommandType;
 };
 
+type CommandType = Array<{
+  name: string;
+  description: string;
+  action: () => void;
+}>;
+
 type ConfigType = {
-  projectConfig?: object;
   plugins?: Record<string, PluginType>;
-  commands?: Array<{
-    name: string;
-    description: string;
-    action: (config: ConfigType) => void;
-  }>;
+  commands?: CommandType;
 };
 
 type ConfigOutput = {
-  projectConfig?: object;
-  commands?: Array<{
-    name: string;
-    description: string;
-    action: (config: ConfigType) => void;
-  }>;
+  commands?: CommandType;
 };
 
 const extensions = ['.js', '.ts', '.mjs'];
@@ -52,7 +48,7 @@ export async function getConfig(
 
   if (config.plugins) {
     for (const plugin in config.plugins) {
-      const pluginOutput = config.plugins[plugin](config);
+      const pluginOutput = config.plugins[plugin]();
       config.commands = [
         ...(config.commands || []),
         ...(pluginOutput.commands || []),
@@ -62,5 +58,9 @@ export async function getConfig(
     delete config.plugins;
   }
 
-  return config;
+  const outputConfig: ConfigOutput = {
+    commands: config.commands ?? [],
+  };
+
+  return outputConfig;
 }

@@ -19,7 +19,7 @@ export const cli = async () => {
       .description(command.description || '')
       .action(async () => {
         try {
-          await command.action(config);
+          await command.action();
         } catch (e) {
           // TODO handle nicely
           console.log('Error: ', e);
