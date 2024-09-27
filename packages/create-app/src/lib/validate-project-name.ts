@@ -61,7 +61,7 @@ export function validateProjectName(name: string) {
     return 'Project name cannot be empty.';
   }
 
-  if (!String(name).match(NAME_REGEX)) {
+  if (!name.match(NAME_REGEX)) {
     return `Invalid project name: "${name}". Please use a valid identifier name (alphanumeric).`;
   }
 
