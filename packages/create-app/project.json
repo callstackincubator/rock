@@ -23,6 +23,12 @@
         "assets": ["packages/create-app/*.md"]
       }
     },
+    "lint": {
+      "executor": "@nx/eslint:lint",
+      "options": {
+        "lintFilePatterns": ["{projectRoot}/src/*.{ts,js,tsx,jsx}"]
+      }
+    },
     "nx-release-publish": {
       "options": {
         "packageRoot": "dist/{projectRoot}"
