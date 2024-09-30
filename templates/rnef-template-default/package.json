@@ -3,9 +3,9 @@
   "version": "0.0.1",
   "private": true,
   "scripts": {
-    "start": "rnef start",
-    "android": "rnef run-android",
-    "ios": "rnef run-ios",
+    "start": "react-native start",
+    "android": "react-native run-android",
+    "ios": "react-native run-ios",
     "lint": "eslint .",
     "test": "jest"
   },
