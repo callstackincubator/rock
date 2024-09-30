@@ -71,10 +71,6 @@ export async function promptTemplate(templates: string[]): Promise<string> {
     throw new Error('No templates found');
   }
 
-  if (templates.length === 1) {
-    return templates[0];
-  }
-
   return checkCancel<string>(
     await select({
       message: 'Select a template:',
