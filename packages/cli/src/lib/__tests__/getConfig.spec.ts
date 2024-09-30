@@ -1,5 +1,5 @@
 import { getConfig } from '../getConfig';
-import { cleanup, writeFiles, getTempDirectory } from '../../../jest/helpers';
+import { cleanup, writeFiles, getTempDirectory } from 'test-helpers';
 
 const DIR = getTempDirectory('test_config');
 
