@@ -1,3 +1,4 @@
+import { test, expect } from 'vitest'
 import { writeFiles, getTempDirectory, cleanup } from './test-helpers';
 import * as fs from 'fs';
 import * as path from 'path';

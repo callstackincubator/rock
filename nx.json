@@ -30,7 +30,7 @@
       }
     },
     {
-      "plugin": "@nx/jest/plugin",
+      "plugin": "@nx/vite/plugin",
       "options": {
         "targetName": "test"
       }

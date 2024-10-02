@@ -10,5 +10,8 @@
         "storage": "tmp/local-registry/storage"
       }
     }
+  },
+  "test": {
+    "executor": "@nx/vite:test"
   }
 }

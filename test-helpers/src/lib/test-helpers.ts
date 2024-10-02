@@ -1,7 +1,6 @@
 import * as fs from 'node:fs';
 import * as path from 'node:path';
 import * as os from 'node:os';
-import { createDirectory } from 'jest-util';
 
 export const getTempDirectory = (name: string) =>
   path.resolve(os.tmpdir(), name);
@@ -24,13 +23,13 @@ export const writeFiles = (
   directory: string,
   files: { [filename: string]: string | NodeJS.ArrayBufferView }
 ) => {
-  createDirectory(directory);
+  fs.mkdirSync(directory, { recursive: true});
 
   Object.keys(files).forEach((fileOrPath) => {
     const dirname = path.dirname(fileOrPath);
 
     if (dirname !== '/') {
-      createDirectory(path.join(directory, dirname));
+      fs.mkdirSync(path.join(directory, dirname), { recursive: true});
     }
     fs.writeFileSync(
       path.resolve(directory, ...fileOrPath.split('/')),
