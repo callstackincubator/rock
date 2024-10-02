@@ -23,13 +23,13 @@ export const writeFiles = (
   directory: string,
   files: { [filename: string]: string | NodeJS.ArrayBufferView }
 ) => {
-  fs.mkdirSync(directory, { recursive: true });
+  createDirectory(directory);
 
   Object.keys(files).forEach((fileOrPath) => {
     const dirname = path.dirname(fileOrPath);
 
     if (dirname !== '/') {
-      fs.mkdirSync(path.join(directory, dirname), { recursive: true });
+      createDirectory(path.join(directory, dirname));
     }
     fs.writeFileSync(
       path.resolve(directory, ...fileOrPath.split('/')),
@@ -37,3 +37,14 @@ export const writeFiles = (
     );
   });
 };
+
+function createDirectory(path: string): void {
+  try {
+    fs.mkdirSync(path, { recursive: true });
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  } catch (error: any) {
+    if (error.code !== 'EEXIST') {
+      throw error;
+    }
+  }
+}

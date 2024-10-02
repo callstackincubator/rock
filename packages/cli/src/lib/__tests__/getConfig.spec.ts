@@ -1,12 +1,17 @@
+import { vi, expect, beforeEach, afterEach, test } from 'vitest';
 import { getConfig } from '../getConfig';
-import { cleanup, writeFiles, getTempDirectory } from 'test-helpers';
+import {
+  cleanup,
+  writeFiles,
+  getTempDirectory,
+} from '../../../../../test-helpers';
 
 const DIR = getTempDirectory('test_config');
 
 beforeEach(() => {
   cleanup(DIR);
-  jest.resetModules();
-  jest.clearAllMocks();
+  vi.resetModules();
+  vi.clearAllMocks();
 });
 
 afterEach(() => cleanup(DIR));
