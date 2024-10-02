@@ -14,13 +14,13 @@
   "tags": [],
   "targets": {
     "build": {
-      "executor": "@nx/js:tsc",
-      "outputs": ["{options.outputPath}"],
+      "executor": "@nx/esbuild:esbuild",
       "options": {
         "outputPath": "packages/create-app/dist",
         "main": "packages/create-app/src/index.ts",
         "tsConfig": "packages/create-app/tsconfig.lib.json",
-        "assets": ["packages/create-app/*.md"]
+        "assets": ["packages/create-app/*.md"],
+        "format": ["esm"]
       }
     },
     "lint": {

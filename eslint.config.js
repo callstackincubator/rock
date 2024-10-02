@@ -1,6 +1,6 @@
-const nx = require('@nx/eslint-plugin');
+import nx from '@nx/eslint-plugin';
 
-module.exports = [
+export default [
   ...nx.configs['flat/base'],
   ...nx.configs['flat/typescript'],
   ...nx.configs['flat/javascript'],

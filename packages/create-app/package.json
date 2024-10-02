@@ -1,7 +1,7 @@
 {
   "name": "@callstack/create-rnef-app",
   "version": "0.0.1",
-  "type": "commonjs",
+  "type": "module",
   "main": "./src/index.js",
   "typings": "./src/index.d.ts",
   "bin": {

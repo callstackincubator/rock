@@ -11,7 +11,7 @@
     "default": ["sharedGlobals"]
   },
   "targetDefaults": {
-    "@nx/js:tsc": {
+    "@nx/esbuild:esbuild": {
       "cache": true,
       "dependsOn": ["^build"],
       "inputs": ["default", "^default"]
