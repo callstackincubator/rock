@@ -27,6 +27,9 @@
         "lintFilePatterns": ["{projectRoot}/src/*.{ts,js,tsx,jsx}"]
       }
     },
+    "test": {
+      "dependsOn": ["build"]
+    },
     "nx-release-publish": {
       "options": {
         "packageRoot": "dist/{projectRoot}"

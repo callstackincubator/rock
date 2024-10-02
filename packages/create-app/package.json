@@ -11,9 +11,12 @@
     "@clack/prompts": "^0.7.0",
     "gradient-string": "^3.0.0",
     "minimist": "^1.2.8",
+    "package-json": "^6.5.0",
+    "tar": "^7.4.3",
     "tslib": "^2.3.0"
   },
   "devDependencies": {
+    "@callstack/rnef-test-helpers": "workspace:*",
     "@types/gradient-string": "^1.1.6",
     "@types/minimist": "^1.2.5"
   }

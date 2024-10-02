@@ -9,11 +9,12 @@ import {
 } from '@clack/prompts';
 import fs from 'node:fs';
 import { dirname, join } from 'node:path';
+import { fileURLToPath } from 'node:url';
 import { parsePackageManagerFromUserAgent } from './parsers.js';
 import { validateProjectName } from './validate-project-name.js';
-import { fileURLToPath } from 'node:url';
+import { TemplateInfo } from './templates.js';
 
-export function printHelpMessage(templates: string[]) {
+export function printHelpMessage(templates: TemplateInfo[]) {
   console.log(`
      Usage: create-rnef [options]
   
@@ -26,7 +27,7 @@ export function printHelpMessage(templates: string[]) {
      
      Templates:
   
-       ${templates.join(', ')}
+       ${templates.map((t) => t.name).join(', ')}
   `);
 }
 
@@ -69,17 +70,19 @@ export async function promptProjectName() {
   );
 }
 
-export async function promptTemplate(templates: string[]): Promise<string> {
+export async function promptTemplate(
+  templates: TemplateInfo[]
+): Promise<TemplateInfo> {
   if (templates.length === 0) {
     throw new Error('No templates found');
   }
 
-  return checkCancel<string>(
+  return checkCancel<TemplateInfo>(
     await select({
       message: 'Select a template:',
       options: templates.map((template) => ({
+        label: template.name,
         value: template,
-        label: template,
       })),
     })
   );

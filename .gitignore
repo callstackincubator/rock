@@ -40,3 +40,7 @@ Thumbs.db
 
 .nx/cache
 .nx/workspace-data
+
+# Local Templates
+*.tgz
+*.tar

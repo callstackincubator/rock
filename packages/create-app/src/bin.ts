@@ -1,2 +1,3 @@
 #!/usr/bin/env node
-export * from './lib/create-app.js';
+
+export * from './lib/bin.js';

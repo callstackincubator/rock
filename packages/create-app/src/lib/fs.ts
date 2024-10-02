@@ -1,7 +1,7 @@
 import fs from 'node:fs';
 import nodePath from 'node:path';
 
-export function isEmptyDir(path: string) {
+export function isEmptyDirSync(path: string) {
   const files = fs.readdirSync(path);
   return files.length === 0 || (files.length === 1 && files[0] === '.git');
 }
@@ -10,7 +10,7 @@ type CopyDirOptions = {
   skipFiles?: string[];
 };
 
-export function copyDir(
+export function copyDirSync(
   from: string,
   to: string,
   { skipFiles = [] }: CopyDirOptions = {}
@@ -23,7 +23,7 @@ export function copyDir(
     const distFile = nodePath.resolve(to, file);
 
     if (stat.isDirectory()) {
-      copyDir(srcFile, distFile, { skipFiles });
+      copyDirSync(srcFile, distFile, { skipFiles });
     } else {
       fs.copyFileSync(srcFile, distFile);
     }

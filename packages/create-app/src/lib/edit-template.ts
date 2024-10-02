@@ -1,9 +1,71 @@
-import path from 'node:path';
-import fs from 'node:fs';
+import * as fs from 'node:fs';
+import * as path from 'node:path';
+
+export function rewritePackageJson(projectPath: string, packageName: string) {
+  const packageJsonPath = path.join(projectPath, 'package.json');
+  if (!fs.existsSync(packageJsonPath)) {
+    return;
+  }
+
+  const packageJson = JSON.parse(fs.readFileSync(packageJsonPath, 'utf-8'));
+
+  packageJson.name = packageName;
+  packageJson.version = '1.0.0';
+  packageJson.private = true;
+
+  delete packageJson.description;
+  delete packageJson.keywords;
+  delete packageJson.homepage;
+  delete packageJson.bugs;
+  delete packageJson.license;
+  delete packageJson.author;
+  delete packageJson.contributors;
+  delete packageJson.funding;
+  delete packageJson.repository;
+  delete packageJson.packageManager;
+
+  fs.writeFileSync(packageJsonPath, JSON.stringify(packageJson, null, 2));
+}
+
+export function renameFiles(projectPath: string) {
+  const sourceGitIgnorePath = path.join(projectPath, 'gitignore');
+  if (!fs.existsSync(sourceGitIgnorePath)) {
+    return;
+  }
+
+  fs.renameSync(sourceGitIgnorePath, path.join(projectPath, '.gitignore'));
+}
 
 const DEFAULT_PLACEHOLDER_NAME = 'HelloWorld';
 
-function replaceNameInUTF8File(
+export async function renamePlaceholder(
+  projectPath: string,
+  projectName: string
+) {
+  if (projectName === DEFAULT_PLACEHOLDER_NAME) {
+    return;
+  }
+
+  for (const filePath of walkDirectory(projectPath).reverse()) {
+    if (!fs.statSync(filePath).isDirectory()) {
+      replaceNameInTextFile(filePath, projectName, DEFAULT_PLACEHOLDER_NAME);
+    }
+
+    if (shouldRenameFile(filePath, DEFAULT_PLACEHOLDER_NAME)) {
+      renameFile(filePath, DEFAULT_PLACEHOLDER_NAME, projectName);
+    } else if (
+      shouldRenameFile(filePath, DEFAULT_PLACEHOLDER_NAME.toLowerCase())
+    ) {
+      renameFile(
+        filePath,
+        DEFAULT_PLACEHOLDER_NAME.toLowerCase(),
+        projectName.toLowerCase()
+      );
+    }
+  }
+}
+
+function replaceNameInTextFile(
   filePath: string,
   projectName: string,
   templateName: string
@@ -21,7 +83,11 @@ function replaceNameInUTF8File(
   }
 }
 
-async function renameFile(filePath: string, oldName: string, newName: string) {
+function shouldRenameFile(filePath: string, nameToReplace: string) {
+  return path.basename(filePath).includes(nameToReplace);
+}
+
+function renameFile(filePath: string, oldName: string, newName: string) {
   const newFileName = path.join(
     path.dirname(filePath),
     path.basename(filePath).replace(new RegExp(oldName, 'g'), newName)
@@ -30,43 +96,13 @@ async function renameFile(filePath: string, oldName: string, newName: string) {
   fs.renameSync(filePath, newFileName);
 }
 
-function shouldRenameFile(filePath: string, nameToReplace: string) {
-  return path.basename(filePath).includes(nameToReplace);
-}
-
-function walk(current: string): string[] {
-  if (!fs.lstatSync(current).isDirectory()) {
-    return [current];
+function walkDirectory(currentPath: string): string[] {
+  if (!fs.lstatSync(currentPath).isDirectory()) {
+    return [currentPath];
   }
 
-  const files = fs
-    .readdirSync(current)
-    .map((child) => walk(path.join(current, child)));
-  const result: string[] = [];
-  return result.concat.apply([current], files);
-}
-
-
-export default async function changePlaceholderInTemplate(
-  projectName: string,
-  directory: string,
-) {
-  if (projectName === DEFAULT_PLACEHOLDER_NAME) {
-    return;
-  }
-
-  for (const filePath of walk(directory).reverse()) {
-    if (!fs.statSync(filePath).isDirectory()) {
-      replaceNameInUTF8File(filePath, projectName, DEFAULT_PLACEHOLDER_NAME);
-    }
-    if (shouldRenameFile(filePath, DEFAULT_PLACEHOLDER_NAME)) {
-      await renameFile(filePath, DEFAULT_PLACEHOLDER_NAME, projectName);
-    } else if (shouldRenameFile(filePath, DEFAULT_PLACEHOLDER_NAME.toLowerCase())) {
-      await renameFile(
-        filePath,
-        DEFAULT_PLACEHOLDER_NAME.toLowerCase(),
-        projectName.toLowerCase()
-      );
-    }
-  }
+  const childPaths = fs
+    .readdirSync(currentPath)
+    .flatMap((childName) => walkDirectory(path.join(currentPath, childName)));
+  return [currentPath, ...childPaths];
 }
