@@ -9,7 +9,7 @@
       "executor": "@nx/esbuild:esbuild",
       "outputs": ["{options.outputPath}"],
       "options": {
-        "outputPath": "dist/test-helpers",
+        "outputPath": "test-helpers/dist",
         "main": "test-helpers/src/index.ts",
         "tsConfig": "test-helpers/tsconfig.lib.json",
         "assets": ["test-helpers/*.md"],
