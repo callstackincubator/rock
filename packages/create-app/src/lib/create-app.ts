@@ -13,6 +13,7 @@ import {
   promptTemplate,
 } from './prompts';
 import { copyDir, isEmptyDir, removeDir, resolveAbsolutePath } from './fs';
+import { printLogo } from './logo';
 import { parseCliOptions } from './parse-cli-options';
 
 const TEMPLATES = ['default'];
@@ -30,6 +31,7 @@ async function create() {
     return;
   }
 
+  printLogo();
   printWelcomeMessage();
 
   const projectName =
