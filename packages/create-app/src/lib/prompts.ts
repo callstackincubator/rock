@@ -37,7 +37,7 @@ export function printVersionMessage() {
 
 export function printWelcomeMessage() {
   console.log('');
-  intro(`Welcome to React Native Enterprise Framework!`);
+  intro(`Hello There!`);
 }
 
 export function printByeMessage(targetDir: string) {
