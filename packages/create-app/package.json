@@ -9,7 +9,7 @@
   },
   "dependencies": {
     "@clack/prompts": "^0.7.0",
-    "gradient-string": "^2.0.2",
+    "gradient-string": "^3.0.0",
     "minimist": "^1.2.8",
     "tslib": "^2.3.0"
   },
