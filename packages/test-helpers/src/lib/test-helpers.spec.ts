@@ -1,7 +1,25 @@
-import { testHelpers } from './test-helpers';
+import { test, expect } from 'vitest'
+import { writeFiles, getTempDirectory, cleanup } from './test-helpers';
+import * as fs from 'fs';
+import * as path from 'path';
 
-describe('testHelpers', () => {
-  it('should work', () => {
-    expect(testHelpers()).toEqual('test-helpers');
-  });
+test('writeFiles in temp directory with cleanup', () => {
+  const directory = getTempDirectory('test_helpers');
+  const files = {
+    'package.json': '{}',
+    'dir/file.js': 'module.exports = "x";',
+  };
+
+  writeFiles(directory, files);
+
+  expect(fs.readFileSync(path.join(directory, 'package.json'), 'utf8')).toBe(
+    '{}'
+  );
+  expect(fs.readFileSync(path.join(directory, 'dir', 'file.js'), 'utf8')).toBe(
+    'module.exports = "x";'
+  );
+
+  cleanup(directory);
+
+  expect(fs.existsSync(directory)).toBe(false);
 });
