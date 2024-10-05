@@ -8,9 +8,10 @@ import {
   text,
 } from '@clack/prompts';
 import fs from 'node:fs';
-import path from 'node:path';
+import { dirname, join } from 'node:path';
 import { parsePackageManagerFromUserAgent } from './parsers';
 import { validateProjectName } from './validate-project-name';
+import { fileURLToPath } from 'node:url';
 
 export function printHelpMessage(templates: string[]) {
   console.log(`
@@ -30,7 +31,9 @@ export function printHelpMessage(templates: string[]) {
 }
 
 export function printVersionMessage() {
-  const packageJsonPath = path.join(__dirname, '..', '..', 'package.json');
+  const __dirname = dirname(fileURLToPath(import.meta.url));
+
+  const packageJsonPath = join(__dirname, '..', '..', 'package.json');
   const packageJson = JSON.parse(fs.readFileSync(packageJsonPath, 'utf-8'));
   console.log(`${packageJson.version}`);
 }

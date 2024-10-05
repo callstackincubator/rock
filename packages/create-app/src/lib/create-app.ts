@@ -1,5 +1,5 @@
 import fs from 'node:fs';
-import path from 'node:path';
+import path, { dirname } from 'node:path';
 import editTemplate from './edit-template';
 import { parsePackageInfo } from './parsers';
 import {
@@ -15,6 +15,7 @@ import {
 import { copyDir, isEmptyDir, removeDir, resolveAbsolutePath } from './fs';
 import { printLogo } from './logo';
 import { parseCliOptions } from './parse-cli-options';
+import { fileURLToPath } from 'node:url';
 
 const TEMPLATES = ['default'];
 
@@ -53,11 +54,14 @@ async function create() {
   removeDir(absoluteTargetDir);
 
   const templateName = options.template ?? (await promptTemplate(TEMPLATES));
+
+  const __dirname = dirname(fileURLToPath(import.meta.url));
+
   const srcDir = path.join(
     __dirname,
     // Workaround for getting the template from within the monorepo
     // TODO: implement downloading templates from NPM
-    '../../../../../templates',
+    '../../../templates',
     `rnef-template-${templateName}`
   );
 
