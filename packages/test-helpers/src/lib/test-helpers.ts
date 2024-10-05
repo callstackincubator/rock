@@ -23,13 +23,13 @@ export const writeFiles = (
   directory: string,
   files: { [filename: string]: string | NodeJS.ArrayBufferView }
 ) => {
-  fs.mkdirSync(directory, { recursive: true});
+  fs.mkdirSync(directory, { recursive: true });
 
   Object.keys(files).forEach((fileOrPath) => {
     const dirname = path.dirname(fileOrPath);
 
     if (dirname !== '/') {
-      fs.mkdirSync(path.join(directory, dirname), { recursive: true});
+      fs.mkdirSync(path.join(directory, dirname), { recursive: true });
     }
     fs.writeFileSync(
       path.resolve(directory, ...fileOrPath.split('/')),

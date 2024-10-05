@@ -17,7 +17,7 @@
     "baseUrl": ".",
     "paths": {
       "@callstack/create-rnef-app": ["packages/create-app/src/index.ts"],
-      "test-helpers": ["test-helpers/src/index.ts"]
+      "@callstack/rnef-test-helpers": ["packages/test-helpers/src/index.ts"]
     }
   },
   "exclude": ["node_modules", "tmp"]

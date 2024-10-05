@@ -1,4 +1,4 @@
-const baseConfig = require('../eslint.config.js');
+const baseConfig = require('../../eslint.config.js');
 
 module.exports = [
   ...baseConfig,
@@ -9,8 +9,6 @@ module.exports = [
         'error',
         {
           ignoredFiles: ['{projectRoot}/eslint.config.{js,cjs,mjs}'],
-          // TODO: @nx/dependency-checks incorrectly reports unused dependencies
-          checkObsoleteDependencies: false,
         },
       ],
     },

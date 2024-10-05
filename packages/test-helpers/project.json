@@ -1,0 +1,19 @@
+{
+  "name": "test-helpers",
+  "$schema": "../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "packages/test-helpers/src",
+  "projectType": "library",
+  "tags": [],
+  "targets": {
+    "build": {
+      "executor": "@nx/js:tsc",
+      "outputs": ["{options.outputPath}"],
+      "options": {
+        "outputPath": "dist/packages/test-helpers",
+        "main": "packages/test-helpers/src/index.ts",
+        "tsConfig": "packages/test-helpers/tsconfig.lib.json",
+        "assets": ["packages/test-helpers/*.md"]
+      }
+    }
+  }
+}
