@@ -1,24 +1,41 @@
 import * as fs from 'node:fs';
 import * as path from 'node:path';
 
-type PluginType = () => {
+type PlatformConfig = {
   name: string;
-  commands: CommandType;
+  init: () => Promise<void>;
+  build: () => Promise<void>;
+  run: () => Promise<void>;
+  linkModules: () => Promise<void>;
+  linkAssets: () => Promise<void>;
 };
 
-type CommandType = Array<{
+type PluginOutput = {
   name: string;
   description: string;
-  action: () => void;
-}>;
+  action: () => Promise<void>;
+  platform?: () => PlatformConfig;
+};
+
+type PluginArgs = {
+  registerCommand: (command: CommandType) => void;
+};
+
+type PluginType = (args: PluginArgs) => PluginOutput;
+
+type CommandType = {
+  name: string;
+  description: string;
+  action: (args: unknown) => void;
+};
 
 type ConfigType = {
   plugins?: Record<string, PluginType>;
-  commands?: CommandType;
+  commands?: Array<CommandType>;
 };
 
 type ConfigOutput = {
-  commands?: CommandType;
+  commands?: Array<CommandType>;
 };
 
 const extensions = ['.js', '.ts', '.mjs'];
@@ -29,7 +46,8 @@ const importUp = async <T>(dir: string, name: string): Promise<T> => {
   for (const ext of extensions) {
     const filePathWithExt = `${filePath}${ext}`;
     if (fs.existsSync(filePathWithExt)) {
-      return import(require.resolve(filePathWithExt));
+      // eslint-disable-next-line @typescript-eslint/no-require-imports
+      return require(require.resolve(filePathWithExt));
     }
   }
 
@@ -46,16 +64,17 @@ export async function getConfig(
 ): Promise<ConfigOutput> {
   const config = await importUp<ConfigType>(dir, 'rnef.config');
 
-  if (config.plugins) {
-    for (const plugin in config.plugins) {
-      const pluginOutput = config.plugins[plugin]();
-      config.commands = [
-        ...(config.commands || []),
-        ...(pluginOutput.commands || []),
-      ];
-    }
+  const api = {
+    registerCommand: (command: CommandType) => {
+      config.commands = [...(config.commands || []), command];
+    },
+  };
 
-    delete config.plugins;
+  if (config.plugins) {
+    // plugins register commands
+    for (const plugin in config.plugins) {
+      config.plugins[plugin](api);
+    }
   }
 
   const outputConfig: ConfigOutput = {

@@ -17,6 +17,9 @@
     "baseUrl": ".",
     "paths": {
       "@callstack/create-rnef-app": ["packages/create-app/src/index.ts"],
+      "@callstack/rnef-plugin-platform-android": [
+        "packages/plugin-platform-android/src/index.ts"
+      ],
       "@callstack/rnef-test-helpers": ["packages/test-helpers/src/index.ts"],
       "cli": ["packages/cli/src/index.ts"]
     }

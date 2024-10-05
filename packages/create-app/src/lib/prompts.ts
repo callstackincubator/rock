@@ -2,6 +2,7 @@ import {
   cancel,
   intro,
   isCancel,
+  multiselect,
   note,
   outro,
   select,
@@ -70,19 +71,38 @@ export async function promptProjectName() {
   );
 }
 
+// export async function promptTemplate(
+//   templates: TemplateInfo[]
+// ): Promise<TemplateInfo> {
+const platformTemplateMap: { ios: string; android: string } = {
+  ios: 'ios',
+  // android: '@callstack/rnef-plugin-template-android',
+  android: join(
+    __dirname,
+    '../../../../',
+    'plugin-platform-android',
+    'dist'
+  ),
+};
+
 export async function promptTemplate(
-  templates: TemplateInfo[]
-): Promise<TemplateInfo> {
+  templates: Array<'ios' | 'android'>
+): Promise<Array<{ platform: string; platformPluginModuleName: string }>> {
   if (templates.length === 0) {
     throw new Error('No templates found');
   }
 
-  return checkCancel<TemplateInfo>(
-    await select({
+  return checkCancel<
+    Array<{ platform: string; platformPluginModuleName: string }>
+  >(
+    await multiselect({
       message: 'Select a template:',
       options: templates.map((template) => ({
-        label: template.name,
-        value: template,
+        value: {
+          platform: template,
+          platformPluginModuleName: platformTemplateMap[template],
+        },
+        label: template,
       })),
     })
   );
