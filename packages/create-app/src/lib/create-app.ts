@@ -16,7 +16,7 @@ import { copyDir, isEmptyDir, removeDir, resolveAbsolutePath } from './fs';
 import { printLogo } from './logo';
 import { parseCliOptions } from './parse-cli-options';
 
-const TEMPLATES = ['default'];
+const TEMPLATES: Array<'android' | 'ios'> = ['android', 'ios'];
 
 async function create() {
   const options = parseCliOptions(process.argv.slice(2));
@@ -52,23 +52,60 @@ async function create() {
 
   removeDir(absoluteTargetDir);
 
-  const templateName = options.template ?? (await promptTemplate(TEMPLATES));
-  const srcDir = path.join(
+  const defaultProjectTemplate = path.join(
     __dirname,
-    // Workaround for getting the template from within the monorepo
-    // TODO: implement downloading templates from NPM
     '../../../../../templates',
-    `rnef-template-${templateName}`
+    'rnef-template-default'
   );
 
-  if (!fs.existsSync(srcDir)) {
-    throw new Error(`Invalid template: template "${templateName}" not found.`);
+  const results = await promptTemplate(TEMPLATES);
+
+  // default TS template
+  copyDir(defaultProjectTemplate, absoluteTargetDir);
+  createRNEFConfig(absoluteTargetDir, Array.from(results));
+
+  // platform folder tempaltes
+  for await (const { platform, platformPluginModuleName } of results) {
+    const { templatePath, editTemplate: customPlatformEditTemplate } =
+      // eslint-disable-next-line @typescript-eslint/no-require-imports
+      require(platformPluginModuleName).getTemplateInfo();
+    if (!fs.existsSync(templatePath)) {
+      throw new Error(
+        `Invalid template: template "${platform}" not found in ${templatePath}.`
+      );
+    }
+
+    copyDir(templatePath, absoluteTargetDir);
+    if (customPlatformEditTemplate) {
+      await customPlatformEditTemplate(projectName, absoluteTargetDir);
+    }
   }
 
-  copyDir(srcDir, absoluteTargetDir);
   await editTemplate(projectName, absoluteTargetDir);
 
   printByeMessage(absoluteTargetDir);
 }
 
 create();
+
+function createRNEFConfig(
+  absoluteTargetDir: string,
+  platforms: Array<{ platform: string; platformPluginModuleName: string }>
+) {
+  const rnefConfig = path.join(absoluteTargetDir, 'rnef.config.js');
+  fs.writeFileSync(
+    rnefConfig,
+    `module.exports = {
+  plugins: {},
+  platforms: {
+    ${platforms
+      .map(
+        ({ platform, platformPluginModuleName }) =>
+          `${platform}: require("${platformPluginModuleName}")(),`
+      )
+      .join('\n')}
+  },
+};
+`
+  );
+}

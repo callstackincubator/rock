@@ -2,6 +2,7 @@ import {
   cancel,
   intro,
   isCancel,
+  multiselect,
   note,
   outro,
   select,
@@ -66,20 +67,33 @@ export async function promptProjectName() {
   );
 }
 
-export async function promptTemplate(templates: string[]): Promise<string> {
+const platformTemplateMap: { ios: string; android: string } = {
+  ios: 'ios',
+  // android: '@callstack/rnef-plugin-template-android',
+  android: path.join(__dirname, '../../../../', 'plugin-platform-android', 'dist'),
+};
+
+export async function promptTemplate(
+  templates: Array<'ios' | 'android'>
+): Promise<Array<{ platform: string; platformPluginModuleName: string }>> {
   if (templates.length === 0) {
     throw new Error('No templates found');
   }
 
-  return checkCancel<string>(
-    await select({
-      message: 'Select a template:',
-      options: templates.map((template) => ({
-        value: template,
-        label: template,
-      })),
-    })
-  );
+  const xd = await multiselect({
+    message: 'Select a template:',
+    options: templates.map((template) => ({
+      value: {
+        platform: template,
+        platformPluginModuleName: platformTemplateMap[template],
+      },
+      label: template,
+    })),
+  });
+
+  return checkCancel<
+    Array<{ platform: string; platformPluginModuleName: string }>
+  >(xd);
 }
 
 export async function confirmOverrideFiles(targetDir: string) {

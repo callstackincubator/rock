@@ -3,7 +3,7 @@
   "version": "0.0.0",
   "license": "MIT",
   "scripts": {
-    "build": "nx build create-app",
+    "build": "nx run-many --target=build",
     "test": "nx run-many --target=test --watch=false",
     "lint": "nx run-many --target=lint"
   },

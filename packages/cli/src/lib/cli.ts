@@ -14,18 +14,23 @@ export const cli = async () => {
 
   // Register commands from the config
   config.commands?.forEach((command) => {
-    program
+    const cmd = program
       .command(command.name)
       .description(command.description || '')
       .action(async () => {
         try {
-          await command.action();
+          command.action(program.args);
         } catch (e) {
           // TODO handle nicely
           console.log('Error: ', e);
           process.exit(1);
         }
       });
+
+    // @ts-expect-error command
+    for (const opt of command.options || []) {
+      cmd.option(opt.name, opt.description ?? '');
+    }
   });
 
   program.parse();
