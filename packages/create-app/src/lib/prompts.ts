@@ -68,9 +68,15 @@ export async function promptProjectName() {
 }
 
 const platformTemplateMap: { ios: string; android: string } = {
-  ios: 'ios',
+  // ios: '@callstack/rnef-plugin-template-ios',
+  ios: path.join(__dirname, '../../../../', 'plugin-platform-ios', 'dist'),
   // android: '@callstack/rnef-plugin-template-android',
-  android: path.join(__dirname, '../../../../', 'plugin-platform-android', 'dist'),
+  android: path.join(
+    __dirname,
+    '../../../../',
+    'plugin-platform-android',
+    'dist'
+  ),
 };
 
 export async function promptTemplate(

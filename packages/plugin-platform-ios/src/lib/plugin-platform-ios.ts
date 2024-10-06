@@ -32,7 +32,7 @@ const buildOptions = [
   },
 ];
 
-const pluginPlatformAndroid =
+const pluginPlatformIOS =
   () =>
   (api: PluginApi): PluginOutput => {
     api.registerCommand({
@@ -50,14 +50,14 @@ const pluginPlatformAndroid =
     });
 
     return {
-      name: 'plugin-platform-android',
-      description: 'RNEF plugin for everything android.',
+      name: 'sample-plugin',
+      description: 'sample plugin',
     };
   };
 
 export const getTemplateInfo = () => {
   return {
-    name: 'android',
+    name: 'ios',
     templatePath: path.join(__dirname, '../template'),
     editTemplate: () => {
       // init
@@ -65,4 +65,4 @@ export const getTemplateInfo = () => {
   };
 };
 
-export default pluginPlatformAndroid;
+export default pluginPlatformIOS;
