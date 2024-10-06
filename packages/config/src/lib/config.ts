@@ -1,32 +1,22 @@
 import * as fs from 'node:fs';
 import * as path from 'node:path';
 
-type PlatformConfig = {
-  name: string;
-  init: () => Promise<void>;
-  build: () => Promise<void>;
-  run: () => Promise<void>;
-  linkModules: () => Promise<void>;
-  linkAssets: () => Promise<void>;
-};
-
-type PluginOutput = {
+export type PluginOutput = {
   name: string;
   description: string;
-  action: () => Promise<void>;
-  platform?: () => PlatformConfig;
 };
 
-type PluginArgs = {
+export type PluginApi = {
   registerCommand: (command: CommandType) => void;
 };
 
-type PluginType = (args: PluginArgs) => PluginOutput;
+type PluginType = (args: PluginApi) => PluginOutput;
 
 type CommandType = {
   name: string;
   description: string;
   action: (args: unknown) => void;
+  options?: Array<{ name: string; description: string }>;
 };
 
 type ConfigType = {

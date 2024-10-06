@@ -1,6 +1,6 @@
 import { Command } from 'commander';
 import { version } from '../../package.json';
-import { getConfig } from './getConfig';
+import { getConfig } from '@callstack/rnef-config';
 
 const program = new Command();
 
@@ -27,7 +27,6 @@ export const cli = async () => {
         }
       });
 
-    // @ts-expect-error command
     for (const opt of command.options || []) {
       cmd.option(opt.name, opt.description ?? '');
     }

@@ -69,6 +69,7 @@ async function create() {
     const { templatePath, editTemplate: customPlatformEditTemplate } =
       // eslint-disable-next-line @typescript-eslint/no-require-imports
       require(platformPluginModuleName).getTemplateInfo();
+
     if (!fs.existsSync(templatePath)) {
       throw new Error(
         `Invalid template: template "${platform}" not found in ${templatePath}.`
@@ -76,6 +77,7 @@ async function create() {
     }
 
     copyDir(templatePath, absoluteTargetDir);
+
     if (customPlatformEditTemplate) {
       await customPlatformEditTemplate(projectName, absoluteTargetDir);
     }
@@ -103,7 +105,7 @@ function createRNEFConfig(
         ({ platform, platformPluginModuleName }) =>
           `${platform}: require("${platformPluginModuleName}")(),`
       )
-      .join('\n')}
+      .join('\n    ')}
   },
 };
 `
