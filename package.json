@@ -4,7 +4,7 @@
   "license": "MIT",
   "type": "module",
   "scripts": {
-    "build": "nx build create-app",
+    "build": "nx run-many -t build",
     "test": "nx run-many --target=test --watch=false",
     "lint": "nx run-many --target=lint"
   },
