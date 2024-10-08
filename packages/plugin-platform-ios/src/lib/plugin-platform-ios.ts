@@ -36,15 +36,15 @@ const pluginPlatformIOS =
   () =>
   (api: PluginApi): PluginOutput => {
     api.registerCommand({
-      name: 'xplat:build',
-      description: 'Build xplat',
+      name: 'ios:build',
+      description: 'Build ios',
       action: build,
       options: buildOptions,
     });
 
     api.registerCommand({
-      name: 'xplat:run',
-      description: 'Run xplat',
+      name: 'ios:run',
+      description: 'Run ios',
       action: run,
       options: buildOptions,
     });
@@ -61,6 +61,8 @@ export const getTemplateInfo = () => {
     templatePath: path.join(__dirname, '../template'),
     editTemplate: () => {
       // init
+      // custom copy (Gemfile, .bundle/vendor)
+      // edit gitignore
     },
   };
 };

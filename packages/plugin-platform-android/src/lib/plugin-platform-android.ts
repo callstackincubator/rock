@@ -9,8 +9,10 @@ const linkAssets = () => {
 };
 
 const build = (args: unknown) => {
-  linkModules();
-  linkAssets();
+  linkModules(); // -> rnc-cli config --platform android
+  linkAssets(); // -> logic react-native-assets, specific to android
+  // args.bundler.build()
+  // nativeAndroidBuild()
   console.log('build', { args });
 };
 
@@ -36,15 +38,15 @@ const pluginPlatformAndroid =
   () =>
   (api: PluginApi): PluginOutput => {
     api.registerCommand({
-      name: 'xplat:build',
-      description: 'Build xplat',
+      name: 'android:build',
+      description: 'Build android',
       action: build,
       options: buildOptions,
     });
 
     api.registerCommand({
-      name: 'xplat:run',
-      description: 'Run xplat',
+      name: 'android:run',
+      description: 'Run android',
       action: run,
       options: buildOptions,
     });
