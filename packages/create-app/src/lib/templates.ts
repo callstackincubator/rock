@@ -78,7 +78,6 @@ export async function downloadTarballFromNpm(
   try {
     const metadata = await packageJson(packageName, { version });
 
-    // @ts-expect-error: metadata is incorrectly typed.
     const tarballUrl = metadata['dist']?.tarball;
     if (!tarballUrl) {
       throw new Error('Tarball URL not found.');
