@@ -61,7 +61,7 @@ async function create() {
     __dirname,
     // Workaround for getting the template from within the monorepo
     // TODO: implement downloading templates from NPM
-    '../../../templates',
+    '../../../../../templates',
     `rnef-template-${templateName}`
   );
 
