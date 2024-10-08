@@ -9,8 +9,8 @@ import {
 } from '@clack/prompts';
 import fs from 'node:fs';
 import { dirname, join } from 'node:path';
-import { parsePackageManagerFromUserAgent } from './parsers';
-import { validateProjectName } from './validate-project-name';
+import { parsePackageManagerFromUserAgent } from './parsers.js';
+import { validateProjectName } from './validate-project-name.js';
 import { fileURLToPath } from 'node:url';
 
 export function printHelpMessage(templates: string[]) {

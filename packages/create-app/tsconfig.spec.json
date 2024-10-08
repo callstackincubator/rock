@@ -9,7 +9,7 @@
       "node",
       "vitest"
     ],
-    "module": "ESNext"
+    "module": "NodeNext",
   },
   "include": [
     "vite.config.ts",

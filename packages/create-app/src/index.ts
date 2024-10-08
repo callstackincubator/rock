@@ -1,1 +1,1 @@
-export * from './lib/create-app';
+export * from './lib/create-app.js';

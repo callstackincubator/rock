@@ -1,7 +1,7 @@
 import fs from 'node:fs';
 import path, { dirname } from 'node:path';
-import editTemplate from './edit-template';
-import { parsePackageInfo } from './parsers';
+import editTemplate from './edit-template.js';
+import { parsePackageInfo } from './parsers.js';
 import {
   cancelAndExit,
   printHelpMessage,
@@ -11,10 +11,10 @@ import {
   printWelcomeMessage,
   printByeMessage,
   promptTemplate,
-} from './prompts';
-import { copyDir, isEmptyDir, removeDir, resolveAbsolutePath } from './fs';
-import { printLogo } from './logo';
-import { parseCliOptions } from './parse-cli-options';
+} from './prompts.js';
+import { copyDir, isEmptyDir, removeDir, resolveAbsolutePath } from './fs.js';
+import { printLogo } from './logo.js';
+import { parseCliOptions } from './parse-cli-options.js';
 import { fileURLToPath } from 'node:url';
 
 const TEMPLATES = ['default'];

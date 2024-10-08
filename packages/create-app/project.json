@@ -14,7 +14,7 @@
   "tags": [],
   "targets": {
     "build": {
-      "executor": "@nx/esbuild:esbuild",
+      "executor": "@nx/js:tsc",
       "options": {
         "outputPath": "packages/create-app/dist",
         "main": "packages/create-app/src/bin.ts",
