@@ -1,5 +1,6 @@
 import * as fs from 'node:fs/promises';
 import * as path from 'node:path';
+import { fileURLToPath } from 'node:url';
 import packageJson from 'package-json';
 import * as tar from 'tar';
 import { resolveAbsolutePath } from './fs.js';
@@ -20,11 +21,35 @@ export type LocalTemplateInfo = {
   packageName?: undefined;
 };
 
+const __dirname = path.dirname(fileURLToPath(import.meta.url));
+
 export const TEMPLATES: TemplateInfo[] = [
   {
     name: 'default',
     version: 'latest',
     packageName: '@callstack/repack',
+  },
+  {
+    name: 'ios',
+    // version: 'latest',
+    // packageName: '@callstack/rnef-plugin-platform-ios',
+    localPath: path.join(
+      __dirname,
+      '../../../../',
+      'plugin-platform-ios',
+      'dist/src'
+    ),
+  },
+  {
+    name: 'android',
+    // version: 'latest',
+    // packageName: '@callstack/rnef-plugin-platform-android',
+    localPath: path.join(
+      __dirname,
+      '../../../../',
+      'plugin-platform-android',
+      'dist/src'
+    ),
   },
 ];
 

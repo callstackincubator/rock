@@ -71,39 +71,19 @@ export async function promptProjectName() {
   );
 }
 
-// export async function promptTemplate(
-//   templates: TemplateInfo[]
-// ): Promise<TemplateInfo> {
-const platformTemplateMap: { ios: string; android: string } = {
-  // ios: '@callstack/rnef-plugin-template-ios',
-  ios: join(__dirname, '../../../../', 'plugin-platform-ios', 'dist'),
-  // android: '@callstack/rnef-plugin-template-android',
-  android: join(
-    __dirname,
-    '../../../../',
-    'plugin-platform-android',
-    'dist'
-  ),
-};
-
 export async function promptTemplate(
-  templates: Array<'ios' | 'android'>
-): Promise<Array<{ platform: string; platformPluginModuleName: string }>> {
+  templates: TemplateInfo[]
+): Promise<TemplateInfo[]> {
   if (templates.length === 0) {
     throw new Error('No templates found');
   }
 
-  return checkCancel<
-    Array<{ platform: string; platformPluginModuleName: string }>
-  >(
+  return checkCancel<TemplateInfo[]>(
     await multiselect({
       message: 'Select a template:',
       options: templates.map((template) => ({
-        value: {
-          platform: template,
-          platformPluginModuleName: platformTemplateMap[template],
-        },
-        label: template,
+        value: template,
+        label: template.name,
       })),
     })
   );
