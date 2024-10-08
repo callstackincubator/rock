@@ -23,7 +23,7 @@
         "buildableProjectDepsInPackageJsonType": "dependencies",
         "generateExportsField": true,
         "compilerOptions": {
-          "module": "ESNext",
+          "module": "NodeNext",
           "outDir": "packages/{projectRoot}/dist"
         }
       }

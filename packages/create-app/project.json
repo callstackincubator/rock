@@ -18,9 +18,7 @@
       "options": {
         "outputPath": "packages/create-app/dist",
         "main": "packages/create-app/src/bin.ts",
-        "tsConfig": "packages/create-app/tsconfig.lib.json",
-        "assets": ["packages/create-app/*.md"],
-        "format": ["esm"]
+        "tsConfig": "packages/create-app/tsconfig.lib.json"
       }
     },
     "lint": {
