@@ -5,7 +5,7 @@
   "type": "module",
   "scripts": {
     "build": "nx run-many --target build",
-    "test": "nx run-many --target test",
+    "test": "nx run-many --target test -- --passWithNoTests",
     "lint": "nx run-many --target lint",
     "typecheck": "nx run-many --target typecheck"
   },

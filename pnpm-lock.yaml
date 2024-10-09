@@ -130,21 +130,23 @@ importers:
 
   packages/plugin-platform-android:
     dependencies:
-      '@callstack/rnef-config':
-        specifier: workspace:*
-        version: link:../config
       tslib:
         specifier: ^2.3.0
         version: 2.7.0
+    devDependencies:
+      '@callstack/rnef-config':
+        specifier: workspace:*
+        version: link:../config
 
   packages/plugin-platform-ios:
     dependencies:
-      '@callstack/rnef-config':
-        specifier: workspace:*
-        version: link:../config
       tslib:
         specifier: ^2.3.0
         version: 2.7.0
+    devDependencies:
+      '@callstack/rnef-config':
+        specifier: workspace:*
+        version: link:../config
 
   packages/test-helpers:
     dependencies:

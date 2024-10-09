@@ -1,13 +1,16 @@
 import { expect, test } from 'vitest';
 import path from 'node:path';
-import { resolveTemplateName } from '../templates';
+import { resolveTemplateName } from '../templates.js';
 
 test('resolveTemplateName with built-in templates', () => {
+  const expectedPath = path.resolve(
+    __dirname,
+    '../../../../../',
+    'templates/rnef-template-default'
+  );
   expect(resolveTemplateName('default')).toEqual({
     name: 'default',
-    version: 'latest',
-    // TODO: update to @callstack/repack-template-default when published
-    packageName: '@callstack/repack',
+    localPath: expectedPath,
   });
 });
 
