@@ -1,6 +1,6 @@
 import { Command } from 'commander';
-import { version } from '../../package.json';
 import { getConfig } from '@callstack/rnef-config';
+import { version } from '../../package.json';
 
 const program = new Command();
 

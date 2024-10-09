@@ -1,15 +1,15 @@
 {
   "name": "@callstack/rnef-cli",
   "version": "0.0.1",
-  "dependencies": {
-    "commander": "^12.1.0",
-    "tslib": "^2.3.0"
-  },
+  "type": "module",
+  "main": "./src/index.js",
+  "typings": "./src/index.d.ts",
   "bin": {
     "rnef": "./src/bin.js"
   },
-  "type": "commonjs",
-  "main": "./src/index.js",
-  "typings": "./src/index.d.ts",
-  "private": true
+  "dependencies": {
+    "@callstack/rnef-config": "workspace:*",
+    "commander": "^12.1.0",
+    "tslib": "^2.3.0"
+  }
 }

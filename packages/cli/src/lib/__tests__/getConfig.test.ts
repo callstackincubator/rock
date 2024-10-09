@@ -1,10 +1,10 @@
 import { vi, expect, beforeEach, afterEach, test } from 'vitest';
-import { getConfig } from '../getConfig';
+import { getConfig } from '@callstack/rnef-config';
 import {
   cleanup,
   writeFiles,
   getTempDirectory,
-} from '../../../../../test-helpers';
+} from '@callstack/rnef-test-helpers';
 
 const DIR = getTempDirectory('test_config');
 
