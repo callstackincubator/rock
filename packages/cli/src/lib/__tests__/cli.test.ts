@@ -12,6 +12,6 @@ it('should throw when config not found', async () => {
 it('should not throw when config is there', async () => {
   const __dirname = dirname(fileURLToPath(import.meta.url));
   await cli({
-    cwd: join(__dirname, '__fixtures__/config-with-sample-plugin'),
+    cwd: join(__dirname, '__fixtures__/simple-config'),
   });
 });

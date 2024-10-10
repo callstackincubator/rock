@@ -22,6 +22,7 @@ type CommandType = {
 
 type ConfigType = {
   plugins?: Record<string, PluginType>;
+  platforms?: Record<string, PluginType>;
   commands?: Array<CommandType>;
 };
 
@@ -38,7 +39,7 @@ const importUp = async <T>(dir: string, name: string): Promise<T> => {
     const filePathWithExt = `${filePath}${ext}`;
     if (fs.existsSync(filePathWithExt)) {
       if (ext === '.mjs') {
-        return import(filePathWithExt);
+        return import(filePathWithExt).then((module) => module.default);
       } else {
         const require = createRequire(import.meta.url);
         return require(filePathWithExt);
@@ -69,6 +70,13 @@ export async function getConfig(
     // plugins register commands
     for (const plugin in config.plugins) {
       config.plugins[plugin](api);
+    }
+  }
+
+  if (config.platforms) {
+    // platforms register commands and custom platform functionality (TBD)
+    for (const platform in config.platforms) {
+      config.platforms[platform](api);
     }
   }
 
