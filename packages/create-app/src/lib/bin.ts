@@ -2,7 +2,7 @@ import fs from 'node:fs';
 import path from 'node:path';
 import { spinner } from '@clack/prompts';
 import {
-  renameFiles,
+  renameCommonFiles,
   renamePlaceholder,
   rewritePackageJson,
 } from './edit-template.js';
@@ -84,9 +84,14 @@ async function create() {
   }
 
   // TODO: add pluging packages
+  const loader = spinner();
+  loader.start('Updating template...');
+  // TODO: add relavant platform plugins to package.json
   rewritePackageJson(absoluteTargetDir, projectName);
-  renameFiles(absoluteTargetDir);
+  renameCommonFiles(absoluteTargetDir);
   renamePlaceholder(absoluteTargetDir, projectName);
+  createConfig(absoluteTargetDir, platforms);
+  loader.stop('Updated template.');
 
   printByeMessage(absoluteTargetDir);
 }
@@ -147,10 +152,7 @@ async function extractPackage(absoluteTargetDir: string, pkg: TemplateInfo) {
   );
 }
 
-function createRNEFConfig(
-  absoluteTargetDir: string,
-  platforms: TemplateInfo[]
-) {
+function createConfig(absoluteTargetDir: string, platforms: TemplateInfo[]) {
   const rnefConfig = path.join(absoluteTargetDir, 'rnef.config.js');
   fs.writeFileSync(
     rnefConfig,

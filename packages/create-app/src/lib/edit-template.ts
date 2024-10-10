@@ -27,7 +27,7 @@ export function rewritePackageJson(projectPath: string, packageName: string) {
   fs.writeFileSync(packageJsonPath, JSON.stringify(packageJson, null, 2));
 }
 
-export function renameFiles(projectPath: string) {
+export function renameCommonFiles(projectPath: string) {
   const sourceGitIgnorePath = path.join(projectPath, 'gitignore');
   if (!fs.existsSync(sourceGitIgnorePath)) {
     return;
