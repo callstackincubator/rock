@@ -1,5 +1,6 @@
 import * as fs from 'node:fs';
 import * as path from 'node:path';
+import { createRequire } from 'node:module';
 
 export type PluginOutput = {
   name: string;
@@ -36,8 +37,12 @@ const importUp = async <T>(dir: string, name: string): Promise<T> => {
   for (const ext of extensions) {
     const filePathWithExt = `${filePath}${ext}`;
     if (fs.existsSync(filePathWithExt)) {
-      // eslint-disable-next-line @typescript-eslint/no-require-imports
-      return require(require.resolve(filePathWithExt));
+      if (ext === '.mjs') {
+        return import(filePathWithExt);
+      } else {
+        const require = createRequire(import.meta.url);
+        return require(filePathWithExt);
+      }
     }
   }
 

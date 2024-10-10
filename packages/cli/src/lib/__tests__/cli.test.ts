@@ -1,10 +1,17 @@
-// import { describe, it, expect } from 'vitest';
-// import { cli } from '../cli.js';
+import { dirname, join } from 'node:path';
+import { fileURLToPath } from 'node:url';
+import { it, expect } from 'vitest';
+import { cli } from '../cli.js';
 
-// describe('cli', () => {
-//   it('should throw when config not found', async () => {
-//     await expect(cli()).rejects.toThrow(
-//       'rnef.config not found in any parent directory of /'
-//     );
-//   });
-// });
+it('should throw when config not found', async () => {
+  await expect(cli({})).rejects.toThrow(
+    'rnef.config not found in any parent directory of /'
+  );
+});
+
+it('should not throw when config is there', async () => {
+  const __dirname = dirname(fileURLToPath(import.meta.url));
+  await cli({
+    cwd: join(__dirname, '__fixtures__/config-with-sample-plugin'),
+  });
+});

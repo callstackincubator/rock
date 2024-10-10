@@ -9,8 +9,12 @@ program
   .description('React Native Enterprise Framework CLI.')
   .version(version);
 
-export const cli = async () => {
-  const config = await getConfig();
+type CliOptions = {
+  cwd?: string;
+};
+
+export const cli = async ({ cwd }: CliOptions) => {
+  const config = await getConfig(cwd);
 
   // Register commands from the config
   config.commands?.forEach((command) => {
