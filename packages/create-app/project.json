@@ -28,7 +28,11 @@
       }
     },
     "test": {
-      "dependsOn": ["build"]
+      "dependsOn": [
+        "build",
+        "plugin-platform-ios:build",
+        "plugin-platform-android:build"
+      ]
     },
     "nx-release-publish": {
       "options": {

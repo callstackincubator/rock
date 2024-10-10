@@ -35,7 +35,7 @@ import {
   TEMPLATES,
 } from './templates.js';
 
-async function create() {
+export async function run() {
   const options = parseCliOptions(process.argv.slice(2));
 
   if (options.help) {
@@ -169,5 +169,3 @@ function createConfig(absoluteTargetDir: string, platforms: TemplateInfo[]) {
 `
   );
 }
-
-create();

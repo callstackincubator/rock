@@ -1,3 +1,10 @@
 #!/usr/bin/env node
 
-export * from './lib/bin.js';
+import { run } from './lib/bin.js';
+
+try {
+  await run();
+} catch (error) {
+  console.error('Error', error);
+  process.exit(1);
+}
