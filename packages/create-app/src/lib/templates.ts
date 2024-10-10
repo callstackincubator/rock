@@ -27,27 +27,29 @@ export type LocalTemplateInfo = {
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
+const TEMP_PACKAGES_PATH = path.join(__dirname, '../../../');
+console.log('TEMP_PACKAGES_PATH', TEMP_PACKAGES_PATH);
+
+const TEMP_TEMPLATES_PATH = path.join(TEMP_PACKAGES_PATH, '../templates');
+console.log('TEMP_TEMPLATES_PATH', TEMP_TEMPLATES_PATH);
+
 export const TEMPLATES: TemplateInfo[] = [
   {
     name: 'default',
     // version: 'latest',
     // packageName: '@callstack/rnef-template-default',
-    localPath: path.join(
-      __dirname,
-      '../../../../../',
-      'templates/rnef-template-default'
-    ),
+    localPath: path.join(TEMP_TEMPLATES_PATH, 'rnef-template-default'),
   },
 ];
+console.log('TEMPLATES', TEMPLATES);
 
 export const PLATFORMS: TemplateInfo[] = [
   {
     name: 'ios',
     // version: 'latest',
-    // packageName: '@callstack/rnef-plugin-platform-ios',
+    // packageName: '@callstack/rnef-plugin-platform-ios/',
     localPath: path.join(
-      __dirname,
-      '../../../../',
+      TEMP_PACKAGES_PATH,
       'plugin-platform-ios',
       'dist/src/template'
     ),
@@ -57,13 +59,13 @@ export const PLATFORMS: TemplateInfo[] = [
     // version: 'latest',
     // packageName: '@callstack/rnef-plugin-platform-android',
     localPath: path.join(
-      __dirname,
-      '../../../../',
+      TEMP_PACKAGES_PATH,
       'plugin-platform-android',
       'dist/src/template'
     ),
   },
 ];
+console.log('PLATFORMS', PLATFORMS);
 
 export function resolveTemplate(
   templates: TemplateInfo[],

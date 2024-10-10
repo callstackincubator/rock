@@ -75,8 +75,8 @@ async function create() {
     ? resolveTemplate(TEMPLATES, options.template)
     : await promptTemplate(TEMPLATES);
 
-  const platforms = options.platform
-    ? options.platform.map((p) => resolveTemplate(PLATFORMS, p))
+  const platforms = options.platforms
+    ? options.platforms.map((p) => resolveTemplate(PLATFORMS, p))
     : await promptPlatforms(PLATFORMS);
 
   console.log('Template', template);
@@ -86,6 +86,7 @@ async function create() {
     extractPackage(absoluteTargetDir, platform);
   }
 
+  // TODO: add pluging packages
   rewritePackageJson(absoluteTargetDir, projectName);
   renameFiles(absoluteTargetDir);
   renamePlaceholder(absoluteTargetDir, projectName);
