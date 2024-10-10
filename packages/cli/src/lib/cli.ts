@@ -13,7 +13,7 @@ type CliOptions = {
   cwd?: string;
 };
 
-export const cli = async ({ cwd }: CliOptions) => {
+export const cli = async ({ cwd }: CliOptions = {}) => {
   const config = await getConfig(cwd);
 
   // Register commands from the config
