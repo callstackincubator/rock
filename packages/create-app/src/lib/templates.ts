@@ -11,13 +11,17 @@ export type NpmTemplateInfo = {
   name: string;
   version: string;
   packageName: string;
+  directory?: string;
+
   localPath?: undefined;
 };
 
 export type LocalTemplateInfo = {
   name: string;
-  version?: undefined;
   localPath: string;
+  directory?: string;
+
+  version?: undefined;
   packageName?: undefined;
 };
 
@@ -26,9 +30,17 @@ const __dirname = path.dirname(fileURLToPath(import.meta.url));
 export const TEMPLATES: TemplateInfo[] = [
   {
     name: 'default',
-    version: 'latest',
-    packageName: '@callstack/repack',
+    // version: 'latest',
+    // packageName: '@callstack/rnef-template-default',
+    localPath: path.join(
+      __dirname,
+      '../../../../../',
+      'templates/rnef-template-default'
+    ),
   },
+];
+
+export const PLATFORMS: TemplateInfo[] = [
   {
     name: 'ios',
     // version: 'latest',
@@ -37,7 +49,7 @@ export const TEMPLATES: TemplateInfo[] = [
       __dirname,
       '../../../../',
       'plugin-platform-ios',
-      'dist/src'
+      'dist/src/template'
     ),
   },
   {
@@ -48,18 +60,17 @@ export const TEMPLATES: TemplateInfo[] = [
       __dirname,
       '../../../../',
       'plugin-platform-android',
-      'dist/src'
+      'dist/src/template'
     ),
   },
 ];
 
-export function resolveTemplateName(name?: string): TemplateInfo | null {
-  if (!name) {
-    return null;
-  }
-
+export function resolveTemplate(
+  templates: TemplateInfo[],
+  name: string
+): TemplateInfo {
   // Check if the template is a template from the list
-  const templateFromList = TEMPLATES.find((t) => t.name === name);
+  const templateFromList = templates.find((t) => t.name === name);
   if (templateFromList) {
     return templateFromList;
   }
