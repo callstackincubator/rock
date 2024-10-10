@@ -1,4 +1,4 @@
-import * as fs from 'node:fs/promises';
+import * as fs from 'node:fs';
 import * as path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import packageJson from 'package-json';
@@ -27,11 +27,8 @@ export type LocalTemplateInfo = {
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
-const TEMP_PACKAGES_PATH = path.join(__dirname, '../../../../');
-console.log('TEMP_PACKAGES_PATH', TEMP_PACKAGES_PATH);
-
+const TEMP_PACKAGES_PATH = findPackagesDir();
 const TEMP_TEMPLATES_PATH = path.join(TEMP_PACKAGES_PATH, '../templates');
-console.log('TEMP_TEMPLATES_PATH', TEMP_TEMPLATES_PATH);
 
 export const TEMPLATES: TemplateInfo[] = [
   {
@@ -41,7 +38,6 @@ export const TEMPLATES: TemplateInfo[] = [
     localPath: path.join(TEMP_TEMPLATES_PATH, 'rnef-template-default'),
   },
 ];
-console.log('TEMPLATES', TEMPLATES);
 
 export const PLATFORMS: TemplateInfo[] = [
   {
@@ -65,7 +61,6 @@ export const PLATFORMS: TemplateInfo[] = [
     ),
   },
 ];
-console.log('PLATFORMS', PLATFORMS);
 
 export function resolveTemplate(
   templates: TemplateInfo[],
@@ -132,7 +127,7 @@ export async function downloadTarballFromNpm(
     );
     // Write the tarball to disk
     const arrayBuffer = await response.arrayBuffer();
-    await fs.writeFile(tarballPath, Buffer.from(arrayBuffer));
+    await fs.promises.writeFile(tarballPath, Buffer.from(arrayBuffer));
 
     return tarballPath;
   } catch (error) {
@@ -148,4 +143,17 @@ export function extractTarballFile(tarballPath: string, targetDir: string) {
     cwd: targetDir,
     strip: 1, // Remove the top-level directory
   });
+}
+
+function findPackagesDir() {
+  let dir = __dirname;
+  while (dir !== '/') {
+    if (path.basename(dir) === 'packages') {
+      return dir;
+    }
+
+    dir = path.dirname(dir);
+  }
+
+  throw new Error('"packages" directory not found');
 }

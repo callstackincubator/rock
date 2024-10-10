@@ -37,7 +37,6 @@ import {
 
 async function create() {
   const options = parseCliOptions(process.argv.slice(2));
-  console.log(options);
 
   if (options.help) {
     printHelpMessage(TEMPLATES, PLATFORMS);
@@ -79,11 +78,9 @@ async function create() {
     ? options.platforms.map((p) => resolveTemplate(PLATFORMS, p))
     : await promptPlatforms(PLATFORMS);
 
-  console.log('Template', template);
-  console.log('Platforms', platforms);
-  extractPackage(absoluteTargetDir, template);
+  await extractPackage(absoluteTargetDir, template);
   for (const platform of platforms) {
-    extractPackage(absoluteTargetDir, platform);
+    await extractPackage(absoluteTargetDir, platform);
   }
 
   // TODO: add pluging packages

@@ -8,8 +8,6 @@ test('resolveTemplateName with built-in templates', () => {
     '../../../../../',
     'templates/rnef-template-default'
   );
-  console.log('Expected path', expectedPath);
-  console.log('Resolved path', resolveTemplate(TEMPLATES, 'default'));
   expect(resolveTemplate(TEMPLATES, 'default')).toEqual({
     name: 'default',
     localPath: expectedPath,

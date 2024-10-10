@@ -9,7 +9,6 @@ import {
 
 const CREATE_APP_PATH = path.resolve(__dirname, '../../../dist/src/bin.js');
 const TEMPLATES_DIR = path.resolve(__dirname, '../../../../../templates');
-console.log('test TEMPLATES_DIR', TEMPLATES_DIR);
 const TEMP_DIR = getTempDirectory('e2e-deploys');
 
 beforeEach(() => {
@@ -17,6 +16,40 @@ beforeEach(() => {
 });
 
 describe('create-app command', { timeout: 30_000 }, () => {
+  it(
+    'should create a new project from default template',
+    { timeout: 30_000 },
+    async () => {
+      const projectName = `test-default-template-${getRandomString(6)}`;
+      const projectPath = path.resolve(TEMP_DIR, projectName);
+
+      if (existsSync(projectPath)) {
+        rmSync(projectPath, { recursive: true, force: true });
+      }
+
+      await execAsync(
+        `node ${CREATE_APP_PATH} ${projectName} --template=default --platform=ios --platform=android`,
+        { cwd: TEMP_DIR }
+      );
+
+      const packageJsonPath = path.join(projectPath, 'package.json');
+      expect(existsSync(packageJsonPath)).toBe(true);
+
+      const packageJson = JSON.parse(readFileSync(packageJsonPath, 'utf-8'));
+      expect(packageJson.name).toBe(projectName);
+      expect(packageJson.version).toBe('1.0.0');
+      expect(packageJson.private).toBe(true);
+      expect(packageJson.description).not.toBeDefined();
+      expect(packageJson.author).not.toBeDefined();
+      expect(packageJson.license).not.toBeDefined();
+      expect(packageJson.repository).not.toBeDefined();
+      expect(packageJson.bugs).not.toBeDefined();
+      expect(packageJson.homepage).not.toBeDefined();
+      expect(packageJson.keywords).not.toBeDefined();
+      expect(packageJson.packageManager).not.toBeDefined();
+    }
+  );
+
   it('should create a new project from npm template', async () => {
     const projectName = `test-npm-template-${getRandomString(6)}`;
     const projectPath = path.resolve(TEMP_DIR, projectName);
