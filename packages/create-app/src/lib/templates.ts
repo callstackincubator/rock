@@ -27,7 +27,7 @@ export type LocalTemplateInfo = {
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
-const TEMP_PACKAGES_PATH = path.join(__dirname, '../../../');
+const TEMP_PACKAGES_PATH = path.join(__dirname, '../../../../');
 console.log('TEMP_PACKAGES_PATH', TEMP_PACKAGES_PATH);
 
 const TEMP_TEMPLATES_PATH = path.join(TEMP_PACKAGES_PATH, '../templates');

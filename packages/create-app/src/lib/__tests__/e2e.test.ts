@@ -9,6 +9,7 @@ import {
 
 const CREATE_APP_PATH = path.resolve(__dirname, '../../../dist/src/bin.js');
 const TEMPLATES_DIR = path.resolve(__dirname, '../../../../../templates');
+console.log('test TEMPLATES_DIR', TEMPLATES_DIR);
 const TEMP_DIR = getTempDirectory('e2e-deploys');
 
 beforeEach(() => {
@@ -25,7 +26,7 @@ describe('create-app command', { timeout: 30_000 }, () => {
     }
 
     await execAsync(
-      `node ${CREATE_APP_PATH} ${projectName} --template=@testing-library/react-native --platform=ios --platform=android`,
+      `node ${CREATE_APP_PATH} ${projectName} --template=@callstack/repack --platform=ios --platform=android`,
       { cwd: TEMP_DIR }
     );
 
