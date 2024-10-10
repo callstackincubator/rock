@@ -127,7 +127,7 @@ export async function downloadTarballFromNpm(
     );
     // Write the tarball to disk
     const arrayBuffer = await response.arrayBuffer();
-    await fs.promises.writeFile(tarballPath, Buffer.from(arrayBuffer));
+    fs.writeFileSync(tarballPath, Buffer.from(arrayBuffer));
 
     return tarballPath;
   } catch (error) {

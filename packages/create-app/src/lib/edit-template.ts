@@ -38,10 +38,7 @@ export function renameCommonFiles(projectPath: string) {
 
 const DEFAULT_PLACEHOLDER_NAME = 'HelloWorld';
 
-export async function renamePlaceholder(
-  projectPath: string,
-  projectName: string
-) {
+export function renamePlaceholder(projectPath: string, projectName: string) {
   if (projectName === DEFAULT_PLACEHOLDER_NAME) {
     return;
   }
