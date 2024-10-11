@@ -4,6 +4,9 @@
   "type": "module",
   "main": "./src/index.js",
   "typings": "./src/index.d.ts",
+  "scripts": {
+    "e2e": "vitest --config vite.e2e.config.js"
+  },
   "bin": {
     "create-rnef-app": "./src/bin.js"
   },

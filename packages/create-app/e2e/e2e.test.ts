@@ -7,8 +7,8 @@ import {
   getTempDirectory,
 } from '@callstack/rnef-test-helpers';
 
-const CREATE_APP_PATH = path.resolve(__dirname, '../../../dist/src/bin.js');
-const TEMPLATES_DIR = path.resolve(__dirname, '../../../../../templates');
+const CREATE_APP_PATH = path.resolve(__dirname, '../dist/src/bin.js');
+const TEMPLATES_DIR = path.resolve(__dirname, '../../../templates');
 const TEMP_DIR = getTempDirectory('e2e-deploys');
 
 beforeEach(() => {

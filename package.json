@@ -6,6 +6,7 @@
   "scripts": {
     "build": "nx run-many --target build",
     "test": "nx run-many --target test",
+    "e2e": "nx run-many --target e2e",
     "lint": "nx run-many --target lint",
     "typecheck": "nx run-many --target typecheck"
   },

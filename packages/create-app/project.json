@@ -27,7 +27,7 @@
         "lintFilePatterns": ["{projectRoot}/src/*.{ts,js,tsx,jsx}"]
       }
     },
-    "test": {
+    "e2e": {
       "dependsOn": [
         "build",
         "plugin-platform-ios:build",
