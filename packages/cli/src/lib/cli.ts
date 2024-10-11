@@ -1,6 +1,9 @@
 import { Command } from 'commander';
 import { getConfig } from '@callstack/rnef-config';
-import { version } from '../../package.json';
+import { createRequire } from "module";
+const require = createRequire(import.meta.url);
+
+const {version} = require("./../../package.json");
 
 const program = new Command();
 
