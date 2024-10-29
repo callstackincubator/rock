@@ -32,7 +32,7 @@ const buildProject = async (
   udid: string | undefined,
   args: BuildFlags
 ): Promise<string> => {
-  const simulatorDest = simulatorDestinationMap;
+  const simulatorDest = simulatorDestinationMap[platformName];
 
   if (!simulatorDest) {
     throw new CLIError(
