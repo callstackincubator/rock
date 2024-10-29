@@ -19,9 +19,7 @@
       "@callstack/create-rnef-app": ["packages/create-app/src/index.ts"],
       "@callstack/rnef-cli": ["packages/cli/src/index.ts"],
       "@callstack/rnef-config": ["packages/config/src/index.ts"],
-      "@callstack/rnef-plugin-metro": [
-        "packages/plugin-metro/src/index.ts"
-      ],
+      "@callstack/rnef-plugin-metro": ["packages/plugin-metro/src/index.ts"],
       "@callstack/rnef-plugin-platform-android": [
         "packages/plugin-platform-android/src/index.ts"
       ],
@@ -30,6 +28,9 @@
       ],
       "@callstack/rnef-test-helpers": ["packages/test-helpers/src/index.ts"],
       "@callstack/rnef-tools": ["packages/tools/src/index.ts"],
+      "@callstack/rnef-plugin-platform-apple": [
+        "packages/plugin-platform-apple/src/index.ts"
+      ]
     }
   },
   "exclude": ["node_modules", "tmp"]

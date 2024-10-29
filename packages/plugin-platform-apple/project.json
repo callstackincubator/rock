@@ -1,0 +1,19 @@
+{
+  "name": "plugin-platform-apple",
+  "$schema": "../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "packages/plugin-platform-apple/src",
+  "projectType": "library",
+  "tags": [],
+  "targets": {
+    "build": {
+      "executor": "@nx/js:tsc",
+      "outputs": ["{options.outputPath}"],
+      "options": {
+        "outputPath": "packages/plugin-platform-apple/dist",
+        "main": "packages/plugin-platform-apple/src/index.ts",
+        "tsConfig": "packages/plugin-platform-apple/tsconfig.lib.json",
+        "assets": ["packages/plugin-platform-apple/*.md"]
+      }
+    }
+  }
+}

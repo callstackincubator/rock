@@ -1,0 +1,18 @@
+{
+  "name": "@callstack/rnef-plugin-platform-apple",
+  "version": "0.0.1",
+  "type": "module",
+  "main": "./dist/src/index.js",
+  "typings": "./dist/src/index.d.ts",
+  "dependencies": {
+    "@clack/prompts": "^0.7.0",
+    "chalk": "^5.3.0",
+    "execa": "^9.5.1",
+    "fast-glob": "^3.3.2",
+    "fast-xml-parser": "^4.5.0",
+    "tslib": "^2.3.0"
+  },
+  "devDependencies": {
+    "@callstack/rnef-config": "workspace:*"
+  }
+}

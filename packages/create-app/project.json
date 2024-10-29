@@ -30,6 +30,7 @@
     "e2e": {
       "dependsOn": [
         "build",
+        "plugin-platform-apple:build",
         "plugin-platform-ios:build",
         "plugin-platform-android:build"
       ]
