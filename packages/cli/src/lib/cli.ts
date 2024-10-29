@@ -18,7 +18,6 @@ type CliOptions = {
 
 export const cli = async ({ cwd }: CliOptions = {}) => {
   const config = await getConfig(cwd);
-  
   // Register commands from the config
   config.commands?.forEach((command) => {
     const cmd = program
