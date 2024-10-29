@@ -1,4 +1,3 @@
-import * as path from 'node:path';
 import type { PluginOutput, PluginApi } from '@callstack/rnef-config';
 
 const linkModules = () => {
@@ -32,7 +31,7 @@ const buildOptions = [
   },
 ];
 
-const pluginPlatformIOS =
+export const pluginPlatformIOS =
   () =>
   (api: PluginApi): PluginOutput => {
     api.registerCommand({
@@ -54,17 +53,5 @@ const pluginPlatformIOS =
       description: 'sample plugin',
     };
   };
-
-export const getTemplateInfo = () => {
-  return {
-    name: 'ios',
-    templatePath: path.join(__dirname, '../template'),
-    editTemplate: () => {
-      // init
-      // custom copy (Gemfile, .bundle/vendor)
-      // edit gitignore
-    },
-  };
-};
 
 export default pluginPlatformIOS;

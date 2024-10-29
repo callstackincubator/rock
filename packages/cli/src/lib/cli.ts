@@ -1,9 +1,9 @@
 import { Command } from 'commander';
 import { getConfig } from '@callstack/rnef-config';
-import { createRequire } from "module";
+import { createRequire } from 'module';
 const require = createRequire(import.meta.url);
 
-const {version} = require("./../../package.json");
+const { version } = require('./../../package.json');
 
 const program = new Command();
 
@@ -18,7 +18,7 @@ type CliOptions = {
 
 export const cli = async ({ cwd }: CliOptions = {}) => {
   const config = await getConfig(cwd);
-
+  
   // Register commands from the config
   config.commands?.forEach((command) => {
     const cmd = program
