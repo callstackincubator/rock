@@ -9,11 +9,11 @@
   },
   "dependencies": {
     "@callstack/rnef-config": "workspace:*",
-    "@react-native-community/cli-config": "^15.0.1-alpha.0",
+    "@react-native-community/cli-config": "^15.1.0",
     "commander": "^12.1.0",
     "tslib": "^2.3.0"
   },
   "devDependencies": {
-    "@react-native-community/cli-types": "^15.0.1-alpha.0"
+    "@react-native-community/cli-types": "^15.1.0"
   }
 }

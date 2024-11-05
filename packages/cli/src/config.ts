@@ -1,4 +1,4 @@
-import loadConfig from '@react-native-community/cli-config';
+import { loadConfigAsync } from '@react-native-community/cli-config';
 import { Config, DependencyConfig } from '@react-native-community/cli-types';
 
 function isValidRNDependency(config: DependencyConfig) {
@@ -19,16 +19,10 @@ function filterConfig(config: Config) {
   return filtered;
 }
 
-export const logConfig = (options: { platform?: string }) => {
-  console.log(
-    JSON.stringify(
-      filterConfig(
-        loadConfig.default({
-          selectedPlatform: options.platform,
-        })
-      ),
-      null,
-      2
-    )
-  );
+export const logConfig = async (options: { platform?: string }) => {
+  const config = await loadConfigAsync({
+    selectedPlatform: options.platform,
+  });
+
+  console.log(JSON.stringify(filterConfig(config), null, 2));
 };

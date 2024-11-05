@@ -88,8 +88,8 @@ importers:
         specifier: workspace:*
         version: link:../config
       '@react-native-community/cli-config':
-        specifier: ^15.0.1-alpha.0
-        version: 15.0.1-alpha.0(typescript@5.5.4)
+        specifier: ^15.1.0
+        version: 15.1.0(typescript@5.5.4)
       commander:
         specifier: ^12.1.0
         version: 12.1.0
@@ -98,8 +98,8 @@ importers:
         version: 2.7.0
     devDependencies:
       '@react-native-community/cli-types':
-        specifier: ^15.0.1-alpha.0
-        version: 15.0.1-alpha.0
+        specifier: ^15.1.0
+        version: 15.1.0
 
   packages/config:
     dependencies:
@@ -151,8 +151,8 @@ importers:
   packages/plugin-platform-ios:
     dependencies:
       '@react-native-community/cli-config-apple':
-        specifier: ^15.0.1-alpha.0
-        version: 15.0.1-alpha.0
+        specifier: ^15.1.0
+        version: 15.1.0
       tslib:
         specifier: ^2.3.0
         version: 2.7.0
@@ -1294,17 +1294,17 @@ packages:
   '@polka/url@1.0.0-next.28':
     resolution: {integrity: sha512-8LduaNlMZGwdZ6qWrKlfa+2M4gahzFkprZiAt2TF8uS0qQgBizKXpXURqvTJ4WtmupWxaLqjRb2UCTe72mu+Aw==}
 
-  '@react-native-community/cli-config-apple@15.0.1-alpha.0':
-    resolution: {integrity: sha512-FXbHjlFn3i0pznPBJE4lF1fUd3qiT3iOkdb1FjVZfajJH7PmqdRDhVbwXMm2OwiqaCEi4qVNAqRZtsQeN2v09A==}
+  '@react-native-community/cli-config-apple@15.1.0':
+    resolution: {integrity: sha512-sNB+/aadirrF4PZSLMNyHnazeLeZeorZhN9VyfCHGjLzVKvZMp3/mdGd6/VBksK41QwtlYqwzeN+VRt5QMY4zg==}
 
-  '@react-native-community/cli-config@15.0.1-alpha.0':
-    resolution: {integrity: sha512-UexAKo2LfavBcUhUuoAvSHXijA+xQt/J1dcMli70Efn1YSKcDt3io558x69TLgAfwCdlnWc69aISDpbe4Jzf1w==}
+  '@react-native-community/cli-config@15.1.0':
+    resolution: {integrity: sha512-UCzftdq6rOl4NNL/L7nP0THtyMmAzaXFTAgzJXD7CGeBXG5MOpBX83muDstYtyt5g+cm0D/532orxRAzsY3NGQ==}
 
-  '@react-native-community/cli-tools@15.0.1-alpha.0':
-    resolution: {integrity: sha512-oNPKtMstjELENXaqELtTePEdWUYDJrWb61Kv7/P7yYV25947+5gulCyAsjGpq4qR6zdRDvTeIsfujrA78qz45Q==}
+  '@react-native-community/cli-tools@15.1.0':
+    resolution: {integrity: sha512-WucpEF33q3sjlhRTww8awrmq6k5AqwFOVQtk/iY4sWMwiJDvhRh0+zzh8rTt9LN/cLh+Lvyq+SOuSWFW7emjug==}
 
-  '@react-native-community/cli-types@15.0.1-alpha.0':
-    resolution: {integrity: sha512-jl30XzSgPgRgZ9eF8OdKpQoRzJIDqauZHlDGPpyhut10A98nbbdx1IETD+dwtp3bHYEI2ULB85QoZUs4NZloCw==}
+  '@react-native-community/cli-types@15.1.0':
+    resolution: {integrity: sha512-P0hojw2Gy1H4cLKp142qb4L9WCrQh1DDIRI8vNY82CWK6vaTmOGLlSZrBGa/aaKD9NDuW8xnpK9Qun14t4wKvg==}
 
   '@rollup/rollup-android-arm-eabi@4.24.0':
     resolution: {integrity: sha512-Q6HJd7Y6xdB48x8ZNVDOqsbh2uByBhgK8PiQgPhwkIw/HC/YX5Ghq2mQY5sRMZWHb3VsFkWooUVOZHKr7DmDIA==}
@@ -5707,16 +5707,16 @@ snapshots:
 
   '@polka/url@1.0.0-next.28': {}
 
-  '@react-native-community/cli-config-apple@15.0.1-alpha.0':
+  '@react-native-community/cli-config-apple@15.1.0':
     dependencies:
-      '@react-native-community/cli-tools': 15.0.1-alpha.0
+      '@react-native-community/cli-tools': 15.1.0
       chalk: 4.1.2
       execa: 5.1.1
       fast-glob: 3.3.2
 
-  '@react-native-community/cli-config@15.0.1-alpha.0(typescript@5.5.4)':
+  '@react-native-community/cli-config@15.1.0(typescript@5.5.4)':
     dependencies:
-      '@react-native-community/cli-tools': 15.0.1-alpha.0
+      '@react-native-community/cli-tools': 15.1.0
       chalk: 4.1.2
       cosmiconfig: 9.0.0(typescript@5.5.4)
       deepmerge: 4.3.1
@@ -5725,7 +5725,7 @@ snapshots:
     transitivePeerDependencies:
       - typescript
 
-  '@react-native-community/cli-tools@15.0.1-alpha.0':
+  '@react-native-community/cli-tools@15.1.0':
     dependencies:
       appdirsjs: 1.2.7
       chalk: 4.1.2
@@ -5739,7 +5739,7 @@ snapshots:
       shell-quote: 1.8.1
       sudo-prompt: 9.2.1
 
-  '@react-native-community/cli-types@15.0.1-alpha.0':
+  '@react-native-community/cli-types@15.1.0':
     dependencies:
       joi: 17.13.3
 

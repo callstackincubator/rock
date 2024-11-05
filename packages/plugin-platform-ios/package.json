@@ -5,7 +5,7 @@
   "main": "./src/index.js",
   "typings": "./src/index.d.ts",
   "dependencies": {
-    "@react-native-community/cli-config-apple": "^15.0.1-alpha.0",
+    "@react-native-community/cli-config-apple": "^15.1.0",
     "tslib": "^2.3.0"
   },
   "devDependencies": {
