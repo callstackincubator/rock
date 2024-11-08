@@ -1,54 +1,27 @@
 import * as path from 'node:path';
 import type { PluginOutput, PluginApi } from '@callstack/rnef-config';
+import { buildAndroid, options } from './commands/buildAndroid/index.js';
+import { runAndroid, runOptions } from './commands/runAndroid/index.js';
 
-const linkModules = () => {
-  console.log('link modules');
-};
-const linkAssets = () => {
-  console.log('link assets');
-};
-
-const build = (args: unknown) => {
-  linkModules(); // -> rnc-cli config --platform android
-  linkAssets(); // -> logic react-native-assets, specific to android
-  // args.bundler.build()
-  // nativeAndroidBuild()
-  console.log('build', { args });
-};
-
-const run = (args: unknown) => {
-  linkModules();
-  linkAssets();
-  console.log('run', { args });
-};
-
-const buildOptions = [
-  {
-    name: '--port',
-    description: 'Port to run on',
-    defaultValue: 8080,
-  },
-  {
-    name: '--remote',
-    description: 'remote build',
-  },
-];
 
 const pluginPlatformAndroid =
   () =>
   (api: PluginApi): PluginOutput => {
     api.registerCommand({
-      name: 'android:build',
+      name: 'build:android',
       description: 'Build android',
-      action: build,
-      options: buildOptions,
+      // @ts-expect-error todo
+      action: buildAndroid,
+      options: options,
     });
 
     api.registerCommand({
-      name: 'android:run',
+      name: 'run:android',
       description: 'Run android',
-      action: run,
-      options: buildOptions,
+      // @ts-expect-error todo
+      action: runAndroid,
+      // @ts-expect-error todo
+      options: runOptions,
     });
 
     return {

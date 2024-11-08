@@ -5,9 +5,12 @@
   "main": "./src/index.js",
   "typings": "./src/index.d.ts",
   "dependencies": {
-    "tslib": "^2.3.0"
+    "tslib": "^2.3.0",
+    "@clack/prompts": "^0.7.0",
+    "@react-native-community/cli-config-android": "15.1.2"
   },
   "devDependencies": {
-    "@callstack/rnef-config": "workspace:*"
+    "@callstack/rnef-config": "workspace:*",
+    "@react-native-community/cli-types": "15.1.2"
   }
 }
