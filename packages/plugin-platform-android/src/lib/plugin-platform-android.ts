@@ -2,6 +2,7 @@ import * as path from 'node:path';
 import type { PluginOutput, PluginApi } from '@callstack/rnef-config';
 import { buildAndroid, options } from './commands/buildAndroid/index.js';
 import { runAndroid, runOptions } from './commands/runAndroid/index.js';
+import { loadConfigAsync } from '@react-native-community/cli-config';
 
 
 const pluginPlatformAndroid =
@@ -10,16 +11,20 @@ const pluginPlatformAndroid =
     api.registerCommand({
       name: 'build:android',
       description: 'Build android',
-      // @ts-expect-error todo
-      action: buildAndroid,
+      action: async (args) => {
+        const config = await loadConfigAsync();
+        await buildAndroid(config, args);
+      },
       options: options,
     });
 
     api.registerCommand({
       name: 'run:android',
       description: 'Run android',
-      // @ts-expect-error todo
-      action: runAndroid,
+      action: async (args) => {
+        const config = await loadConfigAsync();
+        runAndroid(config, args);
+      },
       // @ts-expect-error todo
       options: runOptions,
     });

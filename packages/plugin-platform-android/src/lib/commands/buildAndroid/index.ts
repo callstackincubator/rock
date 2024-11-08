@@ -20,7 +20,6 @@ export interface BuildFlags {
 }
 
 export async function buildAndroid(
-  _argv: Array<string>,
   config: Config,
   args: BuildFlags,
 ) {

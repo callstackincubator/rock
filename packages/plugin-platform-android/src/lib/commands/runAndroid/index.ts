@@ -51,7 +51,6 @@ export type AndroidProject = NonNullable<Config['project']['android']>;
  * Starts the app on a connected Android emulator or device.
  */
 export async function runAndroid(
-  _argv: Array<string>,
   config: Config,
   args: Flags
 ) {
