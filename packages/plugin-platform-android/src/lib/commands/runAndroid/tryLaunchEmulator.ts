@@ -1,6 +1,6 @@
 import os from 'os';
 import spawn from 'nano-spawn';
-import adb from './adb.js';
+import { getDevices } from './adb.js';
 import { spinner } from '@clack/prompts';
 
 const emulatorCommand = process.env['ANDROID_HOME']
@@ -24,7 +24,6 @@ export const getEmulators = async () => {
 
 const launchEmulator = async (
   emulatorName: string,
-  adbPath: string,
   port?: number
 ): Promise<boolean> => {
   const manualCommand = `${emulatorCommand} @${emulatorName}`;
@@ -42,7 +41,7 @@ const launchEmulator = async (
 
   return new Promise<boolean>((resolve, reject) => {
     const bootCheckInterval = setInterval(async () => {
-      const devices = adb.getDevices(adbPath);
+      const devices = getDevices();
       const connected = port
         ? devices.find((d) => d.includes(`${port}`))
         : devices.length > 0;
@@ -83,7 +82,6 @@ const launchEmulator = async (
 };
 
 export default async function tryLaunchEmulator(
-  adbPath: string,
   name?: string,
   port?: number
 ) {
@@ -94,7 +92,7 @@ export default async function tryLaunchEmulator(
   if (emulators.length > 0) {
     try {
       loader.message(`Launching emulator "${emulatorName}"`);
-      await launchEmulator(emulatorName, adbPath, port);
+      await launchEmulator(emulatorName, port);
       loader.stop(`Launched emulator "${emulatorName}".`);
     } catch (error) {
       loader.stop(

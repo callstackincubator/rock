@@ -79,7 +79,6 @@ describe('--appFolder', () => {
     await runOnAllDevices(
       {...args, mode: 'debug'},
       './gradlew',
-      'adb',
       androidProject,
     );
     expect((execa as unknown as Mock).mock.calls[0][1]).toContain(
@@ -88,7 +87,7 @@ describe('--appFolder', () => {
   });
 
   it('uses appName and default variant', async () => {
-    await runOnAllDevices({...args, mode: 'debug'}, './gradlew', 'adb', {
+    await runOnAllDevices({...args, mode: 'debug'}, './gradlew', {
       ...androidProject,
       appName: 'someApp',
     });
@@ -99,7 +98,7 @@ describe('--appFolder', () => {
   });
 
   it('uses appName and custom variant', async () => {
-    await runOnAllDevices({...args, mode: 'release'}, './gradlew', 'adb', {
+    await runOnAllDevices({...args, mode: 'release'}, './gradlew', {
       ...androidProject,
       appName: 'anotherApp',
     });
@@ -123,7 +122,7 @@ describe('--appFolder', () => {
   });
 
   it('uses appName and custom task argument', async () => {
-    await runOnAllDevices({...args, tasks: ['someTask']}, './gradlew', 'adb', {
+    await runOnAllDevices({...args, tasks: ['someTask']}, './gradlew', {
       ...androidProject,
       appName: 'anotherApp',
     });
@@ -137,7 +136,6 @@ describe('--appFolder', () => {
     await runOnAllDevices(
       {...args, tasks: ['clean', 'someTask']},
       './gradlew',
-      'adb',
       androidProject,
     );
 

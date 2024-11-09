@@ -7,12 +7,11 @@
  */
 import fs from 'fs';
 import { Config } from '@react-native-community/cli-types';
-import adb from './adb.js';
+import { getCPU, getDevices } from './adb.js';
+import { tryRunAdbReverse } from './tryRunAdbReverse.js';
 import runOnAllDevices from './runOnAllDevices.js';
-import tryRunAdbReverse from './tryRunAdbReverse.js';
 import tryLaunchAppOnDevice from './tryLaunchAppOnDevice.js';
 import tryInstallAppOnDevice from './tryInstallAppOnDevice.js';
-import getAdbPath from './getAdbPath.js';
 import {
   logger,
   CLIError,
@@ -87,8 +86,7 @@ async function getAvailableDevicePort(
   /**
    * The default value is 5554 for the first virtual device instance running on your machine. A virtual device normally occupies a pair of adjacent ports: a console port and an adb port. The console of the first virtual device running on a particular machine uses console port 5554 and adb port 5555. Subsequent instances use port numbers increasing by two. For example, 5556/5557, 5558/5559, and so on. The range is 5554 to 5682, allowing for 64 concurrent virtual devices.
    */
-  const adbPath = getAdbPath();
-  const devices = adb.getDevices(adbPath);
+  const devices = getDevices();
   if (port > 5682) {
     throw new CLIError('Failed to launch emulator...');
   }
@@ -102,8 +100,6 @@ async function getAvailableDevicePort(
 async function buildAndRun(args: Flags, androidProject: AndroidProject) {
   process.chdir(androidProject.sourceDir);
   const cmd = process.platform.startsWith('win') ? 'gradlew.bat' : './gradlew';
-
-  const adbPath = getAdbPath();
 
   let selectedTask;
 
@@ -134,7 +130,7 @@ async function buildAndRun(args: Flags, androidProject: AndroidProject) {
     }
 
     if (args.interactive) {
-      const users = await checkUsers(device.deviceId as string, adbPath);
+      const users = await checkUsers(device.deviceId as string);
       if (users && users.length > 1) {
         const user = await promptForUser(users);
 
@@ -147,7 +143,6 @@ async function buildAndRun(args: Flags, androidProject: AndroidProject) {
     if (device.connected) {
       return runOnSpecificDevice(
         args,
-        adbPath,
         androidProject,
         selectedTask,
         device.deviceId
@@ -155,10 +150,9 @@ async function buildAndRun(args: Flags, androidProject: AndroidProject) {
     }
 
     const port = await getAvailableDevicePort();
-    await tryLaunchEmulator(adbPath, device.readableName, port);
+    await tryLaunchEmulator(device.readableName, port);
     return runOnSpecificDevice(
       args,
-      adbPath,
       androidProject,
       selectedTask,
       device.deviceId
@@ -166,26 +160,19 @@ async function buildAndRun(args: Flags, androidProject: AndroidProject) {
   }
 
   if (args.device) {
-    return runOnSpecificDevice(
-      args,
-      adbPath,
-      androidProject,
-      selectedTask,
-      args.device
-    );
+    return runOnSpecificDevice(args, androidProject, selectedTask, args.device);
   } else {
-    return runOnAllDevices(args, cmd, adbPath, androidProject);
+    return runOnAllDevices(args, cmd, androidProject);
   }
 }
 
 async function runOnSpecificDevice(
   args: Flags,
-  adbPath: string,
   androidProject: AndroidProject,
   selectedTask?: string,
   deviceId?: string
 ) {
-  const devices = adb.getDevices(adbPath);
+  const devices = getDevices();
 
   // if coming from run-android command and we have selected task
   // from interactive mode we need to create appropriate build task
@@ -214,13 +201,10 @@ async function runOnSpecificDevice(
       }
 
       if (args.activeArchOnly) {
-        const architecture = adb.getCPU(adbPath, deviceId);
+        const architecture = getCPU(deviceId);
 
         if (architecture !== null) {
           logger.info(`Detected architecture ${architecture}`);
-          // `reactNativeDebugArchitectures` was renamed to `reactNativeArchitectures` in 0.68.
-          // Can be removed when 0.67 no longer needs to be supported.
-          gradleArgs.push(`-PreactNativeDebugArchitectures=${architecture}`);
           gradleArgs.push(`-PreactNativeArchitectures=${architecture}`);
         }
       }
@@ -232,7 +216,6 @@ async function runOnSpecificDevice(
       await installAndLaunchOnDevice(
         args,
         deviceId,
-        adbPath,
         androidProject,
         selectedTask
       );
@@ -250,7 +233,6 @@ async function runOnSpecificDevice(
 async function installAndLaunchOnDevice(
   args: Flags,
   selectedDevice: string,
-  adbPath: string,
   androidProject: AndroidProject,
   selectedTask?: string
 ) {
@@ -258,13 +240,12 @@ async function installAndLaunchOnDevice(
 
   await tryInstallAppOnDevice(
     args,
-    adbPath,
     selectedDevice,
     androidProject,
     selectedTask
   );
 
-  await tryLaunchAppOnDevice(selectedDevice, androidProject, adbPath, args);
+  await tryLaunchAppOnDevice(selectedDevice, androidProject, args);
 }
 
 export const runOptions = [
@@ -329,5 +310,3 @@ export default {
   func: runAndroid,
   options: runOptions,
 };
-
-export { adb, getAdbPath, listAndroidDevices, tryRunAdbReverse };

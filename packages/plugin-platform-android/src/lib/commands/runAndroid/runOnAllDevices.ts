@@ -12,11 +12,10 @@ import { Config } from '@react-native-community/cli-types';
 import {
   link,
   logger,
-  CLIError,
   printRunDoctorTip,
 } from '@react-native-community/cli-tools';
-import adb from './adb.js';
-import tryRunAdbReverse from './tryRunAdbReverse.js';
+import { getCPU, getDevices } from './adb.js';
+import { tryRunAdbReverse } from './tryRunAdbReverse.js';
 import tryLaunchAppOnDevice from './tryLaunchAppOnDevice.js';
 import tryLaunchEmulator from './tryLaunchEmulator.js';
 import tryInstallAppOnDevice from './tryInstallAppOnDevice.js';
@@ -29,14 +28,13 @@ type AndroidProject = NonNullable<Config['project']['android']>;
 async function runOnAllDevices(
   args: Flags,
   cmd: string,
-  adbPath: string,
   androidProject: AndroidProject
 ) {
-  let devices = adb.getDevices(adbPath);
+  let devices = getDevices();
   if (devices.length === 0) {
     try {
-      await tryLaunchEmulator(adbPath);
-      devices = adb.getDevices(adbPath);
+      await tryLaunchEmulator();
+      devices = getDevices();
     } catch {
       logger.warn(
         'Please launch an emulator manually or connect a device. Otherwise app may fail to launch.'
@@ -65,7 +63,7 @@ async function runOnAllDevices(
       if (args.activeArchOnly) {
         const architectures = devices
           .map((device) => {
-            return adb.getCPU(adbPath, device);
+            return getCPU(device);
           })
           .filter(
             (arch, index, array) =>
@@ -81,10 +79,6 @@ async function runOnAllDevices(
       }
 
       loader.start('Building the app');
-      logger.debug(
-        `Running command "cd android && ${cmd} ${gradleArgs.join(' ')}"`
-      );
-
       await spawn(cmd, gradleArgs, {
         stdio: ['inherit', 'inherit', 'pipe'],
         cwd: androidProject.sourceDir,
@@ -93,17 +87,21 @@ async function runOnAllDevices(
     }
   } catch (error) {
     printRunDoctorTip();
-    loader.stop(`Failed to build the app. ${(error as {message: string}).message}`, 1);
-    throw createInstallError(error as any);
+    loader.stop(
+      `Failed to build the app. ${createInstallError(
+        error as Error & { stderr: string }
+      )}`,
+      1
+    );
   }
 
   (devices.length > 0 ? devices : [undefined]).forEach(
     async (device: string | void) => {
       tryRunAdbReverse(args.port, device);
       if (args.binaryPath && device) {
-        await tryInstallAppOnDevice(args, adbPath, device, androidProject);
+        await tryInstallAppOnDevice(args, device, androidProject);
       }
-      await tryLaunchAppOnDevice(device, androidProject, adbPath, args);
+      await tryLaunchAppOnDevice(device, androidProject, args);
     }
   );
 }
@@ -137,10 +135,7 @@ function createInstallError(error: Error & { stderr: string }) {
     message = error.message;
   }
 
-  return new CLIError(
-    `Failed to install the app.${message ? ' ' + message : ''}`,
-    error.message.length > 0 ? undefined : error
-  );
+  return `Failed to install the app. ${message}`;
 }
 
 export default runOnAllDevices;

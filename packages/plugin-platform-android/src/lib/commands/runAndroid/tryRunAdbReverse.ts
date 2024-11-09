@@ -6,15 +6,16 @@
  *
  */
 
-import {execFileSync} from 'child_process';
-import {logger} from '@react-native-community/cli-tools';
-import getAdbPath from './getAdbPath.js';
+import { execFileSync } from 'child_process';
+import { getAdbPath } from './adb.js';
+import { spinner } from '@clack/prompts';
 
 // Runs ADB reverse tcp:8081 tcp:8081 to allow loading the jsbundle from the packager
-function tryRunAdbReverse(
+export function tryRunAdbReverse(
   packagerPort: number | string,
-  device?: string | void,
+  device?: string | void
 ) {
+  const loader = spinner();
   try {
     const adbPath = getAdbPath();
     const adbArgs = ['reverse', `tcp:${packagerPort}`, `tcp:${packagerPort}`];
@@ -24,17 +25,15 @@ function tryRunAdbReverse(
       adbArgs.unshift('-s', device);
     }
 
-    logger.info('Connecting to the development server...');
-    logger.debug(`Running command "${adbPath} ${adbArgs.join(' ')}"`);
-
-    execFileSync(adbPath, adbArgs, {stdio: 'inherit'});
+    loader.start('Connecting to the development server');
+    execFileSync(adbPath, adbArgs, { stdio: 'inherit' });
+    loader.stop('Connected to the development server');
   } catch (e) {
-    logger.warn(
+    loader.stop(
       `Failed to connect to development server using "adb reverse": ${
-        (e as {message: string}).message
+        (e as { message: string }).message
       }`,
+      1
     );
   }
 }
-
-export default tryRunAdbReverse;

@@ -7,18 +7,18 @@
  */
 
 import spawn from 'nano-spawn';
-import {AndroidProject, Flags} from './index.js';
-import {logger, CLIError} from '@react-native-community/cli-tools';
+import { AndroidProject, Flags } from './index.js';
+import { getAdbPath } from './adb.js';
+import { spinner } from '@clack/prompts';
 
 async function tryLaunchAppOnDevice(
   device: string | void,
   androidProject: AndroidProject,
-  adbPath: string,
-  args: Flags,
+  args: Flags
 ) {
-  const {appId, appIdSuffix} = args;
+  const { appId, appIdSuffix } = args;
 
-  const {packageName, mainActivity, applicationId} = androidProject;
+  const { packageName, mainActivity, applicationId } = androidProject;
 
   const applicationIdWithSuffix = [appId || applicationId, appIdSuffix]
     .filter(Boolean)
@@ -32,6 +32,7 @@ async function tryLaunchAppOnDevice(
       ? [packageName, mainActivity].join('')
       : [packageName, mainActivity].filter(Boolean).join('.');
 
+  const loader = spinner();
   try {
     // Here we're using the same flags as Android Studio to launch the app
     const adbArgs = [
@@ -48,14 +49,18 @@ async function tryLaunchAppOnDevice(
 
     if (device) {
       adbArgs.unshift('-s', device);
-      logger.info(`Starting the app on "${device}"...`);
+      loader.start(`Starting the app on "${device}"...`);
     } else {
-      logger.info('Starting the app...');
+      loader.start('Starting the app...');
     }
-    logger.debug(`Running command "${adbPath} ${adbArgs.join(' ')}"`);
-    await spawn(adbPath, adbArgs, {stdio: 'inherit'});
+    const adbPath = getAdbPath();
+    await spawn(adbPath, adbArgs);
+    loader.stop('App started.');
   } catch (error) {
-    throw new CLIError('Failed to start the app.', error as any);
+    loader.stop(
+      `Failed to start the app. ${(error as { message: string }).message}`,
+      1
+    );
   }
 }
 

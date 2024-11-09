@@ -1,6 +1,5 @@
 import { execSync } from 'child_process';
-import adb from './adb.js';
-import getAdbPath from './getAdbPath.js';
+import { getDevices, getAdbPath } from './adb.js';
 import { getEmulators } from './tryLaunchEmulator.js';
 import { toPascalCase } from './toPascalCase.js';
 import os from 'os';
@@ -56,7 +55,7 @@ async function promptForDeviceSelection(
       'No devices and/or emulators connected. Please create emulator with Android Studio or connect Android device.'
     );
   }
-  const selected = await select({
+  const selected = (await select({
     message: 'Select the device / emulator you want to use',
     options: allDevices.map((d) => ({
       label: `${chalk.bold(`${toPascalCase(d.type)}`)} ${chalk.green(
@@ -64,14 +63,13 @@ async function promptForDeviceSelection(
       )} (${d.connected ? 'connected' : 'disconnected'})`,
       value: d,
     })),
-  }) as DeviceData;
+  })) as DeviceData;
 
   return selected;
 }
 
 async function listAndroidDevices() {
-  const adbPath = getAdbPath();
-  const devices = adb.getDevices(adbPath);
+  const devices = getDevices();
 
   let allDevices: Array<DeviceData> = [];
 

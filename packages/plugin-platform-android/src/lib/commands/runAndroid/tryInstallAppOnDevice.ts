@@ -1,14 +1,11 @@
 import spawn from 'nano-spawn';
 import fs from 'fs';
-import { logger, CLIError } from '@react-native-community/cli-tools';
-
-import adb from './adb.js';
+import { getAdbPath, getAvailableCPUs } from './adb.js';
 import type { AndroidProject, Flags } from './index.js';
 import { spinner } from '@clack/prompts';
 
 async function tryInstallAppOnDevice(
   args: Flags,
-  adbPath: string,
   device: string,
   androidProject: AndroidProject,
   selectedTask?: string
@@ -37,7 +34,6 @@ async function tryInstallAppOnDevice(
       const buildDirectory = `${sourceDir}/${appName}/build/outputs/apk/${variantPath}`;
       const apkFile = getInstallApkName(
         appName,
-        adbPath,
         variantAppName,
         device,
         buildDirectory
@@ -53,7 +49,7 @@ async function tryInstallAppOnDevice(
     }
     const adbArgs = [...installArgs, pathToApk];
     loader.start(`Installing the app on the device "${device}"...`);
-    logger.debug(`Running command "cd android && adb ${adbArgs.join(' ')}"`);
+    const adbPath = getAdbPath();
     await spawn(adbPath, adbArgs, { stdio: 'inherit' });
     loader.stop('Installed the app on the device.');
   } catch (error) {
@@ -63,12 +59,11 @@ async function tryInstallAppOnDevice(
 
 function getInstallApkName(
   appName: string,
-  adbPath: string,
   variant: string,
   device: string,
   buildDirectory: string
 ) {
-  const availableCPUs = adb.getAvailableCPUs(adbPath, device);
+  const availableCPUs = getAvailableCPUs(device);
 
   // check if there is an apk file like app-armeabi-v7a-debug.apk
   for (const availableCPU of availableCPUs.concat('universal')) {

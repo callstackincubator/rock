@@ -1,13 +1,8 @@
-import {
-  CLIError,
-  logger,
-  printRunDoctorTip,
-} from '@react-native-community/cli-tools';
+import { logger, printRunDoctorTip } from '@react-native-community/cli-tools';
 import { Config } from '@react-native-community/cli-types';
 import spawn from 'nano-spawn';
 import { getAndroidProject } from '@react-native-community/cli-config-android';
-import adb from '../runAndroid/adb.js';
-import getAdbPath from '../runAndroid/getAdbPath.js';
+import { getCPU, getDevices } from '../runAndroid/adb.js';
 import { getTaskNames } from '../runAndroid/getTaskNames.js';
 import { promptForTaskSelection } from '../runAndroid/listAndroidTasks.js';
 import { spinner } from '@clack/prompts';
@@ -53,11 +48,10 @@ export async function buildAndroid(config: Config, args: BuildFlags) {
   }
 
   if (args.activeArchOnly) {
-    const adbPath = getAdbPath();
-    const devices = adb.getDevices(adbPath);
+    const devices = getDevices();
     const architectures = devices
       .map((device) => {
-        return adb.getCPU(adbPath, device);
+        return getCPU(device);
       })
       .filter(
         (arch, index, array) => arch != null && array.indexOf(arch) === index
@@ -76,7 +70,6 @@ export async function build(gradleArgs: string[], sourceDir: string) {
   const loader = spinner();
   const cmd = process.platform.startsWith('win') ? 'gradlew.bat' : './gradlew';
   loader.start('Building the app');
-  logger.debug(`Running command "${cmd} ${gradleArgs.join(' ')}"`);
   try {
     await spawn(cmd, gradleArgs, {
       stdio: 'inherit',
