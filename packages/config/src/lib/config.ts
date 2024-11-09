@@ -16,8 +16,16 @@ type PluginType = (args: PluginApi) => PluginOutput;
 type CommandType = {
   name: string;
   description: string;
-  action: <Args>(args: Args) => void;
-  options?: Array<{ name: string; description: string }>;
+  action: (args: unknown) => void;
+  options?: Array<{
+    name: string;
+    description: string;
+    default?: string | boolean | string[] | undefined;
+    parse?: (
+      value: string,
+      previous: string | boolean | string[]
+    ) => string | boolean | string[];
+  }>;
 };
 
 type ConfigType = {

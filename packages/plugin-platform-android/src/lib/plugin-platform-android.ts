@@ -29,7 +29,6 @@ export const pluginPlatformAndroid =
         // @ts-expect-error todo
         await runAndroid(config, args);
       },
-      // @ts-expect-error todo
       options: runOptions,
     });
 

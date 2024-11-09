@@ -18,8 +18,6 @@ import {
   CLIError,
   link,
   getDefaultUserTerminal,
-  startServerInNewWindow,
-  findDevServerPort,
 } from '@react-native-community/cli-tools';
 import { getAndroidProject } from '@react-native-community/cli-config-android';
 import listAndroidDevices from './listAndroidDevices.js';
@@ -34,14 +32,13 @@ export interface Flags extends BuildFlags {
   appId: string;
   appIdSuffix: string;
   mainActivity?: string;
-  port: number;
+  port: string;
   terminal?: string;
   packager?: boolean;
   device?: string;
-  deviceId?: string;
   listDevices?: boolean;
   binaryPath?: string;
-  user?: number | string;
+  user?: string;
 }
 
 export type AndroidProject = NonNullable<Config['project']['android']>;
@@ -51,25 +48,6 @@ export type AndroidProject = NonNullable<Config['project']['android']>;
  */
 export async function runAndroid(config: Config, args: Flags) {
   link.setPlatform('android');
-
-  const { packager, port } = args;
-
-  if (packager) {
-    const { port: newPort, startPackager } = await findDevServerPort(
-      port,
-      config.root
-    );
-
-    if (startPackager) {
-      // Awaiting this causes the CLI to hang indefinitely, so this must execute without await.
-      startServerInNewWindow(
-        newPort,
-        config.root,
-        config.reactNativePath,
-        args.terminal
-      );
-    }
-  }
 
   if (config.reactNativeVersion !== 'unknown') {
     link.setVersion(config.reactNativeVersion);
@@ -122,13 +100,6 @@ async function getAvailableDevicePort(
 
 // Builds the app and runs it on a connected emulator / device.
 async function buildAndRun(args: Flags, androidProject: AndroidProject) {
-  if (args.deviceId) {
-    logger.warn(
-      'The `deviceId` parameter is renamed to `device`. Please use the new `device` argument next time to avoid this warning.'
-    );
-    args.device = args.deviceId;
-  }
-
   process.chdir(androidProject.sourceDir);
   const cmd = process.platform.startsWith('win') ? 'gradlew.bat' : './gradlew';
 
@@ -149,9 +120,7 @@ async function buildAndRun(args: Flags, androidProject: AndroidProject) {
   if (args.listDevices || args.interactive) {
     if (args.device) {
       logger.warn(
-        `Both ${
-          args.deviceId ? 'deviceId' : 'device'
-        } and "list-devices" parameters were passed to "run" command. We will list available devices and let you choose from one`
+        `Both "device" and "list-devices" parameters were passed to "run" command. We will list available devices and let you choose from one`
       );
     }
 
@@ -177,26 +146,33 @@ async function buildAndRun(args: Flags, androidProject: AndroidProject) {
 
     if (device.connected) {
       return runOnSpecificDevice(
-        { ...args, deviceId: device.deviceId },
+        args,
         adbPath,
         androidProject,
-        selectedTask
+        selectedTask,
+        device.deviceId
       );
     }
 
     const port = await getAvailableDevicePort();
-    const emulator = `emulator-${port}`;
     await tryLaunchEmulator(adbPath, device.readableName, port);
     return runOnSpecificDevice(
-      { ...args, deviceId: emulator },
+      args,
       adbPath,
       androidProject,
-      selectedTask
+      selectedTask,
+      device.deviceId
     );
   }
 
   if (args.device) {
-    return runOnSpecificDevice(args, adbPath, androidProject, selectedTask);
+    return runOnSpecificDevice(
+      args,
+      adbPath,
+      androidProject,
+      selectedTask,
+      args.device
+    );
   } else {
     return runOnAllDevices(args, cmd, adbPath, androidProject);
   }
@@ -206,10 +182,10 @@ async function runOnSpecificDevice(
   args: Flags,
   adbPath: string,
   androidProject: AndroidProject,
-  selectedTask?: string
+  selectedTask?: string,
+  deviceId?: string
 ) {
   const devices = adb.getDevices(adbPath);
-  const { deviceId } = args;
 
   // if coming from run-android command and we have selected task
   // from interactive mode we need to create appropriate build task
@@ -299,8 +275,8 @@ export const runOptions = [
   },
   {
     name: '--port <number>',
-    default: process.env['RCT_METRO_PORT'] || 8081,
-    parse: Number,
+    description: 'Part for packager.',
+    default: process.env['RCT_METRO_PORT'] || '8081',
   },
   {
     name: '--terminal <string>',
@@ -330,12 +306,6 @@ export const runOptions = [
       'if you have a single device connected.',
   },
   {
-    name: '--deviceId <string>',
-    description:
-      '**DEPRECATED** Builds your app and starts it on a specific device/simulator with the ' +
-      'given device id (listed by running "adb devices" on the command line).',
-  },
-  {
     name: '--list-devices',
     description:
       'Lists all available Android devices and simulators and let you choose one to run the app',
@@ -349,7 +319,6 @@ export const runOptions = [
   {
     name: '--user <number>',
     description: 'Id of the User Profile you want to install the app on.',
-    parse: Number,
   },
 ];
 

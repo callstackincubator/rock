@@ -55,12 +55,9 @@ async function tryInstallAppOnDevice(
     loader.start(`Installing the app on the device "${device}"...`);
     logger.debug(`Running command "cd android && adb ${adbArgs.join(' ')}"`);
     await spawn(adbPath, adbArgs, { stdio: 'inherit' });
+    loader.stop('Installed the app on the device.');
   } catch (error) {
-    loader.stop('Failed to install the app on the device.', 1);
-    throw new CLIError(
-      'Failed to install the app on the device.',
-      error as any
-    );
+    loader.stop(`Failed to install the app on the device: ${error}.`, 1);
   }
 }
 

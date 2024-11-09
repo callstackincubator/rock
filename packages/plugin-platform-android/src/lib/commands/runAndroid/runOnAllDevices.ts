@@ -89,7 +89,7 @@ async function runOnAllDevices(
         stdio: ['inherit', 'inherit', 'pipe'],
         cwd: androidProject.sourceDir,
       });
-      loader.stop();
+      loader.stop('Built the app successfully.');
     }
   } catch (error) {
     loader.stop('Failed to build the app.', 1);

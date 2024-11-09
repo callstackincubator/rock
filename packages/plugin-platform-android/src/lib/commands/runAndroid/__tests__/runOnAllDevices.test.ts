@@ -58,7 +58,6 @@ describe('--appFolder', () => {
     mode: 'debug',
     appIdSuffix: '',
     mainActivity: 'MainActivity',
-    deviceId: undefined,
     packager: true,
     port: 8081,
     terminal: 'iTerm2',

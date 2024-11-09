@@ -38,9 +38,9 @@ export const cli = async ({ cwd, argv }: CliOptions = {}) => {
     const cmd = program
       .command(command.name)
       .description(command.description || '')
-      .action(() => {
+      .action((args) => {
         try {
-          command.action(program.args);
+          command.action(args);
         } catch (e) {
           // TODO handle nicely
           logger.error(e as string);
@@ -49,7 +49,11 @@ export const cli = async ({ cwd, argv }: CliOptions = {}) => {
       });
 
     for (const opt of command.options || []) {
-      cmd.option(opt.name, opt.description ?? '');
+      if (opt.parse) {
+        cmd.option(opt.name, opt.description, opt.parse, opt.default);
+      } else {
+        cmd.option(opt.name, opt.description, opt.default);
+      }
     }
   });
 
