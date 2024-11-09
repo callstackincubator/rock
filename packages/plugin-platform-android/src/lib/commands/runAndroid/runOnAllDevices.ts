@@ -92,8 +92,8 @@ async function runOnAllDevices(
       loader.stop('Built the app successfully.');
     }
   } catch (error) {
-    loader.stop('Failed to build the app.', 1);
     printRunDoctorTip();
+    loader.stop(`Failed to build the app. ${(error as {message: string}).message}`, 1);
     throw createInstallError(error as any);
   }
 

@@ -86,16 +86,16 @@ export default async function tryLaunchEmulator(
   adbPath: string,
   name?: string,
   port?: number
-): Promise<{ success: boolean; error?: string }> {
+) {
   const loader = spinner();
+  loader.start(`Looking for available emulators"`);
   const emulators = await getEmulators();
   const emulatorName = name ?? emulators[0];
-  loader.start(`Launching emulator "${emulatorName}"`);
   if (emulators.length > 0) {
     try {
+      loader.message(`Launching emulator "${emulatorName}"`);
       await launchEmulator(emulatorName, adbPath, port);
       loader.stop(`Launched emulator "${emulatorName}".`);
-      return { success: true };
     } catch (error) {
       loader.stop(
         `Failed to launch emulator "${emulatorName}". Reason: ${
@@ -103,12 +103,8 @@ export default async function tryLaunchEmulator(
         }`,
         1
       );
-      return { success: false, error: (error as { message: string })?.message };
     }
+  } else {
+    loader.stop('No emulators found as an output of `emulator -list-avds`', 1);
   }
-  loader.stop('No emulators found as an output of `emulator -list-avds`', 1);
-  return {
-    success: false,
-    error: 'No emulators found as an output of `emulator -list-avds`',
-  };
 }

@@ -85,8 +85,7 @@ export async function build(gradleArgs: string[], sourceDir: string) {
     loader.stop('Build successful.');
   } catch (error) {
     printRunDoctorTip();
-    loader.stop('Failed to build the app.', 1);
-    throw new CLIError('Failed to build the app.', error as Error);
+    loader.stop(`Failed to build the app. ${error}`, 1);
   }
 }
 
