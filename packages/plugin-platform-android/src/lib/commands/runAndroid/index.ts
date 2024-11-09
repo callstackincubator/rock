@@ -7,7 +7,7 @@
  */
 import fs from 'fs';
 import { Config } from '@react-native-community/cli-types';
-import { getCPU, getDevices } from './adb.js';
+import { getCPU, getDevices } from '../buildAndroid/adb.js';
 import { tryRunAdbReverse } from './tryRunAdbReverse.js';
 import runOnAllDevices from './runOnAllDevices.js';
 import tryLaunchAppOnDevice from './tryLaunchAppOnDevice.js';
@@ -23,8 +23,8 @@ import listAndroidDevices from './listAndroidDevices.js';
 import tryLaunchEmulator from './tryLaunchEmulator.js';
 import path from 'path';
 import { build, BuildFlags, options } from '../buildAndroid/index.js';
-import { promptForTaskSelection } from './listAndroidTasks.js';
-import { getTaskNames } from './getTaskNames.js';
+import { promptForTaskSelection } from '../buildAndroid/listAndroidTasks.js';
+import { getTaskNames } from '../buildAndroid/getTaskNames.js';
 import { checkUsers, promptForUser } from './listAndroidUsers.js';
 
 export interface Flags extends BuildFlags {
@@ -99,7 +99,6 @@ async function getAvailableDevicePort(
 // Builds the app and runs it on a connected emulator / device.
 async function buildAndRun(args: Flags, androidProject: AndroidProject) {
   process.chdir(androidProject.sourceDir);
-  const cmd = process.platform.startsWith('win') ? 'gradlew.bat' : './gradlew';
 
   let selectedTask;
 
@@ -162,7 +161,7 @@ async function buildAndRun(args: Flags, androidProject: AndroidProject) {
   if (args.device) {
     return runOnSpecificDevice(args, androidProject, selectedTask, args.device);
   } else {
-    return runOnAllDevices(args, cmd, androidProject);
+    return runOnAllDevices(args, androidProject);
   }
 }
 

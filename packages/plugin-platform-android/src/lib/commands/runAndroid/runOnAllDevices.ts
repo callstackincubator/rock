@@ -12,14 +12,13 @@ import { Config } from '@react-native-community/cli-types';
 import {
   link,
   logger,
-  printRunDoctorTip,
 } from '@react-native-community/cli-tools';
-import { getCPU, getDevices } from './adb.js';
+import { getCPU, getDevices } from '../buildAndroid/adb.js';
 import { tryRunAdbReverse } from './tryRunAdbReverse.js';
 import tryLaunchAppOnDevice from './tryLaunchAppOnDevice.js';
 import tryLaunchEmulator from './tryLaunchEmulator.js';
 import tryInstallAppOnDevice from './tryInstallAppOnDevice.js';
-import { getTaskNames } from './getTaskNames.js';
+import { getTaskNames } from '../buildAndroid/getTaskNames.js';
 import type { Flags } from './index.js';
 import { spinner } from '@clack/prompts';
 
@@ -27,19 +26,12 @@ type AndroidProject = NonNullable<Config['project']['android']>;
 
 async function runOnAllDevices(
   args: Flags,
-  cmd: string,
   androidProject: AndroidProject
 ) {
   let devices = getDevices();
   if (devices.length === 0) {
-    try {
-      await tryLaunchEmulator();
-      devices = getDevices();
-    } catch {
-      logger.warn(
-        'Please launch an emulator manually or connect a device. Otherwise app may fail to launch.'
-      );
-    }
+    await tryLaunchEmulator();
+    devices = getDevices();
   }
 
   const loader = spinner();
@@ -79,6 +71,7 @@ async function runOnAllDevices(
       }
 
       loader.start('Installing the app');
+      const cmd = process.platform.startsWith('win') ? 'gradlew.bat' : './gradlew';
       await spawn(cmd, gradleArgs, {
         stdio: ['inherit', 'inherit', 'pipe'],
         cwd: androidProject.sourceDir,
@@ -86,8 +79,8 @@ async function runOnAllDevices(
       loader.stop('Installed the app.');
     }
   } catch (error) {
-    printRunDoctorTip();
     loader.stop(createInstallError(error as Error & { stderr: string }), 1);
+    return;
   }
 
   (devices.length > 0 ? devices : [undefined]).forEach(

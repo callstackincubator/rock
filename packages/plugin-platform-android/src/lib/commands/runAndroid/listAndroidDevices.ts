@@ -1,7 +1,7 @@
 import { execSync } from 'child_process';
-import { getDevices, getAdbPath } from './adb.js';
+import { getDevices, getAdbPath } from '../buildAndroid/adb.js';
 import { getEmulators } from './tryLaunchEmulator.js';
-import { toPascalCase } from './toPascalCase.js';
+import { toPascalCase } from '../buildAndroid/toPascalCase.js';
 import os from 'os';
 import chalk from 'chalk';
 import { CLIError } from '@react-native-community/cli-tools';

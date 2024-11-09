@@ -8,7 +8,7 @@
 
 import spawn from 'nano-spawn';
 import { AndroidProject, Flags } from './index.js';
-import { getAdbPath } from './adb.js';
+import { getAdbPath } from '../buildAndroid/adb.js';
 import { spinner } from '@clack/prompts';
 
 async function tryLaunchAppOnDevice(

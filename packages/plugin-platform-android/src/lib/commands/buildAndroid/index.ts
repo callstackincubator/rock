@@ -1,10 +1,10 @@
-import { logger, printRunDoctorTip } from '@react-native-community/cli-tools';
+import { logger } from '@react-native-community/cli-tools';
 import { Config } from '@react-native-community/cli-types';
 import spawn from 'nano-spawn';
 import { getAndroidProject } from '@react-native-community/cli-config-android';
-import { getCPU, getDevices } from '../runAndroid/adb.js';
-import { getTaskNames } from '../runAndroid/getTaskNames.js';
-import { promptForTaskSelection } from '../runAndroid/listAndroidTasks.js';
+import { getCPU, getDevices } from './adb.js';
+import { getTaskNames } from './getTaskNames.js';
+import { promptForTaskSelection } from './listAndroidTasks.js';
 import { spinner } from '@clack/prompts';
 
 export interface BuildFlags {
@@ -66,7 +66,6 @@ export async function buildAndroid(config: Config, args: BuildFlags) {
 }
 
 export async function build(gradleArgs: string[], sourceDir: string) {
-  process.chdir(sourceDir);
   const loader = spinner();
   const cmd = process.platform.startsWith('win') ? 'gradlew.bat' : './gradlew';
   loader.start('Building the app');
@@ -77,7 +76,6 @@ export async function build(gradleArgs: string[], sourceDir: string) {
     });
     loader.stop('Build successful.');
   } catch (error) {
-    printRunDoctorTip();
     loader.stop(`Failed to build the app. ${error}`, 1);
   }
 }

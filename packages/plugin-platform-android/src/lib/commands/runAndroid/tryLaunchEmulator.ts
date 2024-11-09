@@ -1,6 +1,6 @@
 import os from 'os';
 import spawn from 'nano-spawn';
-import { getDevices } from './adb.js';
+import { getDevices } from '../buildAndroid/adb.js';
 import { spinner } from '@clack/prompts';
 
 const emulatorCommand = process.env['ANDROID_HOME']
@@ -71,20 +71,10 @@ const launchEmulator = async (
     cp.nodeChildProcess.catch((error) => {
       stopWaitingAndReject(error);
     });
-
-    // @todo investigate
-    // cp.on('exit', () => {
-    //   stopWaitingAndReject(
-    //     `The emulator (${emulatorName}) quit before it finished opening. You can try starting the emulator manually from the terminal with: ${manualCommand}`
-    //   );
-    // });
   });
 };
 
-export default async function tryLaunchEmulator(
-  name?: string,
-  port?: number
-) {
+export default async function tryLaunchEmulator(name?: string, port?: number) {
   const loader = spinner();
   loader.start(`Looking for available emulators"`);
   const emulators = await getEmulators();
@@ -96,13 +86,16 @@ export default async function tryLaunchEmulator(
       loader.stop(`Launched emulator "${emulatorName}".`);
     } catch (error) {
       loader.stop(
-        `Failed to launch emulator "${emulatorName}". Reason: ${
+        `Failed to launch emulator "${emulatorName}". ${
           (error as { message: string }).message
         }`,
         1
       );
     }
   } else {
-    loader.stop('No emulators found as an output of `emulator -list-avds`', 1);
+    loader.stop(
+      'No emulators found as an output of `emulator -list-avds`. Please launch an emulator manually or connect a device',
+      1
+    );
   }
 }

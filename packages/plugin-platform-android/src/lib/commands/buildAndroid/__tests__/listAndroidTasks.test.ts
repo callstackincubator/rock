@@ -4,7 +4,7 @@ import prompts from 'prompts';
 import {
   parseTasksFromGradleFile,
   promptForTaskSelection,
-} from '../listAndroidTasks.js';
+} from '../../buildAndroid/listAndroidTasks.js';
 import tools from '@react-native-community/cli-tools';
 import {vi, Mock, MockedFunction} from 'vitest';
 
