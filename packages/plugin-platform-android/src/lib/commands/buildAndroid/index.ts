@@ -3,13 +3,14 @@ import {
   logger,
   printRunDoctorTip,
 } from '@react-native-community/cli-tools';
-import {Config} from '@react-native-community/cli-types';
-import execa from 'execa';
-import {getAndroidProject} from '@react-native-community/cli-config-android';
+import { Config } from '@react-native-community/cli-types';
+import spawn from 'nano-spawn';
+import { getAndroidProject } from '@react-native-community/cli-config-android';
 import adb from '../runAndroid/adb.js';
 import getAdbPath from '../runAndroid/getAdbPath.js';
-import {getTaskNames} from '../runAndroid/getTaskNames.js';
-import {promptForTaskSelection} from '../runAndroid/listAndroidTasks.js';
+import { getTaskNames } from '../runAndroid/getTaskNames.js';
+import { promptForTaskSelection } from '../runAndroid/listAndroidTasks.js';
+import { spinner } from '@clack/prompts';
 
 export interface BuildFlags {
   mode?: string;
@@ -19,24 +20,21 @@ export interface BuildFlags {
   interactive?: boolean;
 }
 
-export async function buildAndroid(
-  config: Config,
-  args: BuildFlags,
-) {
+export async function buildAndroid(config: Config, args: BuildFlags) {
   const androidProject = getAndroidProject(config);
 
   if (args.tasks && args.mode) {
     logger.warn(
-      'Both "tasks" and "mode" parameters were passed to "build" command. Using "tasks" for building the app.',
+      'Both "tasks" and "mode" parameters were passed to "build" command. Using "tasks" for building the app.'
     );
   }
 
-  let {tasks} = args;
+  let { tasks } = args;
 
   if (args.interactive) {
     const selectedTask = await promptForTaskSelection(
       'build',
-      androidProject.sourceDir,
+      androidProject.sourceDir
     );
     if (selectedTask) {
       tasks = [selectedTask];
@@ -47,7 +45,7 @@ export async function buildAndroid(
     androidProject.appName,
     args.mode,
     tasks,
-    'bundle',
+    'bundle'
   );
 
   if (args.extraParams) {
@@ -62,15 +60,10 @@ export async function buildAndroid(
         return adb.getCPU(adbPath, device);
       })
       .filter(
-        (arch, index, array) => arch != null && array.indexOf(arch) === index,
+        (arch, index, array) => arch != null && array.indexOf(arch) === index
       );
     if (architectures.length > 0) {
       logger.info(`Detected architectures ${architectures.join(', ')}`);
-      // `reactNativeDebugArchitectures` was renamed to `reactNativeArchitectures` in 0.68.
-      // Can be removed when 0.67 no longer needs to be supported.
-      gradleArgs.push(
-        '-PreactNativeDebugArchitectures=' + architectures.join(','),
-      );
       gradleArgs.push('-PreactNativeArchitectures=' + architectures.join(','));
     }
   }
@@ -78,18 +71,21 @@ export async function buildAndroid(
   return build(gradleArgs, androidProject.sourceDir);
 }
 
-export function build(gradleArgs: string[], sourceDir: string) {
+export async function build(gradleArgs: string[], sourceDir: string) {
   process.chdir(sourceDir);
+  const loader = spinner();
   const cmd = process.platform.startsWith('win') ? 'gradlew.bat' : './gradlew';
-  logger.info('Building the app...');
+  loader.start('Building the app');
   logger.debug(`Running command "${cmd} ${gradleArgs.join(' ')}"`);
   try {
-    execa.sync(cmd, gradleArgs, {
+    await spawn(cmd, gradleArgs, {
       stdio: 'inherit',
       cwd: sourceDir,
     });
+    loader.stop('Build successful.');
   } catch (error) {
     printRunDoctorTip();
+    loader.stop('Failed to build the app.', 1);
     throw new CLIError('Failed to build the app.', error as Error);
   }
 }

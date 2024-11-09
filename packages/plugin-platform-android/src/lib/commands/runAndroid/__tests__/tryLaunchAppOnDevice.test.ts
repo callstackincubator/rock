@@ -43,8 +43,8 @@ beforeEach(() => {
   vi.clearAllMocks();
 });
 
-test('launches adb shell with intent to launch com.myapp.MainActivity with different appId than packageName on a simulator', () => {
-  tryLaunchAppOnDevice(device, androidProject, adbPath, args);
+test('launches adb shell with intent to launch com.myapp.MainActivity with different appId than packageName on a simulator', async () => {
+  await tryLaunchAppOnDevice(device, androidProject, adbPath, args);
 
   expect(execa.sync).toHaveBeenCalledWith(
     'path/to/adb',
@@ -60,8 +60,8 @@ test('launches adb shell with intent to launch com.myapp.MainActivity with diffe
   );
 });
 
-test('launches adb shell with intent to launch com.myapp.MainActivity with different appId than packageName on a simulator when mainActivity is fully qualified name', () => {
-  tryLaunchAppOnDevice(
+test('launches adb shell with intent to launch com.myapp.MainActivity with different appId than packageName on a simulator when mainActivity is fully qualified name', async () => {
+  await tryLaunchAppOnDevice(
     device,
     { ...androidProject, mainActivity: 'com.myapp.MainActivity' },
     adbPath,
@@ -82,8 +82,8 @@ test('launches adb shell with intent to launch com.myapp.MainActivity with diffe
   );
 });
 
-test('launches adb shell with intent to launch com.myapp.MainActivity with same appId as packageName on a simulator', () => {
-  tryLaunchAppOnDevice(
+test('launches adb shell with intent to launch com.myapp.MainActivity with same appId as packageName on a simulator', async () => {
+  await tryLaunchAppOnDevice(
     device,
     { ...androidProject, applicationId: 'com.myapp' },
     adbPath,
@@ -104,8 +104,8 @@ test('launches adb shell with intent to launch com.myapp.MainActivity with same 
   );
 });
 
-test('launches adb shell with intent to launch com.myapp.MainActivity with different appId than packageName on a device (without calling simulator)', () => {
-  tryLaunchAppOnDevice(undefined, androidProject, adbPath, args);
+test('launches adb shell with intent to launch com.myapp.MainActivity with different appId than packageName on a device (without calling simulator)', async () => {
+  await tryLaunchAppOnDevice(undefined, androidProject, adbPath, args);
 
   expect(execa.sync).toHaveBeenCalledWith(
     'path/to/adb',
@@ -119,8 +119,8 @@ test('launches adb shell with intent to launch com.myapp.MainActivity with diffe
   );
 });
 
-test('launches adb shell with intent to launch fully specified activity with different appId than packageName and an app suffix on a device', () => {
-  tryLaunchAppOnDevice(
+test('launches adb shell with intent to launch fully specified activity with different appId than packageName and an app suffix on a device', async () => {
+  await tryLaunchAppOnDevice(
     device,
     {
       ...androidProject,
@@ -147,8 +147,8 @@ test('launches adb shell with intent to launch fully specified activity with dif
   );
 });
 
-test('--appId flag overwrites applicationId setting in androidProject', () => {
-  tryLaunchAppOnDevice(undefined, androidProject, adbPath, {
+test('--appId flag overwrites applicationId setting in androidProject', async () => {
+  await tryLaunchAppOnDevice(undefined, androidProject, adbPath, {
     ...args,
     appId: 'my.app.id',
   });
@@ -165,8 +165,8 @@ test('--appId flag overwrites applicationId setting in androidProject', () => {
   );
 });
 
-test('appIdSuffix Staging is appended to applicationId', () => {
-  tryLaunchAppOnDevice(undefined, androidProject, adbPath, {
+test('appIdSuffix Staging is appended to applicationId', async () => {
+  await tryLaunchAppOnDevice(undefined, androidProject, adbPath, {
     ...args,
     appIdSuffix: 'Staging',
   });

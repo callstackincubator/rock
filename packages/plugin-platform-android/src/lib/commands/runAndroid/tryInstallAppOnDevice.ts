@@ -1,20 +1,22 @@
-import execa from 'execa';
+import spawn from 'nano-spawn';
 import fs from 'fs';
-import {logger, CLIError} from '@react-native-community/cli-tools';
+import { logger, CLIError } from '@react-native-community/cli-tools';
 
 import adb from './adb.js';
-import type {AndroidProject, Flags} from './index.js';
+import type { AndroidProject, Flags } from './index.js';
+import { spinner } from '@clack/prompts';
 
-function tryInstallAppOnDevice(
+async function tryInstallAppOnDevice(
   args: Flags,
   adbPath: string,
   device: string,
   androidProject: AndroidProject,
-  selectedTask?: string,
+  selectedTask?: string
 ) {
+  const loader = spinner();
   try {
     // "app" is usually the default value for Android apps with only 1 app
-    const {appName, sourceDir} = androidProject;
+    const { appName, sourceDir } = androidProject;
 
     const defaultVariant = (args.mode || 'debug').toLowerCase();
 
@@ -38,7 +40,7 @@ function tryInstallAppOnDevice(
         adbPath,
         variantAppName,
         device,
-        buildDirectory,
+        buildDirectory
       );
       pathToApk = `${buildDirectory}/${apkFile}`;
     } else {
@@ -50,13 +52,14 @@ function tryInstallAppOnDevice(
       installArgs.push('--user', `${args.user}`);
     }
     const adbArgs = [...installArgs, pathToApk];
-    logger.info(`Installing the app on the device "${device}"...`);
+    loader.start(`Installing the app on the device "${device}"...`);
     logger.debug(`Running command "cd android && adb ${adbArgs.join(' ')}"`);
-    execa.sync(adbPath, adbArgs, {stdio: 'inherit'});
+    await spawn(adbPath, adbArgs, { stdio: 'inherit' });
   } catch (error) {
+    loader.stop('Failed to install the app on the device.', 1);
     throw new CLIError(
       'Failed to install the app on the device.',
-      error as any,
+      error as any
     );
   }
 }
@@ -66,7 +69,7 @@ function getInstallApkName(
   adbPath: string,
   variant: string,
   device: string,
-  buildDirectory: string,
+  buildDirectory: string
 ) {
   const availableCPUs = adb.getAvailableCPUs(adbPath, device);
 

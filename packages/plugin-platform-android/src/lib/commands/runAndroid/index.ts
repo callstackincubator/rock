@@ -24,7 +24,6 @@ import {
 import { getAndroidProject } from '@react-native-community/cli-config-android';
 import listAndroidDevices from './listAndroidDevices.js';
 import tryLaunchEmulator from './tryLaunchEmulator.js';
-import chalk from 'chalk';
 import path from 'path';
 import { build, BuildFlags, options } from '../buildAndroid/index.js';
 import { promptForTaskSelection } from './listAndroidTasks.js';
@@ -50,10 +49,7 @@ export type AndroidProject = NonNullable<Config['project']['android']>;
 /**
  * Starts the app on a connected Android emulator or device.
  */
-export async function runAndroid(
-  config: Config,
-  args: Flags
-) {
+export async function runAndroid(config: Config, args: Flags) {
   link.setPlatform('android');
 
   const { packager, port } = args;
@@ -169,7 +165,7 @@ async function buildAndRun(args: Flags, androidProject: AndroidProject) {
     }
 
     if (args.interactive) {
-      const users = checkUsers(device.deviceId as string, adbPath);
+      const users = await checkUsers(device.deviceId as string, adbPath);
       if (users && users.length > 1) {
         const user = await promptForUser(users);
 
@@ -190,19 +186,12 @@ async function buildAndRun(args: Flags, androidProject: AndroidProject) {
 
     const port = await getAvailableDevicePort();
     const emulator = `emulator-${port}`;
-    logger.info('Launching emulator...');
-    const result = await tryLaunchEmulator(adbPath, device.readableName, port);
-    if (result.success) {
-      logger.info('Successfully launched emulator.');
-      return runOnSpecificDevice(
-        { ...args, deviceId: emulator },
-        adbPath,
-        androidProject,
-        selectedTask
-      );
-    }
-    throw new CLIError(
-      `Failed to launch emulator. Reason: ${chalk.dim(result.error || '')}`
+    await tryLaunchEmulator(adbPath, device.readableName, port);
+    return runOnSpecificDevice(
+      { ...args, deviceId: emulator },
+      adbPath,
+      androidProject,
+      selectedTask
     );
   }
 
@@ -213,7 +202,7 @@ async function buildAndRun(args: Flags, androidProject: AndroidProject) {
   }
 }
 
-function runOnSpecificDevice(
+async function runOnSpecificDevice(
   args: Flags,
   adbPath: string,
   androidProject: AndroidProject,
@@ -264,7 +253,7 @@ function runOnSpecificDevice(
         build(gradleArgs, androidProject.sourceDir);
       }
 
-      installAndLaunchOnDevice(
+      await installAndLaunchOnDevice(
         args,
         deviceId,
         adbPath,
@@ -282,7 +271,7 @@ function runOnSpecificDevice(
   }
 }
 
-function installAndLaunchOnDevice(
+async function installAndLaunchOnDevice(
   args: Flags,
   selectedDevice: string,
   adbPath: string,
@@ -291,7 +280,7 @@ function installAndLaunchOnDevice(
 ) {
   tryRunAdbReverse(args.port, selectedDevice);
 
-  tryInstallAppOnDevice(
+  await tryInstallAppOnDevice(
     args,
     adbPath,
     selectedDevice,
@@ -299,7 +288,7 @@ function installAndLaunchOnDevice(
     selectedTask
   );
 
-  tryLaunchAppOnDevice(selectedDevice, androidProject, adbPath, args);
+  await tryLaunchAppOnDevice(selectedDevice, androidProject, adbPath, args);
 }
 
 export const runOptions = [

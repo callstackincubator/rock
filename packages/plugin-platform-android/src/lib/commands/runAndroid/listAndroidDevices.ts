@@ -50,24 +50,23 @@ function getPhoneName(deviceId: string) {
 
 async function promptForDeviceSelection(
   allDevices: Array<DeviceData>
-): Promise<DeviceData | undefined> {
+): Promise<DeviceData> {
   if (!allDevices.length) {
     throw new CLIError(
       'No devices and/or emulators connected. Please create emulator with Android Studio or connect Android device.'
     );
   }
-  const device = await select({
+  const selected = await select({
     message: 'Select the device / emulator you want to use',
-    choices: allDevices.map((d) => ({
-      title: `${chalk.bold(`${toPascalCase(d.type)}`)} ${chalk.green(
+    options: allDevices.map((d) => ({
+      label: `${chalk.bold(`${toPascalCase(d.type)}`)} ${chalk.green(
         `${d.readableName}`
       )} (${d.connected ? 'connected' : 'disconnected'})`,
       value: d,
     })),
-    min: 1,
-  });
+  }) as DeviceData;
 
-  return device;
+  return selected;
 }
 
 async function listAndroidDevices() {
@@ -96,7 +95,7 @@ async function listAndroidDevices() {
     }
   });
 
-  const emulators = getEmulators();
+  const emulators = await getEmulators();
 
   // Find not booted ones:
   emulators.forEach((emulatorName) => {

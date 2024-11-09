@@ -10,11 +10,11 @@
   "dependencies": {
     "@callstack/rnef-config": "workspace:*",
     "@callstack/rnef-tools": "workspace:*",
-    "@react-native-community/cli-config": "^15.1.0",
+    "@react-native-community/cli-config": "15.1.2",
     "commander": "^12.1.0",
     "tslib": "^2.3.0"
   },
   "devDependencies": {
-    "@react-native-community/cli-types": "^15.1.0"
+    "@react-native-community/cli-types": "15.1.2"
   }
 }

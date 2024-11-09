@@ -6,11 +6,11 @@
  *
  */
 
-import execa from 'execa';
+import spawn from 'nano-spawn';
 import {AndroidProject, Flags} from './index.js';
 import {logger, CLIError} from '@react-native-community/cli-tools';
 
-function tryLaunchAppOnDevice(
+async function tryLaunchAppOnDevice(
   device: string | void,
   androidProject: AndroidProject,
   adbPath: string,
@@ -53,7 +53,7 @@ function tryLaunchAppOnDevice(
       logger.info('Starting the app...');
     }
     logger.debug(`Running command "${adbPath} ${adbArgs.join(' ')}"`);
-    execa.sync(adbPath, adbArgs, {stdio: 'inherit'});
+    await spawn(adbPath, adbArgs, {stdio: 'inherit'});
   } catch (error) {
     throw new CLIError('Failed to start the app.', error as any);
   }

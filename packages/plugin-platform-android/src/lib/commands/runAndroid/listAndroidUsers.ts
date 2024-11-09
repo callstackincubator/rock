@@ -1,4 +1,4 @@
-import execa from 'execa';
+import spawn from 'nano-spawn';
 import { logger } from '@react-native-community/cli-tools';
 import { select } from '@clack/prompts';
 
@@ -7,12 +7,12 @@ type User = {
   name: string;
 };
 
-export function checkUsers(device: string, adbPath: string) {
+export async function checkUsers(device: string, adbPath: string) {
   try {
     const adbArgs = ['-s', device, 'shell', 'pm', 'list', 'users'];
 
     logger.debug(`Checking users on "${device}"...`);
-    const { stdout } = execa.sync(adbPath, adbArgs, { encoding: 'utf-8' });
+    const { stdout } = await spawn(adbPath, adbArgs);
     const regex = new RegExp(
       /^\s*UserInfo\{(?<userId>\d+):(?<userName>.*):(?<userFlags>[0-9a-f]*)}/
     );
@@ -44,12 +44,11 @@ export function checkUsers(device: string, adbPath: string) {
 export async function promptForUser(users: User[]) {
   const selectedUser = await select({
     message: 'Which profile would you like to launch your app into?',
-    choices: users.map((user: User) => ({
-      title: user.name,
+    options: users.map((user) => ({
+      label: user.name,
       value: user,
     })),
-    min: 1,
-  });
+  }) as User;
 
   return selectedUser;
 }

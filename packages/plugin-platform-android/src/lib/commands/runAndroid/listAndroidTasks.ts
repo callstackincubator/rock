@@ -1,7 +1,7 @@
-import {CLIError, getLoader} from '@react-native-community/cli-tools';
+import { CLIError } from '@react-native-community/cli-tools';
 import chalk from 'chalk';
-import execa from 'execa';
-import {select} from '@clack/prompts';
+import spawn from 'nano-spawn';
+import { select, spinner } from '@clack/prompts';
 
 type GradleTask = {
   task: string;
@@ -10,11 +10,11 @@ type GradleTask = {
 
 export const parseTasksFromGradleFile = (
   taskType: 'install' | 'build',
-  text: string,
+  text: string
 ): Array<GradleTask> => {
   const instalTasks: Array<GradleTask> = [];
   const taskRegex = new RegExp(
-    taskType === 'build' ? '^assemble|^bundle' : '^install',
+    taskType === 'build' ? '^assemble|^bundle' : '^install'
   );
   text.split('\n').forEach((line) => {
     if (taskRegex.test(line.trim()) && /(?!.*?Test)^.*$/.test(line.trim())) {
@@ -28,40 +28,40 @@ export const parseTasksFromGradleFile = (
   return instalTasks;
 };
 
-export const getGradleTasks = (
+export const getGradleTasks = async (
   taskType: 'install' | 'build',
-  sourceDir: string,
+  sourceDir: string
 ) => {
-  const loader = getLoader();
+  const loader = spinner();
   loader.start('Searching for available Gradle tasks...');
   const cmd = process.platform.startsWith('win') ? 'gradlew.bat' : './gradlew';
   try {
-    const out = execa.sync(cmd, ['tasks', '--group', taskType], {
+    const { stdout } = await spawn(cmd, ['tasks', '--group', taskType], {
       cwd: sourceDir,
-    }).stdout;
-    loader.succeed();
-    return parseTasksFromGradleFile(taskType, out);
+    });
+    loader.stop('Gradle tasks found.');
+    return parseTasksFromGradleFile(taskType, stdout);
   } catch {
-    loader.fail();
+    loader.stop('Gradle tasks not found.', 1);
     return [];
   }
 };
 
 export const promptForTaskSelection = async (
   taskType: 'install' | 'build',
-  sourceDir: string,
-): Promise<string | undefined> => {
-  const tasks = getGradleTasks(taskType, sourceDir);
+  sourceDir: string
+): Promise<string> => {
+  const tasks = await getGradleTasks(taskType, sourceDir);
   if (!tasks.length) {
     throw new CLIError(`No actionable ${taskType} tasks were found...`);
   }
-  const task = await select({
+  const task = (await select({
     message: `Select ${taskType} task you want to perform`,
-    choices: tasks.map((t: GradleTask) => ({
-      title: `${chalk.bold(t.task)} - ${t.description}`,
+    options: tasks.map((t) => ({
+      label: `${chalk.bold(t.task)} - ${t.description}`,
       value: t.task,
     })),
-    min: 1,
-  });
+  })) as string;
+
   return task;
 };

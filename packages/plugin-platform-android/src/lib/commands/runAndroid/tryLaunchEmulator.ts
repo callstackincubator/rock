@@ -1,15 +1,16 @@
 import os from 'os';
-import execa from 'execa';
+import spawn from 'nano-spawn';
 import adb from './adb.js';
+import { spinner } from '@clack/prompts';
 
 const emulatorCommand = process.env['ANDROID_HOME']
   ? `${process.env['ANDROID_HOME']}/emulator/emulator`
   : 'emulator';
 
-export const getEmulators = () => {
+export const getEmulators = async () => {
   try {
-    const emulatorsOutput = execa.sync(emulatorCommand, ['-list-avds']).stdout;
-    return emulatorsOutput
+    const { stdout } = await spawn(emulatorCommand, ['-list-avds']);
+    return stdout
       .split(os.EOL)
       .filter((name) => name !== '' && !name.includes(' '));
     // The `name` is AVD ID which is expected to not contain whitespace.
@@ -24,19 +25,19 @@ export const getEmulators = () => {
 const launchEmulator = async (
   emulatorName: string,
   adbPath: string,
-  port?: number,
+  port?: number
 ): Promise<boolean> => {
   const manualCommand = `${emulatorCommand} @${emulatorName}`;
 
-  const cp = execa(
+  const cp = spawn(
     emulatorCommand,
     port ? [`@${emulatorName}`, '-port', `${port}`] : [`@${emulatorName}`],
     {
       detached: true,
       stdio: 'ignore',
-    },
+    }
   );
-  cp.unref();
+  (await cp.nodeChildProcess).unref();
   const timeout = 30;
 
   return new Promise<boolean>((resolve, reject) => {
@@ -54,7 +55,7 @@ const launchEmulator = async (
     // Reject command after timeout
     const rejectTimeout = setTimeout(() => {
       stopWaitingAndReject(
-        `It took too long to start and connect with Android emulator: ${emulatorName}. You can try starting the emulator manually from the terminal with: ${manualCommand}`,
+        `It took too long to start and connect with Android emulator: ${emulatorName}. You can try starting the emulator manually from the terminal with: ${manualCommand}`
       );
     }, timeout * 1000);
 
@@ -68,30 +69,44 @@ const launchEmulator = async (
       reject(new Error(message));
     };
 
-    cp.on('error', ({message}) => stopWaitingAndReject(message));
-
-    cp.on('exit', () => {
-      stopWaitingAndReject(
-        `The emulator (${emulatorName}) quit before it finished opening. You can try starting the emulator manually from the terminal with: ${manualCommand}`,
-      );
+    cp.nodeChildProcess.catch((error) => {
+      stopWaitingAndReject(error);
     });
+
+    // @todo investigate
+    // cp.on('exit', () => {
+    //   stopWaitingAndReject(
+    //     `The emulator (${emulatorName}) quit before it finished opening. You can try starting the emulator manually from the terminal with: ${manualCommand}`
+    //   );
+    // });
   });
 };
 
 export default async function tryLaunchEmulator(
   adbPath: string,
-  emulatorName?: string,
-  port?: number,
-): Promise<{success: boolean; error?: string}> {
-  const emulators = getEmulators();
+  name?: string,
+  port?: number
+): Promise<{ success: boolean; error?: string }> {
+  const loader = spinner();
+  const emulators = await getEmulators();
+  const emulatorName = name ?? emulators[0];
+  loader.start(`Launching emulator "${emulatorName}"`);
   if (emulators.length > 0) {
     try {
-      await launchEmulator(emulatorName ?? emulators[0], adbPath, port);
-      return {success: true};
+      await launchEmulator(emulatorName, adbPath, port);
+      loader.stop(`Launched emulator "${emulatorName}".`);
+      return { success: true };
     } catch (error) {
-      return {success: false, error: (error as {message: string})?.message};
+      loader.stop(
+        `Failed to launch emulator "${emulatorName}". Reason: ${
+          (error as { message: string }).message
+        }`,
+        1
+      );
+      return { success: false, error: (error as { message: string })?.message };
     }
   }
+  loader.stop('No emulators found as an output of `emulator -list-avds`', 1);
   return {
     success: false,
     error: 'No emulators found as an output of `emulator -list-avds`',
