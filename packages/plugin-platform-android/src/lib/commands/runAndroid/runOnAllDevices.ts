@@ -78,21 +78,16 @@ async function runOnAllDevices(
         }
       }
 
-      loader.start('Building the app');
+      loader.start('Installing the app');
       await spawn(cmd, gradleArgs, {
         stdio: ['inherit', 'inherit', 'pipe'],
         cwd: androidProject.sourceDir,
       });
-      loader.stop('Built the app successfully.');
+      loader.stop('Installed the app.');
     }
   } catch (error) {
     printRunDoctorTip();
-    loader.stop(
-      `Failed to build the app. ${createInstallError(
-        error as Error & { stderr: string }
-      )}`,
-      1
-    );
+    loader.stop(createInstallError(error as Error & { stderr: string }), 1);
   }
 
   (devices.length > 0 ? devices : [undefined]).forEach(
@@ -111,7 +106,6 @@ function createInstallError(error: Error & { stderr: string }) {
   let message = '';
   // Pass the error message from the command to stdout because we pipe it to
   // parent process so it's not visible
-  logger.log(stderr);
 
   // Handle some common failures and make the errors more helpful
   if (stderr.includes('No connected devices')) {
@@ -131,8 +125,15 @@ function createInstallError(error: Error & { stderr: string }) {
         guide: 'native',
       })
     )} and follow the React Native CLI QuickStart guide to install the compatible version of JDK.`;
+  } else if (
+    stderr.includes('INSTALL_FAILED_INSUFFICIENT_STORAGE') ||
+    stderr.includes('Requested internal only, but not enough space')
+  ) {
+    message =
+      'The device is out of space. Increase storage or remove apps and try again.';
   } else {
     message = error.message;
+    logger.log(stderr);
   }
 
   return `Failed to install the app. ${message}`;
