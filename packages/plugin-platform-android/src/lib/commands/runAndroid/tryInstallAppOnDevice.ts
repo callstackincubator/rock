@@ -50,7 +50,7 @@ async function tryInstallAppOnDevice(
     const adbArgs = [...installArgs, pathToApk];
     loader.start(`Installing the app on the device "${device}"...`);
     const adbPath = getAdbPath();
-    await spawn(adbPath, adbArgs, { stdio: 'inherit' });
+    await spawn(adbPath, adbArgs, { stdio: ['ignore', 'ignore', 'pipe'] });
     loader.stop('Installed the app on the device.');
   } catch (error) {
     loader.stop(`Failed to install the app on the device: ${error}.`, 1);

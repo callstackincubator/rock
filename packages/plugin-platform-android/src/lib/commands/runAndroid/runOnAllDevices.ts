@@ -73,7 +73,7 @@ async function runOnAllDevices(
       loader.start('Installing the app');
       const cmd = process.platform.startsWith('win') ? 'gradlew.bat' : './gradlew';
       await spawn(cmd, gradleArgs, {
-        stdio: ['inherit', 'inherit', 'pipe'],
+        stdio: ['ignore', 'ignore', 'pipe'],
         cwd: androidProject.sourceDir,
       });
       loader.stop('Installed the app.');

@@ -26,7 +26,7 @@ export function tryRunAdbReverse(
     }
 
     loader.start('Connecting to the development server');
-    execFileSync(adbPath, adbArgs, { stdio: 'inherit' });
+    execFileSync(adbPath, adbArgs, { stdio: ['ignore', 'ignore', 'inherit'] });
     loader.stop('Connected to the development server');
   } catch (e) {
     loader.stop(

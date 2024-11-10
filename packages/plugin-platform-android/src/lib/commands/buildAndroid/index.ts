@@ -71,12 +71,15 @@ export async function build(gradleArgs: string[], sourceDir: string) {
   loader.start('Building the app');
   try {
     await spawn(cmd, gradleArgs, {
-      stdio: 'inherit',
+      stdio: ['ignore', 'ignore', 'inherit'],
       cwd: sourceDir,
     });
     loader.stop('Build successful.');
   } catch (error) {
-    loader.stop(`Failed to build the app. ${error}`, 1);
+    loader.stop(
+      `Failed to build the app. ${(error as { message: string }).message}`,
+      1
+    );
   }
 }
 
