@@ -1,19 +1,20 @@
 import type { PluginOutput, PluginApi } from '@callstack/rnef-config';
 import { buildAndroid, options } from './commands/buildAndroid/index.js';
-import { runAndroid, runOptions } from './commands/runAndroid/index.js';
+import { runAndroid, runOptions, Flags } from './commands/runAndroid/index.js';
 import { loadConfigAsync } from '@react-native-community/cli-config';
 
+type PluginConfig = Flags;
+
 export const pluginPlatformAndroid =
-  () =>
-  (api: PluginApi): PluginOutput => {
+  (pluginConfig: PluginConfig) =>
+  (api: PluginApi<Flags>): PluginOutput => {
     api.registerCommand({
       name: 'build:android',
       description: 'Build android',
       action: async (args) => {
         try {
           const config = await loadConfigAsync({ selectedPlatform: 'android' });
-          // @ts-expect-error todo
-          await buildAndroid(config, args);
+          await buildAndroid(config, { ...pluginConfig, ...args });
         } catch (error) {
           console.error('Error while building android', error);
         }
@@ -26,8 +27,7 @@ export const pluginPlatformAndroid =
       description: 'Run android',
       action: async (args) => {
         const config = await loadConfigAsync({ selectedPlatform: 'android' });
-        // @ts-expect-error todo
-        await runAndroid(config, args);
+        await runAndroid(config, { ...pluginConfig, ...args });
       },
       options: runOptions,
     });

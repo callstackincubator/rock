@@ -5,9 +5,9 @@ import type { AndroidProject, Flags } from './index.js';
 import { spinner } from '@clack/prompts';
 
 async function tryInstallAppOnDevice(
-  args: Flags,
   device: string,
   androidProject: AndroidProject,
+  args: Flags,
   selectedTask?: string
 ) {
   const loader = spinner();
@@ -51,9 +51,9 @@ async function tryInstallAppOnDevice(
     loader.start(`Installing the app on the device "${device}"...`);
     const adbPath = getAdbPath();
     await spawn(adbPath, adbArgs, { stdio: ['ignore', 'ignore', 'pipe'] });
-    loader.stop('Installed the app on the device.');
+    loader.stop(`Installed the app on the "${device}".`);
   } catch (error) {
-    loader.stop(`Failed to install the app on the device: ${error}.`, 1);
+    loader.stop(`Failed to install the app on the "${device}": ${error}.`, 1);
   }
 }
 

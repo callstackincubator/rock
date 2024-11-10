@@ -7,9 +7,8 @@
  */
 import fs from 'fs';
 import { Config } from '@react-native-community/cli-types';
-import { getCPU, getDevices } from '../buildAndroid/adb.js';
+import { getDevices } from '../buildAndroid/adb.js';
 import { tryRunAdbReverse } from './tryRunAdbReverse.js';
-import runOnAllDevices from './runOnAllDevices.js';
 import tryLaunchAppOnDevice from './tryLaunchAppOnDevice.js';
 import tryInstallAppOnDevice from './tryInstallAppOnDevice.js';
 import {
@@ -22,10 +21,10 @@ import { getAndroidProject } from '@react-native-community/cli-config-android';
 import listAndroidDevices from './listAndroidDevices.js';
 import tryLaunchEmulator from './tryLaunchEmulator.js';
 import path from 'path';
-import { build, BuildFlags, options } from '../buildAndroid/index.js';
+import { BuildFlags, options } from '../buildAndroid/index.js';
 import { promptForTaskSelection } from '../buildAndroid/listAndroidTasks.js';
-import { getTaskNames } from '../buildAndroid/getTaskNames.js';
 import { checkUsers, promptForUser } from './listAndroidUsers.js';
+import { runGradle } from '../runGradle.js';
 
 export interface Flags extends BuildFlags {
   appId: string;
@@ -101,6 +100,7 @@ async function buildAndRun(args: Flags, androidProject: AndroidProject) {
   process.chdir(androidProject.sourceDir);
 
   let selectedTask;
+  let deviceId = args.device;
 
   if (args.interactive) {
     const task = await promptForTaskSelection(
@@ -123,10 +123,12 @@ async function buildAndRun(args: Flags, androidProject: AndroidProject) {
     if (!device) {
       throw new CLIError(
         `Failed to select device, please try to run app without ${
-          args.listDevices ? 'list-devices' : 'interactive'
-        } command.`
+          args.listDevices ? '--list-devices' : '--interactive'
+        } flag.`
       );
     }
+
+    deviceId = device.deviceId;
 
     if (args.interactive) {
       const users = await checkUsers(device.deviceId as string);
@@ -139,112 +141,61 @@ async function buildAndRun(args: Flags, androidProject: AndroidProject) {
       }
     }
 
-    if (device.connected) {
-      return runOnSpecificDevice(
-        args,
-        androidProject,
-        selectedTask,
-        device.deviceId
-      );
+    if (!device.connected) {
+      const port = await getAvailableDevicePort();
+      await tryLaunchEmulator(device.readableName, port);
     }
+  }
 
+  let devices = getDevices();
+
+  if (devices.length === 0) {
     const port = await getAvailableDevicePort();
-    await tryLaunchEmulator(device.readableName, port);
-    return runOnSpecificDevice(
-      args,
-      androidProject,
-      selectedTask,
-      device.deviceId
-    );
+    await tryLaunchEmulator(undefined, port);
+    devices = getDevices();
   }
 
-  if (args.device) {
-    return runOnSpecificDevice(args, androidProject, selectedTask, args.device);
-  } else {
-    return runOnAllDevices(args, androidProject);
-  }
+  return installAndLaunchOnAllDevices(
+    args,
+    androidProject,
+    selectedTask,
+    devices,
+    deviceId
+  );
 }
 
-async function runOnSpecificDevice(
+async function installAndLaunchOnAllDevices(
   args: Flags,
   androidProject: AndroidProject,
-  selectedTask?: string,
-  deviceId?: string
+  selectedTask: string | undefined,
+  devices: string[],
+  deviceId: string | undefined
 ) {
-  const devices = getDevices();
-
-  // if coming from run-android command and we have selected task
-  // from interactive mode we need to create appropriate build task
-  // eg 'installRelease' -> 'assembleRelease'
-  const buildTask = selectedTask
-    ? [selectedTask.replace('install', 'assemble')]
-    : [];
-
-  if (devices.length > 0 && deviceId) {
-    if (devices.indexOf(deviceId) !== -1) {
-      const gradleArgs = getTaskNames(
-        androidProject.appName,
-        args.mode,
-        args.tasks ?? buildTask,
-        'install'
-      );
-
-      // using '-x lint' in order to ignore linting errors while building the apk
-      gradleArgs.push('-x', 'lint');
-      if (args.extraParams) {
-        gradleArgs.push(...args.extraParams);
-      }
-
-      if (args.port) {
-        gradleArgs.push(`-PreactNativeDevServerPort=${args.port}`);
-      }
-
-      if (args.activeArchOnly) {
-        const architecture = getCPU(deviceId);
-
-        if (architecture !== null) {
-          logger.info(`Detected architecture ${architecture}`);
-          gradleArgs.push(`-PreactNativeArchitectures=${architecture}`);
-        }
-      }
-
-      if (!args.binaryPath) {
-        build(gradleArgs, androidProject.sourceDir);
-      }
-
-      await installAndLaunchOnDevice(
-        args,
-        deviceId,
-        androidProject,
-        selectedTask
-      );
-    } else {
-      logger.error(
-        `Could not find device with the id: "${deviceId}". Please choose one of the following:`,
-        ...devices
-      );
-    }
-  } else {
-    logger.error('No Android device or emulator connected.');
+  if (!args.binaryPath) {
+    await runGradle({
+      taskType: 'install',
+      androidProject,
+      args,
+      selectedTask,
+    });
   }
+
+  const devicesToInstallTo = deviceId ? [deviceId] : devices;
+
+  devicesToInstallTo.forEach(async (device) => {
+    await installAndLaunchOnDevice(device, androidProject, args, selectedTask);
+  });
 }
 
 async function installAndLaunchOnDevice(
-  args: Flags,
-  selectedDevice: string,
+  device: string,
   androidProject: AndroidProject,
+  args: Flags,
   selectedTask?: string
 ) {
-  tryRunAdbReverse(args.port, selectedDevice);
-
-  await tryInstallAppOnDevice(
-    args,
-    selectedDevice,
-    androidProject,
-    selectedTask
-  );
-
-  await tryLaunchAppOnDevice(selectedDevice, androidProject, args);
+  tryRunAdbReverse(args.port, device);
+  await tryInstallAppOnDevice(device, androidProject, args, selectedTask);
+  await tryLaunchAppOnDevice(device, androidProject, args);
 }
 
 export const runOptions = [

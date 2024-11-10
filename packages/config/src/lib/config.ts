@@ -7,16 +7,16 @@ export type PluginOutput = {
   description: string;
 };
 
-export type PluginApi = {
-  registerCommand: (command: CommandType) => void;
+export type PluginApi<Args> = {
+  registerCommand: (command: CommandType<Args>) => void;
 };
 
-type PluginType = (args: PluginApi) => PluginOutput;
+type PluginType<Args> = (args: PluginApi<Args>) => PluginOutput;
 
-type CommandType = {
+type CommandType<Args> = {
   name: string;
   description: string;
-  action: (args: unknown) => void;
+  action: (args: Args) => void;
   options?: Array<{
     name: string;
     description: string;
@@ -28,14 +28,14 @@ type CommandType = {
   }>;
 };
 
-type ConfigType = {
-  plugins?: Record<string, PluginType>;
-  platforms?: Record<string, PluginType>;
-  commands?: Array<CommandType>;
+type ConfigType<Args> = {
+  plugins?: Record<string, PluginType<Args>>;
+  platforms?: Record<string, PluginType<Args>>;
+  commands?: Array<CommandType<Args>>;
 };
 
-type ConfigOutput = {
-  commands?: Array<CommandType>;
+type ConfigOutput<Args> = {
+  commands?: Array<CommandType<Args>>;
 };
 
 const extensions = ['.js', '.ts', '.mjs'];
@@ -63,13 +63,13 @@ const importUp = async <T>(dir: string, name: string): Promise<T> => {
   return importUp(parentDir, name);
 };
 
-export async function getConfig(
+export async function getConfig<Args>(
   dir: string = process.cwd()
-): Promise<ConfigOutput> {
-  const config = await importUp<ConfigType>(dir, 'rnef.config');
+): Promise<ConfigOutput<Args>> {
+  const config = await importUp<ConfigType<Args>>(dir, 'rnef.config');
 
   const api = {
-    registerCommand: (command: CommandType) => {
+    registerCommand: (command: CommandType<Args>) => {
       config.commands = [...(config.commands || []), command];
     },
   };
@@ -88,7 +88,7 @@ export async function getConfig(
     }
   }
 
-  const outputConfig: ConfigOutput = {
+  const outputConfig: ConfigOutput<Args> = {
     commands: config.commands ?? [],
   };
 

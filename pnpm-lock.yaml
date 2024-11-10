@@ -183,6 +183,9 @@ importers:
       nano-spawn:
         specifier: ^0.2.0
         version: 0.2.0
+      rslog:
+        specifier: ^1.2.3
+        version: 1.2.3
       tslib:
         specifier: ^2.3.0
         version: 2.7.0
@@ -4192,6 +4195,10 @@ packages:
     resolution: {integrity: sha512-DOmrlGSXNk1DM0ljiQA+i+o0rSLhtii1je5wgk60j49d1jHT5YYttBv1iWOnYSTG+fZZESUOSNiAl89SIet+Cg==}
     engines: {node: '>=18.0.0', npm: '>=8.0.0'}
     hasBin: true
+
+  rslog@1.2.3:
+    resolution: {integrity: sha512-antALPJaKBRPBU1X2q9t085K4htWDOOv/K1qhTUk7h0l1ePU/KbDqKJn19eKP0dk7PqMioeA0+fu3gyPXCsXxQ==}
+    engines: {node: '>=14.17.6'}
 
   run-parallel@1.2.0:
     resolution: {integrity: sha512-5l4VyZR86LZ/lDxZTR6jqL8AFE2S0IFLMP26AbjsLVADxHdhB/c0GUsH+y39UfCi3dzz8OlQuPmnaJOMoDHQBA==}
@@ -9785,6 +9792,8 @@ snapshots:
       '@rollup/rollup-win32-ia32-msvc': 4.24.0
       '@rollup/rollup-win32-x64-msvc': 4.24.0
       fsevents: 2.3.3
+
+  rslog@1.2.3: {}
 
   run-parallel@1.2.0:
     dependencies:

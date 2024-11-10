@@ -12,7 +12,7 @@ import { getAdbPath } from '../buildAndroid/adb.js';
 import { spinner } from '@clack/prompts';
 
 async function tryLaunchAppOnDevice(
-  device: string | void,
+  device: string,
   androidProject: AndroidProject,
   args: Flags
 ) {
@@ -47,15 +47,11 @@ async function tryLaunchAppOnDevice(
       'android.intent.category.LAUNCHER',
     ];
 
-    if (device) {
-      adbArgs.unshift('-s', device);
-      loader.start(`Starting the app on "${device}"...`);
-    } else {
-      loader.start('Starting the app...');
-    }
+    adbArgs.unshift('-s', device);
+    loader.start(`Starting the app on "${device}"...`);
     const adbPath = getAdbPath();
     await spawn(adbPath, adbArgs);
-    loader.stop('App started.');
+    loader.stop(`App started on "${device}".`);
   } catch (error) {
     loader.stop(
       `Failed to start the app. ${(error as { message: string }).message}`,

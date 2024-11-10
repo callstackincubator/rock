@@ -92,6 +92,23 @@ export function getCPU(device: string): string | null {
   }
 }
 
+/**
+ * Check if emulator is booted
+ */
+export function isEmulatorBooted(device: string | undefined): boolean {
+  const adbPath = getAdbPath();
+  const adbArgs = ['shell', 'getprop', 'sys.boot_completed'];
+  try {
+    if (device) {
+      adbArgs.unshift('-s', device);
+    }
+    const output = execFileSync(adbPath, adbArgs).toString().trim();
+    return output === '1';
+  } catch {
+    return false;
+  }
+}
+
 const regex = new RegExp(
   /^\s*UserInfo\{(?<userId>\d+):(?<userName>.*):(?<userFlags>[0-9a-f]*)}/
 );

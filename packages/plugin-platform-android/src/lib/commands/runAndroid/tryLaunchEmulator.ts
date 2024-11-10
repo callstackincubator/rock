@@ -1,6 +1,6 @@
 import os from 'os';
 import spawn from 'nano-spawn';
-import { getDevices } from '../buildAndroid/adb.js';
+import { isEmulatorBooted, getDevices } from '../buildAndroid/adb.js';
 import { spinner } from '@clack/prompts';
 
 const emulatorCommand = process.env['ANDROID_HOME']
@@ -24,7 +24,8 @@ export const getEmulators = async () => {
 
 const launchEmulator = async (
   emulatorName: string,
-  port?: number
+  port: number | undefined,
+  loader: ReturnType<typeof spinner>
 ): Promise<boolean> => {
   const manualCommand = `${emulatorCommand} @${emulatorName}`;
 
@@ -37,7 +38,7 @@ const launchEmulator = async (
     }
   );
   (await cp.nodeChildProcess).unref();
-  const timeout = 30;
+  const timeout = 120;
 
   return new Promise<boolean>((resolve, reject) => {
     const bootCheckInterval = setInterval(async () => {
@@ -45,9 +46,18 @@ const launchEmulator = async (
       const connected = port
         ? devices.find((d) => d.includes(`${port}`))
         : devices.length > 0;
+
       if (connected) {
-        cleanup();
-        resolve(true);
+        loader.message(`Emulator "${emulatorName}" is connected. Waiting for boot`);
+        if (
+          isEmulatorBooted(
+            // @todo handle multiple devices if necessary
+            typeof connected === 'string' ? connected : undefined
+          )
+        ) {
+          cleanup();
+          resolve(true);
+        }
       }
     }, 1000);
 
@@ -82,7 +92,7 @@ export default async function tryLaunchEmulator(name?: string, port?: number) {
   if (emulators.length > 0) {
     try {
       loader.message(`Launching emulator "${emulatorName}"`);
-      await launchEmulator(emulatorName, port);
+      await launchEmulator(emulatorName, port, loader);
       loader.stop(`Launched emulator "${emulatorName}".`);
     } catch (error) {
       loader.stop(

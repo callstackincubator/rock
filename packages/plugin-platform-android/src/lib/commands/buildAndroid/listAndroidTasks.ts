@@ -2,6 +2,7 @@ import { CLIError } from '@react-native-community/cli-tools';
 import chalk from 'chalk';
 import spawn from 'nano-spawn';
 import { select, spinner } from '@clack/prompts';
+import { getGradleWrapper } from '../runGradle.js';
 
 type GradleTask = {
   task: string;
@@ -34,11 +35,13 @@ export const getGradleTasks = async (
 ) => {
   const loader = spinner();
   loader.start('Searching for available Gradle tasks...');
-  const cmd = process.platform.startsWith('win') ? 'gradlew.bat' : './gradlew';
+  const gradleWrapper = getGradleWrapper();
   try {
-    const { stdout } = await spawn(cmd, ['tasks', '--group', taskType], {
-      cwd: sourceDir,
-    });
+    const { stdout } = await spawn(
+      gradleWrapper,
+      ['tasks', '--group', taskType],
+      { cwd: sourceDir }
+    );
     loader.stop('Gradle tasks found.');
     return parseTasksFromGradleFile(taskType, stdout);
   } catch {
