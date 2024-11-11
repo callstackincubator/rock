@@ -117,11 +117,15 @@ export async function listUsers(device: string) {
   const adbPath = getAdbPath();
   const adbArgs = ['-s', device, 'shell', 'pm', 'list', 'users'];
   const loader = spinner();
-  loader.start('Checking users on "${device}"');
+  loader.start(`Checking users on "${device}"`);
 
   try {
-    const { stdout } = await spawn(adbPath, adbArgs);
-    loader.stop();
+    const { stdout, stderr } = await spawn(adbPath, adbArgs);
+
+    if (stderr) {
+      loader.stop(`Failed to check users of "${device}". ${stderr}`, 1);
+      return [];
+    }
 
     const lines = stdout.split('\n');
     const users = [];
@@ -133,12 +137,13 @@ export async function listUsers(device: string) {
       }
     }
 
+    loader.stop(`Found ${users.length} users on "${device}".`);
     return users;
   } catch (error) {
     loader.stop(
-      `Failed to check users of device. ${
+      `Unexpected error while checking users of "${device}". Continuing without user selection. Error details: ${
         (error as { message: string }).message
-      }`,
+      }.`,
       1
     );
     return [];

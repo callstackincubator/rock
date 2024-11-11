@@ -17,7 +17,6 @@ const args: Flags = {
   terminal: 'iTerm.app',
   appId: '',
   appIdSuffix: '',
-  listDevices: false,
 };
 
 const androidProject: AndroidProjectConfig = {

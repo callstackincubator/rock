@@ -33,30 +33,31 @@ async function tryLaunchAppOnDevice(
       : [packageName, mainActivity].filter(Boolean).join('.');
 
   const loader = spinner();
-  try {
-    // Here we're using the same flags as Android Studio to launch the app
-    const adbArgs = [
-      'shell',
-      'am',
-      'start',
-      '-n',
-      `${applicationIdWithSuffix}/${activityToLaunch}`,
-      '-a',
-      'android.intent.action.MAIN',
-      '-c',
-      'android.intent.category.LAUNCHER',
-    ];
 
-    adbArgs.unshift('-s', device);
-    loader.start(`Starting the app on "${device}"...`);
-    const adbPath = getAdbPath();
-    await spawn(adbPath, adbArgs);
-    loader.stop(`App started on "${device}".`);
-  } catch (error) {
-    loader.stop(
-      `Failed to start the app. ${(error as { message: string }).message}`,
-      1
-    );
+  // Here we're using the same flags as Android Studio to launch the app
+  const adbArgs = [
+    'shell',
+    'am',
+    'start',
+    '-n',
+    `${applicationIdWithSuffix}/${activityToLaunch}`,
+    '-a',
+    'android.intent.action.MAIN',
+    '-c',
+    'android.intent.category.LAUNCHER',
+  ];
+
+  adbArgs.unshift('-s', device);
+
+  loader.start(`Launching the app on "${device}"...`);
+  const adbPath = getAdbPath();
+  const { stderr } = await spawn(adbPath, adbArgs, {
+    stdio: ['ignore', 'ignore', 'pipe'],
+  });
+  if (stderr) {
+    loader.stop(`Failed to launch the app on "${device}". ${stderr}`, 1);
+  } else {
+    loader.stop(`Launched the app on "${device}".`);
   }
 }
 

@@ -1,6 +1,7 @@
 import { Config } from '@react-native-community/cli-types';
 import { getAndroidProject } from '@react-native-community/cli-config-android';
 import { runGradle } from '../runGradle.js';
+import { promptForTaskSelection } from './listAndroidTasks.js';
 
 export interface BuildFlags {
   mode?: string;
@@ -12,8 +13,16 @@ export interface BuildFlags {
 
 export async function buildAndroid(config: Config, args: BuildFlags) {
   const androidProject = getAndroidProject(config);
+  let selectedTask: string | undefined;
 
-  return runGradle({ taskType: 'build', androidProject, args });
+  if (args.interactive) {
+    selectedTask = await promptForTaskSelection(
+      'build',
+      androidProject.sourceDir
+    );
+  }
+
+  return runGradle({ taskType: 'build', androidProject, args, selectedTask });
 }
 
 export const options = [
@@ -24,7 +33,7 @@ export const options = [
   {
     name: '--tasks <list>',
     description:
-      'Run custom Gradle tasks. By default it\'s "assembleDebug". Will override passed mode and variant arguments.',
+      'Run custom Gradle tasks. By default it\'s "assembleDebug". Will override passed mode argument.',
     parse: (val: string) => val.split(','),
   },
   {

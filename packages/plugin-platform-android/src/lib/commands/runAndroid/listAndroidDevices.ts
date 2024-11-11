@@ -4,7 +4,6 @@ import { getEmulators } from './tryLaunchEmulator.js';
 import { toPascalCase } from '../buildAndroid/toPascalCase.js';
 import os from 'os';
 import chalk from 'chalk';
-import { CLIError } from '@react-native-community/cli-tools';
 import { select } from '@clack/prompts';
 
 type DeviceData = {
@@ -51,7 +50,7 @@ async function promptForDeviceSelection(
   allDevices: Array<DeviceData>
 ): Promise<DeviceData> {
   if (!allDevices.length) {
-    throw new CLIError(
+    throw new Error(
       'No devices and/or emulators connected. Please create emulator with Android Studio or connect Android device.'
     );
   }

@@ -11,49 +11,55 @@ async function tryInstallAppOnDevice(
   selectedTask?: string
 ) {
   const loader = spinner();
-  try {
-    // "app" is usually the default value for Android apps with only 1 app
-    const { appName, sourceDir } = androidProject;
 
-    const defaultVariant = (args.mode || 'debug').toLowerCase();
+  // "app" is usually the default value for Android apps with only 1 app
+  const { appName, sourceDir } = androidProject;
 
-    // handle if selected task from interactive mode includes build flavour as well, eg. installProductionDebug should create ['production','debug'] array
-    const variantFromSelectedTask = selectedTask
-      ?.replace('install', '')
-      .split(/(?=[A-Z])/);
+  const defaultVariant = (args.mode || 'debug').toLowerCase();
 
-    // create path to output file, eg. `production/debug`
-    const variantPath =
-      variantFromSelectedTask?.join('/')?.toLowerCase() ?? defaultVariant;
-    // create output file name, eg. `production-debug`
-    const variantAppName =
-      variantFromSelectedTask?.join('-')?.toLowerCase() ?? defaultVariant;
+  // handle if selected task from interactive mode includes build flavour as well, eg. installProductionDebug should create ['production','debug'] array
+  const variantFromSelectedTask = selectedTask
+    ?.replace('install', '')
+    .split(/(?=[A-Z])/);
 
-    let pathToApk;
-    if (!args.binaryPath) {
-      const buildDirectory = `${sourceDir}/${appName}/build/outputs/apk/${variantPath}`;
-      const apkFile = getInstallApkName(
-        appName,
-        variantAppName,
-        device,
-        buildDirectory
-      );
-      pathToApk = `${buildDirectory}/${apkFile}`;
-    } else {
-      pathToApk = args.binaryPath;
-    }
+  // create path to output file, eg. `production/debug`
+  const variantPath =
+    variantFromSelectedTask?.join('/')?.toLowerCase() ?? defaultVariant;
+  // create output file name, eg. `production-debug`
+  const variantAppName =
+    variantFromSelectedTask?.join('-')?.toLowerCase() ?? defaultVariant;
 
-    const installArgs = ['-s', device, 'install', '-r', '-d'];
-    if (args.user !== undefined) {
-      installArgs.push('--user', `${args.user}`);
-    }
-    const adbArgs = [...installArgs, pathToApk];
-    loader.start(`Installing the app on the device "${device}"...`);
-    const adbPath = getAdbPath();
-    await spawn(adbPath, adbArgs, { stdio: ['ignore', 'ignore', 'pipe'] });
-    loader.stop(`Installed the app on the "${device}".`);
-  } catch (error) {
-    loader.stop(`Failed to install the app on the "${device}": ${error}.`, 1);
+  let pathToApk;
+  if (!args.binaryPath) {
+    const buildDirectory = `${sourceDir}/${appName}/build/outputs/apk/${variantPath}`;
+    const apkFile = getInstallApkName(
+      appName,
+      variantAppName,
+      device,
+      buildDirectory
+    );
+    pathToApk = `${buildDirectory}/${apkFile}`;
+  } else {
+    pathToApk = args.binaryPath;
+  }
+
+  const adbArgs = ['-s', device, 'install', '-r', '-d'];
+
+  if (args.user !== undefined) {
+    adbArgs.push('--user', `${args.user}`);
+  }
+  
+  adbArgs.push(pathToApk);
+
+  const adbPath = getAdbPath();
+  loader.start(`Installing the app on "${device}"...`);
+  const { stderr } = await spawn(adbPath, adbArgs, {
+    stdio: ['ignore', 'ignore', 'pipe'],
+  });
+  if (stderr) {
+    loader.stop(`Failed to install the app on "${device}": ${stderr}.`, 1);
+  } else {
+    loader.stop(`Installed the app on "${device}".`);
   }
 }
 

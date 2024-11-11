@@ -12,8 +12,6 @@ import { tryRunAdbReverse } from './tryRunAdbReverse.js';
 import tryLaunchAppOnDevice from './tryLaunchAppOnDevice.js';
 import tryInstallAppOnDevice from './tryInstallAppOnDevice.js';
 import {
-  logger,
-  CLIError,
   link,
   getDefaultUserTerminal,
 } from '@react-native-community/cli-tools';
@@ -34,7 +32,6 @@ export interface Flags extends BuildFlags {
   terminal?: string;
   packager?: boolean;
   device?: string;
-  listDevices?: boolean;
   binaryPath?: string;
   user?: string;
 }
@@ -53,8 +50,8 @@ export async function runAndroid(config: Config, args: Flags) {
 
   if (args.binaryPath) {
     if (args.tasks) {
-      throw new CLIError(
-        'binary-path and tasks were specified, but they are not compatible. Specify only one'
+      throw new Error(
+        'binary-path and tasks were specified, but they are not compatible. Specify only one.'
       );
     }
 
@@ -63,9 +60,7 @@ export async function runAndroid(config: Config, args: Flags) {
       : path.join(config.root, args.binaryPath);
 
     if (args.binaryPath && !fs.existsSync(args.binaryPath)) {
-      throw new CLIError(
-        'binary-path was specified, but the file was not found.'
-      );
+      throw new Error('binary-path was specified, but the file was not found.');
     }
   }
 
@@ -87,7 +82,7 @@ async function getAvailableDevicePort(
    */
   const devices = getDevices();
   if (port > 5682) {
-    throw new CLIError('Failed to launch emulator...');
+    throw new Error('Failed to launch emulator...');
   }
   if (devices.some((d) => d.includes(port.toString()))) {
     return await getAvailableDevicePort(port + 2);
@@ -97,34 +92,19 @@ async function getAvailableDevicePort(
 
 // Builds the app and runs it on a connected emulator / device.
 async function buildAndRun(args: Flags, androidProject: AndroidProject) {
-  process.chdir(androidProject.sourceDir);
-
-  let selectedTask;
   let deviceId = args.device;
+  let selectedTask: string | undefined;
 
   if (args.interactive) {
-    const task = await promptForTaskSelection(
+    selectedTask = await promptForTaskSelection(
       'install',
       androidProject.sourceDir
     );
-    if (task) {
-      selectedTask = task;
-    }
-  }
-
-  if (args.listDevices || args.interactive) {
-    if (args.device) {
-      logger.warn(
-        `Both "device" and "list-devices" parameters were passed to "run" command. We will list available devices and let you choose from one`
-      );
-    }
 
     const device = await listAndroidDevices();
     if (!device) {
-      throw new CLIError(
-        `Failed to select device, please try to run app without ${
-          args.listDevices ? '--list-devices' : '--interactive'
-        } flag.`
+      throw new Error(
+        `Failed to select device, please try to run app without "--interactive" flag.`
       );
     }
 
@@ -235,12 +215,6 @@ export const runOptions = [
     description:
       'Explicitly set the device to use by name. The value is not required ' +
       'if you have a single device connected.',
-  },
-  {
-    name: '--list-devices',
-    description:
-      'Lists all available Android devices and simulators and let you choose one to run the app',
-    default: false,
   },
   {
     name: '--binary-path <string>',

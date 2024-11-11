@@ -1,4 +1,3 @@
-import { CLIError } from '@react-native-community/cli-tools';
 import chalk from 'chalk';
 import spawn from 'nano-spawn';
 import { select, spinner } from '@clack/prompts';
@@ -42,8 +41,9 @@ export const getGradleTasks = async (
       ['tasks', '--group', taskType],
       { cwd: sourceDir }
     );
-    loader.stop('Gradle tasks found.');
-    return parseTasksFromGradleFile(taskType, stdout);
+    const tasks = parseTasksFromGradleFile(taskType, stdout);
+    loader.stop(`Found ${tasks.length} Gradle tasks.`);
+    return tasks;
   } catch {
     loader.stop('Gradle tasks not found.', 1);
     return [];
@@ -56,7 +56,7 @@ export const promptForTaskSelection = async (
 ): Promise<string> => {
   const tasks = await getGradleTasks(taskType, sourceDir);
   if (!tasks.length) {
-    throw new CLIError(`No actionable ${taskType} tasks were found...`);
+    throw new Error(`No actionable ${taskType} tasks were found...`);
   }
   const task = (await select({
     message: `Select ${taskType} task you want to perform`,
