@@ -1,19 +1,27 @@
 import { AndroidProjectConfig } from '@react-native-community/cli-types';
 import tryLaunchAppOnDevice from '../tryLaunchAppOnDevice.js';
 import { Flags } from '../index.js';
-import execa from 'execa';
-import { vi } from 'vitest';
+import spawn from 'nano-spawn';
+import { vi, test } from 'vitest';
 
-vi.mock('execa');
-vi.mock('../getAdbPath');
-vi.mock('../tryLaunchEmulator');
+vi.mock('nano-spawn', () => {
+  return {
+    default: vi.fn(() => Promise.resolve({ stdout: '', stderr: '' })),
+  };
+});
 
-const adbPath = 'path/to/adb';
+vi.mock('@clack/prompts', () => {
+  return {
+    spinner: vi.fn(() => ({ start: vi.fn(), message: vi.fn(), stop: vi.fn() })),
+    select: vi.fn(),
+  };
+});
+
 const device = 'emulator-5554';
 const args: Flags = {
   activeArchOnly: false,
   packager: true,
-  port: 8081,
+  port: '8081',
   terminal: 'iTerm.app',
   appId: '',
   appIdSuffix: '',
@@ -28,9 +36,10 @@ const androidProject: AndroidProjectConfig = {
   dependencyConfiguration: undefined,
   watchModeCommandParams: undefined,
   unstable_reactLegacyComponentNames: undefined,
+  assets: [],
 };
 
-const shellStartCommand = ['shell', 'am', 'start'];
+const shellStartCommand = ['-s', 'emulator-5554', 'shell', 'am', 'start'];
 const actionCategoryFlags = [
   '-a',
   'android.intent.action.MAIN',
@@ -43,19 +52,17 @@ beforeEach(() => {
 });
 
 test('launches adb shell with intent to launch com.myapp.MainActivity with different appId than packageName on a simulator', async () => {
-  await tryLaunchAppOnDevice(device, androidProject, adbPath, args);
+  await tryLaunchAppOnDevice(device, androidProject, args);
 
-  expect(execa.sync).toHaveBeenCalledWith(
-    'path/to/adb',
+  expect(spawn).toHaveBeenCalledWith(
+    'adb',
     [
-      '-s',
-      'emulator-5554',
       ...shellStartCommand,
       '-n',
       'com.myapp.custom/com.myapp.MainActivity',
       ...actionCategoryFlags,
     ],
-    { stdio: 'inherit' }
+    { stdio: ['ignore', 'ignore', 'pipe'] }
   );
 });
 
@@ -63,21 +70,18 @@ test('launches adb shell with intent to launch com.myapp.MainActivity with diffe
   await tryLaunchAppOnDevice(
     device,
     { ...androidProject, mainActivity: 'com.myapp.MainActivity' },
-    adbPath,
     args
   );
 
-  expect(execa.sync).toHaveBeenCalledWith(
-    'path/to/adb',
+  expect(spawn).toHaveBeenCalledWith(
+    'adb',
     [
-      '-s',
-      'emulator-5554',
       ...shellStartCommand,
       '-n',
       'com.myapp.custom/com.myapp.MainActivity',
       ...actionCategoryFlags,
     ],
-    { stdio: 'inherit' }
+    { stdio: ['ignore', 'ignore', 'pipe'] }
   );
 });
 
@@ -85,36 +89,33 @@ test('launches adb shell with intent to launch com.myapp.MainActivity with same 
   await tryLaunchAppOnDevice(
     device,
     { ...androidProject, applicationId: 'com.myapp' },
-    adbPath,
     args
   );
 
-  expect(execa.sync).toHaveBeenCalledWith(
-    'path/to/adb',
+  expect(spawn).toHaveBeenCalledWith(
+    'adb',
     [
-      '-s',
-      'emulator-5554',
       ...shellStartCommand,
       '-n',
       'com.myapp/com.myapp.MainActivity',
       ...actionCategoryFlags,
     ],
-    { stdio: 'inherit' }
+    { stdio: ['ignore', 'ignore', 'pipe'] }
   );
 });
 
 test('launches adb shell with intent to launch com.myapp.MainActivity with different appId than packageName on a device (without calling simulator)', async () => {
-  await tryLaunchAppOnDevice(undefined, androidProject, adbPath, args);
+  await tryLaunchAppOnDevice(device, androidProject, args);
 
-  expect(execa.sync).toHaveBeenCalledWith(
-    'path/to/adb',
+  expect(spawn).toHaveBeenCalledWith(
+    'adb',
     [
       ...shellStartCommand,
       '-n',
       'com.myapp.custom/com.myapp.MainActivity',
       ...actionCategoryFlags,
     ],
-    { stdio: 'inherit' }
+    { stdio: ['ignore', 'ignore', 'pipe'] }
   );
 });
 
@@ -125,59 +126,56 @@ test('launches adb shell with intent to launch fully specified activity with dif
       ...androidProject,
       mainActivity: 'com.zoontek.rnbootsplash.RNBootSplashActivity',
     },
-    adbPath,
     {
       ...args,
       appIdSuffix: 'dev',
     }
   );
 
-  expect(execa.sync).toHaveBeenCalledWith(
-    'path/to/adb',
+  expect(spawn).toHaveBeenCalledWith(
+    'adb',
     [
-      '-s',
-      'emulator-5554',
       ...shellStartCommand,
       '-n',
       'com.myapp.custom.dev/com.zoontek.rnbootsplash.RNBootSplashActivity',
       ...actionCategoryFlags,
     ],
-    { stdio: 'inherit' }
+    { stdio: ['ignore', 'ignore', 'pipe'] }
   );
 });
 
 test('--appId flag overwrites applicationId setting in androidProject', async () => {
-  await tryLaunchAppOnDevice(undefined, androidProject, adbPath, {
+  await tryLaunchAppOnDevice(device, androidProject, {
     ...args,
     appId: 'my.app.id',
   });
 
-  expect(execa.sync).toHaveBeenCalledWith(
-    'path/to/adb',
+  expect(spawn).toHaveBeenCalledWith(
+    'adb',
     [
       ...shellStartCommand,
       '-n',
       'my.app.id/com.myapp.MainActivity',
       ...actionCategoryFlags,
     ],
-    { stdio: 'inherit' }
+    { stdio: ['ignore', 'ignore', 'pipe'] }
   );
 });
 
 test('appIdSuffix Staging is appended to applicationId', async () => {
-  await tryLaunchAppOnDevice(undefined, androidProject, adbPath, {
+  await tryLaunchAppOnDevice(device, androidProject, {
     ...args,
     appIdSuffix: 'Staging',
   });
 
-  expect(execa.sync).toHaveBeenCalledWith(
-    'path/to/adb',
+  expect(spawn).toHaveBeenCalledWith(
+    'adb',
     [
       ...shellStartCommand,
       '-n',
       'com.myapp.custom.Staging/com.myapp.MainActivity',
       ...actionCategoryFlags,
     ],
-    { stdio: 'inherit' }
+    { stdio: ['ignore', 'ignore', 'pipe'] }
   );
 });

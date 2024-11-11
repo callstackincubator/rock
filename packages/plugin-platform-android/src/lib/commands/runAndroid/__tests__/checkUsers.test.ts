@@ -1,6 +1,6 @@
-import execa from 'execa';
+import spawn from 'nano-spawn';
 import { checkUsers } from '../listAndroidUsers.js';
-import { vi, Mock } from 'vitest';
+import { vi, Mock, describe, it } from 'vitest';
 // output of "adb -s ... shell pm users list" command
 const gradleOutput = `
 Users:
@@ -8,14 +8,22 @@ Users:
         UserInfo{10:Guest:404}
 `;
 
-vi.mock('execa', () => {
-  return { sync: vi.fn() };
+vi.mock('nano-spawn', () => {
+  return {
+    default: vi.fn(),
+  };
+});
+
+vi.mock('@clack/prompts', () => {
+  return {
+    spinner: vi.fn(() => ({ start: vi.fn(), message: vi.fn(), stop: vi.fn() })),
+  };
 });
 
 describe('check android users', () => {
-  it('should correctly parse recieved users', () => {
-    (execa.sync as Mock).mockReturnValueOnce({ stdout: gradleOutput });
-    const users = checkUsers('device', 'adbPath');
+  it('should correctly parse recieved users', async () => {
+    (spawn as Mock).mockResolvedValueOnce({ stdout: gradleOutput });
+    const users = await checkUsers('device');
 
     expect(users).toStrictEqual([
       { id: '0', name: 'Homersimpsons' },

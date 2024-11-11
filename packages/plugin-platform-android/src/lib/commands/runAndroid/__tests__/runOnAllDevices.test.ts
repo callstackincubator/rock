@@ -1,16 +1,14 @@
-/**
- * Copyright (c) Facebook, Inc. and its affiliates.
- *
- * This source code is licensed under the MIT license found in the
- * LICENSE file in the root directory of this source tree.
- *
- */
-
-import runOnAllDevices from '../runOnAllDevices.js';
-import execa from 'execa';
-import {Flags} from '../index.js';
-import {AndroidProjectConfig} from '@react-native-community/cli-types';
+import spawn from 'nano-spawn';
+import { Flags } from '../index.js';
+import { AndroidProjectConfig } from '@react-native-community/cli-types';
 import { vi, Mock } from 'vitest';
+import { runGradle } from '../../runGradle.js';
+
+vi.mock('nano-spawn', () => {
+  return {
+    default: vi.fn(),
+  };
+});
 
 const gradleTaskOutput = `
 > Task :tasks
@@ -47,10 +45,6 @@ installRelease - Installs the Release build.
 uninstallAll - Uninstall all applications.
 `;
 
-vi.mock('execa');
-vi.mock('../getAdbPath');
-vi.mock('../tryLaunchEmulator');
-
 describe('--appFolder', () => {
   const args: Flags = {
     appId: '',
@@ -59,7 +53,7 @@ describe('--appFolder', () => {
     appIdSuffix: '',
     mainActivity: 'MainActivity',
     packager: true,
-    port: 8081,
+    port: '8081',
     terminal: 'iTerm2',
     activeArchOnly: false,
   };
@@ -69,79 +63,76 @@ describe('--appFolder', () => {
     applicationId: 'com.test',
     sourceDir: '/android',
     mainActivity: '.MainActivity',
+    assets: [],
   };
   beforeEach(() => {
     vi.clearAllMocks();
-    (execa.sync as Mock).mockReturnValueOnce({stdout: gradleTaskOutput});
+    (spawn as Mock).mockResolvedValueOnce({ stdout: gradleTaskOutput });
   });
 
   it('uses task "install[Variant]" as default task', async () => {
-    await runOnAllDevices(
-      {...args, mode: 'debug'},
-      './gradlew',
+    await runGradle({
+      taskType: 'install',
+      args: { ...args, mode: 'debug' },
       androidProject,
-    );
-    expect((execa as unknown as Mock).mock.calls[0][1]).toContain(
-      'app:installDebug',
-    );
+    });
+    expect((spawn as Mock).mock.calls[0][1]).toContain('app:installDebug');
   });
 
   it('uses appName and default variant', async () => {
-    await runOnAllDevices({...args, mode: 'debug'}, './gradlew', {
-      ...androidProject,
-      appName: 'someApp',
+    await runGradle({
+      taskType: 'install',
+      args: { ...args, mode: 'debug' },
+      androidProject: { ...androidProject, appName: 'someApp' },
     });
 
-    expect((execa as unknown as Mock).mock.calls[0][1]).toContain(
-      'someApp:installDebug',
-    );
+    expect((spawn as Mock).mock.calls[0][1]).toContain('someApp:installDebug');
   });
 
   it('uses appName and custom variant', async () => {
-    await runOnAllDevices({...args, mode: 'release'}, './gradlew', {
-      ...androidProject,
-      appName: 'anotherApp',
+    await runGradle({
+      taskType: 'install',
+      args: { ...args, mode: 'release' },
+      androidProject: { ...androidProject, appName: 'anotherApp' },
     });
 
-    expect((execa as unknown as Mock).mock.calls[0][1]).toContain(
-      'anotherApp:installRelease',
+    expect((spawn as Mock).mock.calls[0][1]).toContain(
+      'anotherApp:installRelease'
     );
   });
 
   it('uses only task argument', async () => {
-    await runOnAllDevices(
-      {...args, tasks: ['someTask']},
-      './gradlew',
-      'adb',
+    await runGradle({
+      taskType: 'install',
+      args: { ...args, tasks: ['someTask'] },
       androidProject,
-    );
+    });
 
-    expect((execa as unknown as Mock).mock.calls[0][1]).toContain(
-      'app:someTask',
-    );
+    expect((spawn as Mock).mock.calls[0][1]).toContain('app:someTask');
   });
 
   it('uses appName and custom task argument', async () => {
-    await runOnAllDevices({...args, tasks: ['someTask']}, './gradlew', {
-      ...androidProject,
-      appName: 'anotherApp',
+    await runGradle({
+      taskType: 'install',
+      args: { ...args, tasks: ['someTask'] },
+      androidProject: { ...androidProject, appName: 'anotherApp' },
     });
 
-    expect((execa as unknown as Mock).mock.calls[0][1]).toContain(
-      'anotherApp:someTask',
-    );
+    expect((spawn as Mock).mock.calls[0][1]).toContain('anotherApp:someTask');
   });
 
   it('uses multiple tasks', async () => {
-    await runOnAllDevices(
-      {...args, tasks: ['clean', 'someTask']},
-      './gradlew',
+    await runGradle({
+      taskType: 'install',
+      args: { ...args, tasks: ['clean', 'someTask'] },
       androidProject,
-    );
+    });
 
-    expect((execa as unknown as Mock).mock.calls[0][1]).toEqual([
+    expect((spawn as Mock).mock.calls[0][1]).toEqual([
       'app:clean',
       'app:someTask',
+      '-x',
+      'lint',
       '-PreactNativeDevServerPort=8081',
     ]);
   });

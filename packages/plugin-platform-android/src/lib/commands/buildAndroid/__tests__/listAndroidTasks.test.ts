@@ -1,12 +1,24 @@
 import chalk from 'chalk';
-import execa from 'execa';
-import prompts from 'prompts';
+import spawn from 'nano-spawn';
+import * as prompts from '@clack/prompts';
 import {
   parseTasksFromGradleFile,
   promptForTaskSelection,
 } from '../../buildAndroid/listAndroidTasks.js';
-import tools from '@react-native-community/cli-tools';
-import {vi, Mock, MockedFunction} from 'vitest';
+import { it, describe, vi, Mock, MockedFunction } from 'vitest';
+
+vi.mock('nano-spawn', () => {
+  return {
+    default: vi.fn(),
+  };
+});
+
+vi.mock('@clack/prompts', () => {
+  return {
+    spinner: vi.fn(() => ({ start: vi.fn(), message: vi.fn(), stop: vi.fn() })),
+    select: vi.fn(),
+  };
+});
 
 const gradleTaskOutput = `
 > Task :tasks
@@ -98,34 +110,27 @@ const tasksList = [
   },
 ];
 
-vi.mock('execa', () => {
-  return {sync: vi.fn()};
-});
-
-vi.mock('prompts', () => vi.fn());
-
 describe('promptForTaskSelection', () => {
-  it('should prompt with correct tasks', () => {
-    (execa.sync as Mock).mockReturnValueOnce({stdout: gradleTaskOutput});
-    (prompts as MockedFunction<typeof prompts>).mockReturnValue(
+  it('should prompt with correct tasks', async () => {
+    (spawn as Mock).mockResolvedValueOnce({ stdout: gradleTaskOutput });
+    (
+      prompts.select as MockedFunction<typeof prompts.select>
+    ).mockResolvedValueOnce(
       Promise.resolve({
         task: [],
-      }),
+      })
     );
 
-    const promptSpy = vi.spyOn(tools, 'prompt');
+    const promptSpy = vi.spyOn(prompts, 'select');
 
-    promptForTaskSelection('install', 'sourceDir');
+    await promptForTaskSelection('install', 'sourceDir');
 
     expect(promptSpy).toHaveBeenCalledWith({
-      choices: tasksList.map((t) => ({
-        title: `${chalk.bold(t.task)} - ${t.description}`,
+      options: tasksList.map((t) => ({
+        label: `${chalk.bold(t.task)} - ${t.description}`,
         value: t.task,
       })),
       message: 'Select install task you want to perform',
-      min: 1,
-      name: 'task',
-      type: 'select',
     });
   });
 });
