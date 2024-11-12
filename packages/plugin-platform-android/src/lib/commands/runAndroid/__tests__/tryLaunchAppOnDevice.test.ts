@@ -47,15 +47,23 @@ const actionCategoryFlags = [
   'android.intent.category.LAUNCHER',
 ];
 
+const OLD_ENV = process.env;
+
 beforeEach(() => {
   vi.clearAllMocks();
+  vi.resetModules();
+  process.env = { ...OLD_ENV, ANDROID_HOME: '/android/home' };
+});
+
+afterAll(() => {
+  process.env = OLD_ENV;
 });
 
 test('launches adb shell with intent to launch com.myapp.MainActivity with different appId than packageName on a simulator', async () => {
   await tryLaunchAppOnDevice(device, androidProject, args);
 
   expect(spawn).toHaveBeenCalledWith(
-    'adb',
+    '/android/home/platform-tools/adb',
     [
       ...shellStartCommand,
       '-n',
@@ -74,7 +82,7 @@ test('launches adb shell with intent to launch com.myapp.MainActivity with diffe
   );
 
   expect(spawn).toHaveBeenCalledWith(
-    'adb',
+    '/android/home/platform-tools/adb',
     [
       ...shellStartCommand,
       '-n',
@@ -93,7 +101,7 @@ test('launches adb shell with intent to launch com.myapp.MainActivity with same 
   );
 
   expect(spawn).toHaveBeenCalledWith(
-    'adb',
+    '/android/home/platform-tools/adb',
     [
       ...shellStartCommand,
       '-n',
@@ -108,7 +116,7 @@ test('launches adb shell with intent to launch com.myapp.MainActivity with diffe
   await tryLaunchAppOnDevice(device, androidProject, args);
 
   expect(spawn).toHaveBeenCalledWith(
-    'adb',
+    '/android/home/platform-tools/adb',
     [
       ...shellStartCommand,
       '-n',
@@ -133,7 +141,7 @@ test('launches adb shell with intent to launch fully specified activity with dif
   );
 
   expect(spawn).toHaveBeenCalledWith(
-    'adb',
+    '/android/home/platform-tools/adb',
     [
       ...shellStartCommand,
       '-n',
@@ -151,7 +159,7 @@ test('--appId flag overwrites applicationId setting in androidProject', async ()
   });
 
   expect(spawn).toHaveBeenCalledWith(
-    'adb',
+    '/android/home/platform-tools/adb',
     [
       ...shellStartCommand,
       '-n',
@@ -169,7 +177,7 @@ test('appIdSuffix Staging is appended to applicationId', async () => {
   });
 
   expect(spawn).toHaveBeenCalledWith(
-    'adb',
+    '/android/home/platform-tools/adb',
     [
       ...shellStartCommand,
       '-n',
