@@ -7,7 +7,7 @@
  */
 
 import { execFileSync } from 'child_process';
-import { getAdbPath } from '../buildAndroid/adb.js';
+import { getAdbPath } from './adb.js';
 import { spinner } from '@clack/prompts';
 
 // Runs ADB reverse tcp:8081 tcp:8081 to allow loading the jsbundle from the packager

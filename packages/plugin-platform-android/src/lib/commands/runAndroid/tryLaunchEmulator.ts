@@ -1,6 +1,6 @@
 import os from 'os';
 import spawn from 'nano-spawn';
-import { isEmulatorBooted, getDevices } from '../buildAndroid/adb.js';
+import { isEmulatorBooted, getDevices } from './adb.js';
 import { spinner } from '@clack/prompts';
 
 const emulatorCommand = process.env['ANDROID_HOME']

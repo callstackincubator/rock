@@ -1,5 +1,5 @@
 import { execSync } from 'child_process';
-import { getDevices, getAdbPath } from '../buildAndroid/adb.js';
+import { getDevices, getAdbPath } from './adb.js';
 import { getEmulators } from './tryLaunchEmulator.js';
 import os from 'os';
 

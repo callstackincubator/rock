@@ -1,10 +1,10 @@
 import { spinner } from '@clack/prompts';
 import { getTaskNames } from './buildAndroid/getTaskNames.js';
 import { AndroidProject, Flags } from './runAndroid/index.js';
-import { getCPU, getDevices } from './buildAndroid/adb.js';
+import { getCPU, getDevices } from './runAndroid/adb.js';
 import { logger } from '@react-native-community/cli-tools';
 import spawn from 'nano-spawn';
-import { BuildFlags } from './buildAndroid/index.js';
+import type { BuildFlags } from './buildAndroid/index.js';
 
 export async function runGradle({
   taskType,

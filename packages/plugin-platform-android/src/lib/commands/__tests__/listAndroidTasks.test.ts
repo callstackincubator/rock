@@ -3,7 +3,7 @@ import spawn from 'nano-spawn';
 import {
   parseTasksFromGradleFile,
   promptForTaskSelection,
-} from '../../buildAndroid/listAndroidTasks.js';
+} from '../listAndroidTasks.js';
 import { it, describe, vi, Mock, MockedFunction } from 'vitest';
 import { select } from '@clack/prompts';
 

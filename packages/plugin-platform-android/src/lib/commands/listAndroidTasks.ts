@@ -1,7 +1,7 @@
 import chalk from 'chalk';
 import spawn from 'nano-spawn';
 import { select, spinner } from '@clack/prompts';
-import { getGradleWrapper } from '../runGradle.js';
+import { getGradleWrapper } from './runGradle.js';
 
 type GradleTask = {
   task: string;

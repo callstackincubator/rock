@@ -7,8 +7,8 @@
  */
 import fs from 'fs';
 import { Config } from '@react-native-community/cli-types';
-import { getDevices } from '../buildAndroid/adb.js';
-import { toPascalCase } from '../buildAndroid/toPascalCase.js';
+import { getDevices } from './adb.js';
+import { toPascalCase } from '../toPascalCase.js';
 import { tryRunAdbReverse } from './tryRunAdbReverse.js';
 import tryLaunchAppOnDevice from './tryLaunchAppOnDevice.js';
 import tryInstallAppOnDevice from './tryInstallAppOnDevice.js';
@@ -21,7 +21,7 @@ import { listAndroidDevices, DeviceData } from './listAndroidDevices.js';
 import tryLaunchEmulator from './tryLaunchEmulator.js';
 import path from 'path';
 import { BuildFlags, options } from '../buildAndroid/index.js';
-import { promptForTaskSelection } from '../buildAndroid/listAndroidTasks.js';
+import { promptForTaskSelection } from '../listAndroidTasks.js';
 import { checkUsers, promptForUser } from './listAndroidUsers.js';
 import { runGradle } from '../runGradle.js';
 import { select } from '@clack/prompts';

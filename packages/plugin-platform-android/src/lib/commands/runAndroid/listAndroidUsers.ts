@@ -1,5 +1,5 @@
 import { select } from '@clack/prompts';
-import { listUsers } from '../buildAndroid/adb.js';
+import { listUsers } from './adb.js';
 
 type User = {
   id: string;

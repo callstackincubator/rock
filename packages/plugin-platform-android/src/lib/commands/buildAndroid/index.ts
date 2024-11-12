@@ -1,7 +1,7 @@
 import { Config } from '@react-native-community/cli-types';
 import { getAndroidProject } from '@react-native-community/cli-config-android';
 import { runGradle } from '../runGradle.js';
-import { promptForTaskSelection } from './listAndroidTasks.js';
+import { promptForTaskSelection } from '../listAndroidTasks.js';
 
 export interface BuildFlags {
   mode?: string;
