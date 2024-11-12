@@ -1,12 +1,9 @@
 import { execSync } from 'child_process';
 import { getDevices, getAdbPath } from '../buildAndroid/adb.js';
 import { getEmulators } from './tryLaunchEmulator.js';
-import { toPascalCase } from '../buildAndroid/toPascalCase.js';
 import os from 'os';
-import chalk from 'chalk';
-import { select } from '@clack/prompts';
 
-type DeviceData = {
+export type DeviceData = {
   deviceId: string | undefined;
   readableName: string;
   connected: boolean;
@@ -46,28 +43,7 @@ function getPhoneName(deviceId: string) {
     .trim();
 }
 
-async function promptForDeviceSelection(
-  allDevices: Array<DeviceData>
-): Promise<DeviceData> {
-  if (!allDevices.length) {
-    throw new Error(
-      'No devices and/or emulators connected. Please create emulator with Android Studio or connect Android device.'
-    );
-  }
-  const selected = (await select({
-    message: 'Select the device / emulator you want to use',
-    options: allDevices.map((d) => ({
-      label: `${chalk.bold(`${toPascalCase(d.type)}`)} ${chalk.green(
-        `${d.readableName}`
-      )} (${d.connected ? 'connected' : 'disconnected'})`,
-      value: d,
-    })),
-  })) as DeviceData;
-
-  return selected;
-}
-
-async function listAndroidDevices() {
+export async function listAndroidDevices() {
   const devices = getDevices();
 
   let allDevices: Array<DeviceData> = [];
@@ -109,8 +85,5 @@ async function listAndroidDevices() {
     allDevices = [...allDevices, emulatorData];
   });
 
-  const selectedDevice = await promptForDeviceSelection(allDevices);
-  return selectedDevice;
+  return allDevices;
 }
-
-export default listAndroidDevices;

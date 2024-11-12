@@ -8,6 +8,7 @@
 import fs from 'fs';
 import { Config } from '@react-native-community/cli-types';
 import { getDevices } from '../buildAndroid/adb.js';
+import { toPascalCase } from '../buildAndroid/toPascalCase.js';
 import { tryRunAdbReverse } from './tryRunAdbReverse.js';
 import tryLaunchAppOnDevice from './tryLaunchAppOnDevice.js';
 import tryInstallAppOnDevice from './tryInstallAppOnDevice.js';
@@ -16,13 +17,15 @@ import {
   getDefaultUserTerminal,
 } from '@react-native-community/cli-tools';
 import { getAndroidProject } from '@react-native-community/cli-config-android';
-import listAndroidDevices from './listAndroidDevices.js';
+import { listAndroidDevices, DeviceData } from './listAndroidDevices.js';
 import tryLaunchEmulator from './tryLaunchEmulator.js';
 import path from 'path';
 import { BuildFlags, options } from '../buildAndroid/index.js';
 import { promptForTaskSelection } from '../buildAndroid/listAndroidTasks.js';
 import { checkUsers, promptForUser } from './listAndroidUsers.js';
 import { runGradle } from '../runGradle.js';
+import { select } from '@clack/prompts';
+import chalk from 'chalk';
 
 export interface Flags extends BuildFlags {
   appId: string;
@@ -73,27 +76,11 @@ export async function runAndroid(config: Config, args: Flags) {
   return buildAndRun(args, androidProject);
 }
 
-const defaultPort = 5552;
-async function getAvailableDevicePort(
-  port: number = defaultPort
-): Promise<number> {
-  /**
-   * The default value is 5554 for the first virtual device instance running on your machine. A virtual device normally occupies a pair of adjacent ports: a console port and an adb port. The console of the first virtual device running on a particular machine uses console port 5554 and adb port 5555. Subsequent instances use port numbers increasing by two. For example, 5556/5557, 5558/5559, and so on. The range is 5554 to 5682, allowing for 64 concurrent virtual devices.
-   */
-  const devices = getDevices();
-  if (port > 5682) {
-    throw new Error('Failed to launch emulator...');
-  }
-  if (devices.some((d) => d.includes(port.toString()))) {
-    return await getAvailableDevicePort(port + 2);
-  }
-  return port;
-}
-
 // Builds the app and runs it on a connected emulator / device.
 async function buildAndRun(args: Flags, androidProject: AndroidProject) {
   let deviceId = args.device;
   let selectedTask: string | undefined;
+  let devices = getDevices();
 
   if (args.interactive) {
     selectedTask = await promptForTaskSelection(
@@ -101,7 +88,9 @@ async function buildAndRun(args: Flags, androidProject: AndroidProject) {
       androidProject.sourceDir
     );
 
-    const device = await listAndroidDevices();
+    const allDevices = await listAndroidDevices();
+    const device = await promptForDeviceSelection(allDevices);
+
     if (!device) {
       throw new Error(
         `Failed to select device, please try to run app without "--interactive" flag.`
@@ -110,8 +99,18 @@ async function buildAndRun(args: Flags, androidProject: AndroidProject) {
 
     deviceId = device.deviceId;
 
-    if (args.interactive) {
-      const users = await checkUsers(device.deviceId as string);
+    if (!device.connected) {
+      await tryLaunchEmulator(device.readableName);
+      // list devices once again when emulator is booted
+      const allDevices = await listAndroidDevices();
+      const newDevice =
+        allDevices.find((d) => d.readableName === device.readableName) ??
+        device;
+      deviceId = newDevice.deviceId;
+    }
+
+    if (deviceId) {
+      const users = await checkUsers(deviceId);
       if (users && users.length > 1) {
         const user = await promptForUser(users);
 
@@ -120,37 +119,13 @@ async function buildAndRun(args: Flags, androidProject: AndroidProject) {
         }
       }
     }
-
-    if (!device.connected) {
-      const port = await getAvailableDevicePort();
-      await tryLaunchEmulator(device.readableName, port);
-    }
   }
 
-  let devices = getDevices();
-
   if (devices.length === 0) {
-    const port = await getAvailableDevicePort();
-    await tryLaunchEmulator(undefined, port);
+    await tryLaunchEmulator(undefined);
     devices = getDevices();
   }
 
-  return installAndLaunchOnAllDevices(
-    args,
-    androidProject,
-    selectedTask,
-    devices,
-    deviceId
-  );
-}
-
-async function installAndLaunchOnAllDevices(
-  args: Flags,
-  androidProject: AndroidProject,
-  selectedTask: string | undefined,
-  devices: string[],
-  deviceId: string | undefined
-) {
   if (!args.binaryPath) {
     await runGradle({
       taskType: 'install',
@@ -160,22 +135,46 @@ async function installAndLaunchOnAllDevices(
     });
   }
 
-  const devicesToInstallTo = deviceId ? [deviceId] : devices;
+  return installAndLaunchOnAllDevices(
+    args,
+    androidProject,
+    selectedTask,
+    deviceId ? [deviceId] : devices
+  );
+}
 
-  devicesToInstallTo.forEach(async (device) => {
-    await installAndLaunchOnDevice(device, androidProject, args, selectedTask);
+async function installAndLaunchOnAllDevices(
+  args: Flags,
+  androidProject: AndroidProject,
+  selectedTask: string | undefined,
+  devices: string[]
+) {
+  return devices.forEach(async (device) => {
+    tryRunAdbReverse(args.port, device);
+    await tryInstallAppOnDevice(device, androidProject, args, selectedTask);
+    await tryLaunchAppOnDevice(device, androidProject, args);
   });
 }
 
-async function installAndLaunchOnDevice(
-  device: string,
-  androidProject: AndroidProject,
-  args: Flags,
-  selectedTask?: string
-) {
-  tryRunAdbReverse(args.port, device);
-  await tryInstallAppOnDevice(device, androidProject, args, selectedTask);
-  await tryLaunchAppOnDevice(device, androidProject, args);
+async function promptForDeviceSelection(
+  allDevices: Array<DeviceData>
+): Promise<DeviceData> {
+  if (!allDevices.length) {
+    throw new Error(
+      'No devices and/or emulators connected. Please create emulator with Android Studio or connect Android device.'
+    );
+  }
+  const selected = (await select({
+    message: 'Select the device / emulator you want to use',
+    options: allDevices.map((d) => ({
+      label: `${chalk.bold(`${toPascalCase(d.type)}`)} ${chalk.green(
+        `${d.readableName}`
+      )} (${d.connected ? 'connected' : 'disconnected'})`,
+      value: d,
+    })),
+  })) as DeviceData;
+
+  return selected;
 }
 
 export const runOptions = [

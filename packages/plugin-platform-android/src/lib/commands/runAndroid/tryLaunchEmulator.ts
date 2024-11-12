@@ -24,19 +24,15 @@ export const getEmulators = async () => {
 
 const launchEmulator = async (
   emulatorName: string,
-  port: number | undefined,
+  port: number,
   loader: ReturnType<typeof spinner>
 ): Promise<boolean> => {
   const manualCommand = `${emulatorCommand} @${emulatorName}`;
 
-  const cp = spawn(
-    emulatorCommand,
-    port ? [`@${emulatorName}`, '-port', `${port}`] : [`@${emulatorName}`],
-    {
-      detached: true,
-      stdio: 'ignore',
-    }
-  );
+  const cp = spawn(emulatorCommand, [`@${emulatorName}`, '-port', `${port}`], {
+    detached: true,
+    stdio: 'ignore',
+  });
   (await cp.nodeChildProcess).unref();
   const timeout = 120;
 
@@ -45,16 +41,13 @@ const launchEmulator = async (
       const devices = getDevices();
       const connected = port
         ? devices.find((d) => d.includes(`${port}`))
-        : devices.length > 0;
+        : false;
 
       if (connected) {
-        loader.message(`Emulator "${emulatorName}" is connected. Waiting for boot`);
-        if (
-          isEmulatorBooted(
-            // @todo handle multiple devices if necessary
-            typeof connected === 'string' ? connected : undefined
-          )
-        ) {
+        loader.message(
+          `Emulator "${emulatorName}" is connected. Waiting for boot`
+        );
+        if (isEmulatorBooted(connected)) {
           cleanup();
           resolve(true);
         }
@@ -84,7 +77,25 @@ const launchEmulator = async (
   });
 };
 
-export default async function tryLaunchEmulator(name?: string, port?: number) {
+const defaultPort = 5552;
+async function getAvailableDevicePort(
+  port: number = defaultPort
+): Promise<number> {
+  /**
+   * The default value is 5554 for the first virtual device instance running on your machine. A virtual device normally occupies a pair of adjacent ports: a console port and an adb port. The console of the first virtual device running on a particular machine uses console port 5554 and adb port 5555. Subsequent instances use port numbers increasing by two. For example, 5556/5557, 5558/5559, and so on. The range is 5554 to 5682, allowing for 64 concurrent virtual devices.
+   */
+  const devices = getDevices();
+  if (port > 5682) {
+    throw new Error('Failed to launch emulator...');
+  }
+  if (devices.some((d) => d.includes(port.toString()))) {
+    return await getAvailableDevicePort(port + 2);
+  }
+  return port;
+}
+
+export default async function tryLaunchEmulator(name: string | undefined) {
+  const port = await getAvailableDevicePort();
   const loader = spinner();
   loader.start(`Looking for available emulators"`);
   const emulators = await getEmulators();
