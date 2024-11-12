@@ -17,6 +17,18 @@ vi.mock('@clack/prompts', () => {
   };
 });
 
+const OLD_ENV = process.env;
+
+beforeEach(() => {
+  vi.clearAllMocks();
+  vi.resetModules();
+  process.env = { ...OLD_ENV, ANDROID_HOME: '/android/home' };
+});
+
+afterAll(() => {
+  process.env = OLD_ENV;
+});
+
 const device = 'emulator-5554';
 const args: Flags = {
   activeArchOnly: false,
@@ -46,18 +58,6 @@ const actionCategoryFlags = [
   '-c',
   'android.intent.category.LAUNCHER',
 ];
-
-const OLD_ENV = process.env;
-
-beforeEach(() => {
-  vi.clearAllMocks();
-  vi.resetModules();
-  process.env = { ...OLD_ENV, ANDROID_HOME: '/android/home' };
-});
-
-afterAll(() => {
-  process.env = OLD_ENV;
-});
 
 test('launches adb shell with intent to launch com.myapp.MainActivity with different appId than packageName on a simulator', async () => {
   await tryLaunchAppOnDevice(device, androidProject, args);
