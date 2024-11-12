@@ -13,6 +13,8 @@ export default [
             '{projectRoot}/eslint.config.{js,cjs,mjs}',
             '{projectRoot}/vite.config.{js,ts,mjs,mts}',
           ],
+          // TODO: @nx/dependency-checks incorrectly reports unused dependencies
+          checkObsoleteDependencies: false,
         },
       ],
     },

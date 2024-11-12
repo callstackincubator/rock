@@ -11,7 +11,6 @@
     "@react-native-community/cli-tools": "^15.1.2",
     "chalk": "^5.3.0",
     "nano-spawn": "^0.2.0",
-    "rslog": "^1.2.3",
     "tslib": "^2.3.0"
   },
   "devDependencies": {
