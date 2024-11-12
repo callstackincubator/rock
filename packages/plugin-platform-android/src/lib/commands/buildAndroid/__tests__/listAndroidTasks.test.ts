@@ -1,11 +1,11 @@
 import chalk from 'chalk';
 import spawn from 'nano-spawn';
-import * as prompts from '@clack/prompts';
 import {
   parseTasksFromGradleFile,
   promptForTaskSelection,
 } from '../../buildAndroid/listAndroidTasks.js';
 import { it, describe, vi, Mock, MockedFunction } from 'vitest';
+import { select } from '@clack/prompts';
 
 vi.mock('nano-spawn', () => {
   return {
@@ -113,19 +113,15 @@ const tasksList = [
 describe('promptForTaskSelection', () => {
   it('should prompt with correct tasks', async () => {
     (spawn as Mock).mockResolvedValueOnce({ stdout: gradleTaskOutput });
-    (
-      prompts.select as MockedFunction<typeof prompts.select>
-    ).mockResolvedValueOnce(
+    (select as MockedFunction<typeof select>).mockResolvedValueOnce(
       Promise.resolve({
         task: [],
       })
     );
 
-    const promptSpy = vi.spyOn(prompts, 'select');
-
     await promptForTaskSelection('install', 'sourceDir');
 
-    expect(promptSpy).toHaveBeenCalledWith({
+    expect(select).toHaveBeenCalledWith({
       options: tasksList.map((t) => ({
         label: `${chalk.bold(t.task)} - ${t.description}`,
         value: t.task,
