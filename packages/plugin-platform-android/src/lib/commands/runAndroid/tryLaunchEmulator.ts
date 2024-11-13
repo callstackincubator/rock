@@ -94,7 +94,7 @@ async function getAvailableDevicePort(
   return port;
 }
 
-export default async function tryLaunchEmulator(name: string | undefined) {
+export default async function tryLaunchEmulator(name?: string) {
   const port = await getAvailableDevicePort();
   const loader = spinner();
   loader.start(`Looking for available emulators"`);

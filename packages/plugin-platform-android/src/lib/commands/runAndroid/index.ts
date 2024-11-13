@@ -90,7 +90,7 @@ export async function runAndroid(config: Config, args: Flags) {
   let devices = getDevices();
 
   if (devices.length === 0) {
-    await tryLaunchEmulator(undefined);
+    await tryLaunchEmulator();
     devices = getDevices();
   }
 
