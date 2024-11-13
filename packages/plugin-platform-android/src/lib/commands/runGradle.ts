@@ -2,7 +2,6 @@ import { spinner } from '@clack/prompts';
 import { getTaskNames } from './buildAndroid/getTaskNames.js';
 import { AndroidProject, Flags } from './runAndroid/index.js';
 import { getCPU, getDevices } from './runAndroid/adb.js';
-import { logger } from '@react-native-community/cli-tools';
 import spawn from 'nano-spawn';
 import type { BuildFlags } from './buildAndroid/index.js';
 
@@ -18,7 +17,8 @@ export async function runGradle({
   args: BuildFlags | Flags;
 }) {
   if (args.tasks && args.mode) {
-    logger.warn(
+    // @todo replace with logger
+    console.warn(
       'Both "tasks" and "mode" parameters were passed to "build" command. Using "tasks" for building the app.'
     );
   }
@@ -49,7 +49,6 @@ export async function runGradle({
       );
 
     if (architectures.length > 0) {
-      logger.info(`Detected architectures ${architectures.join(', ')}`);
       gradleArgs.push('-PreactNativeArchitectures=' + architectures.join(','));
     }
   }

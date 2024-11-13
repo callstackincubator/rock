@@ -12,7 +12,6 @@ import { toPascalCase } from '../toPascalCase.js';
 import { tryRunAdbReverse } from './tryRunAdbReverse.js';
 import tryLaunchAppOnDevice from './tryLaunchAppOnDevice.js';
 import tryInstallAppOnDevice from './tryInstallAppOnDevice.js';
-import { link } from '@react-native-community/cli-tools';
 import { getAndroidProject } from '@react-native-community/cli-config-android';
 import { listAndroidDevices, DeviceData } from './listAndroidDevices.js';
 import tryLaunchEmulator from './tryLaunchEmulator.js';
@@ -40,12 +39,6 @@ export type AndroidProject = NonNullable<Config['project']['android']>;
  * Starts the app on a connected Android emulator or device.
  */
 export async function runAndroid(config: Config, args: Flags) {
-  link.setPlatform('android');
-
-  if (config.reactNativeVersion !== 'unknown') {
-    link.setVersion(config.reactNativeVersion);
-  }
-
   if (args.binaryPath) {
     if (args.tasks) {
       throw new Error(
