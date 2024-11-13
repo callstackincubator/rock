@@ -39,36 +39,14 @@ export type AndroidProject = NonNullable<Config['project']['android']>;
  * Starts the app on a connected Android emulator or device.
  */
 export async function runAndroid(config: Config, args: Flags) {
-  if (args.binaryPath) {
-    if (args.tasks) {
-      throw new Error(
-        'binary-path and tasks were specified, but they are not compatible. Specify only one.'
-      );
-    }
-
-    args.binaryPath = path.isAbsolute(args.binaryPath)
-      ? args.binaryPath
-      : path.join(config.root, args.binaryPath);
-
-    if (args.binaryPath && !fs.existsSync(args.binaryPath)) {
-      throw new Error('binary-path was specified, but the file was not found.');
-    }
-  }
-
   const androidProject = getAndroidProject(config);
 
   if (args.mainActivity) {
     androidProject.mainActivity = args.mainActivity;
   }
 
-  return buildAndRun(args, androidProject);
-}
-
-// Builds the app and runs it on a connected emulator / device.
-async function buildAndRun(args: Flags, androidProject: AndroidProject) {
   let deviceId = args.device;
   let selectedTask: string | undefined;
-  let devices = getDevices();
 
   if (args.interactive) {
     selectedTask = await promptForTaskSelection(
@@ -109,12 +87,28 @@ async function buildAndRun(args: Flags, androidProject: AndroidProject) {
     }
   }
 
+  let devices = getDevices();
+
   if (devices.length === 0) {
     await tryLaunchEmulator(undefined);
     devices = getDevices();
   }
 
-  if (!args.binaryPath) {
+  if (args.binaryPath) {
+    if (args.tasks) {
+      throw new Error(
+        'binary-path and tasks were specified, but they are not compatible. Specify only one.'
+      );
+    }
+
+    args.binaryPath = path.isAbsolute(args.binaryPath)
+      ? args.binaryPath
+      : path.join(config.root, args.binaryPath);
+
+    if (args.binaryPath && !fs.existsSync(args.binaryPath)) {
+      throw new Error('binary-path was specified, but the file was not found.');
+    }
+  } else {
     await runGradle({
       taskType: 'install',
       androidProject,
@@ -123,7 +117,7 @@ async function buildAndRun(args: Flags, androidProject: AndroidProject) {
     });
   }
 
-  return installAndLaunchOnAllDevices(
+  await installAndLaunchOnAllDevices(
     args,
     androidProject,
     selectedTask,
