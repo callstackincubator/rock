@@ -32,9 +32,7 @@ afterAll(() => {
 const device = 'emulator-5554';
 const args: Flags = {
   activeArchOnly: false,
-  packager: true,
   port: '8081',
-  terminal: 'iTerm.app',
   appId: '',
   appIdSuffix: '',
 };

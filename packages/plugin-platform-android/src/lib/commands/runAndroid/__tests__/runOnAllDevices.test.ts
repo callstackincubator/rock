@@ -52,9 +52,7 @@ describe('--appFolder', () => {
     mode: 'debug',
     appIdSuffix: '',
     mainActivity: 'MainActivity',
-    packager: true,
     port: '8081',
-    terminal: 'iTerm2',
     activeArchOnly: false,
   };
   const androidProject: AndroidProjectConfig = {

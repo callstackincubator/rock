@@ -12,10 +12,7 @@ import { toPascalCase } from '../toPascalCase.js';
 import { tryRunAdbReverse } from './tryRunAdbReverse.js';
 import tryLaunchAppOnDevice from './tryLaunchAppOnDevice.js';
 import tryInstallAppOnDevice from './tryInstallAppOnDevice.js';
-import {
-  link,
-  getDefaultUserTerminal,
-} from '@react-native-community/cli-tools';
+import { link } from '@react-native-community/cli-tools';
 import { getAndroidProject } from '@react-native-community/cli-config-android';
 import { listAndroidDevices, DeviceData } from './listAndroidDevices.js';
 import tryLaunchEmulator from './tryLaunchEmulator.js';
@@ -32,8 +29,6 @@ export interface Flags extends BuildFlags {
   appIdSuffix: string;
   mainActivity?: string;
   port: string;
-  terminal?: string;
-  packager?: boolean;
   device?: string;
   binaryPath?: string;
   user?: string;
@@ -180,19 +175,9 @@ async function promptForDeviceSelection(
 export const runOptions = [
   ...options,
   {
-    name: '--no-packager',
-    description: 'Do not launch packager while running the app',
-  },
-  {
     name: '--port <number>',
     description: 'Part for packager.',
     default: process.env['RCT_METRO_PORT'] || '8081',
-  },
-  {
-    name: '--terminal <string>',
-    description:
-      'Launches the Metro Bundler in a new window using the specified terminal path.',
-    default: getDefaultUserTerminal(),
   },
   {
     name: '--appId <string>',
