@@ -203,11 +203,3 @@ export const runOptions = [
     description: 'Id of the User Profile you want to install the app on.',
   },
 ];
-
-export default {
-  name: 'run-android',
-  description:
-    'builds your app and starts it on a connected Android emulator or device',
-  func: runAndroid,
-  options: runOptions,
-};

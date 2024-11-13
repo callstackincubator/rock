@@ -53,10 +53,3 @@ export const options = [
       'Explicitly select build type and flavour to use before running a build',
   },
 ];
-
-export default {
-  name: 'build-android',
-  description: 'builds your app',
-  func: buildAndroid,
-  options,
-};

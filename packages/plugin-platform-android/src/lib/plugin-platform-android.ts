@@ -10,7 +10,7 @@ export const pluginPlatformAndroid =
   (api: PluginApi<Flags>): PluginOutput => {
     api.registerCommand({
       name: 'build:android',
-      description: 'Build android',
+      description: 'Builds your app for Android platform.',
       action: async (args) => {
         try {
           const config = await loadConfigAsync({ selectedPlatform: 'android' });
@@ -24,7 +24,7 @@ export const pluginPlatformAndroid =
 
     api.registerCommand({
       name: 'run:android',
-      description: 'Run android',
+      description: 'Builds your app and starts it on a connected Android emulator or a device.',
       action: async (args) => {
         const config = await loadConfigAsync({ selectedPlatform: 'android' });
         await runAndroid(config, { ...pluginConfig, ...args });
