@@ -171,9 +171,6 @@ importers:
       '@clack/prompts':
         specifier: ^0.7.0
         version: 0.7.0
-      '@react-native-community/cli-config':
-        specifier: 15.1.2
-        version: 15.1.2(typescript@5.5.4)
       '@react-native-community/cli-config-android':
         specifier: 15.1.2
         version: 15.1.2

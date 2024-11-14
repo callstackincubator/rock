@@ -9,6 +9,7 @@ export type PluginOutput = {
 
 export type PluginApi<Args> = {
   registerCommand: (command: CommandType<Args>) => void;
+  getProjectRoot: () => string;
 };
 
 type PluginType<Args> = (args: PluginApi<Args>) => PluginOutput;
@@ -29,6 +30,7 @@ type CommandType<Args> = {
 };
 
 type ConfigType<Args> = {
+  root?: string;
   plugins?: Record<string, PluginType<Args>>;
   platforms?: Record<string, PluginType<Args>>;
   commands?: Array<CommandType<Args>>;
@@ -68,10 +70,15 @@ export async function getConfig<Args>(
 ): Promise<ConfigOutput<Args>> {
   const config = await importUp<ConfigType<Args>>(dir, 'rnef.config');
 
+  if (!config.root) {
+    config.root = process.cwd();
+  }
+
   const api = {
     registerCommand: (command: CommandType<Args>) => {
       config.commands = [...(config.commands || []), command];
     },
+    getProjectRoot: () => config.root as string,
   };
 
   if (config.plugins) {

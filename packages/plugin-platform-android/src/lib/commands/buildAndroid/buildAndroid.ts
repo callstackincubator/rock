@@ -1,5 +1,4 @@
-import { Config } from '@react-native-community/cli-types';
-import { getAndroidProject } from '@react-native-community/cli-config-android';
+import { AndroidProjectConfig } from '@react-native-community/cli-types';
 import { runGradle } from '../runGradle.js';
 import { promptForTaskSelection } from '../listAndroidTasks.js';
 
@@ -11,8 +10,10 @@ export interface BuildFlags {
   interactive?: boolean;
 }
 
-export async function buildAndroid(config: Config, args: BuildFlags) {
-  const androidProject = getAndroidProject(config);
+export async function buildAndroid(
+  androidProject: AndroidProjectConfig,
+  args: BuildFlags
+) {
   let selectedTask: string | undefined;
 
   if (args.interactive) {

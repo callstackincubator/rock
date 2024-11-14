@@ -1,12 +1,14 @@
 import fs from 'fs';
-import { Config } from '@react-native-community/cli-types';
+import {
+  AndroidProjectConfig,
+  Config,
+} from '@react-native-community/cli-types';
 import { checkCancelPrompt } from '@callstack/rnef-tools';
 import { getDevices } from './adb.js';
 import { toPascalCase } from '../toPascalCase.js';
 import { tryRunAdbReverse } from './tryRunAdbReverse.js';
 import tryLaunchAppOnDevice from './tryLaunchAppOnDevice.js';
 import tryInstallAppOnDevice from './tryInstallAppOnDevice.js';
-import { getAndroidProject } from '@react-native-community/cli-config-android';
 import { listAndroidDevices, DeviceData } from './listAndroidDevices.js';
 import tryLaunchEmulator from './tryLaunchEmulator.js';
 import path from 'path';
@@ -32,9 +34,11 @@ export type AndroidProject = NonNullable<Config['project']['android']>;
 /**
  * Starts the app on a connected Android emulator or device.
  */
-export async function runAndroid(config: Config, args: Flags) {
-  const androidProject = getAndroidProject(config);
-
+export async function runAndroid(
+  androidProject: AndroidProjectConfig,
+  args: Flags,
+  projectRoot: string
+) {
   if (args.mainActivity) {
     androidProject.mainActivity = args.mainActivity;
   }
@@ -94,7 +98,7 @@ export async function runAndroid(config: Config, args: Flags) {
 
     args.binaryPath = path.isAbsolute(args.binaryPath)
       ? args.binaryPath
-      : path.join(config.root, args.binaryPath);
+      : path.join(projectRoot, args.binaryPath);
 
     if (args.binaryPath && !fs.existsSync(args.binaryPath)) {
       throw new Error('binary-path was specified, but the file was not found.');

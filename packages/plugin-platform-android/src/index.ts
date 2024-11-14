@@ -1,1 +1,1 @@
-export * from './lib/plugin-platform-android.js';
+export * from './lib/pluginPlatformAndroid.js';
