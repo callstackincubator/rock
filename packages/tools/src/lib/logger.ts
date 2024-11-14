@@ -2,13 +2,12 @@ import color from 'picocolors';
 import isUnicodeSupported from 'is-unicode-supported';
 
 const unicode = isUnicodeSupported();
-const s = (c: string, fallback: string) => (unicode ? c : fallback);
+const unicodeWithFallback = (c: string, fallback: string) => (unicode ? c : fallback);
 
-const INFO_SYMBOL = s('●', '•');
-const SUCCESS_SYMBOL = s('◆', '*');
-const WARN_SYMBOL = s('▲', '!');
-const ERROR_SYMBOL = s('■', 'x');
-
+const INFO_SYMBOL = unicodeWithFallback('●', '•');
+const SUCCESS_SYMBOL = unicodeWithFallback('◆', '*');
+const WARN_SYMBOL = unicodeWithFallback('▲', '!');
+const ERROR_SYMBOL = unicodeWithFallback('■', 'x');
 const SEPARATOR = ', ';
 
 let verbose = false;
