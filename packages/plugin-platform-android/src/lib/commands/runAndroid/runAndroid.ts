@@ -104,33 +104,25 @@ export async function runAndroid(
       throw new Error('binary-path was specified, but the file was not found.');
     }
   } else {
+    // @todo parallelize building gradle and launching emulator once @clack/prompts release 0.8.0
     await runGradle({
-      taskType: 'install',
+      taskType: deviceId ? 'assemble' : 'install',
       androidProject,
       args,
       selectedTask,
     });
   }
 
-  await installAndLaunchOnAllDevices(
-    args,
-    androidProject,
-    selectedTask,
-    deviceId ? [deviceId] : devices
-  );
-}
-
-async function installAndLaunchOnAllDevices(
-  args: Flags,
-  androidProject: AndroidProject,
-  selectedTask: string | undefined,
-  devices: string[]
-) {
-  return devices.forEach(async (device) => {
-    tryRunAdbReverse(args.port, device);
-    await tryInstallAppOnDevice(device, androidProject, args, selectedTask);
-    await tryLaunchAppOnDevice(device, androidProject, args);
-  });
+  if (deviceId) {
+    tryRunAdbReverse(args.port, deviceId);
+    await tryInstallAppOnDevice(deviceId, androidProject, args, selectedTask);
+    await tryLaunchAppOnDevice(deviceId, androidProject, args);
+  } else {
+    devices.forEach(async (device) => {
+      tryRunAdbReverse(args.port, device);
+      await tryLaunchAppOnDevice(device, androidProject, args);
+    });
+  }
 }
 
 async function promptForDeviceSelection(

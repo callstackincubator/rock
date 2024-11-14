@@ -1,5 +1,5 @@
 import { spinner } from '@clack/prompts';
-import { logger } from '@callstack/rnef-tools';
+import { logger, spinnerMock } from '@callstack/rnef-tools';
 import { getTaskNames } from './buildAndroid/getTaskNames.js';
 import { AndroidProject, Flags } from './runAndroid/runAndroid.js';
 import { getCPU, getDevices } from './runAndroid/adb.js';
@@ -12,7 +12,7 @@ export async function runGradle({
   selectedTask,
   args,
 }: {
-  taskType: 'install' | 'build';
+  taskType: 'install' | 'bundle' | 'assemble';
   androidProject: AndroidProject;
   selectedTask?: string;
   args: BuildFlags | Flags;
@@ -54,12 +54,12 @@ export async function runGradle({
   }
 
   const gradleWrapper = getGradleWrapper();
-  const loader = spinner();
+  const loader = logger.isVerbose() ? spinnerMock() : spinner();
 
   try {
     loader.start('Building the app with Gradle');
     await spawn(gradleWrapper, gradleArgs, {
-      stdio: ['ignore', 'ignore', 'inherit'],
+      stdio: logger.isVerbose() ? 'inherit' : ['ignore', 'ignore', 'inherit'],
       cwd: androidProject.sourceDir,
     });
     loader.stop('Build successful.');

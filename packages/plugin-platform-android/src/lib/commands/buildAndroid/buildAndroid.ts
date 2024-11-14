@@ -18,12 +18,12 @@ export async function buildAndroid(
 
   if (args.interactive) {
     selectedTask = await promptForTaskSelection(
-      'build',
+      'bundle',
       androidProject.sourceDir
     );
   }
 
-  return runGradle({ taskType: 'build', androidProject, args, selectedTask });
+  return runGradle({ taskType: 'bundle', androidProject, args, selectedTask });
 }
 
 export const options = [

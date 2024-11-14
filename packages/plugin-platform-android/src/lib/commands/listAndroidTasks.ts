@@ -10,12 +10,14 @@ type GradleTask = {
 };
 
 export const parseTasksFromGradleFile = (
-  taskType: 'install' | 'build',
+  taskType: 'install' | 'bundle' | 'assemble',
   text: string
 ): Array<GradleTask> => {
   const instalTasks: Array<GradleTask> = [];
   const taskRegex = new RegExp(
-    taskType === 'build' ? '^assemble|^bundle' : '^install'
+    taskType === 'bundle' || taskType === 'assemble'
+      ? '^assemble|^bundle'
+      : '^install'
   );
   text.split('\n').forEach((line) => {
     if (taskRegex.test(line.trim()) && /(?!.*?Test)^.*$/.test(line.trim())) {
@@ -30,7 +32,7 @@ export const parseTasksFromGradleFile = (
 };
 
 export const getGradleTasks = async (
-  taskType: 'install' | 'build',
+  taskType: 'install' | 'bundle' | 'assemble',
   sourceDir: string
 ) => {
   const loader = spinner();
@@ -39,7 +41,7 @@ export const getGradleTasks = async (
   try {
     const { stdout } = await spawn(
       gradleWrapper,
-      ['tasks', '--group', taskType],
+      ['tasks', '--group', taskType === 'install' ? 'install' : 'build'],
       { cwd: sourceDir }
     );
     const tasks = parseTasksFromGradleFile(taskType, stdout);
@@ -52,7 +54,7 @@ export const getGradleTasks = async (
 };
 
 export const promptForTaskSelection = async (
-  taskType: 'install' | 'build',
+  taskType: 'install' | 'bundle' | 'assemble',
   sourceDir: string
 ): Promise<string> => {
   const tasks = await getGradleTasks(taskType, sourceDir);

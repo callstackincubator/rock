@@ -11,10 +11,7 @@ async function tryInstallAppOnDevice(
   selectedTask?: string
 ) {
   const loader = spinner();
-
-  // "app" is usually the default value for Android apps with only 1 app
   const { appName, sourceDir } = androidProject;
-
   const defaultVariant = (args.mode || 'debug').toLowerCase();
 
   // handle if selected task from interactive mode includes build flavour as well, eg. installProductionDebug should create ['production','debug'] array
