@@ -17,6 +17,7 @@ vi.mock('@clack/prompts', () => {
   return {
     spinner: vi.fn(() => ({ start: vi.fn(), message: vi.fn(), stop: vi.fn() })),
     select: vi.fn(),
+    isCancel: vi.fn(() => false),
   };
 });
 
@@ -137,8 +138,8 @@ describe('parseTasksFromGradleFile', () => {
 
     expect(tasks).toEqual(tasksList);
   });
-  it('should correctly parse gradle tasks output for "build" taskType', () => {
-    const buildTasks = parseTasksFromGradleFile('build', gradleTaskOutput);
+  it('should correctly parse gradle tasks output for "assemble" taskType', () => {
+    const buildTasks = parseTasksFromGradleFile('assemble', gradleTaskOutput);
 
     expect(buildTasks).toContainEqual({
       description: 'Assemble main outputs for all the variants.',
@@ -148,6 +149,14 @@ describe('parseTasksFromGradleFile', () => {
     expect(buildTasks).not.toContainEqual({
       description: 'Assembles all the Test applications.',
       task: 'assembleAndroidTest',
+    });
+  });
+  it('should correctly parse gradle tasks output for "bundle" taskType', () => {
+    const buildTasks = parseTasksFromGradleFile('bundle', gradleTaskOutput);
+
+    expect(buildTasks).toContainEqual({
+      description: 'Assemble bundles for all the variants.',
+      task: 'bundle',
     });
   });
 });

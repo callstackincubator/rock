@@ -1,8 +1,5 @@
 import { vi, test, Mock, MockedFunction } from 'vitest';
-import {
-  AndroidProjectConfig,
-  Config,
-} from '@react-native-community/cli-types';
+import { AndroidProjectConfig } from '@react-native-community/cli-types';
 import spawn from 'nano-spawn';
 import { select } from '@clack/prompts';
 import { buildAndroid } from '../buildAndroid.js';
@@ -25,6 +22,7 @@ vi.mock('@clack/prompts', () => {
       message: vi.fn(),
     })),
     select: vi.fn(),
+    isCancel: vi.fn(() => false),
   };
 });
 
@@ -62,9 +60,6 @@ const androidProject: AndroidProjectConfig = {
   mainActivity: '.MainActivity',
   assets: [],
 };
-const config = {
-  project: { android: androidProject },
-} as unknown as Config;
 
 beforeEach(() => {
   vi.resetModules();
@@ -73,7 +68,7 @@ beforeEach(() => {
 
 test('buildAndroid runs gradle build with correct configuration for debug', async () => {
   (spawn as Mock).mockResolvedValueOnce({ stdout: 'output' });
-  await buildAndroid(config, args);
+  await buildAndroid(androidProject, args);
 
   expect(spawn as Mock).toBeCalledWith(
     './gradlew',
@@ -88,7 +83,7 @@ test('buildAndroid fails gracefully when gradle errors', async () => {
   (spawn as Mock).mockRejectedValueOnce({ stderr: 'gradle error' });
 
   try {
-    await buildAndroid(config, args);
+    await buildAndroid(androidProject, args);
   } catch (e) {
     expect(e).toMatchObject(Error('process.exit unexpectedly called with "1"'));
   }
@@ -116,7 +111,7 @@ test('buildAndroid runs selected "bundleRelease" task in interactive mode', asyn
     Promise.resolve('bundleRelease')
   );
 
-  await buildAndroid(config, { ...args, interactive: true });
+  await buildAndroid(androidProject, { ...args, interactive: true });
 
   expect(spawn as Mock).toHaveBeenNthCalledWith(
     1,

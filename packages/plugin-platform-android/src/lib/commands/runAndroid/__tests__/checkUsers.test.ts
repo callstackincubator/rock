@@ -17,6 +17,7 @@ vi.mock('nano-spawn', () => {
 vi.mock('@clack/prompts', () => {
   return {
     spinner: vi.fn(() => ({ start: vi.fn(), message: vi.fn(), stop: vi.fn() })),
+    isCancel: vi.fn(() => false),
   };
 });
 
