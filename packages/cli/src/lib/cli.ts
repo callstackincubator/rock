@@ -1,6 +1,7 @@
 import { Command } from 'commander';
 import { getConfig } from '@callstack/rnef-config';
 import { createRequire } from 'module';
+import { logger } from '@callstack/rnef-tools';
 import { logConfig } from '../config.js';
 
 const require = createRequire(import.meta.url);
@@ -12,6 +13,7 @@ const program = new Command();
 program
   .name('rnef')
   .description('React Native Enterprise Framework CLI.')
+  .option('--verbose', 'enable verbose logging')
   .version(version);
 
 type CliOptions = {
@@ -21,6 +23,10 @@ type CliOptions = {
 
 export const cli = async ({ cwd, argv }: CliOptions = {}) => {
   const config = await getConfig(cwd);
+
+  if (argv) {
+    logger.setVerbose(argv.includes('--verbose'));
+  }
 
   program
     .command('config')
@@ -37,7 +43,7 @@ export const cli = async ({ cwd, argv }: CliOptions = {}) => {
           command.action(program.args);
         } catch (e) {
           // TODO handle nicely
-          console.log('Error: ', e);
+          logger.error(e as string);
           process.exit(1);
         }
       });

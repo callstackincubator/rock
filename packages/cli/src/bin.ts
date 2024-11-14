@@ -2,4 +2,7 @@
 
 import { cli } from './lib/cli.js';
 
-cli();
+cli({
+  argv: process.argv,
+  cwd: process.cwd(),
+});
