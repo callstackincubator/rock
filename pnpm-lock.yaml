@@ -29,7 +29,7 @@ importers:
         version: 19.8.3(@babel/traverse@7.25.6)(@swc-node/register@1.9.2(@swc/core@1.5.29(@swc/helpers@0.5.13))(@swc/types@0.1.12)(typescript@5.5.4))(@swc/core@1.5.29(@swc/helpers@0.5.13))(@types/node@18.16.9)(nx@19.8.0(@swc-node/register@1.9.2(@swc/core@1.5.29(@swc/helpers@0.5.13))(@swc/types@0.1.12)(typescript@5.5.4))(@swc/core@1.5.29(@swc/helpers@0.5.13)))(typescript@5.5.4)(verdaccio@5.32.2(typanion@3.14.0))
       '@nx/vite':
         specifier: ^19.8.3
-        version: 19.8.3(@babel/traverse@7.25.6)(@swc-node/register@1.9.2(@swc/core@1.5.29(@swc/helpers@0.5.13))(@swc/types@0.1.12)(typescript@5.5.4))(@swc/core@1.5.29(@swc/helpers@0.5.13))(@types/node@18.16.9)(nx@19.8.0(@swc-node/register@1.9.2(@swc/core@1.5.29(@swc/helpers@0.5.13))(@swc/types@0.1.12)(typescript@5.5.4))(@swc/core@1.5.29(@swc/helpers@0.5.13)))(typescript@5.5.4)(verdaccio@5.32.2(typanion@3.14.0))(vite@5.4.8(@types/node@18.16.9))(vitest@2.1.2)
+        version: 19.8.3(@babel/traverse@7.25.6)(@swc-node/register@1.9.2(@swc/core@1.5.29(@swc/helpers@0.5.13))(@swc/types@0.1.12)(typescript@5.5.4))(@swc/core@1.5.29(@swc/helpers@0.5.13))(@types/node@18.16.9)(nx@19.8.0(@swc-node/register@1.9.2(@swc/core@1.5.29(@swc/helpers@0.5.13))(@swc/types@0.1.12)(typescript@5.5.4))(@swc/core@1.5.29(@swc/helpers@0.5.13)))(typescript@5.5.4)(verdaccio@5.32.2(typanion@3.14.0))(vite@5.4.8(@types/node@18.16.9))(vitest@2.1.2(@types/node@18.16.9)(@vitest/ui@2.1.2))
       '@nx/web':
         specifier: 19.8.3
         version: 19.8.3(@babel/traverse@7.25.6)(@swc-node/register@1.9.2(@swc/core@1.5.29(@swc/helpers@0.5.13))(@swc/types@0.1.12)(typescript@5.5.4))(@swc/core@1.5.29(@swc/helpers@0.5.13))(@types/node@18.16.9)(nx@19.8.0(@swc-node/register@1.9.2(@swc/core@1.5.29(@swc/helpers@0.5.13))(@swc/types@0.1.12)(typescript@5.5.4))(@swc/core@1.5.29(@swc/helpers@0.5.13)))(typescript@5.5.4)(verdaccio@5.32.2(typanion@3.14.0))
@@ -47,7 +47,7 @@ importers:
         version: 18.16.9
       '@vitest/coverage-v8':
         specifier: ^2.1.2
-        version: 2.1.2(vitest@2.1.2)
+        version: 2.1.2(vitest@2.1.2(@types/node@18.16.9)(@vitest/ui@2.1.2))
       '@vitest/ui':
         specifier: ^2.1.2
         version: 2.1.2(vitest@2.1.2)
@@ -87,6 +87,9 @@ importers:
       '@callstack/rnef-config':
         specifier: workspace:*
         version: link:../config
+      '@callstack/rnef-tools':
+        specifier: workspace:*
+        version: link:../tools
       '@react-native-community/cli-config':
         specifier: ^15.1.0
         version: 15.1.0(typescript@5.5.4)
@@ -175,6 +178,12 @@ importers:
       '@clack/prompts':
         specifier: ^0.7.0
         version: 0.7.0
+      is-unicode-supported:
+        specifier: ^2.1.0
+        version: 2.1.0
+      picocolors:
+        specifier: ^1.1.1
+        version: 1.1.1
       tslib:
         specifier: ^2.3.0
         version: 2.7.0
@@ -2775,6 +2784,10 @@ packages:
     resolution: {integrity: sha512-knxG2q4UC3u8stRGyAVJCOdxFmv5DZiRcdlIaAQXAbSfJya+OhopNotLQrstBhququ4ZpuKbDc/8S6mgXgPFPw==}
     engines: {node: '>=10'}
 
+  is-unicode-supported@2.1.0:
+    resolution: {integrity: sha512-mE00Gnza5EEB3Ds0HfMyllZzbBrmLOX3vfWoj9A9PEnTfratQ/BcaJOuMhnkhjXvb2+FkY3VuHqtAGpTPmglFQ==}
+    engines: {node: '>=18'}
+
   is-wsl@1.1.0:
     resolution: {integrity: sha512-gfygJYZ2gLTDlmbWMI0CE2MwnFzSN/2SZfkMlItC4K/JBlsWVDB0bO6XhqcY13YXE7iMcAJnzTCJjPiTeJJ0Mw==}
     engines: {node: '>=4'}
@@ -3302,6 +3315,9 @@ packages:
 
   picocolors@1.1.0:
     resolution: {integrity: sha512-TQ92mBOW0l3LeMeyLV6mzy/kWr8lkd/hp3mTg7wYK7zJhuBStmGMBG0BdeDZS/dZx1IukaX6Bk11zcln25o1Aw==}
+
+  picocolors@1.1.1:
+    resolution: {integrity: sha512-xceH2snhtb5M9liqDsmEw56le376mTZkEX/jEb/RxNFyegNul7eNslCXP9FDj/Lcu0X8KEyMceP2ntpaHrDEVA==}
 
   picomatch@2.3.1:
     resolution: {integrity: sha512-JU3teHTNjmE2VCGFzuY8EXzCDVwEqB2a8fsIvwaStHhAWJEeVd1o1QD80CU6+ZdEXXSLbSsuLwJjkCBWqRQUVA==}
@@ -4953,13 +4969,13 @@ snapshots:
 
   '@clack/core@0.3.4':
     dependencies:
-      picocolors: 1.1.0
+      picocolors: 1.1.1
       sisteransi: 1.0.5
 
   '@clack/prompts@0.7.0':
     dependencies:
       '@clack/core': 0.3.4
-      picocolors: 1.1.0
+      picocolors: 1.1.1
       sisteransi: 1.0.5
 
   '@cspotcode/source-map-support@0.8.1':
@@ -5276,9 +5292,9 @@ snapshots:
       - '@swc/core'
       - debug
 
-  '@nrwl/vite@19.8.3(@babel/traverse@7.25.6)(@swc-node/register@1.9.2(@swc/core@1.5.29(@swc/helpers@0.5.13))(@swc/types@0.1.12)(typescript@5.5.4))(@swc/core@1.5.29(@swc/helpers@0.5.13))(@types/node@18.16.9)(nx@19.8.0(@swc-node/register@1.9.2(@swc/core@1.5.29(@swc/helpers@0.5.13))(@swc/types@0.1.12)(typescript@5.5.4))(@swc/core@1.5.29(@swc/helpers@0.5.13)))(typescript@5.5.4)(verdaccio@5.32.2(typanion@3.14.0))(vite@5.4.8(@types/node@18.16.9))(vitest@2.1.2)':
+  '@nrwl/vite@19.8.3(@babel/traverse@7.25.6)(@swc-node/register@1.9.2(@swc/core@1.5.29(@swc/helpers@0.5.13))(@swc/types@0.1.12)(typescript@5.5.4))(@swc/core@1.5.29(@swc/helpers@0.5.13))(@types/node@18.16.9)(nx@19.8.0(@swc-node/register@1.9.2(@swc/core@1.5.29(@swc/helpers@0.5.13))(@swc/types@0.1.12)(typescript@5.5.4))(@swc/core@1.5.29(@swc/helpers@0.5.13)))(typescript@5.5.4)(verdaccio@5.32.2(typanion@3.14.0))(vite@5.4.8(@types/node@18.16.9))(vitest@2.1.2(@types/node@18.16.9)(@vitest/ui@2.1.2))':
     dependencies:
-      '@nx/vite': 19.8.3(@babel/traverse@7.25.6)(@swc-node/register@1.9.2(@swc/core@1.5.29(@swc/helpers@0.5.13))(@swc/types@0.1.12)(typescript@5.5.4))(@swc/core@1.5.29(@swc/helpers@0.5.13))(@types/node@18.16.9)(nx@19.8.0(@swc-node/register@1.9.2(@swc/core@1.5.29(@swc/helpers@0.5.13))(@swc/types@0.1.12)(typescript@5.5.4))(@swc/core@1.5.29(@swc/helpers@0.5.13)))(typescript@5.5.4)(verdaccio@5.32.2(typanion@3.14.0))(vite@5.4.8(@types/node@18.16.9))(vitest@2.1.2)
+      '@nx/vite': 19.8.3(@babel/traverse@7.25.6)(@swc-node/register@1.9.2(@swc/core@1.5.29(@swc/helpers@0.5.13))(@swc/types@0.1.12)(typescript@5.5.4))(@swc/core@1.5.29(@swc/helpers@0.5.13))(@types/node@18.16.9)(nx@19.8.0(@swc-node/register@1.9.2(@swc/core@1.5.29(@swc/helpers@0.5.13))(@swc/types@0.1.12)(typescript@5.5.4))(@swc/core@1.5.29(@swc/helpers@0.5.13)))(typescript@5.5.4)(verdaccio@5.32.2(typanion@3.14.0))(vite@5.4.8(@types/node@18.16.9))(vitest@2.1.2(@types/node@18.16.9)(@vitest/ui@2.1.2))
     transitivePeerDependencies:
       - '@babel/traverse'
       - '@swc-node/register'
@@ -5624,9 +5640,9 @@ snapshots:
   '@nx/nx-win32-x64-msvc@19.8.3':
     optional: true
 
-  '@nx/vite@19.8.3(@babel/traverse@7.25.6)(@swc-node/register@1.9.2(@swc/core@1.5.29(@swc/helpers@0.5.13))(@swc/types@0.1.12)(typescript@5.5.4))(@swc/core@1.5.29(@swc/helpers@0.5.13))(@types/node@18.16.9)(nx@19.8.0(@swc-node/register@1.9.2(@swc/core@1.5.29(@swc/helpers@0.5.13))(@swc/types@0.1.12)(typescript@5.5.4))(@swc/core@1.5.29(@swc/helpers@0.5.13)))(typescript@5.5.4)(verdaccio@5.32.2(typanion@3.14.0))(vite@5.4.8(@types/node@18.16.9))(vitest@2.1.2)':
+  '@nx/vite@19.8.3(@babel/traverse@7.25.6)(@swc-node/register@1.9.2(@swc/core@1.5.29(@swc/helpers@0.5.13))(@swc/types@0.1.12)(typescript@5.5.4))(@swc/core@1.5.29(@swc/helpers@0.5.13))(@types/node@18.16.9)(nx@19.8.0(@swc-node/register@1.9.2(@swc/core@1.5.29(@swc/helpers@0.5.13))(@swc/types@0.1.12)(typescript@5.5.4))(@swc/core@1.5.29(@swc/helpers@0.5.13)))(typescript@5.5.4)(verdaccio@5.32.2(typanion@3.14.0))(vite@5.4.8(@types/node@18.16.9))(vitest@2.1.2(@types/node@18.16.9)(@vitest/ui@2.1.2))':
     dependencies:
-      '@nrwl/vite': 19.8.3(@babel/traverse@7.25.6)(@swc-node/register@1.9.2(@swc/core@1.5.29(@swc/helpers@0.5.13))(@swc/types@0.1.12)(typescript@5.5.4))(@swc/core@1.5.29(@swc/helpers@0.5.13))(@types/node@18.16.9)(nx@19.8.0(@swc-node/register@1.9.2(@swc/core@1.5.29(@swc/helpers@0.5.13))(@swc/types@0.1.12)(typescript@5.5.4))(@swc/core@1.5.29(@swc/helpers@0.5.13)))(typescript@5.5.4)(verdaccio@5.32.2(typanion@3.14.0))(vite@5.4.8(@types/node@18.16.9))(vitest@2.1.2)
+      '@nrwl/vite': 19.8.3(@babel/traverse@7.25.6)(@swc-node/register@1.9.2(@swc/core@1.5.29(@swc/helpers@0.5.13))(@swc/types@0.1.12)(typescript@5.5.4))(@swc/core@1.5.29(@swc/helpers@0.5.13))(@types/node@18.16.9)(nx@19.8.0(@swc-node/register@1.9.2(@swc/core@1.5.29(@swc/helpers@0.5.13))(@swc/types@0.1.12)(typescript@5.5.4))(@swc/core@1.5.29(@swc/helpers@0.5.13)))(typescript@5.5.4)(verdaccio@5.32.2(typanion@3.14.0))(vite@5.4.8(@types/node@18.16.9))(vitest@2.1.2(@types/node@18.16.9)(@vitest/ui@2.1.2))
       '@nx/devkit': 19.8.3(nx@19.8.0(@swc-node/register@1.9.2(@swc/core@1.5.29(@swc/helpers@0.5.13))(@swc/types@0.1.12)(typescript@5.5.4))(@swc/core@1.5.29(@swc/helpers@0.5.13)))
       '@nx/js': 19.8.3(@babel/traverse@7.25.6)(@swc-node/register@1.9.2(@swc/core@1.5.29(@swc/helpers@0.5.13))(@swc/types@0.1.12)(typescript@5.5.4))(@swc/core@1.5.29(@swc/helpers@0.5.13))(@types/node@18.16.9)(nx@19.8.0(@swc-node/register@1.9.2(@swc/core@1.5.29(@swc/helpers@0.5.13))(@swc/types@0.1.12)(typescript@5.5.4))(@swc/core@1.5.29(@swc/helpers@0.5.13)))(typescript@5.5.4)(verdaccio@5.32.2(typanion@3.14.0))
       '@phenomnomnominal/tsquery': 5.0.1(typescript@5.5.4)
@@ -6156,7 +6172,7 @@ snapshots:
       minimatch: 7.4.6
       semver: 7.6.3
 
-  '@vitest/coverage-v8@2.1.2(vitest@2.1.2)':
+  '@vitest/coverage-v8@2.1.2(vitest@2.1.2(@types/node@18.16.9)(@vitest/ui@2.1.2))':
     dependencies:
       '@ampproject/remapping': 2.3.0
       '@bcoe/v8-coverage': 0.2.3
@@ -7307,6 +7323,8 @@ snapshots:
 
   is-unicode-supported@0.1.0: {}
 
+  is-unicode-supported@2.1.0: {}
+
   is-wsl@1.1.0: {}
 
   is-wsl@2.2.0:
@@ -7881,6 +7899,8 @@ snapshots:
   performance-now@2.1.0: {}
 
   picocolors@1.1.0: {}
+
+  picocolors@1.1.1: {}
 
   picomatch@2.3.1: {}
 
