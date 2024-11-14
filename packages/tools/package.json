@@ -1,0 +1,11 @@
+{
+  "name": "@callstack/rnef-tools",
+  "version": "0.0.1",
+  "type": "module",
+  "dependencies": {
+    "@clack/prompts": "^0.7.0",
+    "tslib": "^2.3.0"
+  },
+  "main": "./dist/src/index.js",
+  "typings": "./dist/src/index.d.ts"
+}

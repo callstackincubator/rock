@@ -11,6 +11,7 @@
     "create-rnef-app": "./src/bin.js"
   },
   "dependencies": {
+    "@callstack/rnef-tools": "workspace:*",
     "@clack/prompts": "^0.7.0",
     "gradient-string": "^3.0.0",
     "minimist": "^1.2.8",

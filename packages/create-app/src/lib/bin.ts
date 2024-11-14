@@ -16,7 +16,6 @@ import { printLogo } from './logo.js';
 import { parseCliOptions } from './parse-cli-options.js';
 import { parsePackageInfo } from './parsers.js';
 import {
-  cancelAndExit,
   printHelpMessage,
   printVersionMessage,
   confirmOverrideFiles,
@@ -26,6 +25,7 @@ import {
   promptTemplate,
   promptPlatforms,
 } from './prompts.js';
+import { cancelPromptAndExit } from '@callstack/rnef-tools';
 import {
   downloadTarballFromNpm,
   extractTarballFile,
@@ -63,7 +63,7 @@ export async function run() {
   ) {
     const confirmOverride = await confirmOverrideFiles(absoluteTargetDir);
     if (!confirmOverride) {
-      cancelAndExit();
+      cancelPromptAndExit();
     }
   }
 

@@ -1,16 +1,8 @@
-import {
-  cancel,
-  intro,
-  isCancel,
-  multiselect,
-  note,
-  outro,
-  select,
-  text,
-} from '@clack/prompts';
+import { intro, multiselect, note, outro, select, text } from '@clack/prompts';
 import fs from 'node:fs';
 import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
+import { checkCancelPrompt } from '@callstack/rnef-tools';
 import { parsePackageManagerFromUserAgent } from './parsers.js';
 import { validateProjectName } from './validate-project-name.js';
 import { TemplateInfo } from './templates.js';
@@ -70,7 +62,7 @@ export function printByeMessage(targetDir: string) {
 }
 
 export async function promptProjectName() {
-  return checkCancel<string>(
+  return checkCancelPrompt<string>(
     await text({
       message: 'What is your app named?',
       validate: validateProjectName,
@@ -89,7 +81,7 @@ export async function promptTemplate(
   //   return templates[0];
   // }
 
-  return checkCancel<TemplateInfo>(
+  return checkCancelPrompt<TemplateInfo>(
     await select({
       message: 'Select a template:',
       options: templates.map((template) => ({
@@ -107,7 +99,7 @@ export async function promptPlatforms(
     throw new Error('No platforms found');
   }
 
-  return checkCancel<TemplateInfo[]>(
+  return checkCancelPrompt<TemplateInfo[]>(
     await multiselect({
       message: 'Select platforms:',
       options: platforms.map((platform) => ({
@@ -119,7 +111,7 @@ export async function promptPlatforms(
 }
 
 export async function confirmOverrideFiles(targetDir: string) {
-  const option = checkCancel<string>(
+  const option = checkCancelPrompt<string>(
     await select({
       message: `"${targetDir}" is not empty, please choose:`,
       options: [
@@ -129,17 +121,4 @@ export async function confirmOverrideFiles(targetDir: string) {
     })
   );
   return option === 'yes';
-}
-
-export function cancelAndExit() {
-  cancel('Operation cancelled.');
-  process.exit(0);
-}
-
-function checkCancel<T>(value: unknown) {
-  if (isCancel(value)) {
-    cancelAndExit();
-  }
-
-  return value as T;
 }
