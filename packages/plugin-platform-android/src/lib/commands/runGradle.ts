@@ -1,4 +1,5 @@
 import { spinner } from '@clack/prompts';
+import { logger } from '@callstack/rnef-tools';
 import { getTaskNames } from './buildAndroid/getTaskNames.js';
 import { AndroidProject, Flags } from './runAndroid/runAndroid.js';
 import { getCPU, getDevices } from './runAndroid/adb.js';
@@ -17,8 +18,7 @@ export async function runGradle({
   args: BuildFlags | Flags;
 }) {
   if (args.tasks && args.mode) {
-    // @todo replace with logger
-    console.warn(
+    logger.warn(
       'Both "tasks" and "mode" parameters were passed to "build" command. Using "tasks" for building the app.'
     );
   }
