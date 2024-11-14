@@ -165,6 +165,9 @@ importers:
 
   packages/plugin-platform-android:
     dependencies:
+      '@callstack/rnef-tools':
+        specifier: workspace:*
+        version: link:../tools
       '@clack/prompts':
         specifier: ^0.7.0
         version: 0.7.0

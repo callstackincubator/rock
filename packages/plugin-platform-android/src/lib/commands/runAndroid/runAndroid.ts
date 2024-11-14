@@ -1,12 +1,6 @@
-/**
- * Copyright (c) Facebook, Inc. and its affiliates.
- *
- * This source code is licensed under the MIT license found in the
- * LICENSE file in the root directory of this source tree.
- *
- */
 import fs from 'fs';
 import { Config } from '@react-native-community/cli-types';
+import { checkCancelPrompt } from '@callstack/rnef-tools';
 import { getDevices } from './adb.js';
 import { toPascalCase } from '../toPascalCase.js';
 import { tryRunAdbReverse } from './tryRunAdbReverse.js';
@@ -16,9 +10,9 @@ import { getAndroidProject } from '@react-native-community/cli-config-android';
 import { listAndroidDevices, DeviceData } from './listAndroidDevices.js';
 import tryLaunchEmulator from './tryLaunchEmulator.js';
 import path from 'path';
-import { BuildFlags, options } from '../buildAndroid/index.js';
+import { BuildFlags, options } from '../buildAndroid/buildAndroid.js';
 import { promptForTaskSelection } from '../listAndroidTasks.js';
-import { checkUsers, promptForUser } from './listAndroidUsers.js';
+import { promptForUser } from './listAndroidUsers.js';
 import { runGradle } from '../runGradle.js';
 import { select } from '@clack/prompts';
 import chalk from 'chalk';
@@ -76,13 +70,10 @@ export async function runAndroid(config: Config, args: Flags) {
     }
 
     if (deviceId) {
-      const users = await checkUsers(deviceId);
-      if (users && users.length > 1) {
-        const user = await promptForUser(users);
+      const user = await promptForUser(deviceId);
 
-        if (user) {
-          args.user = user.id;
-        }
+      if (user) {
+        args.user = user.id;
       }
     }
   }
@@ -146,15 +137,17 @@ async function promptForDeviceSelection(
       'No devices and/or emulators connected. Please create emulator with Android Studio or connect Android device.'
     );
   }
-  const selected = (await select({
-    message: 'Select the device / emulator you want to use',
-    options: allDevices.map((d) => ({
-      label: `${chalk.bold(`${toPascalCase(d.type)}`)} ${chalk.green(
-        `${d.readableName}`
-      )} (${d.connected ? 'connected' : 'disconnected'})`,
-      value: d,
-    })),
-  })) as DeviceData;
+  const selected = checkCancelPrompt<DeviceData>(
+    await select({
+      message: 'Select the device / emulator you want to use',
+      options: allDevices.map((d) => ({
+        label: `${chalk.bold(`${toPascalCase(d.type)}`)} ${chalk.green(
+          `${d.readableName}`
+        )} (${d.connected ? 'connected' : 'disconnected'})`,
+        value: d,
+      })),
+    })
+  );
 
   return selected;
 }

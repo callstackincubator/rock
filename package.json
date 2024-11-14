@@ -8,7 +8,8 @@
     "test": "nx run-many --target test",
     "e2e": "nx run-many --target e2e",
     "lint": "nx run-many --target lint",
-    "typecheck": "nx run-many --target typecheck"
+    "typecheck": "nx run-many --target typecheck",
+    "watch": "nx watch --all -- nx run \\$NX_PROJECT_NAME:build"
   },
   "private": true,
   "dependencies": {

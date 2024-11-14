@@ -5,8 +5,8 @@ import {
 } from '@react-native-community/cli-types';
 import spawn from 'nano-spawn';
 import { select } from '@clack/prompts';
-import { buildAndroid } from '../index.js';
-import { Flags } from '../../runAndroid/index.js';
+import { buildAndroid } from '../buildAndroid.js';
+import { Flags } from '../../runAndroid/runAndroid.js';
 
 vi.mock('nano-spawn', () => {
   return {

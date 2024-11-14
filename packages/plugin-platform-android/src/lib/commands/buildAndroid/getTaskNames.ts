@@ -1,5 +1,5 @@
 import {toPascalCase} from '../toPascalCase.js';
-import type {BuildFlags} from '../buildAndroid/index.js';
+import type {BuildFlags} from './buildAndroid.js';
 
 export function getTaskNames(
   appName: string,

@@ -1,13 +1,5 @@
-/**
- * Copyright (c) Facebook, Inc. and its affiliates.
- *
- * This source code is licensed under the MIT license found in the
- * LICENSE file in the root directory of this source tree.
- *
- */
-
 import spawn from 'nano-spawn';
-import { AndroidProject, Flags } from './index.js';
+import { AndroidProject, Flags } from './runAndroid.js';
 import { getAdbPath } from './adb.js';
 import { spinner } from '@clack/prompts';
 

@@ -1,7 +1,7 @@
 import spawn from 'nano-spawn';
 import fs from 'fs';
 import { getAdbPath, getAvailableCPUs } from './adb.js';
-import type { AndroidProject, Flags } from './index.js';
+import type { AndroidProject, Flags } from './runAndroid.js';
 import { spinner } from '@clack/prompts';
 
 async function tryInstallAppOnDevice(

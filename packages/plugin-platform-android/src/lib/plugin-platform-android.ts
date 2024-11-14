@@ -1,6 +1,6 @@
 import type { PluginOutput, PluginApi } from '@callstack/rnef-config';
-import { buildAndroid, options } from './commands/buildAndroid/index.js';
-import { runAndroid, runOptions, Flags } from './commands/runAndroid/index.js';
+import { buildAndroid, options } from './commands/buildAndroid/buildAndroid.js';
+import { runAndroid, runOptions, Flags } from './commands/runAndroid/runAndroid.js';
 import { loadConfigAsync } from '@react-native-community/cli-config';
 
 type PluginConfig = Flags;

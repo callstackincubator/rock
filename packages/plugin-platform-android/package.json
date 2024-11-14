@@ -5,6 +5,7 @@
   "main": "./src/index.js",
   "typings": "./src/index.d.ts",
   "dependencies": {
+    "@callstack/rnef-tools": "workspace:*",
     "@clack/prompts": "^0.7.0",
     "@react-native-community/cli-config": "15.1.2",
     "@react-native-community/cli-config-android": "15.1.2",
