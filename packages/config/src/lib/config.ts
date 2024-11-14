@@ -14,6 +14,8 @@ export type PluginApi<Args> = {
 
 type PluginType<Args> = (args: PluginApi<Args>) => PluginOutput;
 
+type ArgValue = string | boolean | string[];
+
 type CommandType<Args> = {
   name: string;
   description: string;
@@ -21,11 +23,8 @@ type CommandType<Args> = {
   options?: Array<{
     name: string;
     description: string;
-    default?: string | boolean | string[] | undefined;
-    parse?: (
-      value: string,
-      previous: string | boolean | string[]
-    ) => string | boolean | string[];
+    default?: ArgValue | undefined;
+    parse?: (value: string, previous: ArgValue) => ArgValue;
   }>;
 };
 
