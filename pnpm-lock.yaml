@@ -202,6 +202,9 @@ importers:
 
   packages/plugin-platform-apple:
     dependencies:
+      '@callstack/rnef-tools':
+        specifier: workspace:*
+        version: link:../tools
       '@clack/prompts':
         specifier: ^0.7.0
         version: 0.7.0

@@ -6,7 +6,7 @@ import chalk from 'chalk';
 import type { BuildFlags } from './buildOptions.js';
 import { supportedPlatforms } from '../../config/supportedPlatforms.js';
 import { ApplePlatform, XcodeProjectInfo } from '../../types/index.js';
-import * as logger from '../../utils/logger.js';
+import { logger } from '@callstack/rnef-tools';
 import CLIError from '../../utils/error.js';
 import { getConfiguration } from './getConfiguration.js';
 import { simulatorDestinationMap } from './simulatorDestinationMap.js';
@@ -114,7 +114,7 @@ const buildProject = async (
             logger.error(error)
           );
         }
-
+        // TODO: make sure to have platformName in readable form
         reject(
           new CLIError(`
           Failed to build ${platformName} project.

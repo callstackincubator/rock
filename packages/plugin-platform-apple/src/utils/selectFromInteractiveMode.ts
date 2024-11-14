@@ -4,7 +4,7 @@ import {
   promptForConfigurationSelection,
   promptForSchemeSelection,
 } from './prompts.js';
-import * as logger from './logger.js';
+import { logger } from '@callstack/rnef-tools';
 
 interface Args {
   scheme?: string;

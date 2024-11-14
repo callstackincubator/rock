@@ -2,8 +2,7 @@ import path from 'path';
 import findAllPodfilePaths from './findAllPodfilePaths.js';
 import { ApplePlatform } from '../types/index.js';
 import { supportedPlatforms } from './supportedPlatforms.js';
-import { warn } from '../utils/logger.js';
-
+import { logger } from '@callstack/rnef-tools';
 // Podfile in the bundle package
 const BUNDLE_VENDORED_PODFILE = 'vendor/bundle/ruby';
 
@@ -42,7 +41,7 @@ export default function findPodfilePath(
 
   if (podfiles.length > 0) {
     if (podfiles.length > 1 && containsUnsupportedPodfiles) {
-      warn(`
+      logger.warn(`
           Multiple Podfiles were found: ${podfiles}. Choosing ${podfiles[0]} automatically.
           If you would like to select a different one, you can configure it via "project.${platformName}.sourceDir".
           You can learn more about it here: https://github.com/react-native-community/cli/blob/main/docs/configuration.md

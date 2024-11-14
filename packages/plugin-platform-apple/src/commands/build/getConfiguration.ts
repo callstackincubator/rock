@@ -7,7 +7,7 @@ import { getBuildConfigurationFromXcScheme } from '../../utils/getBuildConfigura
 import path from 'node:path';
 import { getPlatformInfo } from './../../utils/getPlatformInfo.js';
 import { ApplePlatform, XcodeProjectInfo } from '../../types/index.js';
-import * as logger from '../../utils/logger.js';
+import { logger } from '@callstack/rnef-tools';
 
 export async function getConfiguration(
   xcodeProject: XcodeProjectInfo,
