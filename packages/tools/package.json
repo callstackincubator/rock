@@ -3,7 +3,7 @@
   "version": "0.0.1",
   "type": "module",
   "dependencies": {
-    "@clack/prompts": "^0.7.0",
+    "@clack/prompts": "^0.8.1",
     "is-unicode-supported": "^2.1.0",
     "picocolors": "^1.1.1",
     "tslib": "^2.3.0"

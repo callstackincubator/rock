@@ -12,7 +12,7 @@
   },
   "dependencies": {
     "@callstack/rnef-tools": "workspace:*",
-    "@clack/prompts": "^0.7.0",
+    "@clack/prompts": "^0.8.1",
     "gradient-string": "^3.0.0",
     "minimist": "^1.2.8",
     "package-json": "^10.0.1",
