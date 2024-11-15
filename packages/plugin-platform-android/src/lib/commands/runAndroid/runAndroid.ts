@@ -31,6 +31,27 @@ export interface Flags extends BuildFlags {
 
 export type AndroidProject = NonNullable<Config['project']['android']>;
 
+async function selectAndLaunchDevice() {
+  const allDevices = await listAndroidDevices();
+  const device = await promptForDeviceSelection(allDevices);
+
+  if (!device) {
+    throw new Error(
+      `Failed to select device, please try to run app without "--interactive" flag.`
+    );
+  }
+
+  if (!device.connected) {
+    await tryLaunchEmulator(device.readableName);
+    // list devices once again when emulator is booted
+    const allDevices = await listAndroidDevices();
+    const newDevice =
+      allDevices.find((d) => d.readableName === device.readableName) ?? device;
+    return newDevice;
+  }
+  return device;
+}
+
 /**
  * Starts the app on a connected Android emulator or device.
  */
@@ -43,42 +64,19 @@ export async function runAndroid(
     androidProject.mainActivity = args.mainActivity;
   }
 
-  let deviceId = args.device;
-  let selectedTask: string | undefined;
+  const selectedTask = args.interactive
+    ? await promptForTaskSelection('install', androidProject.sourceDir)
+    : undefined;
 
-  if (args.interactive) {
-    selectedTask = await promptForTaskSelection(
-      'install',
-      androidProject.sourceDir
-    );
+  const { deviceId } = args.interactive
+    ? await selectAndLaunchDevice()
+    : { deviceId: args.device };
 
-    const allDevices = await listAndroidDevices();
-    const device = await promptForDeviceSelection(allDevices);
+  if (args.interactive && deviceId) {
+    const user = await promptForUser(deviceId);
 
-    if (!device) {
-      throw new Error(
-        `Failed to select device, please try to run app without "--interactive" flag.`
-      );
-    }
-
-    deviceId = device.deviceId;
-
-    if (!device.connected) {
-      await tryLaunchEmulator(device.readableName);
-      // list devices once again when emulator is booted
-      const allDevices = await listAndroidDevices();
-      const newDevice =
-        allDevices.find((d) => d.readableName === device.readableName) ??
-        device;
-      deviceId = newDevice.deviceId;
-    }
-
-    if (deviceId) {
-      const user = await promptForUser(deviceId);
-
-      if (user) {
-        args.user = user.id;
-      }
+    if (user) {
+      args.user = user.id;
     }
   }
 
