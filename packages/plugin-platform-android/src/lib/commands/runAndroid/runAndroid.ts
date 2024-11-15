@@ -63,7 +63,9 @@ export async function runAndroid(
       selectedTask,
     });
     if (!getDevices().find((d) => d === deviceId)) {
-      logger.error(`Device "${deviceId}" not found. Please connect it first.`);
+      logger.error(
+        `Device "${deviceId}" not found. Please run it first or use a different one.`
+      );
       process.exit(1);
     }
     await tryInstallAppOnDevice(deviceId, androidProject, args, selectedTask);
@@ -81,7 +83,7 @@ export async function runAndroid(
     });
 
     for (const device of getDevices()) {
-      await tryLaunchAppOnDevice(device, androidProject, args)
+      await tryLaunchAppOnDevice(device, androidProject, args);
     }
   }
   outro('Success.');
