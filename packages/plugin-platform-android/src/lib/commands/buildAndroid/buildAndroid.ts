@@ -1,6 +1,7 @@
 import { AndroidProjectConfig } from '@react-native-community/cli-types';
 import { runGradle } from '../runGradle.js';
 import { promptForTaskSelection } from '../listAndroidTasks.js';
+import { intro, outro } from '@clack/prompts';
 
 export interface BuildFlags {
   mode?: string;
@@ -14,6 +15,7 @@ export async function buildAndroid(
   androidProject: AndroidProjectConfig,
   args: BuildFlags
 ) {
+  intro('Building Android app.');
   let selectedTask: string | undefined;
 
   if (args.interactive) {
@@ -23,7 +25,8 @@ export async function buildAndroid(
     );
   }
 
-  return runGradle({ taskType: 'bundle', androidProject, args, selectedTask });
+  await runGradle({ taskType: 'bundle', androidProject, args, selectedTask });
+  outro('Success.');
 }
 
 export const options = [

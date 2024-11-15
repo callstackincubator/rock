@@ -14,7 +14,7 @@ import path from 'path';
 import { BuildFlags, options } from '../buildAndroid/buildAndroid.js';
 import { promptForTaskSelection } from '../listAndroidTasks.js';
 import { runGradle } from '../runGradle.js';
-import { select } from '@clack/prompts';
+import { intro, outro, select } from '@clack/prompts';
 import chalk from 'chalk';
 
 export interface Flags extends BuildFlags {
@@ -37,6 +37,7 @@ export async function runAndroid(
   args: Flags,
   projectRoot: string
 ) {
+  intro('Building and running Android app.');
   normalizeArgs(args, projectRoot);
 
   if (args.mainActivity) {
@@ -61,14 +62,17 @@ export async function runAndroid(
       args,
       selectedTask,
     });
-
+    if (!getDevices().find((d) => d === deviceId)) {
+      logger.error(`Device "${deviceId}" not found. Please connect it first.`);
+      process.exit(1);
+    }
     await tryInstallAppOnDevice(deviceId, androidProject, args, selectedTask);
     await tryLaunchAppOnDevice(deviceId, androidProject, args);
   } else {
     if (getDevices().length === 0) {
       await tryLaunchEmulator();
     }
-    
+
     await runGradle({
       taskType: 'install',
       androidProject,
@@ -76,10 +80,11 @@ export async function runAndroid(
       selectedTask,
     });
 
-    getDevices().forEach(async (device) =>
-      tryLaunchAppOnDevice(device, androidProject, args)
-    );
+    for (const device of getDevices()) {
+      await tryLaunchAppOnDevice(device, androidProject, args)
+    }
   }
+  outro('Success.');
 }
 
 async function selectAndLaunchDevice() {

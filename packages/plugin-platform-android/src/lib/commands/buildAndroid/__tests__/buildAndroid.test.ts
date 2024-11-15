@@ -23,6 +23,8 @@ vi.mock('@clack/prompts', () => {
     })),
     select: vi.fn(),
     isCancel: vi.fn(() => false),
+    intro: vi.fn(),
+    outro: vi.fn(),
   };
 });
 
@@ -75,7 +77,6 @@ test('buildAndroid runs gradle build with correct configuration for debug', asyn
     ['app:bundleDebug', '-x', 'lint', '-PreactNativeDevServerPort=8081'],
     { stdio: 'inherit', cwd: '/android' }
   );
-
 });
 
 test('buildAndroid fails gracefully when gradle errors', async () => {
