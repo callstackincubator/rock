@@ -1,5 +1,4 @@
-import { spinner } from '@clack/prompts';
-import { logger, spinnerMock } from '@callstack/rnef-tools';
+import { logger } from '@callstack/rnef-tools';
 import { getTaskNames } from './buildAndroid/getTaskNames.js';
 import { AndroidProject, Flags } from './runAndroid/runAndroid.js';
 import { getCPU, getDevices } from './runAndroid/adb.js';
@@ -48,21 +47,17 @@ export async function runGradle({
   }
 
   const gradleWrapper = getGradleWrapper();
-  const loader = logger.isVerbose() ? spinnerMock() : spinner();
 
   try {
-    loader.start('Building the app with Gradle');
+    logger.debug(`Running ${gradleWrapper} ${gradleArgs.join(' ')}.`);
     await spawn(gradleWrapper, gradleArgs, {
-      stdio: logger.isVerbose() ? 'inherit' : ['ignore', 'ignore', 'inherit'],
+      stdio: 'inherit',
       cwd: androidProject.sourceDir,
     });
-    loader.stop('Build successful.');
   } catch {
-    loader.stop(
-      `Failed to build the app. See the error above for details from Gradle.`,
-      1
+    throw new Error(
+      `Failed to build the app. See the error above for details from Gradle.`
     );
-    process.exit(1);
   }
 }
 
