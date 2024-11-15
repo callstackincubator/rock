@@ -19,10 +19,10 @@ export function tryRunAdbReverse(
 
     loader.start('Connecting to the development server');
     execFileSync(adbPath, adbArgs, { stdio: ['ignore', 'ignore', 'inherit'] });
-    loader.stop('Connected to the development server');
+    loader.stop(`Connected "${device}" to the development server.`);
   } catch (e) {
     loader.stop(
-      `Failed to connect to development server using "adb reverse": ${
+      `Failed to connect "${device}" to development server using "adb reverse": ${
         (e as { message: string }).message
       }`,
       1

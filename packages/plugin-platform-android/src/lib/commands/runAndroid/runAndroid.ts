@@ -3,7 +3,7 @@ import {
   AndroidProjectConfig,
   Config,
 } from '@react-native-community/cli-types';
-import { checkCancelPrompt } from '@callstack/rnef-tools';
+import { checkCancelPrompt, logger } from '@callstack/rnef-tools';
 import { getDevices } from './adb.js';
 import { toPascalCase } from '../toPascalCase.js';
 import { tryRunAdbReverse } from './tryRunAdbReverse.js';
@@ -31,6 +31,68 @@ export interface Flags extends BuildFlags {
 
 export type AndroidProject = NonNullable<Config['project']['android']>;
 
+/**
+ * Starts the app on a connected Android emulator or device.
+ */
+export async function runAndroid(
+  androidProject: AndroidProjectConfig,
+  args: Flags,
+  projectRoot: string
+) {
+  normalizeArgs(args, projectRoot);
+
+  if (args.mainActivity) {
+    androidProject.mainActivity = args.mainActivity;
+  }
+
+  const selectedTask = args.interactive
+    ? await promptForTaskSelection('install', androidProject.sourceDir)
+    : undefined;
+
+  const { deviceId } = args.interactive
+    ? await selectAndLaunchDevice()
+    : { deviceId: args.device };
+
+  const user =
+    args.interactive && deviceId
+      ? (await promptForUser(deviceId))?.id
+      : args.user;
+
+  let devices = getDevices();
+
+  if (devices.length === 0) {
+    await tryLaunchEmulator();
+    devices = getDevices();
+  }
+
+  if (!args.binaryPath) {
+    // @todo parallelize building gradle and launching emulator once @clack/prompts release 0.8.0
+    await runGradle({
+      taskType: deviceId ? 'assemble' : 'install',
+      androidProject,
+      args,
+      selectedTask,
+    });
+  }
+
+  if (deviceId) {
+    tryRunAdbReverse(args.port, deviceId);
+    await tryInstallAppOnDevice(
+      deviceId,
+      androidProject,
+      args,
+      selectedTask,
+      user
+    );
+    await tryLaunchAppOnDevice(deviceId, androidProject, args);
+  } else {
+    devices.forEach(async (device) => {
+      tryRunAdbReverse(args.port, device);
+      await tryLaunchAppOnDevice(device, androidProject, args);
+    });
+  }
+}
+
 async function selectAndLaunchDevice() {
   const allDevices = await listAndroidDevices();
   const device = await promptForDeviceSelection(allDevices);
@@ -52,45 +114,22 @@ async function selectAndLaunchDevice() {
   return device;
 }
 
-/**
- * Starts the app on a connected Android emulator or device.
- */
-export async function runAndroid(
-  androidProject: AndroidProjectConfig,
-  args: Flags,
-  projectRoot: string
-) {
-  if (args.mainActivity) {
-    androidProject.mainActivity = args.mainActivity;
+function normalizeArgs(args: Flags, projectRoot: string) {
+  if (args.tasks && args.mode) {
+    logger.warn(
+      'Both "tasks" and "mode" parameters were passed to "build" command. Using "tasks" for building the app.'
+    );
   }
 
-  const selectedTask = args.interactive
-    ? await promptForTaskSelection('install', androidProject.sourceDir)
-    : undefined;
-
-  const { deviceId } = args.interactive
-    ? await selectAndLaunchDevice()
-    : { deviceId: args.device };
-
-  if (args.interactive && deviceId) {
-    const user = await promptForUser(deviceId);
-
-    if (user) {
-      args.user = user.id;
-    }
-  }
-
-  let devices = getDevices();
-
-  if (devices.length === 0) {
-    await tryLaunchEmulator();
-    devices = getDevices();
+  // turn on activeArchOnly for debug to speed up local builds
+  if (args.mode !== 'release') {
+    args.activeArchOnly = true;
   }
 
   if (args.binaryPath) {
     if (args.tasks) {
       throw new Error(
-        'binary-path and tasks were specified, but they are not compatible. Specify only one.'
+        'Both "--binary-path" and "--tasks" flags were specified, which are incompatible. Please specify only one.'
       );
     }
 
@@ -99,27 +138,10 @@ export async function runAndroid(
       : path.join(projectRoot, args.binaryPath);
 
     if (args.binaryPath && !fs.existsSync(args.binaryPath)) {
-      throw new Error('binary-path was specified, but the file was not found.');
+      throw new Error(
+        `"--binary-path" was specified, but the file was not found at "${args.binaryPath}".`
+      );
     }
-  } else {
-    // @todo parallelize building gradle and launching emulator once @clack/prompts release 0.8.0
-    await runGradle({
-      taskType: deviceId ? 'assemble' : 'install',
-      androidProject,
-      args,
-      selectedTask,
-    });
-  }
-
-  if (deviceId) {
-    tryRunAdbReverse(args.port, deviceId);
-    await tryInstallAppOnDevice(deviceId, androidProject, args, selectedTask);
-    await tryLaunchAppOnDevice(deviceId, androidProject, args);
-  } else {
-    devices.forEach(async (device) => {
-      tryRunAdbReverse(args.port, device);
-      await tryLaunchAppOnDevice(device, androidProject, args);
-    });
   }
 }
 

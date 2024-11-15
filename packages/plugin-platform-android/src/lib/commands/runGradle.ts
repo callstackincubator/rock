@@ -17,12 +17,6 @@ export async function runGradle({
   selectedTask?: string;
   args: BuildFlags | Flags;
 }) {
-  if (args.tasks && args.mode) {
-    logger.warn(
-      'Both "tasks" and "mode" parameters were passed to "build" command. Using "tasks" for building the app.'
-    );
-  }
-
   const gradleArgs = getTaskNames(
     androidProject.appName,
     args.mode,

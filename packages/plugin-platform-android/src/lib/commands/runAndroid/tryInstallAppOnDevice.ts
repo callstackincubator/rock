@@ -8,7 +8,8 @@ async function tryInstallAppOnDevice(
   device: string,
   androidProject: AndroidProject,
   args: Flags,
-  selectedTask?: string
+  selectedTask?: string,
+  user?: string
 ) {
   const loader = spinner();
   const { appName, sourceDir } = androidProject;
@@ -42,10 +43,10 @@ async function tryInstallAppOnDevice(
 
   const adbArgs = ['-s', device, 'install', '-r', '-d'];
 
-  if (args.user !== undefined) {
-    adbArgs.push('--user', `${args.user}`);
+  if (user !== undefined) {
+    adbArgs.push('--user', `${user}`);
   }
-  
+
   adbArgs.push(pathToApk);
 
   const adbPath = getAdbPath();
