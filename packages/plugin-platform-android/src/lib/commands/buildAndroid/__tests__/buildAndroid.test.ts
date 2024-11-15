@@ -73,10 +73,9 @@ test('buildAndroid runs gradle build with correct configuration for debug', asyn
   expect(spawn as Mock).toBeCalledWith(
     './gradlew',
     ['app:bundleDebug', '-x', 'lint', '-PreactNativeDevServerPort=8081'],
-    { stdio: ['ignore', 'ignore', 'inherit'], cwd: '/android' }
+    { stdio: 'inherit', cwd: '/android' }
   );
-  expect(startMock).toBeCalledWith('Building the app with Gradle');
-  expect(stopMock).toBeCalledWith('Build successful.');
+
 });
 
 test('buildAndroid fails gracefully when gradle errors', async () => {
@@ -85,18 +84,17 @@ test('buildAndroid fails gracefully when gradle errors', async () => {
   try {
     await buildAndroid(androidProject, args);
   } catch (e) {
-    expect(e).toMatchObject(Error('process.exit unexpectedly called with "1"'));
+    expect(e).toMatchObject(
+      Error(
+        'Failed to build the app. See the error above for details from Gradle.'
+      )
+    );
   }
 
   expect(spawn as Mock).toBeCalledWith(
     './gradlew',
     ['app:bundleDebug', '-x', 'lint', '-PreactNativeDevServerPort=8081'],
-    { stdio: ['ignore', 'ignore', 'inherit'], cwd: '/android' }
-  );
-  expect(startMock).toBeCalledWith('Building the app with Gradle');
-  expect(stopMock).toBeCalledWith(
-    'Failed to build the app. See the error above for details from Gradle.',
-    1
+    { stdio: 'inherit', cwd: '/android' }
   );
 });
 
@@ -123,9 +121,8 @@ test('buildAndroid runs selected "bundleRelease" task in interactive mode', asyn
     2,
     './gradlew',
     ['app:bundleRelease', '-x', 'lint', '-PreactNativeDevServerPort=8081'],
-    { stdio: ['ignore', 'ignore', 'inherit'], cwd: '/android' }
+    { stdio: 'inherit', cwd: '/android' }
   );
-  expect(startMock).toBeCalledWith('Building the app with Gradle');
-  expect(stopMock).toHaveBeenNthCalledWith(1, 'Found 2 Gradle tasks.');
-  expect(stopMock).toHaveBeenNthCalledWith(2, 'Build successful.');
+  expect(startMock).toBeCalledWith('Searching for available Gradle tasks...');
+  expect(stopMock).toHaveBeenCalledWith('Found 2 Gradle tasks.');
 });

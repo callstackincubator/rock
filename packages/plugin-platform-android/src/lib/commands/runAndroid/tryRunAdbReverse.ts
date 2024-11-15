@@ -1,13 +1,12 @@
 import { execFileSync } from 'child_process';
 import { getAdbPath } from './adb.js';
-import { spinner } from '@clack/prompts';
+import { logger } from '@callstack/rnef-tools';
 
 // Runs ADB reverse tcp:8081 tcp:8081 to allow loading the jsbundle from the packager
 export function tryRunAdbReverse(
   packagerPort: number | string,
   device?: string | void
 ) {
-  const loader = spinner();
   try {
     const adbPath = getAdbPath();
     const adbArgs = ['reverse', `tcp:${packagerPort}`, `tcp:${packagerPort}`];
@@ -17,15 +16,13 @@ export function tryRunAdbReverse(
       adbArgs.unshift('-s', device);
     }
 
-    loader.start('Connecting to the development server');
+    logger.debug(`Connecting "${device}" to the development server`);
     execFileSync(adbPath, adbArgs, { stdio: ['ignore', 'ignore', 'inherit'] });
-    loader.stop(`Connected "${device}" to the development server.`);
   } catch (e) {
-    loader.stop(
+    logger.error(
       `Failed to connect "${device}" to development server using "adb reverse": ${
         (e as { message: string }).message
-      }`,
-      1
+      }`
     );
   }
 }

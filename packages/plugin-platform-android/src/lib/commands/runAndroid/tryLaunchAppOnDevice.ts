@@ -1,6 +1,8 @@
 import spawn from 'nano-spawn';
 import { AndroidProject, Flags } from './runAndroid.js';
 import { getAdbPath } from './adb.js';
+import { logger } from '@callstack/rnef-tools';
+import { tryRunAdbReverse } from './tryRunAdbReverse.js';
 import { spinner } from '@clack/prompts';
 
 async function tryLaunchAppOnDevice(
@@ -8,6 +10,7 @@ async function tryLaunchAppOnDevice(
   androidProject: AndroidProject,
   args: Flags
 ) {
+  tryRunAdbReverse(args.port, device);
   const { appId, appIdSuffix } = args;
 
   const { packageName, mainActivity, applicationId } = androidProject;
@@ -24,8 +27,6 @@ async function tryLaunchAppOnDevice(
       ? [packageName, mainActivity].join('')
       : [packageName, mainActivity].filter(Boolean).join('.');
 
-  const loader = spinner();
-
   // Here we're using the same flags as Android Studio to launch the app
   const adbArgs = [
     'shell',
@@ -41,15 +42,18 @@ async function tryLaunchAppOnDevice(
 
   adbArgs.unshift('-s', device);
 
-  loader.start(`Launching the app on "${device}"...`);
   const adbPath = getAdbPath();
+  logger.debug(`Running ${adbPath} ${adbArgs.join(' ')}.`);
+  const loader = spinner();
+  loader.start(`Installing the app on "${device}"...`);
   const { stderr } = await spawn(adbPath, adbArgs, {
     stdio: ['ignore', 'ignore', 'pipe'],
   });
+  loader.stop(
+    `Launched the app on "${device}" and listening on port "${args.port}".`
+  );
   if (stderr) {
-    loader.stop(`Failed to launch the app on "${device}". ${stderr}`, 1);
-  } else {
-    loader.stop(`Launched the app on "${device}".`);
+    logger.error(`Failed to launch the app on "${device}". ${stderr}`);
   }
 }
 

@@ -16,20 +16,20 @@ const formatMessages = (messages: Array<string>) => messages.join(SEPARATOR);
 
 const success = (...messages: Array<string>) => {
   console.log(
-    `${color.green(`${SUCCESS_SYMBOL} ${formatMessages(messages)}`)}`
+    `${color.green(`${SUCCESS_SYMBOL}  ${formatMessages(messages)}`)}`
   );
 };
 
 const info = (...messages: Array<string>) => {
-  console.log(`${color.cyan(`${INFO_SYMBOL} ${formatMessages(messages)}`)}`);
+  console.log(`${color.cyan(`${INFO_SYMBOL}  ${formatMessages(messages)}`)}`);
 };
 
 const warn = (...messages: Array<string>) => {
-  console.warn(`${color.yellow(`${WARN_SYMBOL} ${formatMessages(messages)}`)}`);
+  console.warn(`${color.yellow(`${WARN_SYMBOL}  ${formatMessages(messages)}`)}`);
 };
 
 const error = (...messages: Array<string>) => {
-  console.error(`${color.red(`${ERROR_SYMBOL} ${formatMessages(messages)}`)}`);
+  console.error(`${color.red(`${ERROR_SYMBOL}  ${formatMessages(messages)}`)}`);
 };
 
 const debug = (...messages: Array<string>) => {

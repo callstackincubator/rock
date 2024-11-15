@@ -16,11 +16,14 @@ export async function runGradle({
   selectedTask?: string;
   args: BuildFlags | Flags;
 }) {
+  if ('binaryPath' in args) {
+    return;
+  }
   const gradleArgs = getTaskNames(
     androidProject.appName,
     args.mode,
     selectedTask ? [selectedTask] : args.tasks,
-    taskType === 'install' ? 'install' : 'bundle'
+    taskType
   );
 
   gradleArgs.push('-x', 'lint');

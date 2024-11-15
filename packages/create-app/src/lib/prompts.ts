@@ -80,6 +80,7 @@ export async function promptTemplate(
   return checkCancelPrompt<TemplateInfo>(
     await select({
       message: 'Select a template:',
+      // @ts-expect-error todo
       options: templates.map((template) => ({
         value: template,
         label: template.name,
@@ -98,6 +99,7 @@ export async function promptPlatforms(
   return checkCancelPrompt<TemplateInfo[]>(
     await multiselect({
       message: 'Select platforms:',
+      // @ts-expect-error todo
       options: platforms.map((platform) => ({
         value: platform,
         label: platform.name,

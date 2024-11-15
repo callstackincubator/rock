@@ -28,7 +28,7 @@ export async function buildAndroid(
 
 export const options = [
   {
-    name: '--mode <string>',
+    name: '-m --mode <string>',
     description: "Specify your app's build variant",
   },
   {

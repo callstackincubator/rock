@@ -3,29 +3,28 @@ import fs from 'fs';
 import { getAdbPath, getAvailableCPUs } from './adb.js';
 import type { AndroidProject, Flags } from './runAndroid.js';
 import { spinner } from '@clack/prompts';
+import { promptForUser } from './listAndroidUsers.js';
 
 async function tryInstallAppOnDevice(
   device: string,
   androidProject: AndroidProject,
   args: Flags,
-  selectedTask?: string,
-  user?: string
+  selectedTask?: string
 ) {
-  const loader = spinner();
   const { appName, sourceDir } = androidProject;
   const defaultVariant = (args.mode || 'debug').toLowerCase();
-
   // handle if selected task from interactive mode includes build flavour as well, eg. installProductionDebug should create ['production','debug'] array
   const variantFromSelectedTask = selectedTask
     ?.replace('install', '')
+    ?.replace('assemble', '')
     .split(/(?=[A-Z])/);
 
   // create path to output file, eg. `production/debug`
   const variantPath =
-    variantFromSelectedTask?.join('/')?.toLowerCase() ?? defaultVariant;
+    variantFromSelectedTask?.join('/')?.toLowerCase() || defaultVariant;
   // create output file name, eg. `production-debug`
   const variantAppName =
-    variantFromSelectedTask?.join('-')?.toLowerCase() ?? defaultVariant;
+    variantFromSelectedTask?.join('-')?.toLowerCase() || defaultVariant;
 
   let pathToApk;
   if (!args.binaryPath) {
@@ -43,6 +42,8 @@ async function tryInstallAppOnDevice(
 
   const adbArgs = ['-s', device, 'install', '-r', '-d'];
 
+  const user = args.interactive ? (await promptForUser(device))?.id : args.user;
+
   if (user !== undefined) {
     adbArgs.push('--user', `${user}`);
   }
@@ -50,6 +51,7 @@ async function tryInstallAppOnDevice(
   adbArgs.push(pathToApk);
 
   const adbPath = getAdbPath();
+  const loader = spinner();
   loader.start(`Installing the app on "${device}"...`);
   const { stderr } = await spawn(adbPath, adbArgs, {
     stdio: ['ignore', 'ignore', 'pipe'],

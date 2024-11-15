@@ -6,7 +6,6 @@ import {
 import { checkCancelPrompt, logger } from '@callstack/rnef-tools';
 import { getDevices } from './adb.js';
 import { toPascalCase } from '../toPascalCase.js';
-import { tryRunAdbReverse } from './tryRunAdbReverse.js';
 import tryLaunchAppOnDevice from './tryLaunchAppOnDevice.js';
 import tryInstallAppOnDevice from './tryInstallAppOnDevice.js';
 import { listAndroidDevices, DeviceData } from './listAndroidDevices.js';
@@ -14,7 +13,6 @@ import tryLaunchEmulator from './tryLaunchEmulator.js';
 import path from 'path';
 import { BuildFlags, options } from '../buildAndroid/buildAndroid.js';
 import { promptForTaskSelection } from '../listAndroidTasks.js';
-import { promptForUser } from './listAndroidUsers.js';
 import { runGradle } from '../runGradle.js';
 import { select } from '@clack/prompts';
 import chalk from 'chalk';
@@ -45,51 +43,42 @@ export async function runAndroid(
     androidProject.mainActivity = args.mainActivity;
   }
 
-  const selectedTask = args.interactive
-    ? await promptForTaskSelection('install', androidProject.sourceDir)
-    : undefined;
-
   const { deviceId } = args.interactive
     ? await selectAndLaunchDevice()
     : { deviceId: args.device };
 
-  const user =
-    args.interactive && deviceId
-      ? (await promptForUser(deviceId))?.id
-      : args.user;
-
-  let devices = getDevices();
-
-  if (devices.length === 0) {
-    await tryLaunchEmulator();
-    devices = getDevices();
-  }
-
-  if (!args.binaryPath) {
-    // @todo parallelize building gradle and launching emulator once @clack/prompts release 0.8.0
-    await runGradle({
-      taskType: deviceId ? 'assemble' : 'install',
-      androidProject,
-      args,
-      selectedTask,
-    });
-  }
+  const selectedTask = args.interactive
+    ? await promptForTaskSelection(
+        deviceId ? 'assemble' : 'install',
+        androidProject.sourceDir
+      )
+    : undefined;
 
   if (deviceId) {
-    tryRunAdbReverse(args.port, deviceId);
-    await tryInstallAppOnDevice(
-      deviceId,
+    await runGradle({
+      taskType: 'assemble',
       androidProject,
       args,
       selectedTask,
-      user
-    );
+    });
+
+    await tryInstallAppOnDevice(deviceId, androidProject, args, selectedTask);
     await tryLaunchAppOnDevice(deviceId, androidProject, args);
   } else {
-    devices.forEach(async (device) => {
-      tryRunAdbReverse(args.port, device);
-      await tryLaunchAppOnDevice(device, androidProject, args);
+    if (getDevices().length === 0) {
+      await tryLaunchEmulator();
+    }
+    
+    await runGradle({
+      taskType: 'install',
+      androidProject,
+      args,
+      selectedTask,
     });
+
+    getDevices().forEach(async (device) =>
+      tryLaunchAppOnDevice(device, androidProject, args)
+    );
   }
 }
 

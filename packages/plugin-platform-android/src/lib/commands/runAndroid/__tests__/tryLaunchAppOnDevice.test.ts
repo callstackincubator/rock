@@ -23,7 +23,7 @@ const OLD_ENV = process.env;
 beforeEach(() => {
   vi.clearAllMocks();
   vi.resetModules();
-  process.env = { ...OLD_ENV, ANDROID_HOME: '/android/home' };
+  process.env = { ...OLD_ENV, ANDROID_HOME: '/mock/android/home' };
 });
 
 afterAll(() => {
@@ -62,7 +62,7 @@ test('launches adb shell with intent to launch com.myapp.MainActivity with diffe
   await tryLaunchAppOnDevice(device, androidProject, args);
 
   expect(spawn).toHaveBeenCalledWith(
-    '/android/home/platform-tools/adb',
+    '/mock/android/home/platform-tools/adb',
     [
       ...shellStartCommand,
       '-n',
@@ -81,7 +81,7 @@ test('launches adb shell with intent to launch com.myapp.MainActivity with diffe
   );
 
   expect(spawn).toHaveBeenCalledWith(
-    '/android/home/platform-tools/adb',
+    '/mock/android/home/platform-tools/adb',
     [
       ...shellStartCommand,
       '-n',
@@ -100,7 +100,7 @@ test('launches adb shell with intent to launch com.myapp.MainActivity with same 
   );
 
   expect(spawn).toHaveBeenCalledWith(
-    '/android/home/platform-tools/adb',
+    '/mock/android/home/platform-tools/adb',
     [
       ...shellStartCommand,
       '-n',
@@ -115,7 +115,7 @@ test('launches adb shell with intent to launch com.myapp.MainActivity with diffe
   await tryLaunchAppOnDevice(device, androidProject, args);
 
   expect(spawn).toHaveBeenCalledWith(
-    '/android/home/platform-tools/adb',
+    '/mock/android/home/platform-tools/adb',
     [
       ...shellStartCommand,
       '-n',
@@ -140,7 +140,7 @@ test('launches adb shell with intent to launch fully specified activity with dif
   );
 
   expect(spawn).toHaveBeenCalledWith(
-    '/android/home/platform-tools/adb',
+    '/mock/android/home/platform-tools/adb',
     [
       ...shellStartCommand,
       '-n',
@@ -158,7 +158,7 @@ test('--appId flag overwrites applicationId setting in androidProject', async ()
   });
 
   expect(spawn).toHaveBeenCalledWith(
-    '/android/home/platform-tools/adb',
+    '/mock/android/home/platform-tools/adb',
     [
       ...shellStartCommand,
       '-n',
@@ -176,7 +176,7 @@ test('appIdSuffix Staging is appended to applicationId', async () => {
   });
 
   expect(spawn).toHaveBeenCalledWith(
-    '/android/home/platform-tools/adb',
+    '/mock/android/home/platform-tools/adb',
     [
       ...shellStartCommand,
       '-n',

@@ -17,16 +17,12 @@ export const pluginPlatformAndroid =
       name: 'build:android',
       description: 'Builds your app for Android platform.',
       action: async (args) => {
-        try {
-          const projectRoot = api.getProjectRoot();
-          const androidConfig = projectConfig(projectRoot);
-          if (androidConfig) {
-            await buildAndroid(androidConfig, { ...pluginConfig, ...args });
-          } else {
-            throw new Error('Android project not found.');
-          }
-        } catch {
-          throw new Error('Failed to build Android app.');
+        const projectRoot = api.getProjectRoot();
+        const androidConfig = projectConfig(projectRoot);
+        if (androidConfig) {
+          await buildAndroid(androidConfig, { ...pluginConfig, ...args });
+        } else {
+          throw new Error('Android project not found.');
         }
       },
       options: options,
@@ -37,20 +33,16 @@ export const pluginPlatformAndroid =
       description:
         'Builds your app and starts it on a connected Android emulator or a device.',
       action: async (args) => {
-        try {
-          const projectRoot = api.getProjectRoot();
-          const androidConfig = projectConfig(projectRoot);
-          if (androidConfig) {
-            await runAndroid(
-              androidConfig,
-              { ...pluginConfig, ...args },
-              projectRoot
-            );
-          } else {
-            throw new Error('Android project not found.');
-          }
-        } catch {
-          throw new Error('Failed to run Android app.');
+        const projectRoot = api.getProjectRoot();
+        const androidConfig = projectConfig(projectRoot);
+        if (androidConfig) {
+          await runAndroid(
+            androidConfig,
+            { ...pluginConfig, ...args },
+            projectRoot
+          );
+        } else {
+          throw new Error('Android project not found.');
         }
       },
       options: runOptions,
