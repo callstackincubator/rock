@@ -1,4 +1,4 @@
-import { execSync } from 'child_process';
+import spawn from 'nano-spawn';
 import { getDevices, getAdbPath } from './adb.js';
 import { getEmulators } from './tryLaunchEmulator.js';
 import os from 'os';
@@ -15,13 +15,18 @@ export type DeviceData = {
  * @param deviceId string
  * @returns name of Android emulator
  */
-function getEmulatorName(deviceId: string) {
+async function getEmulatorName(deviceId: string) {
   const adbPath = getAdbPath();
-  const buffer = execSync(`${adbPath} -s ${deviceId} emu avd name`);
+  const { output } = await spawn(adbPath, [
+    '-s',
+    deviceId,
+    'emu',
+    'avd',
+    'name',
+  ]);
 
   // 1st line should get us emu name
-  return buffer
-    .toString()
+  return output
     .split(os.EOL)[0]
     .replace(/(\r\n|\n|\r)/gm, '')
     .trim();
@@ -32,27 +37,28 @@ function getEmulatorName(deviceId: string) {
  * @param deviceId string
  * @returns Android device name in readable format
  */
-function getPhoneName(deviceId: string) {
+async function getPhoneName(deviceId: string) {
   const adbPath = getAdbPath();
-  const buffer = execSync(
-    `${adbPath} -s ${deviceId} shell getprop | grep ro.product.model`
-  );
-  return buffer
-    .toString()
-    .replace(/\[ro\.product\.model\]:\s*\[(.*)\]/, '$1')
-    .trim();
+  const { output } = await spawn(adbPath, [
+    '-s',
+    deviceId,
+    'shell',
+    'getprop',
+    'ro.product.model',
+  ]);
+  return output.replace(/\[ro\.product\.model\]:\s*\[(.*)\]/, '$1').trim();
 }
 
 export async function listAndroidDevices() {
-  const devices = getDevices();
+  const devices = await getDevices();
 
   let allDevices: Array<DeviceData> = [];
 
-  devices.forEach((deviceId) => {
+  for (const deviceId of devices) {
     if (deviceId.includes('emulator')) {
       const emulatorData: DeviceData = {
         deviceId,
-        readableName: getEmulatorName(deviceId),
+        readableName: await getEmulatorName(deviceId),
         connected: true,
         type: 'emulator',
       };
@@ -60,13 +66,13 @@ export async function listAndroidDevices() {
     } else {
       const phoneData: DeviceData = {
         deviceId,
-        readableName: getPhoneName(deviceId),
+        readableName: await getPhoneName(deviceId),
         type: 'phone',
         connected: true,
       };
       allDevices = [...allDevices, phoneData];
     }
-  });
+  }
 
   const emulators = await getEmulators();
 

@@ -37,12 +37,11 @@ export async function runGradle({
   }
 
   if (args.activeArchOnly) {
-    const devices = getDevices();
-    const architectures = devices
-      .map(getCPU)
-      .filter(
-        (arch, index, array) => arch != null && array.indexOf(arch) === index
-      );
+    const devices = await getDevices();
+    const cpus = await Promise.all(devices.map(getCPU));
+    const architectures = cpus.filter(
+      (arch, index, array) => arch != null && array.indexOf(arch) === index
+    );
 
     if (architectures.length > 0) {
       gradleArgs.push('-PreactNativeArchitectures=' + architectures.join(','));
@@ -58,9 +57,10 @@ export async function runGradle({
       cwd: androidProject.sourceDir,
     });
   } catch {
-    throw new Error(
+    logger.error(
       `Failed to build the app. See the error above for details from Gradle.`
     );
+    process.exit(1);
   }
 }
 

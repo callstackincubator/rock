@@ -113,7 +113,7 @@ const tasksList = [
 
 describe('promptForTaskSelection', () => {
   it('should prompt with correct tasks', async () => {
-    (spawn as Mock).mockResolvedValueOnce({ stdout: gradleTaskOutput });
+    (spawn as Mock).mockResolvedValueOnce({ output: gradleTaskOutput });
     (select as MockedFunction<typeof select>).mockResolvedValueOnce(
       Promise.resolve({
         task: [],

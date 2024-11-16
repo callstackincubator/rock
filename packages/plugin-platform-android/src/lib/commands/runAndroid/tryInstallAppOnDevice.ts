@@ -29,7 +29,7 @@ async function tryInstallAppOnDevice(
   let pathToApk;
   if (!args.binaryPath) {
     const buildDirectory = `${sourceDir}/${appName}/build/outputs/apk/${variantPath}`;
-    const apkFile = getInstallApkName(
+    const apkFile = await getInstallApkName(
       appName,
       variantAppName,
       device,
@@ -63,13 +63,13 @@ async function tryInstallAppOnDevice(
   }
 }
 
-function getInstallApkName(
+async function getInstallApkName(
   appName: string,
   variant: string,
   device: string,
   buildDirectory: string
 ) {
-  const availableCPUs = getAvailableCPUs(device);
+  const availableCPUs = await getAvailableCPUs(device);
 
   // check if there is an apk file like app-armeabi-v7a-debug.apk
   for (const availableCPU of availableCPUs.concat('universal')) {

@@ -1,5 +1,6 @@
 import { vi, test, Mock, MockedFunction } from 'vitest';
 import { AndroidProjectConfig } from '@react-native-community/cli-types';
+import { logger } from '@callstack/rnef-tools';
 import spawn from 'nano-spawn';
 import { select } from '@clack/prompts';
 import { buildAndroid } from '../buildAndroid.js';
@@ -69,7 +70,7 @@ beforeEach(() => {
 });
 
 test('buildAndroid runs gradle build with correct configuration for debug', async () => {
-  (spawn as Mock).mockResolvedValueOnce({ stdout: 'output' });
+  (spawn as Mock).mockResolvedValueOnce({ output: 'output' });
   await buildAndroid(androidProject, args);
 
   expect(spawn as Mock).toBeCalledWith(
@@ -81,14 +82,13 @@ test('buildAndroid runs gradle build with correct configuration for debug', asyn
 
 test('buildAndroid fails gracefully when gradle errors', async () => {
   (spawn as Mock).mockRejectedValueOnce({ stderr: 'gradle error' });
+  vi.spyOn(logger, 'error');
 
   try {
     await buildAndroid(androidProject, args);
-  } catch (e) {
-    expect(e).toMatchObject(
-      Error(
-        'Failed to build the app. See the error above for details from Gradle.'
-      )
+  } catch {
+    expect(logger.error).toBeCalledWith(
+      'Failed to build the app. See the error above for details from Gradle.'
     );
   }
 
@@ -102,9 +102,9 @@ test('buildAndroid fails gracefully when gradle errors', async () => {
 test('buildAndroid runs selected "bundleRelease" task in interactive mode', async () => {
   (spawn as Mock).mockImplementation((...args) => {
     if (args[0] === './gradlew' && args[1][0] === 'tasks') {
-      return { stdout: gradleTaskOutput };
+      return { output: gradleTaskOutput };
     }
-    return { stdout: 'output' };
+    return { output: 'output' };
   });
   (select as MockedFunction<typeof select>).mockResolvedValueOnce(
     Promise.resolve('bundleRelease')

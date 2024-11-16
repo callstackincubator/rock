@@ -39,12 +39,12 @@ export const getGradleTasks = async (
   loader.start('Searching for available Gradle tasks...');
   const gradleWrapper = getGradleWrapper();
   try {
-    const { stdout } = await spawn(
+    const { output } = await spawn(
       gradleWrapper,
       ['tasks', '--group', taskType === 'install' ? 'install' : 'build'],
       { cwd: sourceDir }
     );
-    const tasks = parseTasksFromGradleFile(taskType, stdout);
+    const tasks = parseTasksFromGradleFile(taskType, output);
     loader.stop(`Found ${tasks.length} Gradle tasks.`);
     return tasks;
   } catch {

@@ -65,7 +65,7 @@ describe('--appFolder', () => {
   };
   beforeEach(() => {
     vi.clearAllMocks();
-    (spawn as Mock).mockResolvedValueOnce({ stdout: gradleTaskOutput });
+    (spawn as Mock).mockResolvedValueOnce({ output: gradleTaskOutput });
   });
 
   it('uses task "install[Variant]" as default task', async () => {

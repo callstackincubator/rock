@@ -9,14 +9,14 @@ const emulatorCommand = process.env['ANDROID_HOME']
 
 export const getEmulators = async () => {
   try {
-    const { stdout } = await spawn(emulatorCommand, ['-list-avds']);
-    return stdout
-      .split(os.EOL)
-      .filter((name) => name !== '' && !name.includes(' '));
+    const { output } = await spawn(emulatorCommand, ['-list-avds']);
     // The `name` is AVD ID which is expected to not contain whitespace.
     // The `emulator` command, however, can occasionally return verbose
     // information about crashes or similar. Hence filtering out anything
     // that has basic whitespace.
+    return output
+      .split(os.EOL)
+      .filter((name) => name !== '' && !name.includes(' '));
   } catch {
     return [];
   }
@@ -38,7 +38,7 @@ const launchEmulator = async (
 
   return new Promise<boolean>((resolve, reject) => {
     const bootCheckInterval = setInterval(async () => {
-      const devices = getDevices();
+      const devices = await getDevices();
       const connected = port
         ? devices.find((d) => d.includes(`${port}`))
         : false;
@@ -47,7 +47,7 @@ const launchEmulator = async (
         loader.message(
           `Emulator "${emulatorName}" is connected. Waiting for boot`
         );
-        if (isEmulatorBooted(connected)) {
+        if (await isEmulatorBooted(connected)) {
           cleanup();
           resolve(true);
         }
@@ -84,7 +84,7 @@ async function getAvailableDevicePort(
   /**
    * The default value is 5554 for the first virtual device instance running on your machine. A virtual device normally occupies a pair of adjacent ports: a console port and an adb port. The console of the first virtual device running on a particular machine uses console port 5554 and adb port 5555. Subsequent instances use port numbers increasing by two. For example, 5556/5557, 5558/5559, and so on. The range is 5554 to 5682, allowing for 64 concurrent virtual devices.
    */
-  const devices = getDevices();
+  const devices = await getDevices();
   if (port > 5682) {
     throw new Error('Failed to launch emulator...');
   }

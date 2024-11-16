@@ -10,7 +10,7 @@ async function tryLaunchAppOnDevice(
   androidProject: AndroidProject,
   args: Flags
 ) {
-  tryRunAdbReverse(args.port, device);
+  await tryRunAdbReverse(args.port, device);
   const { appId, appIdSuffix } = args;
 
   const { packageName, mainActivity, applicationId } = androidProject;

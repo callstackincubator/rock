@@ -62,7 +62,7 @@ export async function runAndroid(
       args,
       selectedTask,
     });
-    if (!getDevices().find((d) => d === deviceId)) {
+    if (!(await getDevices()).find((d) => d === deviceId)) {
       logger.error(
         `Device "${deviceId}" not found. Please run it first or use a different one.`
       );
@@ -71,7 +71,7 @@ export async function runAndroid(
     await tryInstallAppOnDevice(deviceId, androidProject, args, selectedTask);
     await tryLaunchAppOnDevice(deviceId, androidProject, args);
   } else {
-    if (getDevices().length === 0) {
+    if ((await getDevices()).length === 0) {
       await tryLaunchEmulator();
     }
 
@@ -82,7 +82,7 @@ export async function runAndroid(
       selectedTask,
     });
 
-    for (const device of getDevices()) {
+    for (const device of await getDevices()) {
       await tryLaunchAppOnDevice(device, androidProject, args);
     }
   }

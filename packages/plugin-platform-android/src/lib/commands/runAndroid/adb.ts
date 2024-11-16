@@ -1,4 +1,4 @@
-import { execSync, execFileSync } from 'child_process';
+import spawn from 'nano-spawn';
 import path from 'node:path';
 
 export function getAdbPath() {
@@ -31,11 +31,11 @@ function parseDevicesResult(result: string): Array<string> {
 /**
  * Executes the commands needed to get a list of devices from ADB
  */
-export function getDevices(): Array<string> {
+export async function getDevices() {
   const adbPath = getAdbPath();
   try {
-    const devicesResult = execSync(`"${adbPath}" devices`);
-    return parseDevicesResult(devicesResult.toString());
+    const { output } = await spawn(adbPath, ['devices']);
+    return parseDevicesResult(output);
   } catch {
     return [];
   }
@@ -44,25 +44,20 @@ export function getDevices(): Array<string> {
 /**
  * Gets available CPUs of devices from ADB
  */
-export function getAvailableCPUs(device: string): Array<string> {
+export async function getAvailableCPUs(device: string) {
   const adbPath = getAdbPath();
   try {
-    const baseArgs = ['-s', device, 'shell', 'getprop'];
+    const adbArgs = [
+      '-s',
+      device,
+      'shell',
+      'getprop',
+      'ro.product.cpu.abilist',
+    ];
 
-    let cpus = execFileSync(
-      adbPath,
-      baseArgs.concat(['ro.product.cpu.abilist'])
-    ).toString();
+    const { output } = await spawn(adbPath, adbArgs);
 
-    // pre-Lollipop
-    if (!cpus || cpus.trim().length === 0) {
-      cpus = execFileSync(
-        adbPath,
-        baseArgs.concat(['ro.product.cpu.abi'])
-      ).toString();
-    }
-
-    return (cpus || '').trim().split(',');
+    return output.trim().split(',');
   } catch {
     return [];
   }
@@ -71,19 +66,17 @@ export function getAvailableCPUs(device: string): Array<string> {
 /**
  * Gets the CPU architecture of a device from ADB
  */
-export function getCPU(device: string): string | null {
+export async function getCPU(device: string) {
   const adbPath = getAdbPath();
   try {
-    const cpus = execFileSync(adbPath, [
+    const { output } = await spawn(adbPath, [
       '-s',
       device,
       'shell',
       'getprop',
       'ro.product.cpu.abi',
-    ])
-      .toString()
-      .trim();
-
+    ]);
+    const cpus = output.trim();
     return cpus.length > 0 ? cpus : null;
   } catch {
     return null;
@@ -93,12 +86,12 @@ export function getCPU(device: string): string | null {
 /**
  * Check if emulator is booted
  */
-export function isEmulatorBooted(device: string): boolean {
+export async function isEmulatorBooted(device: string) {
   const adbPath = getAdbPath();
   const adbArgs = ['-s', device, 'shell', 'getprop', 'sys.boot_completed'];
   try {
-    const output = execFileSync(adbPath, adbArgs).toString().trim();
-    return output === '1';
+    const { output } = await spawn(adbPath, adbArgs);
+    return output.trim() === '1';
   } catch {
     return false;
   }
