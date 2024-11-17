@@ -118,7 +118,7 @@ function normalizeArgs(args: Flags, projectRoot: string) {
   }
 
   // turn on activeArchOnly for debug to speed up local builds
-  if (args.mode !== 'release') {
+  if (args.mode !== 'release' && args.activeArchOnly === undefined) {
     args.activeArchOnly = true;
   }
 

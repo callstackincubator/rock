@@ -44,7 +44,6 @@ export const options = [
     name: '--active-arch-only',
     description:
       'Build native libraries only for the current device architecture for debug builds.',
-    default: false,
   },
   {
     name: '--extra-params <string>',
