@@ -227,7 +227,7 @@ function spawnMockImplementation(
   return { output: '...' };
 }
 
-test.each([['release'], [undefined]])(
+test.each([['release'], [undefined], ['staging']])(
   'runAndroid runs gradle build with correct configuration for --mode %s and launches on emulator-5552',
   async (mode) => {
     (spawn as Mock).mockImplementation((file, args) =>
@@ -243,7 +243,11 @@ test.each([['release'], [undefined]])(
     expect(spawn as Mock).toBeCalledWith(
       './gradlew',
       [
-        mode === 'release' ? 'app:installRelease' : 'app:installDebug',
+        mode === 'release'
+          ? 'app:installRelease'
+          : mode === 'staging'
+          ? 'app:installStaging'
+          : 'app:installDebug',
         '-x',
         'lint',
         '-PreactNativeDevServerPort=8081',
