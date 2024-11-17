@@ -12,20 +12,25 @@ vi.mock('nano-spawn', () => {
   };
 });
 
-const startMock = vi.fn();
-const stopMock = vi.fn();
+const mocks = vi.hoisted(() => {
+  return {
+    startMock: vi.fn(),
+    stopMock: vi.fn(),
+    outroMock: vi.fn(),
+  };
+});
 
 vi.mock('@clack/prompts', () => {
   return {
     spinner: vi.fn(() => ({
-      start: startMock,
-      stop: stopMock,
+      start: mocks.startMock,
+      stop: mocks.stopMock,
       message: vi.fn(),
     })),
     select: vi.fn(),
     isCancel: vi.fn(() => false),
     intro: vi.fn(),
-    outro: vi.fn(),
+    outro: mocks.outroMock,
   };
 });
 
@@ -73,7 +78,7 @@ test('buildAndroid runs gradle build with correct configuration for debug', asyn
   (spawn as Mock).mockResolvedValueOnce({ output: 'output' });
   await buildAndroid(androidProject, args);
 
-  expect(spawn as Mock).toBeCalledWith(
+  expect(vi.mocked(spawn)).toBeCalledWith(
     './gradlew',
     ['app:bundleDebug', '-x', 'lint', '-PreactNativeDevServerPort=8081'],
     { stdio: 'inherit', cwd: '/android' }
@@ -81,7 +86,7 @@ test('buildAndroid runs gradle build with correct configuration for debug', asyn
 });
 
 test('buildAndroid fails gracefully when gradle errors', async () => {
-  (spawn as Mock).mockRejectedValueOnce({ stderr: 'gradle error' });
+  vi.mocked(spawn).mockRejectedValueOnce({ stderr: 'gradle error' });
   vi.spyOn(logger, 'error');
 
   try {
@@ -92,7 +97,7 @@ test('buildAndroid fails gracefully when gradle errors', async () => {
     );
   }
 
-  expect(spawn as Mock).toBeCalledWith(
+  expect(vi.mocked(spawn)).toBeCalledWith(
     './gradlew',
     ['app:bundleDebug', '-x', 'lint', '-PreactNativeDevServerPort=8081'],
     { stdio: 'inherit', cwd: '/android' }
@@ -100,8 +105,8 @@ test('buildAndroid fails gracefully when gradle errors', async () => {
 });
 
 test('buildAndroid runs selected "bundleRelease" task in interactive mode', async () => {
-  (spawn as Mock).mockImplementation((...args) => {
-    if (args[0] === './gradlew' && args[1][0] === 'tasks') {
+  (spawn as Mock).mockImplementation((file, args) => {
+    if (file === './gradlew' && args[0] === 'tasks') {
       return { output: gradleTaskOutput };
     }
     return { output: 'output' };
@@ -112,18 +117,21 @@ test('buildAndroid runs selected "bundleRelease" task in interactive mode', asyn
 
   await buildAndroid(androidProject, { ...args, interactive: true });
 
-  expect(spawn as Mock).toHaveBeenNthCalledWith(
+  expect(vi.mocked(spawn)).toHaveBeenNthCalledWith(
     1,
     './gradlew',
     ['tasks', '--group', 'build'],
     { cwd: '/android' }
   );
-  expect(spawn as Mock).toHaveBeenNthCalledWith(
+  expect(vi.mocked(spawn)).toHaveBeenNthCalledWith(
     2,
     './gradlew',
     ['app:bundleRelease', '-x', 'lint', '-PreactNativeDevServerPort=8081'],
     { stdio: 'inherit', cwd: '/android' }
   );
-  expect(startMock).toBeCalledWith('Searching for available Gradle tasks...');
-  expect(stopMock).toHaveBeenCalledWith('Found 2 Gradle tasks.');
+  expect(mocks.startMock).toBeCalledWith(
+    'Searching for available Gradle tasks...'
+  );
+  expect(mocks.stopMock).toBeCalledWith('Found 2 Gradle tasks.');
+  expect(mocks.outroMock).toBeCalledWith('Success.');
 });

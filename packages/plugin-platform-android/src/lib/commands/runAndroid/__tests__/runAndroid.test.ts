@@ -85,8 +85,12 @@ androidDependencies - Displays the Android dependencies of the project.
 Build tasks
 -----------
 assemble - Assemble main outputs for all the variants.
+assembleDebug - Assembles main outputs for all Debug variants.
 assembleAndroidTest - Assembles all the Test applications.
-bundle - Bundles main outputs for all Release variants.`;
+assembleRelease - Assembles main outputs for all Release variants.
+bundle - Assemble bundles for all the variants.
+bundleDebug - Assembles bundles for all Debug variants.
+bundleRelease - Assembles bundles for all Release variants.`;
 
 const adbDevicesNoDevicesOutput = `List of devices attached`;
 
@@ -286,7 +290,7 @@ test.each([['release'], [undefined], ['staging']])(
     expect(logErrorSpy).not.toBeCalled();
 
     // Runs installDebug with only active architecture arm64-v8a
-    expect(spawn as Mock).toBeCalledWith(
+    expect(vi.mocked(spawn)).toBeCalledWith(
       './gradlew',
       [
         mode === 'release'
@@ -303,7 +307,7 @@ test.each([['release'], [undefined], ['staging']])(
     );
 
     // launches com.test app with MainActivity on emulator-5552
-    expect(spawn as Mock).toBeCalledWith(
+    expect(vi.mocked(spawn)).toBeCalledWith(
       '/mock/android/home/platform-tools/adb',
       expect.arrayContaining([
         'emulator-5552',
@@ -334,7 +338,7 @@ test('runAndroid runs gradle build with custom --appId, --appIdSuffix and --main
   expect(logErrorSpy).not.toBeCalled();
 
   // launches com.custom.suffix app with OtherActivity on emulator-5552
-  expect(spawn as Mock).toBeCalledWith(
+  expect(vi.mocked(spawn)).toBeCalledWith(
     '/mock/android/home/platform-tools/adb',
     expect.arrayContaining([
       'emulator-5552',
@@ -413,6 +417,11 @@ test.each([
           type: 'emulator',
         });
       }
+      if (opts.message === 'Select assemble task you want to perform') {
+        return Promise.resolve(
+          mode === 'release' ? 'assembleRelease' : 'assembleDebug'
+        );
+      }
       return Promise.resolve(undefined);
     });
 
@@ -423,13 +432,13 @@ test.each([
     );
 
     // we don't want to run installDebug when a device is selected, because gradle will install the app on all connected devices
-    expect(spawn as Mock).not.toBeCalledWith(
+    expect(vi.mocked(spawn)).not.toBeCalledWith(
       './gradlew',
       expect.arrayContaining(['app:installDebug'])
     );
 
     // Runs assemble debug task with active architectures arm64-v8a, armeabi-v7a
-    expect(spawn as Mock).toBeCalledWith(
+    expect(vi.mocked(spawn)).toBeCalledWith(
       './gradlew',
       [
         mode === 'release' ? 'app:assembleRelease' : 'app:assembleDebug',
@@ -442,7 +451,7 @@ test.each([
     );
 
     // launches com.test app with MainActivity on emulator-5554
-    expect(spawn as Mock).toBeCalledWith(
+    expect(vi.mocked(spawn)).toBeCalledWith(
       '/mock/android/home/platform-tools/adb',
       expect.arrayContaining([
         'emulator-5554',
@@ -478,7 +487,7 @@ test('runAndroid launches an app on all connected devices', async () => {
   await runAndroid(androidProject, { ...args }, '/');
 
   // Runs assemble debug task with active architectures arm64-v8a, armeabi-v7a
-  expect(spawn as Mock).toBeCalledWith(
+  expect(vi.mocked(spawn)).toBeCalledWith(
     './gradlew',
     [
       'app:installDebug',
@@ -491,14 +500,14 @@ test('runAndroid launches an app on all connected devices', async () => {
   );
 
   // launches com.test app with MainActivity on emulator-5552
-  expect(spawn as Mock).toBeCalledWith(
+  expect(vi.mocked(spawn)).toBeCalledWith(
     '/mock/android/home/platform-tools/adb',
     expect.arrayContaining(['emulator-5552', 'com.test/com.test.MainActivity']),
     { stdio: ['ignore', 'ignore', 'pipe'] }
   );
 
   // launches com.test app with MainActivity on emulator-5554
-  expect(spawn as Mock).toBeCalledWith(
+  expect(vi.mocked(spawn)).toBeCalledWith(
     '/mock/android/home/platform-tools/adb',
     expect.arrayContaining(['emulator-5554', 'com.test/com.test.MainActivity']),
     { stdio: ['ignore', 'ignore', 'pipe'] }
@@ -548,14 +557,14 @@ test('runAndroid skips building when --binary-path is passed', async () => {
   expect(spawn as Mock).not.toBeCalledWith('./gradlew');
 
   // launches com.test app with MainActivity on emulator-5554
-  expect(spawn as Mock).toBeCalledWith(
+  expect(vi.mocked(spawn)).toBeCalledWith(
     '/mock/android/home/platform-tools/adb',
     expect.arrayContaining(['emulator-5552', 'com.test/com.test.MainActivity']),
     { stdio: ['ignore', 'ignore', 'pipe'] }
   );
 
   // launches com.test app with MainActivity on emulator-5554
-  expect(spawn as Mock).toBeCalledWith(
+  expect(vi.mocked(spawn)).toBeCalledWith(
     '/mock/android/home/platform-tools/adb',
     expect.arrayContaining(['emulator-5554', 'com.test/com.test.MainActivity']),
     { stdio: ['ignore', 'ignore', 'pipe'] }
