@@ -268,6 +268,31 @@ test.each([['release'], [undefined], ['staging']])(
   }
 );
 
+test('runAndroid runs gradle build with custom --appId, --appIdSuffix and --mainActivity', async () => {
+  (spawn as Mock).mockImplementation((file, args) =>
+    spawnMockImplementation(file, args)
+  );
+  const logErrorSpy = vi.spyOn(logger, 'error');
+  await runAndroid(
+    androidProject,
+    { ...args, appId: 'com.custom', appIdSuffix: 'suffix', mainActivity: 'OtherActivity' },
+    '/'
+  );
+
+  expect(mocks.outroMock).toBeCalledWith('Success.');
+  expect(logErrorSpy).not.toBeCalled();
+
+  // launches com.custom.suffix app with OtherActivity on emulator-5552
+  expect(spawn as Mock).toBeCalledWith(
+    '/mock/android/home/platform-tools/adb',
+    expect.arrayContaining([
+      'emulator-5552',
+      'com.custom.suffix/com.test.OtherActivity',
+    ]),
+    { stdio: ['ignore', 'ignore', 'pipe'] }
+  );
+});
+
 test('runAndroid fails to launch an app on not-connected device when specified with --device emulator-5554', async () => {
   (spawn as Mock).mockImplementation((file, args) =>
     spawnMockImplementation(file, args)
