@@ -1,9 +1,9 @@
 import { logger } from '@callstack/rnef-tools';
-import { getTaskNames } from './buildAndroid/getTaskNames.js';
 import { AndroidProject, Flags } from './runAndroid/runAndroid.js';
 import { getCPU, getDevices } from './runAndroid/adb.js';
 import spawn from 'nano-spawn';
 import type { BuildFlags } from './buildAndroid/buildAndroid.js';
+import { toPascalCase } from './toPascalCase.js';
 
 export async function runGradle({
   taskType,
@@ -66,4 +66,16 @@ export async function runGradle({
 
 export function getGradleWrapper() {
   return process.platform.startsWith('win') ? 'gradlew.bat' : './gradlew';
+}
+
+function getTaskNames(
+  appName: string,
+  mode: BuildFlags['mode'] = 'debug',
+  tasks: BuildFlags['tasks'],
+  taskType: 'assemble' | 'install' | 'bundle'
+): Array<string> {
+  const appTasks =
+    tasks && tasks.length ? tasks : [taskType + toPascalCase(mode)];
+
+  return appTasks.map((task) => `${appName}:${task}`);
 }
