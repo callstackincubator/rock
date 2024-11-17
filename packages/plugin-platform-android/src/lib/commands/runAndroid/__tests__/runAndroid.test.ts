@@ -1,6 +1,7 @@
 import fs, { PathLike } from 'node:fs';
 import { vi, test, Mock } from 'vitest';
 import { AndroidProjectConfig } from '@react-native-community/cli-types';
+import { select } from '@clack/prompts';
 import spawn from 'nano-spawn';
 import { runAndroid } from '../runAndroid.js';
 import { Flags } from '../../runAndroid/runAndroid.js';
@@ -70,6 +71,23 @@ afterAll(() => {
   process.env = OLD_ENV;
 });
 
+const gradleTaskOutput = `
+> Task :tasks
+
+------------------------------------------------------------
+Tasks runnable from root project 'com.bananas'
+------------------------------------------------------------
+
+Android tasks
+-------------
+androidDependencies - Displays the Android dependencies of the project.
+
+Build tasks
+-----------
+assemble - Assemble main outputs for all the variants.
+assembleAndroidTest - Assembles all the Test applications.
+bundle - Bundles main outputs for all Release variants.`;
+
 const adbDevicesNoDevicesOutput = `List of devices attached`;
 
 const adbDevicesOneDeviceOutput = `List of devices attached
@@ -83,12 +101,22 @@ const emulatorOutput = `INFO    | Storing crashdata in: /tmp/android-thymikee/em
 Pixel_3a_API_32_arm64-v8a
 Pixel_8_Pro_API_34`;
 
+const emulatorAvdNameOutputPixel3a = `Pixel_3a_API_32_arm64-v8a
+OK`;
+
+const emulatorAvdNameOutputPixel8 = `Pixel_8_Pro_API_34
+OK`;
+
 function mockCallGradleInstallDebug(file: string, args: string[]) {
   return file === './gradlew' && args?.[0] === 'app:installDebug';
 }
 
 function mockCallGradleAssembleDebug(file: string, args: string[]) {
   return file === './gradlew' && args?.[0] === 'app:assembleDebug';
+}
+
+function mockCallGradleTasks(file: string, args: string[]) {
+  return file === './gradlew' && args?.[0] === 'tasks';
 }
 
 function mockCallAdbDevices(file: string, args: string[]) {
@@ -109,6 +137,21 @@ function mockCallAdbBootCompleted(
     args?.[2] === 'shell' &&
     args?.[3] === 'getprop' &&
     args?.[4] === 'sys.boot_completed'
+  );
+}
+
+function mockCallEmulatorAvdName(
+  file: string,
+  args: string[],
+  device: string | undefined
+) {
+  return (
+    file === '/mock/android/home/platform-tools/adb' &&
+    args?.[0] === '-s' &&
+    args?.[1] === (device ?? 'emulator-5552') &&
+    args?.[2] === 'emu' &&
+    args?.[3] === 'avd' &&
+    args?.[4] === 'name'
   );
 }
 
@@ -203,6 +246,9 @@ function spawnMockImplementation(
     }
     return { output: adbDevicesNoDevicesOutput };
   }
+  if (mockCallEmulatorAvdName(file, args, device)) {
+    return { output: emulatorAvdNameOutputPixel3a };
+  }
   if (mockCallAdbBootCompleted(file, args, device)) {
     return { output: '1' };
   }
@@ -234,7 +280,7 @@ test.each([['release'], [undefined], ['staging']])(
       spawnMockImplementation(file, args)
     );
     const logErrorSpy = vi.spyOn(logger, 'error');
-    await runAndroid(androidProject, { ...args, mode: mode }, '/');
+    await runAndroid(androidProject, { ...args, mode }, '/');
 
     expect(mocks.outroMock).toBeCalledWith('Success.');
     expect(logErrorSpy).not.toBeCalled();
@@ -275,7 +321,12 @@ test('runAndroid runs gradle build with custom --appId, --appIdSuffix and --main
   const logErrorSpy = vi.spyOn(logger, 'error');
   await runAndroid(
     androidProject,
-    { ...args, appId: 'com.custom', appIdSuffix: 'suffix', mainActivity: 'OtherActivity' },
+    {
+      ...args,
+      appId: 'com.custom',
+      appIdSuffix: 'suffix',
+      mainActivity: 'OtherActivity',
+    },
     '/'
   );
 
@@ -308,10 +359,18 @@ test('runAndroid fails to launch an app on not-connected device when specified w
   }
 });
 
-test.each([['release'], [undefined]])(
-  `runAndroid launches an app on a selected device emulator-5554 when connected in --mode %s`,
-  async (mode) => {
+test.each([
+  ['release', true],
+  ['release', false],
+  [undefined, true],
+  [undefined, false],
+])(
+  `runAndroid launches an app on a selected device emulator-5554 when connected in --mode %s and --interactive %b`,
+  async (mode, interactive) => {
     (spawn as Mock).mockImplementation((file, args) => {
+      if (mockCallEmulatorAvdName(file, args, 'emulator-5554')) {
+        return { output: emulatorAvdNameOutputPixel8 };
+      }
       if (mockCallAdbBootCompleted(file, args, 'emulator-5554')) {
         return { output: '1' };
       }
@@ -326,6 +385,9 @@ test.each([['release'], [undefined]])(
       }
       if (mockCallAdbStart(file, args, 'emulator-5554')) {
         return { output: '<mock-adb-start>' };
+      }
+      if (mockCallGradleTasks(file, args)) {
+        return { output: gradleTaskOutput };
       }
       return spawnMockImplementation(file, args, {
         adbDevicesOutput: adbDevicesTwoDevicesOutput,
@@ -342,9 +404,21 @@ test.each([['release'], [undefined]])(
       return (actualFs as typeof fs).existsSync(file);
     });
 
+    vi.mocked(select).mockImplementation((opts) => {
+      if (opts.message === 'Select the device / emulator you want to use') {
+        return Promise.resolve({
+          deviceId: 'emulator-5554',
+          readableName: 'Pixel_8_Pro_API_34',
+          connected: true,
+          type: 'emulator',
+        });
+      }
+      return Promise.resolve(undefined);
+    });
+
     await runAndroid(
       androidProject,
-      { ...args, device: 'emulator-5554', mode: mode },
+      { ...args, device: 'emulator-5554', mode, interactive },
       '/'
     );
 
