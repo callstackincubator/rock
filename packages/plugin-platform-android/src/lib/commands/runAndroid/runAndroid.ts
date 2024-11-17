@@ -39,11 +39,7 @@ export async function runAndroid(
 ) {
   intro('Building and running Android app.');
   normalizeArgs(args, projectRoot);
-  
-  if (args.mainActivity) {
-    androidProject.mainActivity = args.mainActivity;
-  }
-  
+
   const { deviceId } = args.interactive
     ? await selectAndLaunchDevice()
     : { deviceId: args.device };

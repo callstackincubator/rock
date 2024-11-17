@@ -12,20 +12,21 @@ export async function tryLaunchAppOnDevice(
 ) {
   await tryRunAdbReverse(args.port, device);
   const { appId, appIdSuffix } = args;
-
   const { packageName, mainActivity, applicationId } = androidProject;
 
   const applicationIdWithSuffix = [appId || applicationId, appIdSuffix]
     .filter(Boolean)
     .join('.');
 
+  const activity = args.mainActivity ?? mainActivity;
+
   const activityToLaunch =
-    mainActivity.startsWith(packageName) ||
-    (!mainActivity.startsWith('.') && mainActivity.includes('.'))
-      ? mainActivity
-      : mainActivity.startsWith('.')
-      ? [packageName, mainActivity].join('')
-      : [packageName, mainActivity].filter(Boolean).join('.');
+    activity.startsWith(packageName) ||
+    (!activity.startsWith('.') && activity.includes('.'))
+      ? activity
+      : activity.startsWith('.')
+      ? [packageName, activity].join('')
+      : [packageName, activity].filter(Boolean).join('.');
 
   // Here we're using the same flags as Android Studio to launch the app
   const adbArgs = [

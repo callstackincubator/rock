@@ -46,7 +46,7 @@ const args: Flags = {
   interactive: undefined,
   appId: '',
   appIdSuffix: '',
-  mainActivity: 'MainActivity',
+  mainActivity: undefined,
   port: '8081',
 };
 const androidProject: AndroidProjectConfig = {
@@ -569,7 +569,7 @@ test('runAndroid skips building when --binary-path is passed', async () => {
   );
 
   // Skips gradle
-  expect(spawn as Mock).not.toBeCalledWith('./gradlew');
+  expect(vi.mocked(spawn)).not.toBeCalledWith('./gradlew');
 
   // launches com.test app with MainActivity on emulator-5554
   expect(vi.mocked(spawn)).toBeCalledWith(
