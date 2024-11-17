@@ -1,6 +1,6 @@
 import { AndroidProjectConfig } from '@react-native-community/cli-types';
-import tryLaunchAppOnDevice from '../tryLaunchAppOnDevice.js';
-import { Flags } from '../runAndroid.js';
+import { tryLaunchAppOnDevice } from '../tryLaunchAppOnDevice.js';
+import type { Flags } from '../runAndroid.js';
 import spawn from 'nano-spawn';
 import { vi, test } from 'vitest';
 

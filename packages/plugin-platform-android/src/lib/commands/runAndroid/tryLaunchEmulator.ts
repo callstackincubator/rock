@@ -1,6 +1,6 @@
 import os from 'os';
 import spawn from 'nano-spawn';
-import { isEmulatorBooted, getDevices } from './adb.js';
+import { getDevices, getAdbPath } from './adb.js';
 import { spinner } from '@clack/prompts';
 
 const emulatorCommand = process.env['ANDROID_HOME']
@@ -94,7 +94,7 @@ async function getAvailableDevicePort(
   return port;
 }
 
-export default async function tryLaunchEmulator(name?: string) {
+export async function tryLaunchEmulator(name?: string) {
   const port = await getAvailableDevicePort();
   const loader = spinner();
   loader.start(`Looking for available emulators"`);
@@ -118,5 +118,19 @@ export default async function tryLaunchEmulator(name?: string) {
       'No emulators found as an output of `emulator -list-avds`. Please launch an emulator manually or connect a device',
       1
     );
+  }
+}
+
+/**
+ * Check if emulator is booted
+ */
+async function isEmulatorBooted(device: string) {
+  const adbPath = getAdbPath();
+  const adbArgs = ['-s', device, 'shell', 'getprop', 'sys.boot_completed'];
+  try {
+    const { output } = await spawn(adbPath, adbArgs);
+    return output.trim() === '1';
+  } catch {
+    return false;
   }
 }

@@ -5,7 +5,7 @@ import { logger } from '@callstack/rnef-tools';
 import { tryRunAdbReverse } from './tryRunAdbReverse.js';
 import { spinner } from '@clack/prompts';
 
-async function tryLaunchAppOnDevice(
+export async function tryLaunchAppOnDevice(
   device: string,
   androidProject: AndroidProject,
   args: Flags
@@ -56,5 +56,3 @@ async function tryLaunchAppOnDevice(
     logger.error(`Failed to launch the app on "${device}". ${stderr}`);
   }
 }
-
-export default tryLaunchAppOnDevice;

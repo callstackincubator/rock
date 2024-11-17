@@ -3,8 +3,7 @@ import { AndroidProjectConfig } from '@react-native-community/cli-types';
 import { logger } from '@callstack/rnef-tools';
 import spawn from 'nano-spawn';
 import { select } from '@clack/prompts';
-import { buildAndroid } from '../buildAndroid.js';
-import { Flags } from '../../runAndroid/runAndroid.js';
+import { buildAndroid, type BuildFlags } from '../buildAndroid.js';
 
 vi.mock('nano-spawn', () => {
   return {
@@ -51,14 +50,12 @@ assemble - Assemble main outputs for all the variants.
 assembleAndroidTest - Assembles all the Test applications.
 bundleRelease - Bundles main outputs for all Release variants.`;
 
-const args: Flags = {
-  appId: '',
+const args: BuildFlags = {
   tasks: undefined,
   mode: 'debug',
-  appIdSuffix: '',
-  mainActivity: 'MainActivity',
-  port: '8081',
   activeArchOnly: false,
+  extraParams: undefined,
+  interactive: undefined,
 };
 const androidProject: AndroidProjectConfig = {
   appName: 'app',
@@ -80,7 +77,7 @@ test('buildAndroid runs gradle build with correct configuration for debug', asyn
 
   expect(vi.mocked(spawn)).toBeCalledWith(
     './gradlew',
-    ['app:bundleDebug', '-x', 'lint', '-PreactNativeDevServerPort=8081'],
+    ['app:bundleDebug', '-x', 'lint'],
     { stdio: 'inherit', cwd: '/android' }
   );
 });
@@ -99,7 +96,7 @@ test('buildAndroid fails gracefully when gradle errors', async () => {
 
   expect(vi.mocked(spawn)).toBeCalledWith(
     './gradlew',
-    ['app:bundleDebug', '-x', 'lint', '-PreactNativeDevServerPort=8081'],
+    ['app:bundleDebug', '-x', 'lint'],
     { stdio: 'inherit', cwd: '/android' }
   );
 });
@@ -126,7 +123,7 @@ test('buildAndroid runs selected "bundleRelease" task in interactive mode', asyn
   expect(vi.mocked(spawn)).toHaveBeenNthCalledWith(
     2,
     './gradlew',
-    ['app:bundleRelease', '-x', 'lint', '-PreactNativeDevServerPort=8081'],
+    ['app:bundleRelease', '-x', 'lint'],
     { stdio: 'inherit', cwd: '/android' }
   );
   expect(mocks.startMock).toBeCalledWith(

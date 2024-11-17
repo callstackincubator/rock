@@ -1,6 +1,6 @@
 import { logger } from '@callstack/rnef-tools';
-import { AndroidProject, Flags } from './runAndroid/runAndroid.js';
-import { getCPU, getDevices } from './runAndroid/adb.js';
+import type { AndroidProject, Flags } from './runAndroid/runAndroid.js';
+import { getAdbPath, getDevices } from './runAndroid/adb.js';
 import spawn from 'nano-spawn';
 import type { BuildFlags } from './buildAndroid/buildAndroid.js';
 import { toPascalCase } from './toPascalCase.js';
@@ -78,4 +78,24 @@ function getTaskNames(
     tasks && tasks.length ? tasks : [taskType + toPascalCase(mode)];
 
   return appTasks.map((task) => `${appName}:${task}`);
+}
+
+/**
+ * Gets the CPU architecture of a device from ADB
+ */
+async function getCPU(device: string) {
+  const adbPath = getAdbPath();
+  try {
+    const { output } = await spawn(adbPath, [
+      '-s',
+      device,
+      'shell',
+      'getprop',
+      'ro.product.cpu.abi',
+    ]);
+    const cpus = output.trim();
+    return cpus.length > 0 ? cpus : null;
+  } catch {
+    return null;
+  }
 }

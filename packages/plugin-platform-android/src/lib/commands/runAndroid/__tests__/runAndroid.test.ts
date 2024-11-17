@@ -3,8 +3,7 @@ import { vi, test, Mock } from 'vitest';
 import { AndroidProjectConfig } from '@react-native-community/cli-types';
 import { select } from '@clack/prompts';
 import spawn from 'nano-spawn';
-import { runAndroid } from '../runAndroid.js';
-import { Flags } from '../../runAndroid/runAndroid.js';
+import { runAndroid, type Flags } from '../runAndroid.js';
 import { logger } from '@callstack/rnef-tools';
 
 const actualFs = await vi.importMock('node:fs');
@@ -40,13 +39,15 @@ vi.mock('@clack/prompts', () => {
 });
 
 const args: Flags = {
-  appId: '',
   tasks: undefined,
   mode: 'debug',
+  activeArchOnly: true,
+  extraParams: undefined,
+  interactive: undefined,
+  appId: '',
   appIdSuffix: '',
   mainActivity: 'MainActivity',
   port: '8081',
-  activeArchOnly: true,
 };
 const androidProject: AndroidProjectConfig = {
   appName: 'app',
@@ -115,8 +116,16 @@ function mockCallGradleInstallDebug(file: string, args: string[]) {
   return file === './gradlew' && args?.[0] === 'app:installDebug';
 }
 
+function mockCallGradleInstallRelease(file: string, args: string[]) {
+  return file === './gradlew' && args?.[0] === 'app:installRelease';
+}
+
 function mockCallGradleAssembleDebug(file: string, args: string[]) {
   return file === './gradlew' && args?.[0] === 'app:assembleDebug';
+}
+
+function mockCallGradleAssembleRelease(file: string, args: string[]) {
+  return file === './gradlew' && args?.[0] === 'app:assembleRelease';
 }
 
 function mockCallGradleTasks(file: string, args: string[]) {
@@ -234,10 +243,16 @@ function spawnMockImplementation(
   }: { adbDevicesOutput?: string; device?: string } = {}
 ) {
   if (mockCallGradleInstallDebug(file, args)) {
-    return { output: '<mock-gradle-install>' };
+    return { output: '<mock-gradle-install-debug>' };
+  }
+  if (mockCallGradleInstallRelease(file, args)) {
+    return { output: '<mock-gradle-install-release>' };
   }
   if (mockCallGradleAssembleDebug(file, args)) {
-    return { output: '<mock-gradle-assemble>' };
+    return { output: '<mock-gradle-assemble-debug>' };
+  }
+  if (mockCallGradleAssembleRelease(file, args)) {
+    return { output: '<mock-gradle-assemble-release>' };
   }
   if (mockCallAdbDevices(file, args)) {
     adbDevicesCallsCount++;

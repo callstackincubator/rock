@@ -1,11 +1,11 @@
 import spawn from 'nano-spawn';
 import fs from 'fs';
-import { getAdbPath, getAvailableCPUs } from './adb.js';
+import { getAdbPath } from './adb.js';
 import type { AndroidProject, Flags } from './runAndroid.js';
 import { spinner } from '@clack/prompts';
 import { promptForUser } from './listAndroidUsers.js';
 
-async function tryInstallAppOnDevice(
+export async function tryInstallAppOnDevice(
   device: string,
   androidProject: AndroidProject,
   args: Flags,
@@ -88,4 +88,24 @@ async function getInstallApkName(
   throw new Error('Could not find the correct install APK file.');
 }
 
-export default tryInstallAppOnDevice;
+/**
+ * Gets available CPUs of devices from ADB
+ */
+async function getAvailableCPUs(device: string) {
+  const adbPath = getAdbPath();
+  try {
+    const adbArgs = [
+      '-s',
+      device,
+      'shell',
+      'getprop',
+      'ro.product.cpu.abilist',
+    ];
+
+    const { output } = await spawn(adbPath, adbArgs);
+
+    return output.trim().split(',');
+  } catch {
+    return [];
+  }
+}

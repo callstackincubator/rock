@@ -1,5 +1,5 @@
 import spawn from 'nano-spawn';
-import { Flags } from '../runAndroid.js';
+import type { Flags } from '../runAndroid.js';
 import { AndroidProjectConfig } from '@react-native-community/cli-types';
 import { vi, Mock } from 'vitest';
 import { runGradle } from '../../runGradle.js';

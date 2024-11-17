@@ -6,10 +6,10 @@ import {
 import { checkCancelPrompt, logger } from '@callstack/rnef-tools';
 import { getDevices } from './adb.js';
 import { toPascalCase } from '../toPascalCase.js';
-import tryLaunchAppOnDevice from './tryLaunchAppOnDevice.js';
-import tryInstallAppOnDevice from './tryInstallAppOnDevice.js';
+import { tryLaunchAppOnDevice } from './tryLaunchAppOnDevice.js';
+import { tryInstallAppOnDevice } from './tryInstallAppOnDevice.js';
 import { listAndroidDevices, DeviceData } from './listAndroidDevices.js';
-import tryLaunchEmulator from './tryLaunchEmulator.js';
+import { tryLaunchEmulator } from './tryLaunchEmulator.js';
 import path from 'path';
 import { BuildFlags, options } from '../buildAndroid/buildAndroid.js';
 import { promptForTaskSelection } from '../listAndroidTasks.js';
@@ -39,11 +39,11 @@ export async function runAndroid(
 ) {
   intro('Building and running Android app.');
   normalizeArgs(args, projectRoot);
-
+  
   if (args.mainActivity) {
     androidProject.mainActivity = args.mainActivity;
   }
-
+  
   const { deviceId } = args.interactive
     ? await selectAndLaunchDevice()
     : { deviceId: args.device };
