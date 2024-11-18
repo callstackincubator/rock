@@ -25,7 +25,6 @@ import {
   promptTemplate,
   promptPlatforms,
 } from './prompts.js';
-import { cancelPromptAndExit } from '@callstack/rnef-tools';
 import {
   downloadTarballFromNpm,
   extractTarballFile,
@@ -34,6 +33,7 @@ import {
   resolveTemplate as resolveTemplate,
   TEMPLATES,
 } from './templates.js';
+import { cancelPromptAndExit } from '@callstack/rnef-tools';
 
 export async function run() {
   const options = parseCliOptions(process.argv.slice(2));
@@ -83,11 +83,9 @@ export async function run() {
     await extractPackage(absoluteTargetDir, platform);
   }
 
-  // TODO: add pluging packages
   const loader = spinner();
   loader.start('Updating template...');
-  // TODO: add relavant platform plugins to package.json
-  rewritePackageJson(absoluteTargetDir, projectName);
+  rewritePackageJson(absoluteTargetDir, projectName, platforms);
   renameCommonFiles(absoluteTargetDir);
   renamePlaceholder(absoluteTargetDir, projectName);
   createConfig(absoluteTargetDir, platforms);
@@ -101,7 +99,7 @@ async function extractPackage(absoluteTargetDir: string, pkg: TemplateInfo) {
 
   let tarballPath: string | null = null;
   // NPM package: download tarball file
-  if (pkg.packageName) {
+  if ('version' in pkg) {
     loader.start(`Downloading package ${pkg.packageName}@${pkg.version}...`);
     tarballPath = await downloadTarballFromNpm(
       pkg.packageName,
@@ -138,9 +136,9 @@ async function extractPackage(absoluteTargetDir: string, pkg: TemplateInfo) {
     return;
   }
 
-  if (pkg.localPath) {
+  if ('localPath' in pkg) {
     loader.start(`Copying local directory ${pkg.localPath}...`);
-    copyDirSync(pkg.localPath, absoluteTargetDir);
+    copyDirSync(path.join(pkg.localPath, pkg.directory), absoluteTargetDir);
     loader.stop(`Copied local directory ${pkg.localPath}.`);
 
     return;
@@ -153,16 +151,21 @@ async function extractPackage(absoluteTargetDir: string, pkg: TemplateInfo) {
 }
 
 function createConfig(absoluteTargetDir: string, platforms: TemplateInfo[]) {
-  const rnefConfig = path.join(absoluteTargetDir, 'rnef.config.js');
+  const rnefConfig = path.join(absoluteTargetDir, 'rnef.config.mjs');
   fs.writeFileSync(
     rnefConfig,
-    `module.exports = {
+    `${platforms
+      .map((template) =>
+        'localPath' in template
+          ? `import ${template.name} from '${template.localPath}';`
+          : `import ${template.name} from '${template.packageName}';`
+      )
+      .join('\n')}
+export default {
   plugins: {},
   platforms: {
     ${platforms
-      .map(
-        (template) => `${template.name}: require("${template.localPath}")(),`
-      )
+      .map((template) => `${template.name}: ${template.name}(),`)
       .join('\n    ')}
   },
 };
