@@ -95,13 +95,23 @@ export function resolveTemplate(
 
 function getNpmLibraryVersion(name: string) {
   const splitName = name.split('@');
-  return splitName.length > 1 ? splitName.pop() : null;
+  return splitName.length === 3 && splitName[0] === ''
+    ? splitName.pop()
+    : splitName.length === 2 && splitName[0] === ''
+    ? null
+    : splitName.length === 2 && splitName[0] !== ''
+    ? splitName.pop()
+    : null;
 }
 
 function getNpmLibraryName(name: string) {
   const splitName = name.split('@');
-  return splitName.length > 1
-    ? splitName.slice(0, splitName.length - 1).join('@')
+  return splitName.length === 3 && splitName[0] === ''
+    ? splitName.slice(0, 2).join('@')
+    : splitName.length === 2 && splitName[0] === ''
+    ? name
+    : splitName.length === 2 && splitName[0] !== ''
+    ? splitName.slice(0, 1).join('')
     : null;
 }
 
