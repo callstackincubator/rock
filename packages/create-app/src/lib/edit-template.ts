@@ -31,8 +31,6 @@ export function rewritePackageJson(
 
   // @todo replace latest with acutal versions
   packageJson.devDependencies['@callstack/rnef-cli'] = 'latest';
-  // community cli is required by react-native core scripts
-  packageJson.devDependencies['@react-native-community/cli'] = 'latest';
 
   platforms.forEach((platform) => {
     if ('localPath' in platform) {
