@@ -1,0 +1,71 @@
+# Note: this action will be published separate on the GitHub.
+# It's here only temporary for the development purposes.
+
+name: 'RNEF Remote Build - Android'
+description: 'Github implementation of the RNEF Remote Build for Android'
+inputs:
+  github-token:
+    description: "GitHub Token"
+    required: false
+    default: ${{ github.token }}
+outputs:
+  artifact-url:
+    description: 'URL of the relevant Android build artifact (could be cached)'
+    value: ${{ steps.cached-url.outcome == 'success' && steps.cached-url.outputs.artifact-url || steps.upload-artifact.outputs.artifact-url }}
+runs:
+  using: "composite"
+  steps:
+    - name: Fingerprint
+      id: fingerprint
+      uses: ./.github/actions/fingerprint
+      with:
+        platforms: android
+
+    - name: Find artifact URL
+      id: cached-url
+      uses: ./.github/actions/find-artifact
+      continue-on-error: true
+      with:
+        name: app-debug-${{ steps.fingerprint.outputs.hash }}.apk
+
+    - name: Post Cached Build (if found)
+      if: steps.cached-url.outcome == 'success'
+      uses: ./.github/actions/post-build
+      with:
+        platform: Android
+        artifact-url: ${{ steps.cached-url.outputs.artifact-url }}
+    
+    - name: Install Java
+      if: steps.cached-url.outcome != 'success'
+      uses: actions/setup-java@v4
+      with:
+        java-version: 17
+        distribution: adopt
+        cache: gradle
+  
+    - name: Validate Gradle wrapper
+      if: steps.cached-url.outcome != 'success'
+      uses: gradle/actions/wrapper-validation@v4
+
+    - name: Build Android
+      shell: bash
+      if: steps.cached-url.outcome != 'success'
+      run: |
+        cd android
+        ./gradlew --no-daemon clean assembleDebug
+
+    - name: Upload APK
+      id: upload-artifact
+      if: steps.cached-url.outcome != 'success'
+      uses: actions/upload-artifact@v4
+      with:
+        name: app-debug-${{ steps.fingerprint.outputs.hash }}.apk
+        path: android/app/build/outputs/apk/debug/app-debug.apk
+        if-no-files-found: error
+
+    - name: Post Build
+      if: steps.cached-url.outcome != 'success'
+      uses: ./.github/actions/post-build
+      with:
+        platform: Android
+        artifact-url: ${{ steps.upload-artifact.outputs.artifact-url }}

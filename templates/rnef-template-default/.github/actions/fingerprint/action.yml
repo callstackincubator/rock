@@ -1,0 +1,16 @@
+# Note: this action will be published separate on the GitHub.
+# It's here only temporary for the development purposes.
+
+name: 'Fingerprint'
+description: 'Fingerprint the current native-related files'
+inputs:
+  platforms:
+    description: 'The platforms to fingerprint'
+    required: true
+    default: 'android,ios'
+outputs:
+  hash:
+    description: 'The fingerprint hash'
+runs:
+  using: 'node20'
+  main: 'index.js'
