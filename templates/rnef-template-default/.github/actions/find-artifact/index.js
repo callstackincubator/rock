@@ -40,8 +40,7 @@ async function run() {
     const artifacts = await fetchArtifacts(octokit, repository, name);
 
     if (artifacts.length === 0) {
-      core.setFailed(`No artifacts found with the name "${name}.`);
-      rerturn;
+      return;
     }
 
     console.log(`Found ${artifacts.length} artifacts with name "${name}":`);

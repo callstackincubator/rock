@@ -7,7 +7,6 @@ async function run() {
 
   const fingerprint = await createFingerprintAsync('.', {
     platforms,
-    debug: true,
   });
 
   const details = fingerprint.sources.map(source =>
