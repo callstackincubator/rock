@@ -95,24 +95,22 @@ export function resolveTemplate(
 
 function getNpmLibraryVersion(name: string) {
   const splitName = name.split('@');
-  return splitName.length === 3 && splitName[0] === ''
-    ? splitName.pop()
-    : splitName.length === 2 && splitName[0] === ''
-    ? null
-    : splitName.length === 2 && splitName[0] !== ''
-    ? splitName.pop()
-    : null;
+  if (splitName.length === 3 && splitName[0] === '') {
+    return splitName[2];
+  } else if (splitName.length === 2 && splitName[0] !== '') {
+    return splitName[1];
+  }
+  return null;
 }
 
 function getNpmLibraryName(name: string) {
   const splitName = name.split('@');
-  return splitName.length === 3 && splitName[0] === ''
-    ? splitName.slice(0, 2).join('@')
-    : splitName.length === 2 && splitName[0] === ''
-    ? name
-    : splitName.length === 2 && splitName[0] !== ''
-    ? splitName.slice(0, 1).join('')
-    : null;
+  if (splitName.length === 3 && splitName[0] === '') {
+    return `@${splitName[1]}`;
+  } else if (splitName.length === 2 && splitName[0] !== '') {
+    return splitName[0];
+  }
+  return name;
 }
 
 export async function downloadTarballFromNpm(
