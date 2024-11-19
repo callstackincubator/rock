@@ -111,7 +111,7 @@ test('launches adb shell with intent to launch com.myapp.MainActivity with same 
   );
 });
 
-test('launches adb shell with intent to launch com.myapp.MainActivity with different appId than packageName on a device (without calling simulator)', async () => {
+test('launches adb shell with intent to launch com.myapp.MainActivity with different appId than packageName on a device', async () => {
   await tryLaunchAppOnDevice(device, androidProject, args);
 
   expect(spawn).toHaveBeenCalledWith(
