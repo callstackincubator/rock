@@ -44,15 +44,15 @@ export const PLATFORMS: TemplateInfo[] = [
     type: 'local',
     name: 'ios',
     packageName: '@callstack/rnef-plugin-platform-ios',
-    localPath: path.join(TEMP_PACKAGES_PATH, 'plugin-platform-ios'),
-    directory: 'dist/src/template',
+    localPath: path.join(TEMP_PACKAGES_PATH, 'plugin-platform-ios', 'dist'),
+    directory: 'src/template',
   },
   {
     type: 'local',
     name: 'android',
     packageName: '@callstack/rnef-plugin-platform-android',
-    localPath: path.join(TEMP_PACKAGES_PATH, 'plugin-platform-android'),
-    directory: 'dist/src/template',
+    localPath: path.join(TEMP_PACKAGES_PATH, 'plugin-platform-android', 'dist'),
+    directory: 'src/template',
   },
 ];
 
