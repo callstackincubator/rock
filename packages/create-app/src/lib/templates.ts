@@ -11,6 +11,7 @@ export type NpmTemplateInfo = {
   name: string;
   version: string;
   packageName: string;
+  /** Directory inside package that contains the template */
   directory: string;
 };
 
