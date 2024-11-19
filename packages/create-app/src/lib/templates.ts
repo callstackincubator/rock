@@ -86,8 +86,8 @@ export function resolveTemplate(
 
   // Otherwise, assume it's a npm package
   return {
-    name: getNpmLibraryName(name) ?? name,
-    packageName: getNpmLibraryName(name) ?? name,
+    name: getNpmLibraryName(name),
+    packageName: getNpmLibraryName(name),
     directory: '.',
     version: getNpmLibraryVersion(name) ?? 'latest',
   };
