@@ -65,7 +65,7 @@ runs:
       if: ${{ !steps.cached-url.outputs.artifact-url }}
       run: |
         cd android
-        ./gradlew --no-daemon clean assembleDebug
+        pnpm rnef build:android --tasks assembleDebug
       shell: bash
 
     - name: Upload APK

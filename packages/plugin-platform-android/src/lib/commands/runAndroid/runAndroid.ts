@@ -109,7 +109,7 @@ async function selectAndLaunchDevice() {
 function normalizeArgs(args: Flags, projectRoot: string) {
   if (args.tasks && args.mode) {
     logger.warn(
-      'Both "tasks" and "mode" parameters were passed to "build" command. Using "tasks" for building the app.'
+      'Both "--tasks" and "--mode" parameters were passed. Using "--tasks" for building the app.'
     );
   }
 
