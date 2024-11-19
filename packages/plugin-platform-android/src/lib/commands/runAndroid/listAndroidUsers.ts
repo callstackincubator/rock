@@ -64,7 +64,5 @@ export async function promptForUser(deviceId: string) {
 
     return selectedUser;
   }
-  else {
-    return null;
-  }
+  return null;
 }
