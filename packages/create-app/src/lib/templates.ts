@@ -101,6 +101,7 @@ export function resolveTemplate(
   };
 }
 
+// handles `package@x.y.z` and `@scoped/package@x.y.z` package naming schemes
 function getNpmLibraryVersion(name: string) {
   const splitName = name.split('@');
   if (splitName.length === 3 && splitName[0] === '') {
@@ -111,6 +112,7 @@ function getNpmLibraryVersion(name: string) {
   return null;
 }
 
+// handles `package@x.y.z` and `@scoped/package@x.y.z` package naming schemes
 function getNpmLibraryName(name: string) {
   const splitName = name.split('@');
   if (splitName.length === 3 && splitName[0] === '') {
