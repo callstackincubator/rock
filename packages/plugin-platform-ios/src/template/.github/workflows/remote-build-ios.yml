@@ -1,4 +1,4 @@
-name: Remote Build Android
+name: Remote Build iOS Simulator
 
 on:
   push:
@@ -6,15 +6,15 @@ on:
       - main
   pull_request:
     branches:
-      - main
+      - '**'
 
 concurrency: 
-  group: remote-build-android-${{ github.ref }}
+  group: remote-build-ios-${{ github.ref }}
   cancel-in-progress: true
 
 jobs:
   build:
-    runs-on: ubuntu-latest
+    runs-on: macos-latest
 
     steps:
       - name: Checkout repository
@@ -29,5 +29,7 @@ jobs:
       - name: Install dependencies
         run: npm install
 
-      - name: RNEF Remote Build - Android
-        uses: ./.github/actions/rnef-remote-build-android
+      - name: RNEF Remote Build - iOS Simulator
+        uses: ./.github/actions/rnef-remote-build-ios
+        with:
+          architectures: arm64
