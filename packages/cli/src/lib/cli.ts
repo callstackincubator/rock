@@ -41,9 +41,8 @@ export const cli = async ({ cwd, argv }: CliOptions = {}) => {
       .action((args) => {
         try {
           command.action(args);
-        } catch (e) {
-          // TODO handle nicely
-          logger.error(e as string);
+        } catch (error) {
+          logger.error(`Unexpected error while running "${command.name}": ${error}`);
           process.exit(1);
         }
       });
