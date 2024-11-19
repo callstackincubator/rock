@@ -9,6 +9,7 @@ test('resolveTemplateName with built-in templates', () => {
     'templates/rnef-template-default'
   );
   expect(resolveTemplate(TEMPLATES, 'default')).toEqual({
+    type: 'local',
     name: 'default',
     localPath: expectedPath,
     directory: '.',
@@ -18,6 +19,7 @@ test('resolveTemplateName with built-in templates', () => {
 
 test('resolveTemplateName with local paths', () => {
   expect(resolveTemplate(TEMPLATES, './directory/template-1')).toEqual({
+    type: 'local',
     name: 'template-1',
     localPath: path.resolve('./directory/template-1'),
     directory: '.',
@@ -25,6 +27,7 @@ test('resolveTemplateName with local paths', () => {
   });
 
   expect(resolveTemplate(TEMPLATES, '../../up/up/away/template-2')).toEqual({
+    type: 'local',
     name: 'template-2',
     localPath: path.resolve('../../up/up/away/template-2'),
     directory: '.',
@@ -32,6 +35,7 @@ test('resolveTemplateName with local paths', () => {
   });
 
   expect(resolveTemplate(TEMPLATES, '/absolute/path/template-3')).toEqual({
+    type: 'local',
     name: 'template-3',
     localPath: '/absolute/path/template-3',
     directory: '.',
@@ -41,6 +45,7 @@ test('resolveTemplateName with local paths', () => {
   expect(
     resolveTemplate(TEMPLATES, 'file:///url-based/path/template-4')
   ).toEqual({
+    type: 'local',
     name: 'template-4',
     localPath: '/url-based/path/template-4',
     directory: '.',
@@ -48,6 +53,7 @@ test('resolveTemplateName with local paths', () => {
   });
 
   expect(resolveTemplate(TEMPLATES, './directory/template-5.tgz')).toEqual({
+    type: 'local',
     name: 'template-5',
     localPath: path.resolve('./directory/template-5.tgz'),
     directory: '.',
@@ -55,6 +61,7 @@ test('resolveTemplateName with local paths', () => {
   });
 
   expect(resolveTemplate(TEMPLATES, '../up/template-6.tar')).toEqual({
+    type: 'local',
     name: 'template-6',
     localPath: path.resolve('../up/template-6.tar'),
     directory: '.',
@@ -62,6 +69,7 @@ test('resolveTemplateName with local paths', () => {
   });
 
   expect(resolveTemplate(TEMPLATES, '/root/directory/template-7.tgz')).toEqual({
+    type: 'local',
     name: 'template-7',
     localPath: '/root/directory/template-7.tgz',
     directory: '.',
@@ -71,18 +79,21 @@ test('resolveTemplateName with local paths', () => {
 
 test('resolveTemplateName with npm packages', () => {
   expect(resolveTemplate(TEMPLATES, 'package-name')).toEqual({
+    type: 'npm',
     name: 'package-name',
     directory: '.',
     packageName: 'package-name',
     version: 'latest',
   });
   expect(resolveTemplate(TEMPLATES, 'package-name@1.2.3')).toEqual({
+    type: 'npm',
     name: 'package-name',
     directory: '.',
     packageName: 'package-name',
     version: '1.2.3',
   });
   expect(resolveTemplate(TEMPLATES, '@scoped/package-name@1.2.3')).toEqual({
+    type: 'npm',
     name: '@scoped/package-name',
     directory: '.',
     packageName: '@scoped/package-name',

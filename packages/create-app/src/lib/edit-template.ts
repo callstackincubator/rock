@@ -33,10 +33,10 @@ export function rewritePackageJson(
   packageJson.devDependencies['@callstack/rnef-cli'] = 'latest';
 
   platforms.forEach((platform) => {
-    if ('localPath' in platform) {
+    if (platform.type === 'local') {
       packageJson.devDependencies[platform.packageName] =
         'file://' + platform.localPath;
-    } else if (platform.version) {
+    } else if (platform.type === 'npm') {
       packageJson.devDependencies[platform.packageName] = platform.version;
     }
   });

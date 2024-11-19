@@ -99,7 +99,7 @@ async function extractPackage(absoluteTargetDir: string, pkg: TemplateInfo) {
 
   let tarballPath: string | null = null;
   // NPM package: download tarball file
-  if ('version' in pkg) {
+  if (pkg.type === 'npm') {
     loader.start(`Downloading package ${pkg.packageName}@${pkg.version}...`);
     tarballPath = await downloadTarballFromNpm(
       pkg.packageName,
@@ -136,9 +136,12 @@ async function extractPackage(absoluteTargetDir: string, pkg: TemplateInfo) {
     return;
   }
 
-  if ('localPath' in pkg) {
+  if (pkg.type === 'local') {
     loader.start(`Copying local directory ${pkg.localPath}...`);
-    copyDirSync(path.join(pkg.localPath, pkg.directory), absoluteTargetDir);
+    copyDirSync(
+      path.join(pkg.localPath, pkg.directory ?? ''),
+      absoluteTargetDir
+    );
     loader.stop(`Copied local directory ${pkg.localPath}.`);
 
     return;
@@ -156,7 +159,7 @@ function createConfig(absoluteTargetDir: string, platforms: TemplateInfo[]) {
     rnefConfig,
     `${platforms
       .map((template) =>
-        'localPath' in template
+        template.type === 'local'
           ? `import ${template.name} from '${template.localPath}';`
           : `import ${template.name} from '${template.packageName}';`
       )

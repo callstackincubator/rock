@@ -8,18 +8,20 @@ import { resolveAbsolutePath } from './fs.js';
 export type TemplateInfo = NpmTemplateInfo | LocalTemplateInfo;
 
 export type NpmTemplateInfo = {
+  type: 'npm';
   name: string;
   version: string;
   packageName: string;
   /** Directory inside package that contains the template */
-  directory: string;
+  directory: string | undefined;
 };
 
 export type LocalTemplateInfo = {
+  type: 'local';
   name: string;
   localPath: string;
   packageName: string;
-  directory: string;
+  directory: string | undefined;
 };
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
@@ -29,6 +31,7 @@ const TEMP_TEMPLATES_PATH = path.join(TEMP_PACKAGES_PATH, '../templates');
 
 export const TEMPLATES: TemplateInfo[] = [
   {
+    type: 'local',
     name: 'default',
     packageName: '@callstack/rnef-template-default',
     localPath: path.join(TEMP_TEMPLATES_PATH, 'rnef-template-default'),
@@ -38,12 +41,14 @@ export const TEMPLATES: TemplateInfo[] = [
 
 export const PLATFORMS: TemplateInfo[] = [
   {
+    type: 'local',
     name: 'ios',
     packageName: '@callstack/rnef-plugin-platform-ios',
     localPath: path.join(TEMP_PACKAGES_PATH, 'plugin-platform-ios', 'dist'),
     directory: 'src/template',
   },
   {
+    type: 'local',
     name: 'android',
     packageName: '@callstack/rnef-plugin-platform-android',
     localPath: path.join(TEMP_PACKAGES_PATH, 'plugin-platform-android', 'dist'),
@@ -76,6 +81,7 @@ export function resolveTemplate(
     const ext = path.extname(basename);
 
     return {
+      type: 'local',
       name: basename.slice(0, basename.length - ext.length),
       localPath: resolveAbsolutePath(name),
       directory: '.',
@@ -87,6 +93,7 @@ export function resolveTemplate(
 
   // Otherwise, assume it's a npm package
   return {
+    type: 'npm',
     name: getNpmLibraryName(name),
     packageName: getNpmLibraryName(name),
     directory: '.',
