@@ -33,7 +33,7 @@ const buildOptions = [
 
 export const pluginPlatformIOS =
   () =>
-  (api: PluginApi<object>): PluginOutput => {
+  (api: PluginApi): PluginOutput => {
     api.registerCommand({
       name: 'ios:build',
       description: 'Build ios',

@@ -299,7 +299,7 @@ test.each([['release'], [undefined], ['staging']])(
       spawnMockImplementation(file, args)
     );
     const logErrorSpy = vi.spyOn(logger, 'error');
-    await runAndroid(androidProject, { ...args, mode }, '/');
+    await runAndroid({ ...androidProject }, { ...args, mode }, '/');
 
     expect(mocks.outroMock).toBeCalledWith('Success.');
     expect(logErrorSpy).not.toBeCalled();
@@ -339,7 +339,7 @@ test('runAndroid runs gradle build with custom --appId, --appIdSuffix and --main
   );
   const logErrorSpy = vi.spyOn(logger, 'error');
   await runAndroid(
-    androidProject,
+    { ...androidProject },
     {
       ...args,
       appId: 'com.custom',
@@ -369,7 +369,11 @@ test('runAndroid fails to launch an app on not-connected device when specified w
   );
   const logErrorSpy = vi.spyOn(logger, 'error');
   try {
-    await runAndroid(androidProject, { ...args, device: 'emulator-5554' }, '/');
+    await runAndroid(
+      { ...androidProject },
+      { ...args, device: 'emulator-5554' },
+      '/'
+    );
   } catch {
     expect(mocks.outroMock).not.toBeCalledWith('Success.');
     expect(logErrorSpy).toBeCalledWith(
@@ -441,7 +445,7 @@ test.each([
     });
 
     await runAndroid(
-      androidProject,
+      { ...androidProject },
       { ...args, device: 'emulator-5554', mode, interactive },
       '/'
     );
@@ -499,7 +503,7 @@ test('runAndroid launches an app on all connected devices', async () => {
     });
   });
 
-  await runAndroid(androidProject, { ...args }, '/');
+  await runAndroid({ ...androidProject }, { ...args }, '/');
 
   // Runs assemble debug task with active architectures arm64-v8a, armeabi-v7a
   expect(vi.mocked(spawn)).toBeCalledWith(
@@ -560,7 +564,7 @@ test('runAndroid skips building when --binary-path is passed', async () => {
   });
 
   await runAndroid(
-    androidProject,
+    { ...androidProject },
     {
       ...args,
       binaryPath: 'android/app/build/outputs/apk/debug/app-debug.apk',

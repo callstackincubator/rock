@@ -1,9 +1,13 @@
 import type { PluginOutput, PluginApi } from '@callstack/rnef-config';
-import { buildAndroid, options } from './commands/buildAndroid/buildAndroid.js';
 import {
+  buildAndroid,
+  type BuildFlags,
+  options,
+} from './commands/buildAndroid/buildAndroid.js';
+import {
+  type Flags,
   runAndroid,
   runOptions,
-  Flags,
 } from './commands/runAndroid/runAndroid.js';
 import { projectConfig } from '@react-native-community/cli-config-android';
 import { AndroidProjectConfig } from '@react-native-community/cli-types';
@@ -12,7 +16,7 @@ type PluginConfig = AndroidProjectConfig;
 
 export const pluginPlatformAndroid =
   (pluginConfig: PluginConfig) =>
-  (api: PluginApi<Flags>): PluginOutput => {
+  (api: PluginApi): PluginOutput => {
     api.registerCommand({
       name: 'build:android',
       description: 'Builds your app for Android platform.',
@@ -20,7 +24,7 @@ export const pluginPlatformAndroid =
         const projectRoot = api.getProjectRoot();
         const androidConfig = projectConfig(projectRoot);
         if (androidConfig) {
-          await buildAndroid(androidConfig, { ...pluginConfig, ...args });
+          await buildAndroid(androidConfig, args as BuildFlags);
         } else {
           throw new Error('Android project not found.');
         }
@@ -38,7 +42,7 @@ export const pluginPlatformAndroid =
         if (androidConfig) {
           await runAndroid(
             androidConfig,
-            { ...pluginConfig, ...args },
+            { ...pluginConfig, ...(args as Flags) },
             projectRoot
           );
         } else {

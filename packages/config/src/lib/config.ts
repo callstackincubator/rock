@@ -7,19 +7,19 @@ export type PluginOutput = {
   description: string;
 };
 
-export type PluginApi<Args> = {
-  registerCommand: (command: CommandType<Args>) => void;
+export type PluginApi = {
+  registerCommand: (command: CommandType) => void;
   getProjectRoot: () => string;
 };
 
-type PluginType<Args> = (args: PluginApi<Args>) => PluginOutput;
+type PluginType = (args: PluginApi) => PluginOutput;
 
 type ArgValue = string | boolean | string[];
 
-type CommandType<Args> = {
+type CommandType = {
   name: string;
   description: string;
-  action: (args: Args) => void;
+  action: <Args>(args: Args) => void;
   options?: Array<{
     name: string;
     description: string;
@@ -28,15 +28,15 @@ type CommandType<Args> = {
   }>;
 };
 
-type ConfigType<Args> = {
+type ConfigType = {
   root?: string;
-  plugins?: Record<string, PluginType<Args>>;
-  platforms?: Record<string, PluginType<Args>>;
-  commands?: Array<CommandType<Args>>;
+  plugins?: Record<string, PluginType>;
+  platforms?: Record<string, PluginType>;
+  commands?: Array<CommandType>;
 };
 
-type ConfigOutput<Args> = {
-  commands?: Array<CommandType<Args>>;
+type ConfigOutput = {
+  commands?: Array<CommandType>;
 };
 
 const extensions = ['.js', '.ts', '.mjs'];
@@ -64,17 +64,17 @@ const importUp = async <T>(dir: string, name: string): Promise<T> => {
   return importUp(parentDir, name);
 };
 
-export async function getConfig<Args>(
+export async function getConfig(
   dir: string = process.cwd()
-): Promise<ConfigOutput<Args>> {
-  const config = await importUp<ConfigType<Args>>(dir, 'rnef.config');
+): Promise<ConfigOutput> {
+  const config = await importUp<ConfigType>(dir, 'rnef.config');
 
   if (!config.root) {
     config.root = process.cwd();
   }
 
   const api = {
-    registerCommand: (command: CommandType<Args>) => {
+    registerCommand: (command: CommandType) => {
       config.commands = [...(config.commands || []), command];
     },
     getProjectRoot: () => config.root as string,
@@ -94,7 +94,7 @@ export async function getConfig<Args>(
     }
   }
 
-  const outputConfig: ConfigOutput<Args> = {
+  const outputConfig: ConfigOutput = {
     commands: config.commands ?? [],
   };
 
