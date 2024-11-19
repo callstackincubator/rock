@@ -453,7 +453,9 @@ test.each([
     // we don't want to run installDebug when a device is selected, because gradle will install the app on all connected devices
     expect(vi.mocked(spawn)).not.toBeCalledWith(
       './gradlew',
-      expect.arrayContaining(['app:installDebug'])
+      expect.arrayContaining([
+        mode === 'release' ? 'app:installRelease' : 'app:installDebug',
+      ])
     );
 
     // Runs assemble debug task with active architectures arm64-v8a, armeabi-v7a
