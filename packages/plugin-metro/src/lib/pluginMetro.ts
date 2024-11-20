@@ -5,8 +5,16 @@ import {
   // @ts-expect-error missing typings
 } from '@react-native/community-cli-plugin';
 
+type PluginConfig = {
+  platforms: {
+    [platformName: string]: {
+      npmPackageName?: string;
+    };
+  };
+};
+
 export const pluginMetro =
-  () =>
+  (pluginConfig: PluginConfig) =>
   (api: PluginApi): PluginOutput => {
     api.registerCommand({
       name: 'dev',
@@ -16,7 +24,7 @@ export const pluginMetro =
         const reactNativeVersion = '0.76.1';
         startCommand.func(
           undefined,
-          { root, reactNativeVersion, platforms: {} },
+          { root, reactNativeVersion, platforms: pluginConfig.platforms },
           args
         );
       },
@@ -32,7 +40,7 @@ export const pluginMetro =
         const reactNativeVersion = '0.76.1';
         bundleCommand.func(
           undefined,
-          { root, reactNativeVersion, platforms: {} },
+          { root, reactNativeVersion, platforms: pluginConfig.platforms },
           args
         );
       },
