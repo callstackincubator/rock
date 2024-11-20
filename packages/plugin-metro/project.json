@@ -1,0 +1,23 @@
+{
+  "name": "plugin-metro",
+  "$schema": "../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "packages/plugin-metro/src",
+  "projectType": "library",
+  "tags": [],
+  "targets": {
+    "build": {
+      "executor": "@nx/js:tsc",
+      "outputs": ["{options.outputPath}"],
+      "options": {
+        "outputPath": "packages/plugin-metro/dist",
+        "main": "packages/plugin-metro/src/index.ts",
+        "tsConfig": "packages/plugin-metro/tsconfig.lib.json",
+        "assets": [
+          "packages/plugin-metro/*.md",
+          "packages/plugin-metro/src/template/**/*",
+          "packages/plugin-metro/react-native.config.*"
+        ]
+      }
+    }
+  }
+}
