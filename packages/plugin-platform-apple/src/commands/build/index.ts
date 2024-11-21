@@ -3,7 +3,6 @@ import { buildProject } from './buildProject.js';
 import { getXcodeProjectAndDir } from './getXcodeProjectAndDir.js';
 import { supportedPlatforms } from '../../config/supportedPlatforms.js';
 import { BuilderCommand } from '../../types/index.js';
-import CLIError from '../../utils/error.js';
 import getPlatformConfig from '../../utils/getPlatformConfig.js';
 
 export const createBuild = async (

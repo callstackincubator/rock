@@ -3,7 +3,6 @@ import fs from 'node:fs';
 import findXcodeProject from '../../config/findXcodeProject.js';
 import { getPlatformInfo } from '../../utils/getPlatformInfo.js';
 import { ApplePlatform, ProjectConfig } from '../../types/index.js';
-import CLIError from '../../utils/error.js';
 
 export function getXcodeProjectAndDir(
   iosProjectConfig: ProjectConfig | undefined,

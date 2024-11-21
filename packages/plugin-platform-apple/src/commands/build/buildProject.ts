@@ -7,7 +7,6 @@ import type { BuildFlags } from './buildOptions.js';
 import { supportedPlatforms } from '../../config/supportedPlatforms.js';
 import { ApplePlatform, XcodeProjectInfo } from '../../types/index.js';
 import { logger } from '@callstack/rnef-tools';
-import CLIError from '../../utils/error.js';
 import { getConfiguration } from './getConfiguration.js';
 import { simulatorDestinationMap } from './simulatorDestinationMap.js';
 import { spinner } from '@clack/prompts';

@@ -1,5 +1,4 @@
 import { logger } from '@callstack/rnef-tools';
-import CLIError from './error.js';
 
 export function checkIfConfigurationExists(
   configurations: string[],
