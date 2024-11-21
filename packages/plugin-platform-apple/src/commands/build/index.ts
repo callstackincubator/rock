@@ -13,14 +13,14 @@ export const createBuild = async (
   const platformConfig = getPlatformConfig(platformName);
 
   if (!platformConfig) {
-    throw new CLIError(`Unable to find ${platformName} platform config.`);
+    throw new Error(`Unable to find ${platformName} platform config.`);
   }
 
   if (
     platformConfig === undefined ||
     supportedPlatforms[platformName] === undefined
   ) {
-    throw new CLIError(`Unable to find ${platformName} platform config`);
+    throw new Error(`Unable to find ${platformName} platform config`);
   }
 
   // TODO: add logic for installing Cocoapods

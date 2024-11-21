@@ -13,7 +13,7 @@ export function getXcodeProjectAndDir(
   const { readableName: platformReadableName } = getPlatformInfo(platformName);
 
   if (!iosProjectConfig) {
-    throw new CLIError(
+    throw new Error(
       `${platformReadableName} project folder not found. Make sure that project.${platformName}.sourceDir points to a directory with your Xcode project and that you are running this command inside of React Native project.`
     );
   }
@@ -22,7 +22,7 @@ export function getXcodeProjectAndDir(
   let { xcodeProject } = iosProjectConfig;
 
   if (!xcodeProject) {
-    throw new CLIError(
+    throw new Error(
       `Could not find Xcode project files in "${sourceDir}" folder. Please make sure that you have installed Cocoapods and "${sourceDir}" is a valid path`
     );
   }

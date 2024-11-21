@@ -48,6 +48,7 @@ export async function getConfiguration(
 
   // TODO: make it a default behaviour. if there's one option let's go with it.
   // make this behaviour better, even if there are two ask? also not to make this prompt too annoying
+  // make it default in build:ios and also respect flags
   const selection = await selectFromInteractiveMode({
     scheme,
     mode,
@@ -62,7 +63,7 @@ export async function getConfiguration(
     mode = selection.mode;
   }
 
-  logger.info(
+  logger.debug(
     `Found Xcode ${
       xcodeProject.isWorkspace ? 'workspace' : 'project'
     } "${chalk.bold(xcodeProject.name)}"`

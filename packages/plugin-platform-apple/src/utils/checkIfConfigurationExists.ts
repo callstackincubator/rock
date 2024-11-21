@@ -11,7 +11,7 @@ export function checkIfConfigurationExists(
   }
 
   if (!configurations.includes(mode)) {
-    throw new CLIError(
+    throw new Error(
       `Configuration "${mode}" does not exist in your project. Please use one of the existing configurations: ${configurations.join(
         ', '
       )}`

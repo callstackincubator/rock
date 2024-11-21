@@ -3,7 +3,7 @@ import { XMLParser } from 'fast-xml-parser';
 import fs from 'fs';
 import path from 'path';
 import { Info } from '../types/index.js';
-import CLIError from './error.js';
+import { logger } from '@callstack/rnef-tools';
 
 const xmlParser = new XMLParser({ ignoreAttributes: false });
 
@@ -46,9 +46,10 @@ export function getBuildConfigurationFromXcScheme(
             .join(', ')}'`
         : '';
 
-    throw new CLIError(
+    logger.error(
       `Could not find scheme ${scheme}. Please make sure the schema you want to run exists. ${availableSchemas}`
     );
+    process.exit(1);
   }
 
   return configuration;

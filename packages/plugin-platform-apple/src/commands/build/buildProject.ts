@@ -10,6 +10,7 @@ import { logger } from '@callstack/rnef-tools';
 import CLIError from '../../utils/error.js';
 import { getConfiguration } from './getConfiguration.js';
 import { simulatorDestinationMap } from './simulatorDestinationMap.js';
+import { spinner } from '@clack/prompts';
 
 function prettifyXcodebuildMessages(output: string): Set<string> {
   const errorRegex = /error\b[^\S\r\n]*[:\-\s]*([^\r\n]*)/gim;
@@ -35,7 +36,7 @@ const buildProject = async (
   const simulatorDest = simulatorDestinationMap[platformName];
 
   if (!simulatorDest) {
-    throw new CLIError(
+    throw new Error(
       `Unknown platform: ${platformName}. Please, use one of: ${Object.values(
         supportedPlatforms
       ).join(', ')}.`
@@ -69,51 +70,35 @@ const buildProject = async (
     xcodebuildArgs.push(...args.extraParams);
   }
 
-  // const loader = getLoader();
-  logger.info(
+  const loader = spinner();
+  logger.debug(
     `Building ${chalk.dim(`(using "xcodebuild ${xcodebuildArgs.join(' ')}")`)}`
   );
 
   let buildOutput = '';
 
   return new Promise<string>((resolve, reject) => {
-    let xcodebuildOutputFormatter: ChildProcess;
-
     const buildProcess = child_process.spawn(
       'xcodebuild',
       xcodebuildArgs,
       getProcessOptions(args)
     );
 
+    loader.start(`Building the app${'.'.repeat(buildOutput.length % 10)}`);
+
     buildProcess.stdout.on('data', (data: Buffer) => {
       const stringData = data.toString();
       buildOutput += stringData;
-      if (xcodebuildOutputFormatter) {
-        xcodebuildOutputFormatter?.stdin?.write(data);
-      } else {
-        if (logger.isVerbose()) {
-          logger.debug(stringData);
-        } else {
-          // loader.start(
-          //   `Building the app${'.'.repeat(buildOutput.length % 10)}`
-          // );
-        }
+      if (logger.isVerbose()) {
+        logger.debug(stringData);
       }
     });
 
     buildProcess.on('close', (code: number) => {
-      if (xcodebuildOutputFormatter) {
-        xcodebuildOutputFormatter.stdin?.end();
-      } else {
-        // loader.stop();
-      }
-
       if (code !== 0) {
-        if (!xcodebuildOutputFormatter) {
-          Array.from(prettifyXcodebuildMessages(buildOutput)).forEach((error) =>
-            logger.error(error)
-          );
-        }
+        Array.from(prettifyXcodebuildMessages(buildOutput)).forEach((error) =>
+          logger.error(error)
+        );
         // TODO: make sure to have platformName in readable form
         reject(
           new CLIError(`
@@ -125,8 +110,7 @@ const buildProject = async (
         );
         return;
       }
-
-      logger.success('Successfully built the app');
+      loader.stop('Successfully built the app');
       resolve(buildOutput);
     });
   });
