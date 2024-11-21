@@ -110,6 +110,24 @@ export async function promptPlatforms(
   );
 }
 
+export async function promptPlugins(
+  plugins: TemplateInfo[]
+): Promise<TemplateInfo[]> {
+  if (plugins.length === 0) {
+    throw new Error('No plugins found');
+  }
+
+  return checkCancelPrompt<TemplateInfo[]>(
+    await multiselect({
+      message: 'Select plugins:',
+      options: plugins.map((plugin) => ({
+        value: plugin,
+        label: plugin.name,
+      })),
+    })
+  );
+}
+
 export async function confirmOverrideFiles(targetDir: string) {
   const option = checkCancelPrompt<string>(
     await select({

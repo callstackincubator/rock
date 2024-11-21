@@ -24,6 +24,7 @@ import {
   printByeMessage,
   promptTemplate,
   promptPlatforms,
+  promptPlugins,
 } from './prompts.js';
 import {
   downloadTarballFromNpm,
@@ -32,6 +33,7 @@ import {
   PLATFORMS,
   resolveTemplate as resolveTemplate,
   TEMPLATES,
+  PLUGINS,
 } from './templates.js';
 import { cancelPromptAndExit } from '@callstack/rnef-tools';
 
@@ -78,9 +80,16 @@ export async function run() {
     ? options.platforms.map((p) => resolveTemplate(PLATFORMS, p))
     : await promptPlatforms(PLATFORMS);
 
+  const plugins = options.plugins
+    ? options.plugins.map((p) => resolveTemplate(PLUGINS, p))
+    : await promptPlugins(PLUGINS);
+
   await extractPackage(absoluteTargetDir, template);
   for (const platform of platforms) {
     await extractPackage(absoluteTargetDir, platform);
+  }
+  for (const plugin of plugins) {
+    await extractPackage(absoluteTargetDir, plugin);
   }
 
   const loader = spinner();

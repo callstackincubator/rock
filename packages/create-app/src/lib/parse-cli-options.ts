@@ -4,6 +4,7 @@ export type CliOptions = {
   name?: string;
   template?: string;
   platforms?: string[];
+  plugins?: string[];
   help?: boolean;
   version?: boolean;
   dir?: string;
@@ -17,6 +18,7 @@ type MinimistOptions = {
   dir?: string;
   template?: string;
   platform?: string | string[];
+  plugin?: string | string[];
 };
 
 export function parseCliOptions(argv: string[]): CliOptions {
@@ -30,6 +32,7 @@ export function parseCliOptions(argv: string[]): CliOptions {
     name: options._[0],
     template: ensureOptionalString(options.template),
     platforms: ensureOpitonalArray(options.platform),
+    plugins: ensureOpitonalArray(options.plugin),
     help: options.help,
     version: options.version,
     dir: ensureOptionalString(options.dir),

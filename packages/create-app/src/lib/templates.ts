@@ -39,6 +39,16 @@ export const TEMPLATES: TemplateInfo[] = [
   },
 ];
 
+export const PLUGINS: TemplateInfo[] = [
+  {
+    type: 'local',
+    name: 'metro',
+    packageName: '@callstack/rnef-plugin-metro',
+    localPath: path.join(TEMP_PACKAGES_PATH, 'plugin-metro'),
+    directory: 'src/template',
+  },
+];
+
 export const PLATFORMS: TemplateInfo[] = [
   {
     type: 'local',
