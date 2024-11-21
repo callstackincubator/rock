@@ -28,7 +28,7 @@ describe('create-app command', { timeout: 30_000 }, () => {
       }
 
       await execAsync(
-        `node ${CREATE_APP_PATH} ${projectName} --template=default --platform=ios --platform=android`,
+        `node ${CREATE_APP_PATH} ${projectName} --template=default --platform=ios --platform=android --plugin=metro`,
         { cwd: TEMP_DIR }
       );
 
@@ -59,7 +59,7 @@ describe('create-app command', { timeout: 30_000 }, () => {
     }
 
     await execAsync(
-      `node ${CREATE_APP_PATH} ${projectName} --template=@callstack/repack --platform=ios --platform=android`,
+      `node ${CREATE_APP_PATH} ${projectName} --template=@callstack/repack --platform=ios --platform=android --plugin=metro`,
       { cwd: TEMP_DIR }
     );
 
@@ -93,7 +93,7 @@ describe('create-app command', { timeout: 30_000 }, () => {
 
       const templatePath = `${TEMPLATES_DIR}/rnef-template-default`;
       await execAsync(
-        `node ${CREATE_APP_PATH} ${projectName} --template="${templatePath}" --platform=ios --platform=android`,
+        `node ${CREATE_APP_PATH} ${projectName} --template="${templatePath}" --platform=ios --platform=android --plugin=metro`,
         { cwd: TEMP_DIR }
       );
 
