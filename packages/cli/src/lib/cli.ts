@@ -3,6 +3,7 @@ import { getConfig } from '@callstack/rnef-config';
 import { createRequire } from 'module';
 import { logger } from '@callstack/rnef-tools';
 import { logConfig } from '../config.js';
+import { nativeFingerprintCommand } from './commands/fingerprint.js';
 
 const require = createRequire(import.meta.url);
 
@@ -33,6 +34,12 @@ export const cli = async ({ cwd, argv }: CliOptions = {}) => {
     .option('-p, --platform <string>', 'Select platform, e.g. ios or android')
     .action(logConfig);
 
+  program
+    .command('fingerprint [path]')
+    .option('-p, --platform <string>', 'Select platform, e.g. ios or android')
+    .option('--verbose', 'Enable verbose logging')
+    .action(nativeFingerprintCommand);
+
   // Register commands from the config
   config.commands?.forEach((command) => {
     const cmd = program
@@ -42,7 +49,9 @@ export const cli = async ({ cwd, argv }: CliOptions = {}) => {
         try {
           command.action(args);
         } catch (error) {
-          logger.error(`Unexpected error while running "${command.name}": ${error}`);
+          logger.error(
+            `Unexpected error while running "${command.name}": ${error}`
+          );
           process.exit(1);
         }
       });
