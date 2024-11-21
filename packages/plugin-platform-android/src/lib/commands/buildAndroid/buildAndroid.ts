@@ -18,14 +18,10 @@ export async function buildAndroid(
 ) {
   normalizeArgs(args);
   intro('Building Android app.');
-  let selectedTask: string | undefined;
 
-  if (args.interactive) {
-    selectedTask = await promptForTaskSelection(
-      'bundle',
-      androidProject.sourceDir
-    );
-  }
+  const selectedTask = args.interactive
+    ? await promptForTaskSelection('bundle', androidProject.sourceDir)
+    : undefined;
 
   await runGradle({ taskType: 'bundle', androidProject, args, selectedTask });
   outro('Success.');
