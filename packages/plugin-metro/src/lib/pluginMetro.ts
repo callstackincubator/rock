@@ -20,7 +20,9 @@ export const pluginMetro =
       name: 'dev',
       description: 'Starts Metro dev server.',
       action: async (args) => {
+        // @todo replace with api.getProjectRoot()
         const root = '.';
+        // @todo replace with api.getReactNativeVersion()
         const reactNativeVersion = '0.76.1';
         startCommand.func(
           undefined,
@@ -36,7 +38,9 @@ export const pluginMetro =
       description:
         'Build the bundle for the provided JavaScript entry file with Metro.',
       action: async (args) => {
+        // @todo replace with api.getProjectRoot()
         const root = '.';
+        // @todo replace with api.getReactNativeVersion()
         const reactNativeVersion = '0.76.1';
         bundleCommand.func(
           undefined,
