@@ -9,7 +9,7 @@ inputs:
   scheme:
     description: The workspace scheme to build
     required: false
-    default: "RnefRemoteBuildTest"
+    default: "HelloWorld"
   architectures:
     description: The architectures to build for
     required: false
