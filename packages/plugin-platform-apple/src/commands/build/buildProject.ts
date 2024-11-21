@@ -100,7 +100,7 @@ const buildProject = async (
         );
         // TODO: make sure to have platformName in readable form
         reject(
-          new CLIError(`
+          new Error(`
           Failed to build ${platformName} project.
 
           "xcodebuild" exited with error code '${code}'. To debug build

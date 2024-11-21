@@ -1,5 +1,6 @@
 import path from 'path';
 import { XcodeProjectInfo } from '../types/index.js';
+import { logger } from '@callstack/rnef-tools';
 
 function findXcodeProject(files: Array<string>): XcodeProjectInfo | null {
   const sortedFiles = files.sort();
@@ -17,7 +18,9 @@ function findXcodeProject(files: Array<string>): XcodeProjectInfo | null {
       };
     }
     if (ext === '.xcodeproj') {
-      // TODO: raise a warning that probably Pods are not installed or CLI is looking in the wrong directory
+      logger.warn(
+        "We couldn't find `.xcworkspace` file in your project, please make sure that you have Cocoapods installed, outdated or missing Pods can cause various build issues."
+      );
       return {
         name: fileName,
         path: projectPath,
