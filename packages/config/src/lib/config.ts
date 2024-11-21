@@ -16,7 +16,7 @@ type PluginType = (args: PluginApi) => PluginOutput;
 type CommandType = {
   name: string;
   description: string;
-  action: (args: unknown) => void;
+  action: <Args>(args: Args) => void;
   options?: Array<{ name: string; description: string }>;
 };
 

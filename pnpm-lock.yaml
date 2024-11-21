@@ -146,6 +146,9 @@ importers:
 
   packages/plugin-metro:
     dependencies:
+      '@callstack/rnef-tools':
+        specifier: workspace:*
+        version: link:../tools
       '@react-native-community/cli-server-api':
         specifier: ^15.1.2
         version: 15.1.2
