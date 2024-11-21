@@ -146,21 +146,12 @@ importers:
 
   packages/plugin-metro:
     dependencies:
-      '@callstack/rnef-tools':
-        specifier: workspace:*
-        version: link:../tools
-      '@clack/prompts':
-        specifier: ^0.8.1
-        version: 0.8.1
       '@react-native-community/cli-server-api':
         specifier: ^15.1.2
         version: 15.1.2
       '@react-native/community-cli-plugin':
         specifier: ^0.76.0
         version: 0.76.2(@babel/core@7.25.2)(@babel/preset-env@7.25.4(@babel/core@7.25.2))(@react-native-community/cli-server-api@15.1.2)
-      nano-spawn:
-        specifier: ^0.2.0
-        version: 0.2.0
       tslib:
         specifier: ^2.3.0
         version: 2.7.0
@@ -168,9 +159,6 @@ importers:
       '@callstack/rnef-config':
         specifier: workspace:*
         version: link:../config
-      '@react-native-community/cli-types':
-        specifier: ^15.1.2
-        version: 15.1.2
 
   packages/plugin-platform-android:
     dependencies:
@@ -983,11 +971,6 @@ packages:
     bundledDependencies:
       - is-unicode-supported
 
-  '@clack/prompts@0.8.1':
-    resolution: {integrity: sha512-I263nEUNbX4lPTX93trl1fkIvGrGlz6nUYkqOddF0ZmjqcxUgUlXmpUIUqfapirRKJrFddvwF+qdZgg8cSqF7g==}
-    bundledDependencies:
-      - is-unicode-supported
-
   '@cspotcode/source-map-support@0.8.1':
     resolution: {integrity: sha512-IchNf6dN4tHoMFIn/7OE8LWZ19Y6q/67Bmf6vnGREv8RSbBVb9LPJxEcnwrcwX6ixSvaiGoomAUvu4YSxXrVgw==}
     engines: {node: '>=12'}
@@ -1519,9 +1502,6 @@ packages:
 
   '@react-native-community/cli-types@15.1.0':
     resolution: {integrity: sha512-P0hojw2Gy1H4cLKp142qb4L9WCrQh1DDIRI8vNY82CWK6vaTmOGLlSZrBGa/aaKD9NDuW8xnpK9Qun14t4wKvg==}
-
-  '@react-native-community/cli-types@15.1.2':
-    resolution: {integrity: sha512-sPF4MteFp4V3VIBmhQwflFwRQrZOvPz1XAXKkkoVW8oN7KuCTp+VNsiIZOx4Fn9gWAsrRWlybxQVzuzfX7aqww==}
 
   '@react-native/babel-plugin-codegen@0.76.2':
     resolution: {integrity: sha512-a1IfRho/ZUVbvzSu3JWkxsvqyEI7IXApPQikhGWw4e24QYsIYHdlIULs3rb0840lqpO1dbbuudfO7lmkpkbkMg==}
@@ -3656,10 +3636,6 @@ packages:
   mv@2.1.1:
     resolution: {integrity: sha512-at/ZndSy3xEGJ8i0ygALh8ru9qy7gWW1cmkaqBN29JmMlIvM//MEO9y1sk/avxuwnPcfhkejkLsuPxH81BrkSg==}
     engines: {node: '>=0.8.0'}
-
-  nano-spawn@0.2.0:
-    resolution: {integrity: sha512-IjZBIOLxSlxu+m/kacg9JuP93oUpRemeV0mEuCy64nzBKKIL9m0aLJHtVPcVuzJDHFhElzjpwbW4a3tMzgKoZQ==}
-    engines: {node: '>=18.19'}
 
   nanoid@3.3.7:
     resolution: {integrity: sha512-eSRppjcPIatRIMC1U6UngP8XFcz8MQWGQdt1MTBQ7NaAmvXDfvNxbvWV3x2y6CdEUciCSsDHDQZbhYaB8QEo2g==}
@@ -5844,12 +5820,6 @@ snapshots:
       picocolors: 1.1.1
       sisteransi: 1.0.5
 
-  '@clack/prompts@0.8.1':
-    dependencies:
-      '@clack/core': 0.3.4
-      picocolors: 1.1.1
-      sisteransi: 1.0.5
-
   '@cspotcode/source-map-support@0.8.1':
     dependencies:
       '@jridgewell/trace-mapping': 0.3.9
@@ -6700,10 +6670,6 @@ snapshots:
       sudo-prompt: 9.2.1
 
   '@react-native-community/cli-types@15.1.0':
-    dependencies:
-      joi: 17.13.3
-
-  '@react-native-community/cli-types@15.1.2':
     dependencies:
       joi: 17.13.3
 
@@ -9173,8 +9139,6 @@ snapshots:
       mkdirp: 0.5.6
       ncp: 2.0.0
       rimraf: 2.4.5
-
-  nano-spawn@0.2.0: {}
 
   nanoid@3.3.7: {}
 

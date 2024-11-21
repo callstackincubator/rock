@@ -5,15 +5,11 @@
   "main": "./src/index.js",
   "typings": "./src/index.d.ts",
   "dependencies": {
-    "@callstack/rnef-tools": "workspace:*",
-    "@clack/prompts": "^0.8.1",
     "@react-native-community/cli-server-api": "^15.1.2",
     "@react-native/community-cli-plugin": "^0.76.0",
-    "nano-spawn": "^0.2.0",
     "tslib": "^2.3.0"
   },
   "devDependencies": {
-    "@callstack/rnef-config": "workspace:*",
-    "@react-native-community/cli-types": "^15.1.2"
+    "@callstack/rnef-config": "workspace:*"
   }
 }
