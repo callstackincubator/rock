@@ -95,7 +95,7 @@ export async function run() {
   rewritePackageJson(absoluteTargetDir, projectName, platforms);
   renameCommonFiles(absoluteTargetDir);
   renamePlaceholder(absoluteTargetDir, projectName);
-  createConfig(absoluteTargetDir, platforms);
+  createConfig(absoluteTargetDir, platforms, plugins);
   loader.stop('Updated template.');
 
   printByeMessage(absoluteTargetDir);
@@ -160,17 +160,25 @@ async function extractPackage(absoluteTargetDir: string, pkg: TemplateInfo) {
   );
 }
 
-function createConfig(absoluteTargetDir: string, platforms: TemplateInfo[]) {
+function createConfig(
+  absoluteTargetDir: string,
+  platforms: TemplateInfo[],
+  plugins: TemplateInfo[]
+) {
   const rnefConfig = path.join(absoluteTargetDir, 'rnef.config.mjs');
-  fs.writeFileSync(rnefConfig, formatConfig(platforms));
+  fs.writeFileSync(rnefConfig, formatConfig(platforms, plugins));
 }
 
-export function formatConfig(platforms: TemplateInfo[]) {
+export function formatConfig(
+  platforms: TemplateInfo[],
+  plugins: TemplateInfo[]
+) {
   const platformsWithImports = platforms.filter(
     (template) => template.importName
   );
+  const pluginsWithImports = plugins.filter((template) => template.importName);
 
-  return `${platformsWithImports
+  return `${[...platformsWithImports, ...pluginsWithImports]
     .map(
       (template) =>
         `import { ${template.importName} } from '${template.packageName}';`
@@ -178,7 +186,11 @@ export function formatConfig(platforms: TemplateInfo[]) {
     .join('\n')}
 
 export default {
-  plugins: {},
+  plugins: {
+    ${pluginsWithImports
+      .map((template) => `${template.name}: ${template.name}(),`)
+      .join('\n    ')}
+  },
   platforms: {
     ${platformsWithImports
       .map((template) => `${template.name}: ${template.importName}(),`)
