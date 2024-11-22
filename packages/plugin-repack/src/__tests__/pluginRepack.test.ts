@@ -1,7 +1,7 @@
 import { pluginRepack } from '../lib/pluginRepack.js';
 import { expect, test } from 'vitest';
 
-const pluginApi = { registerCommand: vi.fn() };
+const pluginApi = { registerCommand: vi.fn(), getProjectRoot: vi.fn() };
 
 test('plugin is called with correct arguments and returns its name and description', () => {
   const plugin = pluginRepack({
