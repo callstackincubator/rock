@@ -1,0 +1,21 @@
+{
+  "name": "@callstack/rnef-plugin-repack",
+  "version": "0.0.1",
+  "type": "module",
+  "main": "./src/index.js",
+  "typings": "./src/index.d.ts",
+  "dependencies": {
+    "@callstack/rnef-tools": "workspace:*",
+    "@callstack/repack": "5.0.0-rc.2",
+    "tslib": "^2.3.0"
+  },
+  "devDependencies": {
+    "@callstack/rnef-config": "workspace:*"
+  },
+  "peerDependencies": {
+    "@rspack/core": "1.0.3",
+    "@rspack/plugin-react-refresh": "^1.0.0",
+    "@swc/helpers": "^0.5.15",
+    "babel-loader": "^9.2.1"
+  }
+}

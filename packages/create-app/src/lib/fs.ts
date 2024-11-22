@@ -1,5 +1,6 @@
 import fs from 'node:fs';
 import nodePath from 'node:path';
+import os from 'node:os';
 
 export function isEmptyDirSync(path: string) {
   const files = fs.readdirSync(path);
@@ -25,7 +26,28 @@ export function copyDirSync(
     if (stat.isDirectory()) {
       copyDirSync(srcFile, distFile, { skipFiles });
     } else {
-      fs.copyFileSync(srcFile, distFile);
+      // merge package.json files
+      if (nodePath.basename(srcFile) === 'package.json') {
+        const srcPackageJsonContents = JSON.parse(
+          fs.readFileSync(srcFile, 'utf-8')
+        );
+        if (!fs.existsSync(distFile)) {
+          fs.copyFileSync(srcFile, distFile);
+        }
+        const distPackageJsonContents = JSON.parse(
+          fs.readFileSync(distFile, 'utf-8')
+        );
+        distPackageJsonContents.devDependencies = {
+          ...distPackageJsonContents.devDependencies,
+          ...srcPackageJsonContents.devDependencies,
+        };
+        fs.writeFileSync(
+          distFile,
+          JSON.stringify(distPackageJsonContents, null, 2)
+        );
+      } else {
+        fs.copyFileSync(srcFile, distFile);
+      }
     }
   }
 }

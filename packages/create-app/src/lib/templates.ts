@@ -49,6 +49,13 @@ export const PLUGINS: TemplateInfo[] = [
     localPath: path.join(TEMP_PACKAGES_PATH, 'plugin-metro'),
     directory: 'src/template',
   },
+  {
+    type: 'local',
+    name: 'repack',
+    packageName: '@callstack/rnef-plugin-repack',
+    localPath: path.join(TEMP_PACKAGES_PATH, 'plugin-repack'),
+    directory: 'src/template',
+  },
 ];
 
 export const PLATFORMS: TemplateInfo[] = [
