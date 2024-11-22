@@ -1,12 +1,11 @@
-import { pluginMetro } from '../lib/pluginRepack.js';
+import { pluginRepack } from '../lib/pluginRepack.js';
 import { expect, test } from 'vitest';
 
 const pluginApi = { registerCommand: vi.fn() };
 
 test('plugin is called with correct arguments and returns its name and description', () => {
-  const plugin = pluginMetro({
+  const plugin = pluginRepack({
     root: '/',
-    reactNativeVersion: '0.76.0',
     reactNativePath: '/path/to/react-native',
     platforms: {
       android: {},
@@ -15,6 +14,6 @@ test('plugin is called with correct arguments and returns its name and descripti
 
   expect(plugin).toMatchObject({
     name: 'plugin-repack',
-    description: 'RNEF plugin for Metro bundler.',
+    description: 'RNEF plugin for Re.Pack toolkit with Rspack.',
   });
 });
