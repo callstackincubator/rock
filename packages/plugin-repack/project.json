@@ -1,0 +1,23 @@
+{
+  "name": "plugin-repack",
+  "$schema": "../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "packages/plugin-repack/src",
+  "projectType": "library",
+  "tags": [],
+  "targets": {
+    "build": {
+      "executor": "@nx/js:tsc",
+      "outputs": ["{options.outputPath}"],
+      "options": {
+        "outputPath": "packages/plugin-repack/dist",
+        "main": "packages/plugin-repack/src/index.ts",
+        "tsConfig": "packages/plugin-repack/tsconfig.lib.json",
+        "assets": [
+          "packages/plugin-repack/*.md",
+          "packages/plugin-repack/src/template/**/*",
+          "packages/plugin-repack/react-native.config.*"
+        ]
+      }
+    }
+  }
+}

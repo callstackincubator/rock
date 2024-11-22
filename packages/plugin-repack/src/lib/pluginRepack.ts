@@ -1,0 +1,60 @@
+import type { PluginOutput, PluginApi } from '@callstack/rnef-config';
+import commands from '@callstack/repack/commands/rspack';
+import { logger } from '@callstack/rnef-tools';
+
+type PluginConfig = {
+  root: string;
+  reactNativePath: string;
+  platforms: {
+    [key: string]: {
+      npmPackageName?: string;
+    };
+  };
+};
+
+// @ts-expect-error todo type
+const startCommand = commands.find(
+  // @ts-expect-error todo type
+  (command) => command.name === 'start'
+);
+// @ts-expect-error todo type
+const bundleCommand = commands.find(
+  // @ts-expect-error todo type
+  (command) => command.name === 'bundle'
+);
+
+export const pluginRepack =
+  (pluginConfig: PluginConfig) =>
+  (api: PluginApi): PluginOutput => {
+    api.registerCommand({
+      name: 'start',
+      description: 'Starts Re.Pack dev server.',
+      action: (args) => {
+        startCommand.func(undefined, { ...pluginConfig }, args);
+      },
+      options: startCommand.options,
+    });
+
+    api.registerCommand({
+      name: 'bundle',
+      description: 'Bundles JavaScript with Re.Pack.',
+      action: (args) => {
+        // @ts-expect-error todo type
+        if (!args.entryFile) {
+          logger.error(
+            '"rnef bundle" command is missing "--entry-file" argument.'
+          );
+          process.exit(1);
+        }
+        bundleCommand.func(undefined, { ...pluginConfig }, args);
+      },
+      options: bundleCommand.options,
+    });
+
+    return {
+      name: 'plugin-repack',
+      description: 'RNEF plugin for Re.Pack toolkit with Rspack.',
+    };
+  };
+
+export default pluginRepack;
