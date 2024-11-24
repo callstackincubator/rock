@@ -22,4 +22,7 @@ export default [
       parser: jsoncParser,
     },
   },
+  {
+    ignores: ['**/template/*'],
+  },
 ];
