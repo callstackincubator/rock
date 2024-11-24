@@ -1,4 +1,5 @@
 import nx from '@nx/eslint-plugin';
+import jsoncParser from 'jsonc-eslint-parser';
 
 export default [
   ...nx.configs['flat/base'],
@@ -26,5 +27,21 @@ export default [
     files: ['**/*.ts', '**/*.tsx', '**/*.js', '**/*.jsx'],
     // Override or add rules here
     rules: {},
+  },
+  {
+    files: ['**/*.json'],
+    rules: {
+      '@nx/dependency-checks': [
+        'error',
+        {
+          ignoredFiles: ['{projectRoot}/eslint.config.{js,cjs,mjs}'],
+          // TODO: @nx/dependency-checks incorrectly reports unused dependencies
+          checkObsoleteDependencies: false,
+        },
+      ],
+    },
+    languageOptions: {
+      parser: jsoncParser,
+    },
   },
 ];
