@@ -4,12 +4,11 @@ import {
   getBuildOptions,
 } from '@callstack/rnef-plugin-platform-apple';
 import { BuildFlags } from '@callstack/rnef-plugin-platform-apple';
+import { getProjectConfig } from '@react-native-community/cli-config-apple';
+
+const projectConfig = getProjectConfig({ platformName: 'ios' });
 
 const buildOptions = getBuildOptions({ platformName: 'ios' });
-
-const build = async (args: unknown) => {
-  await createBuild('ios', args as BuildFlags);
-};
 
 const run = (args: unknown) => {
   console.log('run', { args });
@@ -21,7 +20,16 @@ const pluginPlatformIOS =
     api.registerCommand({
       name: 'build:ios',
       description: 'Build iOS app.',
-      action: build,
+      action: async (args) => {
+        const projectRoot = api.getProjectRoot();
+        const iosConfig = projectConfig(projectRoot, {});
+
+        if (iosConfig) {
+          await createBuild('ios', iosConfig, args as BuildFlags);
+        } else {
+          throw new Error('iOS project not found.');
+        }
+      },
       options: buildOptions,
     });
 

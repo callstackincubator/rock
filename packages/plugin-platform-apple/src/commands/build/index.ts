@@ -1,31 +1,17 @@
 import { BuildFlags } from './buildOptions.js';
 import { buildProject } from './buildProject.js';
 import { getXcodeProjectAndDir } from './getXcodeProjectAndDir.js';
-import { supportedPlatforms } from '../../config/supportedPlatforms.js';
-import { BuilderCommand } from '../../types/index.js';
-import getPlatformConfig from '../../utils/getPlatformConfig.js';
+import { BuilderCommand, ProjectConfig } from '../../types/index.js';
 
 export const createBuild = async (
   platformName: BuilderCommand['platformName'],
+  projectConfig: ProjectConfig,
   buildFlags: BuildFlags
 ) => {
-  const platformConfig = getPlatformConfig(platformName);
-
-  if (!platformConfig) {
-    throw new Error(`Unable to find ${platformName} platform config.`);
-  }
-
-  if (
-    platformConfig === undefined ||
-    supportedPlatforms[platformName] === undefined
-  ) {
-    throw new Error(`Unable to find ${platformName} platform config`);
-  }
-
-  // TODO: add logic for installing Cocoapods
+  // TODO: add logic for installing Cocoapods based on @expo/fingerprint & pod-install package.
 
   const { xcodeProject, sourceDir } = getXcodeProjectAndDir(
-    platformConfig,
+    projectConfig,
     platformName
   );
 
