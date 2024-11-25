@@ -21,14 +21,14 @@ export async function selectFromInteractiveMode({
   let newMode = mode;
 
   const schemes = info?.schemes;
-  if (schemes && schemes.length > 1) {
+  if (schemes && schemes.length > 1 && scheme) {
     newScheme = await promptForSchemeSelection(schemes);
   } else {
     logger.debug(`Automatically selected ${chalk.bold(scheme)} scheme.`);
   }
 
   const configurations = info?.configurations;
-  if (configurations && configurations.length > 1) {
+  if (configurations && configurations.length > 1 && mode) {
     newMode = await promptForConfigurationSelection(configurations);
   } else {
     logger.debug(`Automatically selected ${chalk.bold(mode)} configuration.`);

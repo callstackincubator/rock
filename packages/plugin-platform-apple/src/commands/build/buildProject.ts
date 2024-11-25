@@ -1,7 +1,4 @@
-import child_process, {
-  ChildProcess,
-  SpawnOptionsWithoutStdio,
-} from 'child_process';
+import child_process, { SpawnOptionsWithoutStdio } from 'child_process';
 import chalk from 'chalk';
 import type { BuildFlags } from './buildOptions.js';
 import { supportedPlatforms } from '../../config/supportedPlatforms.js';

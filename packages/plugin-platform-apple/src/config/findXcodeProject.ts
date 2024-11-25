@@ -19,7 +19,7 @@ function findXcodeProject(files: Array<string>): XcodeProjectInfo | null {
     }
     if (ext === '.xcodeproj') {
       logger.warn(
-        "We couldn't find `.xcworkspace` file in your project, please make sure that you have Cocoapods installed, outdated or missing Pods can cause various build issues."
+        "We couldn't find `.xcworkspace` file in your project, please make sure that you have Cocoapods installed. Outdated or missing Pods can cause various build issues."
       );
       return {
         name: fileName,

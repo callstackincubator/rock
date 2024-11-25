@@ -23,7 +23,6 @@ export const createBuild = async (
   }
 
   // TODO: add logic for installing Cocoapods
-  // if there's no `.xcoworpsace` file, we need to log it and probably exit
 
   const { xcodeProject, sourceDir } = getXcodeProjectAndDir(
     platformConfig,

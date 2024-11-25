@@ -46,21 +46,20 @@ export async function getConfiguration(
     args.mode ||
     getBuildConfigurationFromXcScheme(scheme, 'Debug', sourceDir, info);
 
-  // TODO: make it a default behaviour. if there's one option let's go with it.
-  // make this behaviour better, even if there are two ask? also not to make this prompt too annoying
-  // make it default in build:ios and also respect flags
-  const selection = await selectFromInteractiveMode({
-    scheme,
-    mode,
-    info,
-  });
+  if (args.interactive) {
+    const selection = await selectFromInteractiveMode({
+      scheme: args.scheme ? undefined : scheme,
+      mode: args.mode ? undefined : mode,
+      info,
+    });
 
-  if (selection.scheme) {
-    scheme = selection.scheme;
-  }
+    if (selection.scheme && !args.scheme) {
+      scheme = selection.scheme;
+    }
 
-  if (selection.mode) {
-    mode = selection.mode;
+    if (selection.mode && !args.mode) {
+      mode = selection.mode;
+    }
   }
 
   logger.debug(
