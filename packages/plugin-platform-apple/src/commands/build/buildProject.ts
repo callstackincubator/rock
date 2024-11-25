@@ -121,11 +121,6 @@ const buildProject = async (
         return;
       }
 
-      // TODO: Add build artifacts location to the success message
-      // We can either:
-      // 1. Parse it from ~/Library/Developer/Xcode/DerivedData/ (latest build)
-      // 2. Use -derivedDataPath flag to specify custom location (preferred for remote builds)
-
       loader.stop('Successfully built the app');
       resolve(buildOutput);
     });

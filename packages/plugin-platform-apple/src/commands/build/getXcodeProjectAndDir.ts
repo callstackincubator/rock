@@ -1,5 +1,4 @@
 import fs from 'node:fs';
-// import {CLIError} from '@react-native-community/cli-tools';
 import findXcodeProject from '../../config/findXcodeProject.js';
 import { getPlatformInfo } from '../../utils/getPlatformInfo.js';
 import { ApplePlatform, ProjectConfig } from '../../types/index.js';

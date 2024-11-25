@@ -3,15 +3,7 @@ import {
   createBuild,
   getBuildOptions,
 } from '@callstack/rnef-plugin-platform-apple';
-import { BuildFlags } from 'packages/plugin-platform-apple/dist/src/index.js';
-// import type { BuildFlags } from '@callstack/rnef-plugin-platform-apple';
-
-const linkModules = () => {
-  console.log('link modules');
-};
-const linkAssets = () => {
-  console.log('link assets');
-};
+import { BuildFlags } from '@callstack/rnef-plugin-platform-apple';
 
 const buildOptions = getBuildOptions({ platformName: 'ios' });
 
@@ -20,8 +12,6 @@ const build = async (args: unknown) => {
 };
 
 const run = (args: unknown) => {
-  linkModules();
-  linkAssets();
   console.log('run', { args });
 };
 
