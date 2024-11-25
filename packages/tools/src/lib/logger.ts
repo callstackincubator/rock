@@ -2,7 +2,8 @@ import color from 'picocolors';
 import isUnicodeSupported from 'is-unicode-supported';
 
 const unicode = isUnicodeSupported();
-const unicodeWithFallback = (c: string, fallback: string) => (unicode ? c : fallback);
+const unicodeWithFallback = (c: string, fallback: string) =>
+  unicode ? c : fallback;
 
 const INFO_SYMBOL = unicodeWithFallback('●', '•');
 const SUCCESS_SYMBOL = unicodeWithFallback('◆', '*');
@@ -25,7 +26,9 @@ const info = (...messages: Array<string>) => {
 };
 
 const warn = (...messages: Array<string>) => {
-  console.warn(`${color.yellow(`${WARN_SYMBOL}  ${formatMessages(messages)}`)}`);
+  console.warn(
+    `${color.yellow(`${WARN_SYMBOL}  ${formatMessages(messages)}`)}`
+  );
 };
 
 const error = (...messages: Array<string>) => {
