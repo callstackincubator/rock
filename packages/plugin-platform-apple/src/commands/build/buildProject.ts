@@ -10,6 +10,7 @@ import { logger } from '@callstack/rnef-tools';
 import { getConfiguration } from './getConfiguration.js';
 import { simulatorDestinationMap } from './simulatorDestinationMap.js';
 import { spinner } from '@clack/prompts';
+import { getPlatformInfo } from '../../utils/getPlatformInfo.js';
 
 function prettifyXcodebuildMessages(output: string): Set<string> {
   const errorRegex = /error\b[^\S\r\n]*[:\-\s]*([^\r\n]*)/gim;
@@ -98,10 +99,9 @@ const buildProject = async (
         Array.from(prettifyXcodebuildMessages(buildOutput)).forEach((error) =>
           logger.error(error)
         );
-        // TODO: make sure to have platformName in readable form
         reject(
           new Error(`
-          Failed to build ${platformName} project.
+          Failed to build ${getPlatformInfo(platformName).readableName} project.
 
           "xcodebuild" exited with error code '${code}'. To debug build
           logs further, consider building your app with Xcode.app, by opening
@@ -109,6 +109,12 @@ const buildProject = async (
         );
         return;
       }
+
+      // TODO: Add build artifacts location to the success message
+      // We can either:
+      // 1. Parse it from ~/Library/Developer/Xcode/DerivedData/ (latest build)
+      // 2. Use -derivedDataPath flag to specify custom location (preferred for remote builds)
+
       loader.stop('Successfully built the app');
       resolve(buildOutput);
     });
