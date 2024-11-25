@@ -10,10 +10,12 @@ export function checkIfConfigurationExists(
   }
 
   if (!configurations.includes(mode)) {
-    throw new Error(
+    logger.error(
       `Configuration "${mode}" does not exist in your project. Please use one of the existing configurations: ${configurations.join(
         ', '
       )}`
     );
+
+    process.exit(1);
   }
 }
