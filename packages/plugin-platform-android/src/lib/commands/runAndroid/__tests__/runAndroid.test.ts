@@ -292,7 +292,7 @@ function spawnMockImplementation(
   return { output: '...' };
 }
 
-test.each([['release'], [undefined], ['staging']])(
+test.each([['release'], ['debug'], ['staging']])(
   'runAndroid runs gradle build with correct configuration for --mode %s and launches on emulator-5552',
   async (mode) => {
     (spawn as Mock).mockImplementation((file, args) =>
@@ -385,8 +385,8 @@ test('runAndroid fails to launch an app on not-connected device when specified w
 test.each([
   ['release', true],
   ['release', false],
-  [undefined, true],
-  [undefined, false],
+  ['debug', true],
+  ['debug', false],
 ])(
   `runAndroid launches an app on a selected device emulator-5554 when connected in --mode %s and --interactive %b`,
   async (mode, interactive) => {

@@ -1,10 +1,15 @@
+import fs, { PathLike } from 'node:fs';
 import { vi, test, Mock, MockedFunction } from 'vitest';
 import { AndroidProjectConfig } from '@react-native-community/cli-types';
 import { logger } from '@callstack/rnef-tools';
 import spawn from 'nano-spawn';
 import { select } from '@clack/prompts';
 import { buildAndroid, type BuildFlags } from '../buildAndroid.js';
+import color from 'picocolors';
 
+const actualFs = await vi.importMock('node:fs');
+
+vi.mock('node:fs');
 vi.mock('nano-spawn', () => {
   return {
     default: vi.fn(),
@@ -71,14 +76,45 @@ beforeEach(() => {
   vi.clearAllMocks();
 });
 
-test('buildAndroid runs gradle build with correct configuration for debug', async () => {
-  (spawn as Mock).mockResolvedValueOnce({ output: 'output' });
+function mockCallAdbGetCpu(file: string, args: string[]) {
+  return (
+    file === '/mock/android/home/platform-tools/adb' &&
+    args?.[0] === 'shell' &&
+    args?.[1] === 'getprop' &&
+    args?.[2] === 'ro.product.cpu.abi'
+  );
+}
+
+function spawnMockImplementation(file: string, args: string[]) {
+  if (mockCallAdbGetCpu(file, args)) {
+    return { output: 'arm64-v8a' };
+  }
+  return { output: '...' };
+}
+
+test('buildAndroid runs gradle build with correct configuration for debug and outputs build path', async () => {
+  (spawn as Mock).mockImplementation((file, args) =>
+    spawnMockImplementation(file, args)
+  );
+  vi.mocked(fs.existsSync).mockImplementation((file: PathLike) => {
+    if (file === '/android/app/build/outputs/bundle/debug/app-debug.aab') {
+      return true;
+    }
+    return (actualFs as typeof fs).existsSync(file);
+  });
+  vi.spyOn(logger, 'info');
+
   await buildAndroid(androidProject, args);
 
   expect(vi.mocked(spawn)).toBeCalledWith(
     './gradlew',
     ['app:bundleDebug', '-x', 'lint'],
     { stdio: 'inherit', cwd: '/android' }
+  );
+  expect(logger.info).toBeCalledWith(
+    `Build output: ${color.cyan(
+      '/android/app/build/outputs/bundle/debug/app-debug.aab'
+    )}`
   );
 });
 
@@ -106,11 +142,20 @@ test('buildAndroid runs selected "bundleRelease" task in interactive mode', asyn
     if (file === './gradlew' && args[0] === 'tasks') {
       return { output: gradleTaskOutput };
     }
+    if (mockCallAdbGetCpu(file, args)) {
+      return { output: 'arm64-v8a' };
+    }
     return { output: 'output' };
   });
   (select as MockedFunction<typeof select>).mockResolvedValueOnce(
     Promise.resolve('bundleRelease')
   );
+  vi.mocked(fs.existsSync).mockImplementation((file: PathLike) => {
+    if (file === '/android/app/build/outputs/bundle/release/app-release.aab') {
+      return true;
+    }
+    return (actualFs as typeof fs).existsSync(file);
+  });
 
   await buildAndroid(androidProject, { ...args, interactive: true });
 

@@ -70,8 +70,8 @@ describe('--appFolder', () => {
 
   it('uses task "install[Variant]" as default task', async () => {
     await runGradle({
-      taskType: 'install',
-      args: { ...args, mode: 'debug' },
+      tasks: ['installDebug'],
+      args: { ...args },
       androidProject,
     });
     expect((spawn as Mock).mock.calls[0][1]).toContain('app:installDebug');
@@ -79,8 +79,8 @@ describe('--appFolder', () => {
 
   it('uses appName and default variant', async () => {
     await runGradle({
-      taskType: 'install',
-      args: { ...args, mode: 'debug' },
+      tasks: ['installDebug'],
+      args: { ...args },
       androidProject: { ...androidProject, appName: 'someApp' },
     });
 
@@ -89,8 +89,8 @@ describe('--appFolder', () => {
 
   it('uses appName and custom variant', async () => {
     await runGradle({
-      taskType: 'install',
-      args: { ...args, mode: 'release' },
+      tasks: ['installRelease'],
+      args: { ...args },
       androidProject: { ...androidProject, appName: 'anotherApp' },
     });
 
@@ -101,8 +101,8 @@ describe('--appFolder', () => {
 
   it('uses only task argument', async () => {
     await runGradle({
-      taskType: 'install',
-      args: { ...args, tasks: ['someTask'] },
+      tasks: ['installDebug', 'someTask'],
+      args: { ...args },
       androidProject,
     });
 
@@ -111,8 +111,8 @@ describe('--appFolder', () => {
 
   it('uses appName and custom task argument', async () => {
     await runGradle({
-      taskType: 'install',
-      args: { ...args, tasks: ['someTask'] },
+      tasks: ['someTask', 'installDebug'],
+      args: { ...args },
       androidProject: { ...androidProject, appName: 'anotherApp' },
     });
 
@@ -121,8 +121,8 @@ describe('--appFolder', () => {
 
   it('uses multiple tasks', async () => {
     await runGradle({
-      taskType: 'install',
-      args: { ...args, tasks: ['clean', 'someTask'] },
+      tasks: ['clean', 'someTask'],
+      args: { ...args },
       androidProject,
     });
 

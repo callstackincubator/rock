@@ -2,7 +2,8 @@ import color from 'picocolors';
 import isUnicodeSupported from 'is-unicode-supported';
 
 const unicode = isUnicodeSupported();
-const unicodeWithFallback = (c: string, fallback: string) => (unicode ? c : fallback);
+const unicodeWithFallback = (c: string, fallback: string) =>
+  unicode ? c : fallback;
 
 const INFO_SYMBOL = unicodeWithFallback('●', '•');
 const SUCCESS_SYMBOL = unicodeWithFallback('◆', '*');
@@ -15,17 +16,17 @@ let verbose = false;
 const formatMessages = (messages: Array<string>) => messages.join(SEPARATOR);
 
 const success = (...messages: Array<string>) => {
-  console.log(
-    `${color.green(`${SUCCESS_SYMBOL}  ${formatMessages(messages)}`)}`
-  );
+  console.log(`${color.green(SUCCESS_SYMBOL)}  ${formatMessages(messages)}`);
 };
 
 const info = (...messages: Array<string>) => {
-  console.log(`${color.cyan(`${INFO_SYMBOL}  ${formatMessages(messages)}`)}`);
+  console.log(`${color.cyan(INFO_SYMBOL)}  ${formatMessages(messages)}`);
 };
 
 const warn = (...messages: Array<string>) => {
-  console.warn(`${color.yellow(`${WARN_SYMBOL}  ${formatMessages(messages)}`)}`);
+  console.warn(
+    `${color.yellow(`${WARN_SYMBOL}  ${formatMessages(messages)}`)}`
+  );
 };
 
 const error = (...messages: Array<string>) => {

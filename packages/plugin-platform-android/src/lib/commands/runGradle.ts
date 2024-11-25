@@ -3,28 +3,20 @@ import type { AndroidProject, Flags } from './runAndroid/runAndroid.js';
 import { getAdbPath, getDevices } from './runAndroid/adb.js';
 import spawn from 'nano-spawn';
 import type { BuildFlags } from './buildAndroid/buildAndroid.js';
-import { toPascalCase } from './toPascalCase.js';
 
 export async function runGradle({
-  taskType,
+  tasks,
   androidProject,
-  selectedTask,
   args,
 }: {
-  taskType: 'install' | 'bundle' | 'assemble';
+  tasks: string[];
   androidProject: AndroidProject;
-  selectedTask?: string;
   args: BuildFlags | Flags;
 }) {
   if ('binaryPath' in args) {
     return;
   }
-  const gradleArgs = getTaskNames(
-    androidProject.appName,
-    args.mode,
-    selectedTask ? [selectedTask] : args.tasks,
-    taskType
-  );
+  const gradleArgs = getTaskNames(androidProject.appName, tasks);
 
   gradleArgs.push('-x', 'lint');
 
@@ -68,16 +60,8 @@ export function getGradleWrapper() {
   return process.platform.startsWith('win') ? 'gradlew.bat' : './gradlew';
 }
 
-function getTaskNames(
-  appName: string,
-  mode: BuildFlags['mode'] = 'debug',
-  tasks: BuildFlags['tasks'],
-  taskType: 'assemble' | 'install' | 'bundle'
-): Array<string> {
-  const appTasks =
-    tasks && tasks.length ? tasks : [taskType + toPascalCase(mode)];
-
-  return appTasks.map((task) => `${appName}:${task}`);
+function getTaskNames(appName: string, tasks: string[]): Array<string> {
+  return tasks.map((task) => `${appName}:${task}`);
 }
 
 /**

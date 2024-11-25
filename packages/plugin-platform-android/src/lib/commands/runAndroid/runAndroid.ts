@@ -44,39 +44,27 @@ export async function runAndroid(
     ? await selectAndLaunchDevice()
     : { deviceId: args.device };
 
-  const selectedTask = args.interactive
-    ? await promptForTaskSelection(
-        deviceId ? 'assemble' : 'install',
-        androidProject.sourceDir
-      )
-    : undefined;
+  const mainTaskType = deviceId ? 'assemble' : 'install';
+  const tasks = args.interactive
+    ? [await promptForTaskSelection(mainTaskType, androidProject.sourceDir)]
+    : [...(args.tasks ?? []), `${mainTaskType}${toPascalCase(args.mode)}`];
 
   if (deviceId) {
-    await runGradle({
-      taskType: 'assemble',
-      androidProject,
-      args,
-      selectedTask,
-    });
+    await runGradle({ tasks, androidProject, args });
     if (!(await getDevices()).find((d) => d === deviceId)) {
       logger.error(
         `Device "${deviceId}" not found. Please run it first or use a different one.`
       );
       process.exit(1);
     }
-    await tryInstallAppOnDevice(deviceId, androidProject, args, selectedTask);
+    await tryInstallAppOnDevice(deviceId, androidProject, args, tasks);
     await tryLaunchAppOnDevice(deviceId, androidProject, args);
   } else {
     if ((await getDevices()).length === 0) {
       await tryLaunchEmulator();
     }
 
-    await runGradle({
-      taskType: 'install',
-      androidProject,
-      args,
-      selectedTask,
-    });
+    await runGradle({ tasks, androidProject, args });
 
     for (const device of await getDevices()) {
       await tryLaunchAppOnDevice(device, androidProject, args);
@@ -111,6 +99,10 @@ function normalizeArgs(args: Flags, projectRoot: string) {
     logger.warn(
       'Both "--tasks" and "--mode" parameters were passed. Using "--tasks" for building the app.'
     );
+  }
+
+  if (!args.mode) {
+    args.mode = 'debug';
   }
 
   // turn on activeArchOnly for debug to speed up local builds
