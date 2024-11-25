@@ -72,7 +72,8 @@ const buildProject = async (
         ? `id=${udid}`
         : mode === 'Debug' || args.device
         ? `generic/platform=${simulatorDest}`
-        : `generic/platform=${platformName}`;
+        : `generic/platform=${platformName}` +
+          (args.destination ? ',' + args.destination : '');
     })(),
   ];
 

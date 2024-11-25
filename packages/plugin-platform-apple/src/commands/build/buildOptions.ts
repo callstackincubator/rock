@@ -42,6 +42,12 @@ export type BuildFlags = {
    * Custom build folder path
    */
   buildFolder?: string;
+
+  /**
+   * Explicitly extend destination e.g. "arch=x86_64"
+   */
+
+  destination?: string;
 };
 
 export const getBuildOptions = ({ platformName }: BuilderCommand) => {
@@ -84,6 +90,10 @@ export const getBuildOptions = ({ platformName }: BuilderCommand) => {
     {
       name: '--buildFolder <string>',
       description: `Location for ${readableName} build artifacts. Corresponds to Xcode's "-derivedDataPath".`,
+    },
+    {
+      name: '--destination <string>',
+      description: 'Explicitly extend destination e.g. "arch=x86_64"',
     },
   ];
 };
