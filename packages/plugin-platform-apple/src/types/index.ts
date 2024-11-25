@@ -1,11 +1,10 @@
-import { supportedPlatforms } from './../config/supportedPlatforms.js';
+import { supportedPlatforms } from './../supportedPlatforms.js';
 
 type ObjectValues<T> = T[keyof T];
 
 export type ApplePlatform = ObjectValues<typeof supportedPlatforms>;
 
 export interface Device {
-  // TODO: here check which command are we using and use the fixed logic for downloading the simulators and devices
   name: string;
   udid: string;
   state?: string;

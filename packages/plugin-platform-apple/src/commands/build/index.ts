@@ -1,7 +1,7 @@
 import { BuildFlags } from './buildOptions.js';
 import { buildProject } from './buildProject.js';
-import { getXcodeProjectAndDir } from './getXcodeProjectAndDir.js';
 import { BuilderCommand, ProjectConfig } from '../../types/index.js';
+import { logger } from '@callstack/rnef-tools';
 
 export const createBuild = async (
   platformName: BuilderCommand['platformName'],
@@ -10,10 +10,14 @@ export const createBuild = async (
 ) => {
   // TODO: add logic for installing Cocoapods based on @expo/fingerprint & pod-install package.
 
-  const { xcodeProject, sourceDir } = getXcodeProjectAndDir(
-    projectConfig,
-    platformName
-  );
+  const { xcodeProject, sourceDir } = projectConfig;
+
+  if (!xcodeProject) {
+    logger.error(
+      `Could not find Xcode project files in "${sourceDir}" folder. Please make sure that you have installed Cocoapods and "${sourceDir}" is a valid path`
+    );
+    process.exit(1);
+  }
 
   process.chdir(sourceDir);
 

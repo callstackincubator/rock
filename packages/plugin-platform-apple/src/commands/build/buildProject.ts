@@ -1,7 +1,7 @@
 import child_process, { SpawnOptionsWithoutStdio } from 'child_process';
 import chalk from 'chalk';
 import type { BuildFlags } from './buildOptions.js';
-import { supportedPlatforms } from '../../config/supportedPlatforms.js';
+import { supportedPlatforms } from '../../supportedPlatforms.js';
 import { ApplePlatform, XcodeProjectInfo } from '../../types/index.js';
 import { logger } from '@callstack/rnef-tools';
 import { getConfiguration } from './getConfiguration.js';
