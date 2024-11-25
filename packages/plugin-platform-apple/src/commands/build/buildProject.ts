@@ -56,11 +56,24 @@ const buildProject = async (
     '-scheme',
     scheme,
     '-destination',
-    udid
-      ? `id=${udid}`
-      : mode === 'Debug'
-      ? `generic/platform=${simulatorDest}`
-      : `generic/platform=${platformName}`,
+    (() => {
+      if (args.device && typeof args.device === 'string') {
+        // Check if the device argument looks like a UDID (assuming UDIDs are alphanumeric and have specific length)
+        const isUDID = /^[A-Fa-f0-9-]{25,}$/.test(args.device);
+        if (isUDID) {
+          return `id=${args.device}`;
+        } else {
+          // If it's a device name
+          return `name=${args.device}`;
+        }
+      }
+
+      return udid
+        ? `id=${udid}`
+        : mode === 'Debug' || args.device
+        ? `generic/platform=${simulatorDest}`
+        : `generic/platform=${platformName}`;
+    })(),
   ];
 
   if (args.extraParams) {
