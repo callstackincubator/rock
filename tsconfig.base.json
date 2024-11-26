@@ -20,6 +20,7 @@
       "@callstack/rnef-cli": ["packages/cli/src/index.ts"],
       "@callstack/rnef-config": ["packages/config/src/index.ts"],
       "@callstack/rnef-plugin-metro": ["packages/plugin-metro/src/index.ts"],
+      "@callstack/rnef-plugin-repack": ["packages/plugin-repack/src/index.ts"],
       "@callstack/rnef-plugin-platform-android": [
         "packages/plugin-platform-android/src/index.ts"
       ],

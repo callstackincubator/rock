@@ -63,7 +63,7 @@ export const pluginMetro =
   (pluginConfig: PluginConfig) =>
   (api: PluginApi): PluginOutput => {
     api.registerCommand({
-      name: 'dev',
+      name: 'start',
       description: 'Starts Metro dev server.',
       // @ts-expect-error todo fix this
       action: (args: StartCommandArgs) => {

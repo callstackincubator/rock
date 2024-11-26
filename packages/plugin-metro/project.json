@@ -14,8 +14,7 @@
         "tsConfig": "packages/plugin-metro/tsconfig.lib.json",
         "assets": [
           "packages/plugin-metro/*.md",
-          "packages/plugin-metro/src/template/**/*",
-          "packages/plugin-metro/react-native.config.*"
+          "packages/plugin-metro/src/template/**/*"
         ]
       }
     }

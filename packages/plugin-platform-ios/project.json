@@ -14,7 +14,8 @@
         "tsConfig": "packages/plugin-platform-ios/tsconfig.lib.json",
         "assets": [
           "packages/plugin-platform-ios/*.md",
-          "packages/plugin-platform-ios/src/template/**/*"
+          "packages/plugin-platform-ios/src/template/**/*",
+          "packages/plugin-platform-ios/react-native.config.*"
         ]
       }
     }

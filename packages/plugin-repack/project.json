@@ -14,8 +14,7 @@
         "tsConfig": "packages/plugin-repack/tsconfig.lib.json",
         "assets": [
           "packages/plugin-repack/*.md",
-          "packages/plugin-repack/src/template/**/*",
-          "packages/plugin-repack/react-native.config.*"
+          "packages/plugin-repack/src/template/**/*"
         ]
       }
     }

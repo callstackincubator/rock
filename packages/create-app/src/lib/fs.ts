@@ -1,6 +1,5 @@
 import fs from 'node:fs';
 import nodePath from 'node:path';
-import os from 'node:os';
 
 export function isEmptyDirSync(path: string) {
   const files = fs.readdirSync(path);
@@ -26,30 +25,56 @@ export function copyDirSync(
     if (stat.isDirectory()) {
       copyDirSync(srcFile, distFile, { skipFiles });
     } else {
-      // merge package.json files
       if (nodePath.basename(srcFile) === 'package.json') {
-        const srcPackageJsonContents = JSON.parse(
-          fs.readFileSync(srcFile, 'utf-8')
-        );
-        if (!fs.existsSync(distFile)) {
-          fs.copyFileSync(srcFile, distFile);
-        }
-        const distPackageJsonContents = JSON.parse(
-          fs.readFileSync(distFile, 'utf-8')
-        );
-        distPackageJsonContents.devDependencies = {
-          ...distPackageJsonContents.devDependencies,
-          ...srcPackageJsonContents.devDependencies,
-        };
-        fs.writeFileSync(
-          distFile,
-          JSON.stringify(distPackageJsonContents, null, 2)
-        );
+        mergePackageJsons(srcFile, distFile);
       } else {
         fs.copyFileSync(srcFile, distFile);
       }
     }
   }
+}
+
+function mergePackageJsons(from: string, to: string) {
+  const src = JSON.parse(fs.readFileSync(from, 'utf-8'));
+  if (!fs.existsSync(to)) {
+    fs.copyFileSync(from, to);
+  }
+  const dist = JSON.parse(fs.readFileSync(to, 'utf-8'));
+  dist.scripts = { ...dist.scripts, ...src.scripts };
+  dist.devDependencies = removeDuplicateDependencies({
+    devDependencies: { ...dist.devDependencies, ...src.devDependencies },
+  }).devDependencies;
+
+  fs.writeFileSync(to, JSON.stringify(dist, null, 2));
+}
+
+type PackageJsonDeps = {
+  devDependencies: Record<string, string>;
+};
+
+function removeDuplicateDependencies(allDeps: PackageJsonDeps) {
+  const uniqueDependencies = Object.keys(allDeps.devDependencies).reduce(
+    (acc: string[], key) => {
+      if (!acc.includes(key)) {
+        acc.push(key);
+      }
+      return acc;
+    },
+    []
+  );
+  const newDeps = uniqueDependencies.reduce(
+    (acc: PackageJsonDeps, key) => {
+      if (allDeps.devDependencies[key]) {
+        acc.devDependencies[key] = allDeps.devDependencies[key];
+      }
+      return acc;
+    },
+    { devDependencies: {} }
+  );
+
+  return {
+    devDependencies: newDeps.devDependencies,
+  };
 }
 
 export function removeDir(path: string) {
