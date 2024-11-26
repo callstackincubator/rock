@@ -40,20 +40,17 @@ function mergePackageJsons(from: string, to: string) {
     fs.copyFileSync(from, to);
   }
   const dist = JSON.parse(fs.readFileSync(to, 'utf-8'));
-  dist.scripts = { ...dist.scripts, ...src.scripts };
-  dist.devDependencies = removeDuplicateDependencies({
-    devDependencies: { ...dist.devDependencies, ...src.devDependencies },
-  }).devDependencies;
+  dist.scripts = removeDuplicates({ ...dist.scripts, ...src.scripts });
+  dist.devDependencies = removeDuplicates({
+    ...dist.devDependencies,
+    ...src.devDependencies,
+  });
 
   fs.writeFileSync(to, JSON.stringify(dist, null, 2));
 }
 
-type PackageJsonDeps = {
-  devDependencies: Record<string, string>;
-};
-
-function removeDuplicateDependencies(allDeps: PackageJsonDeps) {
-  const uniqueDependencies = Object.keys(allDeps.devDependencies).reduce(
+function removeDuplicates(allDeps: Record<string, string>) {
+  const uniqueDependencies = Object.keys(allDeps).reduce(
     (acc: string[], key) => {
       if (!acc.includes(key)) {
         acc.push(key);
@@ -63,18 +60,16 @@ function removeDuplicateDependencies(allDeps: PackageJsonDeps) {
     []
   );
   const newDeps = uniqueDependencies.reduce(
-    (acc: PackageJsonDeps, key) => {
-      if (allDeps.devDependencies[key]) {
-        acc.devDependencies[key] = allDeps.devDependencies[key];
+    (acc: Record<string, string>, key) => {
+      if (allDeps[key]) {
+        acc[key] = allDeps[key];
       }
       return acc;
     },
-    { devDependencies: {} }
+    {}
   );
 
-  return {
-    devDependencies: newDeps.devDependencies,
-  };
+  return newDeps;
 }
 
 export function removeDir(path: string) {
