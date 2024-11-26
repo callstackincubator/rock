@@ -40,36 +40,11 @@ function mergePackageJsons(from: string, to: string) {
     fs.copyFileSync(from, to);
   }
   const dist = JSON.parse(fs.readFileSync(to, 'utf-8'));
-  dist.scripts = removeDuplicates({ ...dist.scripts, ...src.scripts });
-  dist.devDependencies = removeDuplicates({
-    ...dist.devDependencies,
-    ...src.devDependencies,
-  });
+  // @todo consider adding a warning when src keys are different from dist keys
+  dist.scripts = { ...dist.scripts, ...src.scripts };
+  dist.devDependencies = { ...dist.devDependencies, ...src.devDependencies };
 
   fs.writeFileSync(to, JSON.stringify(dist, null, 2));
-}
-
-function removeDuplicates(allDeps: Record<string, string>) {
-  const uniqueDependencies = Object.keys(allDeps).reduce(
-    (acc: string[], key) => {
-      if (!acc.includes(key)) {
-        acc.push(key);
-      }
-      return acc;
-    },
-    []
-  );
-  const newDeps = uniqueDependencies.reduce(
-    (acc: Record<string, string>, key) => {
-      if (allDeps[key]) {
-        acc[key] = allDeps[key];
-      }
-      return acc;
-    },
-    {}
-  );
-
-  return newDeps;
 }
 
 export function removeDir(path: string) {
