@@ -1,0 +1,9 @@
+{
+  "name": "rnef-plugin-platform-android-template",
+  "scripts": {
+    "android": "rnef run:android"
+  },
+  "devDependencies": {
+    "@callstack/rnef-plugin-platform-android": "latest"
+  }
+}

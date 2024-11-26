@@ -1,0 +1,9 @@
+{
+  "name": "rnef-plugin-platform-ios-template",
+  "scripts": {
+    "ios": "rnef run:ios"
+  },
+  "devDependencies": {
+    "@callstack/rnef-plugin-platform-ios": "latest"
+  }
+}

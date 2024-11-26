@@ -8,7 +8,7 @@ import {
 import {
   renameCommonFiles,
   renamePlaceholder,
-  rewritePackageJson,
+  sortDevDepsInPackageJson,
 } from './edit-template.js';
 import { copyDirSync, isEmptyDirSync, removeDir } from './fs.js';
 import { printLogo } from './logo.js';
@@ -92,7 +92,7 @@ export async function run() {
 
   const loader = spinner();
   loader.start('Updating template...');
-  rewritePackageJson(absoluteTargetDir, projectName, platforms);
+  sortDevDepsInPackageJson(absoluteTargetDir);
   renameCommonFiles(absoluteTargetDir);
   renamePlaceholder(absoluteTargetDir, projectName);
   createConfig(absoluteTargetDir, platforms, plugins);

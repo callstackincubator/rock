@@ -1,45 +1,13 @@
 import * as fs from 'node:fs';
 import * as path from 'node:path';
-import { TemplateInfo } from './templates.js';
 
-export function rewritePackageJson(
-  projectPath: string,
-  packageName: string,
-  platforms: TemplateInfo[]
-) {
+export function sortDevDepsInPackageJson(projectPath: string) {
   const packageJsonPath = path.join(projectPath, 'package.json');
   if (!fs.existsSync(packageJsonPath)) {
     return;
   }
 
   const packageJson = JSON.parse(fs.readFileSync(packageJsonPath, 'utf-8'));
-
-  packageJson.name = packageName;
-  packageJson.version = '1.0.0';
-  packageJson.private = true;
-
-  delete packageJson.description;
-  delete packageJson.keywords;
-  delete packageJson.homepage;
-  delete packageJson.bugs;
-  delete packageJson.license;
-  delete packageJson.author;
-  delete packageJson.contributors;
-  delete packageJson.funding;
-  delete packageJson.repository;
-  delete packageJson.packageManager;
-
-  // @todo replace latest with acutal versions
-  packageJson.devDependencies['@callstack/rnef-cli'] = 'latest';
-
-  platforms.forEach((platform) => {
-    if (platform.type === 'local') {
-      packageJson.devDependencies[platform.packageName] =
-        'file://' + platform.localPath;
-    } else if (platform.type === 'npm') {
-      packageJson.devDependencies[platform.packageName] = platform.version;
-    }
-  });
 
   packageJson.devDependencies = Object.fromEntries(
     Object.entries(packageJson.devDependencies).sort()
