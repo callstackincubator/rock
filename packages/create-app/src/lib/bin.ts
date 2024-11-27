@@ -2,16 +2,15 @@ import fs from 'node:fs';
 import path from 'node:path';
 import { spinner } from '@clack/prompts';
 import {
+  resolveAbsolutePath,
+  cancelPromptAndExit,
+} from '@callstack/rnef-tools';
+import {
   renameCommonFiles,
   renamePlaceholder,
   rewritePackageJson,
 } from './edit-template.js';
-import {
-  copyDirSync,
-  isEmptyDirSync,
-  removeDir,
-  resolveAbsolutePath,
-} from './fs.js';
+import { copyDirSync, isEmptyDirSync, removeDir } from './fs.js';
 import { printLogo } from './logo.js';
 import { parseCliOptions } from './parse-cli-options.js';
 import { parsePackageInfo } from './parsers.js';
@@ -35,7 +34,6 @@ import {
   TEMPLATES,
   PLUGINS,
 } from './templates.js';
-import { cancelPromptAndExit } from '@callstack/rnef-tools';
 
 export async function run() {
   const options = parseCliOptions(process.argv.slice(2));

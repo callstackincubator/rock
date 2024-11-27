@@ -35,7 +35,3 @@ export function removeDir(path: string) {
     fs.rmSync(path, { recursive: true });
   }
 }
-
-export function resolveAbsolutePath(path: string) {
-  return nodePath.isAbsolute(path) ? path : nodePath.join(process.cwd(), path);
-}

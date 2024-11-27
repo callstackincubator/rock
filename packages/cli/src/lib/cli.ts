@@ -23,8 +23,6 @@ type CliOptions = {
 };
 
 export const cli = async ({ cwd, argv }: CliOptions = {}) => {
-  const config = await getConfig(cwd);
-
   if (argv) {
     logger.setVerbose(argv.includes('--verbose'));
   }
@@ -37,10 +35,10 @@ export const cli = async ({ cwd, argv }: CliOptions = {}) => {
   program
     .command('fingerprint [path]')
     .option('-p, --platform <string>', 'Select platform, e.g. ios or android')
-    .option('--verbose', 'Enable verbose logging')
     .action(nativeFingerprintCommand);
 
-  // Register commands from the config
+  Register commands from the config
+  const config = await getConfig(cwd);
   config.commands?.forEach((command) => {
     const cmd = program
       .command(command.name)

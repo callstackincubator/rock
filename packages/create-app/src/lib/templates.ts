@@ -1,9 +1,9 @@
 import * as fs from 'node:fs';
 import * as path from 'node:path';
 import { fileURLToPath } from 'node:url';
+import { resolveAbsolutePath } from '@callstack/rnef-tools';
 import packageJson from 'package-json';
 import * as tar from 'tar';
-import { resolveAbsolutePath } from './fs.js';
 
 export type TemplateInfo = NpmTemplateInfo | LocalTemplateInfo;
 

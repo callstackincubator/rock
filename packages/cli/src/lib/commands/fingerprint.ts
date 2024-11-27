@@ -1,31 +1,35 @@
 import { performance } from 'perf_hooks';
-import { nativeFingerprint } from '@callstack/rnef-tools';
+import {
+  logger,
+  nativeFingerprint,
+  resolveAbsolutePath,
+} from '@callstack/rnef-tools';
 
 type NativeFingerprintCommandOptions = {
-  platform?: 'ios' | 'android';
-  verbose?: boolean;
+  platform: 'ios' | 'android';
 };
 
 export async function nativeFingerprintCommand(
-  path?: string,
+  path = '.',
   options?: NativeFingerprintCommandOptions
 ) {
-  if (options?.verbose) {
-    console.log('Fingerprinting...');
+  path = path ?? '.';
+  const platform = options?.platform ?? 'ios';
+
+  if (logger.isVerbose()) {
+    logger.debug(`Fingerprinting "${resolveAbsolutePath(path)}"...`);
   }
 
   const start = performance.now();
-  const fingerprint = await nativeFingerprint(path ?? '.', {
-    platform: options?.platform ?? 'ios',
-  });
+  const fingerprint = await nativeFingerprint(path, { platform });
 
-  if (!options?.verbose) {
-    console.log(fingerprint.hash);
+  if (!logger.isVerbose()) {
+    logger.info(fingerprint.hash);
     return;
   }
 
   const duration = performance.now() - start;
-  console.log('Hash: ', fingerprint.hash);
-  console.log('Details: ', fingerprint.sources);
-  console.log(`Duration: ${duration.toFixed(1)}ms`);
+  logger.debug('Hash:', fingerprint.hash);
+  logger.debug('Sources:', JSON.stringify(fingerprint.sources, null, 2));
+  logger.debug(`Duration: ${(duration / 1000).toFixed(1)}s`);
 }
