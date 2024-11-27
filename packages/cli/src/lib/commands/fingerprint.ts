@@ -24,7 +24,8 @@ export async function nativeFingerprintCommand(
   const fingerprint = await nativeFingerprint(path, { platform });
 
   if (!logger.isVerbose()) {
-    logger.info(fingerprint.hash);
+    // Print fingerprint hash without any logger formatting
+    console.log(fingerprint.hash);
     return;
   }
 
