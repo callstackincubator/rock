@@ -1,4 +1,3 @@
-import chalk from 'chalk';
 import { selectFromInteractiveMode } from '../../utils/selectFromInteractiveMode.js';
 import { getInfo } from '../../utils/getInfo.js';
 import { checkIfConfigurationExists } from '../../utils/checkIfConfigurationExists.js';
@@ -8,6 +7,7 @@ import path from 'node:path';
 import { getPlatformInfo } from './../../utils/getPlatformInfo.js';
 import { ApplePlatform, XcodeProjectInfo } from '../../types/index.js';
 import { logger } from '@callstack/rnef-tools';
+import { bold } from 'picocolors';
 
 export async function getConfiguration(
   xcodeProject: XcodeProjectInfo,
@@ -31,9 +31,7 @@ export async function getConfiguration(
 
     if (info?.schemes?.includes(fallbackScheme)) {
       logger.warn(
-        `Scheme "${chalk.bold(
-          scheme
-        )}" doesn't exist. Using fallback scheme "${chalk.bold(
+        `Scheme "${bold(scheme)}" doesn't exist. Using fallback scheme "${bold(
           fallbackScheme
         )}"`
       );
@@ -63,9 +61,9 @@ export async function getConfiguration(
   }
 
   logger.debug(
-    `Found Xcode ${
-      xcodeProject.isWorkspace ? 'workspace' : 'project'
-    } "${chalk.bold(xcodeProject.name)}"`
+    `Found Xcode ${xcodeProject.isWorkspace ? 'workspace' : 'project'} "${bold(
+      xcodeProject.name
+    )}"`
   );
 
   return { scheme, mode };

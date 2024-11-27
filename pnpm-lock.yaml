@@ -211,9 +211,6 @@ importers:
       '@react-native-community/cli-config-apple':
         specifier: ^15.1.2
         version: 15.1.2
-      chalk:
-        specifier: ^5.3.0
-        version: 5.3.0
       execa:
         specifier: ^9.5.1
         version: 9.5.1
@@ -223,6 +220,9 @@ importers:
       fast-xml-parser:
         specifier: ^4.5.0
         version: 4.5.0
+      picocolors:
+        specifier: ^1.1.1
+        version: 1.1.1
       tslib:
         specifier: ^2.3.0
         version: 2.7.0
@@ -4021,9 +4021,6 @@ packages:
   performance-now@2.1.0:
     resolution: {integrity: sha512-7EAHlyLHI56VEIdK57uwHdHKIaAGbnXPiw0yWbarQZOKaKpvUIgW0jWRVLiatnM+XXlSwsanIBH/hzGMJulMow==}
 
-  picocolors@1.1.0:
-    resolution: {integrity: sha512-TQ92mBOW0l3LeMeyLV6mzy/kWr8lkd/hp3mTg7wYK7zJhuBStmGMBG0BdeDZS/dZx1IukaX6Bk11zcln25o1Aw==}
-
   picocolors@1.1.1:
     resolution: {integrity: sha512-xceH2snhtb5M9liqDsmEw56le376mTZkEX/jEb/RxNFyegNul7eNslCXP9FDj/Lcu0X8KEyMceP2ntpaHrDEVA==}
 
@@ -6723,7 +6720,7 @@ snapshots:
       '@nx/js': 19.8.3(@babel/traverse@7.25.9)(@swc-node/register@1.9.2(@swc/core@1.5.29(@swc/helpers@0.5.13))(@swc/types@0.1.12)(typescript@5.5.4))(@swc/core@1.5.29(@swc/helpers@0.5.13))(@types/node@18.16.9)(nx@19.8.0(@swc-node/register@1.9.2(@swc/core@1.5.29(@swc/helpers@0.5.13))(@swc/types@0.1.12)(typescript@5.5.4))(@swc/core@1.5.29(@swc/helpers@0.5.13)))(typescript@5.5.4)(verdaccio@5.32.2(typanion@3.14.0))
       detect-port: 1.6.1
       http-server: 14.1.1
-      picocolors: 1.1.0
+      picocolors: 1.1.1
       tslib: 2.7.0
     transitivePeerDependencies:
       - '@babel/traverse'
@@ -9678,8 +9675,6 @@ snapshots:
       through2: 2.0.5
 
   performance-now@2.1.0: {}
-
-  picocolors@1.1.0: {}
 
   picocolors@1.1.1: {}
 
