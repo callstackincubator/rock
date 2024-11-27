@@ -37,7 +37,7 @@ export const cli = async ({ cwd, argv }: CliOptions = {}) => {
     .option('-p, --platform <string>', 'Select platform, e.g. ios or android')
     .action(nativeFingerprintCommand);
 
-  Register commands from the config
+  // Register commands from the config
   const config = await getConfig(cwd);
   config.commands?.forEach((command) => {
     const cmd = program
