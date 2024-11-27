@@ -30,7 +30,7 @@ And then in your test project:
 
 ```sh
 cd /my/test/project/
-pnpm link --global "@callstack/rnef-cli" "@callstack/rnef-config" "@callstack/rnef-tools" "@callstack/rnef-plugin-platform-android" "@callstack/rnef-plugin-platrom-ios" "@callstack/create-rnef-app" "@callstack/plugin-metro"
+pnpm link --global "@callstack/rnef-cli" "@callstack/rnef-config" "@callstack/rnef-tools" "@callstack/rnef-plugin-platform-android" "@callstack/rnef-plugin-platform-ios" "@callstack/create-rnef-app" "@callstack/rnef-plugin-metro"
 ```
 
 #### Hoist pnpm dependencies
