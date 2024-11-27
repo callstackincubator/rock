@@ -2,12 +2,18 @@
   "name": "@callstack/rnef-tools",
   "version": "0.0.1",
   "type": "module",
+  "main": "./dist/src/index.js",
+  "typings": "./dist/src/index.d.ts",
+  "exports": {
+    ".": {
+      "import": "./dist/src/index.js",
+      "types": "./dist/src/index.d.ts"
+    }
+  },
   "dependencies": {
     "@clack/prompts": "^0.8.1",
     "is-unicode-supported": "^2.1.0",
     "picocolors": "^1.1.1",
     "tslib": "^2.3.0"
-  },
-  "main": "./dist/src/index.js",
-  "typings": "./dist/src/index.d.ts"
+  }
 }

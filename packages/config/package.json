@@ -2,10 +2,15 @@
   "name": "@callstack/rnef-config",
   "version": "0.0.1",
   "type": "module",
-  "dependencies": {
-    "tslib": "^2.3.0"
-  },
   "main": "./dist/src/index.js",
   "typings": "./dist/src/index.d.ts",
-  "private": true
+  "exports": {
+    ".": {
+      "import": "./dist/src/index.js",
+      "types": "./dist/src/index.d.ts"
+    }
+  },
+  "dependencies": {
+    "tslib": "^2.3.0"
+  }
 }

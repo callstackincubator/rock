@@ -2,8 +2,14 @@
   "name": "@callstack/rnef-plugin-platform-ios",
   "version": "0.0.1",
   "type": "module",
-  "main": "./src/index.js",
-  "typings": "./src/index.d.ts",
+  "main": "./dist/src/index.js",
+  "typings": "./dist/src/index.d.ts",
+  "exports": {
+    ".": {
+      "import": "./dist/src/index.js",
+      "types": "./dist/src/index.d.ts"
+    }
+  },
   "dependencies": {
     "@react-native-community/cli-config-apple": "^15.1.2",
     "tslib": "^2.3.0"
