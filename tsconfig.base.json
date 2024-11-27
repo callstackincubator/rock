@@ -26,6 +26,7 @@
         "packages/plugin-platform-ios/src/index.ts"
       ],
       "@callstack/rnef-test-helpers": ["packages/test-helpers/src/index.ts"],
+      "@callstack/rnef-tools": ["packages/tools/src/index.ts"],
     }
   },
   "exclude": ["node_modules", "tmp"]
