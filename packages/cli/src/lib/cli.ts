@@ -9,14 +9,6 @@ const require = createRequire(import.meta.url);
 
 const { version } = require('./../../package.json');
 
-const program = new Command();
-
-program
-  .name('rnef')
-  .description('React Native Enterprise Framework CLI.')
-  .option('--verbose', 'enable verbose logging')
-  .version(version);
-
 type CliOptions = {
   cwd?: string;
   argv?: string[];
@@ -26,6 +18,14 @@ export const cli = async ({ cwd, argv }: CliOptions = {}) => {
   if (argv) {
     logger.setVerbose(argv.includes('--verbose'));
   }
+
+  const program = new Command();
+
+  program
+    .name('rnef')
+    .description('React Native Enterprise Framework CLI.')
+    .option('--verbose', 'enable verbose logging')
+    .version(version);
 
   program
     .command('config')
