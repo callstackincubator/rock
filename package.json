@@ -9,7 +9,8 @@
     "e2e": "nx run-many --target e2e",
     "lint": "nx run-many --target lint",
     "typecheck": "nx run-many --target typecheck",
-    "watch": "nx watch --all -- nx run \\$NX_PROJECT_NAME:build"
+    "watch": "nx watch --all -- nx run \\$NX_PROJECT_NAME:build",
+    "link-packages": "node ./scripts/link-packages.js"
   },
   "private": true,
   "dependencies": {
@@ -31,6 +32,8 @@
     "@vitest/ui": "^2.1.2",
     "eslint": "^9.8.0",
     "eslint-config-prettier": "^9.0.0",
+    "fast-glob": "^3.3.2",
+    "nano-spawn": "^0.2.0",
     "nx": "19.8.0",
     "prettier": "^2.6.2",
     "ts-node": "10.9.1",
