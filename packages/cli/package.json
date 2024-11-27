@@ -7,7 +7,7 @@
     "import": "./dist/src/index.js"
   },
   "bin": {
-    "rnef": "./src/bin.js"
+    "rnef": "./dist/src/bin.js"
   },
   "dependencies": {
     "@callstack/rnef-config": "workspace:*",

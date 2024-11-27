@@ -10,7 +10,7 @@
     "e2e": "vitest --config vite.e2e.config.js"
   },
   "bin": {
-    "create-rnef-app": "./src/bin.js"
+    "create-rnef-app": "./dist/src/bin.js"
   },
   "dependencies": {
     "@callstack/rnef-tools": "workspace:*",
