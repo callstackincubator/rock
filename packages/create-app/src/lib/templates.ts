@@ -14,6 +14,7 @@ export type NpmTemplateInfo = {
   packageName: string;
   /** Directory inside package that contains the template */
   directory: string | undefined;
+  importName?: string;
 };
 
 export type LocalTemplateInfo = {
@@ -22,6 +23,7 @@ export type LocalTemplateInfo = {
   localPath: string;
   packageName: string;
   directory: string | undefined;
+  importName?: string;
 };
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
@@ -54,15 +56,17 @@ export const PLATFORMS: TemplateInfo[] = [
     type: 'local',
     name: 'ios',
     packageName: '@callstack/rnef-plugin-platform-ios',
-    localPath: path.join(TEMP_PACKAGES_PATH, 'plugin-platform-ios', 'dist'),
+    localPath: path.join(TEMP_PACKAGES_PATH, 'plugin-platform-ios'),
     directory: 'src/template',
+    importName: 'pluginPlatformIOS',
   },
   {
     type: 'local',
     name: 'android',
     packageName: '@callstack/rnef-plugin-platform-android',
-    localPath: path.join(TEMP_PACKAGES_PATH, 'plugin-platform-android', 'dist'),
+    localPath: path.join(TEMP_PACKAGES_PATH, 'plugin-platform-android'),
     directory: 'src/template',
+    importName: 'pluginPlatformAndroid',
   },
 ];
 

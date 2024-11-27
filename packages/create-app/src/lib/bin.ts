@@ -164,20 +164,23 @@ async function extractPackage(absoluteTargetDir: string, pkg: TemplateInfo) {
 
 function createConfig(absoluteTargetDir: string, platforms: TemplateInfo[]) {
   const rnefConfig = path.join(absoluteTargetDir, 'rnef.config.mjs');
+  const platformsWithImports = platforms.filter(
+    (template) => template.importName
+  );
+
   fs.writeFileSync(
     rnefConfig,
-    `${platforms
-      .map((template) =>
-        template.type === 'local'
-          ? `import ${template.name} from '${template.localPath}';`
-          : `import ${template.name} from '${template.packageName}';`
+    `${platformsWithImports
+      .map(
+        (template) =>
+          `import { ${template.importName} } from '${template.packageName}';`
       )
       .join('\n')}
 export default {
   plugins: {},
   platforms: {
-    ${platforms
-      .map((template) => `${template.name}: ${template.name}(),`)
+    ${platformsWithImports
+      .map((template) => `${template.name}: ${template.importName}(),`)
       .join('\n    ')}
   },
 };
