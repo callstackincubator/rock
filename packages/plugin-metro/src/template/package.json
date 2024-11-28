@@ -1,6 +1,7 @@
 {
   "name": "rnef-plugin-metro-template",
   "devDependencies": {
+    "@callstack/rnef-plugin-metro": "^0.0.1",
     "@react-native/metro-config": "0.76.1"
   }
 }
