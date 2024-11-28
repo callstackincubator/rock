@@ -4,6 +4,6 @@
     "ios": "rnef run:ios"
   },
   "devDependencies": {
-    "@callstack/rnef-plugin-platform-ios": "latest"
+    "@callstack/rnef-plugin-platform-ios": "^0.0.1"
   }
 }

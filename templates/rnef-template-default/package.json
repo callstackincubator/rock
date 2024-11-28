@@ -17,7 +17,7 @@
     "@babel/core": "^7.25.2",
     "@babel/preset-env": "^7.25.3",
     "@babel/runtime": "^7.25.0",
-    "@callstack/rnef-cli": "latest",
+    "@callstack/rnef-cli": "^0.0.1",
     "@expo/fingerprint": "^0.10.3",
     "@react-native/babel-preset": "0.76.1",
     "@react-native/eslint-config": "0.76.1",
