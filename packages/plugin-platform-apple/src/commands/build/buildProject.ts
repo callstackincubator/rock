@@ -1,5 +1,5 @@
 import child_process, { SpawnOptionsWithoutStdio } from 'child_process';
-import { dim } from 'picocolors';
+import color from 'picocolors';
 import type { BuildFlags } from './buildOptions.js';
 import { supportedPlatforms } from '../../supportedPlatforms.js';
 import { ApplePlatform, XcodeProjectInfo } from '../../types/index.js';
@@ -83,7 +83,7 @@ const buildProject = async (
 
   const loader = spinner();
   logger.debug(
-    `Building ${dim(`(using "xcodebuild ${xcodebuildArgs.join(' ')}")`)}`
+    `Building ${color.dim(`(using "xcodebuild ${xcodebuildArgs.join(' ')}")`)}`
   );
 
   let buildOutput = '';

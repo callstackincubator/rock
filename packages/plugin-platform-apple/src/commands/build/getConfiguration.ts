@@ -7,7 +7,7 @@ import path from 'node:path';
 import { getPlatformInfo } from './../../utils/getPlatformInfo.js';
 import { ApplePlatform, XcodeProjectInfo } from '../../types/index.js';
 import { logger } from '@callstack/rnef-tools';
-import { bold } from 'picocolors';
+import color from 'picocolors';
 
 export async function getConfiguration(
   xcodeProject: XcodeProjectInfo,
@@ -31,7 +31,7 @@ export async function getConfiguration(
 
     if (info?.schemes?.includes(fallbackScheme)) {
       logger.warn(
-        `Scheme "${bold(scheme)}" doesn't exist. Using fallback scheme "${bold(
+        `Scheme "${color.bold(scheme)}" doesn't exist. Using fallback scheme "${color.bold(
           fallbackScheme
         )}"`
       );
@@ -61,7 +61,7 @@ export async function getConfiguration(
   }
 
   logger.debug(
-    `Found Xcode ${xcodeProject.isWorkspace ? 'workspace' : 'project'} "${bold(
+    `Found Xcode ${xcodeProject.isWorkspace ? 'workspace' : 'project'} "${color.bold(
       xcodeProject.name
     )}"`
   );

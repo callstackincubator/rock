@@ -14,7 +14,7 @@ const run = (args: unknown) => {
   console.log('run', { args });
 };
 
-const pluginPlatformIOS =
+export const pluginPlatformIOS =
   () =>
   (api: PluginApi): PluginOutput => {
     api.registerCommand({

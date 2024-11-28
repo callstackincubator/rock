@@ -1,4 +1,4 @@
-import { bold } from 'picocolors';
+import color from 'picocolors';
 import { XMLParser } from 'fast-xml-parser';
 import fs from 'fs';
 import path from 'path';
@@ -42,7 +42,7 @@ export function getBuildConfigurationFromXcScheme(
     const availableSchemas =
       projectInfo && projectInfo.schemes && projectInfo.schemes.length > 0
         ? `Available schemas are: ${projectInfo.schemes
-            .map((name) => bold(name))
+            .map((name) => color.bold(name))
             .join(', ')}`
         : '';
 
