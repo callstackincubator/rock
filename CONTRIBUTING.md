@@ -13,13 +13,11 @@ All work on RNEF happens directly on GitHub. Contributors send pull requests whi
 
 ## Testing your changes
 
-> Please make sure the version of React Native matches the one present in devDependencies of the CLI. Otherwise, you may get unexpected errors.
-
-_Note: you must use the `--watchFolders` flag with the `start` command when testing the CLI with `pnpm link` like this. Otherwise Metro can't find the symlinked folder and this may result in errors such as `ReferenceError: SHA-1 for file ... is not computed`. If you are experiencing this error while using Release configuration, please add `watchFolders: ["path/to/cloned/cli/"]` to your `metro.config.js` file._
+> Please make sure the version of React Native matches the one present in devDependencies of RNEF. Otherwise, you may get unexpected errors.
 
 ### Setup
 
-Because of a modular design of the RNEF, we recommend developing using symbolic links to its packages. This way you can use it seamlessly in the tested project, as you'd use the locally installed CLI. Here's what you need to run in the terminal:
+Because of a modular design of the RNEF, we recommend developing using symbolic links to its packages. This way you can use it seamlessly in the tested project, as you'd use the locally installed RNEF CLI. Here's what you need to run in the terminal:
 
 ```sh
 cd /path/to/cloned/rnef/
@@ -92,11 +90,11 @@ When you're sending a pull request:
 
 ## Publishing workflow
 
-This part is for maintainers only, documenting steps to manually publish the packages with Lerna. Make sure you have publish access to the `@react-native-community/cli` and related packages.
+This part is for maintainers only, documenting steps to manually publish the packages with Nx.
 
 ### Stable version
 
-1. Pull latest changes for the stable branch (we use a _N.x_ convention where _N_ stands for major version of the RNC CLI).
+1. Pull latest changes for the stable branch.
 1. Run `pnpm run publish`, it will tag the packages as `latest`.
 1. Chose an appropriate version from the available options.
 1. Create release notes in the project's Release tab.
@@ -117,7 +115,7 @@ This part is for maintainers only, documenting steps to manually publish the pac
 
 ## Reporting issues
 
-You can report issues on our [bug tracker](https://github.com/react-native-community/react-native-cli/issues). Please follow the issue template when opening an issue.
+You can report issues on our [bug tracker](https://github.com/callstack/rnef/issues). Please follow the issue template when opening an issue.
 
 ## Stale Bot
 

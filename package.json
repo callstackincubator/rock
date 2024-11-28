@@ -10,7 +10,7 @@
     "lint": "nx run-many --target lint",
     "typecheck": "nx run-many --target typecheck",
     "watch": "nx watch --all -- nx run \\$NX_PROJECT_NAME:build",
-    "link-packages": "node ./scripts/link-packages.js"
+    "link-packages": "node ./scripts/linkPackages.mjs"
   },
   "private": true,
   "dependencies": {
