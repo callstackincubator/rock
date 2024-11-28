@@ -188,7 +188,7 @@ export function formatConfig(
 export default {
   plugins: {
     ${pluginsWithImports
-      .map((template) => `${template.name}: ${template.name}(),`)
+      .map((template) => `${template.name}: ${template.importName}(),`)
       .join('\n    ')}
   },
   platforms: {
