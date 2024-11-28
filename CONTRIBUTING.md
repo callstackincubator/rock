@@ -31,6 +31,15 @@ cd /my/test/project/
 pnpm link --global "@callstack/rnef-cli" "@callstack/rnef-config" "@callstack/rnef-tools" "@callstack/rnef-plugin-platform-android" "@callstack/rnef-plugin-platform-ios" "@callstack/create-rnef-app" "@callstack/rnef-plugin-metro" "@callstack/rnef-plugin-repack"
 ```
 
+Update entries in package.json to look like this:
+
+```json
+{
+  "@callstack/rnef-cli": "link:../../rnef/packages/cli",
+  "@callstack/rnef-plugin-platform-android": "link:../../rnef/packages/plugin-platform-android"
+}
+```
+
 #### Hoist pnpm dependencies
 
 Set node-linker to hoisted in your test project's `.npmrc` file for pnpm to place the node_modules in a way that React Native platform tooling expects:
