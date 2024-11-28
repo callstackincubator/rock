@@ -1,5 +1,5 @@
 import { performance } from 'perf_hooks';
-import { intro, outro, spinner } from '@clack/prompts';
+import { outro, spinner } from '@clack/prompts';
 import {
   logger,
   nativeFingerprint,
@@ -17,7 +17,6 @@ export async function nativeFingerprintCommand(
   path = path ?? '.';
   const platform = options?.platform ?? 'ios';
   const loader = spinner();
-  intro('fingerprint');
   logger.debug(`Fingerprinting "${resolveAbsolutePath(path)}"...`);
 
   let start = 0;
