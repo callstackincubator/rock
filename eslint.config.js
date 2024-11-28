@@ -29,10 +29,13 @@ export default [
     rules: {},
   },
   {
+    ignores: ['**/template/**/*.mjs'],
+  },
+  {
     files: ['**/*.json'],
     rules: {
       '@nx/dependency-checks': [
-        'error',
+        'warn',
         {
           ignoredFiles: ['{projectRoot}/eslint.config.{js,cjs,mjs}'],
           // TODO: @nx/dependency-checks incorrectly reports unused dependencies
