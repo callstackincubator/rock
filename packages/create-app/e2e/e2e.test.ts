@@ -7,8 +7,10 @@ import {
   getTempDirectory,
 } from '@callstack/rnef-test-helpers';
 
-const CREATE_APP_PATH = path.resolve(__dirname, '../dist/src/bin.js');
-const TEMPLATES_DIR = path.resolve(__dirname, '../../../templates');
+const REGISTRY_URL = 'http://localhost:4873/';
+const CREATE_APP_COMMAND = `pnpm create --registry=${REGISTRY_URL} @callstack/rnef-app`;
+
+const ROOT_DIR = path.resolve(__dirname, '../../..');
 const TEMP_DIR = getTempDirectory('e2e-deploys');
 
 beforeEach(() => {
@@ -28,7 +30,7 @@ describe('create-app command', { timeout: 30_000 }, () => {
       }
 
       await execAsync(
-        `node ${CREATE_APP_PATH} ${projectName} --template=default --platform=ios --platform=android --plugin=metro`,
+        `${CREATE_APP_COMMAND} ${projectName} --template=default --platform=ios --platform=android --plugin=metro`,
         { cwd: TEMP_DIR }
       );
 
@@ -59,7 +61,7 @@ describe('create-app command', { timeout: 30_000 }, () => {
     }
 
     await execAsync(
-      `node ${CREATE_APP_PATH} ${projectName} --template=@callstack/repack --platform=ios --platform=android --plugin=metro`,
+      `${CREATE_APP_COMMAND} ${projectName} --template=@callstack/rnef-template-default --platform=ios --platform=android --plugin=metro`,
       { cwd: TEMP_DIR }
     );
 
@@ -91,9 +93,9 @@ describe('create-app command', { timeout: 30_000 }, () => {
         rmSync(projectPath, { recursive: true, force: true });
       }
 
-      const templatePath = `${TEMPLATES_DIR}/rnef-template-default`;
+      const templatePath = `${ROOT_DIR}/templates/rnef-template-default`;
       await execAsync(
-        `node ${CREATE_APP_PATH} ${projectName} --template="${templatePath}" --platform=ios --platform=android --plugin=metro`,
+        `${CREATE_APP_COMMAND} ${projectName} --template="${templatePath}" --platform=ios --platform=android --plugin=metro`,
         { cwd: TEMP_DIR }
       );
 

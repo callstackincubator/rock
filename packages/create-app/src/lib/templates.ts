@@ -1,6 +1,5 @@
 import * as fs from 'node:fs';
 import * as path from 'node:path';
-import { fileURLToPath } from 'node:url';
 import { resolveAbsolutePath } from '@callstack/rnef-tools';
 import packageJson from 'package-json';
 import * as tar from 'tar';
@@ -26,27 +25,22 @@ export type LocalTemplateInfo = {
   importName?: string;
 };
 
-const __dirname = path.dirname(fileURLToPath(import.meta.url));
-
-const TEMP_PACKAGES_PATH = findPackagesDir();
-const TEMP_TEMPLATES_PATH = path.join(TEMP_PACKAGES_PATH, '../templates');
-
 export const TEMPLATES: TemplateInfo[] = [
   {
-    type: 'local',
+    type: 'npm',
     name: 'default',
     packageName: '@callstack/rnef-template-default',
-    localPath: path.join(TEMP_TEMPLATES_PATH, 'rnef-template-default'),
+    version: 'latest',
     directory: '.',
   },
 ];
 
 export const PLUGINS: TemplateInfo[] = [
   {
-    type: 'local',
+    type: 'npm',
     name: 'metro',
     packageName: '@callstack/rnef-plugin-metro',
-    localPath: path.join(TEMP_PACKAGES_PATH, 'plugin-metro'),
+    version: 'latest',
     directory: 'src/template',
     importName: 'pluginMetro',
   },
@@ -62,18 +56,18 @@ export const PLUGINS: TemplateInfo[] = [
 
 export const PLATFORMS: TemplateInfo[] = [
   {
-    type: 'local',
+    type: 'npm',
     name: 'ios',
     packageName: '@callstack/rnef-plugin-platform-ios',
-    localPath: path.join(TEMP_PACKAGES_PATH, 'plugin-platform-ios'),
+    version: 'latest',
     directory: 'src/template',
     importName: 'pluginPlatformIOS',
   },
   {
-    type: 'local',
+    type: 'npm',
     name: 'android',
     packageName: '@callstack/rnef-plugin-platform-android',
-    localPath: path.join(TEMP_PACKAGES_PATH, 'plugin-platform-android'),
+    version: 'latest',
     directory: 'src/template',
     importName: 'pluginPlatformAndroid',
   },
@@ -186,17 +180,4 @@ export function extractTarballFile(tarballPath: string, targetDir: string) {
     cwd: targetDir,
     strip: 1, // Remove the top-level directory
   });
-}
-
-function findPackagesDir() {
-  let dir = __dirname;
-  while (dir !== '/') {
-    if (path.basename(dir) === 'packages') {
-      return dir;
-    }
-
-    dir = path.dirname(dir);
-  }
-
-  throw new Error('"packages" directory not found');
 }

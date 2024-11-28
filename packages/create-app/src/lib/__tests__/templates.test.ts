@@ -3,17 +3,12 @@ import path from 'node:path';
 import { resolveTemplate, TEMPLATES } from '../templates.js';
 
 test('resolveTemplateName with built-in templates', () => {
-  const expectedPath = path.resolve(
-    __dirname,
-    '../../../../../',
-    'templates/rnef-template-default'
-  );
   expect(resolveTemplate(TEMPLATES, 'default')).toEqual({
-    type: 'local',
+    type: 'npm',
     name: 'default',
-    localPath: expectedPath,
-    directory: '.',
     packageName: '@callstack/rnef-template-default',
+    version: 'latest',
+    directory: '.',
   });
 });
 

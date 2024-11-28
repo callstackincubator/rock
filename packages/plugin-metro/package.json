@@ -6,6 +6,10 @@
     "types": "./dist/src/index.d.ts",
     "import": "./dist/src/index.js"
   },
+  "files": [
+    "dist",
+    "src"
+  ],
   "dependencies": {
     "@callstack/rnef-tools": "workspace:*",
     "@react-native-community/cli-server-api": "^15.1.2",
@@ -14,5 +18,8 @@
   },
   "devDependencies": {
     "@callstack/rnef-config": "workspace:*"
+  },
+  "publishConfig": {
+    "registry": "http://localhost:4873"
   }
 }

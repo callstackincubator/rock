@@ -6,6 +6,9 @@
     "types": "./dist/src/index.d.ts",
     "import": "./dist/src/index.js"
   },
+  "files": [
+    "dist"
+  ],
   "scripts": {
     "e2e": "vitest --config vite.e2e.config.js"
   },
@@ -25,5 +28,8 @@
     "@callstack/rnef-test-helpers": "workspace:*",
     "@types/gradient-string": "^1.1.6",
     "@types/minimist": "^1.2.5"
+  },
+  "publishConfig": {
+    "registry": "http://localhost:4873"
   }
 }

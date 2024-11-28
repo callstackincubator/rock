@@ -1,0 +1,32 @@
+storage: /tmp/verdaccio-storage
+
+auth:
+  htpasswd:
+    file: /tmp/verdaccio-storage/.htpasswd
+    max_users: 1000
+
+uplinks:
+  npmjs:
+    url: https://registry.npmjs.org/
+
+packages:
+  '@*/*':
+    access: $all
+    publish: $all
+    proxy: npmjs
+  '**':
+    access: $all
+    publish: $all
+    proxy: npmjs
+
+logs:
+  - { type: stdout, format: pretty, level: info }
+
+web:
+  enable: true
+  title: CI Verdaccio
+
+security:
+  web:
+    sign:
+      expiresIn: 1h

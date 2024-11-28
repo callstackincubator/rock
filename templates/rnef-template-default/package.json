@@ -1,7 +1,6 @@
 {
-  "name": "HelloWorld",
-  "version": "1.0.0",
-  "private": true,
+  "name": "@callstack/rnef-template-default",
+  "version": "0.0.1",
   "scripts": {
     "start": "rnef start",
     "lint": "eslint .",
@@ -33,5 +32,8 @@
   },
   "engines": {
     "node": ">=18"
+  },
+  "publishConfig": {
+    "registry": "http://localhost:4873"
   }
 }
