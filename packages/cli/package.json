@@ -12,6 +12,7 @@
   "dependencies": {
     "@callstack/rnef-config": "workspace:*",
     "@callstack/rnef-tools": "workspace:*",
+    "@clack/prompts": "^0.8.1",
     "@react-native-community/cli-config": "^15.1.2",
     "commander": "^12.1.0",
     "tslib": "^2.3.0"

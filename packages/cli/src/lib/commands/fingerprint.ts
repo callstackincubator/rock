@@ -1,4 +1,5 @@
 import { performance } from 'perf_hooks';
+import { intro, outro, spinner } from '@clack/prompts';
 import {
   logger,
   nativeFingerprint,
@@ -15,22 +16,24 @@ export async function nativeFingerprintCommand(
 ) {
   path = path ?? '.';
   const platform = options?.platform ?? 'ios';
+  const loader = spinner();
+  intro('fingerprint');
+  logger.debug(`Fingerprinting "${resolveAbsolutePath(path)}"...`);
 
+  let start = 0;
   if (logger.isVerbose()) {
-    logger.debug(`Fingerprinting "${resolveAbsolutePath(path)}"...`);
+    start = performance.now();
   }
 
-  const start = performance.now();
+  loader.start("Calculating fingerprint for the project's native parts");
   const fingerprint = await nativeFingerprint(path, { platform });
 
-  if (!logger.isVerbose()) {
-    // Print fingerprint hash without any logger formatting
-    console.log(fingerprint.hash);
-    return;
+  if (logger.isVerbose()) {
+    const duration = performance.now() - start;
+    logger.debug('Hash:', fingerprint.hash);
+    logger.debug('Sources:', JSON.stringify(fingerprint.sources, null, 2));
+    logger.debug(`Duration: ${(duration / 1000).toFixed(1)}s`);
   }
-
-  const duration = performance.now() - start;
-  logger.debug('Hash:', fingerprint.hash);
-  logger.debug('Sources:', JSON.stringify(fingerprint.sources, null, 2));
-  logger.debug(`Duration: ${(duration / 1000).toFixed(1)}s`);
+  loader.stop(`Fingerprint calculated: ${fingerprint.hash}`);
+  outro('Success.');
 }
