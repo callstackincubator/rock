@@ -15,7 +15,7 @@ export async function getConfiguration(
   args: BuildFlags,
   platformName: ApplePlatform
 ) {
-  const info = getInfo(xcodeProject, sourceDir);
+  const info = await getInfo(xcodeProject, sourceDir);
 
   if (args.mode) {
     checkIfConfigurationExists(info?.configurations ?? [], args.mode);

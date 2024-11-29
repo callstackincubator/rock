@@ -1,12 +1,14 @@
-import { describe, it, expect, vi } from 'vitest';
-import { execaSync } from 'execa';
+import { describe, it, expect, vi, Mock } from 'vitest';
+import spawn from 'nano-spawn';
 import * as fs from 'fs';
 import { getInfo } from '../getInfo.js';
 import { XcodeProjectInfo } from '../../types/index.js';
 
-vi.mock('execa', () => ({
-  execaSync: vi.fn(),
-}));
+vi.mock('nano-spawn', () => {
+  return {
+    default: vi.fn(),
+  };
+});
 
 vi.mock('fs', () => ({
   readFileSync: vi.fn(),
@@ -31,12 +33,12 @@ describe('getInfo', () => {
    </FileRef>
 </Workspace>`);
 
-    (execaSync as any).mockReturnValue({ stdout: '{}' });
+    (spawn as Mock).mockResolvedValue({ stdout: '{}' });
 
     getInfo({ isWorkspace: true, name } as XcodeProjectInfo, 'some/path');
 
     // Should not call on Pods or the other misc groups
-    expect(execaSync).toHaveBeenCalledWith('xcodebuild', [
+    expect(spawn).toHaveBeenCalledWith('xcodebuild', [
       '-list',
       '-json',
       '-project',

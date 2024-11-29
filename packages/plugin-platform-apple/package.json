@@ -8,9 +8,9 @@
     "@callstack/rnef-tools": "workspace:*",
     "@clack/prompts": "^0.7.0",
     "@react-native-community/cli-config-apple": "^15.1.2",
-    "execa": "^9.5.1",
     "fast-glob": "^3.3.2",
     "fast-xml-parser": "^4.5.0",
+    "nano-spawn": "^0.2.0",
     "picocolors": "^1.1.1",
     "tslib": "^2.3.0"
   },
