@@ -2,6 +2,7 @@ import { BuildFlags } from './buildOptions.js';
 import { buildProject } from './buildProject.js';
 import { BuilderCommand, ProjectConfig } from '../../types/index.js';
 import { logger } from '@callstack/rnef-tools';
+import { outro } from '@clack/prompts';
 
 export const createBuild = async (
   platformName: BuilderCommand['platformName'],
@@ -21,5 +22,6 @@ export const createBuild = async (
 
   process.chdir(sourceDir);
 
-  return buildProject(xcodeProject, platformName, undefined, buildFlags);
+  await buildProject(xcodeProject, platformName, undefined, buildFlags);
+  outro('Success 🎉.');
 };

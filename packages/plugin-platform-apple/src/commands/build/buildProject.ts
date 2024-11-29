@@ -89,11 +89,7 @@ const buildProject = async (
   let buildOutput = '';
 
   return new Promise<string>((resolve, reject) => {
-    const buildProcess = child_process.spawn(
-      'xcodebuild',
-      xcodebuildArgs,
-      getProcessOptions(args)
-    );
+    const buildProcess = child_process.spawn('xcodebuild', xcodebuildArgs);
 
     loader.start(`Building the app${'.'.repeat(buildOutput.length % 10)}`);
 
@@ -126,35 +122,5 @@ const buildProject = async (
     });
   });
 };
-
-function getProcessOptions<T extends BuildFlags>(
-  args: T
-): SpawnOptionsWithoutStdio {
-  if (
-    'packager' in args &&
-    typeof args.packager === 'boolean' &&
-    args.packager
-  ) {
-    const terminal =
-      'terminal' in args && typeof args.terminal === 'string'
-        ? args.terminal
-        : '';
-
-    const port =
-      'port' in args && typeof args.port === 'number' ? String(args.port) : '';
-
-    return {
-      env: {
-        ...process.env,
-        RCT_TERMINAL: terminal,
-        RCT_METRO_PORT: port,
-      },
-    };
-  }
-
-  return {
-    env: process.env,
-  };
-}
 
 export { buildProject };
