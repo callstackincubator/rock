@@ -1,1 +1,1 @@
-export * from './lib/plugin-platform-ios.js';
+export * from './lib/pluginPlatformIOS.js';
