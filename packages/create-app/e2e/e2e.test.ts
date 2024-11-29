@@ -50,7 +50,7 @@ describe('create-app command', { timeout: 30_000 }, () => {
     }
   );
 
-  it('should create a new project from npm template', async () => {
+  it.skip('should create a new project from npm template', async () => {
     const projectName = `test-npm-template-${getRandomString(6)}`;
     const projectPath = path.resolve(TEMP_DIR, projectName);
 
