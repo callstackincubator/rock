@@ -34,5 +34,5 @@ export async function nativeFingerprintCommand(
     logger.debug(`Duration: ${(duration / 1000).toFixed(1)}s`);
   }
   loader.stop(`Fingerprint calculated: ${fingerprint.hash}`);
-  outro('Success.');
+  outro('Success 🎉.');
 }

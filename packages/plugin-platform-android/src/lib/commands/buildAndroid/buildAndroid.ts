@@ -2,7 +2,7 @@ import { AndroidProjectConfig } from '@react-native-community/cli-types';
 import { runGradle } from '../runGradle.js';
 import { promptForTaskSelection } from '../listAndroidTasks.js';
 import { findOutputFile } from '../runAndroid/tryInstallAppOnDevice.js';
-import { intro, outro } from '@clack/prompts';
+import { outro, spinner } from '@clack/prompts';
 import { logger } from '@callstack/rnef-tools';
 import color from 'picocolors';
 import { toPascalCase } from '../toPascalCase.js';
@@ -20,7 +20,6 @@ export async function buildAndroid(
   args: BuildFlags
 ) {
   normalizeArgs(args);
-  intro('Building Android app.');
 
   const tasks = args.interactive
     ? [await promptForTaskSelection('bundle', androidProject.sourceDir)]
@@ -31,9 +30,11 @@ export async function buildAndroid(
   const outputFilePath = await findOutputFile(androidProject, tasks);
 
   if (outputFilePath) {
-    logger.info(`Build output: ${color.cyan(outputFilePath)}`);
+    const loader = spinner();
+    loader.start('');
+    loader.stop(`Build output: ${color.cyan(outputFilePath)}`);
   }
-  outro(`Success.`);
+  outro('Success 🎉.');
 }
 
 function normalizeArgs(args: BuildFlags) {

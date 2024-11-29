@@ -3,6 +3,7 @@ import type { AndroidProject, Flags } from './runAndroid/runAndroid.js';
 import { getAdbPath, getDevices } from './runAndroid/adb.js';
 import spawn from 'nano-spawn';
 import type { BuildFlags } from './buildAndroid/buildAndroid.js';
+import { spinner } from '@clack/prompts';
 
 export async function runGradle({
   tasks,
@@ -16,6 +17,10 @@ export async function runGradle({
   if ('binaryPath' in args) {
     return;
   }
+  const loader = spinner();
+  loader.start('');
+  loader.stop('Running Gradle build ↓');
+
   const gradleArgs = getTaskNames(androidProject.appName, tasks);
 
   gradleArgs.push('-x', 'lint');
@@ -48,6 +53,8 @@ export async function runGradle({
       stdio: 'inherit',
       cwd: androidProject.sourceDir,
     });
+    loader.start('');
+    loader.stop('Gradle build finished.');
   } catch {
     logger.error(
       `Failed to build the app. See the error above for details from Gradle.`

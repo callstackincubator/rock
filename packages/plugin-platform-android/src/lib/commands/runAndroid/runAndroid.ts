@@ -14,7 +14,7 @@ import path from 'path';
 import { BuildFlags, options } from '../buildAndroid/buildAndroid.js';
 import { promptForTaskSelection } from '../listAndroidTasks.js';
 import { runGradle } from '../runGradle.js';
-import { intro, outro, select } from '@clack/prompts';
+import { outro, select } from '@clack/prompts';
 import chalk from 'chalk';
 
 export interface Flags extends BuildFlags {
@@ -37,7 +37,6 @@ export async function runAndroid(
   args: Flags,
   projectRoot: string
 ) {
-  intro('Building and running Android app.');
   normalizeArgs(args, projectRoot);
 
   const { deviceId } = args.interactive
@@ -70,7 +69,7 @@ export async function runAndroid(
       await tryLaunchAppOnDevice(device, androidProject, args);
     }
   }
-  outro('Success.');
+  outro('Success 🎉.');
 }
 
 async function selectAndLaunchDevice() {
