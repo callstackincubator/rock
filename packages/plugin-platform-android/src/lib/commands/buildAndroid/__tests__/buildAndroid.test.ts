@@ -102,7 +102,6 @@ test('buildAndroid runs gradle build with correct configuration for debug and ou
     }
     return (actualFs as typeof fs).existsSync(file);
   });
-  vi.spyOn(logger, 'info');
 
   await buildAndroid(androidProject, args);
 
@@ -111,7 +110,7 @@ test('buildAndroid runs gradle build with correct configuration for debug and ou
     ['app:bundleDebug', '-x', 'lint'],
     { stdio: 'inherit', cwd: '/android' }
   );
-  expect(logger.info).toBeCalledWith(
+  expect(mocks.stopMock).toBeCalledWith(
     `Build output: ${color.cyan(
       '/android/app/build/outputs/bundle/debug/app-debug.aab'
     )}`
@@ -175,5 +174,5 @@ test('buildAndroid runs selected "bundleRelease" task in interactive mode', asyn
     'Searching for available Gradle tasks...'
   );
   expect(mocks.stopMock).toBeCalledWith('Found 2 Gradle tasks.');
-  expect(mocks.outroMock).toBeCalledWith('Success.');
+  expect(mocks.outroMock).toBeCalledWith('Success 🎉.');
 });
