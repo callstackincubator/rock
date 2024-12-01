@@ -185,6 +185,16 @@ export function extractTarballFile(tarballPath: string, targetDir: string) {
     file: tarballPath,
     cwd: targetDir,
     strip: 1, // Remove the top-level directory
+    onReadEntry: (entry) => {
+      const newFileName = path.join(
+        path.dirname(entry.path),
+        path
+          .basename(entry.path)
+          .replace(new RegExp('HelloWorld', 'g'), 'App76')
+      );
+      console.log(newFileName);
+      entry.path = newFileName;
+    },
   });
 }
 

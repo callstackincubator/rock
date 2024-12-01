@@ -1,5 +1,7 @@
 import fs from 'node:fs';
+import path from 'node:path';
 import nodePath from 'node:path';
+import { shouldRenameFile } from './edit-template.js';
 
 export function isEmptyDirSync(path: string) {
   const files = fs.readdirSync(path);
@@ -22,13 +24,38 @@ export function copyDirSync(
     const stat = fs.statSync(srcFile);
     const distFile = nodePath.resolve(to, file);
 
+    const DEFAULT_PLACEHOLDER_NAME = 'HelloWorld';
+    const newName = 'App76';
+    let newFileName = distFile;
+
+    if (shouldRenameFile(distFile, DEFAULT_PLACEHOLDER_NAME)) {
+      newFileName = path.join(
+        path.dirname(distFile),
+        path
+          .basename(distFile)
+          .replace(new RegExp(DEFAULT_PLACEHOLDER_NAME, 'g'), newName)
+      );
+    } else if (
+      shouldRenameFile(distFile, DEFAULT_PLACEHOLDER_NAME.toLowerCase())
+    ) {
+      newFileName = path.join(
+        path.dirname(distFile),
+        path
+          .basename(distFile)
+          .replace(
+            new RegExp(DEFAULT_PLACEHOLDER_NAME.toLowerCase(), 'g'),
+            newName.toLowerCase()
+          )
+      );
+    }
+
     if (stat.isDirectory()) {
-      copyDirSync(srcFile, distFile, { skipFiles });
+      copyDirSync(srcFile, newFileName, { skipFiles });
     } else {
       if (nodePath.basename(srcFile) === 'package.json') {
         mergePackageJsons(srcFile, distFile);
       } else {
-        fs.copyFileSync(srcFile, distFile);
+        fs.copyFileSync(srcFile, newFileName);
       }
     }
   }

@@ -51,24 +51,35 @@ export async function run() {
   printLogo();
   printWelcomeMessage();
 
+  let isExistingProject = true;
+  let absoluteTargetDir;
+
   const projectName =
     (options.dir || options.name) ?? (await promptProjectName());
-  const { targetDir } = parsePackageInfo(projectName);
-  const absoluteTargetDir = resolveAbsolutePath(targetDir);
 
-  if (
-    !options.override &&
-    fs.existsSync(absoluteTargetDir) &&
-    !isEmptyDirSync(absoluteTargetDir)
-  ) {
-    const confirmOverride = await confirmOverrideFiles(absoluteTargetDir);
+  if (isExistingProject) {
+    const confirmOverride = await confirmOverrideFiles(projectName);
     if (!confirmOverride) {
       cancelPromptAndExit();
     }
-  }
+    absoluteTargetDir = resolveAbsolutePath('./');
+  } else {
+    const { targetDir } = parsePackageInfo(projectName);
+    absoluteTargetDir = resolveAbsolutePath(targetDir);
+    if (
+      !options.override &&
+      fs.existsSync(absoluteTargetDir) &&
+      !isEmptyDirSync(absoluteTargetDir)
+    ) {
+      const confirmOverride = await confirmOverrideFiles(absoluteTargetDir);
+      if (!confirmOverride) {
+        cancelPromptAndExit();
+      }
+    }
 
-  removeDir(absoluteTargetDir);
-  fs.mkdirSync(absoluteTargetDir, { recursive: true });
+    removeDir(absoluteTargetDir);
+    fs.mkdirSync(absoluteTargetDir, { recursive: true });
+  }
 
   const template = options.template
     ? resolveTemplate(TEMPLATES, options.template)

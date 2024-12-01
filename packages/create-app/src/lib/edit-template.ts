@@ -69,7 +69,7 @@ function replaceNameInTextFile(
   }
 }
 
-function shouldRenameFile(filePath: string, nameToReplace: string) {
+export function shouldRenameFile(filePath: string, nameToReplace: string) {
   return path.basename(filePath).includes(nameToReplace);
 }
 
