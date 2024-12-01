@@ -61,11 +61,12 @@ export function printByeMessage(targetDir: string) {
   outro('Done.');
 }
 
-export async function promptProjectName() {
+export async function promptProjectName(hint?: string) {
   return checkCancelPrompt<string>(
     await text({
       message: 'What is your app named?',
       validate: validateProjectName,
+      initialValue: hint,
     })
   );
 }

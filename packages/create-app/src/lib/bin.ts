@@ -51,13 +51,14 @@ export async function run() {
   printLogo();
   printWelcomeMessage();
 
-  let isExistingProject = true;
+  const existingProjectName = checkIfExistingProject();
   let absoluteTargetDir;
 
   const projectName =
-    (options.dir || options.name) ?? (await promptProjectName());
+    (options.dir || options.name) ??
+    (await promptProjectName(existingProjectName || undefined));
 
-  if (isExistingProject) {
+  if (existingProjectName) {
     const confirmOverride = await confirmOverrideFiles(projectName);
     if (!confirmOverride) {
       cancelPromptAndExit();
@@ -93,12 +94,18 @@ export async function run() {
     ? options.plugins.map((p) => resolveTemplate(PLUGINS, p))
     : await promptPlugins(PLUGINS);
 
-  await extractPackage(absoluteTargetDir, template);
+  const skipFiles = existingProjectName
+    ? ['README.md', 'index.js', 'App.tsx', 'App.test.tsx']
+    : [];
+
+  await extractPackage(absoluteTargetDir, template, projectName, { skipFiles });
   for (const platform of platforms) {
-    await extractPackage(absoluteTargetDir, platform);
+    await extractPackage(absoluteTargetDir, platform, projectName, {
+      skipFiles,
+    });
   }
   for (const plugin of plugins) {
-    await extractPackage(absoluteTargetDir, plugin);
+    await extractPackage(absoluteTargetDir, plugin, projectName, { skipFiles });
   }
 
   const loader = spinner();
@@ -112,7 +119,27 @@ export async function run() {
   printByeMessage(absoluteTargetDir);
 }
 
-async function extractPackage(absoluteTargetDir: string, pkg: TemplateInfo) {
+function checkIfExistingProject(): string | false {
+  const absoluteTargetDir = resolveAbsolutePath('./');
+
+  if (
+    fs.existsSync(absoluteTargetDir) &&
+    !isEmptyDirSync(absoluteTargetDir) &&
+    fs.existsSync(path.join(absoluteTargetDir, 'package.json'))
+  ) {
+    return JSON.parse(
+      fs.readFileSync(path.join(absoluteTargetDir, 'package.json'), 'utf8')
+    ).name;
+  }
+  return false;
+}
+
+async function extractPackage(
+  absoluteTargetDir: string,
+  pkg: TemplateInfo,
+  projectName: string,
+  { skipFiles }: { skipFiles: string[] }
+) {
   const loader = spinner();
 
   let tarballPath: string | null = null;
@@ -158,7 +185,9 @@ async function extractPackage(absoluteTargetDir: string, pkg: TemplateInfo) {
     loader.start(`Copying local directory ${pkg.localPath}...`);
     copyDirSync(
       path.join(pkg.localPath, pkg.directory ?? ''),
-      absoluteTargetDir
+      absoluteTargetDir,
+      projectName,
+      { skipFiles }
     );
     loader.stop(`Copied local directory ${pkg.localPath}.`);
 

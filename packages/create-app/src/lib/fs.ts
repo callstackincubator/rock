@@ -15,42 +15,40 @@ type CopyDirOptions = {
 export function copyDirSync(
   from: string,
   to: string,
+  newBasename: string,
   { skipFiles = [] }: CopyDirOptions = {}
 ) {
   fs.mkdirSync(to, { recursive: true });
 
   for (const file of fs.readdirSync(from)) {
+    if (skipFiles.includes(path.basename(file))) {
+      continue;
+    }
     const srcFile = nodePath.resolve(from, file);
     const stat = fs.statSync(srcFile);
     const distFile = nodePath.resolve(to, file);
 
     const DEFAULT_PLACEHOLDER_NAME = 'HelloWorld';
-    const newName = 'App76';
     let newFileName = distFile;
 
     if (shouldRenameFile(distFile, DEFAULT_PLACEHOLDER_NAME)) {
-      newFileName = path.join(
-        path.dirname(distFile),
-        path
-          .basename(distFile)
-          .replace(new RegExp(DEFAULT_PLACEHOLDER_NAME, 'g'), newName)
+      newFileName = renameBasename(
+        distFile,
+        DEFAULT_PLACEHOLDER_NAME,
+        newBasename
       );
     } else if (
       shouldRenameFile(distFile, DEFAULT_PLACEHOLDER_NAME.toLowerCase())
     ) {
-      newFileName = path.join(
-        path.dirname(distFile),
-        path
-          .basename(distFile)
-          .replace(
-            new RegExp(DEFAULT_PLACEHOLDER_NAME.toLowerCase(), 'g'),
-            newName.toLowerCase()
-          )
+      newFileName = renameBasename(
+        distFile,
+        DEFAULT_PLACEHOLDER_NAME.toLowerCase(),
+        newBasename.toLowerCase()
       );
     }
 
     if (stat.isDirectory()) {
-      copyDirSync(srcFile, newFileName, { skipFiles });
+      copyDirSync(srcFile, newFileName, newBasename, { skipFiles });
     } else {
       if (nodePath.basename(srcFile) === 'package.json') {
         mergePackageJsons(srcFile, distFile);
@@ -59,6 +57,13 @@ export function copyDirSync(
       }
     }
   }
+}
+
+function renameBasename(filePath: string, oldName: string, newName: string) {
+  return path.join(
+    path.dirname(filePath),
+    path.basename(filePath).replace(new RegExp(oldName, 'g'), newName)
+  );
 }
 
 function mergePackageJsons(from: string, to: string) {
