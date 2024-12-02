@@ -6,6 +6,8 @@ import { getConfiguration } from './getConfiguration.js';
 import { simulatorDestinationMap } from './simulatorDestinationMap.js';
 import { spinner } from '@clack/prompts';
 import spawn from 'nano-spawn';
+import { selectFromInteractiveMode } from '../../utils/selectFromInteractiveMode.js';
+import path from 'node:path';
 
 const buildProject = async (
   xcodeProject: XcodeProjectInfo,
@@ -13,6 +15,7 @@ const buildProject = async (
   udid: string | undefined,
   args: BuildFlags
 ) => {
+  normalizeArgs(args, xcodeProject);
   const simulatorDest = simulatorDestinationMap[platformName];
 
   if (!simulatorDest) {
@@ -23,12 +26,14 @@ const buildProject = async (
     );
   }
 
-  const { scheme, mode } = await getConfiguration(
-    xcodeProject,
-    process.cwd(),
-    args,
-    platformName
-  );
+  const { scheme, mode } = args.interactive
+    ? await selectFromInteractiveMode(xcodeProject, args.scheme, args.mode)
+    : await getConfiguration(
+        xcodeProject,
+        args.scheme,
+        args.mode,
+        platformName
+      );
 
   const xcodebuildArgs = [
     xcodeProject.isWorkspace ? '-workspace' : '-project',
@@ -65,14 +70,18 @@ const buildProject = async (
   }
 
   const loader = spinner();
-  loader.start(`Building the app with xcodebuild`);
+  loader.start(
+    `Builing the app with xcodebuild for ${scheme} scheme in ${mode} mode.`
+  );
   logger.debug(`Running "xcodebuild ${xcodebuildArgs.join(' ')}.`);
 
   try {
     await spawn('xcodebuild', xcodebuildArgs, {
       stdio: logger.isVerbose() ? 'inherit' : ['ignore', 'ignore', 'inherit'],
     });
-    loader.stop('Built the app with xcodebuild.');
+    loader.stop(
+      `Built the app with xcodebuild for ${scheme} scheme in ${mode} mode.`
+    );
   } catch (error) {
     loader.stop(
       'Running xcodebuild failed. Check the error message above for details.',
@@ -81,5 +90,17 @@ const buildProject = async (
     throw error;
   }
 };
+
+function normalizeArgs(args: BuildFlags, xcodeProject: XcodeProjectInfo) {
+  if (!args.mode) {
+    args.mode = 'Debug';
+  }
+  if (!args.scheme) {
+    args.scheme = path.basename(
+      xcodeProject.name,
+      path.extname(xcodeProject.name)
+    );
+  }
+}
 
 export { buildProject };

@@ -1,9 +1,5 @@
-import { selectFromInteractiveMode } from '../../utils/selectFromInteractiveMode.js';
 import { getInfo } from '../../utils/getInfo.js';
 import { checkIfConfigurationExists } from '../../utils/checkIfConfigurationExists.js';
-import type { BuildFlags } from './buildOptions.js';
-import { getBuildConfigurationFromXcScheme } from '../../utils/getBuildConfigurationFromXcScheme.js';
-import path from 'node:path';
 import { getPlatformInfo } from './../../utils/getPlatformInfo.js';
 import { ApplePlatform, XcodeProjectInfo } from '../../types/index.js';
 import { logger } from '@callstack/rnef-tools';
@@ -11,19 +7,16 @@ import color from 'picocolors';
 
 export async function getConfiguration(
   xcodeProject: XcodeProjectInfo,
-  sourceDir: string,
-  args: BuildFlags,
+  inputScheme: string,
+  inputMode: string,
   platformName: ApplePlatform
 ) {
+  const sourceDir = process.cwd();
   const info = await getInfo(xcodeProject, sourceDir);
 
-  if (args.mode) {
-    checkIfConfigurationExists(info?.configurations ?? [], args.mode);
-  }
+  checkIfConfigurationExists(info?.configurations ?? [], inputMode);
 
-  let scheme =
-    args.scheme ||
-    path.basename(xcodeProject.name, path.extname(xcodeProject.name));
+  let scheme = inputScheme;
 
   if (!info?.schemes?.includes(scheme)) {
     const { readableName } = getPlatformInfo(platformName);
@@ -31,7 +24,9 @@ export async function getConfiguration(
 
     if (info?.schemes?.includes(fallbackScheme)) {
       logger.warn(
-        `Scheme "${color.bold(scheme)}" doesn't exist. Using fallback scheme "${color.bold(
+        `Scheme "${color.bold(
+          scheme
+        )}" doesn't exist. Using fallback scheme "${color.bold(
           fallbackScheme
         )}"`
       );
@@ -40,31 +35,11 @@ export async function getConfiguration(
     }
   }
 
-  let mode =
-    args.mode ||
-    getBuildConfigurationFromXcScheme(scheme, 'Debug', sourceDir, info);
-
-  if (args.interactive) {
-    const selection = await selectFromInteractiveMode({
-      scheme: args.scheme ? undefined : scheme,
-      mode: args.mode ? undefined : mode,
-      info,
-    });
-
-    if (selection.scheme && !args.scheme) {
-      scheme = selection.scheme;
-    }
-
-    if (selection.mode && !args.mode) {
-      mode = selection.mode;
-    }
-  }
-
   logger.debug(
-    `Found Xcode ${xcodeProject.isWorkspace ? 'workspace' : 'project'} "${color.bold(
-      xcodeProject.name
-    )}"`
+    `Found Xcode ${
+      xcodeProject.isWorkspace ? 'workspace' : 'project'
+    } "${color.bold(xcodeProject.name)}"`
   );
 
-  return { scheme, mode };
+  return { scheme, mode: inputMode };
 }
