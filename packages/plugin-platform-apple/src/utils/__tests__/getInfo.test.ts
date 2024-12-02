@@ -18,7 +18,7 @@ describe('getInfo', () => {
   it('handles non-project / workspace locations in a ', () => {
     const name = `YourProjectName`;
 
-    (fs.readFileSync as any)
+    vi.mocked(fs.readFileSync)
       .mockReturnValueOnce(`<?xml version="1.0" encoding="UTF-8"?>
 <Workspace
    version = "1.0">
@@ -38,12 +38,11 @@ describe('getInfo', () => {
     getInfo({ isWorkspace: true, name } as XcodeProjectInfo, 'some/path');
 
     // Should not call on Pods or the other misc groups
-    expect(spawn).toHaveBeenCalledWith('xcodebuild', [
-      '-list',
-      '-json',
-      '-project',
-      `some/path/${name}.xcodeproj`,
-    ]);
+    expect(spawn).toHaveBeenCalledWith(
+      'xcodebuild',
+      ['-list', '-json', '-project', `some/path/${name}.xcodeproj`],
+      { stdio: ['ignore', 'pipe', 'inherit'] }
+    );
   });
 
   afterEach(() => {

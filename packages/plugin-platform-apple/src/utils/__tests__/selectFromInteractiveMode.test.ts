@@ -2,6 +2,7 @@ import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 import { bold } from 'picocolors';
 import { logger } from '@callstack/rnef-tools';
 import { selectFromInteractiveMode } from '../selectFromInteractiveMode.js';
+import { getInfo } from '../getInfo.js';
 import {
   promptForConfigurationSelection,
   promptForSchemeSelection,
@@ -13,6 +14,12 @@ vi.mock('@callstack/rnef-tools', () => ({
     debug: vi.fn(),
   },
 }));
+
+vi.mock('../getInfo', () => {
+  return {
+    getInfo: vi.fn(() => Promise.resolve(undefined)),
+  };
+});
 
 vi.mock('../prompts', () => ({
   promptForConfigurationSelection: vi.fn(),
@@ -35,11 +42,16 @@ describe('selectFromInteractiveMode', () => {
   });
 
   it('should return unchanged values when info is undefined', async () => {
-    const result = await selectFromInteractiveMode({
-      scheme: 'TestScheme',
-      mode: 'Debug',
-      info: undefined,
-    });
+    const xcodeInfo = {
+      name: 'TestApp',
+      path: '/path/to/TestApp',
+      isWorkspace: true,
+    };
+    const result = await selectFromInteractiveMode(
+      xcodeInfo,
+      'TestScheme',
+      'Debug'
+    );
 
     expect(result).toEqual({
       scheme: 'TestScheme',
@@ -51,16 +63,21 @@ describe('selectFromInteractiveMode', () => {
 
   it('should prompt for scheme selection when multiple schemes exist', async () => {
     vi.mocked(promptForSchemeSelection).mockResolvedValueOnce('SelectedScheme');
-
-    const result = await selectFromInteractiveMode({
-      scheme: 'TestScheme',
-      mode: 'Debug',
-      info: {
-        schemes: ['Scheme1', 'Scheme2'],
-        configurations: ['Debug'],
-        name: 'TestApp',
-      },
+    vi.mocked(getInfo).mockResolvedValueOnce({
+      schemes: ['Scheme1', 'Scheme2'],
+      configurations: ['Debug'],
+      name: 'TestApp',
     });
+    const xcodeInfo = {
+      name: 'TestApp',
+      path: '/path/to/TestApp',
+      isWorkspace: true,
+    };
+    const result = await selectFromInteractiveMode(
+      xcodeInfo,
+      'TestScheme',
+      'Debug'
+    );
 
     expect(promptForSchemeSelection).toHaveBeenCalledWith([
       'Scheme1',
@@ -74,16 +91,21 @@ describe('selectFromInteractiveMode', () => {
 
   it('should prompt for configuration selection when multiple configurations exist', async () => {
     vi.mocked(promptForConfigurationSelection).mockResolvedValueOnce('Release');
-
-    const result = await selectFromInteractiveMode({
-      scheme: 'TestScheme',
-      mode: 'Debug',
-      info: {
-        schemes: ['TestScheme'],
-        configurations: ['Debug', 'Release'],
-        name: 'TestApp',
-      },
+    vi.mocked(getInfo).mockResolvedValueOnce({
+      schemes: ['TestScheme'],
+      configurations: ['Debug', 'Release'],
+      name: 'TestApp',
     });
+    const xcodeInfo = {
+      name: 'TestApp',
+      path: '/path/to/TestApp',
+      isWorkspace: true,
+    };
+    const result = await selectFromInteractiveMode(
+      xcodeInfo,
+      'TestScheme',
+      'Debug'
+    );
 
     expect(promptForConfigurationSelection).toHaveBeenCalledWith([
       'Debug',
@@ -96,15 +118,21 @@ describe('selectFromInteractiveMode', () => {
   });
 
   it('should automatically select single scheme and configuration', async () => {
-    const result = await selectFromInteractiveMode({
-      scheme: 'TestScheme',
-      mode: 'Debug',
-      info: {
-        schemes: ['TestScheme'],
-        configurations: ['Debug'],
-        name: 'TestApp',
-      },
+    vi.mocked(getInfo).mockResolvedValueOnce({
+      schemes: ['TestScheme'],
+      configurations: ['Debug'],
+      name: 'TestApp',
     });
+    const xcodeInfo = {
+      name: 'TestApp',
+      path: '/path/to/TestApp',
+      isWorkspace: true,
+    };
+    const result = await selectFromInteractiveMode(
+      xcodeInfo,
+      'TestScheme',
+      'Debug'
+    );
 
     expect(result).toEqual({
       scheme: 'TestScheme',
