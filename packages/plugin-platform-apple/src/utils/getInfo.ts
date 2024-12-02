@@ -3,6 +3,7 @@ import { XMLParser } from 'fast-xml-parser';
 import * as fs from 'fs';
 import * as path from 'path';
 import { Info, XcodeProjectInfo } from '../types/index.js';
+import { logger } from '@callstack/rnef-tools';
 
 function isErrorLike(err: unknown): err is { message: string } {
   return Boolean(
@@ -63,12 +64,27 @@ export async function getInfo(
       return result;
     }
 
-    const { stdout } = await spawn('xcodebuild', [
-      '-list',
-      '-json',
-      '-project',
-      path.join(sourceDir, location.replace('group:', '')),
-    ]);
+    let stdout = '';
+    try {
+      const buildOutput = await spawn(
+        'xcodebuild',
+        [
+          '-list',
+          '-json',
+          '-project',
+          path.join(sourceDir, location.replace('group:', '')),
+        ],
+        {
+          stdio: logger.isVerbose() ? 'pipe' : ['ignore', 'pipe', 'inherit'],
+        }
+      );
+      stdout = buildOutput.stdout;
+    } catch (error) {
+      logger.error(
+        'Failed to get project info. Check the error message above for details.'
+      );
+      throw error;
+    }
     const info = parseTargetList(stdout);
     if (!info) {
       return result;
