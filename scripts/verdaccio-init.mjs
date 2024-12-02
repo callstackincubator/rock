@@ -26,6 +26,7 @@ async function startVerdaccio() {
 
     app.listen(VERDACCIO_PORT, async () => {
       console.log(`Verdaccio is running on ${VERDACCIO_REGISTRY_URL}`);
+      await publishTemplate();
       await publishPackages();
     });
 
@@ -54,6 +55,23 @@ async function publishPackages() {
   console.log(run2.all);
 
   console.log('All packages published successfully!');
+}
+
+async function publishTemplate() {
+  console.log('Publishing template to Verdaccio...');
+  const run = await $(
+    'pnpm',
+    [
+      'publish',
+      '--registry',
+      VERDACCIO_REGISTRY_URL,
+      '--no-git-checks',
+      '--force',
+    ],
+    { cwd: `${ROOT_DIR}/templates/rnef-template-default` }
+  );
+  console.log(run.all);
+  console.log('Template published successfully!');
 }
 
 startVerdaccio();

@@ -8,7 +8,7 @@ import {
 } from '@callstack/rnef-test-helpers';
 
 const REGISTRY_URL = 'http://localhost:4873/';
-const CREATE_APP_COMMAND = `pnpm create --registry=${REGISTRY_URL} @callstack/rnef-app`;
+const CREATE_APP_COMMAND = `pnpm create @callstack/rnef-app`;
 
 const ROOT_DIR = path.resolve(__dirname, '../../..');
 const TEMP_DIR = getTempDirectory('e2e-deploys');

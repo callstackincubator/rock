@@ -47,5 +47,5 @@ jobs:
           node scripts/verdaccio-init.mjs &
 
           sleep 5
-          pnpm exec nx affected -t e2e
+          NPM_CONFIG_REGISTRY=http://localhost:4873 pnpm exec nx affected -t e2e
 
