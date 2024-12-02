@@ -1,18 +1,18 @@
-import { exec } from 'node:child_process';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
+import { $ } from 'execa';
 import { runServer } from 'verdaccio';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
 const VERDACCIO_PORT = 4873;
-const VERDACCIO_REGISTRY_URL = `http://localhost:${VERDACCIO_PORT}/`;
+const VERDACCIO_REGISTRY_URL = `http://localhost:${VERDACCIO_PORT}`;
 const VERDACCIO_STORAGE_PATH = '/tmp/verdaccio-storage';
 
 async function startVerdaccio() {
   try {
     console.log('Starting Verdaccio...');
-    const configPath = path.join(__dirname, './verdaccio.yaml');
+    const configPath = path.join(__dirname, 'verdaccio.yaml');
     const app = await runServer(configPath);
 
     app.listen(VERDACCIO_PORT, async () => {
@@ -36,17 +36,14 @@ async function startVerdaccio() {
 
 async function publishPackages() {
   console.log('Removing previous packages...');
-  await exec(`rm -rf ${VERDACCIO_STORAGE_PATH}`, {
-    stdio: 'inherit',
-  });
+  const run1 = await $`rm -rf ${VERDACCIO_STORAGE_PATH}`;
+  console.log(run1.all);
 
   console.log('Publishing all packages to Verdaccio...');
-  await exec(
-    `pnpm -r publish --registry ${VERDACCIO_REGISTRY_URL} --no-git-checks --force`,
-    {
-      stdio: 'inherit',
-    }
-  );
+  const run2 =
+    await $`pnpm -r publish --registry ${VERDACCIO_REGISTRY_URL} --no-git-checks --force`;
+  console.log(run2.all);
+
   console.log('All packages published successfully!');
 }
 

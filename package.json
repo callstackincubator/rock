@@ -10,7 +10,8 @@
     "lint": "nx run-many --target lint",
     "typecheck": "nx run-many --target typecheck",
     "watch": "nx watch --all -- nx run \\$NX_PROJECT_NAME:build",
-    "link-packages": "node ./scripts/linkPackages.mjs"
+    "link-packages": "node ./scripts/linkPackages.mjs",
+    "verdaccio-reset": "node ./scripts/verdaccio-reset.mjs"
   },
   "private": true,
   "dependencies": {
@@ -32,6 +33,7 @@
     "@vitest/ui": "^2.1.2",
     "eslint": "^9.8.0",
     "eslint-config-prettier": "^9.0.0",
+    "execa": "^9.5.1",
     "fast-glob": "^3.3.2",
     "nano-spawn": "^0.2.0",
     "nx": "19.8.0",
