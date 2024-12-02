@@ -17,7 +17,7 @@ export interface Device {
   lastBootedAt?: string;
 }
 
-export type DeviceType = 'simulator' | 'device';
+export type DeviceType = 'simulator' | 'device' | 'catalyst';
 
 export interface Info {
   name: string;

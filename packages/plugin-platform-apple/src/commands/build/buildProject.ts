@@ -76,12 +76,13 @@ const buildProject = async (
   logger.debug(`Running "xcodebuild ${xcodebuildArgs.join(' ')}.`);
 
   try {
-    await spawn('xcodebuild', xcodebuildArgs, {
+    const { output } = await spawn('xcodebuild', xcodebuildArgs, {
       stdio: logger.isVerbose() ? 'inherit' : ['ignore', 'ignore', 'inherit'],
     });
     loader.stop(
       `Built the app with xcodebuild for ${scheme} scheme in ${mode} mode.`
     );
+    return output;
   } catch (error) {
     loader.stop(
       'Running xcodebuild failed. Check the error message above for details.',

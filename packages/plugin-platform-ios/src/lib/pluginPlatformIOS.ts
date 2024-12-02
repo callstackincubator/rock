@@ -1,18 +1,17 @@
 import type { PluginOutput, PluginApi } from '@callstack/rnef-config';
 import {
   createBuild,
+  createRun,
+  getRunOptions,
   getBuildOptions,
+  RunFlags,
+  BuildFlags,
 } from '@callstack/rnef-plugin-platform-apple';
-import { BuildFlags } from '@callstack/rnef-plugin-platform-apple';
 import { getProjectConfig } from '@react-native-community/cli-config-apple';
 
 const projectConfig = getProjectConfig({ platformName: 'ios' });
-
 const buildOptions = getBuildOptions({ platformName: 'ios' });
-
-const run = (args: unknown) => {
-  console.log('run', { args });
-};
+const runOptions = getRunOptions({ platformName: 'ios' });
 
 export const pluginPlatformIOS =
   () =>
@@ -36,8 +35,18 @@ export const pluginPlatformIOS =
     api.registerCommand({
       name: 'run:ios',
       description: 'Run iOS app.',
-      action: run,
-      options: buildOptions,
+      action: async (args) => {
+        const projectRoot = api.getProjectRoot();
+        const iosConfig = projectConfig(projectRoot, {});
+
+        if (iosConfig) {
+          await createRun('ios', iosConfig, args as RunFlags, projectRoot);
+        } else {
+          throw new Error('iOS project not found.');
+        }
+      },
+      // @ts-expect-error: fix `simulator` is not defined in `RunFlags`
+      options: runOptions,
     });
 
     return {
