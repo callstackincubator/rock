@@ -47,12 +47,19 @@ const importUp = async <T>(dir: string, name: string): Promise<T> => {
   for (const ext of extensions) {
     const filePathWithExt = `${filePath}${ext}`;
     if (fs.existsSync(filePathWithExt)) {
+      let config: T;
+
       if (ext === '.mjs') {
-        return import(filePathWithExt).then((module) => module.default);
+        config = await import(filePathWithExt).then((module) => module.default);
       } else {
         const require = createRequire(import.meta.url);
-        return require(filePathWithExt);
+        config = require(filePathWithExt);
       }
+
+      return {
+        root: dir,
+        ...config,
+      };
     }
   }
 
