@@ -1,9 +1,11 @@
+import fs from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { $ } from 'execa';
 import { runServer } from 'verdaccio';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
+const ROOT_DIR = path.join(__dirname, '..');
 
 const VERDACCIO_PORT = 4873;
 const VERDACCIO_REGISTRY_URL = `http://localhost:${VERDACCIO_PORT}`;
@@ -11,6 +13,13 @@ const VERDACCIO_STORAGE_PATH = '/tmp/verdaccio-storage';
 
 async function startVerdaccio() {
   try {
+    console.log(`Writing .npmrc: ${ROOT_DIR}`);
+    const npmConfigPath = path.join(ROOT_DIR, '.npmrc');
+    fs.writeFileSync(
+      npmConfigPath,
+      `//localhost:${VERDACCIO_PORT}/:_authToken=secretToken\n`
+    );
+
     console.log('Starting Verdaccio...');
     const configPath = path.join(__dirname, 'verdaccio.yaml');
     const app = await runServer(configPath);
