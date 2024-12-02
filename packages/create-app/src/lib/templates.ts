@@ -45,10 +45,10 @@ export const PLUGINS: TemplateInfo[] = [
     importName: 'pluginMetro',
   },
   {
-    type: 'local',
+    type: 'npm',
     name: 'repack',
     packageName: '@callstack/rnef-plugin-repack',
-    localPath: path.join(TEMP_PACKAGES_PATH, 'plugin-repack'),
+    version: 'latest',
     directory: 'src/template',
     importName: 'pluginRepack',
   },
