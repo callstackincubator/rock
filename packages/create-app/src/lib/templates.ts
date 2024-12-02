@@ -153,6 +153,7 @@ export async function downloadTarballFromNpm(
       throw new Error('Tarball URL not found.');
     }
 
+    console.log('tarballUrl', tarballUrl);
     const response = await fetch(tarballUrl);
     if (!response.ok) {
       throw new Error(`Failed to fetch package: ${response.statusText}`);
