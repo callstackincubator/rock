@@ -7,7 +7,6 @@ export interface RunFlags extends BuildFlags {
   device?: string;
   udid?: string;
   binaryPath?: string;
-  listDevices?: boolean;
   port: string;
 }
 
@@ -23,10 +22,6 @@ export const getRunOptions = ({ platformName }: BuilderCommand) => {
       name: '--binary-path <string>',
       description:
         'Path relative to project root where pre-built .app binary lives.',
-    },
-    {
-      name: '--list-devices',
-      description: `List all available ${readableName} devices and simulators and let you choose one to run the app. `,
     },
     {
       name: '--udid <string>',

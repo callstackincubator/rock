@@ -144,7 +144,7 @@ export const createRun = async (
       ? getFallbackSimulator(args.simulator, args.udid)
       : devices[0];
 
-  if (args.listDevices || args.interactive) {
+  if (args.interactive) {
     if (args.device || args.udid) {
       logger.warn(
         `Both ${
@@ -157,9 +157,7 @@ export const createRun = async (
 
     if (!selectedDevice) {
       throw new Error(
-        `Failed to select device, please try to run app without ${
-          args.listDevices ? 'list-devices' : 'interactive'
-        } command.`
+        `Failed to select device, please try to run app without the "--interactive" flag.`
       );
     } else {
       // if (selectedDevice.udid !== preferredDevice) {
