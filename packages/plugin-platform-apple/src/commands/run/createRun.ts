@@ -145,14 +145,6 @@ export const createRun = async (
       : devices[0];
 
   if (args.interactive) {
-    if (args.device || args.udid) {
-      logger.warn(
-        `Both ${
-          args.device ? 'device' : 'udid'
-        } and "list-devices" parameters were passed to "run" command. We will list available devices and let you choose from one.`
-      );
-    }
-
     const selectedDevice = await promptForDeviceSelection(devices);
 
     if (!selectedDevice) {
@@ -229,12 +221,6 @@ export const createRun = async (
     }
 
     return;
-  }
-
-  if (args.device && args.udid) {
-    return logger.error(
-      'The `device` and `udid` options are mutually exclusive.'
-    );
   }
 
   if (args.udid) {
@@ -326,5 +312,11 @@ function normalizeArgs(args: RunFlags, xcodeProject: XcodeProjectInfo) {
       xcodeProject.name,
       path.extname(xcodeProject.name)
     );
+  }
+  if (args.device && args.udid) {
+    logger.error(
+      'The "--device" and "--udid" flags are mutually exclusive. Please use only one of them.'
+    );
+    process.exit(1);
   }
 }
