@@ -8,7 +8,6 @@
 
 import path from 'path';
 import fs from 'fs';
-import color from 'picocolors';
 import { logger } from '@callstack/rnef-tools';
 import listDevices from '../../utils/listDevices.js';
 import { promptForDeviceSelection } from '../../utils/prompts.js';
@@ -16,7 +15,7 @@ import { buildProject } from '../build/buildProject.js';
 import { getConfiguration } from '../build/getConfiguration.js';
 import { getFallbackSimulator } from './getFallbackSimulator.js';
 import { getPlatformInfo } from './getPlatformInfo.js';
-import { printFoundDevices, matchingDevice } from './matchingDevice.js';
+import { matchingDevice } from './matchingDevice.js';
 import { runOnDevice } from './runOnDevice.js';
 import { runOnSimulator } from './runOnSimulator.js';
 import {
@@ -29,17 +28,6 @@ import openApp from './openApp.js';
 import { RunFlags } from './runOptions.js';
 import { selectFromInteractiveMode } from '../../utils/selectFromInteractiveMode.js';
 import { spinner } from '@clack/prompts';
-import { supportedPlatforms } from '../../supportedPlatforms.js';
-
-// function getPackageJson(root: string) {
-//   try {
-//     return require(path.join(root, 'package.json'));
-//   } catch {
-//     throw new Error(
-//       'No package.json found. Please make sure the file exists in the current folder.'
-//     );
-//   }
-// }
 
 export const createRun = async (
   platformName: BuilderCommand['platformName'],
@@ -49,13 +37,6 @@ export const createRun = async (
 ) => {
   const { sdkNames, readableName: platformReadableName } =
     getPlatformInfo(platformName);
-
-  if (
-    projectConfig === undefined ||
-    supportedPlatforms[platformName] === undefined
-  ) {
-    throw new Error(`Unable to find ${platformReadableName} platform config`);
-  }
 
   const { xcodeProject, sourceDir } = projectConfig;
 
