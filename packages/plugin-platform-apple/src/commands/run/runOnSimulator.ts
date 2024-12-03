@@ -9,12 +9,12 @@ import spawn from 'nano-spawn';
 import { spinner } from '@clack/prompts';
 
 export async function runOnSimulator(
+  simulator: Device,
   xcodeProject: XcodeProjectInfo,
   platform: ApplePlatform,
   mode: string,
   scheme: string,
-  args: RunFlags,
-  simulator: Device
+  args: RunFlags
 ) {
   const { binaryPath, target } = args;
 

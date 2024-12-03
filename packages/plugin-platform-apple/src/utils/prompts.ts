@@ -33,7 +33,7 @@ export async function promptForDeviceSelection(
   devices: Device[]
 ): Promise<Device | undefined> {
   const device = await select({
-    message: 'Select the device you want to use',
+    message: 'Select the device / emulator you want to use',
     options: devices
       .filter(({ type }) => type === 'device' || type === 'simulator')
       .map((d) => {

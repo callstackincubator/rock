@@ -21,6 +21,7 @@ import { runOnDevice } from './runOnDevice.js';
 import { runOnSimulator } from './runOnSimulator.js';
 import {
   BuilderCommand,
+  Device,
   ProjectConfig,
   XcodeProjectInfo,
 } from '../../types/index.js';
@@ -65,19 +66,9 @@ export const createRun = async (
     process.exit(1);
   }
 
-  normalizeArgs(args, xcodeProject);
+  normalizeArgs(args, projectRoot, xcodeProject);
   // @todo replace chdir with running the command in the {cwd: sourceDir}
   process.chdir(sourceDir);
-
-  if (args.binaryPath) {
-    args.binaryPath = path.isAbsolute(args.binaryPath)
-      ? args.binaryPath
-      : path.join(projectRoot, args.binaryPath);
-
-    if (!fs.existsSync(args.binaryPath)) {
-      throw new Error('binary-path was specified, but the file was not found.');
-    }
-  }
 
   const { scheme, mode } = args.interactive
     ? await selectFromInteractiveMode(xcodeProject, args.scheme, args.mode)
@@ -139,149 +130,27 @@ export const createRun = async (
   //   }
   // }
 
-  const fallbackSimulator =
-    platformName === 'ios'
-      ? getFallbackSimulator(args.simulator, args.udid)
-      : devices[0];
+  const device = args.interactive
+    ? await promptForDeviceSelection(devices)
+    : args.udid
+    ? devices.find((d) => d.udid === args.udid)
+    : args.device
+    ? matchingDevice(devices, args.device)
+    : args.simulator
+    ? matchingSimulator(devices, platformName, args.simulator, args.udid)
+    : undefined;
 
-  if (args.interactive) {
-    const selectedDevice = await promptForDeviceSelection(devices);
-
-    if (!selectedDevice) {
-      throw new Error(
-        `Failed to select device, please try to run app without the "--interactive" flag.`
-      );
-    } else {
-      // if (selectedDevice.udid !== preferredDevice) {
-      //   cacheManager.set(
-      //     packageJson.name,
-      //     'lastUsedIOSDeviceId',
-      //     selectedDevice.udid
-      //   );
-      // }
-    }
-
-    if (selectedDevice.type === 'simulator') {
-      return runOnSimulator(
-        xcodeProject,
-        platformName,
-        mode,
-        scheme,
-        args,
-        selectedDevice
-      );
-    } else {
-      return runOnDevice(
-        selectedDevice,
-        platformName,
-        mode,
-        scheme,
-        xcodeProject,
-        args
-      );
-    }
-  }
-
-  if (!args.device && !args.udid && !args.simulator) {
-    const bootedSimulators = devices.filter(
-      ({ state, type }) => state === 'Booted' && type === 'simulator'
-    );
-    const bootedDevices = devices.filter(({ type }) => type === 'device'); // Physical devices here are always booted
-    const booted = [...bootedSimulators, ...bootedDevices];
-
-    if (booted.length === 0) {
-      logger.info(
-        'No booted devices or simulators found. Launching first available simulator...'
-      );
-      return runOnSimulator(
-        xcodeProject,
-        platformName,
-        mode,
-        scheme,
-        args,
-        fallbackSimulator
-      );
-    }
-
-    logger.info(`Found booted ${booted.map(({ name }) => name).join(', ')}`);
-
-    for (const simulator of bootedSimulators) {
-      await runOnSimulator(
-        xcodeProject,
-        platformName,
-        mode,
-        scheme,
-        args,
-        simulator || fallbackSimulator
-      );
-    }
-
-    for (const device of bootedDevices) {
-      await runOnDevice(device, platformName, mode, scheme, xcodeProject, args);
-    }
-
-    return;
-  }
-
-  if (args.udid) {
-    const device = devices.find((d) => d.udid === args.udid);
-    if (!device) {
-      return logger.error(
-        `Could not find a device with udid: "${color.bold(
-          args.udid
-        )}". ${printFoundDevices(devices)}`
-      );
-    }
+  if (device) {
     if (device.type === 'simulator') {
       return runOnSimulator(
-        xcodeProject,
-        platformName,
-        mode,
-        scheme,
-        args,
-        fallbackSimulator
-      );
-    } else {
-      return runOnDevice(
         device,
+        xcodeProject,
         platformName,
         mode,
         scheme,
-        xcodeProject,
         args
       );
-    }
-  } else if (args.device) {
-    let device = matchingDevice(devices, args.device);
-
-    if (!device) {
-      const deviceByUdid = devices.find((d) => d.udid === args.device);
-      if (!deviceByUdid) {
-        return logger.error(
-          `Could not find a physical device with name or unique device identifier: "${color.bold(
-            args.device
-          )}". ${printFoundDevices(devices, 'device')}`
-        );
-      }
-
-      device = deviceByUdid;
-
-      if (deviceByUdid.type === 'simulator') {
-        return logger.error(
-          `The device with udid: "${color.bold(
-            args.device
-          )}" is a simulator. If you want to run on a simulator, use the "--simulator" flag instead.`
-        );
-      }
-    }
-
-    if (device && device.type === 'simulator') {
-      return logger.error(
-        "`--device` flag is intended for physical devices. If you're trying to run on a simulator, use `--simulator` instead."
-      );
-    }
-
-    if (device && device.type === 'device') {
+    } else {
       return runOnDevice(
         device,
         platformName,
@@ -292,18 +161,46 @@ export const createRun = async (
       );
     }
   } else {
-    runOnSimulator(
-      xcodeProject,
-      platformName,
-      mode,
-      scheme,
-      args,
-      fallbackSimulator
+    const bootedSimulators = devices.filter(
+      ({ state, type }) => state === 'Booted' && type === 'simulator'
     );
+    if (bootedSimulators.length === 0) {
+      logger.debug(
+        'No booted devices or simulators found. Launching first available simulator...'
+      );
+      bootedSimulators.push(
+        matchingSimulator(devices, platformName, args.simulator, args.udid)
+      );
+    }
+    for (const simulator of bootedSimulators) {
+      await runOnSimulator(
+        simulator,
+        xcodeProject,
+        platformName,
+        mode,
+        scheme,
+        args
+      );
+    }
   }
 };
 
-function normalizeArgs(args: RunFlags, xcodeProject: XcodeProjectInfo) {
+function matchingSimulator(
+  devices: Device[],
+  platformName: string,
+  simulator: string | undefined,
+  udid: string | undefined
+) {
+  return platformName === 'ios'
+    ? getFallbackSimulator(simulator, udid)
+    : devices[0];
+}
+
+function normalizeArgs(
+  args: RunFlags,
+  projectRoot: string,
+  xcodeProject: XcodeProjectInfo
+) {
   if (!args.mode) {
     args.mode = 'Debug';
   }
@@ -318,5 +215,16 @@ function normalizeArgs(args: RunFlags, xcodeProject: XcodeProjectInfo) {
       'The "--device" and "--udid" flags are mutually exclusive. Please use only one of them.'
     );
     process.exit(1);
+  }
+  if (args.binaryPath) {
+    args.binaryPath = path.isAbsolute(args.binaryPath)
+      ? args.binaryPath
+      : path.join(projectRoot, args.binaryPath);
+
+    if (!fs.existsSync(args.binaryPath)) {
+      throw new Error(
+        `"--binary-path" was specified, but the file was not found at "${args.binaryPath}".`
+      );
+    }
   }
 }
