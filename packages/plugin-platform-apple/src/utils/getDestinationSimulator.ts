@@ -2,13 +2,9 @@ import child_process from 'child_process';
 import findMatchingSimulator from './findMatchingSimulator.js';
 import { Device } from '../types/index.js';
 
-type FlagsT = {
-  simulator?: string;
-  udid?: string;
-};
-
 export function getDestinationSimulator(
-  args: FlagsT,
+  simulator?: string,
+  udid?: string,
   fallbackSimulators: string[] = []
 ) {
   let simulators: { devices: { [index: string]: Array<Device> } };
@@ -27,15 +23,13 @@ export function getDestinationSimulator(
   }
 
   const selectedSimulator = fallbackSimulators.reduce((simulator, fallback) => {
-    return (
-      simulator || findMatchingSimulator(simulators, { simulator: fallback })
-    );
-  }, findMatchingSimulator(simulators, args));
+    return simulator || findMatchingSimulator(simulators, fallback);
+  }, findMatchingSimulator(simulators, simulator, udid));
 
   if (!selectedSimulator) {
     throw new Error(
       `No simulator available with ${
-        args.simulator ? `name "${args.simulator}"` : `udid "${args.udid}"`
+        simulator ? `name "${simulator}"` : `udid "${udid}"`
       }`
     );
   }

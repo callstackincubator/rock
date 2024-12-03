@@ -1,19 +1,17 @@
 import child_process from 'child_process';
 import { logger } from '@callstack/rnef-tools';
-import color from 'picocolors';
 import { getBuildPath } from './getBuildPath.js';
 import { getBuildSettings } from './getBuildSettings.js';
 import path from 'path';
 import { ApplePlatform, XcodeProjectInfo } from '../../types/index.js';
+import spawn from 'nano-spawn';
 
 function handleLaunchResult(
   success: boolean,
   errorMessage: string,
   errorDetails = ''
 ) {
-  if (success) {
-    logger.success('Successfully launched the app');
-  } else {
+  if (!success) {
     logger.error(errorMessage, errorDetails);
   }
 }
@@ -54,7 +52,7 @@ export default async function installApp({
   }
 
   if (!appPath) {
-    appPath = await getBuildPath(buildSettings, platform);
+    appPath = getBuildPath(buildSettings, platform);
   }
 
   const targetBuildDir = buildSettings.TARGET_BUILD_DIR;
@@ -68,27 +66,22 @@ export default async function installApp({
     throw new Error('Failed to get target build directory.');
   }
 
-  logger.info(`Installing "${color.bold(appPath)}`);
+  logger.debug(`Installing "${path.basename(appPath)}"`);
 
   if (udid && appPath) {
-    child_process.spawnSync('xcrun', ['simctl', 'install', udid, appPath], {
-      stdio: 'inherit',
+    await spawn('xcrun', ['simctl', 'install', udid, appPath], {
+      stdio: logger.isVerbose() ? 'inherit' : ['ignore', 'pipe', 'inherit'],
     });
   }
 
-  const bundleID = child_process
-    .execFileSync(
-      '/usr/libexec/PlistBuddy',
-      [
-        '-c',
-        'Print:CFBundleIdentifier',
-        path.join(targetBuildDir, infoPlistPath),
-      ],
-      { encoding: 'utf8' }
-    )
-    .trim();
+  const { stdout } = await spawn('/usr/libexec/PlistBuddy', [
+    '-c',
+    'Print:CFBundleIdentifier',
+    path.join(targetBuildDir, infoPlistPath),
+  ]);
+  const bundleID = stdout.trim();
 
-  logger.info(`Launching "${color.bold(bundleID)}"`);
+  logger.debug(`Launching "${bundleID}"`);
 
   const result = child_process.spawnSync('xcrun', [
     'simctl',

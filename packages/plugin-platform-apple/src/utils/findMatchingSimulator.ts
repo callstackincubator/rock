@@ -29,7 +29,8 @@ import type { Device } from '../types/index.js';
  */
 function findMatchingSimulator(
   simulators: { devices: { [index: string]: Array<Device> } },
-  findOptions?: null | { simulator?: string; udid?: string }
+  simulator?: string,
+  udid?: string
 ) {
   if (!simulators.devices) {
     return null;
@@ -38,15 +39,13 @@ function findMatchingSimulator(
   let simulatorVersion;
   let simulatorName = null;
 
-  if (findOptions && findOptions.simulator) {
-    const parsedSimulatorName = findOptions.simulator.match(
-      /(.*)? (?:\((\d+\.\d+)?\))$/
-    );
+  if (simulator) {
+    const parsedSimulatorName = simulator.match(/(.*)? (?:\((\d+\.\d+)?\))$/);
     if (parsedSimulatorName && parsedSimulatorName[2] !== undefined) {
       simulatorVersion = parsedSimulatorName[2];
       simulatorName = parsedSimulatorName[1];
     } else {
-      simulatorName = findOptions.simulator;
+      simulatorName = simulator;
     }
   }
 
@@ -96,8 +95,8 @@ function findMatchingSimulator(
         state: simulator.state,
         version,
       };
-      if (findOptions && findOptions.udid) {
-        if (simulator.udid === findOptions.udid) {
+      if (udid) {
+        if (simulator.udid === udid) {
           return simulatorDescriptor;
         }
       } else {

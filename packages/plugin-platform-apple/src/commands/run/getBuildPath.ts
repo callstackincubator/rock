@@ -2,7 +2,7 @@ import path from 'path';
 import { BuildSettings } from './getBuildSettings.js';
 import { ApplePlatform } from '../../types/index.js';
 
-export async function getBuildPath(
+export function getBuildPath(
   buildSettings: BuildSettings,
   platform: ApplePlatform = 'ios',
   isCatalyst = false

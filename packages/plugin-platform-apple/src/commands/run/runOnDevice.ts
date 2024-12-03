@@ -40,6 +40,8 @@ export async function runOnDevice(
       xcodeProject,
       platform,
       selectedDevice.udid,
+      scheme,
+      mode,
       args
     );
 
@@ -67,6 +69,8 @@ export async function runOnDevice(
         xcodeProject,
         platform,
         selectedDevice.udid,
+        scheme,
+        mode,
         args
       );
 

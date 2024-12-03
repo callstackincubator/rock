@@ -1,7 +1,7 @@
 import { logger } from '@callstack/rnef-tools';
 import color from 'picocolors';
-import child_process from 'child_process';
 import { XcodeProjectInfo } from '../../types/index.js';
+import spawn from 'nano-spawn';
 
 export type BuildSettings = {
   TARGET_BUILD_DIR: string;
@@ -17,22 +17,18 @@ export async function getBuildSettings(
   scheme: string,
   target?: string
 ): Promise<BuildSettings | null> {
-  const buildSettings = child_process.execFileSync(
-    'xcodebuild',
-    [
-      xcodeProject.isWorkspace ? '-workspace' : '-project',
-      xcodeProject.name,
-      '-scheme',
-      scheme,
-      '-sdk',
-      getPlatformName(buildOutput),
-      '-configuration',
-      mode,
-      '-showBuildSettings',
-      '-json',
-    ],
-    { encoding: 'utf8' }
-  );
+  const { stdout: buildSettings } = await spawn('xcodebuild', [
+    xcodeProject.isWorkspace ? '-workspace' : '-project',
+    xcodeProject.name,
+    '-scheme',
+    scheme,
+    '-sdk',
+    getPlatformName(buildOutput),
+    '-configuration',
+    mode,
+    '-showBuildSettings',
+    '-json',
+  ]);
 
   const settings = JSON.parse(buildSettings);
 

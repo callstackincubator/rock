@@ -2,20 +2,18 @@ import type { BuildFlags } from './buildOptions.js';
 import { supportedPlatforms } from '../../supportedPlatforms.js';
 import { ApplePlatform, XcodeProjectInfo } from '../../types/index.js';
 import { logger } from '@callstack/rnef-tools';
-import { getConfiguration } from './getConfiguration.js';
 import { simulatorDestinationMap } from './simulatorDestinationMap.js';
 import { spinner } from '@clack/prompts';
 import spawn from 'nano-spawn';
-import { selectFromInteractiveMode } from '../../utils/selectFromInteractiveMode.js';
-import path from 'node:path';
 
-const buildProject = async (
+export const buildProject = async (
   xcodeProject: XcodeProjectInfo,
   platformName: ApplePlatform,
   udid: string | undefined,
+  scheme: string,
+  mode: string,
   args: BuildFlags
 ) => {
-  normalizeArgs(args, xcodeProject);
   const simulatorDest = simulatorDestinationMap[platformName];
 
   if (!simulatorDest) {
@@ -25,15 +23,6 @@ const buildProject = async (
       ).join(', ')}.`
     );
   }
-
-  const { scheme, mode } = args.interactive
-    ? await selectFromInteractiveMode(xcodeProject, args.scheme, args.mode)
-    : await getConfiguration(
-        xcodeProject,
-        args.scheme,
-        args.mode,
-        platformName
-      );
 
   const xcodebuildArgs = [
     xcodeProject.isWorkspace ? '-workspace' : '-project',
@@ -74,10 +63,10 @@ const buildProject = async (
     `Builing the app with xcodebuild for ${scheme} scheme in ${mode} mode.`
   );
   logger.debug(`Running "xcodebuild ${xcodebuildArgs.join(' ')}.`);
-
   try {
     const { output } = await spawn('xcodebuild', xcodebuildArgs, {
-      stdio: logger.isVerbose() ? 'inherit' : ['ignore', 'ignore', 'inherit'],
+      // stdio: logger.isVerbose() ? 'inherit' : ['ignore', 'pipe', 'inherit'],
+      stdio: 'pipe',
     });
     loader.stop(
       `Built the app with xcodebuild for ${scheme} scheme in ${mode} mode.`
@@ -91,17 +80,3 @@ const buildProject = async (
     throw error;
   }
 };
-
-function normalizeArgs(args: BuildFlags, xcodeProject: XcodeProjectInfo) {
-  if (!args.mode) {
-    args.mode = 'Debug';
-  }
-  if (!args.scheme) {
-    args.scheme = path.basename(
-      xcodeProject.name,
-      path.extname(xcodeProject.name)
-    );
-  }
-}
-
-export { buildProject };

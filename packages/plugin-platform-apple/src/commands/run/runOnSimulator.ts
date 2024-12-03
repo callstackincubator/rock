@@ -5,6 +5,8 @@ import { buildProject } from '../build/buildProject.js';
 import { formattedDeviceName } from './matchingDevice.js';
 import installApp from './installApp.js';
 import { RunFlags } from './runOptions.js';
+import spawn from 'nano-spawn';
+import { spinner } from '@clack/prompts';
 
 export async function runOnSimulator(
   xcodeProject: XcodeProjectInfo,
@@ -31,15 +33,18 @@ export async function runOnSimulator(
     .execFileSync('xcode-select', ['-p'], { encoding: 'utf8' })
     .trim();
 
-  child_process.execFileSync('open', [
+  const loader = spinner();
+  loader.start(`Launching Simulator "${simulator.name}"`);
+  await spawn('open', [
     `${activeDeveloperDir}/Applications/Simulator.app`,
     '--args',
     '-CurrentDeviceUDID',
     simulator.udid,
   ]);
+  loader.stop(`Launched Simulator "${simulator.name}"`);
 
   if (simulator.state !== 'Booted') {
-    bootSimulator(simulator);
+    await bootSimulator(simulator);
   }
 
   let buildOutput;
@@ -48,11 +53,14 @@ export async function runOnSimulator(
       xcodeProject,
       platform,
       simulator.udid,
+      scheme,
+      mode,
       args
     );
   }
 
-  installApp({
+  loader.start(`Installing the app on "${simulator.name}"`);
+  await installApp({
     buildOutput: buildOutput ?? '',
     xcodeProject,
     mode,
@@ -61,11 +69,12 @@ export async function runOnSimulator(
     udid: simulator.udid,
     binaryPath,
   });
+  loader.stop(`Installed the app on "${simulator.name}".`);
 }
 
-function bootSimulator(selectedSimulator: Device) {
+async function bootSimulator(selectedSimulator: Device) {
   const simulatorFullName = formattedDeviceName(selectedSimulator);
   logger.info(`Launching ${simulatorFullName}`);
 
-  child_process.spawnSync('xcrun', ['simctl', 'boot', selectedSimulator.udid]);
+  await spawn('xcrun', ['simctl', 'boot', selectedSimulator.udid]);
 }

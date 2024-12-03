@@ -37,14 +37,13 @@ export default async function openApp({
   }
 
   if (!appPath) {
-    appPath = await getBuildPath(buildSettings, 'macos');
+    appPath = getBuildPath(buildSettings, 'macos');
   }
 
-  logger.info(`Opening "${color.bold(appPath)}"`);
+  logger.debug(`Opening "${color.bold(appPath)}"`);
 
   try {
     await spawn('open', [appPath]);
-    logger.success('Successfully launched the app');
   } catch (e) {
     logger.error('Failed to launch the app', e as string);
   }

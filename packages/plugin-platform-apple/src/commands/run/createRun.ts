@@ -24,10 +24,11 @@ import {
   ProjectConfig,
   XcodeProjectInfo,
 } from '../../types/index.js';
-import { supportedPlatforms } from '@react-native-community/cli-config-apple';
 import openApp from './openApp.js';
-import { getXcodeProjectAndDir } from './getXcodeProjectAndDir.js';
 import { RunFlags } from './runOptions.js';
+import { selectFromInteractiveMode } from '../../utils/selectFromInteractiveMode.js';
+import { spinner } from '@clack/prompts';
+import { supportedPlatforms } from '../../supportedPlatforms.js';
 
 // function getPackageJson(root: string) {
 //   try {
@@ -55,12 +56,17 @@ export const createRun = async (
     throw new Error(`Unable to find ${platformReadableName} platform config`);
   }
 
-  const { xcodeProject, sourceDir } = getXcodeProjectAndDir(
-    projectConfig,
-    platformName
-  );
+  const { xcodeProject, sourceDir } = projectConfig;
+
+  if (!xcodeProject) {
+    logger.error(
+      `Could not find Xcode project files in "${sourceDir}" folder. Please make sure that you have installed Cocoapods and "${sourceDir}" is a valid path`
+    );
+    process.exit(1);
+  }
 
   normalizeArgs(args, xcodeProject);
+  // @todo replace chdir with running the command in the {cwd: sourceDir}
   process.chdir(sourceDir);
 
   if (args.binaryPath) {
@@ -73,23 +79,26 @@ export const createRun = async (
     }
   }
 
-  // todo add interactive mode
-  const { mode, scheme } = await getConfiguration(
-    xcodeProject,
-    args.scheme,
-    args.mode,
-    platformName
-  );
+  const { scheme, mode } = args.interactive
+    ? await selectFromInteractiveMode(xcodeProject, args.scheme, args.mode)
+    : await getConfiguration(
+        xcodeProject,
+        args.scheme,
+        args.mode,
+        platformName
+      );
 
   if (platformName === 'macos') {
     const buildOutput = await buildProject(
       xcodeProject,
       platformName,
       undefined,
+      scheme,
+      mode,
       args
     );
 
-    openApp({
+    await openApp({
       buildOutput,
       xcodeProject,
       mode,
@@ -101,14 +110,17 @@ export const createRun = async (
     return;
   }
 
+  const loader = spinner();
+  loader.start('Looking for available devices and simulators');
   const devices = await listDevices(sdkNames);
-
   if (devices.length === 0) {
     return logger.error(
       `${platformReadableName} devices or simulators not detected. Install simulators via Xcode or connect a physical ${platformReadableName} device`
     );
   }
+  loader.stop('Found available devices and simulators.');
 
+  // @todo implement cache manager
   // const packageJson = getPackageJson(ctx.root);
 
   // const preferredDevice = cacheManager.get(
@@ -128,7 +140,9 @@ export const createRun = async (
   // }
 
   const fallbackSimulator =
-    platformName === 'ios' ? getFallbackSimulator(args) : devices[0];
+    platformName === 'ios'
+      ? getFallbackSimulator(args.simulator, args.udid)
+      : devices[0];
 
   if (args.listDevices || args.interactive) {
     if (args.device || args.udid) {

@@ -41,7 +41,7 @@ describe('getInfo', () => {
     expect(spawn).toHaveBeenCalledWith(
       'xcodebuild',
       ['-list', '-json', '-project', `some/path/${name}.xcodeproj`],
-      { stdio: ['ignore', 'pipe', 'inherit'] }
+      { stdio: ['ignore', 'pipe', 'inherit'], cwd: 'some/path' }
     );
   });
 

@@ -13,9 +13,7 @@ export async function getConfiguration(
 ) {
   const sourceDir = process.cwd();
   const info = await getInfo(xcodeProject, sourceDir);
-
   checkIfConfigurationExists(info?.configurations ?? [], inputMode);
-
   let scheme = inputScheme;
 
   if (!info?.schemes?.includes(scheme)) {

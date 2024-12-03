@@ -4,6 +4,7 @@ import * as fs from 'fs';
 import * as path from 'path';
 import { Info, XcodeProjectInfo } from '../types/index.js';
 import { logger } from '@callstack/rnef-tools';
+import { spinner } from '@clack/prompts';
 
 function isErrorLike(err: unknown): err is { message: string } {
   return Boolean(
@@ -41,6 +42,8 @@ export async function getInfo(
   projectInfo: XcodeProjectInfo,
   sourceDir: string
 ): Promise<Info | undefined> {
+  const loader = spinner();
+  loader.start('Gathering Xcode project information');
   if (!projectInfo.isWorkspace) {
     const { stdout } = await spawn('xcodebuild', ['-list', '-json']);
     return parseTargetList(stdout);
@@ -75,13 +78,18 @@ export async function getInfo(
           path.join(sourceDir, location.replace('group:', '')),
         ],
         {
+          cwd: sourceDir,
           stdio: logger.isVerbose() ? 'pipe' : ['ignore', 'pipe', 'inherit'],
         }
       );
       stdout = buildOutput.stdout;
+      logger.debug(stdout);
+      logger.debug(buildOutput.stderr);
+      loader.stop('Gathered Xcode project information.');
     } catch (error) {
-      logger.error(
-        'Failed to get project info. Check the error message above for details.'
+      loader.stop(
+        'Failed to get project info. Check the error message above for details.',
+        1
       );
       throw error;
     }

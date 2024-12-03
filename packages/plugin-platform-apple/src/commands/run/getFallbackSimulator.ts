@@ -1,8 +1,10 @@
 import { Device } from '../../types/index.js';
 import { getDestinationSimulator } from '../../utils/getDestinationSimulator.js';
-import { RunFlags } from './runOptions.js';
 
-export function getFallbackSimulator(args: RunFlags): Device {
+export function getFallbackSimulator(
+  simulator: string | undefined,
+  udid: string | undefined
+): Device {
   /**
    * If provided simulator does not exist, try simulators in following order
    * - iPhone 14
@@ -17,12 +19,16 @@ export function getFallbackSimulator(args: RunFlags): Device {
     'iPhone 12',
     'iPhone 11',
   ];
-  const selectedSimulator = getDestinationSimulator(args, fallbackSimulators);
+  const selectedSimulator = getDestinationSimulator(
+    simulator,
+    udid,
+    fallbackSimulators
+  );
 
   if (!selectedSimulator) {
     throw new Error(
       `No simulator available with ${
-        args.simulator ? `name "${args.simulator}"` : `udid "${args.udid}"`
+        simulator ? `name "${simulator}"` : `udid "${udid}"`
       }`
     );
   }
