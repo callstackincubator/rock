@@ -4,7 +4,7 @@ import { ApplePlatform, XcodeProjectInfo } from '../../types/index.js';
 import { logger } from '@callstack/rnef-tools';
 import { simulatorDestinationMap } from './simulatorDestinationMap.js';
 import { spinner } from '@clack/prompts';
-import spawn from 'nano-spawn';
+import spawn, { SubprocessError } from 'nano-spawn';
 
 export const buildProject = async (
   xcodeProject: XcodeProjectInfo,
@@ -64,19 +64,19 @@ export const buildProject = async (
   );
   logger.debug(`Running "xcodebuild ${xcodebuildArgs.join(' ')}.`);
   try {
-    const { output } = await spawn('xcodebuild', xcodebuildArgs, {
-      // stdio: logger.isVerbose() ? 'inherit' : ['ignore', 'pipe', 'inherit'],
-      stdio: 'pipe',
-    });
+    const { output } = await spawn('xcodebuild', xcodebuildArgs);
     loader.stop(
       `Built the app with xcodebuild for ${scheme} scheme in ${mode} mode.`
     );
     return output;
   } catch (error) {
+    logger.log('');
+    logger.log((error as SubprocessError).stdout);
+    logger.error((error as SubprocessError).stderr);
     loader.stop(
       'Running xcodebuild failed. Check the error message above for details.',
       1
     );
-    throw error;
+    throw new Error('Running xcodebuild failed');
   }
 };

@@ -56,7 +56,7 @@ export async function runOnDevice(
       throw new Error('Failed to get build settings for your project');
     }
 
-    const appPath = await getBuildPath(buildSettings, platform, true);
+    const appPath = getBuildPath(buildSettings, platform, true);
     const appProcess = child_process.spawn(`${appPath}/${scheme}`, [], {
       detached: true,
       stdio: 'ignore',
@@ -85,7 +85,7 @@ export async function runOnDevice(
         throw new Error('Failed to get build settings for your project');
       }
 
-      appPath = await getBuildPath(buildSettings, platform);
+      appPath = getBuildPath(buildSettings, platform);
     } else {
       appPath = args.binaryPath;
     }
