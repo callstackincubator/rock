@@ -1,4 +1,3 @@
-import child_process from 'child_process';
 import { ApplePlatform, Device, XcodeProjectInfo } from '../../types/index.js';
 import { logger } from '@callstack/rnef-tools';
 import color from 'picocolors';
@@ -6,6 +5,7 @@ import { buildProject } from '../build/buildProject.js';
 import { getBuildPath } from './getBuildPath.js';
 import { getBuildSettings } from './getBuildSettings.js';
 import { RunFlags } from './runOptions.js';
+import spawn from 'nano-spawn';
 
 export async function runOnDevice(
   selectedDevice: Device,
@@ -21,13 +21,9 @@ export async function runOnDevice(
     );
   }
 
-  const isIOSDeployInstalled = child_process.spawnSync(
-    'ios-deploy',
-    ['--version'],
-    { encoding: 'utf8' }
-  );
-
-  if (isIOSDeployInstalled.error) {
+  try {
+    await spawn('ios-deploy', ['--version']);
+  } catch {
     throw new Error(
       `Failed to install the app on the device because we couldn't execute the "ios-deploy" command. Please install it by running "${color.bold(
         'brew install ios-deploy'
@@ -57,11 +53,11 @@ export async function runOnDevice(
     }
 
     const appPath = getBuildPath(buildSettings, platform, true);
-    const appProcess = child_process.spawn(`${appPath}/${scheme}`, [], {
+    const appProcess = spawn(`${appPath}/${scheme}`, [], {
       detached: true,
       stdio: 'ignore',
     });
-    appProcess.unref();
+    (await appProcess.nodeChildProcess).unref();
   } else {
     let buildOutput, appPath;
     if (!args.binaryPath) {
@@ -100,15 +96,11 @@ export async function runOnDevice(
 
     logger.info(`Installing and launching your app on ${selectedDevice.name}`);
 
-    const iosDeployOutput = child_process.spawnSync(
-      'ios-deploy',
-      iosDeployInstallArgs,
-      { encoding: 'utf8' }
-    );
-
-    if (iosDeployOutput.error) {
+    try {
+      await spawn('ios-deploy', iosDeployInstallArgs, { stdio: 'inherit' });
+    } catch (error) {
       throw new Error(
-        `Failed to install the app on the device. We've encountered an error in "ios-deploy" command: ${iosDeployOutput.error.message}`
+        `Failed to install the app on the device with "ios-deploy": ${error}`
       );
     }
   }
