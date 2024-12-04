@@ -11,7 +11,6 @@ import fs from 'fs';
 import { logger } from '@callstack/rnef-tools';
 import listDevices from '../../utils/listDevices.js';
 import { promptForDeviceSelection } from '../../utils/prompts.js';
-import { buildProject } from '../build/buildProject.js';
 import { getConfiguration } from '../build/getConfiguration.js';
 import { getFallbackSimulator } from './getFallbackSimulator.js';
 import { getPlatformInfo } from './getPlatformInfo.js';
@@ -24,10 +23,10 @@ import {
   ProjectConfig,
   XcodeProjectInfo,
 } from '../../types/index.js';
-import openApp from './openApp.js';
 import { RunFlags } from './runOptions.js';
 import { selectFromInteractiveMode } from '../../utils/selectFromInteractiveMode.js';
 import { spinner } from '@clack/prompts';
+import { runOnMac } from './runOnMac.js';
 
 export const createRun = async (
   platformName: BuilderCommand['platformName'],
@@ -61,25 +60,7 @@ export const createRun = async (
       );
 
   if (platformName === 'macos') {
-    const buildOutput = await buildProject(
-      xcodeProject,
-      platformName,
-      undefined,
-      scheme,
-      mode,
-      args
-    );
-
-    await openApp({
-      buildOutput,
-      xcodeProject,
-      mode,
-      scheme,
-      target: args.target,
-      binaryPath: args.binaryPath,
-    });
-
-    return;
+    return await runOnMac(xcodeProject, mode, scheme, args);
   }
 
   const loader = spinner();

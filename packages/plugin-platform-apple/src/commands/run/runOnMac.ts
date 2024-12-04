@@ -1,9 +1,36 @@
 import { logger } from '@callstack/rnef-tools';
 import color from 'picocolors';
+import spawn from 'nano-spawn';
 import { getBuildPath } from './getBuildPath.js';
 import { getBuildSettings } from './getBuildSettings.js';
 import { XcodeProjectInfo } from '../../types/index.js';
-import spawn from 'nano-spawn';
+import { buildProject } from '../build/buildProject.js';
+import { RunFlags } from './runOptions.js';
+
+export async function runOnMac(
+  xcodeProject: XcodeProjectInfo,
+  mode: string,
+  scheme: string,
+  args: RunFlags
+) {
+  const buildOutput = await buildProject(
+    xcodeProject,
+    'macos',
+    undefined,
+    scheme,
+    mode,
+    args
+  );
+
+  await openApp({
+    buildOutput,
+    xcodeProject,
+    mode,
+    scheme,
+    target: args.target,
+    binaryPath: args.binaryPath,
+  });
+}
 
 type Options = {
   buildOutput: string;
@@ -14,7 +41,7 @@ type Options = {
   binaryPath?: string;
 };
 
-export default async function openApp({
+async function openApp({
   buildOutput,
   xcodeProject,
   mode,
