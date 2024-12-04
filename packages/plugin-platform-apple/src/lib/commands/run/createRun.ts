@@ -25,7 +25,7 @@ import {
 } from '../../types/index.js';
 import { RunFlags } from './runOptions.js';
 import { selectFromInteractiveMode } from '../../utils/selectFromInteractiveMode.js';
-import { spinner } from '@clack/prompts';
+import { outro, spinner } from '@clack/prompts';
 import { runOnMac } from './runOnMac.js';
 
 export const createRun = async (
@@ -165,6 +165,8 @@ export const createRun = async (
       );
     }
   }
+
+  outro('Success 🎉.');
 };
 
 async function matchingSimulator(
