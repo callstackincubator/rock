@@ -118,7 +118,7 @@ export const createRun = async (
     : args.device
     ? matchingDevice(devices, args.device)
     : args.simulator
-    ? matchingSimulator(devices, platformName, args.simulator, args.udid)
+    ? await matchingSimulator(devices, platformName, args.simulator, args.udid)
     : undefined;
 
   if (device) {
@@ -165,7 +165,12 @@ export const createRun = async (
         'No booted devices or simulators found. Launching first available simulator...'
       );
       bootedSimulators.push(
-        matchingSimulator(devices, platformName, args.simulator, args.udid)
+        await matchingSimulator(
+          devices,
+          platformName,
+          args.simulator,
+          args.udid
+        )
       );
     }
     for (const simulator of bootedSimulators) {
@@ -181,14 +186,14 @@ export const createRun = async (
   }
 };
 
-function matchingSimulator(
+async function matchingSimulator(
   devices: Device[],
   platformName: string,
   simulator: string | undefined,
   udid: string | undefined
 ) {
   return platformName === 'ios'
-    ? getFallbackSimulator(simulator, udid)
+    ? await getFallbackSimulator(simulator, udid)
     : devices[0];
 }
 

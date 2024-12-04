@@ -1,20 +1,9 @@
-import child_process from 'child_process';
 import { logger } from '@callstack/rnef-tools';
 import { getBuildPath } from './getBuildPath.js';
 import { getBuildSettings } from './getBuildSettings.js';
 import path from 'path';
 import { ApplePlatform, XcodeProjectInfo } from '../../types/index.js';
-import spawn from 'nano-spawn';
-
-function handleLaunchResult(
-  success: boolean,
-  errorMessage: string,
-  errorDetails = ''
-) {
-  if (!success) {
-    logger.error(errorMessage, errorDetails);
-  }
-}
+import spawn, { SubprocessError } from 'nano-spawn';
 
 type Options = {
   buildOutput: string;
@@ -83,16 +72,14 @@ export default async function installApp({
 
   logger.debug(`Launching "${bundleID}"`);
 
-  const result = child_process.spawnSync('xcrun', [
-    'simctl',
-    'launch',
-    udid,
-    bundleID,
-  ]);
-
-  handleLaunchResult(
-    result.status === 0,
-    'Failed to launch the app on simulator',
-    result.stderr.toString()
-  );
+  try {
+    await spawn('xcrun', ['simctl', 'launch', udid, bundleID]);
+  } catch (error) {
+    logger.error(
+      `Failed to launch the app on simulator. ${
+        (error as SubprocessError).stderr
+      }`
+    );
+    throw error;
+  }
 }

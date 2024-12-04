@@ -1,4 +1,3 @@
-import child_process from 'child_process';
 import { logger } from '@callstack/rnef-tools';
 import { ApplePlatform, Device, XcodeProjectInfo } from '../../types/index.js';
 import { buildProject } from '../build/buildProject.js';
@@ -29,9 +28,7 @@ export async function runOnSimulator(
    * it will not boot the "default" device, but the one we set. If the app is already running,
    * this flag has no effect.
    */
-  const activeDeveloperDir = child_process
-    .execFileSync('xcode-select', ['-p'], { encoding: 'utf8' })
-    .trim();
+  const { output: activeDeveloperDir } = await spawn('xcode-select', ['-p']);
 
   const loader = spinner();
   loader.start(`Launching Simulator "${simulator.name}"`);

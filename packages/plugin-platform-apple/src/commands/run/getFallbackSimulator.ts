@@ -1,10 +1,9 @@
-import { Device } from '../../types/index.js';
 import { getDestinationSimulator } from '../../utils/getDestinationSimulator.js';
 
-export function getFallbackSimulator(
+export async function getFallbackSimulator(
   simulator: string | undefined,
   udid: string | undefined
-): Device {
+) {
   /**
    * If provided simulator does not exist, try simulators in following order
    * - iPhone 14
@@ -19,7 +18,7 @@ export function getFallbackSimulator(
     'iPhone 12',
     'iPhone 11',
   ];
-  const selectedSimulator = getDestinationSimulator(
+  const selectedSimulator = await getDestinationSimulator(
     simulator,
     udid,
     fallbackSimulators
