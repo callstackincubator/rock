@@ -38,7 +38,7 @@ export async function runOnSimulator(
     '-CurrentDeviceUDID',
     simulator.udid,
   ]);
-  loader.stop(`Launched Simulator "${simulator.name}"`);
+  loader.stop(`Launched Simulator "${simulator.name}".`);
 
   if (simulator.state !== 'Booted') {
     await bootSimulator(simulator);
