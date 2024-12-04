@@ -1,4 +1,4 @@
-import { supportedPlatforms } from './../supportedPlatforms.js';
+import { supportedPlatforms } from '../utils/supportedPlatforms.js';
 
 type ObjectValues<T> = T[keyof T];
 
