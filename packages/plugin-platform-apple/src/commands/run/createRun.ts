@@ -142,6 +142,21 @@ export const createRun = async (
       );
     }
   } else {
+    if (args.device) {
+      logger.warn(
+        `No devices found matching "${args.device}". Falling back to default simulator.`
+      );
+      // setting device to undefined to avoid buildProject to use it
+      args.device = undefined;
+    } else if (args.udid) {
+      logger.warn(
+        `No devices found matching UDID "${args.udid}". Falling back to default simulator.`
+      );
+    } else if (args.simulator) {
+      logger.warn(
+        `No simulator found matching "${args.simulator}". Falling back to default simulator.`
+      );
+    }
     const bootedSimulators = devices.filter(
       ({ state, type }) => state === 'Booted' && type === 'simulator'
     );
