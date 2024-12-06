@@ -82,21 +82,6 @@ export const createRun = async (
     }
     return;
   } else {
-    if (args.device) {
-      logger.warn(
-        `No devices found matching "${args.device}". Falling back to default simulator.`
-      );
-      // setting device to undefined to avoid buildProject to use it
-      args.device = undefined;
-    } else if (args.udid) {
-      logger.warn(
-        `No devices found matching UDID "${args.udid}". Falling back to default simulator.`
-      );
-    } else if (args.simulator) {
-      logger.warn(
-        `No simulator found matching "${args.simulator}". Falling back to default simulator.`
-      );
-    }
     const bootedSimulators = devices.filter(
       ({ state, type }) => state === 'Booted' && type === 'simulator'
     );
@@ -137,20 +122,41 @@ async function selectDevice(
   const packageJsonPath = path.join(projectRoot, 'package.json');
   const { name } = JSON.parse(fs.readFileSync(packageJsonPath, 'utf-8'));
   const preferredDeviceUDID = cacheManager.get(name, 'lastUsedIOSDeviceId');
+  const { simulator, udid, interactive } = args;
 
-  if (args.interactive) {
-    return promptForDeviceSelection(devices);
-  } else if (args.udid) {
-    return devices.find((d) => d.udid === args.udid);
+  let device;
+  if (interactive) {
+    device = await promptForDeviceSelection(devices);
+  } else if (udid) {
+    device = devices.find((d) => d.udid === udid);
   } else if (args.device) {
-    return matchingDevice(devices, args.device);
-  } else if (args.simulator) {
-    return matchingSimulator(devices, platform, args.simulator, args.udid);
+    device = matchingDevice(devices, args.device);
+  } else if (simulator) {
+    device = await matchingSimulator(devices, platform, simulator, udid);
   } else if (preferredDeviceUDID) {
-    return findPreferredDevice(devices, projectRoot);
+    device = findPreferredDevice(devices, projectRoot);
   } else {
-    return undefined;
+    device = undefined;
   }
+
+  if (!device) {
+    if (args.device) {
+      logger.warn(
+        `No devices found matching "${args.device}". Falling back to default simulator.`
+      );
+      // setting device to undefined to avoid buildProject to use it
+      args.device = undefined;
+    } else if (udid) {
+      logger.warn(
+        `No devices found matching UDID "${udid}". Falling back to default simulator.`
+      );
+    } else if (simulator) {
+      logger.warn(
+        `No simulator found matching "${simulator}". Falling back to default simulator.`
+      );
+    }
+  }
+  return device;
 }
 
 function getProjectNameFromPackageJson(projectRoot: string) {
