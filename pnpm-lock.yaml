@@ -292,6 +292,9 @@ importers:
       '@expo/fingerprint':
         specifier: ^0.11.2
         version: 0.11.2
+      appdirsjs:
+        specifier: ^1.2.7
+        version: 1.2.7
       is-unicode-supported:
         specifier: ^2.1.0
         version: 2.1.0
