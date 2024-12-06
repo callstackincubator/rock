@@ -49,6 +49,18 @@ const parseXcdeviceList = (text: string, sdkNames: string[] = []): Device[] => {
   return devices;
 };
 
+async function listSimulators() {
+  const simctlOutput = JSON.parse(
+    (await spawn('xcrun', ['simctl', 'list', '--json', 'devices'])).stdout
+  );
+
+  const simulators: Device[] = Object.keys(simctlOutput.devices)
+    .map((key) => simctlOutput.devices[key])
+    .reduce((acc, val) => acc.concat(val), []);
+
+  return simulators;
+}
+
 /**
  * Executes `xcrun xcdevice list` and `xcrun simctl list --json devices`, and connects parsed output of these two commands. We are running these two commands as they are necessary to display both physical devices and simulators. However, it's important to note that neither command provides a combined output of both.
  * @param sdkNames
@@ -58,13 +70,7 @@ async function listDevices(sdkNames: string[]): Promise<Device[]> {
   const { stdout: xcdeviceOutput } = await spawn('xcrun', ['xcdevice', 'list']);
   const parsedXcdeviceOutput = parseXcdeviceList(xcdeviceOutput, sdkNames);
 
-  const simctlOutput = JSON.parse(
-    (await spawn('xcrun', ['simctl', 'list', '--json', 'devices'])).stdout
-  );
-
-  const parsedSimctlOutput: Device[] = Object.keys(simctlOutput.devices)
-    .map((key) => simctlOutput.devices[key])
-    .reduce((acc, val) => acc.concat(val), []);
+  const parsedSimctlOutput = await listSimulators();
 
   const merged: Device[] = [];
   const matchedUdids = new Set();

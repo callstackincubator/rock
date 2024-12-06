@@ -1,10 +1,10 @@
 import path from 'path';
 import fs from 'fs';
+import isInteractive from 'is-interactive';
 import { logger, cacheManager } from '@callstack/rnef-tools';
 import listDevices from '../../utils/listDevices.js';
 import { promptForDeviceSelection } from '../../utils/prompts.js';
 import { getConfiguration } from '../build/getConfiguration.js';
-import { getFallbackSimulator } from './getFallbackSimulator.js';
 import { getPlatformInfo } from './getPlatformInfo.js';
 import { matchingDevice } from './matchingDevice.js';
 import { runOnDevice } from './runOnDevice.js';
@@ -86,17 +86,26 @@ export const createRun = async (
       ({ state, type }) => state === 'Booted' && type === 'simulator'
     );
     if (bootedSimulators.length === 0) {
-      logger.debug(
-        'No booted devices or simulators found. Launching first available simulator...'
-      );
-      bootedSimulators.push(
-        await matchingSimulator(
-          devices,
-          platformName,
-          args.simulator,
-          args.udid
-        )
-      );
+      // fallback to present all devices when no device is selected
+      if (isInteractive()) {
+        const simulator = await promptForDeviceSelection(devices);
+        bootedSimulators.push(simulator);
+      } else {
+        logger.debug(
+          'No booted devices or simulators found. Launching first available simulator...'
+        );
+        const simulator = devices.filter(
+          (device) => device.type === 'simulator'
+        )[0];
+        if (simulator) {
+          bootedSimulators.push(simulator);
+        } else {
+          logger.error(
+            'No Apple simulators found. Install simulators via Xcode.'
+          );
+          process.exit(1);
+        }
+      }
     }
     for (const simulator of bootedSimulators) {
       await runOnSimulator(
@@ -119,23 +128,17 @@ async function selectDevice(
   projectRoot: string,
   platform: ApplePlatform
 ) {
-  const preferredDevice = findPreferredDevice(devices, projectRoot, platform);
   const { simulator, udid, interactive } = args;
-
-  let device;
+  let device = findPreferredDevice(devices, projectRoot, platform);
   if (interactive) {
     device = await promptForDeviceSelection(devices);
   } else if (udid) {
     device = devices.find((d) => d.udid === udid);
   } else if (args.device) {
-    device = matchingDevice(devices, args.device);
+    device = matchingDevice(devices, args.device, 'device');
   } else if (simulator) {
-    device = await matchingSimulator(devices, platform, simulator, udid);
-  } else if (preferredDevice) {
-    device = preferredDevice;
-  }
-
-  if (!device) {
+    device = matchingDevice(devices, simulator, 'simulator');
+  } else if (!device) {
     if (args.device) {
       logger.warn(
         `No devices found matching "${args.device}". Falling back to default simulator.`
@@ -179,17 +182,6 @@ function findPreferredDevice(
   return devices.find(({ udid }) => udid === cachedUDID);
 }
 
-async function matchingSimulator(
-  devices: Device[],
-  platformName: string,
-  simulator: string | undefined,
-  udid: string | undefined
-) {
-  return platformName === 'ios'
-    ? await getFallbackSimulator(simulator, udid)
-    : devices[0];
-}
-
 function normalizeArgs(
   args: RunFlags,
   projectRoot: string,
@@ -220,5 +212,11 @@ function normalizeArgs(
         `"--binary-path" was specified, but the file was not found at "${args.binaryPath}".`
       );
     }
+  }
+  if (args.interactive && !isInteractive()) {
+    logger.warn(
+      'Interactive mode is not supported in non-interactive environments.'
+    );
+    args.interactive = false;
   }
 }

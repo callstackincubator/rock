@@ -10,6 +10,7 @@ import { outro, cancel } from '@clack/prompts';
 import path from 'path';
 import { selectFromInteractiveMode } from '../../utils/selectFromInteractiveMode.js';
 import { getConfiguration } from './getConfiguration.js';
+import isInteractive from 'is-interactive';
 
 export const createBuild = async (
   platformName: BuilderCommand['platformName'],
@@ -64,5 +65,11 @@ function normalizeArgs(args: BuildFlags, xcodeProject: XcodeProjectInfo) {
       xcodeProject.name,
       path.extname(xcodeProject.name)
     );
+  }
+  if (args.interactive && !isInteractive()) {
+    logger.warn(
+      'Interactive mode is not supported in non-interactive environments.'
+    );
+    args.interactive = false;
   }
 }

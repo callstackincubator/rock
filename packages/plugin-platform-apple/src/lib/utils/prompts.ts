@@ -31,7 +31,7 @@ export async function promptForConfigurationSelection(
 export async function promptForDeviceSelection(devices: Device[]) {
   return checkCancelPrompt<Device>(
     await select({
-      message: 'Select the device / emulator you want to use',
+      message: 'Select the device / simulator you want to use',
       options: devices
         .filter(({ type }) => type === 'device' || type === 'simulator')
         .map((d) => {
