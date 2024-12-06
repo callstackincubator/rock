@@ -10,7 +10,7 @@ import { matchingDevice } from './matchingDevice.js';
 import { runOnDevice } from './runOnDevice.js';
 import { runOnSimulator } from './runOnSimulator.js';
 import {
-  BuilderCommand,
+  ApplePlatform,
   Device,
   ProjectConfig,
   XcodeProjectInfo,
@@ -21,7 +21,7 @@ import { outro, spinner } from '@clack/prompts';
 import { runOnMac } from './runOnMac.js';
 
 export const createRun = async (
-  platformName: BuilderCommand['platformName'],
+  platformName: ApplePlatform,
   projectConfig: ProjectConfig,
   args: RunFlags,
   projectRoot: string
@@ -64,22 +64,7 @@ export const createRun = async (
     );
   }
   loader.stop('Found available devices and simulators.');
-
-  const packageJsonPath = path.join(projectRoot, 'package.json');
-  const { name } = JSON.parse(fs.readFileSync(packageJsonPath, 'utf-8'));
-  const preferredDeviceUDID = cacheManager.get(name, 'lastUsedIOSDeviceId');
-
-  const device = args.interactive
-    ? await promptForDeviceSelection(devices)
-    : args.udid
-    ? devices.find((d) => d.udid === args.udid)
-    : args.device
-    ? matchingDevice(devices, args.device)
-    : args.simulator
-    ? await matchingSimulator(devices, platformName, args.simulator, args.udid)
-    : preferredDeviceUDID
-    ? findPreferredDevice(devices, projectRoot)
-    : undefined;
+  const device = await selectDevice(devices, args, projectRoot, platformName);
 
   if (device) {
     cachePreferredDevice(device, projectRoot);
@@ -142,6 +127,31 @@ export const createRun = async (
 
   outro('Success 🎉.');
 };
+
+async function selectDevice(
+  devices: Device[],
+  args: RunFlags,
+  projectRoot: string,
+  platform: ApplePlatform
+) {
+  const packageJsonPath = path.join(projectRoot, 'package.json');
+  const { name } = JSON.parse(fs.readFileSync(packageJsonPath, 'utf-8'));
+  const preferredDeviceUDID = cacheManager.get(name, 'lastUsedIOSDeviceId');
+
+  if (args.interactive) {
+    return promptForDeviceSelection(devices);
+  } else if (args.udid) {
+    return devices.find((d) => d.udid === args.udid);
+  } else if (args.device) {
+    return matchingDevice(devices, args.device);
+  } else if (args.simulator) {
+    return matchingSimulator(devices, platform, args.simulator, args.udid);
+  } else if (preferredDeviceUDID) {
+    return findPreferredDevice(devices, projectRoot);
+  } else {
+    return undefined;
+  }
+}
 
 function getProjectNameFromPackageJson(projectRoot: string) {
   const packageJsonPath = path.join(projectRoot, 'package.json');
