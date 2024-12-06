@@ -8,6 +8,14 @@ const DIR = getTempDirectory('.rnef/cache');
 const projectName = 'Project1';
 const fullPath = path.join(DIR, projectName);
 
+vi.mock('appdirsjs', async () => {
+  const appdirsjs = await vi.importActual('appdirsjs');
+  // patch discrepancy between importing appdirsjs from tests vs from the module
+  return {
+    default: appdirsjs,
+  };
+});
+
 describe('cacheManager', () => {
   beforeEach(() => {
     vi.restoreAllMocks();
