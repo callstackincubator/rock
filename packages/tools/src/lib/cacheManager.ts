@@ -39,14 +39,12 @@ function saveCache(name: string, cache: Cache) {
  */
 function getCacheRootPath() {
   const legacyPath = path.resolve(os.homedir(), '.rnef', 'cache');
-  // @ts-expect-error appDirs is not callable according to TS, but types seem fine, ignore it
-  const cachePath = appDirs({ appName: 'rnef', legacyPath }).cache;
-
-  if (!fs.existsSync(cachePath)) {
-    fs.mkdirSync(cachePath, { recursive: true });
+  const { cache } = appDirs.default({ appName: 'rnef', legacyPath });
+  
+  if (!fs.existsSync(cache)) {
+    fs.mkdirSync(cache, { recursive: true });
   }
-
-  return cachePath;
+  return cache;
 }
 
 function removeProjectCache(name: string) {

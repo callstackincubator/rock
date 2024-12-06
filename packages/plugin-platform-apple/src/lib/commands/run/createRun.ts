@@ -1,6 +1,6 @@
 import path from 'path';
 import fs from 'fs';
-import { logger } from '@callstack/rnef-tools';
+import { logger, cacheManager } from '@callstack/rnef-tools';
 import listDevices from '../../utils/listDevices.js';
 import { promptForDeviceSelection } from '../../utils/prompts.js';
 import { getConfiguration } from '../build/getConfiguration.js';
@@ -65,24 +65,9 @@ export const createRun = async (
   }
   loader.stop('Found available devices and simulators.');
 
-  // @todo implement cache manager
-  // const packageJson = getPackageJson(ctx.root);
-
-  // const preferredDevice = cacheManager.get(
-  //   packageJson.name,
-  //   'lastUsedIOSDeviceId'
-  // );
-
-  // if (preferredDevice) {
-  //   const preferredDeviceIndex = devices.findIndex(
-  //     ({ udid }) => udid === preferredDevice
-  //   );
-
-  //   if (preferredDeviceIndex > -1) {
-  //     const [device] = devices.splice(preferredDeviceIndex, 1);
-  //     devices.unshift(device);
-  //   }
-  // }
+  const packageJsonPath = path.join(projectRoot, 'package.json');
+  const { name } = JSON.parse(fs.readFileSync(packageJsonPath, 'utf-8'));
+  const preferredDeviceUDID = cacheManager.get(name, 'lastUsedIOSDeviceId');
 
   const device = args.interactive
     ? await promptForDeviceSelection(devices)
@@ -92,11 +77,14 @@ export const createRun = async (
     ? matchingDevice(devices, args.device)
     : args.simulator
     ? await matchingSimulator(devices, platformName, args.simulator, args.udid)
+    : preferredDeviceUDID
+    ? findPreferredDevice(devices, projectRoot)
     : undefined;
 
   if (device) {
+    cachePreferredDevice(device, projectRoot);
     if (device.type === 'simulator') {
-      return runOnSimulator(
+      await runOnSimulator(
         device,
         xcodeProject,
         platformName,
@@ -105,15 +93,9 @@ export const createRun = async (
         args
       );
     } else {
-      return runOnDevice(
-        device,
-        platformName,
-        mode,
-        scheme,
-        xcodeProject,
-        args
-      );
+      await runOnDevice(device, platformName, mode, scheme, xcodeProject, args);
     }
+    return;
   } else {
     if (args.device) {
       logger.warn(
@@ -160,6 +142,22 @@ export const createRun = async (
 
   outro('Success 🎉.');
 };
+
+function getProjectNameFromPackageJson(projectRoot: string) {
+  const packageJsonPath = path.join(projectRoot, 'package.json');
+  return JSON.parse(fs.readFileSync(packageJsonPath, 'utf-8')).name;
+}
+
+function cachePreferredDevice(device: Device, projectRoot: string) {
+  const name = getProjectNameFromPackageJson(projectRoot);
+  cacheManager.set(name, 'lastUsedIOSDeviceId', device.udid);
+}
+
+function findPreferredDevice(devices: Device[], projectRoot: string) {
+  const name = getProjectNameFromPackageJson(projectRoot);
+  const preferredDeviceUDID = cacheManager.get(name, 'lastUsedIOSDeviceId');
+  return devices.find(({ udid }) => udid === preferredDeviceUDID);
+}
 
 async function matchingSimulator(
   devices: Device[],
