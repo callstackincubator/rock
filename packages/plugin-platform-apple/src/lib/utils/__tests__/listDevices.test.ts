@@ -1,319 +1,474 @@
 import spawn from 'nano-spawn';
-import listDevices from '../listDevices.js';
+import fs from 'node:fs';
+import { listDevicesAndSimulators } from '../listDevices.js';
 import { Mock, vi } from 'vitest';
 
 vi.mock('nano-spawn');
+vi.mock('node:fs');
 
 beforeEach(() => {
   (spawn as Mock)
-    .mockResolvedValueOnce({ stdout: xcrunXcdeviceOut })
-    .mockResolvedValueOnce({ stdout: xcrunSimctlOut });
+    .mockResolvedValueOnce({ output: xcrunSimctlOutput })
+    .mockResolvedValueOnce({ output: devicectlOutput });
+
+  vi.mocked(fs).readFileSync.mockReturnValue(devicectlOutput);
 });
 
-const xcrunXcdeviceOut = `
-[
-  {
-    "simulator" : true,
-    "operatingSystemVersion" : "16.0 (20J373)",
-    "available" : true,
-    "platform" : "com.apple.platform.appletvsimulator",
-    "modelCode" : "AppleTV11,1",
-    "identifier" : "F022AD06-DFD3-4B9F-B4DD-3C30E17E7CE6",
-    "architecture" : "arm64",
-    "modelUTI" : "com.apple.apple-tv-4k-2nd",
-    "modelName" : "Apple TV 4K (2nd generation)",
-    "name" : "Apple TV 4K (2nd generation)"
-  },
-  {
-    "simulator" : true,
-    "operatingSystemVersion" : "16.0 (20J373)",
-    "available" : true,
-    "platform" : "com.apple.platform.appletvsimulator",
-    "modelCode" : "AppleTV5,3",
-    "identifier" : "76DB4F99-2EEC-47F4-9DFB-239F2091DFCD",
-    "architecture" : "arm64",
-    "modelUTI" : "com.apple.apple-tv-4",
-    "modelName" : "Apple TV",
-    "name" : "Apple TV"
-  },
-  {
-    "simulator" : true,
-    "operatingSystemVersion" : "16.0 (20A360)",
-    "available" : true,
-    "platform" : "com.apple.platform.iphonesimulator",
-    "modelCode" : "iPhone14,8",
-    "identifier" : "A88CFA2A-05C8-44EE-9B67-7AEFE1624E2F",
-    "architecture" : "arm64",
-    "modelUTI" : "com.apple.iphone-14-plus-1",
-    "modelName" : "iPhone 14 Plus",
-    "name" : "iPhone 14 Plus"
-  },
-  {
-    "simulator" : true,
-    "operatingSystemVersion" : "16.0 (20A360)",
-    "available" : true,
-    "platform" : "com.apple.platform.iphonesimulator",
-    "modelCode" : "iPhone14,6",
-    "identifier" : "1202C373-7381-433C-84FA-EF6741078CC1",
-    "architecture" : "arm64",
-    "modelUTI" : "com.apple.iphone-se3-1",
-    "modelName" : "iPhone SE (3rd generation)",
-    "name" : "iPhone SE (3rd generation)"
-  },
-  {
-    "simulator" : true,
-    "operatingSystemVersion" : "17.0 (21A328)",
-    "available" : true,
-    "platform" : "com.apple.platform.iphonesimulator",
-    "modelCode" : "iPhone16,2",
-    "identifier" : "B3D623E3-9907-4E0A-B76B-13B13A47FE92",
-    "architecture" : "arm64",
-    "modelUTI" : "com.apple.iphone-15-pro-max-1",
-    "modelName" : "iPhone 15 Pro Max",
-    "name" : "iPhone 15 Pro Max",
-    "ignored" : false
-  },
-  {
-    "simulator" : false,
-    "operatingSystemVersion" : "13.0.1 (22A400)",
-    "interface" : "usb",
-    "available" : true,
-    "platform" : "com.apple.platform.macosx",
-    "modelCode" : "MacBookPro18,1",
-    "identifier" : "11111111-131230917230918374",
-    "architecture" : "arm64e",
-    "modelUTI" : "com.apple.macbookpro-16-2021",
-    "modelName" : "MacBook Pro",
-    "name" : "My Mac"
-  },
-  {
-    "simulator" : true,
-    "operatingSystemVersion" : "16.0 (20A360)",
-    "available" : true,
-    "platform" : "com.apple.platform.iphonesimulator",
-    "modelCode" : "iPhone14,7",
-    "identifier" : "D83F179F-6C0B-45BA-9104-45397BA3FFB9",
-    "architecture" : "arm64",
-    "modelUTI" : "com.apple.iphone-14-1",
-    "modelName" : "iPhone 14",
-    "name" : "iPhone 14"
-  },
-  {
-    "simulator" : true,
-    "operatingSystemVersion" : "16.0 (20J373)",
-    "available" : true,
-    "platform" : "com.apple.platform.appletvsimulator",
-    "modelCode" : "AppleTV11,1",
-    "identifier" : "D1DD7196-8ADE-445B-9BD8-B1FE8CE2FAFB",
-    "architecture" : "arm64",
-    "modelUTI" : "com.apple.apple-tv-4k-2nd",
-    "modelName" : "Apple TV 4K (at 1080p) (2nd generation)",
-    "name" : "Apple TV 4K (at 1080p) (2nd generation)"
-  },
-  {
-    "modelCode" : "iPhone12,1",
-    "simulator" : false,
-    "modelName" : "iPhone 11",
-    "error" : {
-      "code" : 6,
-      "failureReason" : "",
-      "underlyingErrors" : [
-        {
-          "code" : 4,
-          "failureReason" : "",
-          "description" : "Adam’s iPhone is locked.",
-          "recoverySuggestion" : "To use Adam’s iPhone with Xcode, unlock it.",
-          "domain" : "DVTDeviceIneligibilityErrorDomain"
-        }
-      ],
-      "description" : "To use Adam’s iPhone for development, enable Developer Mode in Settings → Privacy & Security.",
-      "recoverySuggestion" : "",
-      "domain" : "DVTDeviceIneligibilityErrorDomain"
-    },
-    "operatingSystemVersion" : "16.2 (20C65)",
-    "identifier" : "1234567890-0987654321",
-    "platform" : "com.apple.platform.iphoneos",
-    "architecture" : "arm64e",
-    "interface" : "usb",
-    "available" : false,
-    "name" : "Adam’s iPhone",
-    "modelUTI" : "com.apple.iphone-11-2"
-  },
-  {
-    "modelCode" : "AppleTV11,1",
-    "simulator" : false,
-    "modelName" : "Apple TV 4K (2nd generation)",
-    "error" : {
-      "code" : -13,
-      "failureReason" : "",
-      "underlyingErrors" : [
-        {
-          "code" : 4,
-          "failureReason" : "",
-          "description" : "Living Room is locked.",
-          "recoverySuggestion" : "To use Living Room with Xcode, unlock it.",
-          "domain" : "DVTDeviceIneligibilityErrorDomain"
-        }
-      ],
-      "description" : "Living Room is not connected",
-      "recoverySuggestion" : "Xcode will continue when Living Room is connected and unlocked.",
-      "domain" : "com.apple.platform.iphoneos"
-    },
-    "operatingSystemVersion" : "16.1 (20K71)",
-    "identifier" : "7656fbf922891c8a2c7682c9d845eaa6954c24d8",
-    "platform" : "com.apple.platform.appletvos",
-    "architecture" : "arm64e",
-    "interface" : "usb",
-    "available" : false,
-    "name" : "Living Room",
-    "modelUTI" : "com.apple.apple-tv-4k-2nd"
-  }
-]
-`;
-
-const xcrunSimctlOut = `
+const devicectlOutput = `
 {
-  "devices" : {
-    "com.apple.CoreSimulator.SimRuntime.iOS-16-2" : [
+  "info" : {
+    "arguments" : [
+      "devicectl",
+      "list",
+      "devices",
+      "-j",
+      "./tmp.json"
+    ],
+    "commandType" : "devicectl.list.devices",
+    "environment" : {
+      "TERM" : "xterm-256color"
+    },
+    "jsonVersion" : 2,
+    "outcome" : "success",
+    "version" : "397.21"
+  },
+  "result" : {
+    "devices" : [
       {
-        "lastBootedAt" : "2023-05-09T11:08:32Z",
-        "dataPath" : "<REPLACED_ROOT>/Library/Developer/CoreSimulator/Devices/54B1D3DE-A943-4867-BA6A-B82BFE3A7904/data",
-        "dataPathSize" : 4630163456,
-        "logPath" : "<REPLACED_ROOT>/Library/Logs/CoreSimulator/54B1D3DE-A943-4867-BA6A-B82BFE3A7904",
-        "udid" : "54B1D3DE-A943-4867-BA6A-B82BFE3A7904",
-        "isAvailable" : false,
-        "availabilityError" : "runtime profile not found using System match policy",
-        "deviceTypeIdentifier" : "com.apple.CoreSimulator.SimDeviceType.iPhone-14",
-        "state" : "Shutdown",
-        "name" : "iPhone 14"
+        "capabilities" : [
+          {
+            "featureIdentifier" : "com.apple.coredevice.feature.unpairdevice",
+            "name" : "Unpair Device"
+          }
+        ],
+        "connectionProperties" : {
+          "authenticationType" : "manualPairing",
+          "isMobileDeviceOnly" : false,
+          "lastConnectionDate" : "2024-07-19T19:07:40.777Z",
+          "pairingState" : "paired",
+          "potentialHostnames" : [
+            "00008112-000C18C00C41A01E.coredevice.local",
+            "3574FE69-1FBC-4320-9B68-6B21B329CF4E.coredevice.local"
+          ],
+          "tunnelState" : "unavailable"
+        },
+        "deviceProperties" : {
+          "bootedFromSnapshot" : true,
+          "bootedSnapshotName" : "com.apple.os.update-B85E7A526BAA709A717F05DFCE553E04A25314E75507FA8B1BC0388CA5060AD5",
+          "ddiServicesAvailable" : false,
+          "developerModeStatus" : "enabled",
+          "hasInternalOSBuild" : false,
+          "name" : "Apple Vision Pro",
+          "osBuildUpdate" : "21O589",
+          "osVersionNumber" : "1.2",
+          "rootFileSystemIsWritable" : false
+        },
+        "hardwareProperties" : {
+          "cpuType" : {
+            "name" : "arm64e",
+            "subType" : 2,
+            "type" : 16777228
+          },
+          "deviceType" : "realityDevice",
+          "ecid" : 3404912838942750,
+          "hardwareModel" : "N301AP",
+          "internalStorageCapacity" : 256000000000,
+          "isProductionFused" : true,
+          "marketingName" : "Apple Vision Pro",
+          "platform" : "xrOS",
+          "productType" : "RealityDevice14,1",
+          "reality" : "physical",
+          "serialNumber" : "TJ45F0V6HY",
+          "supportedCPUTypes" : [
+            {
+              "name" : "arm64e",
+              "subType" : 2,
+              "type" : 16777228
+            },
+            {
+              "name" : "arm64",
+              "subType" : 0,
+              "type" : 16777228
+            },
+            {
+              "name" : "arm64",
+              "subType" : 1,
+              "type" : 16777228
+            },
+            {
+              "name" : "arm64_32",
+              "subType" : 1,
+              "type" : 33554444
+            }
+          ],
+          "supportedDeviceFamilies" : [
+            1,
+            2,
+            7
+          ],
+          "thinningProductType" : "RealityDevice14,1",
+          "udid" : "00008112-000C18C00C41A01E"
+        },
+        "identifier" : "3574FE69-1FBC-4320-9B68-6B21B329CF4E",
+        "tags" : [
+
+        ],
+        "visibilityClass" : "default"
       },
       {
-        "lastBootedAt" : "2024-01-07T15:33:06Z",
-        "dataPath" : "<REPLACED_ROOT>/Library/Developer/CoreSimulator/Devices/B3D623E3-9907-4E0A-B76B-13B13A47FE92/data",
-        "dataPathSize" : 4181225472,
-        "logPath" : "<REPLACED_ROOT>/Library/Logs/CoreSimulator/B3D623E3-9907-4E0A-B76B-13B13A47FE92",
-        "udid" : "B3D623E3-9907-4E0A-B76B-13B13A47FE92",
-        "isAvailable" : true,
-        "logPathSize" : 745472,
-        "deviceTypeIdentifier" : "com.apple.CoreSimulator.SimDeviceType.iPhone-15-Pro-Max",
-        "state" : "Shutdown",
-        "name" : "iPhone 15 Pro Max"
+        "capabilities" : [
+          {
+            "featureIdentifier" : "com.apple.coredevice.feature.installroot",
+            "name" : "Install Root"
+          },
+          {
+            "featureIdentifier" : "com.apple.coredevice.feature.installapp",
+            "name" : "Install Application"
+          },
+          {
+            "featureIdentifier" : "com.apple.dt.profile",
+            "name" : "Service Hub Profile"
+          },
+          {
+            "featureIdentifier" : "com.apple.coredevice.feature.debugserverproxy",
+            "name" : "com.apple.internal.dt.remote.debugproxy"
+          },
+          {
+            "featureIdentifier" : "com.apple.coredevice.feature.uninstallroot",
+            "name" : "Uninstall Root"
+          },
+          {
+            "featureIdentifier" : "com.apple.coredevice.feature.fetchappicons",
+            "name" : "Fetch Application Icons"
+          },
+          {
+            "featureIdentifier" : "com.apple.coredevice.feature.disableddiservices",
+            "name" : "Disable Developer Disk Image Services"
+          },
+          {
+            "featureIdentifier" : "com.apple.coredevice.feature.unpairdevice",
+            "name" : "Unpair Device"
+          },
+          {
+            "featureIdentifier" : "Cryptex1",
+            "name" : "com.apple.security.cryptexd.remote"
+          },
+          {
+            "featureIdentifier" : "ReadIdentifiers",
+            "name" : "com.apple.security.cryptexd.remote"
+          },
+          {
+            "featureIdentifier" : "com.apple.coredevice.feature.listapps",
+            "name" : "List Applications"
+          },
+          {
+            "featureIdentifier" : "com.apple.coredevice.feature.transferFiles",
+            "name" : "Transfer Files"
+          },
+          {
+            "featureIdentifier" : "com.apple.coredevice.feature.spawnexecutable",
+            "name" : "Spawn Executable"
+          },
+          {
+            "featureIdentifier" : "CryptexInstall",
+            "name" : "com.apple.security.cryptexd.remote"
+          },
+          {
+            "featureIdentifier" : "com.apple.coredevice.feature.listprocesses",
+            "name" : "List Processes"
+          },
+          {
+            "featureIdentifier" : "com.apple.coredevice.feature.querymobilegestalt",
+            "name" : "Query MobileGestalt"
+          },
+          {
+            "featureIdentifier" : "com.apple.coredevice.feature.listroots",
+            "name" : "List Roots"
+          },
+          {
+            "featureIdentifier" : "com.apple.coredevice.feature.getlockstate",
+            "name" : "Get Lock State"
+          },
+          {
+            "featureIdentifier" : "com.apple.coredevice.feature.sendmemorywarningtoprocess",
+            "name" : "Send Memory Warning to Process"
+          },
+          {
+            "featureIdentifier" : "com.apple.coredevice.feature.acquireusageassertion",
+            "name" : "Acquire Usage Assertion"
+          },
+          {
+            "featureIdentifier" : "com.apple.coredevice.feature.rebootdevice",
+            "name" : "Reboot Device"
+          },
+          {
+            "featureIdentifier" : "com.apple.coredevice.feature.viewdevicescreen",
+            "name" : "View Device Screen"
+          },
+          {
+            "featureIdentifier" : "com.apple.coredevice.feature.capturesysdiagnose",
+            "name" : "Capture Sysdiagnose"
+          },
+          {
+            "featureIdentifier" : "com.apple.coredevice.feature.fetchddimetadata",
+            "name" : "Fetch Developer Disk Image Services Metadata"
+          },
+          {
+            "featureIdentifier" : "com.apple.coredevice.feature.getdisplayinfo",
+            "name" : "Get Display Information"
+          },
+          {
+            "featureIdentifier" : "com.apple.coredevice.feature.launchapplication",
+            "name" : "Launch Application"
+          },
+          {
+            "featureIdentifier" : "com.apple.coredevice.feature.monitorprocesstermination",
+            "name" : "Monitor Process for Termination"
+          },
+          {
+            "featureIdentifier" : "com.apple.coredevice.feature.uninstallapp",
+            "name" : "Uninstall Application"
+          },
+          {
+            "featureIdentifier" : "com.apple.coredevice.feature.sendsignaltoprocess",
+            "name" : "Send Signal to Process"
+          },
+          {
+            "featureIdentifier" : "Cryptex1,UseProductClass",
+            "name" : "com.apple.security.cryptexd.remote"
+          },
+          {
+            "featureIdentifier" : "com.apple.coredevice.feature.disconnectdevice",
+            "name" : "Disconnect from Device"
+          },
+          {
+            "featureIdentifier" : "com.apple.dt.remoteFetchSymbols.dyldSharedCacheFiles",
+            "name" : "com.apple.dt.remoteFetchSymbols"
+          },
+          {
+            "featureIdentifier" : "com.apple.coredevice.feature.getdeviceinfo",
+            "name" : "Fetch Extended Device Info"
+          }
+        ],
+        "connectionProperties" : {
+          "authenticationType" : "manualPairing",
+          "isMobileDeviceOnly" : false,
+          "lastConnectionDate" : "2024-12-06T16:55:38.466Z",
+          "localHostnames" : [
+            "my-iphone.coredevice.local",
+            "00008110-00015D4E1439801E.coredevice.local",
+            "6DEA7AA0-E7CE-4C2F-8706-43464FA2910D.coredevice.local"
+          ],
+          "pairingState" : "paired",
+          "potentialHostnames" : [
+            "00008110-00015D4E1439801E.coredevice.local",
+            "6DEA7AA0-E7CE-4C2F-8706-43464FA2910D.coredevice.local"
+          ],
+          "transportType" : "wired",
+          "tunnelIPAddress" : "fdff:c3b9:12b0::1",
+          "tunnelState" : "connected",
+          "tunnelTransportProtocol" : "tcp"
+        },
+        "deviceProperties" : {
+          "bootState" : "booted",
+          "bootedFromSnapshot" : true,
+          "bootedSnapshotName" : "com.apple.os.update-027C9D77AFE10465E45B92DDB1AD85D8F116B64C443515AE9667312B17B3FFBC",
+          "ddiServicesAvailable" : true,
+          "developerModeStatus" : "enabled",
+          "hasInternalOSBuild" : false,
+          "name" : "my-iphone",
+          "osBuildUpdate" : "22B91",
+          "osVersionNumber" : "18.1.1",
+          "rootFileSystemIsWritable" : false,
+          "screenViewingURL" : "devices://device/open?id=6DEA7AA0-E7CE-4C2F-8706-43464FA2910D"
+        },
+        "hardwareProperties" : {
+          "cpuType" : {
+            "name" : "arm64e",
+            "subType" : 2,
+            "type" : 16777228
+          },
+          "deviceType" : "iPhone",
+          "ecid" : 384064904855582,
+          "hardwareModel" : "D63AP",
+          "internalStorageCapacity" : 128000000000,
+          "isProductionFused" : true,
+          "marketingName" : "iPhone 13 Pro",
+          "platform" : "iOS",
+          "productType" : "iPhone14,2",
+          "reality" : "physical",
+          "serialNumber" : "TXH6V2HLJQ",
+          "supportedCPUTypes" : [
+            {
+              "name" : "arm64e",
+              "subType" : 2,
+              "type" : 16777228
+            },
+            {
+              "name" : "arm64",
+              "subType" : 0,
+              "type" : 16777228
+            },
+            {
+              "name" : "arm64",
+              "subType" : 1,
+              "type" : 16777228
+            },
+            {
+              "name" : "arm64_32",
+              "subType" : 1,
+              "type" : 33554444
+            }
+          ],
+          "supportedDeviceFamilies" : [
+            1
+          ],
+          "thinningProductType" : "iPhone14,2",
+          "udid" : "00008110-00015D4E1439801E"
+        },
+        "identifier" : "6DEA7AA0-E7CE-4C2F-8706-43464FA2910D",
+        "tags" : [
+
+        ],
+        "visibilityClass" : "default"
       }
     ]
   }
-}`;
+}
+`;
+
+const xcrunSimctlOutput = `
+== Devices ==
+-- iOS 18.0 --
+    iPhone SE (3rd generation) (3339B733-4E3C-4916-AF02-1C43E1C769B2) (Shutdown)
+    iPhone 16 Pro (8E64D38C-2345-434D-AD46-DF092B4E2FDB) (Booted)
+    iPhone 16 Pro Max (848948C1-8494-4331-B7DE-FB380E30B310) (Shutdown)
+    iPhone 16 (DAF2A92E-0762-4443-9A1F-B06CAC58216D) (Shutdown)
+    iPhone 16 Plus (2F1CFD88-6581-4425-9902-F452EF2CB5A1) (Shutdown)
+    iPad (10th generation) (371F39BD-DFB4-41C8-A9BD-90527EED67E2) (Shutdown)
+    iPad mini (6th generation) (229FF073-6A31-4F03-85D0-4D5DE02192E2) (Shutdown)
+    iPad Air 13-inch (M2) (386C48E3-EAB5-47CA-9EA8-AD3A2A4AAB7F) (Shutdown)
+    iPad Pro 13-inch (M4) (0C80D473-0072-4932-9C51-5E0ADB7ACE06) (Shutdown)
+-- tvOS 18.0 --
+    Apple TV (EF1F361A-F7B7-4859-BF4F-877BAF4836F2) (Shutdown)
+    Apple TV 4K (3rd generation) (9D35F2F1-CA5B-4B17-8F7C-4D12308FB482) (Shutdown)
+    Apple TV 4K (3rd generation) (at 1080p) (02A843C5-225C-456D-BFC1-F5B1F5565FDD) (Shutdown)
+-- visionOS 1.1 --
+-- visionOS 2.0 --
+    Apple Vision Pro (8F741C32-632F-4E2F-B7D8-4CB8DDB8B888) (Shutdown)
+-- Unavailable: com.apple.CoreSimulator.SimRuntime.iOS-15-2 --
+-- Unavailable: com.apple.CoreSimulator.SimRuntime.iOS-15-4 --
+`;
 
 describe('listDevices', () => {
-  it('parses output list for iOS', async () => {
-    const devices = await listDevices(['iphoneos', 'iphonesimulator']);
-
-    // Find all available simulators
-    expect(devices).toContainEqual({
-      isAvailable: true,
-      name: 'iPhone 14 Plus',
-      udid: 'A88CFA2A-05C8-44EE-9B67-7AEFE1624E2F',
-      sdk: 'com.apple.platform.iphonesimulator',
-      version: '16.0 (20A360)',
-      availabilityError: undefined,
-      type: 'simulator',
-    });
-    expect(devices).toContainEqual({
-      name: 'iPhone SE (3rd generation)',
-      isAvailable: true,
-      udid: '1202C373-7381-433C-84FA-EF6741078CC1',
-      sdk: 'com.apple.platform.iphonesimulator',
-      version: '16.0 (20A360)',
-      availabilityError: undefined,
-      type: 'simulator',
-    });
-
-    // Filter out AppleTV
-    expect(devices).not.toContainEqual({
-      isAvailable: false,
-      name: 'Living Room',
-      udid: '7656fbf922891c8a2c7682c9d845eaa6954c24d8',
-      version: '16.1 (20K71)',
-      sdk: 'com.apple.platform.appletvos',
-      availabilityError: 'Living Room is not connected',
-      type: 'device',
-    });
-    expect(devices).not.toContainEqual({
-      isAvailable: true,
-      name: 'Apple TV 4K (2nd generation)',
-      udid: 'F022AD06-DFD3-4B9F-B4DD-3C30E17E7CE6',
-      sdk: 'com.apple.platform.appletvsimulator',
-      version: '16.0 (20J373)',
-      availabilityError: undefined,
-      type: 'simulator',
-    });
-    // Filter out macOS
-    expect(devices).not.toContainEqual({
-      isAvailable: true,
-      name: 'My Mac',
-      udid: '11111111-131230917230918374',
-      version: '13.0.1 (22A400)',
-      availabilityError: undefined,
-      type: 'device',
-    });
-  });
-
-  it('parses output for tvOS', async () => {
-    const devices = await listDevices(['appletvos', 'appletvsimulator']);
-
-    // Filter out all available simulators
-    expect(devices).not.toContainEqual({
-      isAvailable: true,
-      name: 'iPhone 14 Plus',
-      udid: 'A88CFA2A-05C8-44EE-9B67-7AEFE1624E2F',
-      sdk: 'com.apple.platform.iphonesimulator',
-      version: '16.0 (20A360)',
-      availabilityError: undefined,
-      type: 'simulator',
-    });
-
-    // Find AppleTV
-    expect(devices).toContainEqual({
-      isAvailable: true,
-      name: 'Apple TV 4K (2nd generation)',
-      udid: 'F022AD06-DFD3-4B9F-B4DD-3C30E17E7CE6',
-      sdk: 'com.apple.platform.appletvsimulator',
-      version: '16.0 (20J373)',
-      availabilityError: undefined,
-      type: 'simulator',
-    });
-
-    // Filter out macOS
-    expect(devices).not.toContainEqual({
-      isAvailable: true,
-      name: 'My Mac',
-      udid: '11111111-131230917230918374',
-      version: '13.0.1 (22A400)',
-      availabilityError: undefined,
-      type: 'device',
-    });
-  });
-
-  it('parses and merges output from two commands', async () => {
-    const devices = await listDevices(['iphoneos', 'iphonesimulator']);
-
-    expect(devices).toContainEqual({
-      availabilityError: undefined,
-      dataPath:
-        '<REPLACED_ROOT>/Library/Developer/CoreSimulator/Devices/B3D623E3-9907-4E0A-B76B-13B13A47FE92/data',
-      dataPathSize: 4181225472,
-      deviceTypeIdentifier:
-        'com.apple.CoreSimulator.SimDeviceType.iPhone-15-Pro-Max',
-      isAvailable: true,
-      lastBootedAt: '2024-01-07T15:33:06Z',
-      logPath:
-        '<REPLACED_ROOT>/Library/Logs/CoreSimulator/B3D623E3-9907-4E0A-B76B-13B13A47FE92',
-      logPathSize: 745472,
-      name: 'iPhone 15 Pro Max',
-      sdk: 'com.apple.platform.iphonesimulator',
-      state: 'Shutdown',
-      type: 'simulator',
-      udid: 'B3D623E3-9907-4E0A-B76B-13B13A47FE92',
-      version: '17.0 (21A328)',
-    });
+  it('outputs a list of available devices and simulators', async () => {
+    const devices = await listDevicesAndSimulators();
+    expect(devices).toEqual([
+      {
+        name: 'iPhone SE (3rd generation)',
+        udid: '3339B733-4E3C-4916-AF02-1C43E1C769B2',
+        version: 'iOS 18.0',
+        state: 'Shutdown',
+        type: 'simulator',
+      },
+      {
+        name: 'iPhone 16 Pro',
+        udid: '8E64D38C-2345-434D-AD46-DF092B4E2FDB',
+        version: 'iOS 18.0',
+        state: 'Booted',
+        type: 'simulator',
+      },
+      {
+        name: 'iPhone 16 Pro Max',
+        udid: '848948C1-8494-4331-B7DE-FB380E30B310',
+        version: 'iOS 18.0',
+        state: 'Shutdown',
+        type: 'simulator',
+      },
+      {
+        name: 'iPhone 16',
+        udid: 'DAF2A92E-0762-4443-9A1F-B06CAC58216D',
+        version: 'iOS 18.0',
+        state: 'Shutdown',
+        type: 'simulator',
+      },
+      {
+        name: 'iPhone 16 Plus',
+        udid: '2F1CFD88-6581-4425-9902-F452EF2CB5A1',
+        version: 'iOS 18.0',
+        state: 'Shutdown',
+        type: 'simulator',
+      },
+      {
+        name: 'iPad (10th generation)',
+        udid: '371F39BD-DFB4-41C8-A9BD-90527EED67E2',
+        version: 'iOS 18.0',
+        state: 'Shutdown',
+        type: 'simulator',
+      },
+      {
+        name: 'iPad mini (6th generation)',
+        udid: '229FF073-6A31-4F03-85D0-4D5DE02192E2',
+        version: 'iOS 18.0',
+        state: 'Shutdown',
+        type: 'simulator',
+      },
+      {
+        name: 'iPad Air 13-inch (M2)',
+        udid: '386C48E3-EAB5-47CA-9EA8-AD3A2A4AAB7F',
+        version: 'iOS 18.0',
+        state: 'Shutdown',
+        type: 'simulator',
+      },
+      {
+        name: 'iPad Pro 13-inch (M4)',
+        udid: '0C80D473-0072-4932-9C51-5E0ADB7ACE06',
+        version: 'iOS 18.0',
+        state: 'Shutdown',
+        type: 'simulator',
+      },
+      {
+        name: 'Apple TV',
+        udid: 'EF1F361A-F7B7-4859-BF4F-877BAF4836F2',
+        version: 'tvOS 18.0',
+        state: 'Shutdown',
+        type: 'simulator',
+      },
+      {
+        name: 'Apple TV 4K (3rd generation)',
+        udid: '9D35F2F1-CA5B-4B17-8F7C-4D12308FB482',
+        version: 'tvOS 18.0',
+        state: 'Shutdown',
+        type: 'simulator',
+      },
+      {
+        name: 'Apple TV 4K (3rd generation) (at 1080p)',
+        udid: '02A843C5-225C-456D-BFC1-F5B1F5565FDD',
+        version: 'tvOS 18.0',
+        state: 'Shutdown',
+        type: 'simulator',
+      },
+      {
+        name: 'Apple Vision Pro',
+        udid: '8F741C32-632F-4E2F-B7D8-4CB8DDB8B888',
+        version: 'visionOS 2.0',
+        state: 'Shutdown',
+        type: 'simulator',
+      },
+      {
+        name: 'Apple Vision Pro',
+        udid: '00008112-000C18C00C41A01E',
+        version: 'xrOS 1.2',
+        state: 'Shutdown',
+        type: 'device',
+      },
+      {
+        name: 'my-iphone',
+        udid: '00008110-00015D4E1439801E',
+        version: 'iOS 18.1.1',
+        state: 'Booted',
+        type: 'device',
+      },
+    ]);
   });
 });

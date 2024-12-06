@@ -2,7 +2,7 @@ import path from 'path';
 import fs from 'fs';
 import isInteractive from 'is-interactive';
 import { logger } from '@callstack/rnef-tools';
-import listDevices from '../../utils/listDevices.js';
+import { listDevicesAndSimulators } from '../../utils/listDevices.js';
 import { promptForDeviceSelection } from '../../utils/prompts.js';
 import { getConfiguration } from '../build/getConfiguration.js';
 import { getPlatformInfo } from '../../utils/getPlatformInfo.js';
@@ -26,9 +26,7 @@ export const createRun = async (
   args: RunFlags,
   projectRoot: string
 ) => {
-  const { sdkNames, readableName: platformReadableName } =
-    getPlatformInfo(platformName);
-
+  const { readableName: platformReadableName } = getPlatformInfo(platformName);
   const { xcodeProject, sourceDir } = projectConfig;
 
   if (!xcodeProject) {
@@ -57,14 +55,14 @@ export const createRun = async (
 
   const loader = spinner();
   loader.start('Looking for available devices and simulators');
-  const devices = await listDevices(sdkNames);
+  const devices = await listDevicesAndSimulators();
   if (devices.length === 0) {
     return logger.error(
       `${platformReadableName} devices or simulators not detected. Install simulators via Xcode or connect a physical ${platformReadableName} device`
     );
   }
   loader.stop('Found available devices and simulators.');
-  const device = await selectDevice(devices, args, projectRoot, platformName);
+  const device = await selectDevice(devices, args, platformName);
 
   if (device) {
     if (device.type === 'simulator') {
@@ -124,7 +122,6 @@ export const createRun = async (
 async function selectDevice(
   devices: Device[],
   args: RunFlags,
-  projectRoot: string,
   platform: ApplePlatform
 ) {
   const { simulator, udid, interactive } = args;

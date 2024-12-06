@@ -1,6 +1,7 @@
 import { select } from '@clack/prompts';
-import { Device } from '../types/index.js';
+import color from 'picocolors';
 import { checkCancelPrompt } from '@callstack/rnef-tools';
+import { Device } from '../types/index.js';
 
 export async function promptForSchemeSelection(schemes: string[]) {
   return checkCancelPrompt<string>(
@@ -32,24 +33,13 @@ export async function promptForDeviceSelection(devices: Device[]) {
   return checkCancelPrompt<Device>(
     await select({
       message: 'Select the device / simulator you want to use',
-      options: devices
-        .filter(({ type }) => type === 'device' || type === 'simulator')
-        .map((d) => {
-          const availability =
-            !d.isAvailable && !!d.availabilityError
-              ? `(unavailable - ${d.availabilityError})`
-              : '';
-
-          return {
-            label: `${d.name}${getVersionFromDevice(d)} ${availability}`,
-            value: d,
-            disabled: !d.isAvailable,
-          };
-        }),
+      options: devices.map((d) => {
+        const markDevice = d.type === 'device' ? ` - (physical device)` : '';
+        return {
+          label: `${d.name} ${color.dim(`(${d.version})${markDevice}`)}`,
+          value: d,
+        };
+      }),
     })
   );
-}
-
-function getVersionFromDevice({ version }: Device) {
-  return version ? ` (${version.match(/^(\d+\.\d+)/)?.[1]})` : '';
 }

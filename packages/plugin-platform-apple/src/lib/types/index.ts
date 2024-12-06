@@ -7,14 +7,9 @@ export type ApplePlatform = ObjectValues<typeof supportedPlatforms>;
 export interface Device {
   name: string;
   udid: string;
-  state?: string;
-  availability?: string;
-  isAvailable?: boolean;
-  version?: string;
-  sdk?: string;
-  availabilityError?: string;
-  type?: DeviceType;
-  lastBootedAt?: string;
+  version: string;
+  type: DeviceType;
+  state?: 'Booted' | 'Shutdown';
 }
 
 export type DeviceType = 'simulator' | 'device' | 'catalyst';

@@ -1,103 +1,110 @@
+import os from 'node:os';
+import fs from 'node:fs';
+import path from 'node:path';
 import spawn from 'nano-spawn';
 import type { Device } from '../types/index.js';
 
-type DeviceOutput = {
-  modelCode: string;
-  simulator: boolean;
-  modelName: string;
-  error: {
-    code: number;
-    failureReason: string;
-    underlyingErrors: [
-      {
-        code: number;
-        failureReason: string;
-        description: string;
-        recoverySuggestion: string;
-        domain: string;
-      }
-    ];
-    description: string;
-    recoverySuggestion: string;
-    domain: string;
+type DevicectlOutput = {
+  capabilities: object[];
+  connectionProperties: object;
+  deviceProperties: {
+    bootedFromSnapshot: boolean;
+    bootedSnapshotName: string;
+    ddiServicesAvailable: boolean;
+    developerModeStatus: string;
+    hasInternalOSBuild: boolean;
+    name: string;
+    osBuildUpdate: string;
+    osVersionNumber: string;
+    rootFileSystemIsWritable: boolean;
+    bootState?: string;
+    screenViewingURL?: string;
   };
-  operatingSystemVersion: string;
+  hardwareProperties: {
+    cpuType: object;
+    deviceType: string;
+    ecid: number;
+    hardwareModel: string;
+    internalStorageCapacity: number;
+    isProductionFused: boolean;
+    marketingName: string;
+    platform: string;
+    productType: string;
+    reality: string;
+    serialNumber: string;
+    supportedCPUTypes: object[];
+    supportedDeviceFamilies: number[];
+    thinningProductType: string;
+    udid: string;
+  };
   identifier: string;
-  platform: string;
-  architecture: string;
-  interface: string;
-  available: boolean;
-  name: string;
-  modelUTI: string;
+  tags: unknown[];
+  visibilityClass: string;
 };
 
-const parseXcdeviceList = (text: string, sdkNames: string[] = []): Device[] => {
-  const rawOutput = JSON.parse(text) as DeviceOutput[];
-
-  const devices: Device[] = rawOutput
-    .filter((device) => sdkNames.includes(stripPlatform(device.platform)))
-    .sort((device) => (device.simulator ? 1 : -1))
-    .map((device) => ({
-      isAvailable: device.available,
-      name: device.name,
-      udid: device.identifier,
-      sdk: device.platform,
-      version: device.operatingSystemVersion,
-      availabilityError: device.error?.description,
-      type: device.simulator ? 'simulator' : 'device',
-    }));
+function parseDevicectlList(devicectlOutput: DevicectlOutput[]): Device[] {
+  const devices: Device[] = devicectlOutput.map((device) => ({
+    name: device.deviceProperties.name,
+    udid: device.hardwareProperties.udid,
+    version: `${device.hardwareProperties.platform} ${device.deviceProperties.osVersionNumber}`,
+    state:
+      device.deviceProperties.bootState === 'booted' ? 'Booted' : 'Shutdown',
+    type: 'device',
+  }));
   return devices;
-};
-
-async function listSimulators() {
-  const simctlOutput = JSON.parse(
-    (await spawn('xcrun', ['simctl', 'list', '--json', 'devices'])).stdout
-  );
-
-  const simulators: Device[] = Object.keys(simctlOutput.devices)
-    .map((key) => simctlOutput.devices[key])
-    .reduce((acc, val) => acc.concat(val), []);
-
-  return simulators;
 }
 
-/**
- * Executes `xcrun xcdevice list` and `xcrun simctl list --json devices`, and connects parsed output of these two commands. We are running these two commands as they are necessary to display both physical devices and simulators. However, it's important to note that neither command provides a combined output of both.
- * @param sdkNames
- * @returns List of available devices and simulators.
- */
-async function listDevices(sdkNames: string[]): Promise<Device[]> {
-  const { stdout: xcdeviceOutput } = await spawn('xcrun', ['xcdevice', 'list']);
-  const parsedXcdeviceOutput = parseXcdeviceList(xcdeviceOutput, sdkNames);
+async function getDevices() {
+  const tmpPath = path.resolve(os.tmpdir(), 'iosPhysicalDevices.json'); // same as Minisim.app
+  await spawn('xcrun', ['devicectl', 'list', 'devices', '-j', tmpPath]);
+  const output = JSON.parse(fs.readFileSync(tmpPath, 'utf8'));
 
-  const parsedSimctlOutput = await listSimulators();
+  return parseDevicectlList(output.result.devices);
+}
 
-  const merged: Device[] = [];
-  const matchedUdids = new Set();
+async function getSimulators() {
+  const { output } = await spawn('xcrun', [
+    'simctl',
+    'list',
+    'devices',
+    'available',
+  ]);
+  return parseSimctlOutput(output);
+}
 
-  parsedXcdeviceOutput.forEach((first) => {
-    const match = parsedSimctlOutput.find(
-      (second) => first.udid === second.udid
+export async function listDevicesAndSimulators() {
+  const simulators = await getSimulators();
+  const devices = await getDevices();
+  return [...simulators, ...devices];
+}
+
+function parseSimctlOutput(input: string): Device[] {
+  const lines = input.split('\n');
+  const devices: Device[] = [];
+  const currentOSIdx = 1;
+  const deviceNameIdx = 1;
+  const identifierIdx = 4;
+  const deviceStateIdx = 5;
+  let osVersion = '';
+
+  lines.forEach((line) => {
+    const currentOsMatch = line.match(/-- (.*?) --/);
+    if (currentOsMatch && currentOsMatch.length > 0) {
+      osVersion = currentOsMatch[currentOSIdx];
+    }
+    const deviceMatch = line.match(
+      /(.*?) (\(([0-9.]+)\) )?\(([0-9A-F-]+)\) \((.*?)\)/
     );
-    if (match) {
-      matchedUdids.add(first.udid);
-      merged.push({ ...first, ...match });
-    } else {
-      merged.push({ ...first });
+    if (deviceMatch && deviceMatch.length > 0) {
+      devices.push({
+        name: deviceMatch[deviceNameIdx].trim(),
+        udid: deviceMatch[identifierIdx],
+        version: osVersion,
+        state: deviceMatch[deviceStateIdx] as 'Booted' | 'Shutdown',
+        type: 'simulator',
+      });
     }
   });
 
-  parsedSimctlOutput.forEach((item) => {
-    if (!matchedUdids.has(item.udid)) {
-      merged.push({ ...item });
-    }
-  });
-
-  return merged.filter(({ isAvailable }) => isAvailable === true);
+  return devices;
 }
-
-export function stripPlatform(platform: string): string {
-  return platform.replace('com.apple.platform.', '');
-}
-
-export default listDevices;
