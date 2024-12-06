@@ -67,7 +67,7 @@ export const createRun = async (
   const device = await selectDevice(devices, args, projectRoot, platformName);
 
   if (device) {
-    cachePreferredDevice(device, projectRoot);
+    cachePreferredDevice(device, projectRoot, platformName);
     if (device.type === 'simulator') {
       await runOnSimulator(
         device,
@@ -119,9 +119,7 @@ async function selectDevice(
   projectRoot: string,
   platform: ApplePlatform
 ) {
-  const packageJsonPath = path.join(projectRoot, 'package.json');
-  const { name } = JSON.parse(fs.readFileSync(packageJsonPath, 'utf-8'));
-  const preferredDeviceUDID = cacheManager.get(name, 'lastUsedIOSDeviceId');
+  const preferredDevice = findPreferredDevice(devices, projectRoot, platform);
   const { simulator, udid, interactive } = args;
 
   let device;
@@ -133,10 +131,8 @@ async function selectDevice(
     device = matchingDevice(devices, args.device);
   } else if (simulator) {
     device = await matchingSimulator(devices, platform, simulator, udid);
-  } else if (preferredDeviceUDID) {
-    device = findPreferredDevice(devices, projectRoot);
-  } else {
-    device = undefined;
+  } else if (preferredDevice) {
+    device = preferredDevice;
   }
 
   if (!device) {
@@ -164,15 +160,23 @@ function getProjectNameFromPackageJson(projectRoot: string) {
   return JSON.parse(fs.readFileSync(packageJsonPath, 'utf-8')).name;
 }
 
-function cachePreferredDevice(device: Device, projectRoot: string) {
+function cachePreferredDevice(
+  device: Device,
+  projectRoot: string,
+  platform: ApplePlatform
+) {
   const name = getProjectNameFromPackageJson(projectRoot);
-  cacheManager.set(name, 'lastUsedIOSDeviceId', device.udid);
+  cacheManager.set(name, 'lastUsedDeviceUDID-' + platform, device.udid);
 }
 
-function findPreferredDevice(devices: Device[], projectRoot: string) {
+function findPreferredDevice(
+  devices: Device[],
+  projectRoot: string,
+  platform: ApplePlatform
+) {
   const name = getProjectNameFromPackageJson(projectRoot);
-  const preferredDeviceUDID = cacheManager.get(name, 'lastUsedIOSDeviceId');
-  return devices.find(({ udid }) => udid === preferredDeviceUDID);
+  const cachedUDID = cacheManager.get(name, 'lastUsedDeviceUDID-' + platform);
+  return devices.find(({ udid }) => udid === cachedUDID);
 }
 
 async function matchingSimulator(

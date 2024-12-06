@@ -1,6 +1,5 @@
-import path from 'path';
-import fs from 'fs';
-import os from 'os';
+import path from 'node:path';
+import fs from 'node:fs';
 import appDirs from 'appdirsjs';
 import logger from './logger.js';
 import color from 'picocolors';
@@ -33,14 +32,14 @@ function saveCache(name: string, cache: Cache) {
 }
 
 /**
- * Returns the path string of `$HOME/.rnef`.
- *
- * In case it doesn't exist, it will be created.
+ * Returns path to cache.
+ * Cache is stored in:
+ * home/user/.cache/rnef on Linux
+ * /Users/User/Library/Caches/rnef on MacOS
+ * C:\Users\User\AppData\Local\Temp\rnef on Windows
  */
 function getCacheRootPath() {
-  const legacyPath = path.resolve(os.homedir(), '.rnef', 'cache');
-  const { cache } = appDirs.default({ appName: 'rnef', legacyPath });
-  
+  const { cache } = appDirs.default({ appName: 'rnef' });
   if (!fs.existsSync(cache)) {
     fs.mkdirSync(cache, { recursive: true });
   }
