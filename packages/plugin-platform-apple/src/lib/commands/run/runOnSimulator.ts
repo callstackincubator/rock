@@ -1,7 +1,5 @@
-import { logger } from '@callstack/rnef-tools';
 import { ApplePlatform, Device, XcodeProjectInfo } from '../../types/index.js';
 import { buildProject } from '../build/buildProject.js';
-import { formattedDeviceName } from './matchingDevice.js';
 import installApp from './installApp.js';
 import { RunFlags } from './runOptions.js';
 import spawn from 'nano-spawn';
@@ -38,11 +36,11 @@ export async function runOnSimulator(
     '-CurrentDeviceUDID',
     simulator.udid,
   ]);
-  loader.stop(`Launched Simulator "${simulator.name}".`);
 
   if (simulator.state !== 'Booted') {
     await bootSimulator(simulator);
   }
+  loader.stop(`Launched Simulator "${simulator.name}".`);
 
   let buildOutput;
   if (!binaryPath) {
@@ -70,8 +68,5 @@ export async function runOnSimulator(
 }
 
 async function bootSimulator(selectedSimulator: Device) {
-  const simulatorFullName = formattedDeviceName(selectedSimulator);
-  logger.info(`Launching ${simulatorFullName}`);
-
   await spawn('xcrun', ['simctl', 'boot', selectedSimulator.udid]);
 }

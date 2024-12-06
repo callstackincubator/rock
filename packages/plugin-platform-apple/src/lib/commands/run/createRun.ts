@@ -5,7 +5,7 @@ import { logger, cacheManager } from '@callstack/rnef-tools';
 import listDevices from '../../utils/listDevices.js';
 import { promptForDeviceSelection } from '../../utils/prompts.js';
 import { getConfiguration } from '../build/getConfiguration.js';
-import { getPlatformInfo } from './getPlatformInfo.js';
+import { getPlatformInfo } from '../../utils/getPlatformInfo.js';
 import { matchingDevice } from './matchingDevice.js';
 import { runOnDevice } from './runOnDevice.js';
 import { runOnSimulator } from './runOnSimulator.js';
@@ -135,9 +135,9 @@ async function selectDevice(
   } else if (udid) {
     device = devices.find((d) => d.udid === udid);
   } else if (args.device) {
-    device = matchingDevice(devices, args.device, 'device');
+    device = matchingDevice(devices, args.device, platform, 'device');
   } else if (simulator) {
-    device = matchingDevice(devices, simulator, 'simulator');
+    device = matchingDevice(devices, simulator, platform, 'simulator');
   } else if (!device) {
     if (args.device) {
       logger.warn(

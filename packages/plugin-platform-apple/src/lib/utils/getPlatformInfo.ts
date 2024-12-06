@@ -12,30 +12,27 @@ interface PlatformInfo {
  * Falls back to iOS if platform is not supported.
  */
 export function getPlatformInfo(platform: ApplePlatform): PlatformInfo {
-  const iosPlatformInfo: PlatformInfo = {
-    readableName: 'iOS',
-    sdkNames: ['iphonesimulator', 'iphoneos'],
-  };
-
   switch (platform) {
+    case 'tvos':
+      return {
+        readableName: 'tvOS',
+        sdkNames: ['appletvsimulator', 'appletvos'],
+      };
+    case 'visionos':
+      return {
+        readableName: 'visionOS',
+        sdkNames: ['xrsimulator', 'xros'],
+      };
+    case 'macos':
+      return {
+        readableName: 'macOS',
+        sdkNames: ['macosx'],
+      };
     case 'ios':
-      return iosPlatformInfo;
-    // case 'tvos':
-    //   return {
-    //     readableName: 'tvOS',
-    //     sdkNames: ['appletvsimulator', 'appletvos'],
-    //   };
-    // case 'visionos':
-    //   return {
-    //     readableName: 'visionOS',
-    //     sdkNames: ['xrsimulator', 'xros'],
-    //   };
-    // case 'macos':
-    //   return {
-    //     readableName: 'macOS',
-    //     sdkNames: ['macosx'],
-    //   };
     default:
-      return iosPlatformInfo;
+      return {
+        readableName: 'iOS',
+        sdkNames: ['iphonesimulator', 'iphoneos'],
+      };
   }
 }

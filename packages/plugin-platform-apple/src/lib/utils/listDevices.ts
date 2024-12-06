@@ -35,7 +35,7 @@ const parseXcdeviceList = (text: string, sdkNames: string[] = []): Device[] => {
   const rawOutput = JSON.parse(text) as DeviceOutput[];
 
   const devices: Device[] = rawOutput
-    .filter((device) => sdkNames.includes(stripPlatform(device?.platform)))
+    .filter((device) => sdkNames.includes(stripPlatform(device.platform)))
     .sort((device) => (device.simulator ? 1 : -1))
     .map((device) => ({
       isAvailable: device.available,

@@ -1,5 +1,5 @@
 import { BuilderCommand } from '../../types/index.js';
-import { getPlatformInfo } from './getPlatformInfo.js';
+import { getPlatformInfo } from '../../utils/getPlatformInfo.js';
 import { BuildFlags, getBuildOptions } from '../build/buildOptions.js';
 
 export interface RunFlags extends BuildFlags {
@@ -28,11 +28,8 @@ export const getRunOptions = ({ platformName }: BuilderCommand) => {
       description: 'Explicitly set the device to use by UDID',
     },
     !isMac && {
-      name: '--simulator <string>',
-      description:
-        `Explicitly set the simulator to use. Optionally set the ${readableName} version ` +
-        'between parentheses at the end to match an exact version: ' +
-        '"iPhone 15 (17.0)"',
+      name: '--simulator [string]',
+      description: `Explicitly set the simulator to use by name or by unique device identifier. Optionally set the ${readableName} version between parentheses at the end to match an exact version: "iPhone 15 (17.0). If the value is not provided, the app will run on the first available physical device."`,
     },
     ...getBuildOptions({ platformName }),
   ];

@@ -1,34 +1,43 @@
 import { logger } from '@callstack/rnef-tools';
 import color from 'picocolors';
-import { Device, DeviceType } from '../../types/index.js';
+import { ApplePlatform, Device, DeviceType } from '../../types/index.js';
+import { getPlatformInfo } from '../../utils/getPlatformInfo.js';
 
 export function matchingDevice(
   devices: Array<Device>,
   deviceName: string | true | undefined,
+  platform: ApplePlatform,
   type: DeviceType
 ) {
   // The condition specifically checks if the value is `true`, not just truthy to allow for `--device` flag without a value
   if (deviceName === true) {
-    const firstIOSDevice = devices.find((d) => d.type === 'device');
-    if (firstIOSDevice) {
+    const firstBootedDevice = devices.find(
+      (d) => d.type === type && d.state === 'Booted'
+    );
+    if (firstBootedDevice) {
+      return firstBootedDevice;
+    }
+    const firstDevice = devices.find((d) => d.type === type);
+    if (firstDevice) {
       logger.info(
         `Using first available device named "${color.bold(
-          firstIOSDevice.name
+          firstDevice.name
         )}" due to lack of name supplied.`
       );
-      return firstIOSDevice;
+      return firstDevice;
     } else {
-      logger.error('No iOS devices connected.');
+      logger.error(
+        `No ${getPlatformInfo(platform).readableName} devices connected.`
+      );
       return undefined;
     }
   }
-  const deviceByName = devices
-    .filter((device) => device.type === type)
-    .find(
-      (device) =>
-        device.name === deviceName || formattedDeviceName(device) === deviceName
-    );
-  const deviceByUdid = devices.find((d) => d.udid === deviceName);
+  const devicesByType = devices.filter((d) => d.type === type);
+  const deviceByName = devicesByType.find(
+    (device) =>
+      device.name === deviceName || formattedDeviceName(device) === deviceName
+  );
+  const deviceByUdid = devicesByType.find((d) => d.udid === deviceName);
 
   return deviceByName || deviceByUdid;
 }
