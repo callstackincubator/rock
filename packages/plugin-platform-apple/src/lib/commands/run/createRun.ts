@@ -1,7 +1,7 @@
 import path from 'path';
 import fs from 'fs';
 import isInteractive from 'is-interactive';
-import { logger, cacheManager } from '@callstack/rnef-tools';
+import { logger } from '@callstack/rnef-tools';
 import listDevices from '../../utils/listDevices.js';
 import { promptForDeviceSelection } from '../../utils/prompts.js';
 import { getConfiguration } from '../build/getConfiguration.js';
@@ -67,7 +67,6 @@ export const createRun = async (
   const device = await selectDevice(devices, args, projectRoot, platformName);
 
   if (device) {
-    cachePreferredDevice(device, projectRoot, platformName);
     if (device.type === 'simulator') {
       await runOnSimulator(
         device,
@@ -129,7 +128,7 @@ async function selectDevice(
   platform: ApplePlatform
 ) {
   const { simulator, udid, interactive } = args;
-  let device = findPreferredDevice(devices, projectRoot, platform);
+  let device;
   if (interactive) {
     device = await promptForDeviceSelection(devices);
   } else if (udid) {
@@ -156,30 +155,6 @@ async function selectDevice(
     }
   }
   return device;
-}
-
-function getProjectNameFromPackageJson(projectRoot: string) {
-  const packageJsonPath = path.join(projectRoot, 'package.json');
-  return JSON.parse(fs.readFileSync(packageJsonPath, 'utf-8')).name;
-}
-
-function cachePreferredDevice(
-  device: Device,
-  projectRoot: string,
-  platform: ApplePlatform
-) {
-  const name = getProjectNameFromPackageJson(projectRoot);
-  cacheManager.set(name, 'lastUsedDeviceUDID-' + platform, device.udid);
-}
-
-function findPreferredDevice(
-  devices: Device[],
-  projectRoot: string,
-  platform: ApplePlatform
-) {
-  const name = getProjectNameFromPackageJson(projectRoot);
-  const cachedUDID = cacheManager.get(name, 'lastUsedDeviceUDID-' + platform);
-  return devices.find(({ udid }) => udid === cachedUDID);
 }
 
 function normalizeArgs(
