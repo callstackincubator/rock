@@ -5,12 +5,7 @@ import appDirs from 'appdirsjs';
 import logger from './logger.js';
 import color from 'picocolors';
 
-type CacheKey =
-  | 'eTag'
-  | 'lastChecked'
-  | 'latestVersion'
-  | 'dependencies'
-  | 'lastUsedIOSDeviceId';
+type CacheKey = string;
 type Cache = { [key in CacheKey]?: string };
 
 function loadCache(name: string): Cache | undefined {
@@ -19,8 +14,7 @@ function loadCache(name: string): Cache | undefined {
       path.resolve(getCacheRootPath(), name),
       'utf8'
     );
-    const cache = JSON.parse(cacheRaw);
-    return cache;
+    return JSON.parse(cacheRaw);
   } catch (e) {
     if ((e as { code: string }).code === 'ENOENT') {
       // Create cache file since it doesn't exist.
