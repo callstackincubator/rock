@@ -19,9 +19,7 @@ describe('cacheManager', () => {
 
   test('should not remove cache if it does not exist', () => {
     vi.spyOn(fs, 'existsSync').mockReturnValue(false);
-    vi.spyOn(fs, 'rmSync').mockImplementation(() => {
-      return void 0;
-    });
+    vi.spyOn(fs, 'rmSync').mockReturnValue(undefined);
 
     cacheManager.removeProjectCache(projectName);
 
@@ -30,9 +28,7 @@ describe('cacheManager', () => {
 
   test('should remove cache if it exists', () => {
     vi.spyOn(fs, 'existsSync').mockReturnValue(true);
-    vi.spyOn(fs, 'rmSync').mockImplementation(() => {
-      return void 0;
-    });
+    vi.spyOn(fs, 'rmSync').mockReturnValue(undefined);
     vi.spyOn(path, 'resolve').mockReturnValue(fullPath);
 
     cacheManager.removeProjectCache(projectName);
