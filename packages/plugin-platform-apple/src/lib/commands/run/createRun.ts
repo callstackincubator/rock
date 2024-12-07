@@ -19,6 +19,7 @@ import { RunFlags } from './runOptions.js';
 import { selectFromInteractiveMode } from '../../utils/selectFromInteractiveMode.js';
 import { outro, spinner } from '@clack/prompts';
 import { runOnMac } from './runOnMac.js';
+import { runOnMacCatalyst } from './runOnMacCatalyst.js';
 
 export const createRun = async (
   platformName: ApplePlatform,
@@ -50,7 +51,13 @@ export const createRun = async (
       );
 
   if (platformName === 'macos') {
-    return await runOnMac(xcodeProject, mode, scheme, args);
+    await runOnMac(xcodeProject, mode, scheme, args);
+    outro('Success 🎉.');
+    return;
+  } else if (args.catalyst) {
+    await runOnMacCatalyst(platformName, mode, scheme, xcodeProject, args);
+    outro('Success 🎉.');
+    return;
   }
 
   const loader = spinner();
@@ -74,9 +81,10 @@ export const createRun = async (
         scheme,
         args
       );
-    } else {
+    } else if (device.type === 'device') {
       await runOnDevice(device, platformName, mode, scheme, xcodeProject, args);
     }
+    outro('Success 🎉.');
     return;
   } else {
     const bootedSimulators = devices.filter(

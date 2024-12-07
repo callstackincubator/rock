@@ -12,7 +12,7 @@ export interface Device {
   state?: 'Booted' | 'Shutdown';
 }
 
-export type DeviceType = 'simulator' | 'device' | 'catalyst';
+export type DeviceType = 'simulator' | 'device';
 
 export interface Info {
   name: string;

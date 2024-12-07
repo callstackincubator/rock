@@ -4,8 +4,7 @@ import { ApplePlatform } from '../../types/index.js';
 
 export function getBuildPath(
   buildSettings: BuildSettings,
-  platform: ApplePlatform = 'ios',
-  isCatalyst = false
+  platform: ApplePlatform
 ) {
   const targetBuildDir = buildSettings.TARGET_BUILD_DIR;
   const executableFolderPath = buildSettings.EXECUTABLE_FOLDER_PATH;
@@ -23,9 +22,7 @@ export function getBuildPath(
     throw new Error('Failed to get product name.');
   }
 
-  if (isCatalyst) {
-    return path.join(`${targetBuildDir}-maccatalyst`, executableFolderPath);
-  } else if (platform === 'macos') {
+  if (platform === 'macos') {
     return path.join(targetBuildDir, fullProductName);
   } else {
     return path.join(targetBuildDir, executableFolderPath);

@@ -9,6 +9,7 @@ export type BuildFlags = {
   target?: string;
   extraParams?: string[];
   device?: string;
+  catalyst?: boolean;
   buildFolder?: string;
   destination?: string;
 };
@@ -48,6 +49,10 @@ export const getBuildOptions = ({ platformName }: BuilderCommand) => {
       name: '--device [string]',
       description:
         'Explicitly set the device to use by name or by unique device identifier. If the value is not provided, the app will run on the first available physical device.',
+    },
+    {
+      name: '--catalyst',
+      description: 'Run on Mac Catalyst.',
     },
     {
       name: '--buildFolder <string>',

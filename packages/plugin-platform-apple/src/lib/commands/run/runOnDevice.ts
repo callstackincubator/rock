@@ -15,12 +15,6 @@ export async function runOnDevice(
   xcodeProject: XcodeProjectInfo,
   args: RunFlags
 ) {
-  if (args.binaryPath && selectedDevice.type === 'catalyst') {
-    throw new Error(
-      'binary-path was specified for catalyst device, which is not supported.'
-    );
-  }
-
   try {
     await spawn('ios-deploy', ['--version']);
   } catch {
@@ -31,8 +25,9 @@ export async function runOnDevice(
     );
   }
 
-  if (selectedDevice.type === 'catalyst') {
-    const buildOutput = await buildProject(
+  let buildOutput, appPath;
+  if (!args.binaryPath) {
+    buildOutput = await buildProject(
       xcodeProject,
       platform,
       selectedDevice.udid,
@@ -52,57 +47,27 @@ export async function runOnDevice(
       throw new Error('Failed to get build settings for your project');
     }
 
-    const appPath = getBuildPath(buildSettings, platform, true);
-    const appProcess = spawn(`${appPath}/${scheme}`, [], {
-      detached: true,
-      stdio: 'ignore',
-    });
-    (await appProcess.nodeChildProcess).unref();
+    appPath = getBuildPath(buildSettings, platform);
   } else {
-    let buildOutput, appPath;
-    if (!args.binaryPath) {
-      buildOutput = await buildProject(
-        xcodeProject,
-        platform,
-        selectedDevice.udid,
-        scheme,
-        mode,
-        args
-      );
+    appPath = args.binaryPath;
+  }
 
-      const buildSettings = await getBuildSettings(
-        xcodeProject,
-        mode,
-        buildOutput,
-        scheme
-      );
+  const iosDeployInstallArgs = [
+    '--bundle',
+    appPath,
+    '--id',
+    selectedDevice.udid,
+    '--justlaunch',
+  ];
 
-      if (!buildSettings) {
-        throw new Error('Failed to get build settings for your project');
-      }
+  logger.info(`Installing and launching your app on ${selectedDevice.name}`);
 
-      appPath = getBuildPath(buildSettings, platform);
-    } else {
-      appPath = args.binaryPath;
-    }
-
-    const iosDeployInstallArgs = [
-      '--bundle',
-      appPath,
-      '--id',
-      selectedDevice.udid,
-      '--justlaunch',
-    ];
-
-    logger.info(`Installing and launching your app on ${selectedDevice.name}`);
-
-    try {
-      await spawn('ios-deploy', iosDeployInstallArgs, { stdio: 'inherit' });
-    } catch (error) {
-      throw new Error(
-        `Failed to install the app on the device with "ios-deploy": ${error}`
-      );
-    }
+  try {
+    await spawn('ios-deploy', iosDeployInstallArgs, { stdio: 'inherit' });
+  } catch (error) {
+    throw new Error(
+      `Failed to install the app on the device with "ios-deploy": ${error}`
+    );
   }
 
   return logger.success('Installed the app on the device.');

@@ -45,7 +45,9 @@ export const buildProject = async (
         }
       }
 
-      return udid
+      return args.catalyst
+        ? 'platform=macOS,variant=Mac Catalyst'
+        : udid
         ? `id=${udid}`
         : mode === 'Debug' || args.device
         ? `generic/platform=${simulatorDest}`

@@ -63,6 +63,7 @@ export async function runOnSimulator(
     target,
     udid: simulator.udid,
     binaryPath,
+    platform,
   });
   loader.stop(`Installed the app on "${simulator.name}".`);
 }

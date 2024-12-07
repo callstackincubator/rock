@@ -13,7 +13,7 @@ type Options = {
   target?: string;
   udid: string;
   binaryPath?: string;
-  platform?: ApplePlatform;
+  platform: ApplePlatform;
 };
 
 export default async function installApp({
