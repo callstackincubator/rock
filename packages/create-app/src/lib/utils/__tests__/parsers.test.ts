@@ -1,5 +1,8 @@
 import { describe, it, test, expect } from 'vitest';
-import { parsePackageInfo, parsePackageManagerFromUserAgent } from '../parsers';
+import {
+  parsePackageInfo,
+  parsePackageManagerFromUserAgent,
+} from '../parsers.js';
 
 describe('parsePackageInfo', () => {
   test('handles simple package name: foo', () => {
