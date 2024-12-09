@@ -32,8 +32,5 @@
   },
   "engines": {
     "node": ">=18"
-  },
-  "publishConfig": {
-    "registry": "http://localhost:4873"
   }
 }

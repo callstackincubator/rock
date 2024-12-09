@@ -28,8 +28,5 @@
     "@callstack/rnef-test-helpers": "workspace:*",
     "@types/gradient-string": "^1.1.6",
     "@types/minimist": "^1.2.5"
-  },
-  "publishConfig": {
-    "registry": "http://localhost:4873"
   }
 }

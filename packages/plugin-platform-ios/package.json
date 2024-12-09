@@ -17,8 +17,5 @@
   },
   "devDependencies": {
     "@callstack/rnef-config": "workspace:*"
-  },
-  "publishConfig": {
-    "registry": "http://localhost:4873"
   }
 }

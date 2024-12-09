@@ -19,8 +19,5 @@
   },
   "devDependencies": {
     "@react-native-community/cli-types": "^15.1.2"
-  },
-  "publishConfig": {
-    "registry": "http://localhost:4873"
   }
 }
