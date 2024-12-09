@@ -8,7 +8,7 @@ import {
 import {
   renameCommonFiles,
   renamePlaceholder,
-  sortDevDepsInPackageJson,
+  rewritePackageJson,
 } from './edit-template.js';
 import { copyDirSync, isEmptyDirSync, removeDir } from './fs.js';
 import { printLogo } from './logo.js';
@@ -27,7 +27,7 @@ import {
 } from './prompts.js';
 import {
   downloadTarballFromNpm,
-  extractTarballFile,
+  extractTarball,
   TemplateInfo,
   PLATFORMS,
   resolveTemplate as resolveTemplate,
@@ -92,7 +92,7 @@ export async function run() {
 
   const loader = spinner();
   loader.start('Updating template...');
-  sortDevDepsInPackageJson(absoluteTargetDir);
+  rewritePackageJson(absoluteTargetDir, projectName);
   renameCommonFiles(absoluteTargetDir);
   renamePlaceholder(absoluteTargetDir, projectName);
   createConfig(absoluteTargetDir, platforms, plugins);
@@ -131,7 +131,7 @@ async function extractPackage(absoluteTargetDir: string, pkg: TemplateInfo) {
       loader.start(`Extracting package ${pkg.name}...`);
     }
 
-    await extractTarballFile(tarballPath, absoluteTargetDir);
+    const localPath = await extractTarball(tarballPath, absoluteTargetDir);
 
     if (pkg.packageName) {
       fs.unlinkSync(tarballPath);
@@ -140,6 +140,11 @@ async function extractPackage(absoluteTargetDir: string, pkg: TemplateInfo) {
       loader.stop(`Extracted package ${pkg.name}.`);
     }
 
+    loader.start(`Copying extracted directory ${localPath}...`);
+    copyDirSync(path.join(localPath, pkg.directory ?? ''), absoluteTargetDir);
+    loader.stop(`Copied extracted directory ${localPath}.`);
+
+    //removeDir(localPath);
     return;
   }
 

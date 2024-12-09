@@ -1,7 +1,7 @@
 import * as fs from 'node:fs';
 import * as path from 'node:path';
 
-export function sortDevDepsInPackageJson(projectPath: string) {
+export function rewritePackageJson(projectPath: string, packageName: string) {
   const packageJsonPath = path.join(projectPath, 'package.json');
   if (!fs.existsSync(packageJsonPath)) {
     return;
@@ -9,11 +9,82 @@ export function sortDevDepsInPackageJson(projectPath: string) {
 
   const packageJson = JSON.parse(fs.readFileSync(packageJsonPath, 'utf-8'));
 
-  packageJson.devDependencies = Object.fromEntries(
-    Object.entries(packageJson.devDependencies).sort()
-  );
+  // Override fields from template
+  packageJson.name = packageName;
+  packageJson.version = '1.0.0';
+  packageJson.private = true;
 
-  fs.writeFileSync(packageJsonPath, JSON.stringify(packageJson, null, 2));
+  // Remove fields from template
+  delete packageJson.description;
+  delete packageJson.keywords;
+  delete packageJson.homepage;
+  delete packageJson.bugs;
+  delete packageJson.license;
+  delete packageJson.author;
+  delete packageJson.contributors;
+  delete packageJson.funding;
+  delete packageJson.repository;
+  delete packageJson.packageManager;
+  delete packageJson.publishConfig;
+
+  if (packageJson.dependencies) {
+    packageJson.dependencies = Object.fromEntries(
+      Object.entries(packageJson.dependencies).sort()
+    );
+  }
+
+  if (packageJson.devDependencies) {
+    packageJson.devDependencies = Object.fromEntries(
+      Object.entries(packageJson.devDependencies).sort()
+    );
+  }
+  if (packageJson.peerDependencies) {
+    packageJson.peerDependencies = Object.fromEntries(
+      Object.entries(packageJson.peerDependencies).sort()
+    );
+  }
+
+  fs.writeFileSync(
+    packageJsonPath,
+    JSON.stringify(reorderFields(packageJson), null, 2)
+  );
+}
+
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+function reorderFields(packageJson: any) {
+  const {
+    name,
+    version,
+    private: privateValue,
+    scripts,
+    dependencies,
+    devDependencies,
+    peerDependencies,
+    ...rest
+  } = packageJson;
+
+  const result: Record<string, unknown> = {
+    name,
+    version,
+    private: privateValue,
+    scripts,
+  };
+
+  if (dependencies) {
+    result['dependencies'] = dependencies;
+  }
+  if (devDependencies) {
+    result['devDependencies'] = devDependencies;
+  }
+  if (peerDependencies) {
+    result['peerDependencies'] = peerDependencies;
+  }
+
+  for (const key in rest) {
+    result[key] = rest[key];
+  }
+
+  return result;
 }
 
 export function renameCommonFiles(projectPath: string) {

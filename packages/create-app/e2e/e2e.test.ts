@@ -48,9 +48,9 @@ describe('create-app command', { timeout: 30_000 }, () => {
 
       const packageJson = JSON.parse(readFileSync(packageJsonPath, 'utf-8'));
       // TODO: fix template application
-      //expect(packageJson.name).toBe(projectName);
-      //expect(packageJson.version).toBe('1.0.0');
-      //expect(packageJson.private).toBe(true);
+      expect(packageJson.name).toBe(projectName);
+      expect(packageJson.version).toBe('1.0.0');
+      expect(packageJson.private).toBe(true);
       expect(packageJson.description).not.toBeDefined();
       expect(packageJson.author).not.toBeDefined();
       expect(packageJson.license).not.toBeDefined();
@@ -59,6 +59,7 @@ describe('create-app command', { timeout: 30_000 }, () => {
       expect(packageJson.homepage).not.toBeDefined();
       expect(packageJson.keywords).not.toBeDefined();
       expect(packageJson.packageManager).not.toBeDefined();
+      expect(packageJson.publishConfig).not.toBeDefined();
     }
   );
 
@@ -80,9 +81,9 @@ describe('create-app command', { timeout: 30_000 }, () => {
 
     const packageJson = JSON.parse(readFileSync(packageJsonPath, 'utf-8'));
     // TODO: fix template application
-    //expect(packageJson.name).toBe(projectName);
-    //expect(packageJson.version).toBe('1.0.0');
-    //expect(packageJson.private).toBe(true);
+    expect(packageJson.name).toBe(projectName);
+    expect(packageJson.version).toBe('1.0.0');
+    expect(packageJson.private).toBe(true);
     expect(packageJson.description).not.toBeDefined();
     expect(packageJson.author).not.toBeDefined();
     expect(packageJson.license).not.toBeDefined();
@@ -91,6 +92,7 @@ describe('create-app command', { timeout: 30_000 }, () => {
     expect(packageJson.homepage).not.toBeDefined();
     expect(packageJson.keywords).not.toBeDefined();
     expect(packageJson.packageManager).not.toBeDefined();
+    expect(packageJson.publishConfig).not.toBeDefined();
   });
 
   it(
@@ -115,9 +117,9 @@ describe('create-app command', { timeout: 30_000 }, () => {
 
       const packageJson = JSON.parse(readFileSync(packageJsonPath, 'utf-8'));
       // TODO: fix template application
-      //expect(packageJson.name).toBe(projectName);
-      //expect(packageJson.version).toBe('1.0.0');
-      //expect(packageJson.private).toBe(true);
+      expect(packageJson.name).toBe(projectName);
+      expect(packageJson.version).toBe('1.0.0');
+      expect(packageJson.private).toBe(true);
       expect(packageJson.description).not.toBeDefined();
       expect(packageJson.author).not.toBeDefined();
       expect(packageJson.license).not.toBeDefined();
@@ -126,6 +128,7 @@ describe('create-app command', { timeout: 30_000 }, () => {
       expect(packageJson.homepage).not.toBeDefined();
       expect(packageJson.keywords).not.toBeDefined();
       expect(packageJson.packageManager).not.toBeDefined();
+      expect(packageJson.publishConfig).not.toBeDefined();
     }
   );
 });

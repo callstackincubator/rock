@@ -175,10 +175,23 @@ export async function downloadTarballFromNpm(
 }
 
 // This automatically handles both .tgz and .tar files
-export function extractTarballFile(tarballPath: string, targetDir: string) {
-  return tar.extract({
+export async function extractTarball(
+  tarballPath: string,
+  targetDir: string
+): Promise<string> {
+  const archiveName = path.basename(tarballPath, path.extname(tarballPath));
+  const tempFolder = path.join(
+    targetDir,
+    '.tmp',
+    `${archiveName}-${Date.now()}`
+  );
+  fs.mkdirSync(tempFolder, { recursive: true });
+
+  await tar.extract({
     file: tarballPath,
-    cwd: targetDir,
-    strip: 1, // Remove the top-level directory
+    cwd: tempFolder,
+    strip: 1, // Remove top-level directory
   });
+
+  return tempFolder;
 }
