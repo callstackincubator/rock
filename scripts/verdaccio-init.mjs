@@ -21,7 +21,7 @@ async function startVerdaccio() {
     );
 
     console.log('Starting Verdaccio...');
-    const configPath = path.join(__dirname, '../.verdaccio/config.yaml');
+    const configPath = path.join(__dirname, '../.verdaccio/config.yml');
     const app = await runServer(configPath);
 
     app.listen(VERDACCIO_PORT, async () => {
