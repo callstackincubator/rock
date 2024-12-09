@@ -74,7 +74,7 @@ export const createRun = async (
 
   const loader = spinner();
   loader.start('Looking for available devices and simulators');
-  const devices = await listDevicesAndSimulators();
+  const devices = await listDevicesAndSimulators(platformName);
   if (devices.length === 0) {
     return logger.error(
       `${platformReadableName} devices or simulators not detected. Install simulators via Xcode or connect a physical ${platformReadableName} device`

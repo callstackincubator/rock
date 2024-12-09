@@ -361,11 +361,12 @@ const xcrunSimctlOutput = `
 `;
 
 describe('listDevices', () => {
-  it('outputs a list of available devices and simulators', async () => {
-    const devices = await listDevicesAndSimulators();
+  it('outputs a list of available devices and simulators for iOS platform', async () => {
+    const devices = await listDevicesAndSimulators('ios');
     expect(devices).toEqual([
       {
         name: 'iPhone SE (3rd generation)',
+        platform: 'ios',
         udid: '3339B733-4E3C-4916-AF02-1C43E1C769B2',
         version: 'iOS 18.0',
         state: 'Shutdown',
@@ -373,6 +374,7 @@ describe('listDevices', () => {
       },
       {
         name: 'iPhone 16 Pro',
+        platform: 'ios',
         udid: '8E64D38C-2345-434D-AD46-DF092B4E2FDB',
         version: 'iOS 18.0',
         state: 'Booted',
@@ -380,6 +382,7 @@ describe('listDevices', () => {
       },
       {
         name: 'iPhone 16 Pro Max',
+        platform: 'ios',
         udid: '848948C1-8494-4331-B7DE-FB380E30B310',
         version: 'iOS 18.0',
         state: 'Shutdown',
@@ -387,6 +390,7 @@ describe('listDevices', () => {
       },
       {
         name: 'iPhone 16',
+        platform: 'ios',
         udid: 'DAF2A92E-0762-4443-9A1F-B06CAC58216D',
         version: 'iOS 18.0',
         state: 'Shutdown',
@@ -394,6 +398,7 @@ describe('listDevices', () => {
       },
       {
         name: 'iPhone 16 Plus',
+        platform: 'ios',
         udid: '2F1CFD88-6581-4425-9902-F452EF2CB5A1',
         version: 'iOS 18.0',
         state: 'Shutdown',
@@ -401,6 +406,7 @@ describe('listDevices', () => {
       },
       {
         name: 'iPad (10th generation)',
+        platform: 'ios',
         udid: '371F39BD-DFB4-41C8-A9BD-90527EED67E2',
         version: 'iOS 18.0',
         state: 'Shutdown',
@@ -408,6 +414,7 @@ describe('listDevices', () => {
       },
       {
         name: 'iPad mini (6th generation)',
+        platform: 'ios',
         udid: '229FF073-6A31-4F03-85D0-4D5DE02192E2',
         version: 'iOS 18.0',
         state: 'Shutdown',
@@ -415,6 +422,7 @@ describe('listDevices', () => {
       },
       {
         name: 'iPad Air 13-inch (M2)',
+        platform: 'ios',
         udid: '386C48E3-EAB5-47CA-9EA8-AD3A2A4AAB7F',
         version: 'iOS 18.0',
         state: 'Shutdown',
@@ -422,52 +430,71 @@ describe('listDevices', () => {
       },
       {
         name: 'iPad Pro 13-inch (M4)',
+        platform: 'ios',
         udid: '0C80D473-0072-4932-9C51-5E0ADB7ACE06',
         version: 'iOS 18.0',
         state: 'Shutdown',
         type: 'simulator',
       },
       {
-        name: 'Apple TV',
-        udid: 'EF1F361A-F7B7-4859-BF4F-877BAF4836F2',
-        version: 'tvOS 18.0',
-        state: 'Shutdown',
-        type: 'simulator',
-      },
-      {
-        name: 'Apple TV 4K (3rd generation)',
-        udid: '9D35F2F1-CA5B-4B17-8F7C-4D12308FB482',
-        version: 'tvOS 18.0',
-        state: 'Shutdown',
-        type: 'simulator',
-      },
-      {
-        name: 'Apple TV 4K (3rd generation) (at 1080p)',
-        udid: '02A843C5-225C-456D-BFC1-F5B1F5565FDD',
-        version: 'tvOS 18.0',
-        state: 'Shutdown',
-        type: 'simulator',
-      },
-      {
-        name: 'Apple Vision Pro',
-        udid: '8F741C32-632F-4E2F-B7D8-4CB8DDB8B888',
-        version: 'visionOS 2.0',
-        state: 'Shutdown',
-        type: 'simulator',
-      },
-      {
-        name: 'Apple Vision Pro',
-        udid: '00008112-000C18C00C41A01E',
-        version: 'xrOS 1.2',
-        state: 'Shutdown',
-        type: 'device',
-      },
-      {
         name: 'my-iphone',
+        platform: 'ios',
         udid: '00008110-00015D4E1439801E',
         version: 'iOS 18.1.1',
         state: 'Booted',
         type: 'device',
+      },
+    ]);
+  });
+
+  it('outputs a list of available devices and simulators for tvOS platform', async () => {
+    const devices = await listDevicesAndSimulators('tvos');
+    expect(devices).toEqual([
+      {
+        name: 'Apple TV',
+        platform: 'tvos',
+        state: 'Shutdown',
+        type: 'simulator',
+        udid: 'EF1F361A-F7B7-4859-BF4F-877BAF4836F2',
+        version: 'tvOS 18.0',
+      },
+      {
+        name: 'Apple TV 4K (3rd generation)',
+        platform: 'tvos',
+        state: 'Shutdown',
+        type: 'simulator',
+        udid: '9D35F2F1-CA5B-4B17-8F7C-4D12308FB482',
+        version: 'tvOS 18.0',
+      },
+      {
+        name: 'Apple TV 4K (3rd generation) (at 1080p)',
+        platform: 'tvos',
+        state: 'Shutdown',
+        type: 'simulator',
+        udid: '02A843C5-225C-456D-BFC1-F5B1F5565FDD',
+        version: 'tvOS 18.0',
+      },
+    ]);
+  });
+
+  it('outputs a list of available devices and simulators for visionOS platform', async () => {
+    const devices = await listDevicesAndSimulators('visionos');
+    expect(devices).toEqual([
+      {
+        name: 'Apple Vision Pro',
+        platform: 'visionos',
+        state: 'Shutdown',
+        type: 'simulator',
+        udid: '8F741C32-632F-4E2F-B7D8-4CB8DDB8B888',
+        version: 'visionOS 2.0',
+      },
+      {
+        name: 'Apple Vision Pro',
+        platform: 'visionos',
+        state: 'Shutdown',
+        type: 'device',
+        udid: '00008112-000C18C00C41A01E',
+        version: 'xrOS 1.2',
       },
     ]);
   });

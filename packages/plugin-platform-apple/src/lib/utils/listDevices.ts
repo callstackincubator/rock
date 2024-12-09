@@ -2,7 +2,7 @@ import os from 'node:os';
 import fs from 'node:fs';
 import path from 'node:path';
 import spawn from 'nano-spawn';
-import type { Device } from '../types/index.js';
+import type { ApplePlatform, Device } from '../types/index.js';
 
 type DevicectlOutput = {
   capabilities: object[];
@@ -47,6 +47,7 @@ function parseDevicectlList(devicectlOutput: DevicectlOutput[]): Device[] {
     name: device.deviceProperties.name,
     udid: device.hardwareProperties.udid,
     version: `${device.hardwareProperties.platform} ${device.deviceProperties.osVersionNumber}`,
+    platform: getPlatformFromOsVersion(device.hardwareProperties.platform),
     state:
       device.deviceProperties.bootState === 'booted' ? 'Booted' : 'Shutdown',
     type: 'device',
@@ -72,10 +73,12 @@ async function getSimulators() {
   return parseSimctlOutput(output);
 }
 
-export async function listDevicesAndSimulators() {
+export async function listDevicesAndSimulators(platform: ApplePlatform) {
   const simulators = await getSimulators();
   const devices = await getDevices();
-  return [...simulators, ...devices];
+  return [...simulators, ...devices].filter(
+    (device) => device.platform === platform
+  );
 }
 
 function parseSimctlOutput(input: string): Device[] {
@@ -100,6 +103,7 @@ function parseSimctlOutput(input: string): Device[] {
         name: deviceMatch[deviceNameIdx].trim(),
         udid: deviceMatch[identifierIdx],
         version: osVersion,
+        platform: getPlatformFromOsVersion(osVersion.split(' ')[0]),
         state: deviceMatch[deviceStateIdx] as 'Booted' | 'Shutdown',
         type: 'simulator',
       });
@@ -107,4 +111,22 @@ function parseSimctlOutput(input: string): Device[] {
   });
 
   return devices;
+}
+
+function getPlatformFromOsVersion(
+  osVersion: string
+): ApplePlatform | undefined {
+  switch (osVersion) {
+    case 'iOS':
+      return 'ios';
+    case 'tvOS':
+      return 'tvos';
+    case 'macOS':
+      return 'macos';
+    case 'xrOS':
+    case 'visionOS':
+      return 'visionos';
+    default:
+      return undefined;
+  }
 }

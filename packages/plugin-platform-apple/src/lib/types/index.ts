@@ -7,9 +7,10 @@ export type ApplePlatform = ObjectValues<typeof supportedPlatforms>;
 export interface Device {
   name: string;
   udid: string;
-  version: string;
+  version: string; // e.g. visionOS 2.0
+  platform: ApplePlatform | undefined;
   type: DeviceType;
-  state?: 'Booted' | 'Shutdown';
+  state: 'Booted' | 'Shutdown';
 }
 
 export type DeviceType = 'simulator' | 'device';
