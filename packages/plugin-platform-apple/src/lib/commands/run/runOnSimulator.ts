@@ -8,6 +8,7 @@ import { spinner } from '@clack/prompts';
 export async function runOnSimulator(
   simulator: Device,
   xcodeProject: XcodeProjectInfo,
+  sourceDir: string,
   platform: ApplePlatform,
   mode: string,
   scheme: string,
@@ -46,6 +47,7 @@ export async function runOnSimulator(
   if (!binaryPath) {
     buildOutput = await buildProject(
       xcodeProject,
+      sourceDir,
       platform,
       simulator.udid,
       scheme,
@@ -58,6 +60,7 @@ export async function runOnSimulator(
   await installApp({
     buildOutput: buildOutput ?? '',
     xcodeProject,
+    sourceDir,
     mode,
     scheme,
     target,

@@ -8,6 +8,7 @@ import spawn, { SubprocessError } from 'nano-spawn';
 
 export const buildProject = async (
   xcodeProject: XcodeProjectInfo,
+  sourceDir: string,
   platformName: ApplePlatform,
   udid: string | undefined,
   scheme: string,
@@ -66,7 +67,9 @@ export const buildProject = async (
   );
   logger.debug(`Running "xcodebuild ${xcodebuildArgs.join(' ')}.`);
   try {
-    const { output } = await spawn('xcodebuild', xcodebuildArgs);
+    const { output } = await spawn('xcodebuild', xcodebuildArgs, {
+      cwd: sourceDir,
+    });
     loader.stop(
       `Built the app with xcodebuild for ${scheme} scheme in ${mode} mode.`
     );

@@ -38,24 +38,30 @@ export const createRun = async (
   }
 
   normalizeArgs(args, projectRoot, xcodeProject);
-  // @todo replace chdir with running the command in the {cwd: sourceDir}
-  process.chdir(sourceDir);
 
   const { scheme, mode } = args.interactive
     ? await selectFromInteractiveMode(xcodeProject, args.scheme, args.mode)
     : await getConfiguration(
         xcodeProject,
+        sourceDir,
         args.scheme,
         args.mode,
         platformName
       );
 
   if (platformName === 'macos') {
-    await runOnMac(xcodeProject, mode, scheme, args);
+    await runOnMac(xcodeProject, sourceDir, mode, scheme, args);
     outro('Success 🎉.');
     return;
   } else if (args.catalyst) {
-    await runOnMacCatalyst(platformName, mode, scheme, xcodeProject, args);
+    await runOnMacCatalyst(
+      platformName,
+      mode,
+      scheme,
+      xcodeProject,
+      sourceDir,
+      args
+    );
     outro('Success 🎉.');
     return;
   }
@@ -76,13 +82,22 @@ export const createRun = async (
       await runOnSimulator(
         device,
         xcodeProject,
+        sourceDir,
         platformName,
         mode,
         scheme,
         args
       );
     } else if (device.type === 'device') {
-      await runOnDevice(device, platformName, mode, scheme, xcodeProject, args);
+      await runOnDevice(
+        device,
+        platformName,
+        mode,
+        scheme,
+        xcodeProject,
+        sourceDir,
+        args
+      );
     }
     outro('Success 🎉.');
     return;
@@ -116,6 +131,7 @@ export const createRun = async (
       await runOnSimulator(
         simulator,
         xcodeProject,
+        sourceDir,
         platformName,
         mode,
         scheme,

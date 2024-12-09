@@ -8,6 +8,7 @@ import spawn, { SubprocessError } from 'nano-spawn';
 type Options = {
   buildOutput: string;
   xcodeProject: XcodeProjectInfo;
+  sourceDir: string;
   mode: string;
   scheme: string;
   target?: string;
@@ -19,6 +20,7 @@ type Options = {
 export default async function installApp({
   buildOutput,
   xcodeProject,
+  sourceDir,
   mode,
   scheme,
   target,
@@ -30,6 +32,7 @@ export default async function installApp({
 
   const buildSettings = await getBuildSettings(
     xcodeProject,
+    sourceDir,
     mode,
     buildOutput,
     scheme,

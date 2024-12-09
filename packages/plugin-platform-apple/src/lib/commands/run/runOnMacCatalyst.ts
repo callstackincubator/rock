@@ -10,6 +10,7 @@ export async function runOnMacCatalyst(
   mode: string,
   scheme: string,
   xcodeProject: XcodeProjectInfo,
+  sourceDir: string,
   args: RunFlags
 ) {
   if (args.binaryPath) {
@@ -19,6 +20,7 @@ export async function runOnMacCatalyst(
   }
   const buildOutput = await buildProject(
     xcodeProject,
+    sourceDir,
     platform,
     undefined,
     scheme,
@@ -28,6 +30,7 @@ export async function runOnMacCatalyst(
 
   const buildSettings = await getBuildSettings(
     xcodeProject,
+    sourceDir,
     mode,
     buildOutput,
     scheme

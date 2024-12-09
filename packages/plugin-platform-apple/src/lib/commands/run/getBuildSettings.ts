@@ -12,23 +12,28 @@ export type BuildSettings = {
 
 export async function getBuildSettings(
   xcodeProject: XcodeProjectInfo,
+  sourceDir: string,
   mode: string,
   buildOutput: string,
   scheme: string,
   target?: string
 ): Promise<BuildSettings | null> {
-  const { stdout: buildSettings } = await spawn('xcodebuild', [
-    xcodeProject.isWorkspace ? '-workspace' : '-project',
-    xcodeProject.name,
-    '-scheme',
-    scheme,
-    '-sdk',
-    getPlatformName(buildOutput),
-    '-configuration',
-    mode,
-    '-showBuildSettings',
-    '-json',
-  ]);
+  const { stdout: buildSettings } = await spawn(
+    'xcodebuild',
+    [
+      xcodeProject.isWorkspace ? '-workspace' : '-project',
+      xcodeProject.name,
+      '-scheme',
+      scheme,
+      '-sdk',
+      getPlatformName(buildOutput),
+      '-configuration',
+      mode,
+      '-showBuildSettings',
+      '-json',
+    ],
+    { cwd: sourceDir }
+  );
 
   const settings = JSON.parse(buildSettings);
 

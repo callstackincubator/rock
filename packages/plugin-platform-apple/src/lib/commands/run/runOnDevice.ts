@@ -13,6 +13,7 @@ export async function runOnDevice(
   mode: string,
   scheme: string,
   xcodeProject: XcodeProjectInfo,
+  sourceDir: string,
   args: RunFlags
 ) {
   try {
@@ -29,6 +30,7 @@ export async function runOnDevice(
   if (!args.binaryPath) {
     buildOutput = await buildProject(
       xcodeProject,
+      sourceDir,
       platform,
       selectedDevice.udid,
       scheme,
@@ -38,6 +40,7 @@ export async function runOnDevice(
 
     const buildSettings = await getBuildSettings(
       xcodeProject,
+      sourceDir,
       mode,
       buildOutput,
       scheme

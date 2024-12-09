@@ -9,12 +9,14 @@ import { RunFlags } from './runOptions.js';
 
 export async function runOnMac(
   xcodeProject: XcodeProjectInfo,
+  sourceDir: string,
   mode: string,
   scheme: string,
   args: RunFlags
 ) {
   const buildOutput = await buildProject(
     xcodeProject,
+    sourceDir,
     'macos',
     undefined,
     scheme,
@@ -25,6 +27,7 @@ export async function runOnMac(
   await openApp({
     buildOutput,
     xcodeProject,
+    sourceDir,
     mode,
     scheme,
     target: args.target,
@@ -35,6 +38,7 @@ export async function runOnMac(
 type Options = {
   buildOutput: string;
   xcodeProject: XcodeProjectInfo;
+  sourceDir: string;
   mode: string;
   scheme: string;
   target?: string;
@@ -44,6 +48,7 @@ type Options = {
 async function openApp({
   buildOutput,
   xcodeProject,
+  sourceDir,
   mode,
   scheme,
   target,
@@ -53,6 +58,7 @@ async function openApp({
 
   const buildSettings = await getBuildSettings(
     xcodeProject,
+    sourceDir,
     mode,
     buildOutput,
     scheme,

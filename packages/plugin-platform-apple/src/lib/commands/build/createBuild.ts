@@ -29,13 +29,12 @@ export const createBuild = async (
   }
 
   normalizeArgs(args, xcodeProject);
-  // @todo replace chdir with running the command in the {cwd: sourceDir}
-  process.chdir(sourceDir);
 
   const { scheme, mode } = args.interactive
     ? await selectFromInteractiveMode(xcodeProject, args.scheme, args.mode)
     : await getConfiguration(
         xcodeProject,
+        sourceDir,
         args.scheme,
         args.mode,
         platformName
@@ -44,6 +43,7 @@ export const createBuild = async (
   try {
     await buildProject(
       xcodeProject,
+      sourceDir,
       platformName,
       undefined,
       scheme,
