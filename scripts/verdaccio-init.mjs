@@ -26,8 +26,9 @@ async function startVerdaccio() {
 
     app.listen(VERDACCIO_PORT, async () => {
       console.log(`Verdaccio is running on ${VERDACCIO_REGISTRY_URL}`);
-      await publishTemplate();
+      await removeAllPackages();
       await publishPackages();
+      await publishTemplate();
     });
 
     // Handle process termination gracefully
@@ -44,22 +45,24 @@ async function startVerdaccio() {
   }
 }
 
-async function publishPackages() {
+async function removeAllPackages() {
   console.log('Removing previous packages...');
-  const run1 = await $`rm -rf ${VERDACCIO_STORAGE_PATH}`;
-  console.log(run1.all);
+  const output = await $`rm -rf ${VERDACCIO_STORAGE_PATH}`;
+  console.log(`Command: ${output.command}`);
+  console.log(output.all);
+}
 
+async function publishPackages() {
   console.log('Publishing all packages to Verdaccio...');
-  const run2 =
+  const output =
     await $`pnpm -r publish --registry ${VERDACCIO_REGISTRY_URL} --no-git-checks --force`;
-  console.log(run2.all);
-
-  console.log('All packages published successfully!');
+  console.log(`Command: ${output.command}`);
+  console.log(output.all);
 }
 
 async function publishTemplate() {
   console.log('Publishing template to Verdaccio...');
-  const run = await $(
+  const output = await $(
     'pnpm',
     [
       'publish',
@@ -70,8 +73,8 @@ async function publishTemplate() {
     ],
     { cwd: `${ROOT_DIR}/templates/rnef-template-default` }
   );
-  console.log(run.all);
-  console.log('Template published successfully!');
+  console.log(`Command: ${output.command}`);
+  console.log(output.all);
 }
 
 startVerdaccio();
