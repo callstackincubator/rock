@@ -45,5 +45,9 @@ jobs:
         run: |
           pnpm config set registry http://localhost:4873
           node scripts/verdaccio-init.mjs &
+
+          # This is necessary as we have to wait for verdaccio init to finish in the background
+          # We can either put sleep here or put some blocking script that would ping local verdaccio instance if it's ready
+          sleep 3
           NPM_CONFIG_REGISTRY=http://localhost:4873 pnpm exec nx affected -t e2e
 
