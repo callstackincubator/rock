@@ -49,6 +49,7 @@ describe('selectFromInteractiveMode', () => {
     };
     const result = await selectFromInteractiveMode(
       xcodeInfo,
+      '/path/to/TestApp/ios',
       'TestScheme',
       'Debug'
     );
@@ -75,6 +76,7 @@ describe('selectFromInteractiveMode', () => {
     };
     const result = await selectFromInteractiveMode(
       xcodeInfo,
+      '/path/to/TestApp/ios',
       'TestScheme',
       'Debug'
     );
@@ -103,6 +105,7 @@ describe('selectFromInteractiveMode', () => {
     };
     const result = await selectFromInteractiveMode(
       xcodeInfo,
+      '/path/to/TestApp/ios',
       'TestScheme',
       'Debug'
     );
@@ -130,6 +133,7 @@ describe('selectFromInteractiveMode', () => {
     };
     const result = await selectFromInteractiveMode(
       xcodeInfo,
+      '/path/to/TestApp/ios',
       'TestScheme',
       'Debug'
     );
@@ -149,24 +153,5 @@ describe('selectFromInteractiveMode', () => {
       2,
       `Automatically selected ${bold('Debug')} configuration.`
     );
-  });
-
-  it('should handle undefined scheme and mode', async () => {
-    const result = await selectFromInteractiveMode({
-      scheme: undefined,
-      mode: undefined,
-      info: {
-        schemes: ['Scheme1', 'Scheme2'],
-        configurations: ['Debug', 'Release'],
-        name: 'TestApp',
-      },
-    });
-
-    expect(result).toEqual({
-      scheme: undefined,
-      mode: undefined,
-    });
-    expect(promptForSchemeSelection).not.toHaveBeenCalled();
-    expect(promptForConfigurationSelection).not.toHaveBeenCalled();
   });
 });

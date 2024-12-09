@@ -9,12 +9,12 @@ import { getInfo } from './getInfo.js';
 
 export async function selectFromInteractiveMode(
   xcodeProject: XcodeProjectInfo,
+  sourceDir: string,
   scheme: string,
   mode: string
 ): Promise<{ scheme: string; mode: string }> {
   let newScheme = scheme;
   let newMode = mode;
-  const sourceDir = process.cwd();
   const info = await getInfo(xcodeProject, sourceDir);
 
   const schemes = info?.schemes;

@@ -31,7 +31,12 @@ export const createBuild = async (
   normalizeArgs(args, xcodeProject);
 
   const { scheme, mode } = args.interactive
-    ? await selectFromInteractiveMode(xcodeProject, args.scheme, args.mode)
+    ? await selectFromInteractiveMode(
+        xcodeProject,
+        sourceDir,
+        args.scheme,
+        args.mode
+      )
     : await getConfiguration(
         xcodeProject,
         sourceDir,

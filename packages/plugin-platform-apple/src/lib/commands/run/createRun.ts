@@ -20,6 +20,7 @@ import { selectFromInteractiveMode } from '../../utils/selectFromInteractiveMode
 import { outro, spinner } from '@clack/prompts';
 import { runOnMac } from './runOnMac.js';
 import { runOnMacCatalyst } from './runOnMacCatalyst.js';
+import { cacheRecentDevice } from './recentDevices.js';
 
 export const createRun = async (
   platformName: ApplePlatform,
@@ -40,7 +41,12 @@ export const createRun = async (
   normalizeArgs(args, projectRoot, xcodeProject);
 
   const { scheme, mode } = args.interactive
-    ? await selectFromInteractiveMode(xcodeProject, args.scheme, args.mode)
+    ? await selectFromInteractiveMode(
+        xcodeProject,
+        sourceDir,
+        args.scheme,
+        args.mode
+      )
     : await getConfiguration(
         xcodeProject,
         sourceDir,
@@ -75,9 +81,10 @@ export const createRun = async (
     );
   }
   loader.stop('Found available devices and simulators.');
-  const device = await selectDevice(devices, args, platformName);
+  const device = await selectDevice(devices, args, platformName, projectRoot);
 
   if (device) {
+    cacheRecentDevice(device, projectRoot, platformName);
     if (device.type === 'simulator') {
       await runOnSimulator(
         device,
@@ -108,8 +115,13 @@ export const createRun = async (
     if (bootedSimulators.length === 0) {
       // fallback to present all devices when no device is selected
       if (isInteractive()) {
-        const simulator = await promptForDeviceSelection(devices);
+        const simulator = await promptForDeviceSelection(
+          devices,
+          projectRoot,
+          platformName
+        );
         bootedSimulators.push(simulator);
+        cacheRecentDevice(simulator, projectRoot, platformName);
       } else {
         logger.debug(
           'No booted devices or simulators found. Launching first available simulator...'
@@ -146,12 +158,13 @@ export const createRun = async (
 async function selectDevice(
   devices: Device[],
   args: RunFlags,
-  platform: ApplePlatform
+  platform: ApplePlatform,
+  projectRoot: string
 ) {
   const { simulator, udid, interactive } = args;
   let device;
   if (interactive) {
-    device = await promptForDeviceSelection(devices);
+    device = await promptForDeviceSelection(devices, projectRoot, platform);
   } else if (udid) {
     device = devices.find((d) => d.udid === udid);
   } else if (args.device) {

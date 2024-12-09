@@ -1,7 +1,8 @@
 import { select } from '@clack/prompts';
 import color from 'picocolors';
 import { checkCancelPrompt } from '@callstack/rnef-tools';
-import { Device } from '../types/index.js';
+import { ApplePlatform, Device } from '../types/index.js';
+import { sortByRecentDevices } from '../commands/run/recentDevices.js';
 
 export async function promptForSchemeSelection(schemes: string[]) {
   return checkCancelPrompt<string>(
@@ -29,11 +30,16 @@ export async function promptForConfigurationSelection(
   );
 }
 
-export async function promptForDeviceSelection(devices: Device[]) {
+export async function promptForDeviceSelection(
+  devices: Device[],
+  projectRoot: string,
+  platformName: ApplePlatform
+) {
+  const sortedDevices = sortByRecentDevices(devices, projectRoot, platformName);
   return checkCancelPrompt<Device>(
     await select({
       message: 'Select the device / simulator you want to use',
-      options: devices.map((d) => {
+      options: sortedDevices.map((d) => {
         const markDevice = d.type === 'device' ? ` - (physical device)` : '';
         return {
           label: `${d.name} ${color.dim(`(${d.version})${markDevice}`)}`,
