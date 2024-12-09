@@ -7,15 +7,20 @@ import {
   getTempDirectory,
 } from '@callstack/rnef-test-helpers';
 
+/**
+ * Perform following commands to test e2e locally (on macOS):
+ * 1. nx reset
+ * pnpm build
+ * node scripts/verdaccio-init.mjs (keep it running)
+ * rm -rf ~/Library/Caches/pnpm/dlx/
+ * pnpm test:e2e
+ */
+
 const VERDACCIO_REGISTRY_URL = 'http://localhost:4873';
 const CREATE_APP_COMMAND = `pnpm create @callstack/rnef-app`;
 
-console.log('__dirname', __dirname);
 const ROOT_DIR = path.resolve(__dirname, '../../..');
-
-console.log('ROOT_DIR', ROOT_DIR);
 const TEMP_DIR = getTempDirectory('e2e-deploys');
-console.log('TEMP_DIR', TEMP_DIR);
 
 const execArgs = {
   cwd: TEMP_DIR,

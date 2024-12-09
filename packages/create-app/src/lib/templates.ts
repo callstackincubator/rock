@@ -1,8 +1,5 @@
-import * as fs from 'node:fs';
 import * as path from 'node:path';
 import { resolveAbsolutePath } from '@callstack/rnef-tools';
-import packageJson from 'package-json';
-import * as tar from 'tar';
 
 export type TemplateInfo = NpmTemplateInfo | LocalTemplateInfo;
 
@@ -106,7 +103,7 @@ export function resolveTemplate(
     };
   }
 
-  // TODO: handle cases when template is github repo url
+  // @todo: handle cases when template is github repo url
 
   // Otherwise, assume it's a npm package
   return {
@@ -138,60 +135,4 @@ function getNpmLibraryName(name: string) {
     return splitName[0];
   }
   return name;
-}
-
-export async function downloadTarballFromNpm(
-  packageName: string,
-  version = 'latest',
-  targetDir: string
-) {
-  try {
-    const metadata = await packageJson(packageName, { version });
-
-    const tarballUrl = metadata['dist']?.tarball;
-    if (!tarballUrl) {
-      throw new Error('Tarball URL not found.');
-    }
-
-    console.log('tarballUrl', tarballUrl);
-    const response = await fetch(tarballUrl);
-    if (!response.ok) {
-      throw new Error(`Failed to fetch package: ${response.statusText}`);
-    }
-
-    const tarballPath = path.join(
-      targetDir,
-      `${packageName.replace('/', '-')}.tgz`
-    );
-    // Write the tarball to disk
-    const arrayBuffer = await response.arrayBuffer();
-    fs.writeFileSync(tarballPath, Buffer.from(arrayBuffer));
-
-    return tarballPath;
-  } catch (error) {
-    console.error(`Error downloading package`, error);
-    throw error;
-  }
-}
-
-// This automatically handles both .tgz and .tar files
-export async function extractTarball(
-  tarballPath: string,
-  targetDir: string
-): Promise<string> {
-  const archiveName = path.basename(tarballPath, path.extname(tarballPath));
-  const tempFolder = path.join(
-    targetDir,
-    '.tmp',
-    `${archiveName}-${Date.now()}`
-  );
-  fs.mkdirSync(tempFolder, { recursive: true });
-
-  await tar.extract({
-    file: tarballPath,
-    cwd: tempFolder,
-    strip: 1, // Remove top-level directory
-  });
-
-  return tempFolder;
 }

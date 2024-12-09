@@ -7,13 +7,13 @@ import {
 } from '@callstack/rnef-tools';
 import {
   renameCommonFiles,
-  renamePlaceholder,
-  rewritePackageJson,
-} from './edit-template.js';
-import { copyDirSync, isEmptyDirSync, removeDir } from './fs.js';
-import { printLogo } from './logo.js';
-import { parseCliOptions } from './parse-cli-options.js';
-import { parsePackageInfo } from './parsers.js';
+  replacePlaceholder,
+} from './utils/edit-template.js';
+import { copyDirSync, isEmptyDirSync, removeDirSync } from './utils/fs.js';
+import { printLogo } from './utils/logo.js';
+import { parseCliOptions } from './utils/parse-cli-options.js';
+import { rewritePackageJson } from './utils/package-json.js';
+import { parsePackageInfo } from './utils/parsers.js';
 import {
   printHelpMessage,
   printVersionMessage,
@@ -24,16 +24,18 @@ import {
   promptTemplate,
   promptPlatforms,
   promptPlugins,
-} from './prompts.js';
+} from './utils/prompts.js';
 import {
-  downloadTarballFromNpm,
-  extractTarball,
   TemplateInfo,
   PLATFORMS,
-  resolveTemplate as resolveTemplate,
+  resolveTemplate,
   TEMPLATES,
   PLUGINS,
 } from './templates.js';
+import {
+  downloadTarballFromNpm,
+  extractTarballToTempDirectory,
+} from './utils/tarball.js';
 
 export async function run() {
   const options = parseCliOptions(process.argv.slice(2));
@@ -67,7 +69,7 @@ export async function run() {
     }
   }
 
-  removeDir(absoluteTargetDir);
+  removeDirSync(absoluteTargetDir);
   fs.mkdirSync(absoluteTargetDir, { recursive: true });
 
   const template = options.template
@@ -92,9 +94,9 @@ export async function run() {
 
   const loader = spinner();
   loader.start('Updating template...');
-  rewritePackageJson(absoluteTargetDir, projectName);
   renameCommonFiles(absoluteTargetDir);
-  renamePlaceholder(absoluteTargetDir, projectName);
+  replacePlaceholder(absoluteTargetDir, projectName);
+  rewritePackageJson(absoluteTargetDir, projectName);
   createConfig(absoluteTargetDir, platforms, plugins);
   loader.stop('Updated template.');
 
@@ -113,6 +115,7 @@ async function extractPackage(absoluteTargetDir: string, pkg: TemplateInfo) {
       pkg.version,
       absoluteTargetDir
     );
+    loader.stop(`Downloaded package ${pkg.packageName}@${pkg.version}.`);
   }
   // Local tarball file
   else if (
@@ -125,13 +128,11 @@ async function extractPackage(absoluteTargetDir: string, pkg: TemplateInfo) {
 
   // Extract tarball file: either from NPM or local one
   if (tarballPath) {
-    if (pkg.packageName) {
-      loader.message(`Extracting package ${pkg.name}...`);
-    } else {
-      loader.start(`Extracting package ${pkg.name}...`);
-    }
-
-    const localPath = await extractTarball(tarballPath, absoluteTargetDir);
+    loader.start(`Extracting package ${pkg.name}...`);
+    const localPath = await extractTarballToTempDirectory(
+      absoluteTargetDir,
+      tarballPath
+    );
 
     if (pkg.packageName) {
       fs.unlinkSync(tarballPath);

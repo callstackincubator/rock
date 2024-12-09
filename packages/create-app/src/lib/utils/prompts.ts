@@ -4,8 +4,8 @@ import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { checkCancelPrompt } from '@callstack/rnef-tools';
 import { parsePackageManagerFromUserAgent } from './parsers.js';
-import { validateProjectName } from './validate-project-name.js';
-import { TemplateInfo } from './templates.js';
+import { validateProjectName } from '../validate-project-name.js';
+import { TemplateInfo } from '../templates.js';
 
 export function printHelpMessage(
   templates: TemplateInfo[],
