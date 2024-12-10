@@ -2,7 +2,7 @@ import fs from 'fs';
 import path from 'path';
 import packageJson from 'package-json';
 import * as tar from 'tar';
-import { getNameWithoutExtension, removeDirSync } from './fs.js';
+import { getNameWithoutExtension } from './fs.js';
 
 export async function downloadTarballFromNpm(
   packageName: string,
@@ -17,7 +17,6 @@ export async function downloadTarballFromNpm(
       throw new Error('Tarball URL not found.');
     }
 
-    console.log('tarballUrl', tarballUrl);
     const response = await fetch(tarballUrl);
     if (!response.ok) {
       throw new Error(`Failed to fetch package: ${response.statusText}`);

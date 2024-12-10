@@ -100,7 +100,7 @@ export async function run() {
   createConfig(absoluteTargetDir, platforms, plugins);
 
   loader.stop(
-    'Applied default template, ios and android platforms and metro plugin'
+    'Applied default template, ios and android platforms and metro plugin.'
   );
 
   printByeMessage(absoluteTargetDir);
