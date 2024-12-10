@@ -99,9 +99,7 @@ export async function run() {
   rewritePackageJson(absoluteTargetDir, projectName);
   createConfig(absoluteTargetDir, platforms, plugins);
 
-  loader.stop(
-    'Applied default template, ios and android platforms and metro plugin.'
-  );
+  loader.stop('Applied template, platforms and plugins.');
 
   printByeMessage(absoluteTargetDir);
 }
