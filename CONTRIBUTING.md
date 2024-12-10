@@ -77,7 +77,7 @@ nx reset
 pnpm build
 
 # Start local verdaccio registry
-node scripts/verdaccio-init.mjs
+pnpm verdaccio:init
 
 # Remove pnpm dlx cache, so that new version of package is used
 rm -rf ~/Library/Caches/pnpm/dlx/

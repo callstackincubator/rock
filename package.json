@@ -11,7 +11,8 @@
     "typecheck": "nx run-many --target typecheck",
     "watch": "nx watch --all -- nx run \\$NX_PROJECT_NAME:build",
     "link-packages": "node ./scripts/linkPackages.mjs",
-    "verdaccio-reset": "./scripts/verdaccio-reset.sh"
+    "verdaccio:init": "node ./scripts/verdaccio-init.mjs",
+    "verdaccio:reset": "./scripts/verdaccio-reset.sh"
   },
   "private": true,
   "dependencies": {

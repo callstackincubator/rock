@@ -11,7 +11,7 @@ import {
  * Perform following commands to test e2e locally (on macOS):
  * 1. nx reset
  * pnpm build
- * node scripts/verdaccio-init.mjs (keep it running)
+ * pnpm verdaccio:init (keep it running)
  * rm -rf ~/Library/Caches/pnpm/dlx/
  * pnpm test:e2e
  */
