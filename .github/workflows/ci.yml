@@ -43,7 +43,8 @@ jobs:
 
       - name: Run end-to-end tests
         run: |
-          pnpm verdaccio:init
+          # Run in background
+          pnpm verdaccio:init &
 
           # This is necessary as we have to wait for verdaccio init to finish in the background
           # We can either put sleep here or put some blocking script that would ping local verdaccio instance if it's ready
