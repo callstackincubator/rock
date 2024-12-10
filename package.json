@@ -19,6 +19,7 @@
     "vite-tsconfig-paths": "^5.0.1"
   },
   "devDependencies": {
+    "@clack/prompts": "^0.8.2",
     "@eslint/js": "^9.8.0",
     "@nx/eslint": "19.8.0",
     "@nx/eslint-plugin": "19.8.0",

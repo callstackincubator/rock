@@ -1,6 +1,7 @@
 import fs from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
+import { log, spinner } from '@clack/prompts';
 import { $ } from 'execa';
 import { runServer } from 'verdaccio';
 
@@ -11,23 +12,26 @@ const VERDACCIO_PORT = 4873;
 const VERDACCIO_REGISTRY_URL = `http://localhost:${VERDACCIO_PORT}`;
 const VERDACCIO_STORAGE_PATH = '/tmp/verdaccio-storage';
 
+const loader = spinner();
+
 async function startVerdaccio() {
   try {
     backupNpmConfig();
 
-    console.log(`Writing .npmrc: ${ROOT_DIR}`);
+    loader.start(`Writing .npmrc`);
     const npmConfigPath = path.join(ROOT_DIR, '.npmrc');
     fs.writeFileSync(
       npmConfigPath,
       `//localhost:${VERDACCIO_PORT}/:_authToken=secretToken\nregistry=${VERDACCIO_REGISTRY_URL}\n`
     );
+    loader.stop(`Wrote .npmrc: ${ROOT_DIR}`);
 
-    console.log('Starting Verdaccio...');
+    loader.start('Starting Verdaccio...');
     const configPath = path.join(__dirname, '../.verdaccio/config.yml');
     const app = await runServer(configPath);
 
     app.listen(VERDACCIO_PORT, async () => {
-      console.log(`Verdaccio is running on ${VERDACCIO_REGISTRY_URL}`);
+      loader.stop(`Verdaccio is running on ${VERDACCIO_REGISTRY_URL}`);
       await removeAllPackages();
       await publishPackages();
       await publishTemplate();
@@ -35,9 +39,9 @@ async function startVerdaccio() {
 
     // Handle process termination gracefully
     process.on('SIGINT', () => {
-      console.log('Shutting down Verdaccio...');
+      loader.start('Shutting down Verdaccio...');
       app.close(() => {
-        console.log('Verdaccio has been stopped.');
+        loader.stop('Verdaccio has been stopped.');
 
         removeAllPackages();
         restoreNpmConfig();
@@ -51,23 +55,20 @@ async function startVerdaccio() {
 }
 
 async function removeAllPackages() {
-  console.log('Removing previous packages...');
-  const output = await $`rm -rf ${VERDACCIO_STORAGE_PATH}`;
-  console.log(`Command: ${output.command}`);
-  console.log(output.all);
+  loader.start('Removing previous packages...');
+  await $`rm -rf ${VERDACCIO_STORAGE_PATH}`;
+  loader.stop('Removed previous packages');
 }
 
 async function publishPackages() {
-  console.log('Publishing all packages to Verdaccio...');
-  const output =
-    await $`pnpm -r publish --registry ${VERDACCIO_REGISTRY_URL} --no-git-checks --force`;
-  console.log(`Command: ${output.command}`);
-  console.log(output.all);
+  log.step('Publishing all packages to Verdaccio...');
+  await $`pnpm -r publish --registry ${VERDACCIO_REGISTRY_URL} --no-git-checks --force`;
+  log.step('Published all packages.');
 }
 
 async function publishTemplate() {
-  console.log('Publishing template to Verdaccio...');
-  const output = await $(
+  log.step('Publishing template to Verdaccio...');
+  await $(
     'pnpm',
     [
       'publish',
@@ -78,20 +79,21 @@ async function publishTemplate() {
     ],
     { cwd: `${ROOT_DIR}/templates/rnef-template-default` }
   );
-  console.log(`Command: ${output.command}`);
-  console.log(output.all);
+  log.step('Published template.');
 }
 
 function backupNpmConfig() {
-  console.log('Backing up npm config...');
+  loader.start('Backing up npm config...');
   const npmConfigPath = path.join(ROOT_DIR, '.npmrc');
   fs.copyFileSync(npmConfigPath, `${npmConfigPath}.backup`);
+  loader.stop('Backed up npm config.');
 }
 
 function restoreNpmConfig() {
-  console.log('Restoring npm config...');
+  loader.start('Restoring npm config...');
   const npmConfigPath = path.join(ROOT_DIR, '.npmrc');
   fs.renameSync(`${npmConfigPath}.backup`, npmConfigPath);
+  loader.stop('Restored npm config.');
 }
 
 startVerdaccio();
