@@ -38,20 +38,23 @@ async function startVerdaccio() {
     });
 
     // Handle process termination gracefully
-    process.on('SIGINT', () => {
-      loader.start('Shutting down Verdaccio...');
-      app.close(() => {
-        loader.stop('Verdaccio has been stopped.');
-
-        removeAllPackages();
-        restoreNpmConfig();
-        process.exit(0);
-      });
-    });
+    process.on('SIGINT', () => cleanup(app));
+    process.on('SIGTERM', () => cleanup(app));
   } catch (error) {
     console.error('Error', error);
     process.exit(1);
   }
+}
+
+function cleanup(app) {
+  loader.start('Shutting down Verdaccio...');
+  app.close(() => {
+    loader.stop('Verdaccio has been stopped.');
+
+    removeAllPackages();
+    restoreNpmConfig();
+    process.exit(0);
+  });
 }
 
 async function removeAllPackages() {
