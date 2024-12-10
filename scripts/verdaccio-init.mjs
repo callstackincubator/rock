@@ -13,6 +13,8 @@ const VERDACCIO_STORAGE_PATH = '/tmp/verdaccio-storage';
 
 async function startVerdaccio() {
   try {
+    backupNpmConfig();
+
     console.log(`Writing .npmrc: ${ROOT_DIR}`);
     const npmConfigPath = path.join(ROOT_DIR, '.npmrc');
     fs.writeFileSync(
@@ -36,6 +38,9 @@ async function startVerdaccio() {
       console.log('Shutting down Verdaccio...');
       app.close(() => {
         console.log('Verdaccio has been stopped.');
+
+        removeAllPackages();
+        restoreNpmConfig();
         process.exit(0);
       });
     });
@@ -75,6 +80,18 @@ async function publishTemplate() {
   );
   console.log(`Command: ${output.command}`);
   console.log(output.all);
+}
+
+function backupNpmConfig() {
+  console.log('Backing up npm config...');
+  const npmConfigPath = path.join(ROOT_DIR, '.npmrc');
+  fs.copyFileSync(npmConfigPath, `${npmConfigPath}.backup`);
+}
+
+function restoreNpmConfig() {
+  console.log('Restoring npm config...');
+  const npmConfigPath = path.join(ROOT_DIR, '.npmrc');
+  fs.renameSync(`${npmConfigPath}.backup`, npmConfigPath);
 }
 
 startVerdaccio();
