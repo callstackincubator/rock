@@ -95,14 +95,14 @@ async function publishTemplate() {
 function backupNpmConfig() {
   loader.start('Backing up npm config...');
   const npmConfigPath = path.join(ROOT_DIR, '.npmrc');
-  fs.copyFileSync(npmConfigPath, `${npmConfigPath}.backup`);
+  fs.copyFileSync(npmConfigPath, `${npmConfigPath}.orig`);
   loader.stop('Backed up npm config.');
 }
 
 function restoreNpmConfig() {
   loader.start('Restoring npm config...');
   const npmConfigPath = path.join(ROOT_DIR, '.npmrc');
-  fs.renameSync(`${npmConfigPath}.backup`, npmConfigPath);
+  fs.renameSync(`${npmConfigPath}.orig`, npmConfigPath);
   loader.stop('Restored npm config.');
 }
 
