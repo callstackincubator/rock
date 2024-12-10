@@ -84,6 +84,8 @@ export async function run() {
     ? options.plugins.map((p) => resolveTemplate(PLUGINS, p))
     : await promptPlugins(PLUGINS);
 
+  const loader = spinner();
+  loader.start('Applying template, platforms and plugins');
   await extractPackage(absoluteTargetDir, template);
   for (const platform of platforms) {
     await extractPackage(absoluteTargetDir, platform);
@@ -92,30 +94,27 @@ export async function run() {
     await extractPackage(absoluteTargetDir, plugin);
   }
 
-  const loader = spinner();
-  loader.start('Updating template...');
   renameCommonFiles(absoluteTargetDir);
   replacePlaceholder(absoluteTargetDir, projectName);
   rewritePackageJson(absoluteTargetDir, projectName);
   createConfig(absoluteTargetDir, platforms, plugins);
-  loader.stop('Updated template.');
+
+  loader.stop(
+    'Applied default template, ios and android platforms and metro plugin'
+  );
 
   printByeMessage(absoluteTargetDir);
 }
 
 async function extractPackage(absoluteTargetDir: string, pkg: TemplateInfo) {
-  const loader = spinner();
-
   let tarballPath: string | null = null;
   // NPM package: download tarball file
   if (pkg.type === 'npm') {
-    loader.start(`Downloading package ${pkg.packageName}@${pkg.version}...`);
     tarballPath = await downloadTarballFromNpm(
       pkg.packageName,
       pkg.version,
       absoluteTargetDir
     );
-    loader.stop(`Downloaded package ${pkg.packageName}@${pkg.version}.`);
   }
   // Local tarball file
   else if (
@@ -128,7 +127,6 @@ async function extractPackage(absoluteTargetDir: string, pkg: TemplateInfo) {
 
   // Extract tarball file: either from NPM or local one
   if (tarballPath) {
-    loader.start(`Extracting package ${pkg.name}...`);
     const localPath = await extractTarballToTempDirectory(
       absoluteTargetDir,
       tarballPath
@@ -136,26 +134,19 @@ async function extractPackage(absoluteTargetDir: string, pkg: TemplateInfo) {
 
     if (pkg.packageName) {
       fs.unlinkSync(tarballPath);
-      loader.stop(`Downloaded and extracted package ${pkg.packageName}.`);
-    } else {
-      loader.stop(`Extracted package ${pkg.name}.`);
     }
 
-    loader.start(`Copying extracted directory ${localPath}...`);
     copyDirSync(path.join(localPath, pkg.directory ?? ''), absoluteTargetDir);
-    loader.stop(`Copied extracted directory ${localPath}.`);
+    removeDirSync(localPath);
 
-    //removeDir(localPath);
     return;
   }
 
   if (pkg.type === 'local') {
-    loader.start(`Copying local directory ${pkg.localPath}...`);
     copyDirSync(
       path.join(pkg.localPath, pkg.directory ?? ''),
       absoluteTargetDir
     );
-    loader.stop(`Copied local directory ${pkg.localPath}.`);
 
     return;
   }

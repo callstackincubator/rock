@@ -50,8 +50,8 @@ export async function extractTarballToTempDirectory(
   tarballPath: string
 ): Promise<string> {
   const tempFolder = path.join(
-    getTarballTempDirectoryName(targetDir),
-    `${getNameWithoutExtension(tarballPath)}-${Date.now()}`
+    targetDir,
+    `.temp-${getNameWithoutExtension(tarballPath)}-${Date.now()}`
   );
   fs.mkdirSync(tempFolder, { recursive: true });
 
@@ -62,12 +62,4 @@ export async function extractTarballToTempDirectory(
   });
 
   return tempFolder;
-}
-
-export function clearTarballTempDirectory(targetDir: string) {
-  removeDirSync(getTarballTempDirectoryName(targetDir));
-}
-
-function getTarballTempDirectoryName(targetDir: string) {
-  return path.join(targetDir, '.tmp');
 }
