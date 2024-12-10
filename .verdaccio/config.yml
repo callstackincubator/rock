@@ -1,32 +1,19 @@
 storage: /tmp/verdaccio-storage
 
-auth:
-  htpasswd:
-    file: /tmp/verdaccio-storage/.htpasswd
-    max_users: 1000
-
 uplinks:
   npmjs:
     url: https://registry.npmjs.org/
 
 packages:
-  '@*/*':
+  '@callstack/*':
     access: $all
     publish: $all
-    proxy: npmjs
   '**':
     access: $all
-    publish: $all
     proxy: npmjs
 
+# This options does not seem to react to changes when used with `runServer()` node API
+# Maybe upgrade to Verdaccio 6.x will help
+# See: https://github.com/verdaccio/verdaccio/issues/3728
 logs:
   - { type: stdout, format: pretty, level: info }
-
-web:
-  enable: true
-  title: CI Verdaccio
-
-security:
-  web:
-    sign:
-      expiresIn: 1h
