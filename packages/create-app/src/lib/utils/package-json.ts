@@ -30,19 +30,6 @@ export function rewritePackageJson(projectPath: string, packageName: string) {
   packageJson.version = '1.0.0';
   packageJson.private = true;
 
-  // Remove fields from template
-  delete packageJson.description;
-  delete packageJson.keywords;
-  delete packageJson.homepage;
-  delete packageJson.bugs;
-  delete packageJson.license;
-  delete packageJson.author;
-  delete packageJson.contributors;
-  delete packageJson.funding;
-  delete packageJson.repository;
-  delete packageJson.packageManager;
-  delete packageJson.publishConfig;
-
   if (packageJson.dependencies) {
     packageJson.dependencies = Object.fromEntries(
       Object.entries(packageJson.dependencies).sort()
