@@ -2,7 +2,7 @@ import fs from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { log, spinner } from '@clack/prompts';
-import { $ } from 'execa';
+import spawn from 'nano-spawn';
 import { runServer } from 'verdaccio';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
@@ -56,19 +56,26 @@ async function startVerdaccio() {
 
 async function removeAllPackages() {
   loader.start('Removing previous packages...');
-  await $`rm -rf ${VERDACCIO_STORAGE_PATH}`;
+  await spawn('rm', ['-rf', VERDACCIO_STORAGE_PATH]);
   loader.stop('Removed previous packages');
 }
 
 async function publishPackages() {
   log.step('Publishing all packages to Verdaccio...');
-  await $`pnpm -r publish --registry ${VERDACCIO_REGISTRY_URL} --no-git-checks --force`;
+  await spawn('pnpm', [
+    '-r',
+    'publish',
+    '--registry',
+    VERDACCIO_REGISTRY_URL,
+    '--no-git-checks',
+    '--force',
+  ]);
   log.step('Published all packages.');
 }
 
 async function publishTemplate() {
   log.step('Publishing template to Verdaccio...');
-  await $(
+  await spawn(
     'pnpm',
     [
       'publish',

@@ -34,7 +34,6 @@
     "@vitest/ui": "^2.1.2",
     "eslint": "^9.8.0",
     "eslint-config-prettier": "^9.0.0",
-    "execa": "^9.5.1",
     "fast-glob": "^3.3.2",
     "nano-spawn": "^0.2.0",
     "nx": "19.8.0",
