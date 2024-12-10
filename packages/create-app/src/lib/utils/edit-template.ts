@@ -51,9 +51,9 @@ export function replacePlaceholder(projectPath: string, projectName: string) {
 function replacePlaceholderInTextFile(filePath: string, projectName: string) {
   const fileContent = fs.readFileSync(filePath, 'utf8');
   const replacedFileContent = fileContent
-    .replace(new RegExp(DEFAULT_PLACEHOLDER_NAME, 'g'), projectName)
-    .replace(
-      new RegExp(DEFAULT_PLACEHOLDER_NAME.toLowerCase(), 'g'),
+    .replaceAll(DEFAULT_PLACEHOLDER_NAME, projectName)
+    .replaceAll(
+      DEFAULT_PLACEHOLDER_NAME.toLowerCase(),
       projectName.toLowerCase()
     );
 

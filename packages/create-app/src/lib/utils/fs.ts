@@ -56,7 +56,7 @@ export function walkDirectory(currentPath: string): string[] {
 export function renameFile(filePath: string, oldName: string, newName: string) {
   const newFileName = nodePath.join(
     nodePath.dirname(filePath),
-    nodePath.basename(filePath).replace(new RegExp(oldName, 'g'), newName)
+    nodePath.basename(filePath).replaceAll(oldName, newName)
   );
 
   fs.renameSync(filePath, newFileName);
