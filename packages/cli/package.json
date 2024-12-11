@@ -9,9 +9,12 @@
   "bin": {
     "rnef": "./dist/src/bin.js"
   },
+  "scripts": {
+    "publish:npm": "npm publish"
+  },
   "dependencies": {
-    "@callstack/rnef-config": "workspace:*",
-    "@callstack/rnef-tools": "workspace:*",
+    "@callstack/rnef-config": "^0.0.1",
+    "@callstack/rnef-tools": "^0.0.1",
     "@clack/prompts": "^0.8.1",
     "@react-native-community/cli-config": "^15.1.2",
     "commander": "^12.1.0",

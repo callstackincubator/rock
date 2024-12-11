@@ -6,6 +6,9 @@
     "types": "./dist/src/index.d.ts",
     "import": "./dist/src/index.js"
   },
+  "scripts": {
+    "publish:npm": "npm publish"
+  },
   "dependencies": {
     "tslib": "^2.3.0"
   }

@@ -67,7 +67,7 @@ async function publishPackages() {
   log.step('Publishing all packages to Verdaccio...');
   await spawn('pnpm', [
     '-r',
-    'publish',
+    'publish:npm',
     '--registry',
     VERDACCIO_REGISTRY_URL,
     '--no-git-checks',

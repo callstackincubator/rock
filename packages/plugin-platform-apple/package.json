@@ -2,10 +2,19 @@
   "name": "@callstack/rnef-plugin-platform-apple",
   "version": "0.0.1",
   "type": "module",
-  "main": "./dist/src/index.js",
-  "typings": "./dist/src/index.d.ts",
+  "exports": {
+    "types": "./dist/src/index.d.ts",
+    "import": "./dist/src/index.js"
+  },
+  "files": [
+    "dist",
+    "src"
+  ],
+  "scripts": {
+    "publish:npm": "npm publish"
+  },
   "dependencies": {
-    "@callstack/rnef-tools": "workspace:*",
+    "@callstack/rnef-tools": "^0.0.1",
     "@clack/prompts": "^0.7.0",
     "@react-native-community/cli-config-apple": "^15.1.2",
     "fast-glob": "^3.3.2",
@@ -15,6 +24,6 @@
     "tslib": "^2.3.0"
   },
   "devDependencies": {
-    "@callstack/rnef-config": "workspace:*"
+    "@callstack/rnef-config": "^0.0.1"
   }
 }

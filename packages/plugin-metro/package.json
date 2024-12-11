@@ -10,13 +10,16 @@
     "dist",
     "src"
   ],
+  "scripts": {
+    "publish:npm": "npm publish"
+  },
   "dependencies": {
-    "@callstack/rnef-tools": "workspace:*",
+    "@callstack/rnef-tools": "^0.0.1",
     "@react-native-community/cli-server-api": "^15.1.2",
     "@react-native/community-cli-plugin": "^0.76.0",
     "tslib": "^2.3.0"
   },
   "devDependencies": {
-    "@callstack/rnef-config": "workspace:*"
+    "@callstack/rnef-config": "^0.0.1"
   }
 }
