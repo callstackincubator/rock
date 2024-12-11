@@ -13,7 +13,7 @@ import {
  * pnpm build
  * pnpm verdaccio:init (keep it running)
  * rm -rf ~/Library/Caches/pnpm/dlx/
- * pnpm test:e2e
+ * pnpm e2e
  */
 
 const VERDACCIO_REGISTRY_URL = 'http://localhost:4873';

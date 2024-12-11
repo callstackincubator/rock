@@ -83,7 +83,7 @@ pnpm verdaccio:init
 rm -rf ~/Library/Caches/pnpm/dlx/
 
 # Run tests
-pnpm test:e2e
+pnpm e2e
 
 # Or Create RNEF app
 NPM_CONFIG_REGISTRY=http://localhost:4873 pnpm create @callstack/rnef-app --registry http://localhost:4873
