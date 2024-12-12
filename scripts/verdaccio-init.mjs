@@ -65,14 +65,14 @@ async function removeAllPackages() {
 
 async function publishPackages() {
   log.step('Publishing all packages to Verdaccio...');
-  await spawn('pnpm', [
-    '-r',
-    'publish:npm',
-    '--registry',
-    VERDACCIO_REGISTRY_URL,
-    '--no-git-checks',
-    '--force',
-  ]);
+
+  // This is a workaround to make pnpm publish work with our templates.
+  // PNPM removes execute (+x) flag from files in package, e.g. gradlew, so
+  // we use `npm publish` instead of `pnpm publish` to publish packages.
+  // This also prevents us from using `workspace:` dependencies.
+  // This is a known issue: https://github.com/pnpm/pnpm/issues/8862
+  await spawn('pnpm', ['-r', 'publish:verdaccio']);
+
   log.step('Published all packages.');
 }
 

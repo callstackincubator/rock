@@ -10,7 +10,7 @@
     "dist"
   ],
   "scripts": {
-    "publish:npm": "npm publish",
+    "publish:verdaccio": "npm publish --registry http://localhost:4873 --userconfig ../../.npmrc",
     "e2e": "vitest --config vite.e2e.config.js"
   },
   "bin": {

@@ -11,7 +11,7 @@
     "src"
   ],
   "scripts": {
-    "publish:npm": "npm publish"
+    "publish:verdaccio": "npm publish --registry http://localhost:4873 --userconfig ../../.npmrc"
   },
   "dependencies": {
     "@react-native-community/cli-config-apple": "^15.1.2",
