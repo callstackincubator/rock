@@ -13,6 +13,7 @@
     "react-native.config.ts"
   ],
   "scripts": {
+    "clean-dist": "rm -f dist/package.json",
     "publish:verdaccio": "npm publish --registry http://localhost:4873 --userconfig ../../.npmrc"
   },
   "dependencies": {

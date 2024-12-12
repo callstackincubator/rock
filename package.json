@@ -5,6 +5,7 @@
   "type": "module",
   "scripts": {
     "build": "nx run-many --target build",
+    "postbuild": "nx run-many --target clean-dist",
     "test": "nx run-many --target test",
     "e2e": "nx run-many --target e2e",
     "lint": "nx run-many --target lint",
