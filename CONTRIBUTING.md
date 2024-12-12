@@ -76,10 +76,10 @@ In order to test changes to `create-app` package, you need to run the following 
 nx reset
 pnpm build
 
-# Start local verdaccio registry
-pnpm verdaccio:init &
+# Start local verdaccio registry (in one terminal), keep it open
+pnpm verdaccio:init
 
-# Publish packages to verdaccio
+# Publish packages to verdaccio (in another terminal)
 pnpm verdaccio:publish
 
 # Remove pnpm dlx cache, so that new version of package is used
