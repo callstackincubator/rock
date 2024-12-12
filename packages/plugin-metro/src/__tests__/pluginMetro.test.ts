@@ -6,7 +6,7 @@ const pluginApi = { registerCommand: vi.fn() };
 test('plugin is called with correct arguments and returns its name and description', () => {
   const plugin = pluginMetro({
     root: '/',
-    reactNativeVersion: '0.76.0',
+    reactNativeVersion: '0.77.0-rc.2',
     reactNativePath: '/path/to/react-native',
     platforms: {
       android: {},

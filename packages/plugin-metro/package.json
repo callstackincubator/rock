@@ -17,8 +17,8 @@
   },
   "dependencies": {
     "@callstack/rnef-tools": "^0.0.1",
-    "@react-native-community/cli-server-api": "^15.1.2",
-    "@react-native/community-cli-plugin": "^0.76.0",
+    "@react-native-community/cli-server-api": "^16.0.2",
+    "@react-native/community-cli-plugin": "0.77.0-rc.2",
     "tslib": "^2.3.0"
   },
   "devDependencies": {

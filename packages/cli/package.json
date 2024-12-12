@@ -17,11 +17,11 @@
     "@callstack/rnef-config": "^0.0.1",
     "@callstack/rnef-tools": "^0.0.1",
     "@clack/prompts": "^0.8.1",
-    "@react-native-community/cli-config": "^15.1.2",
+    "@react-native-community/cli-config": "^16.0.2",
     "commander": "^12.1.0",
     "tslib": "^2.3.0"
   },
   "devDependencies": {
-    "@react-native-community/cli-types": "^15.1.2"
+    "@react-native-community/cli-types": "^16.0.2"
   }
 }
