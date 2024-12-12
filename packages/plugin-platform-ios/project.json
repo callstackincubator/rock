@@ -11,8 +11,7 @@
       "options": {
         "outputPath": "packages/plugin-platform-ios/dist",
         "main": "packages/plugin-platform-ios/src/index.ts",
-        "tsConfig": "packages/plugin-platform-ios/tsconfig.lib.json",
-        "assets": ["packages/plugin-platform-ios/*.md"]
+        "tsConfig": "packages/plugin-platform-ios/tsconfig.lib.json"
       }
     }
   }

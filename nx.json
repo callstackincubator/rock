@@ -19,7 +19,6 @@
         "outputPath": "{projectRoot}/dist",
         "main": "{projectRoot}/src/index.ts",
         "tsConfig": "{projectRoot}/tsconfig.lib.json",
-        "assets": ["packages/{projectRoot}/*.md"],
         "buildableProjectDepsInPackageJsonType": "dependencies",
         "generateExportsField": true,
         "compilerOptions": {
