@@ -1,13 +1,15 @@
+import { dirname } from 'path';
+import { fileURLToPath } from 'url';
 import { Command } from 'commander';
 import { getConfig } from '@callstack/rnef-config';
 import { createRequire } from 'module';
-import { logger } from '@callstack/rnef-tools';
+import { logger, resolveFilenameUp } from '@callstack/rnef-tools';
 import { logConfig } from '../config.js';
 import { nativeFingerprintCommand } from './commands/fingerprint.js';
 
 const require = createRequire(import.meta.url);
-
-const { version } = require('./../../package.json');
+const __dirname = dirname(fileURLToPath(import.meta.url));
+const { version } = require(resolveFilenameUp(__dirname, 'package.json'));
 
 type CliOptions = {
   cwd?: string;
