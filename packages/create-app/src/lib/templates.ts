@@ -38,7 +38,7 @@ export const PLUGINS: TemplateInfo[] = [
     name: 'metro',
     packageName: '@callstack/rnef-plugin-metro',
     version: 'latest',
-    directory: 'src/template',
+    directory: 'template',
     importName: 'pluginMetro',
   },
   {
@@ -46,7 +46,7 @@ export const PLUGINS: TemplateInfo[] = [
     name: 'repack',
     packageName: '@callstack/rnef-plugin-repack',
     version: 'latest',
-    directory: 'src/template',
+    directory: 'template',
     importName: 'pluginRepack',
   },
 ];
@@ -57,7 +57,7 @@ export const PLATFORMS: TemplateInfo[] = [
     name: 'ios',
     packageName: '@callstack/rnef-plugin-platform-ios',
     version: 'latest',
-    directory: 'src/template',
+    directory: 'template',
     importName: 'pluginPlatformIOS',
   },
   {
@@ -65,7 +65,7 @@ export const PLATFORMS: TemplateInfo[] = [
     name: 'android',
     packageName: '@callstack/rnef-plugin-platform-android',
     version: 'latest',
-    directory: 'src/template',
+    directory: 'template',
     importName: 'pluginPlatformAndroid',
   },
 ];

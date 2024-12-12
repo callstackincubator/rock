@@ -8,7 +8,8 @@
   },
   "files": [
     "dist",
-    "src"
+    "src",
+    "template"
   ],
   "scripts": {
     "publish:verdaccio": "npm publish --registry http://localhost:4873 --userconfig ../../.npmrc"
