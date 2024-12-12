@@ -11,11 +11,7 @@
       "options": {
         "outputPath": "packages/plugin-metro/dist",
         "main": "packages/plugin-metro/src/index.ts",
-        "tsConfig": "packages/plugin-metro/tsconfig.lib.json",
-        "assets": [
-          "packages/plugin-metro/*.md",
-          "packages/plugin-metro/src/template/**/*"
-        ]
+        "tsConfig": "packages/plugin-metro/tsconfig.lib.json"
       }
     }
   }
