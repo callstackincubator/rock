@@ -46,8 +46,8 @@ jobs:
           # Run in background
           pnpm verdaccio:init &
 
-          # This is necessary as we have to wait for verdaccio init to finish in the background
-          # We can either put sleep here or put some blocking script that would ping local verdaccio instance if it's ready
-          sleep 3
+          npx wait-on@8.0.1 http://localhost:4873
+          pnpm verdaccio:publish
+
           NPM_CONFIG_REGISTRY=http://localhost:4873 pnpm exec nx affected -t e2e
 

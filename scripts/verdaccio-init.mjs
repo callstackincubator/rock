@@ -1,7 +1,7 @@
 import fs from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
-import { log, spinner } from '@clack/prompts';
+import { intro, log, outro, spinner } from '@clack/prompts';
 import spawn from 'nano-spawn';
 import { runServer } from 'verdaccio';
 
@@ -16,6 +16,8 @@ const loader = spinner();
 
 async function startVerdaccio() {
   try {
+    intro('Verdaccio');
+
     backupNpmConfig();
 
     loader.start(`Writing .npmrc`);
@@ -26,21 +28,23 @@ async function startVerdaccio() {
     );
     loader.stop(`Wrote .npmrc: ${ROOT_DIR}`);
 
+    await clearPackageStorage();
+
     loader.start('Starting Verdaccio...');
     const configPath = path.join(__dirname, '../.verdaccio/config.yml');
     const app = await runServer(configPath);
 
-    app.listen(VERDACCIO_PORT, async () => {
-      loader.stop(`Verdaccio is running on ${VERDACCIO_REGISTRY_URL}`);
-      await removeAllPackages();
-      await publishPackages();
-      await publishTemplate();
+    app.listen(VERDACCIO_PORT, () => {
+      loader.stop(`Verdaccio is running: ${VERDACCIO_REGISTRY_URL}`);
+      log.info('Press Ctrl+C to stop Verdaccio');
     });
 
     // Handle process termination gracefully
     process.on('SIGINT', () => cleanup(app));
     process.on('SIGTERM', () => cleanup(app));
   } catch (error) {
+    clearPackageStorage();
+    restoreNpmConfig();
     console.error('Error', error);
     process.exit(1);
   }
@@ -51,45 +55,17 @@ function cleanup(app) {
   app.close(() => {
     loader.stop('Verdaccio has been stopped.');
 
-    removeAllPackages();
+    clearPackageStorage();
     restoreNpmConfig();
+    outro('Done');
     process.exit(0);
   });
 }
 
-async function removeAllPackages() {
-  loader.start('Removing previous packages...');
+async function clearPackageStorage() {
+  loader.start('Clearing package storage...');
   await spawn('rm', ['-rf', VERDACCIO_STORAGE_PATH]);
-  loader.stop('Removed previous packages');
-}
-
-async function publishPackages() {
-  log.step('Publishing all packages to Verdaccio...');
-
-  // This is a workaround to make pnpm publish work with our templates.
-  // PNPM removes execute (+x) flag from files in package, e.g. gradlew, so
-  // we use `npm publish` instead of `pnpm publish` to publish packages.
-  // This also prevents us from using `workspace:` dependencies.
-  // This is a known issue: https://github.com/pnpm/pnpm/issues/8862
-  await spawn('pnpm', ['-r', 'publish:verdaccio']);
-
-  log.step('Published all packages.');
-}
-
-async function publishTemplate() {
-  log.step('Publishing template to Verdaccio...');
-  await spawn(
-    'pnpm',
-    [
-      'publish',
-      '--registry',
-      VERDACCIO_REGISTRY_URL,
-      '--no-git-checks',
-      '--force',
-    ],
-    { cwd: `${ROOT_DIR}/templates/rnef-template-default` }
-  );
-  log.step('Published template.');
+  loader.stop('Cleared package storage');
 }
 
 function backupNpmConfig() {

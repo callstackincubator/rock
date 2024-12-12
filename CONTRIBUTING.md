@@ -77,7 +77,10 @@ nx reset
 pnpm build
 
 # Start local verdaccio registry
-pnpm verdaccio:init
+pnpm verdaccio:init &
+
+# Publish packages to verdaccio
+pnpm verdaccio:publish
 
 # Remove pnpm dlx cache, so that new version of package is used
 rm -rf ~/Library/Caches/pnpm/dlx/
