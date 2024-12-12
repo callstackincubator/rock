@@ -9,7 +9,8 @@
   "files": [
     "dist",
     "src",
-    "template"
+    "template",
+    "react-native.config.ts"
   ],
   "scripts": {
     "publish:verdaccio": "npm publish --registry http://localhost:4873 --userconfig ../../.npmrc"

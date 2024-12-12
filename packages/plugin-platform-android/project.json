@@ -12,11 +12,7 @@
         "outputPath": "packages/plugin-platform-android/dist",
         "main": "packages/plugin-platform-android/src/index.ts",
         "tsConfig": "packages/plugin-platform-android/tsconfig.lib.json",
-        "assets": [
-          "packages/plugin-platform-android/*.md",
-          "packages/plugin-platform-android/src/template/**/*",
-          "packages/plugin-platform-android/react-native.config.*"
-        ]
+        "assets": ["packages/plugin-platform-android/*.md"]
       }
     }
   }
