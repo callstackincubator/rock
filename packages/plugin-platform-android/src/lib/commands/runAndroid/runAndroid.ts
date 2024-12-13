@@ -3,7 +3,14 @@ import {
   AndroidProjectConfig,
   Config,
 } from '@react-native-community/cli-types';
-import { checkCancelPrompt, logger } from '@rnef/tools';
+import {
+  checkCancelPrompt,
+  getProjectRoot,
+  logger,
+  nativeFingerprint,
+} from '@rnef/tools';
+import { note, outro, select } from '@clack/prompts';
+import isInteractive from 'is-interactive';
 import { getDevices } from './adb.js';
 import { toPascalCase } from '../toPascalCase.js';
 import { tryLaunchAppOnDevice } from './tryLaunchAppOnDevice.js';
@@ -13,9 +20,7 @@ import { tryLaunchEmulator } from './tryLaunchEmulator.js';
 import path from 'path';
 import { BuildFlags, options } from '../buildAndroid/buildAndroid.js';
 import { promptForTaskSelection } from '../listAndroidTasks.js';
-import { runGradle } from '../runGradle.js';
-import { outro, select } from '@clack/prompts';
-import isInteractive from 'is-interactive';
+import { runGradle, RunGradleArgs } from '../runGradle.js';
 
 export interface Flags extends BuildFlags {
   appId: string;
@@ -49,6 +54,7 @@ export async function runAndroid(
     : [...(args.tasks ?? []), `${mainTaskType}${toPascalCase(args.mode)}`];
 
   if (deviceId) {
+    await fetchCachedBuild({ tasks, androidProject, args });
     await runGradle({ tasks, androidProject, args });
     if (!(await getDevices()).find((d) => d === deviceId)) {
       logger.error(
@@ -70,6 +76,7 @@ export async function runAndroid(
       }
     }
 
+    await fetchCachedBuild({ tasks, androidProject, args });
     await runGradle({ tasks, androidProject, args });
 
     for (const device of await getDevices()) {
@@ -77,6 +84,30 @@ export async function runAndroid(
     }
   }
   outro('Success 🎉.');
+}
+
+async function fetchCachedBuild({
+  tasks,
+  androidProject,
+  args,
+}: RunGradleArgs) {
+  note(
+    [
+      'Tasks: ' + tasks,
+      'Android project: ' + JSON.stringify(androidProject, null, 2),
+      'Args: ' + JSON.stringify(args, null, 2),
+    ].join('\n'),
+    'Fetch cached build'
+  );
+
+  const root = getProjectRoot();
+  const fingerprint = await nativeFingerprint(root, { platform: 'android' });
+  note(
+    ['Root: ' + root, 'Fingerprint: ' + fingerprint.hash].join('\n'),
+    'Fingerprint'
+  );
+
+  const artifactName = `app-debug-${fingerprint.hash}.apk`;
 }
 
 async function selectAndLaunchDevice() {

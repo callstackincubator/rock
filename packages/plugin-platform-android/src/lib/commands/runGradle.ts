@@ -5,15 +5,17 @@ import spawn from 'nano-spawn';
 import type { BuildFlags } from './buildAndroid/buildAndroid.js';
 import { spinner } from '@clack/prompts';
 
+export type RunGradleArgs = {
+  tasks: string[];
+  androidProject: AndroidProject;
+  args: BuildFlags | Flags;
+};
+
 export async function runGradle({
   tasks,
   androidProject,
   args,
-}: {
-  tasks: string[];
-  androidProject: AndroidProject;
-  args: BuildFlags | Flags;
-}) {
+}: RunGradleArgs) {
   if ('binaryPath' in args) {
     return;
   }
