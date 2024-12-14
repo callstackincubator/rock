@@ -3,12 +3,8 @@ import commands from '@callstack/repack/commands/rspack';
 import { logger } from '@callstack/rnef-tools';
 
 type PluginConfig = {
-  root?: string;
-  reactNativePath?: string;
-  platforms: {
-    [key: string]: {
-      npmPackageName?: string;
-    };
+  platforms?: {
+    [key: string]: object;
   };
 };
 
@@ -24,14 +20,19 @@ const bundleCommand = commands.find(
 );
 
 export const pluginRepack =
-  (pluginConfig: PluginConfig) =>
+  (pluginConfig: PluginConfig = {}) =>
   (api: PluginApi): PluginOutput => {
     api.registerCommand({
       name: 'start',
       description: 'Starts Re.Pack dev server.',
       action: (args) => {
         const root = api.getProjectRoot();
-        startCommand.func(undefined, { root, ...pluginConfig }, args);
+        const platforms = api.getPlatforms();
+        startCommand.func(
+          undefined,
+          { root, platforms, ...pluginConfig },
+          args
+        );
       },
       options: startCommand.options,
     });
@@ -48,7 +49,12 @@ export const pluginRepack =
           process.exit(1);
         }
         const root = api.getProjectRoot();
-        bundleCommand.func(undefined, { root, ...pluginConfig }, args);
+        const platforms = api.getPlatforms();
+        bundleCommand.func(
+          undefined,
+          { root, platforms, ...pluginConfig },
+          args
+        );
       },
       options: bundleCommand.options,
     });

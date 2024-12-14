@@ -7,13 +7,10 @@ import {
 import { logger } from '@callstack/rnef-tools';
 
 type PluginConfig = {
-  root?: string;
-  reactNativeVersion: string;
-  reactNativePath: string;
-  platforms: {
-    [platformName: string]: {
-      npmPackageName?: string;
-    };
+  reactNativeVersion?: string;
+  reactNativePath?: string;
+  platforms?: {
+    [platformName: string]: object;
   };
 };
 
@@ -60,7 +57,7 @@ type BundleCommandArgs = {
 };
 
 export const pluginMetro =
-  (pluginConfig: PluginConfig) =>
+  (pluginConfig: PluginConfig = {}) =>
   (api: PluginApi): PluginOutput => {
     api.registerCommand({
       name: 'start',
@@ -68,7 +65,20 @@ export const pluginMetro =
       // @ts-expect-error todo fix this
       action: (args: StartCommandArgs) => {
         const root = api.getProjectRoot();
-        startCommand.func(undefined, { root, ...pluginConfig }, args);
+        const reactNativeVersion = api.getReactNativeVersion();
+        const reactNativePath = api.getReactNativePath();
+        const platforms = api.getPlatforms();
+        startCommand.func(
+          undefined,
+          {
+            root,
+            reactNativeVersion,
+            reactNativePath,
+            platforms,
+            ...pluginConfig,
+          },
+          args
+        );
       },
       options: startCommand.options,
     });
@@ -86,7 +96,20 @@ export const pluginMetro =
           process.exit(1);
         }
         const root = api.getProjectRoot();
-        bundleCommand.func(undefined, { root, ...pluginConfig }, args);
+        const reactNativeVersion = api.getReactNativeVersion();
+        const reactNativePath = api.getReactNativePath();
+        const platforms = api.getPlatforms();
+        bundleCommand.func(
+          undefined,
+          {
+            root,
+            reactNativeVersion,
+            reactNativePath,
+            platforms,
+            ...pluginConfig,
+          },
+          args
+        );
       },
       options: bundleCommand.options,
     });

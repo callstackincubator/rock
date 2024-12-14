@@ -10,6 +10,9 @@ export type PluginOutput = {
 export type PluginApi = {
   registerCommand: (command: CommandType) => void;
   getProjectRoot: () => string;
+  getReactNativeVersion: () => string;
+  getReactNativePath: () => string;
+  getPlatforms: () => { [platform: string]: object };
 };
 
 type PluginType = (args: PluginApi) => PluginOutput;
@@ -30,6 +33,8 @@ type CommandType = {
 
 type ConfigType = {
   root?: string;
+  reactNativeVersion?: string;
+  reactNativePath?: string;
   plugins?: Record<string, PluginType>;
   platforms?: Record<string, PluginType>;
   commands?: Array<CommandType>;
@@ -41,13 +46,13 @@ type ConfigOutput = {
 
 const extensions = ['.js', '.ts', '.mjs'];
 
-const importUp = async <T>(dir: string, name: string): Promise<T> => {
+const importUp = async (dir: string, name: string): Promise<ConfigType> => {
   const filePath = path.join(dir, name);
 
   for (const ext of extensions) {
     const filePathWithExt = `${filePath}${ext}`;
     if (fs.existsSync(filePathWithExt)) {
-      let config: T;
+      let config: ConfigType;
 
       if (ext === '.mjs') {
         config = await import(filePathWithExt).then((module) => module.default);
@@ -58,6 +63,12 @@ const importUp = async <T>(dir: string, name: string): Promise<T> => {
 
       return {
         root: dir,
+        get reactNativePath() {
+          return resolveReactNativePath(config.root || dir);
+        },
+        get reactNativeVersion() {
+          return getReactNativeVersion(config.root || dir);
+        },
         ...config,
       };
     }
@@ -74,7 +85,7 @@ const importUp = async <T>(dir: string, name: string): Promise<T> => {
 export async function getConfig(
   dir: string = process.cwd()
 ): Promise<ConfigOutput> {
-  const config = await importUp<ConfigType>(dir, 'rnef.config');
+  const config = await importUp(dir, 'rnef.config');
 
   if (!config.root) {
     config.root = process.cwd();
@@ -85,6 +96,9 @@ export async function getConfig(
       config.commands = [...(config.commands || []), command];
     },
     getProjectRoot: () => config.root as string,
+    getReactNativeVersion: () => config.reactNativeVersion as string,
+    getReactNativePath: () => config.reactNativePath as string,
+    getPlatforms: () => config.platforms as { [platform: string]: object },
   };
 
   if (config.plugins) {
@@ -106,4 +120,27 @@ export async function getConfig(
   };
 
   return outputConfig;
+}
+
+function getReactNativeVersion(root: string) {
+  try {
+    const require = createRequire(import.meta.url);
+    return JSON.parse(
+      fs.readFileSync(
+        path.join(
+          require.resolve('react-native', { paths: [root] }),
+          '..',
+          'package.json'
+        ),
+        'utf-8'
+      )
+    ).version;
+  } catch {
+    return 'unknown';
+  }
+}
+
+function resolveReactNativePath(root: string) {
+  const require = createRequire(import.meta.url);
+  return path.join(require.resolve('react-native', { paths: [root] }), '..');
 }
