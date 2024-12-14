@@ -15,7 +15,7 @@ if linkage != nil
 end
 
 target 'HelloWorld' do
-  config = use_native_modules!(['rnef', 'config', '-p', 'visionos'])
+  config = use_native_modules!(['rnef', 'config'])
   config[:reactNativePath] = '../node_modules/@callstack/react-native-visionos'
 
   use_react_native!(
