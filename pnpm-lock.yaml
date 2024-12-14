@@ -262,8 +262,8 @@ importers:
         specifier: workspace:*
         version: link:../plugin-platform-apple
       '@react-native-community/cli-config-apple':
-        specifier: ^15.1.2
-        version: 15.1.2
+        specifier: ^16.0.2
+        version: 16.0.2
       tslib:
         specifier: ^2.3.0
         version: 2.8.1
