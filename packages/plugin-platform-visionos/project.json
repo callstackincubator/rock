@@ -11,12 +11,7 @@
       "options": {
         "outputPath": "packages/plugin-platform-visionos/dist",
         "main": "packages/plugin-platform-visionos/src/index.ts",
-        "tsConfig": "packages/plugin-platform-visionos/tsconfig.lib.json",
-        "assets": [
-          "packages/plugin-platform-visionos/*.md",
-          "packages/plugin-platform-visionos/src/template/**/*",
-          "packages/plugin-platform-visionos/react-native.config.*"
-        ]
+        "tsConfig": "packages/plugin-platform-visionos/tsconfig.lib.json"
       }
     }
   }
