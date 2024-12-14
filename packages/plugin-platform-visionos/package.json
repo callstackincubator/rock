@@ -1,0 +1,17 @@
+{
+  "name": "@callstack/rnef-plugin-platform-visionos",
+  "version": "0.0.1",
+  "type": "module",
+  "exports": {
+    "types": "./dist/src/index.d.ts",
+    "import": "./dist/src/index.js"
+  },
+  "dependencies": {
+    "@react-native-community/cli-config-apple": "^15.1.2",
+    "tslib": "^2.3.0",
+    "@callstack/rnef-plugin-platform-apple": "workspace:*"
+  },
+  "devDependencies": {
+    "@callstack/rnef-config": "workspace:*"
+  }
+}

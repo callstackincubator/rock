@@ -1,0 +1,103 @@
+name: 'RNEF Remote Build - visionOS Simulator'
+description: 'Github implementation of the RNEF Remote Build for visionOS Simulator'
+
+inputs:
+  github-token:
+    description: "GitHub Token"
+    required: false
+    default: ${{ github.token }}
+  scheme:
+    description: The workspace scheme to build
+    required: false
+    default: "HelloWorld"
+  architectures:
+    description: The architectures to build for
+    required: false
+    default: "arm64 x86_64"
+
+outputs:
+  artifact-url:
+    description: 'URL of the relevant visionOS Simulator build artifact (could be cached)'
+    value: ${{ steps.cached-url.outcome == 'success' && steps.cached-url.outputs.artifact-url || steps.upload-artifact.outputs.artifact-url }}
+
+runs:
+  using: "composite"
+  steps:
+    - name: Native Fingerprint
+      id: fingerprint
+      uses: ./.github/actions/rnef-native-fingerprint
+      with:
+        platforms: visionos
+
+    - name: Set variables
+      run: |
+        echo "ARTIFACT_NAME=${{inputs.scheme}}-${{inputs.architectures}}-${{ steps.fingerprint.outputs.hash}}.tar.gz" >> $GITHUB_ENV
+      shell: bash
+
+    - name: Find artifact URL
+      id: cached-url
+      uses: ./.github/actions/find-artifact
+      with:
+        name: ${{ env.ARTIFACT_NAME }}
+
+    - name: Post Cached Build (if found)
+      if: steps.cached-url.outputs.artifact-url
+      uses: ./.github/actions/rnef-post-build
+      with:
+        platform: visionOS Simulator
+        artifact-url: ${{ steps.cached-url.outputs.artifact-url }}
+
+    - name: Install Pods
+      if: ${{ !steps.cached-url.outputs.artifact-url }}
+      run: |
+        cd visionos
+        pod install --verbose
+      shell: bash
+
+    - name: Build visionOS
+      if: ${{ !steps.cached-url.outputs.artifact-url }}
+      # Taken from: https://github.com/microsoft/rnx-kit/blob/ac1cfa362ace6172a020d2b4bcdd63c398527c17/incubator/build/scripts/build-apple.sh#L49
+      # @TODO replace with RNEF CLI call.
+      run: |
+        cd visionos
+        xcworkspace=$(find . -maxdepth 1 -name '*.xcworkspace' -type d | head -1)
+        xcodebuild \
+           -workspace "${xcworkspace}" \
+           -scheme "${{inputs.scheme}}" \
+           -destination "generic/platform=visionOS Simulator" \
+           -configuration Debug \
+           -derivedDataPath DerivedData \
+           ARCHS="${{inputs.architectures}}" \
+           CODE_SIGNING_ALLOWED=NO \
+           CLANG_ADDRESS_SANITIZER=NO \
+           CLANG_UNDEFINED_BEHAVIOR_SANITIZER=NO \
+           OTHER_CFLAGS='$(inherited) -fno-sanitize=undefined -fno-sanitize=bounds -fstack-protector-strong' \
+           OTHER_LDFLAGS='$(inherited) -fno-sanitize=undefined -fno-sanitize=bounds -fstack-protector-strong' \
+           COMPILER_INDEX_STORE_ENABLE=NO \
+           build
+      shell: bash
+
+    - name: Prepare Artifact
+      if: ${{ !steps.cached-url.outputs.artifact-url }}
+      run: |
+        app=$(find visionos/DerivedData/Build/Products/Debug-iphonesimulator -maxdepth 1 -name '*.app' -type d | head -1)
+        app_dir=$(dirname "${app}")
+        app_name=$(basename "${app}")
+        tar -C "${app_dir}" -czvf "${{ env.ARTIFACT_NAME }}" "${app_name}"
+      shell: bash
+
+    - name: Upload IPA
+      id: upload-artifact
+      if: ${{ !steps.cached-url.outputs.artifact-url }}
+      uses: actions/upload-artifact@v4
+      with:
+        name: ${{ env.ARTIFACT_NAME }}
+        path: ${{ env.ARTIFACT_NAME }}
+        if-no-files-found: error
+
+    - name: Post Build
+      if: ${{ !steps.cached-url.outputs.artifact-url }}
+      uses: ./.github/actions/rnef-post-build
+      with:
+        platform: visionOS Simulator
+        artifact-url: ${{ steps.upload-artifact.outputs.artifact-url }}

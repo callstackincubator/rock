@@ -62,6 +62,14 @@ export const PLATFORMS: TemplateInfo[] = [
   },
   {
     type: 'npm',
+    name: 'visionos',
+    packageName: '@callstack/rnef-plugin-platform-visionos',
+    version: 'latest',
+    directory: 'template',
+    importName: 'pluginPlatformVisionOS',
+  },
+  {
+    type: 'npm',
     name: 'android',
     packageName: '@rnef/plugin-platform-android',
     version: 'latest',

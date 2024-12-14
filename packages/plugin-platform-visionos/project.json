@@ -1,0 +1,23 @@
+{
+  "name": "plugin-platform-visionos",
+  "$schema": "../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "packages/plugin-platform-visionos/src",
+  "projectType": "library",
+  "tags": [],
+  "targets": {
+    "build": {
+      "executor": "@nx/js:tsc",
+      "outputs": ["{options.outputPath}"],
+      "options": {
+        "outputPath": "packages/plugin-platform-visionos/dist",
+        "main": "packages/plugin-platform-visionos/src/index.ts",
+        "tsConfig": "packages/plugin-platform-visionos/tsconfig.lib.json",
+        "assets": [
+          "packages/plugin-platform-visionos/*.md",
+          "packages/plugin-platform-visionos/src/template/**/*",
+          "packages/plugin-platform-visionos/react-native.config.*"
+        ]
+      }
+    }
+  }
+}
