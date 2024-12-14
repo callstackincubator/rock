@@ -13,9 +13,9 @@
   "dependencies": {
     "@react-native-community/cli-config-apple": "^16.0.2",
     "tslib": "^2.3.0",
-    "@callstack/rnef-plugin-platform-apple": "workspace:*"
+    "@callstack/rnef-plugin-platform-apple": "^0.0.1"
   },
   "devDependencies": {
-    "@callstack/rnef-config": "workspace:*"
+    "@callstack/rnef-config": "^0.0.1"
   }
 }
