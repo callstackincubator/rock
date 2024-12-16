@@ -8,8 +8,6 @@ on:
   workflow_dispatch:
   # Remove this one before merging
   pull_request:
-    branches:
-      - chore/nightly-ci
 
 jobs:
   main:
