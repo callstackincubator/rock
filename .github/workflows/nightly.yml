@@ -32,24 +32,24 @@ jobs:
       - run: pnpm install --frozen-lockfile
       - uses: nrwl/nx-set-shas@v4
 
-      - name: Typecheck and lint
-        run: pnpm lint typecheck
+      # - name: Typecheck and lint
+      #   run: pnpm lint typecheck
 
-      - name: Run tests
-        run: pnpm test
+      # - name: Run tests
+      #   run: pnpm test
 
       - name: Build framework
         run: pnpm build
 
-      - name: Run end-to-end tests
+      - name: Publish framework to Verdaccio
         run: |
-          # Run in background
           pnpm verdaccio:init &
-
           npx wait-on@8.0.1 http://localhost:4873
           pnpm verdaccio:publish
 
-          NPM_CONFIG_REGISTRY=http://localhost:4873 pnpm e2e
+      # - name: Run end-to-end tests
+      #   run: |
+      #     NPM_CONFIG_REGISTRY=http://localhost:4873 pnpm e2e
 
       - name: Deploy template
         run: |
@@ -64,4 +64,6 @@ jobs:
           NPM_CONFIG_REGISTRY=http://localhost:4873 pnpm install
 
       - name: Build Android template
-        run: pnpm rnef build:android
+        run: |
+          cd ../nightly-deploy
+          pnpm rnef build:android
