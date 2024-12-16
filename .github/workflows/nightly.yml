@@ -6,13 +6,14 @@ on:
     - cron: '0 2 * * *'
   # Manaual trigger
   workflow_dispatch:
+  pull_request:
 
 concurrency: 
   group: nightly-${{ github.ref }}
   cancel-in-progress: true
 
 jobs:
-  main:
+  validate:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -21,7 +22,6 @@ jobs:
         with:
           version: 9.11.0
 
-      # Cache node_modules
       - uses: actions/setup-node@v4
         with:
           node-version: 20
@@ -49,6 +49,39 @@ jobs:
         run: |
           NPM_CONFIG_REGISTRY=http://localhost:4873 pnpm e2e
 
+  build-android:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 9.11.0
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: 'pnpm'
+
+      - name: Install Java
+        uses: actions/setup-java@v4
+        with:
+          java-version: 17
+          distribution: adopt
+          cache: gradle
+
+      - run: pnpm install --frozen-lockfile
+      - uses: nrwl/nx-set-shas@v4
+
+      - name: Build framework
+        run: pnpm build
+
+      - name: Publish framework to Verdaccio
+        run: |
+          pnpm verdaccio:init &
+          npx wait-on@8.0.1 http://localhost:4873
+          pnpm verdaccio:publish
+
       - name: Deploy template
         run: |
           cd ..
@@ -64,14 +97,53 @@ jobs:
             NPM_CONFIG_NODE_LINKER=hoisted \
             pnpm install
 
-      - name: Install Java
-        uses: actions/setup-java@v4
-        with:
-          java-version: 17
-          distribution: adopt
-          cache: gradle
-
       - name: Build Android template
         run: |
           cd ../NightlyDeploy
           pnpm rnef build:android
+
+  build-ios:
+    runs-on: macos-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 9.11.0
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: 'pnpm'
+
+      - run: pnpm install --frozen-lockfile
+      - uses: nrwl/nx-set-shas@v4
+
+      - name: Build framework
+        run: pnpm build
+
+      - name: Publish framework to Verdaccio
+        run: |
+          pnpm verdaccio:init &
+          npx wait-on@8.0.1 http://localhost:4873
+          pnpm verdaccio:publish
+
+      - name: Deploy template
+        run: |
+          cd ..
+          NPM_CONFIG_REGISTRY=http://localhost:4873 pnpm create @callstack/rnef-app \
+            --registry http://localhost:4873 \
+            NightlyDeploy \
+            --template=default \
+            --platfrom=ios --platform=android \
+            --plugin=metro
+
+          cd NightlyDeploy
+          NPM_CONFIG_REGISTRY=http://localhost:4873 \
+            NPM_CONFIG_NODE_LINKER=hoisted \
+            pnpm install
+
+      - name: Build iOS template
+        run: |
+          cd ../NightlyDeploy
+          pnpm rnef build:ios
