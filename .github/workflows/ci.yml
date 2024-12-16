@@ -1,10 +1,12 @@
 name: CI
 
 on:
-  push:
-    branches:
-      - main
-  pull_request:
+  # Revert before merging
+  workflow_dispatch:
+  # push:
+  #   branches:
+  #     - main
+  # pull_request:
 
 permissions:
   actions: read

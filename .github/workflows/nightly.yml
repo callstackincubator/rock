@@ -61,6 +61,10 @@ jobs:
             --platfrom=ios --platform=android \
             --plugin=metro
           cd nightly-deploy
+
+          echo "link-workspace-packages=true\nauto-install-peers=true\n" > .npmrc
+
+          # Install dependencies  
           NPM_CONFIG_REGISTRY=http://localhost:4873 pnpm install
 
       - name: Build Android template
