@@ -62,8 +62,9 @@ jobs:
             --plugin=metro
 
           cd NightlyDeploy
-          echo "node-linker=hoisted\n" > .npmrc
-          NPM_CONFIG_REGISTRY=http://localhost:4873 pnpm install
+          NPM_CONFIG_REGISTRY=http://localhost:4873 \
+            NPM_CONFIG_NODE_LINKER=hoisted \
+            pnpm install
 
       - name: Build Android template
         run: |
