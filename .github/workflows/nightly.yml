@@ -1,11 +1,16 @@
 name: Nighlty
 
 on:
+  # Runs every night at 2 AM
   schedule:
-   # Runs every night at 2 AM
     - cron: '0 2 * * *'
+  # Manaual trigger
   workflow_dispatch:
-    
+  # Remove this one before merging
+  pull_request:
+    branches:
+      - chore/nightly-ci
+
 jobs:
   main:
     runs-on: ubuntu-latest
