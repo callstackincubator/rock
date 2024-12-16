@@ -66,6 +66,13 @@ jobs:
             NPM_CONFIG_NODE_LINKER=hoisted \
             pnpm install
 
+      - name: Install Java
+        uses: actions/setup-java@v4
+        with:
+          java-version: 17
+          distribution: adopt
+          cache: gradle
+
       - name: Build Android template
         run: |
           cd ../NightlyDeploy
