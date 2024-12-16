@@ -154,4 +154,4 @@ jobs:
       - name: Build iOS template
         run: |
           cd ../NightlyDeploy
-          pnpm rnef build:ios
+          pnpm rnef build:ios --verbose
