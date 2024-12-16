@@ -62,7 +62,7 @@ jobs:
             --plugin=metro
 
           cd NightlyDeploy
-          echo "link-workspace-packages=true\nauto-install-peers=true\n" > .npmrc
+          echo "node-linker=hoisted\n" > .npmrc
           NPM_CONFIG_REGISTRY=http://localhost:4873 pnpm install
 
       - name: Build Android template
