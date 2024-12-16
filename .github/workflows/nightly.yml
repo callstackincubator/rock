@@ -6,8 +6,6 @@ on:
     - cron: '0 2 * * *'
   # Manaual trigger
   workflow_dispatch:
-  # Remove before merging
-  pull_request:
 
 concurrency: 
   group: nightly-${{ github.ref }}
