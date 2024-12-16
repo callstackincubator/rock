@@ -56,18 +56,16 @@ jobs:
           cd ..
           NPM_CONFIG_REGISTRY=http://localhost:4873 pnpm create @callstack/rnef-app \
             --registry http://localhost:4873 \
-            nightly-deploy \
+            NightlyDeploy \
             --template=default \
             --platfrom=ios --platform=android \
             --plugin=metro
-          cd nightly-deploy
 
+          cd NightlyDeploy
           echo "link-workspace-packages=true\nauto-install-peers=true\n" > .npmrc
-
-          # Install dependencies  
           NPM_CONFIG_REGISTRY=http://localhost:4873 pnpm install
 
       - name: Build Android template
         run: |
-          cd ../nightly-deploy
+          cd ../NightlyDeploy
           pnpm rnef build:android
