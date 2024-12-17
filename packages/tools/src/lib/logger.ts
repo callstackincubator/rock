@@ -13,33 +13,33 @@ const SEPARATOR = ', ';
 
 let verbose = false;
 
-const formatMessages = (messages: Array<string>) => messages.join(SEPARATOR);
+const formatMessages = (messages: Array<unknown>) => messages.join(SEPARATOR);
 
-const success = (...messages: Array<string>) => {
+const success = (...messages: Array<unknown>) => {
   console.log(`${color.green(SUCCESS_SYMBOL)}  ${formatMessages(messages)}`);
 };
 
-const info = (...messages: Array<string>) => {
+const info = (...messages: Array<unknown>) => {
   console.log(`${color.cyan(INFO_SYMBOL)}  ${formatMessages(messages)}`);
 };
 
-const warn = (...messages: Array<string>) => {
+const warn = (...messages: Array<unknown>) => {
   console.warn(
     `${color.yellow(`${WARN_SYMBOL}  ${formatMessages(messages)}`)}`
   );
 };
 
-const error = (...messages: Array<string>) => {
+const error = (...messages: Array<unknown>) => {
   console.error(`${color.red(`${ERROR_SYMBOL}  ${formatMessages(messages)}`)}`);
 };
 
-const debug = (...messages: Array<string>) => {
+const debug = (...messages: Array<unknown>) => {
   if (verbose) {
     console.log(`${color.gray('debug')} ${formatMessages(messages)}`);
   }
 };
 
-const log = (...messages: Array<string>) => {
+const log = (...messages: Array<unknown>) => {
   console.log(`${formatMessages(messages)}`);
 };
 

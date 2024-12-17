@@ -10,7 +10,7 @@ export type GitHubArtifact = {
   downloadUrl: string;
 };
 
-async function fetchGitHubArtifactsByName(
+export async function fetchGitHubArtifactsByName(
   octokit: Octokit,
   repository: string,
   name: string

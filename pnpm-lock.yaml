@@ -310,6 +310,9 @@ importers:
       picocolors:
         specifier: ^1.1.1
         version: 1.1.1
+      ts-regex-builder:
+        specifier: ^1.8.2
+        version: 1.8.2
       tslib:
         specifier: ^2.3.0
         version: 2.7.0
@@ -5652,6 +5655,10 @@ packages:
         optional: true
       '@swc/wasm':
         optional: true
+
+  ts-regex-builder@1.8.2:
+    resolution: {integrity: sha512-Y8HovHFheDKm/jgLIWSO8o81xA/I9O5AGc3/vNG1sVSskatOifr3SQzAsatBXGLjL3nYhQif1MpwQRS5GF8ADg==}
+    engines: {node: '>= 18.0.0'}
 
   tsconfck@3.1.4:
     resolution: {integrity: sha512-kdqWFGVJqe+KGYvlSO9NIaWn9jT1Ny4oKVzAJsKii5eoE9snzTJzL4+MMVOMn+fikWGFmKEylcXL710V/kIPJQ==}
@@ -12870,6 +12877,8 @@ snapshots:
       yn: 3.1.1
     optionalDependencies:
       '@swc/core': 1.5.29(@swc/helpers@0.5.13)
+
+  ts-regex-builder@1.8.2: {}
 
   tsconfck@3.1.4(typescript@5.5.4):
     optionalDependencies:
