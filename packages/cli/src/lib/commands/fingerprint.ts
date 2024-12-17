@@ -4,7 +4,7 @@ import {
   logger,
   nativeFingerprint,
   resolveAbsolutePath,
-} from '@callstack/rnef-tools';
+} from '@rnef/tools';
 
 type NativeFingerprintCommandOptions = {
   platform: 'ios' | 'android';

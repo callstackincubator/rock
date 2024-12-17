@@ -1,4 +1,4 @@
-import type { PluginOutput, PluginApi } from '@callstack/rnef-config';
+import type { PluginOutput, PluginApi } from '@rnef/config';
 import {
   buildAndroid,
   type BuildFlags,

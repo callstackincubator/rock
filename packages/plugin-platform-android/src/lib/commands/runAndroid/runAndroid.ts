@@ -3,7 +3,7 @@ import {
   AndroidProjectConfig,
   Config,
 } from '@react-native-community/cli-types';
-import { checkCancelPrompt, logger } from '@callstack/rnef-tools';
+import { checkCancelPrompt, logger } from '@rnef/tools';
 import { getDevices } from './adb.js';
 import { toPascalCase } from '../toPascalCase.js';
 import { tryLaunchAppOnDevice } from './tryLaunchAppOnDevice.js';

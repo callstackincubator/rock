@@ -5,7 +5,7 @@ uplinks:
     url: https://registry.npmjs.org/
 
 packages:
-  '@callstack/*':
+  '@rnef/*':
     access: $all
     publish: $all
   '**':

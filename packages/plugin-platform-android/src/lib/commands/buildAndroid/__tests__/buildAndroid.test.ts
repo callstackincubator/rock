@@ -1,7 +1,7 @@
 import fs, { PathLike } from 'node:fs';
 import { vi, test, Mock, MockedFunction } from 'vitest';
 import { AndroidProjectConfig } from '@react-native-community/cli-types';
-import { logger } from '@callstack/rnef-tools';
+import { logger } from '@rnef/tools';
 import spawn from 'nano-spawn';
 import { select } from '@clack/prompts';
 import { buildAndroid, type BuildFlags } from '../buildAndroid.js';

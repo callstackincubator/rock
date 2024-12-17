@@ -1,7 +1,7 @@
 import path from 'node:path';
 import fs from 'node:fs';
 import { ApplePlatform, Device } from '../../types/index.js';
-import { cacheManager, logger } from '@callstack/rnef-tools';
+import { cacheManager, logger } from '@rnef/tools';
 
 function getProjectNameFromPackageJson(projectRoot: string) {
   const packageJsonPath = path.join(projectRoot, 'package.json');

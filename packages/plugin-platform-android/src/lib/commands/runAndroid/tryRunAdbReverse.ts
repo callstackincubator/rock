@@ -1,6 +1,6 @@
 import spawn from 'nano-spawn';
 import { getAdbPath } from './adb.js';
-import { logger } from '@callstack/rnef-tools';
+import { logger } from '@rnef/tools';
 
 // Runs ADB reverse tcp:8081 tcp:8081 to allow loading the jsbundle from the packager
 export async function tryRunAdbReverse(

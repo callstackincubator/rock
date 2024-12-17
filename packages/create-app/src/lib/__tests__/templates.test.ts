@@ -6,7 +6,7 @@ test('resolveTemplateName with built-in templates', () => {
   expect(resolveTemplate(TEMPLATES, 'default')).toEqual({
     type: 'npm',
     name: 'default',
-    packageName: '@callstack/rnef-template-default',
+    packageName: '@rnef/template-default',
     version: 'latest',
     directory: '.',
   });

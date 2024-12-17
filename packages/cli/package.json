@@ -1,5 +1,5 @@
 {
-  "name": "@callstack/rnef-cli",
+  "name": "@rnef/cli",
   "version": "0.0.1",
   "type": "module",
   "exports": {
@@ -14,8 +14,8 @@
     "publish:verdaccio": "npm publish --registry http://localhost:4873 --userconfig ../../.npmrc"
   },
   "dependencies": {
-    "@callstack/rnef-config": "^0.0.1",
-    "@callstack/rnef-tools": "^0.0.1",
+    "@rnef/config": "^0.0.1",
+    "@rnef/tools": "^0.0.1",
     "@clack/prompts": "^0.8.1",
     "@react-native-community/cli-config": "^16.0.2",
     "commander": "^12.1.0",

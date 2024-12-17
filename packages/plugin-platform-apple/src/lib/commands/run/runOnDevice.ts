@@ -1,5 +1,5 @@
 import { ApplePlatform, Device, XcodeProjectInfo } from '../../types/index.js';
-import { logger } from '@callstack/rnef-tools';
+import { logger } from '@rnef/tools';
 import color from 'picocolors';
 import { buildProject } from '../build/buildProject.js';
 import { getBuildPath } from './getBuildPath.js';

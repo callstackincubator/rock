@@ -93,10 +93,10 @@ importers:
 
   packages/cli:
     dependencies:
-      '@callstack/rnef-config':
+      '@rnef/config':
         specifier: ^0.0.1
         version: link:../config
-      '@callstack/rnef-tools':
+      '@rnef/tools':
         specifier: ^0.0.1
         version: link:../tools
       '@clack/prompts':
@@ -124,7 +124,7 @@ importers:
 
   packages/create-app:
     dependencies:
-      '@callstack/rnef-tools':
+      '@rnef/tools':
         specifier: ^0.0.1
         version: link:../tools
       '@clack/prompts':
@@ -146,7 +146,7 @@ importers:
         specifier: ^2.3.0
         version: 2.7.0
     devDependencies:
-      '@callstack/rnef-test-helpers':
+      '@rnef/test-helpers':
         specifier: ^0.0.1
         version: link:../test-helpers
       '@types/gradient-string':
@@ -158,7 +158,7 @@ importers:
 
   packages/plugin-metro:
     dependencies:
-      '@callstack/rnef-tools':
+      '@rnef/tools':
         specifier: ^0.0.1
         version: link:../tools
       '@react-native-community/cli-server-api':
@@ -171,13 +171,13 @@ importers:
         specifier: ^2.3.0
         version: 2.8.1
     devDependencies:
-      '@callstack/rnef-config':
+      '@rnef/config':
         specifier: ^0.0.1
         version: link:../config
 
   packages/plugin-platform-android:
     dependencies:
-      '@callstack/rnef-tools':
+      '@rnef/tools':
         specifier: ^0.0.1
         version: link:../tools
       '@clack/prompts':
@@ -199,7 +199,7 @@ importers:
         specifier: ^2.3.0
         version: 2.7.0
     devDependencies:
-      '@callstack/rnef-config':
+      '@rnef/config':
         specifier: ^0.0.1
         version: link:../config
       '@react-native-community/cli-types':
@@ -208,7 +208,7 @@ importers:
 
   packages/plugin-platform-apple:
     dependencies:
-      '@callstack/rnef-tools':
+      '@rnef/tools':
         specifier: ^0.0.1
         version: link:../tools
       '@clack/prompts':
@@ -236,13 +236,13 @@ importers:
         specifier: ^2.3.0
         version: 2.7.0
     devDependencies:
-      '@callstack/rnef-config':
+      '@rnef/config':
         specifier: ^0.0.1
         version: link:../config
 
   packages/plugin-platform-ios:
     dependencies:
-      '@callstack/rnef-plugin-platform-apple':
+      '@rnef/plugin-platform-apple':
         specifier: ^0.0.1
         version: link:../plugin-platform-apple
       '@react-native-community/cli-config-apple':
@@ -252,7 +252,7 @@ importers:
         specifier: ^2.3.0
         version: 2.7.0
     devDependencies:
-      '@callstack/rnef-config':
+      '@rnef/config':
         specifier: ^0.0.1
         version: link:../config
 
@@ -261,7 +261,7 @@ importers:
       '@callstack/repack':
         specifier: 5.0.0-rc.2
         version: 5.0.0-rc.2(@react-native-community/cli-server-api@16.0.2)(@react-native-community/cli-types@16.0.2)(@react-native-community/cli@15.1.2(typescript@5.5.4))(@rspack/core@1.1.3(@swc/helpers@0.5.15))(@rspack/plugin-react-refresh@1.0.0(react-refresh@0.14.2))(react-native@0.76.3(@babel/core@7.25.2)(@babel/preset-env@7.25.4(@babel/core@7.25.2))(@react-native-community/cli-server-api@16.0.2)(react@18.3.1))(webpack@5.96.1(@swc/core@1.5.29(@swc/helpers@0.5.13)))
-      '@callstack/rnef-tools':
+      '@rnef/tools':
         specifier: ^0.0.1
         version: link:../tools
       '@rspack/core':
@@ -280,7 +280,7 @@ importers:
         specifier: ^2.3.0
         version: 2.7.0
     devDependencies:
-      '@callstack/rnef-config':
+      '@rnef/config':
         specifier: ^0.0.1
         version: link:../config
 

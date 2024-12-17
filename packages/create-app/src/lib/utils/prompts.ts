@@ -2,7 +2,7 @@ import { intro, multiselect, note, outro, select, text } from '@clack/prompts';
 import fs from 'node:fs';
 import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
-import { checkCancelPrompt } from '@callstack/rnef-tools';
+import { checkCancelPrompt } from '@rnef/tools';
 import { parsePackageManagerFromUserAgent } from './parsers.js';
 import { validateProjectName } from '../validate-project-name.js';
 import { TemplateInfo } from '../templates.js';

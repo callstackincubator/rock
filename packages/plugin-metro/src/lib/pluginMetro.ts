@@ -1,10 +1,10 @@
-import type { PluginOutput, PluginApi } from '@callstack/rnef-config';
+import type { PluginOutput, PluginApi } from '@rnef/config';
 import {
   startCommand,
   bundleCommand,
   // @ts-expect-error missing typings
 } from '@react-native/community-cli-plugin';
-import { logger } from '@callstack/rnef-tools';
+import { logger } from '@rnef/tools';
 
 type PluginConfig = {
   reactNativeVersion?: string;

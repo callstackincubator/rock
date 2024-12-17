@@ -1,5 +1,5 @@
 {
-  "name": "@callstack/rnef-plugin-platform-ios",
+  "name": "@rnef/plugin-platform-ios",
   "version": "0.0.1",
   "type": "module",
   "exports": {
@@ -19,9 +19,9 @@
   "dependencies": {
     "@react-native-community/cli-config-apple": "^16.0.2",
     "tslib": "^2.3.0",
-    "@callstack/rnef-plugin-platform-apple": "^0.0.1"
+    "@rnef/plugin-platform-apple": "^0.0.1"
   },
   "devDependencies": {
-    "@callstack/rnef-config": "^0.0.1"
+    "@rnef/config": "^0.0.1"
   }
 }

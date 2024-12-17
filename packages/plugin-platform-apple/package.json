@@ -1,5 +1,5 @@
 {
-  "name": "@callstack/rnef-plugin-platform-apple",
+  "name": "@rnef/plugin-platform-apple",
   "version": "0.0.1",
   "type": "module",
   "exports": {
@@ -15,7 +15,7 @@
     "publish:verdaccio": "npm publish --registry http://localhost:4873 --userconfig ../../.npmrc"
   },
   "dependencies": {
-    "@callstack/rnef-tools": "^0.0.1",
+    "@rnef/tools": "^0.0.1",
     "@clack/prompts": "^0.7.0",
     "@react-native-community/cli-config-apple": "^16.0.2",
     "fast-glob": "^3.3.2",
@@ -26,6 +26,6 @@
     "tslib": "^2.3.0"
   },
   "devDependencies": {
-    "@callstack/rnef-config": "^0.0.1"
+    "@rnef/config": "^0.0.1"
   }
 }

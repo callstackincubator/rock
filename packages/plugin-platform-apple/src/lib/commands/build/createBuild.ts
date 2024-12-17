@@ -5,7 +5,7 @@ import {
   ProjectConfig,
   XcodeProjectInfo,
 } from '../../types/index.js';
-import { logger } from '@callstack/rnef-tools';
+import { logger } from '@rnef/tools';
 import { outro, cancel } from '@clack/prompts';
 import path from 'path';
 import { selectFromInteractiveMode } from '../../utils/selectFromInteractiveMode.js';

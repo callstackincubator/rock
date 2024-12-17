@@ -2,7 +2,7 @@ import chalk from 'chalk';
 import spawn from 'nano-spawn';
 import { select, spinner } from '@clack/prompts';
 import { getGradleWrapper } from './runGradle.js';
-import { checkCancelPrompt } from '@callstack/rnef-tools';
+import { checkCancelPrompt } from '@rnef/tools';
 
 type GradleTask = {
   task: string;

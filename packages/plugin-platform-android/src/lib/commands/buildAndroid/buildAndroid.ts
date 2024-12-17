@@ -3,7 +3,7 @@ import { runGradle } from '../runGradle.js';
 import { promptForTaskSelection } from '../listAndroidTasks.js';
 import { findOutputFile } from '../runAndroid/tryInstallAppOnDevice.js';
 import { outro, spinner } from '@clack/prompts';
-import { logger } from '@callstack/rnef-tools';
+import { logger } from '@rnef/tools';
 import color from 'picocolors';
 import { toPascalCase } from '../toPascalCase.js';
 

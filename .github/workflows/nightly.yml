@@ -84,7 +84,7 @@ jobs:
       - name: Deploy template
         run: |
           cd ..
-          NPM_CONFIG_REGISTRY=http://localhost:4873 pnpm create @callstack/rnef-app \
+          NPM_CONFIG_REGISTRY=http://localhost:4873 pnpm create @rnef/app \
             --registry http://localhost:4873 \
             NightlyDeploy \
             --template=default \
@@ -130,7 +130,7 @@ jobs:
       - name: Deploy template
         run: |
           cd ..
-          NPM_CONFIG_REGISTRY=http://localhost:4873 pnpm create @callstack/rnef-app \
+          NPM_CONFIG_REGISTRY=http://localhost:4873 pnpm create @rnef/app \
             --registry http://localhost:4873 \
             NightlyDeploy \
             --template=default \

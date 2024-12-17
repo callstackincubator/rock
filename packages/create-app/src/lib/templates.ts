@@ -1,5 +1,5 @@
 import * as path from 'node:path';
-import { resolveAbsolutePath } from '@callstack/rnef-tools';
+import { resolveAbsolutePath } from '@rnef/tools';
 
 export type TemplateInfo = NpmTemplateInfo | LocalTemplateInfo;
 
@@ -26,7 +26,7 @@ export const TEMPLATES: TemplateInfo[] = [
   {
     type: 'npm',
     name: 'default',
-    packageName: '@callstack/rnef-template-default',
+    packageName: '@rnef/template-default',
     version: 'latest',
     directory: '.',
   },
@@ -36,7 +36,7 @@ export const PLUGINS: TemplateInfo[] = [
   {
     type: 'npm',
     name: 'metro',
-    packageName: '@callstack/rnef-plugin-metro',
+    packageName: '@rnef/plugin-metro',
     version: 'latest',
     directory: 'template',
     importName: 'pluginMetro',
@@ -44,7 +44,7 @@ export const PLUGINS: TemplateInfo[] = [
   {
     type: 'npm',
     name: 'repack',
-    packageName: '@callstack/rnef-plugin-repack',
+    packageName: '@rnef/plugin-repack',
     version: 'latest',
     directory: 'template',
     importName: 'pluginRepack',
@@ -55,7 +55,7 @@ export const PLATFORMS: TemplateInfo[] = [
   {
     type: 'npm',
     name: 'ios',
-    packageName: '@callstack/rnef-plugin-platform-ios',
+    packageName: '@rnef/plugin-platform-ios',
     version: 'latest',
     directory: 'template',
     importName: 'pluginPlatformIOS',
@@ -63,7 +63,7 @@ export const PLATFORMS: TemplateInfo[] = [
   {
     type: 'npm',
     name: 'android',
-    packageName: '@callstack/rnef-plugin-platform-android',
+    packageName: '@rnef/plugin-platform-android',
     version: 'latest',
     directory: 'template',
     importName: 'pluginPlatformAndroid',

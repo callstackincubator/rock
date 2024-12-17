@@ -1,10 +1,7 @@
 import fs from 'node:fs';
 import path from 'node:path';
 import { spinner } from '@clack/prompts';
-import {
-  resolveAbsolutePath,
-  cancelPromptAndExit,
-} from '@callstack/rnef-tools';
+import { resolveAbsolutePath, cancelPromptAndExit } from '@rnef/tools';
 import {
   renameCommonFiles,
   replacePlaceholder,

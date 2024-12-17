@@ -4,7 +4,7 @@ import { AndroidProjectConfig } from '@react-native-community/cli-types';
 import { select } from '@clack/prompts';
 import spawn from 'nano-spawn';
 import { runAndroid, type Flags } from '../runAndroid.js';
-import { logger } from '@callstack/rnef-tools';
+import { logger } from '@rnef/tools';
 
 const actualFs = await vi.importMock('node:fs');
 

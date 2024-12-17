@@ -4,7 +4,7 @@ import { getAdbPath } from './adb.js';
 import type { AndroidProject, Flags } from './runAndroid.js';
 import { spinner } from '@clack/prompts';
 import { promptForUser } from './listAndroidUsers.js';
-import { logger } from '@callstack/rnef-tools';
+import { logger } from '@rnef/tools';
 
 export async function tryInstallAppOnDevice(
   device: string,

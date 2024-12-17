@@ -2,7 +2,7 @@ import fs from 'fs';
 import path from 'path';
 import cacheManager from '../cacheManager.js';
 import { vi, describe, beforeEach } from 'vitest';
-import { cleanup, getTempDirectory } from '@callstack/rnef-test-helpers';
+import { cleanup, getTempDirectory } from '@rnef/test-helpers';
 
 const DIR = getTempDirectory('.rnef/cache');
 const projectName = 'Project1';

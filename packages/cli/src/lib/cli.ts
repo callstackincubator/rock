@@ -1,9 +1,9 @@
 import { dirname } from 'path';
 import { fileURLToPath } from 'url';
 import { Command } from 'commander';
-import { getConfig } from '@callstack/rnef-config';
+import { getConfig } from '@rnef/config';
 import { createRequire } from 'module';
-import { logger, resolveFilenameUp } from '@callstack/rnef-tools';
+import { logger, resolveFilenameUp } from '@rnef/tools';
 import { logConfig } from '../config.js';
 import { nativeFingerprintCommand } from './commands/fingerprint.js';
 

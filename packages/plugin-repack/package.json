@@ -1,5 +1,5 @@
 {
-  "name": "@callstack/rnef-plugin-repack",
+  "name": "@rnef/plugin-repack",
   "version": "0.0.1",
   "type": "module",
   "exports": {
@@ -16,11 +16,11 @@
     "publish:verdaccio": "npm publish --registry http://localhost:4873 --userconfig ../../.npmrc"
   },
   "dependencies": {
-    "@callstack/rnef-tools": "^0.0.1",
+    "@rnef/tools": "^0.0.1",
     "tslib": "^2.3.0"
   },
   "devDependencies": {
-    "@callstack/rnef-config": "^0.0.1"
+    "@rnef/config": "^0.0.1"
   },
   "peerDependencies": {
     "@callstack/repack": "5.0.0-rc.2",

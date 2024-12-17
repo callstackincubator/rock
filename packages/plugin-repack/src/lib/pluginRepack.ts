@@ -1,6 +1,6 @@
-import type { PluginOutput, PluginApi } from '@callstack/rnef-config';
+import type { PluginOutput, PluginApi } from '@rnef/config';
 import commands from '@callstack/repack/commands/rspack';
-import { logger } from '@callstack/rnef-tools';
+import { logger } from '@rnef/tools';
 
 type PluginConfig = {
   platforms?: {

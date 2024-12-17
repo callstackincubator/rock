@@ -1,4 +1,4 @@
-import { logger } from '@callstack/rnef-tools';
+import { logger } from '@rnef/tools';
 import color from 'picocolors';
 import { XcodeProjectInfo } from '../../types/index.js';
 import spawn from 'nano-spawn';

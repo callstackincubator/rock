@@ -1,5 +1,5 @@
 {
-  "name": "@callstack/create-rnef-app",
+  "name": "@rnef/create-app",
   "version": "0.0.1",
   "type": "module",
   "exports": {
@@ -18,7 +18,7 @@
     "create-rnef-app": "./dist/src/bin.js"
   },
   "dependencies": {
-    "@callstack/rnef-tools": "^0.0.1",
+    "@rnef/tools": "^0.0.1",
     "@clack/prompts": "^0.8.1",
     "gradient-string": "^3.0.0",
     "minimist": "^1.2.8",
@@ -27,7 +27,7 @@
     "tslib": "^2.3.0"
   },
   "devDependencies": {
-    "@callstack/rnef-test-helpers": "^0.0.1",
+    "@rnef/test-helpers": "^0.0.1",
     "@types/gradient-string": "^1.1.6",
     "@types/minimist": "^1.2.5"
   }

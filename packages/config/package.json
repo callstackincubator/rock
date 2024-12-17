@@ -1,5 +1,5 @@
 {
-  "name": "@callstack/rnef-config",
+  "name": "@rnef/config",
   "version": "0.0.1",
   "type": "module",
   "exports": {

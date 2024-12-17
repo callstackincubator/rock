@@ -1,6 +1,6 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 import { bold } from 'picocolors';
-import { logger } from '@callstack/rnef-tools';
+import { logger } from '@rnef/tools';
 import { selectFromInteractiveMode } from '../selectFromInteractiveMode.js';
 import { getInfo } from '../getInfo.js';
 import {
@@ -9,7 +9,7 @@ import {
 } from '../prompts.js';
 
 // Mock dependencies
-vi.mock('@callstack/rnef-tools', () => ({
+vi.mock('@rnef/tools', () => ({
   logger: {
     debug: vi.fn(),
   },

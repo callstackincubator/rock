@@ -5,7 +5,7 @@ import {
   execAsync,
   getRandomString,
   getTempDirectory,
-} from '@callstack/rnef-test-helpers';
+} from '@rnef/test-helpers';
 
 /**
  * Perform following commands to test e2e locally (on macOS):
@@ -17,7 +17,7 @@ import {
  */
 
 const VERDACCIO_REGISTRY_URL = 'http://localhost:4873';
-const CREATE_APP_COMMAND = `pnpm create @callstack/rnef-app`;
+const CREATE_APP_COMMAND = `pnpm create @rnef/app`;
 
 const ROOT_DIR = path.resolve(__dirname, '../../..');
 const TEMP_DIR = getTempDirectory('e2e-deploys');
@@ -77,7 +77,7 @@ describe('create-app command', { timeout: 30_000 }, () => {
     }
 
     await execAsync(
-      `${CREATE_APP_COMMAND} ${projectName} --template=@callstack/rnef-template-default --platform=ios --platform=android --plugin=metro`,
+      `${CREATE_APP_COMMAND} ${projectName} --template=@rnef/template-default --platform=ios --platform=android --plugin=metro`,
       execArgs
     );
 

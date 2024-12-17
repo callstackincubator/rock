@@ -1,6 +1,6 @@
 import { select } from '@clack/prompts';
 import color from 'picocolors';
-import { checkCancelPrompt } from '@callstack/rnef-tools';
+import { checkCancelPrompt } from '@rnef/tools';
 import { ApplePlatform, Device } from '../types/index.js';
 import { sortByRecentDevices } from '../commands/run/recentDevices.js';
 

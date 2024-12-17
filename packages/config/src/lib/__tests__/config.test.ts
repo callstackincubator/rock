@@ -6,7 +6,7 @@ import {
   cleanup,
   writeFiles,
   getTempDirectory,
-} from '@callstack/rnef-test-helpers';
+} from '@rnef/test-helpers';
 
 let DIR: string;
 

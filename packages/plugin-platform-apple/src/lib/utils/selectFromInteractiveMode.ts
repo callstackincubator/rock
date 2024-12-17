@@ -4,7 +4,7 @@ import {
   promptForConfigurationSelection,
   promptForSchemeSelection,
 } from './prompts.js';
-import { logger } from '@callstack/rnef-tools';
+import { logger } from '@rnef/tools';
 import { getInfo } from './getInfo.js';
 
 export async function selectFromInteractiveMode(

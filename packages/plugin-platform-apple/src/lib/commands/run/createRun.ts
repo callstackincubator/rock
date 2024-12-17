@@ -1,7 +1,7 @@
 import path from 'path';
 import fs from 'fs';
 import isInteractive from 'is-interactive';
-import { logger } from '@callstack/rnef-tools';
+import { logger } from '@rnef/tools';
 import { listDevicesAndSimulators } from '../../utils/listDevices.js';
 import { promptForDeviceSelection } from '../../utils/prompts.js';
 import { getConfiguration } from '../build/getConfiguration.js';

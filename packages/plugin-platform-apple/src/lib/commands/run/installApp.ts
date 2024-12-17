@@ -1,4 +1,4 @@
-import { logger } from '@callstack/rnef-tools';
+import { logger } from '@rnef/tools';
 import { getBuildPath } from './getBuildPath.js';
 import { getBuildSettings } from './getBuildSettings.js';
 import path from 'path';

@@ -1,5 +1,5 @@
 {
-  "name": "@callstack/rnef-plugin-metro",
+  "name": "@rnef/plugin-metro",
   "version": "0.0.1",
   "type": "module",
   "exports": {
@@ -16,12 +16,12 @@
     "publish:verdaccio": "npm publish --registry http://localhost:4873 --userconfig ../../.npmrc"
   },
   "dependencies": {
-    "@callstack/rnef-tools": "^0.0.1",
+    "@rnef/tools": "^0.0.1",
     "@react-native-community/cli-server-api": "^16.0.2",
     "@react-native/community-cli-plugin": "0.77.0-rc.2",
     "tslib": "^2.3.0"
   },
   "devDependencies": {
-    "@callstack/rnef-config": "^0.0.1"
+    "@rnef/config": "^0.0.1"
   }
 }

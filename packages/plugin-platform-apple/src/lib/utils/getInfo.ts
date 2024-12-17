@@ -3,7 +3,7 @@ import { XMLParser } from 'fast-xml-parser';
 import * as fs from 'fs';
 import * as path from 'path';
 import { Info, XcodeProjectInfo } from '../types/index.js';
-import { logger } from '@callstack/rnef-tools';
+import { logger } from '@rnef/tools';
 import { spinner } from '@clack/prompts';
 
 function isErrorLike(err: unknown): err is { message: string } {

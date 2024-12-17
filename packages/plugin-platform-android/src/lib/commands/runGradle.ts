@@ -1,4 +1,4 @@
-import { logger } from '@callstack/rnef-tools';
+import { logger } from '@rnef/tools';
 import type { AndroidProject, Flags } from './runAndroid/runAndroid.js';
 import { getAdbPath, getDevices } from './runAndroid/adb.js';
 import spawn from 'nano-spawn';

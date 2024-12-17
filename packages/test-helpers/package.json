@@ -1,5 +1,5 @@
 {
-  "name": "@callstack/rnef-test-helpers",
+  "name": "@rnef/test-helpers",
   "version": "0.0.1",
   "type": "module",
   "private": true,

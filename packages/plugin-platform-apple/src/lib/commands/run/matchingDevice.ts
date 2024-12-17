@@ -1,4 +1,4 @@
-import { logger } from '@callstack/rnef-tools';
+import { logger } from '@rnef/tools';
 import color from 'picocolors';
 import { ApplePlatform, Device, DeviceType } from '../../types/index.js';
 import { getPlatformInfo } from '../../utils/getPlatformInfo.js';

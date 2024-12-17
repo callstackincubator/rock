@@ -1,7 +1,7 @@
 import spawn from 'nano-spawn';
 import { AndroidProject, Flags } from './runAndroid.js';
 import { getAdbPath } from './adb.js';
-import { logger } from '@callstack/rnef-tools';
+import { logger } from '@rnef/tools';
 import { tryRunAdbReverse } from './tryRunAdbReverse.js';
 import { spinner } from '@clack/prompts';
 

@@ -1,4 +1,4 @@
-import { logger } from '@callstack/rnef-tools';
+import { logger } from '@rnef/tools';
 import color from 'picocolors';
 import spawn from 'nano-spawn';
 import { getBuildPath } from './getBuildPath.js';

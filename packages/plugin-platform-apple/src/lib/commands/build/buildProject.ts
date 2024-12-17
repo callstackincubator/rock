@@ -1,7 +1,7 @@
 import type { BuildFlags } from './buildOptions.js';
 import { supportedPlatforms } from '../../utils/supportedPlatforms.js';
 import { ApplePlatform, XcodeProjectInfo } from '../../types/index.js';
-import { logger } from '@callstack/rnef-tools';
+import { logger } from '@rnef/tools';
 import { simulatorDestinationMap } from './simulatorDestinationMap.js';
 import { spinner } from '@clack/prompts';
 import spawn, { SubprocessError } from 'nano-spawn';

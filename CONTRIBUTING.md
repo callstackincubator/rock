@@ -28,15 +28,15 @@ And then in your test project:
 
 ```sh
 cd /my/test/project/
-pnpm link --global "@callstack/rnef-cli" "@callstack/rnef-config" "@callstack/rnef-tools" "@callstack/rnef-plugin-platform-android" "@callstack/rnef-plugin-platform-ios" "@callstack/create-rnef-app" "@callstack/rnef-plugin-metro" "@callstack/rnef-plugin-repack"
+pnpm link --global "@rnef/cli" "@rnef/config" "@rnef/tools" "@rnef/plugin-platform-android" "@rnef/plugin-platform-ios" "@rnef/create-app" "@rnef/plugin-metro" "@rnef/plugin-repack"
 ```
 
 Update entries in package.json to look like this:
 
 ```json
 {
-  "@callstack/rnef-cli": "link:../../rnef/packages/cli",
-  "@callstack/rnef-plugin-platform-android": "link:../../rnef/packages/plugin-platform-android"
+  "@rnef/cli": "link:../../rnef/packages/cli",
+  "@rnef/plugin-platform-android": "link:../../rnef/packages/plugin-platform-android"
 }
 ```
 
@@ -89,7 +89,7 @@ rm -rf ~/Library/Caches/pnpm/dlx/
 pnpm e2e
 
 # Or Create RNEF app
-NPM_CONFIG_REGISTRY=http://localhost:4873 pnpm create @callstack/rnef-app --registry http://localhost:4873
+NPM_CONFIG_REGISTRY=http://localhost:4873 pnpm create @rnef/app --registry http://localhost:4873
 # Then use pnpm install with registry
 NPM_CONFIG_REGISTRY=http://localhost:4873 pnpm install
 

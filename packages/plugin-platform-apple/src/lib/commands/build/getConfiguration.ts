@@ -2,7 +2,7 @@ import { getInfo } from '../../utils/getInfo.js';
 import { checkIfConfigurationExists } from '../../utils/checkIfConfigurationExists.js';
 import { getPlatformInfo } from './../../utils/getPlatformInfo.js';
 import { ApplePlatform, XcodeProjectInfo } from '../../types/index.js';
-import { logger } from '@callstack/rnef-tools';
+import { logger } from '@rnef/tools';
 import color from 'picocolors';
 
 export async function getConfiguration(
