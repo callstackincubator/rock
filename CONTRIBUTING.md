@@ -91,6 +91,7 @@ pnpm e2e
 # Or Create RNEF app
 NPM_CONFIG_REGISTRY=http://localhost:4873 pnpm create @rnef/app --registry http://localhost:4873
 # Then use pnpm install with registry
+echo "node-linker=hoisted" > .npmrc
 NPM_CONFIG_REGISTRY=http://localhost:4873 pnpm install
 
 # Clean up
