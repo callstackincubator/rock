@@ -56,25 +56,9 @@ runs:
 
     - name: Build iOS
       if: ${{ !steps.cached-url.outputs.artifact-url }}
-      # Taken from: https://github.com/microsoft/rnx-kit/blob/ac1cfa362ace6172a020d2b4bcdd63c398527c17/incubator/build/scripts/build-apple.sh#L49
-      # @TODO replace with RNEF CLI call.
       run: |
         cd ios
-        xcworkspace=$(find . -maxdepth 1 -name '*.xcworkspace' -type d | head -1)
-        xcodebuild \
-           -workspace "${xcworkspace}" \
-           -scheme "${{inputs.scheme}}" \
-           -destination "generic/platform=iOS Simulator" \
-           -configuration Debug \
-           -derivedDataPath DerivedData \
-           ARCHS="${{inputs.architectures}}" \
-           CODE_SIGNING_ALLOWED=NO \
-           CLANG_ADDRESS_SANITIZER=NO \
-           CLANG_UNDEFINED_BEHAVIOR_SANITIZER=NO \
-           OTHER_CFLAGS='$(inherited) -fno-sanitize=undefined -fno-sanitize=bounds -fstack-protector-strong' \
-           OTHER_LDFLAGS='$(inherited) -fno-sanitize=undefined -fno-sanitize=bounds -fstack-protector-strong' \
-           COMPILER_INDEX_STORE_ENABLE=NO \
-           build
+        pnpm rnef build:ios
       shell: bash
 
     - name: Prepare Artifact
