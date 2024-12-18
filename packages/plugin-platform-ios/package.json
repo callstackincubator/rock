@@ -23,5 +23,8 @@
   },
   "devDependencies": {
     "@rnef/config": "^0.0.1"
+  },
+  "publishConfig": {
+    "access": "restricted"
   }
 }

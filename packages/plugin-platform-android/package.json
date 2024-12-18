@@ -28,5 +28,8 @@
   "devDependencies": {
     "@react-native-community/cli-types": "^16.0.2",
     "@rnef/config": "^0.0.1"
+  },
+  "publishConfig": {
+    "access": "restricted"
   }
 }
