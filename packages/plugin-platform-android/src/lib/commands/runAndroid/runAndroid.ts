@@ -43,11 +43,10 @@ export async function runAndroid(
 
   normalizeArgs(args, projectRoot);
 
-  const { deviceId } = args.interactive
-    ? await selectAndLaunchDevice()
-    : { deviceId: args.device };
+  const devices = await listAndroidDevices();
+  const device = await selectDevice(devices, args);
 
-  const mainTaskType = deviceId ? 'assemble' : 'install';
+  const mainTaskType = device ? 'assemble' : 'install';
   const tasks = args.interactive
     ? [await promptForTaskSelection(mainTaskType, androidProject.sourceDir)]
     : [...(args.tasks ?? []), `${mainTaskType}${toPascalCase(args.mode)}`];
@@ -60,15 +59,17 @@ export async function runAndroid(
     }
   }
 
-  if (deviceId) {
+  if (device) {
     await runGradle({ tasks, androidProject, args });
-    if (!(await getDevices()).find((d) => d === deviceId)) {
-      throw new RnefError(
-        `Device "${deviceId}" not found. Please run it first or use a different one.`
-      );
+    // new devices can be connected after the build
+    const devices = await getDevices();
+    if (!devices.find((d) => d === device.deviceId)) {
+      device.deviceId = await tryLaunchEmulator(device.readableName);
     }
-    await tryInstallAppOnDevice(deviceId, androidProject, args, tasks);
-    await tryLaunchAppOnDevice(deviceId, androidProject, args);
+    if (device.deviceId) {
+      await tryInstallAppOnDevice(device, androidProject, args, tasks);
+      await tryLaunchAppOnDevice(device, androidProject, args);
+    }
   } else {
     if ((await getDevices()).length === 0) {
       if (isInteractive()) {
@@ -83,7 +84,7 @@ export async function runAndroid(
 
     await runGradle({ tasks, androidProject, args });
 
-    for (const device of await getDevices()) {
+    for (const device of await listAndroidDevices()) {
       if (args.binaryPath) {
         await tryInstallAppOnDevice(device, androidProject, args, tasks);
       }
@@ -112,6 +113,30 @@ async function selectAndLaunchDevice() {
     return newDevice;
   }
   return device;
+}
+
+async function selectDevice(devices: DeviceData[], args: Flags) {
+  const { interactive } = args;
+  let device;
+  if (interactive) {
+    device = await selectAndLaunchDevice();
+  } else if (args.device) {
+    device = matchingDevice(devices, args.device);
+  }
+  if (!device && args.device) {
+    logger.warn(
+      `No devices or emulators found matching "${args.device}". Falling back to default emulator.`
+    );
+  }
+  return device;
+}
+
+function matchingDevice(devices: Array<DeviceData>, deviceArg: string) {
+  const deviceByName = devices.find(
+    (device) => device.readableName === deviceArg
+  );
+  const deviceById = devices.find((d) => d.deviceId === deviceArg);
+  return deviceByName || deviceById;
 }
 
 function normalizeArgs(args: Flags, projectRoot: string) {

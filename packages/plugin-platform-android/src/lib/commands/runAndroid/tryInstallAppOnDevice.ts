@@ -5,16 +5,30 @@ import type { AndroidProject, Flags } from './runAndroid.js';
 import { spinner } from '@clack/prompts';
 import { promptForUser } from './listAndroidUsers.js';
 import { logger, RnefError } from '@rnef/tools';
+import { DeviceData } from './listAndroidDevices.js';
 
 export async function tryInstallAppOnDevice(
-  device: string,
+  device: DeviceData,
   androidProject: AndroidProject,
   args: Flags,
   tasks: string[]
 ) {
+  let deviceId;
+  if (!device.deviceId) {
+    logger.debug(
+      `No device with id "${device.deviceId}", skipping launching the app.`
+    );
+    return;
+  } else {
+    deviceId = device.deviceId;
+  }
   let pathToApk: string;
   if (!args.binaryPath) {
-    const outputFilePath = await findOutputFile(androidProject, tasks, device);
+    const outputFilePath = await findOutputFile(
+      androidProject,
+      tasks,
+      deviceId
+    );
     if (!outputFilePath) {
       logger.warn(
         "Skipping installation because there's no build output file."
@@ -26,8 +40,10 @@ export async function tryInstallAppOnDevice(
     pathToApk = args.binaryPath;
   }
 
-  const adbArgs = ['-s', device, 'install', '-r', '-d'];
-  const user = args.interactive ? (await promptForUser(device))?.id : args.user;
+  const adbArgs = ['-s', deviceId, 'install', '-r', '-d'];
+  const user = args.interactive
+    ? (await promptForUser(deviceId))?.id
+    : args.user;
 
   if (user !== undefined) {
     adbArgs.push('--user', `${user}`);
@@ -37,14 +53,21 @@ export async function tryInstallAppOnDevice(
 
   const adbPath = getAdbPath();
   const loader = spinner();
-  loader.start(`Installing the app on "${device}"`);
+  loader.start(
+    `Installing the app on ${device.readableName} (id: ${deviceId})`
+  );
   const { stderr } = await spawn(adbPath, adbArgs, {
     stdio: ['ignore', 'ignore', 'pipe'],
   });
   if (stderr) {
-    loader.stop(`Failed to install the app on "${device}": ${stderr}.`, 1);
+    loader.stop(
+      `Failed to install the app on ${device.readableName} (id: ${deviceId}): ${stderr}.`,
+      1
+    );
   } else {
-    loader.stop(`Installed the app on "${device}".`);
+    loader.stop(
+      `Installed the app on ${device.readableName} (id: ${deviceId}).`
+    );
   }
 }
 

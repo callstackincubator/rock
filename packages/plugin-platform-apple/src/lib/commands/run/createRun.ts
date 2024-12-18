@@ -167,14 +167,13 @@ async function selectDevice(
     device = await promptForDeviceSelection(devices, projectRoot, platform);
   } else if (args.device) {
     device = matchingDevice(devices, args.device);
-  } else if (!device) {
-    if (args.device) {
-      logger.warn(
-        `No devices or simulators found matching "${args.device}". Falling back to default simulator.`
-      );
-      // setting device to undefined to avoid buildProject to use it
-      args.device = undefined;
-    }
+  }
+  if (!device && args.device) {
+    logger.warn(
+      `No devices or simulators found matching "${args.device}". Falling back to default simulator.`
+    );
+    // setting device to undefined to avoid buildProject to use it
+    args.device = undefined;
   }
   return device;
 }

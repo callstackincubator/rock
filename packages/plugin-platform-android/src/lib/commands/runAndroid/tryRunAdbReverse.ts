@@ -5,16 +5,17 @@ import { logger, RnefError } from '@rnef/tools';
 // Runs ADB reverse tcp:8081 tcp:8081 to allow loading the jsbundle from the packager
 export async function tryRunAdbReverse(
   packagerPort: number | string,
-  device?: string | void
+  device: string
 ) {
   try {
     const adbPath = getAdbPath();
-    const adbArgs = ['reverse', `tcp:${packagerPort}`, `tcp:${packagerPort}`];
-
-    // If a device is specified then tell adb to use it
-    if (device) {
-      adbArgs.unshift('-s', device);
-    }
+    const adbArgs = [
+      '-s',
+      device,
+      'reverse',
+      `tcp:${packagerPort}`,
+      `tcp:${packagerPort}`,
+    ];
 
     logger.debug(`Connecting "${device}" to the development server`);
     await spawn(adbPath, adbArgs, { stdio: ['ignore', 'ignore', 'inherit'] });

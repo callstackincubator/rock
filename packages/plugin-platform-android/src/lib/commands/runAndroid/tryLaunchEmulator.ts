@@ -1,5 +1,5 @@
 import os from 'os';
-import spawn from 'nano-spawn';
+import spawn, { SubprocessError } from 'nano-spawn';
 import { getDevices, getAdbPath } from './adb.js';
 import { spinner } from '@clack/prompts';
 
@@ -26,7 +26,7 @@ const launchEmulator = async (
   emulatorName: string,
   port: number,
   loader: ReturnType<typeof spinner>
-): Promise<boolean> => {
+): Promise<string> => {
   const manualCommand = `${emulatorCommand} @${emulatorName}`;
 
   const cp = spawn(emulatorCommand, [`@${emulatorName}`, '-port', `${port}`], {
@@ -36,7 +36,7 @@ const launchEmulator = async (
   (await cp.nodeChildProcess).unref();
   const timeout = 120;
 
-  return new Promise<boolean>((resolve, reject) => {
+  return new Promise<string>((resolve, reject) => {
     const bootCheckInterval = setInterval(async () => {
       const devices = await getDevices();
       const connected = port
@@ -49,11 +49,10 @@ const launchEmulator = async (
         );
         if (await isEmulatorBooted(connected)) {
           cleanup();
-          resolve(true);
+          resolve(connected);
         }
       }
     }, 1000);
-
     // Reject command after timeout
     const rejectTimeout = setTimeout(() => {
       stopWaitingAndReject(
@@ -100,15 +99,16 @@ export async function tryLaunchEmulator(name?: string) {
   loader.start(`Looking for available emulators"`);
   const emulators = await getEmulators();
   const emulatorName = name ?? emulators[0];
+  let deviceId;
   if (emulators.length > 0) {
     try {
       loader.message(`Launching emulator "${emulatorName}"`);
-      await launchEmulator(emulatorName, port, loader);
-      loader.stop(`Launched emulator "${emulatorName}".`);
+      deviceId = await launchEmulator(emulatorName, port, loader);
+      loader.stop(`Launched ${emulatorName} emulator.`);
     } catch (error) {
       loader.stop(
-        `Failed to launch emulator "${emulatorName}". ${
-          (error as { message: string }).message
+        `Failed to launch ${emulatorName} emulator. ${
+          (error as SubprocessError).message
         }`,
         1
       );
@@ -119,6 +119,7 @@ export async function tryLaunchEmulator(name?: string) {
       1
     );
   }
+  return deviceId;
 }
 
 /**
