@@ -15,7 +15,7 @@ import { BuildFlags, options } from '../buildAndroid/buildAndroid.js';
 import { promptForTaskSelection } from '../listAndroidTasks.js';
 import { runGradle } from '../runGradle.js';
 import { outro, select } from '@clack/prompts';
-import chalk from 'chalk';
+import isInteractive from 'is-interactive';
 
 export interface Flags extends BuildFlags {
   appId: string;
@@ -60,7 +60,14 @@ export async function runAndroid(
     await tryLaunchAppOnDevice(deviceId, androidProject, args);
   } else {
     if ((await getDevices()).length === 0) {
-      await tryLaunchEmulator();
+      if (isInteractive()) {
+        await selectAndLaunchDevice();
+      } else {
+        logger.debug(
+          'No booted devices or emulators found. Launching first available mulator...'
+        );
+        await tryLaunchEmulator();
+      }
     }
 
     await runGradle({ tasks, androidProject, args });
@@ -140,9 +147,9 @@ async function promptForDeviceSelection(
     await select({
       message: 'Select the device / emulator you want to use',
       options: allDevices.map((d) => ({
-        label: `${chalk.bold(`${toPascalCase(d.type)}`)} ${chalk.green(
-          `${d.readableName}`
-        )} (${d.connected ? 'connected' : 'disconnected'})`,
+        label: `${d.readableName}${
+          d.type === 'phone' ? ' - (physical device)' : ''
+        }${d.connected ? ' (connected)' : ''}`,
         value: d,
       })),
     })

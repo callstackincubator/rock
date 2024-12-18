@@ -1,5 +1,5 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
-import { bold } from 'picocolors';
+import color from 'picocolors';
 import { logger } from '@rnef/tools';
 import { selectFromInteractiveMode } from '../selectFromInteractiveMode.js';
 import { getInfo } from '../getInfo.js';
@@ -26,7 +26,7 @@ vi.mock('../prompts', () => ({
   promptForSchemeSelection: vi.fn(),
 }));
 
-vi.mock('chalk', () => ({
+vi.mock('picocolors', () => ({
   default: {
     bold: vi.fn((str) => str),
   },
@@ -87,7 +87,7 @@ describe('selectFromInteractiveMode', () => {
     ]);
     expect(result.scheme).toBe('SelectedScheme');
     expect(logger.debug).toHaveBeenCalledWith(
-      `Automatically selected ${bold('Debug')} configuration.`
+      `Automatically selected ${color.bold('Debug')} configuration.`
     );
   });
 
@@ -116,7 +116,7 @@ describe('selectFromInteractiveMode', () => {
     ]);
     expect(result.mode).toBe('Release');
     expect(logger.debug).toHaveBeenCalledWith(
-      `Automatically selected ${bold('TestScheme')} scheme.`
+      `Automatically selected ${color.bold('TestScheme')} scheme.`
     );
   });
 
@@ -147,11 +147,11 @@ describe('selectFromInteractiveMode', () => {
     expect(logger.debug).toHaveBeenCalledTimes(2);
     expect(logger.debug).toHaveBeenNthCalledWith(
       1,
-      `Automatically selected ${bold('TestScheme')} scheme.`
+      `Automatically selected ${color.bold('TestScheme')} scheme.`
     );
     expect(logger.debug).toHaveBeenNthCalledWith(
       2,
-      `Automatically selected ${bold('Debug')} configuration.`
+      `Automatically selected ${color.bold('Debug')} configuration.`
     );
   });
 });

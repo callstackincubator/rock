@@ -1,4 +1,4 @@
-import chalk from 'chalk';
+import color from 'picocolors';
 import spawn from 'nano-spawn';
 import {
   parseTasksFromGradleFile,
@@ -124,7 +124,7 @@ describe('promptForTaskSelection', () => {
 
     expect(select).toHaveBeenCalledWith({
       options: tasksList.map((t) => ({
-        label: `${chalk.bold(t.task)} - ${t.description}`,
+        label: `${color.bold(t.task)} - ${t.description}`,
         value: t.task,
       })),
       message: 'Select install task you want to perform',

@@ -293,11 +293,45 @@ function spawnMockImplementation(
 }
 
 test.each([['release'], ['debug'], ['staging']])(
-  'runAndroid runs gradle build with correct configuration for --mode %s and launches on emulator-5552',
+  'runAndroid runs gradle build with correct configuration for --mode %s and launches on emulator-5554 when prompted with two devices available',
   async (mode) => {
-    (spawn as Mock).mockImplementation((file, args) =>
-      spawnMockImplementation(file, args)
-    );
+    (spawn as Mock).mockImplementation((file, args) => {
+      if (mockCallEmulatorAvdName(file, args, 'emulator-5554')) {
+        return { output: emulatorAvdNameOutputPixel8 };
+      }
+      if (mockCallAdbBootCompleted(file, args, 'emulator-5554')) {
+        return { output: '1' };
+      }
+      if (mockCallAdbReverse(file, args, 'emulator-5554')) {
+        return { output: '<mock-adb-reverse>' };
+      }
+      if (mockCallAdbGetCpu(file, args, 'emulator-5554')) {
+        return { output: 'armeabi-v7a' };
+      }
+      if (mockCallAdbGetAvailableCpus(file, args, 'emulator-5554')) {
+        return { output: 'arm64-v8a,armeabi-v7a' };
+      }
+      if (mockCallAdbStart(file, args, 'emulator-5554')) {
+        return { output: '<mock-adb-start>' };
+      }
+      if (mockCallGradleTasks(file, args)) {
+        return { output: gradleTaskOutput };
+      }
+      return spawnMockImplementation(file, args, {
+        adbDevicesOutput: adbDevicesTwoDevicesOutput,
+      });
+    });
+    vi.mocked(select).mockImplementation((opts) => {
+      if (opts.message === 'Select the device / emulator you want to use') {
+        return Promise.resolve({
+          deviceId: 'emulator-5554',
+          readableName: 'Pixel_8_Pro_API_34',
+          connected: true,
+          type: 'emulator',
+        });
+      }
+      return Promise.resolve(undefined);
+    });
     const logErrorSpy = vi.spyOn(logger, 'error');
     await runAndroid({ ...androidProject }, { ...args, mode }, '/');
 
@@ -316,7 +350,7 @@ test.each([['release'], ['debug'], ['staging']])(
         '-x',
         'lint',
         '-PreactNativeDevServerPort=8081',
-        '-PreactNativeArchitectures=arm64-v8a',
+        '-PreactNativeArchitectures=arm64-v8a,armeabi-v7a',
       ],
       { stdio: 'inherit', cwd: '/android' }
     );
@@ -325,7 +359,7 @@ test.each([['release'], ['debug'], ['staging']])(
     expect(vi.mocked(spawn)).toBeCalledWith(
       '/mock/android/home/platform-tools/adb',
       expect.arrayContaining([
-        'emulator-5552',
+        'emulator-5554',
         'com.test/com.test.MainActivity',
       ]),
       { stdio: ['ignore', 'ignore', 'pipe'] }

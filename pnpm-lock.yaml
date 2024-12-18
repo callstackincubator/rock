@@ -93,18 +93,18 @@ importers:
 
   packages/cli:
     dependencies:
-      '@rnef/config':
-        specifier: ^0.0.1
-        version: link:../config
-      '@rnef/tools':
-        specifier: ^0.0.1
-        version: link:../tools
       '@clack/prompts':
         specifier: ^0.8.1
         version: 0.8.1
       '@react-native-community/cli-config':
         specifier: ^16.0.2
         version: 16.0.2(typescript@5.5.4)
+      '@rnef/config':
+        specifier: ^0.0.1
+        version: link:../config
+      '@rnef/tools':
+        specifier: ^0.0.1
+        version: link:../tools
       commander:
         specifier: ^12.1.0
         version: 12.1.0
@@ -124,12 +124,12 @@ importers:
 
   packages/create-app:
     dependencies:
-      '@rnef/tools':
-        specifier: ^0.0.1
-        version: link:../tools
       '@clack/prompts':
         specifier: ^0.8.1
         version: 0.8.1
+      '@rnef/tools':
+        specifier: ^0.0.1
+        version: link:../tools
       gradient-string:
         specifier: ^3.0.0
         version: 3.0.0
@@ -158,15 +158,15 @@ importers:
 
   packages/plugin-metro:
     dependencies:
-      '@rnef/tools':
-        specifier: ^0.0.1
-        version: link:../tools
       '@react-native-community/cli-server-api':
         specifier: ^16.0.2
         version: 16.0.2
       '@react-native/community-cli-plugin':
         specifier: 0.77.0-rc.2
         version: 0.77.0-rc.2(@babel/core@7.25.2)(@babel/preset-env@7.25.4(@babel/core@7.25.2))(@react-native-community/cli-server-api@16.0.2)
+      '@rnef/tools':
+        specifier: ^0.0.1
+        version: link:../tools
       tslib:
         specifier: ^2.3.0
         version: 2.8.1
@@ -177,18 +177,21 @@ importers:
 
   packages/plugin-platform-android:
     dependencies:
-      '@rnef/tools':
-        specifier: ^0.0.1
-        version: link:../tools
       '@clack/prompts':
         specifier: ^0.8.1
         version: 0.8.1
       '@react-native-community/cli-config-android':
         specifier: ^16.0.2
         version: 16.0.2
+      '@rnef/tools':
+        specifier: ^0.0.1
+        version: link:../tools
       chalk:
         specifier: ^5.3.0
         version: 5.3.0
+      is-interactive:
+        specifier: ^2.0.0
+        version: 2.0.0
       nano-spawn:
         specifier: ^0.2.0
         version: 0.2.0
@@ -199,24 +202,24 @@ importers:
         specifier: ^2.3.0
         version: 2.7.0
     devDependencies:
-      '@rnef/config':
-        specifier: ^0.0.1
-        version: link:../config
       '@react-native-community/cli-types':
         specifier: ^16.0.2
         version: 16.0.2
+      '@rnef/config':
+        specifier: ^0.0.1
+        version: link:../config
 
   packages/plugin-platform-apple:
     dependencies:
-      '@rnef/tools':
-        specifier: ^0.0.1
-        version: link:../tools
       '@clack/prompts':
         specifier: ^0.7.0
         version: 0.7.0
       '@react-native-community/cli-config-apple':
         specifier: ^16.0.2
         version: 16.0.2
+      '@rnef/tools':
+        specifier: ^0.0.1
+        version: link:../tools
       fast-glob:
         specifier: ^3.3.2
         version: 3.3.2
@@ -242,12 +245,12 @@ importers:
 
   packages/plugin-platform-ios:
     dependencies:
-      '@rnef/plugin-platform-apple':
-        specifier: ^0.0.1
-        version: link:../plugin-platform-apple
       '@react-native-community/cli-config-apple':
         specifier: ^16.0.2
         version: 16.0.2
+      '@rnef/plugin-platform-apple':
+        specifier: ^0.0.1
+        version: link:../plugin-platform-apple
       tslib:
         specifier: ^2.3.0
         version: 2.7.0
@@ -8040,7 +8043,7 @@ snapshots:
     dependencies:
       '@react-native-community/cli-debugger-ui': 15.1.2
       '@react-native-community/cli-tools': 15.1.2
-      compression: 1.7.4
+      compression: 1.7.5
       connect: 3.7.0
       errorhandler: 1.5.1
       nocache: 3.0.4

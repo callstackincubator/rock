@@ -1,4 +1,4 @@
-import chalk from 'chalk';
+import color from 'picocolors';
 import spawn from 'nano-spawn';
 import { select, spinner } from '@clack/prompts';
 import { getGradleWrapper } from './runGradle.js';
@@ -65,7 +65,7 @@ export const promptForTaskSelection = async (
     await select({
       message: `Select ${taskType} task you want to perform`,
       options: tasks.map((t) => ({
-        label: `${chalk.bold(t.task)} - ${t.description}`,
+        label: `${color.bold(t.task)} - ${t.description}`,
         value: t.task,
       })),
     })
