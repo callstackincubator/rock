@@ -1,4 +1,3 @@
-import path from 'node:path'
 import type { BuildFlags } from './buildOptions.js';
 import { supportedPlatforms } from '../../utils/supportedPlatforms.js';
 import { ApplePlatform, XcodeProjectInfo } from '../../types/index.js';
