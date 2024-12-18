@@ -30,6 +30,8 @@ export function rewritePackageJson(projectPath: string, packageName: string) {
   packageJson.version = '1.0.0';
   packageJson.private = true;
 
+  delete packageJson.publishConfig;
+
   if (packageJson.dependencies) {
     packageJson.dependencies = Object.fromEntries(
       Object.entries(packageJson.dependencies).sort()

@@ -14,6 +14,7 @@
   ],
   "scripts": {
     "clean-dist": "rm -f dist/package.json",
+    "publish:npm": "npm publish --access restricted",
     "publish:verdaccio": "npm publish --registry http://localhost:4873 --userconfig ../../.npmrc"
   },
   "dependencies": {
