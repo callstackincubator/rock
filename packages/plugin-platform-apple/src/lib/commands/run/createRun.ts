@@ -161,31 +161,19 @@ async function selectDevice(
   platform: ApplePlatform,
   projectRoot: string
 ) {
-  const { simulator, udid, interactive } = args;
+  const { interactive } = args;
   let device;
   if (interactive) {
     device = await promptForDeviceSelection(devices, projectRoot, platform);
-  } else if (udid) {
-    device = devices.find((d) => d.udid === udid);
   } else if (args.device) {
-    device = matchingDevice(devices, args.device, platform, 'device');
-  } else if (simulator) {
-    device = matchingDevice(devices, simulator, platform, 'simulator');
+    device = matchingDevice(devices, args.device);
   } else if (!device) {
     if (args.device) {
       logger.warn(
-        `No devices found matching "${args.device}". Falling back to default simulator.`
+        `No devices or simulators found matching "${args.device}". Falling back to default simulator.`
       );
       // setting device to undefined to avoid buildProject to use it
       args.device = undefined;
-    } else if (udid) {
-      logger.warn(
-        `No devices found matching UDID "${udid}". Falling back to default simulator.`
-      );
-    } else if (simulator) {
-      logger.warn(
-        `No simulator found matching "${simulator}". Falling back to default simulator.`
-      );
     }
   }
   return device;
@@ -204,12 +192,6 @@ function normalizeArgs(
       xcodeProject.name,
       path.extname(xcodeProject.name)
     );
-  }
-  if (args.device && args.udid) {
-    logger.error(
-      'The "--device" and "--udid" flags are mutually exclusive. Please use only one of them.'
-    );
-    process.exit(1);
   }
   if (args.binaryPath) {
     args.binaryPath = path.isAbsolute(args.binaryPath)

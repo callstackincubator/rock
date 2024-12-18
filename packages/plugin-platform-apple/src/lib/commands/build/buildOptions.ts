@@ -46,9 +46,9 @@ export const getBuildOptions = ({ platformName }: BuilderCommand) => {
       parse: (val: string) => val.split(' '),
     },
     {
-      name: '--device [string]',
+      name: '--device <string>',
       description:
-        'Explicitly set the device to use by name or by unique device identifier. If the value is not provided, the app will run on the first available physical device.',
+        'Explicitly set the device or simulator to use by name or by UDID.',
     },
     {
       name: '--catalyst',
