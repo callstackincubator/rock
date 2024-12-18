@@ -2,7 +2,7 @@ import { Device } from '../../types/index.js';
 
 export function matchingDevice(
   devices: Array<Device>,
-  deviceName: string | true | undefined
+  deviceName: string | undefined
 ) {
   const deviceByName = devices.find(
     (device) =>
