@@ -54,13 +54,17 @@ export async function runAndroid(
     : [...(args.tasks ?? []), `${mainTaskType}${toPascalCase(args.mode)}`];
 
   if (deviceId) {
-    await fetchCachedBuild({ tasks, androidProject, args });
-    await runGradle({ tasks, androidProject, args });
-    if (!(await getDevices()).find((d) => d === deviceId)) {
-      logger.error(
-        `Device "${deviceId}" not found. Please run it first or use a different one.`
-      );
-      process.exit(1);
+    const cachedBuild = await fetchCachedBuild({ tasks, androidProject, args });
+    if (cachedBuild) {
+      // TODO: install cached build
+    } else {
+      await runGradle({ tasks, androidProject, args });
+      if (!(await getDevices()).find((d) => d === deviceId)) {
+        logger.error(
+          `Device "${deviceId}" not found. Please run it first or use a different one.`
+        );
+        process.exit(1);
+      }
     }
     await tryInstallAppOnDevice(deviceId, androidProject, args, tasks);
     await tryLaunchAppOnDevice(deviceId, androidProject, args);
@@ -76,8 +80,12 @@ export async function runAndroid(
       }
     }
 
-    await fetchCachedBuild({ tasks, androidProject, args });
-    await runGradle({ tasks, androidProject, args });
+    const cachedBuild = await fetchCachedBuild({ tasks, androidProject, args });
+    if (cachedBuild) {
+      // TODO: install cached build
+    } else {
+      await runGradle({ tasks, androidProject, args });
+    }
 
     for (const device of await getDevices()) {
       await tryLaunchAppOnDevice(device, androidProject, args);
@@ -86,11 +94,16 @@ export async function runAndroid(
   outro('Success 🎉.');
 }
 
+export type CachedBuild = {
+  fingerprint: string;
+  artifactName: string;
+};
+
 async function fetchCachedBuild({
   tasks,
   androidProject,
   args,
-}: RunGradleArgs) {
+}: RunGradleArgs): Promise<CachedBuild | null> {
   note(
     [
       'Tasks: ' + tasks,
@@ -108,6 +121,12 @@ async function fetchCachedBuild({
   );
 
   const artifactName = `app-debug-${fingerprint.hash}.apk`;
+  return null;
+
+  // return {
+  //   fingerprint,
+  //   artifactName,
+  // };
 }
 
 async function selectAndLaunchDevice() {
