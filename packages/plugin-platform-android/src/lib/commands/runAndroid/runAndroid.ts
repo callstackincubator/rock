@@ -24,7 +24,7 @@ import { tryLaunchEmulator } from './tryLaunchEmulator.js';
 import path from 'path';
 import { BuildFlags, options } from '../buildAndroid/buildAndroid.js';
 import { promptForTaskSelection } from '../listAndroidTasks.js';
-import { runGradle, RunGradleArgs } from '../runGradle.js';
+import { runGradle } from '../runGradle.js';
 
 export interface Flags extends BuildFlags {
   appId: string;
