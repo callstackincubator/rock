@@ -17,7 +17,7 @@ export async function nativeFingerprintCommand(
   path = path ?? '.';
   const platform = options?.platform ?? 'ios';
   const loader = spinner();
-  logger.debug(`Fingerprinting "${resolveAbsolutePath(path)}"...`);
+  logger.debug(`Fingerprinting "${resolveAbsolutePath(path)}".`);
 
   let start = 0;
   if (logger.isVerbose()) {

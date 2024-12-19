@@ -37,7 +37,7 @@ export async function tryInstallAppOnDevice(
 
   const adbPath = getAdbPath();
   const loader = spinner();
-  loader.start(`Installing the app on "${device}"...`);
+  loader.start(`Installing the app on "${device}"`);
   const { stderr } = await spawn(adbPath, adbArgs, {
     stdio: ['ignore', 'ignore', 'pipe'],
   });

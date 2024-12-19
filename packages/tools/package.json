@@ -14,6 +14,7 @@
   "dependencies": {
     "@clack/prompts": "^0.8.1",
     "@expo/fingerprint": "^0.11.2",
+    "adm-zip": "^0.5.16",
     "appdirsjs": "^1.2.7",
     "is-unicode-supported": "^2.1.0",
     "octokit": "^4.0.2",
