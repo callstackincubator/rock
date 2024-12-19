@@ -30,7 +30,7 @@
     "publish:npm": {
       "dependsOn": ["build"]
     },
-    "publish:verdaccio": {
+    "verdaccio:publish": {
       "dependsOn": ["build"]
     }
   },
