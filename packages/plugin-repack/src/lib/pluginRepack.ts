@@ -11,12 +11,8 @@ type PluginConfig = {
 type StartArgs = Parameters<NonNullable<typeof startCommand>['func']>[2];
 type BundleArgs = Parameters<NonNullable<typeof bundleCommand>['func']>[2];
 
-const startCommand = commands.default.find(
-  (command) => command.name === 'start'
-);
-const bundleCommand = commands.default.find(
-  (command) => command.name === 'bundle'
-);
+const startCommand = commands.find((command) => command.name === 'start');
+const bundleCommand = commands.find((command) => command.name === 'bundle');
 
 export const pluginRepack =
   (pluginConfig: PluginConfig = {}) =>
@@ -40,7 +36,6 @@ export const pluginRepack =
         // @ts-expect-error TODO fix getPlatforms type
         startCommand.func([], { root, platforms, ...pluginConfig }, args);
       },
-      // @ts-expect-error TODO will be fixed in Re.Pack
       options: startCommand.options,
     });
 
@@ -59,7 +54,6 @@ export const pluginRepack =
         // @ts-expect-error TODO fix getPlatforms type
         bundleCommand.func([], { root, platforms, ...pluginConfig }, args);
       },
-      // @ts-expect-error TODO will be fixed in Re.Pack
       options: bundleCommand.options,
     });
 
