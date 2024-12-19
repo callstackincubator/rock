@@ -62,7 +62,6 @@ export const pluginMetro =
     api.registerCommand({
       name: 'start',
       description: 'Starts Metro dev server.',
-      // @ts-expect-error todo fix this
       action: (args: StartCommandArgs) => {
         const root = api.getProjectRoot();
         const reactNativeVersion = api.getReactNativeVersion();
@@ -87,7 +86,6 @@ export const pluginMetro =
       name: 'bundle',
       description:
         'Build the bundle for the provided JavaScript entry file with Metro.',
-      // @ts-expect-error todo fix this
       action: (args: BundleCommandArgs) => {
         if (!args.platform || !args.bundleOutput || !args.entryFile) {
           logger.error(
