@@ -8,10 +8,12 @@ import {
   downloadGitHubArtifact,
   fetchGitHubArtifactsByName,
   getProjectRoot,
+  hasGitHubToken,
   logger,
   nativeFingerprint,
 } from '@rnef/tools';
-import { note, outro, select } from '@clack/prompts';
+import { log, outro, select, spinner } from '@clack/prompts';
+import color from 'picocolors';
 import isInteractive from 'is-interactive';
 import { getDevices } from './adb.js';
 import { toPascalCase } from '../toPascalCase.js';
@@ -55,9 +57,8 @@ export async function runAndroid(
     ? [await promptForTaskSelection(mainTaskType, androidProject.sourceDir)]
     : [...(args.tasks ?? []), `${mainTaskType}${toPascalCase(args.mode)}`];
 
-  const cachedBuild = await fetchCachedBuild({ tasks, androidProject, args });
+  const cachedBuild = await fetchCachedBuild();
   if (cachedBuild) {
-    logger.info(`Using cached build: ${cachedBuild.artifactName}`);
     args.binaryPath = cachedBuild.artifactPath;
   }
 
@@ -98,40 +99,36 @@ export type CachedBuild = {
   artifactPath: string;
 };
 
-async function fetchCachedBuild({
-  tasks,
-  androidProject,
-  args,
-}: RunGradleArgs): Promise<CachedBuild | null> {
-  note(
-    [
-      'Tasks: ' + tasks,
-      'Android project: ' + JSON.stringify(androidProject, null, 2),
-      'Args: ' + JSON.stringify(args, null, 2),
-    ].join('\n'),
-    'Fetch cached build'
-  );
+// TODO: pass relevant build variables
+async function fetchCachedBuild(): Promise<CachedBuild | null> {
+  const loader = spinner();
+  loader.start('Checking for cached build...');
 
-  const root = getProjectRoot();
-  const fingerprint = await nativeFingerprint(root, { platform: 'android' });
-  note(
-    ['Root: ' + root, 'Fingerprint: ' + fingerprint.hash].join('\n'),
-    'Fingerprint'
-  );
-
-  fingerprint.hash = '845d50c1abcf2d5e2b0f76b8c52392c3ad183daa';
-  const artifactName = `app-debug-${fingerprint.hash}.apk`;
-  const artifacts = await fetchGitHubArtifactsByName(artifactName);
-  console.log('Arifacts: ', artifacts);
-
-  if (artifacts.length === 0) {
+  if (!hasGitHubToken()) {
+    loader.stop('No GitHub token found, skipping cached build.');
+    log.warn(
+      'Please set GITHUB_TOKEN environment variable to use cached builds.'
+    );
     return null;
   }
 
+  const root = getProjectRoot();
+  loader.message('Calculating fingerprint');
+  const fingerprint = await nativeFingerprint(root, { platform: 'android' });
+
+  loader.message('Querying cached build...');
+  const artifactName = `app-debug-${fingerprint.hash}.apk`;
+  const artifacts = await fetchGitHubArtifactsByName(artifactName);
+  if (artifacts.length === 0) {
+    loader.stop(`No cached build found for hash ${fingerprint.hash}.`);
+    return null;
+  }
+
+  loader.message('Downloading cached build...');
   const cachePath = path.join(root, 'android/build/cache');
   const artifactPath = await downloadGitHubArtifact(artifacts[0], cachePath);
+  loader.stop(`Downloaded ccached build: ${color.cyan(artifactPath)}`);
 
-  console.log('Artifact archive: ', artifactPath);
   return {
     fingerprint: fingerprint.hash,
     artifactName,

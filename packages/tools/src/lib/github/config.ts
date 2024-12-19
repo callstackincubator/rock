@@ -2,6 +2,10 @@ import { execSync } from 'child_process';
 import logger from '../logger.js';
 import { GITHUB_REPO_REGEX } from './patterns.js';
 
+export function hasGitHubToken(): boolean {
+  return !!process.env['GITHUB_TOKEN'];
+}
+
 export type GitHubRepoDetails = {
   url: string;
   owner: string;
