@@ -43,7 +43,7 @@ runs:
         name: ${{inputs.artifact-name-prefix}}-${{ steps.fingerprint.outputs.hash}}.${{inputs.artifact-name-extension}}
 
     - name: Post Cached Build (if found)
-      if: steps.cached-url.outputs.artifact-url
+      if: ${{ steps.cached-url.outputs.artifact-url && github.event_name == 'pull_request' }}
       uses: ./.github/actions/rnef-post-build
       with:
         platform: Android
@@ -78,7 +78,7 @@ runs:
         if-no-files-found: error
 
     - name: Post Build
-      if: ${{ !steps.cached-url.outputs.artifact-url }}
+      if: ${{ !steps.cached-url.outputs.artifact-url && github.event_name == 'pull_request' }}
       uses: ./.github/actions/rnef-post-build
       with:
         platform: Android

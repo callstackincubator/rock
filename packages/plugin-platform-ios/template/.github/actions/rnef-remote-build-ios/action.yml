@@ -41,7 +41,7 @@ runs:
         name: ${{ env.ARTIFACT_NAME }}
 
     - name: Post Cached Build (if found)
-      if: steps.cached-url.outputs.artifact-url
+      if: ${{ steps.cached-url.outputs.artifact-url && github.event_name == 'pull_request' }}
       uses: ./.github/actions/rnef-post-build
       with:
         platform: iOS Simulator
@@ -80,7 +80,7 @@ runs:
         if-no-files-found: error
 
     - name: Post Build
-      if: ${{ !steps.cached-url.outputs.artifact-url }}
+      if: ${{ !steps.cached-url.outputs.artifact-url && github.event_name == 'pull_request' }}
       uses: ./.github/actions/rnef-post-build
       with:
         platform: iOS Simulator
