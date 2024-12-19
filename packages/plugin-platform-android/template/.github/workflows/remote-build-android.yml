@@ -27,7 +27,11 @@ jobs:
           cache: 'npm'
 
       - name: Install dependencies
-        run: npm install
+        run: |
+          # Remove next line after public release
+          echo "//registry.npmjs.org/:_authToken=${{ secrets.NPM_TOKEN }}" > .npmrc
+          npm install
 
       - name: RNEF Remote Build - Android
         uses: ./.github/actions/rnef-remote-build-android
+
