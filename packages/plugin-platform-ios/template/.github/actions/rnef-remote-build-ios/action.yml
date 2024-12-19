@@ -58,7 +58,7 @@ runs:
       if: ${{ !steps.cached-url.outputs.artifact-url }}
       run: |
         cd ios
-        pnpm rnef build:ios
+        npx rnef build:ios
       shell: bash
 
     - name: Prepare Artifact

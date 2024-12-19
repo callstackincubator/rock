@@ -65,7 +65,7 @@ runs:
       if: ${{ !steps.cached-url.outputs.artifact-url }}
       run: |
         cd android
-        pnpm rnef build:android --tasks assembleDebug
+        npx rnef build:android --tasks assembleDebug
       shell: bash
 
     - name: Upload APK
