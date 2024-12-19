@@ -6,4 +6,5 @@ export * from './lib/path.js';
 export * from './lib/ci.js';
 export * from './lib/project.js';
 
+export * from './lib/github/artifacts.js';
 export * from './lib/github/config.js';

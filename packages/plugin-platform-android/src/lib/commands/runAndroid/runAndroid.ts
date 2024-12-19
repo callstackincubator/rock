@@ -5,6 +5,8 @@ import {
 } from '@react-native-community/cli-types';
 import {
   checkCancelPrompt,
+  downloadGitHubArtifact,
+  fetchGitHubArtifactsByName,
   getProjectRoot,
   logger,
   nativeFingerprint,
@@ -53,18 +55,19 @@ export async function runAndroid(
     ? [await promptForTaskSelection(mainTaskType, androidProject.sourceDir)]
     : [...(args.tasks ?? []), `${mainTaskType}${toPascalCase(args.mode)}`];
 
+  const cachedBuild = await fetchCachedBuild({ tasks, androidProject, args });
+  if (cachedBuild) {
+    logger.info(`Using cached build: ${cachedBuild.artifactName}`);
+    args.binaryPath = cachedBuild.artifactPath;
+  }
+
   if (deviceId) {
-    const cachedBuild = await fetchCachedBuild({ tasks, androidProject, args });
-    if (cachedBuild) {
-      // TODO: install cached build
-    } else {
-      await runGradle({ tasks, androidProject, args });
-      if (!(await getDevices()).find((d) => d === deviceId)) {
-        logger.error(
-          `Device "${deviceId}" not found. Please run it first or use a different one.`
-        );
-        process.exit(1);
-      }
+    await runGradle({ tasks, androidProject, args });
+    if (!(await getDevices()).find((d) => d === deviceId)) {
+      logger.error(
+        `Device "${deviceId}" not found. Please run it first or use a different one.`
+      );
+      process.exit(1);
     }
     await tryInstallAppOnDevice(deviceId, androidProject, args, tasks);
     await tryLaunchAppOnDevice(deviceId, androidProject, args);
@@ -80,12 +83,7 @@ export async function runAndroid(
       }
     }
 
-    const cachedBuild = await fetchCachedBuild({ tasks, androidProject, args });
-    if (cachedBuild) {
-      // TODO: install cached build
-    } else {
-      await runGradle({ tasks, androidProject, args });
-    }
+    await runGradle({ tasks, androidProject, args });
 
     for (const device of await getDevices()) {
       await tryLaunchAppOnDevice(device, androidProject, args);
@@ -97,6 +95,7 @@ export async function runAndroid(
 export type CachedBuild = {
   fingerprint: string;
   artifactName: string;
+  artifactPath: string;
 };
 
 async function fetchCachedBuild({
@@ -120,13 +119,24 @@ async function fetchCachedBuild({
     'Fingerprint'
   );
 
+  fingerprint.hash = '845d50c1abcf2d5e2b0f76b8c52392c3ad183daa';
   const artifactName = `app-debug-${fingerprint.hash}.apk`;
-  return null;
+  const artifacts = await fetchGitHubArtifactsByName(artifactName);
+  console.log('Arifacts: ', artifacts);
 
-  // return {
-  //   fingerprint,
-  //   artifactName,
-  // };
+  if (artifacts.length === 0) {
+    return null;
+  }
+
+  const cachePath = path.join(root, 'android/build/cache');
+  const artifactPath = await downloadGitHubArtifact(artifacts[0], cachePath);
+
+  console.log('Artifact archive: ', artifactPath);
+  return {
+    fingerprint: fingerprint.hash,
+    artifactName,
+    artifactPath,
+  };
 }
 
 async function selectAndLaunchDevice() {

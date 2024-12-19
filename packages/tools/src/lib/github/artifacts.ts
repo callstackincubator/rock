@@ -1,6 +1,10 @@
+import * as fs from 'fs';
+import * as nodePath from 'path';
 import { Octokit } from 'octokit';
+import { detectGitHubRepoDetails } from './config.js';
 
 const PAGE_SIZE = 100; // Maximum allowed by GitHub API
+const GITHUB_TOKEN = process.env['GITHUB_TOKEN'];
 
 export type GitHubArtifact = {
   id: number;
@@ -11,17 +15,24 @@ export type GitHubArtifact = {
 };
 
 export async function fetchGitHubArtifactsByName(
-  octokit: Octokit,
-  repository: string,
   name: string
 ): Promise<GitHubArtifact[]> {
+  const octokit = new Octokit({
+    auth: GITHUB_TOKEN,
+  });
+
+  const repoDetails = await detectGitHubRepoDetails();
+  if (!repoDetails) {
+    throw new Error('Unable to detect GitHub repository details');
+  }
+
   const result: GitHubArtifact[] = [];
   let page = 1;
 
   while (true) {
     const response = await octokit.rest.actions.listArtifactsForRepo({
-      owner: repository.split('/')[0],
-      repo: repository.split('/')[1],
+      owner: repoDetails.owner,
+      repo: repoDetails.repository,
       name,
       per_page: PAGE_SIZE,
       page,
@@ -46,6 +57,40 @@ export async function fetchGitHubArtifactsByName(
     page += 1;
   }
 
-  result.sort();
+  result.sort((a, b) => {
+    const expiresA = a.expiresAt ?? '0000-00-00';
+    const expiresB = b.expiresAt ?? '0000-00-00';
+    // Sort in descending order
+    return expiresB.localeCompare(expiresA);
+  });
   return result;
+}
+
+export async function downloadGitHubArtifact(
+  artifact: GitHubArtifact,
+  path: string
+): Promise<string> {
+  try {
+    fs.mkdirSync(path, {
+      recursive: true,
+    });
+
+    const response = await fetch(artifact.downloadUrl, {
+      headers: {
+        Authorization: `token ${GITHUB_TOKEN}`,
+      },
+    });
+
+    if (!response.ok) {
+      throw new Error(`Failed to download artifact: ${response.statusText}`);
+    }
+
+    const targetPath = nodePath.join(path, artifact.name);
+    const buffer = await response.arrayBuffer();
+    await fs.writeFileSync(targetPath, Buffer.from(buffer));
+
+    return targetPath;
+  } catch (error) {
+    throw new Error(`Failed to download cached build ${error}`);
+  }
 }

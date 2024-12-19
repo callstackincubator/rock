@@ -4,7 +4,7 @@ import { GITHUB_REPO_REGEX } from './patterns.js';
 
 export type GitHubRepoDetails = {
   url: string;
-  organization: string;
+  owner: string;
   repository: string;
 };
 
@@ -21,7 +21,7 @@ export function detectGitHubRepoDetails(): GitHubRepoDetails | null {
 
     return {
       url,
-      organization: match[1],
+      owner: match[1],
       repository: match[2],
     };
   } catch (error: unknown) {
