@@ -34,5 +34,3 @@ jobs:
 
       - name: RNEF Remote Build - iOS Simulator
         uses: ./.github/actions/rnef-remote-build-ios
-        with:
-          architectures: arm64

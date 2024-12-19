@@ -10,10 +10,6 @@ inputs:
     description: The workspace scheme to build
     required: false
     default: "HelloWorld"
-  architectures:
-    description: The architectures to build for
-    required: false
-    default: "arm64 x86_64"
 
 outputs:
   artifact-url:
@@ -31,7 +27,7 @@ runs:
 
     - name: Set variables
       run: |
-        echo "ARTIFACT_NAME=${{inputs.scheme}}-${{inputs.architectures}}-${{ steps.fingerprint.outputs.hash}}.tar.gz" >> $GITHUB_ENV
+        echo "ARTIFACT_NAME=${{inputs.scheme}}-${{ steps.fingerprint.outputs.hash}}.tar.gz" >> $GITHUB_ENV
       shell: bash
 
     - name: Find artifact URL
