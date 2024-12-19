@@ -7,8 +7,13 @@ const EXCLUDED_SOURCES = [
   'expoAutolinkingConfig:android',
 ];
 
-type FingerprintOptions = {
+export type FingerprintOptions = {
   platform: 'ios' | 'android';
+};
+
+export type FingerprintResult = {
+  hash: string;
+  sources: FingerprintSource[];
 };
 
 /**
@@ -17,7 +22,7 @@ type FingerprintOptions = {
 export async function nativeFingerprint(
   path: string,
   options: FingerprintOptions
-) {
+): Promise<FingerprintResult> {
   const platform = options.platform;
 
   const fingerprint = await createFingerprintAsync(path, {

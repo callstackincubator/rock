@@ -34,7 +34,7 @@ runs:
       id: fingerprint
       uses: ./.github/actions/rnef-native-fingerprint
       with:
-        platforms: android
+        platform: android
 
     - name: Find artifact URL
       id: cached-url
@@ -68,7 +68,7 @@ runs:
         npx rnef build:android --tasks assembleDebug
       shell: bash
 
-    - name: Upload APK
+    - name: Upload Artifact
       id: upload-artifact
       if: ${{ !steps.cached-url.outputs.artifact-url }}
       uses: actions/upload-artifact@v4

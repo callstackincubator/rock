@@ -4,13 +4,12 @@
 name: 'Fingerprint'
 description: 'Fingerprint the current native-related files'
 inputs:
-  platforms:
-    description: 'The platforms to fingerprint'
+  platform:
+    description: 'The platform to fingerprint: android or ios'
     required: true
-    default: 'android,ios'
 outputs:
   hash:
     description: 'The fingerprint hash'
 runs:
   using: 'node20'
-  main: 'index.js'
+  main: 'index.mjs'

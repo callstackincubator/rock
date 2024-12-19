@@ -23,7 +23,7 @@ runs:
       id: fingerprint
       uses: ./.github/actions/rnef-native-fingerprint
       with:
-        platforms: ios
+        platform: ios
 
     - name: Set variables
       run: |
@@ -54,7 +54,7 @@ runs:
       if: ${{ !steps.cached-url.outputs.artifact-url }}
       run: |
         cd ios
-        npx rnef build:ios
+        npx rnef build:ios --buildFolder=build
       shell: bash
 
     - name: Prepare Artifact
@@ -66,7 +66,7 @@ runs:
         tar -C "${app_dir}" -czvf "${{ env.ARTIFACT_NAME }}" "${app_name}"
       shell: bash
 
-    - name: Upload IPA
+    - name: Upload Artifact
       id: upload-artifact
       if: ${{ !steps.cached-url.outputs.artifact-url }}
       uses: actions/upload-artifact@v4
