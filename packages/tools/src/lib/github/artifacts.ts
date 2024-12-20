@@ -111,12 +111,12 @@ export async function downloadGitHubArtifact(
       console.log(`Failed to unzip file: ${error}`);
     }
 
-    // try {
-    //   // Remove the zip file after extraction
-    //   fs.unlinkSync(zipPath);
-    // } catch (error) {
-    //   console.log(`Failed to remove zip file: ${error}`);
-    // }
+    try {
+      // Remove the zip file after extraction
+      fs.unlinkSync(zipPath);
+    } catch (error) {
+      console.log(`Failed to remove zip file: ${error}`);
+    }
     return targetPath;
   } catch (error) {
     throw new Error(`Failed to download cached build ${error}`);
