@@ -17,3 +17,34 @@ export function resolveFilenameUp(path: string, filename: string) {
 
   return resolveFilenameUp(parentDir, filename);
 }
+
+export function findFilesWithPattern(path: string, pattern: RegExp) {
+  const files = fs.readdirSync(path);
+  const result: string[] = [];
+  for (const file of files) {
+    const filePath = nodePath.join(path, file);
+    const stat = fs.statSync(filePath);
+    if (stat.isFile() && file.match(pattern)) {
+      result.push(filePath);
+    } else if (stat.isDirectory()) {
+      result.push(...findFilesWithPattern(filePath, pattern));
+    }
+  }
+  return result;
+}
+
+export function findDirectoriesWithPattern(path: string, pattern: RegExp) {
+  const files = fs.readdirSync(path);
+  const result: string[] = [];
+  for (const file of files) {
+    const filePath = nodePath.join(path, file);
+    const stat = fs.statSync(filePath);
+    if (stat.isDirectory()) {
+      if (file.match(pattern)) {
+        result.push(filePath);
+      }
+      result.push(...findDirectoriesWithPattern(filePath, pattern));
+    }
+  }
+  return result;
+}

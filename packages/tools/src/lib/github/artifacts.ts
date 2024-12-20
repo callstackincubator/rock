@@ -86,10 +86,10 @@ export async function fetchGitHubArtifactsByName(
 
 export async function downloadGitHubArtifact(
   artifact: GitHubArtifact,
-  path: string
-): Promise<string> {
+  targetPath: string
+): Promise<void> {
   try {
-    fs.mkdirSync(path, {
+    fs.mkdirSync(targetPath, {
       recursive: true,
     });
 
@@ -103,27 +103,12 @@ export async function downloadGitHubArtifact(
       throw new Error(`Failed to download artifact: ${response.statusText}`);
     }
 
-    const targetPath = nodePath.join(path, artifact.name);
     const zipPath = targetPath + '.zip';
     const buffer = await response.arrayBuffer();
     fs.writeFileSync(zipPath, Buffer.from(buffer));
-    console.log(
-      'Downloaded artifact: ',
-      '\nname: ',
-      artifact.name,
-      '\ntargetPath: ',
-      targetPath,
-      '\nzipPath: ',
-      zipPath
-    );
 
-    console.log('Unzipping file: ', zipPath, targetPath);
     unzipFile(zipPath, targetPath);
-
-    console.log('Removing zip file: ', zipPath);
     fs.unlinkSync(zipPath);
-
-    return targetPath;
   } catch (error) {
     console.log('Error: ', error);
     throw new Error(`Failed to download cached build ${error}`);
