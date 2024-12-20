@@ -7,6 +7,23 @@ import { detectGitHubRepoDetails } from './config.js';
 const PAGE_SIZE = 100; // Maximum allowed by GitHub API
 const GITHUB_TOKEN = process.env['GITHUB_TOKEN'];
 
+type FormatArtifactNameParams = {
+  platform: string;
+  mode: string;
+  hash: string;
+};
+
+/**
+ * e.g. rnef-android-debug-1234567890
+ */
+export function formatArtifactName({
+  platform,
+  mode,
+  hash,
+}: FormatArtifactNameParams): string {
+  return `rnef-${platform}-${mode}-${hash}`;
+}
+
 export type GitHubArtifact = {
   id: number;
   name: string;
@@ -90,13 +107,25 @@ export async function downloadGitHubArtifact(
     const zipPath = targetPath + '.zip';
     const buffer = await response.arrayBuffer();
     fs.writeFileSync(zipPath, Buffer.from(buffer));
+    console.log(
+      'Downloaded artifact: ',
+      '\nname: ',
+      artifact.name,
+      '\ntargetPath: ',
+      targetPath,
+      '\nzipPath: ',
+      zipPath
+    );
 
+    console.log('Unzipping file: ', zipPath, targetPath);
     unzipFile(zipPath, targetPath);
 
+    console.log('Removing zip file: ', zipPath);
     fs.unlinkSync(zipPath);
 
     return targetPath;
   } catch (error) {
+    console.log('Error: ', error);
     throw new Error(`Failed to download cached build ${error}`);
   }
 }

@@ -7,6 +7,7 @@ import {
   checkCancelPrompt,
   downloadGitHubArtifact,
   fetchGitHubArtifactsByName,
+  formatArtifactName,
   getProjectRoot,
   hasGitHubToken,
   logger,
@@ -115,21 +116,24 @@ async function fetchCachedBuild(
   sourceDir: string,
   mode: string
 ): Promise<CachedBuild | null> {
-  const loader = spinner();
-  loader.start('Looking for a cached build on GitHub');
-
   if (!hasGitHubToken()) {
-    loader.stop('No GitHub token found, skipping cached build.');
     log.warn(
-      'Please set GITHUB_TOKEN environment variable to use cached builds.'
+      'No GitHub token found, skipping cached build. Set GITHUB_TOKEN environment variable to use cached builds.'
     );
     return null;
   }
 
+  const loader = spinner();
+  loader.start('Looking for a cached build on GitHub');
+
   const root = getProjectRoot();
   const fingerprint = await nativeFingerprint(root, { platform: 'android' });
 
-  const artifactName = `app-${mode}-${fingerprint.hash}.apk`;
+  const artifactName = formatArtifactName({
+    platform: 'android',
+    mode,
+    hash: fingerprint.hash,
+  });
   const artifacts = await fetchGitHubArtifactsByName(artifactName);
   if (artifacts.length === 0) {
     loader.stop(`No cached build found for hash ${fingerprint.hash}.`);
