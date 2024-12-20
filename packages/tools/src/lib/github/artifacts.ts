@@ -1,9 +1,8 @@
 import * as fs from 'node:fs';
 import * as nodePath from 'node:path';
 import { Octokit } from 'octokit';
+import AdmZip from 'adm-zip';
 import { detectGitHubRepoDetails } from './config.js';
-// @ts-expect-error fix
-import admzip from 'adm-zip';
 
 const PAGE_SIZE = 100; // Maximum allowed by GitHub API
 const GITHUB_TOKEN = process.env['GITHUB_TOKEN'];
@@ -92,33 +91,17 @@ export async function downloadGitHubArtifact(
     const buffer = await response.arrayBuffer();
     fs.writeFileSync(zipPath, Buffer.from(buffer));
 
-    try {
-      // Unzip the file using adm-zip
-      const zip = new admzip(zipPath);
-      // @ts-expect-error fix
-      zip.getEntries().forEach((entry) => {
-        // there's only one entry in the zip file, so simplifying to this
-        const entryPath = targetPath;
-        if (entry.isDirectory) {
-          fs.mkdirSync(entryPath, { recursive: true });
-        } else {
-          const directory = nodePath.dirname(entryPath);
-          fs.mkdirSync(directory, { recursive: true });
-          fs.writeFileSync(entryPath, entry.getData());
-        }
-      });
-    } catch (error) {
-      console.log(`Failed to unzip file: ${error}`);
-    }
+    unzipFile(zipPath, targetPath);
 
-    try {
-      // Remove the zip file after extraction
-      fs.unlinkSync(zipPath);
-    } catch (error) {
-      console.log(`Failed to remove zip file: ${error}`);
-    }
+    fs.unlinkSync(zipPath);
+
     return targetPath;
   } catch (error) {
     throw new Error(`Failed to download cached build ${error}`);
   }
+}
+
+function unzipFile(zipPath: string, targetPath: string): void {
+  const zip = new AdmZip(zipPath);
+  zip.extractAllTo(targetPath, true);
 }
