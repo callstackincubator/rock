@@ -82,9 +82,7 @@ export async function runAndroid(
       }
     }
 
-    if (!args.binaryPath) {
-      await runGradle({ tasks, androidProject, args });
-    }
+    await runGradle({ tasks, androidProject, args });
 
     for (const device of await getDevices()) {
       if (args.binaryPath) {
