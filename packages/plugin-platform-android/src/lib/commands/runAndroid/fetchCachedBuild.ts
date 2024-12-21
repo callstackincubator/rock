@@ -8,20 +8,47 @@ import {
   logger,
   nativeFingerprint,
 } from '@rnef/tools';
-import { CachedBuild } from './runAndroid.js';
 import { log, spinner } from '@clack/prompts';
 import path from 'node:path';
 import color from 'picocolors';
 import fs from 'node:fs';
 
+const ciHelpers = {
+  github: {
+    downloadArtifact: downloadGitHubArtifact,
+    fetchArtifactsByName: fetchGitHubArtifactsByName,
+    hasToken: hasGitHubToken,
+  },
+} as const;
+
+const ciHumanReadableNames = {
+  github: {
+    displayName: 'GitHub',
+    tokenName: 'GITHUB_TOKEN',
+  },
+};
+
+type CachedBuild = {
+  fingerprint: string;
+  artifactName: string;
+  artifactPath: string;
+  binaryPath: string;
+};
+
 // TODO: pass relevant build variables
 export async function fetchCachedBuild(
+  ci: 'github',
   sourceDir: string,
   mode: string
 ): Promise<CachedBuild | null> {
-  if (!hasGitHubToken()) {
+  const downloadArtifact = ciHelpers[ci].downloadArtifact;
+  const fetchArtifactsByName = ciHelpers[ci].fetchArtifactsByName;
+  const hasToken = ciHelpers[ci].hasToken;
+  const { displayName, tokenName } = ciHumanReadableNames[ci];
+
+  if (!hasToken()) {
     log.warn(
-      'No GitHub token found, skipping cached build. Set GITHUB_TOKEN environment variable to use cached builds.'
+      `No ${displayName} token found, skipping cached build. Set ${tokenName} environment variable to use cached builds.`
     );
     return null;
   }
@@ -44,7 +71,7 @@ export async function fetchCachedBuild(
       loader.stop(
         `Found local cached build: ${color.cyan(
           path.relative(root, localBinaryPath)
-        )}.`
+        )}`
       );
       return {
         fingerprint: fingerprint.hash,
@@ -55,15 +82,15 @@ export async function fetchCachedBuild(
     }
   }
 
-  loader.message('Looking for a cached build on GitHub');
-  const artifacts = await fetchGitHubArtifactsByName(artifactName);
+  loader.message(`Looking for a cached build on ${displayName}`);
+  const artifacts = await fetchArtifactsByName(artifactName);
   if (artifacts.length === 0) {
     loader.stop(`No cached build found for hash ${fingerprint.hash}.`);
     return null;
   }
 
   loader.message('Downloading cached build');
-  await downloadGitHubArtifact(artifacts[0], artifactPath);
+  await downloadArtifact(artifacts[0], artifactPath);
   loader.stop(
     `Downloaded cached build: ${color.cyan(path.relative(root, artifactPath))}.`
   );

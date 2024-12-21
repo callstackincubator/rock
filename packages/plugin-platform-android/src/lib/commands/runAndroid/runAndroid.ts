@@ -1,4 +1,4 @@
-import fs from 'fs';
+import fs from 'node:fs';
 import {
   AndroidProjectConfig,
   Config,
@@ -12,7 +12,7 @@ import { tryLaunchAppOnDevice } from './tryLaunchAppOnDevice.js';
 import { tryInstallAppOnDevice } from './tryInstallAppOnDevice.js';
 import { listAndroidDevices, DeviceData } from './listAndroidDevices.js';
 import { tryLaunchEmulator } from './tryLaunchEmulator.js';
-import path from 'path';
+import path from 'node:path';
 import { BuildFlags, options } from '../buildAndroid/buildAndroid.js';
 import { promptForTaskSelection } from '../listAndroidTasks.js';
 import { runGradle } from '../runGradle.js';
@@ -51,6 +51,7 @@ export async function runAndroid(
 
   if (!args.binaryPath) {
     const cachedBuild = await fetchCachedBuild(
+      'github',
       androidProject.sourceDir,
       args.mode
     );
@@ -93,13 +94,6 @@ export async function runAndroid(
   }
   outro('Success 🎉.');
 }
-
-export type CachedBuild = {
-  fingerprint: string;
-  artifactName: string;
-  artifactPath: string;
-  binaryPath: string;
-};
 
 async function selectAndLaunchDevice() {
   const allDevices = await listAndroidDevices();

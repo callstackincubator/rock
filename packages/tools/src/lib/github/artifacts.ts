@@ -1,5 +1,4 @@
 import * as fs from 'node:fs';
-import * as nodePath from 'node:path';
 import { Octokit } from 'octokit';
 import AdmZip from 'adm-zip';
 import { detectGitHubRepoDetails } from './config.js';
