@@ -3,6 +3,7 @@ import { tryLaunchAppOnDevice } from '../tryLaunchAppOnDevice.js';
 import type { Flags } from '../runAndroid.js';
 import spawn from 'nano-spawn';
 import { vi, test } from 'vitest';
+import { DeviceData } from '../listAndroidDevices.js';
 
 vi.mock('nano-spawn', () => {
   return {
@@ -30,7 +31,13 @@ afterAll(() => {
   process.env = OLD_ENV;
 });
 
-const device = 'emulator-5554';
+const device: DeviceData = {
+  deviceId: 'emulator-5554',
+  readableName: 'Emulator 5554',
+  connected: true,
+  type: 'emulator',
+};
+
 const args: Flags = {
   activeArchOnly: false,
   port: '8081',
@@ -47,7 +54,6 @@ const androidProject: AndroidProjectConfig = {
   mainActivity: '.MainActivity',
   dependencyConfiguration: undefined,
   watchModeCommandParams: undefined,
-  unstable_reactLegacyComponentNames: undefined,
   assets: [],
 };
 
