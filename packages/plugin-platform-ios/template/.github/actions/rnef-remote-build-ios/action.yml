@@ -25,9 +25,9 @@ runs:
       with:
         platform: ios
 
-    - name: Set variables
+    - name: Set artifact name
       run: |
-        echo "ARTIFACT_NAME=${{inputs.scheme}}-${{ steps.fingerprint.outputs.hash}}.tar.gz" >> $GITHUB_ENV
+        echo "ARTIFACT_NAME=rnef-ios-${{ inputs.scheme }}-${{ steps.fingerprint.outputs.hash}}" >> $GITHUB_ENV
       shell: bash
 
     - name: Find artifact URL
@@ -54,16 +54,21 @@ runs:
       if: ${{ !steps.cached-url.outputs.artifact-url }}
       run: |
         cd ios
-        npx rnef build:ios --buildFolder=build
+        npx rnef build:ios --buildFolder="build"
       shell: bash
 
-    - name: Prepare Artifact
+    - name: Find Build Artifact
       if: ${{ !steps.cached-url.outputs.artifact-url }}
       run: |
-        app=$(find ios/DerivedData/Build/Products/Debug-iphonesimulator -maxdepth 1 -name '*.app' -type d | head -1)
-        app_dir=$(dirname "${app}")
-        app_name=$(basename "${app}")
-        tar -C "${app_dir}" -czvf "${{ env.ARTIFACT_NAME }}" "${app_name}"
+        # Need to compress with tar, as GH actions drop execute file permission during packing to zip
+        APP_PATH=$(find ios/build/Build/Products/Debug-iphonesimulator -maxdepth 1 -name '*.app' -type d | head -1)
+        APP_DIR=$(dirname "$APP_PATH")
+        APP_BASENAME=$(basename "$APP_PATH")
+
+        ARTIFACT_PATH="$APP_DIR/${{ env.ARTIFACT_NAME }}.tar.gz"
+        tar -C "$APP_DIR" -czvf "$ARTIFACT_PATH" "$APP_BASENAME"
+
+        echo "ARTIFACT_PATH=$ARTIFACT_PATH" >> $GITHUB_ENV
       shell: bash
 
     - name: Upload Artifact
@@ -72,7 +77,7 @@ runs:
       uses: actions/upload-artifact@v4
       with:
         name: ${{ env.ARTIFACT_NAME }}
-        path: ${{ env.ARTIFACT_NAME }}
+        path: ${{ env.ARTIFACT_PATH }}
         if-no-files-found: error
 
     - name: Post Build
