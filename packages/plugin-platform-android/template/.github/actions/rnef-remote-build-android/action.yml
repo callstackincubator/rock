@@ -13,14 +13,10 @@ inputs:
     description: "Path to the build output artifact"
     required: false
     default: "android/app/build/outputs/apk/debug/app-debug.apk"
-  artifact-name-prefix:
-    description: "Prefix for the artifact name"
+  mode:
+    description: "Build mode"
     required: false
-    default: "app-debug"
-  artifact-name-extension:
-    description: "File extension for the artifact name"
-    required: false
-    default: "apk"
+    default: "debug"
 
 outputs:
   artifact-url:
@@ -36,11 +32,16 @@ runs:
       with:
         platform: android
 
+    - name: Set artifact name
+      run: |
+        echo "ARTIFACT_NAME=rnef-android-${{ inputs.mode }}-${{ steps.fingerprint.outputs.hash}}" >> $GITHUB_ENV
+      shell: bash
+
     - name: Find artifact URL
       id: cached-url
       uses: ./.github/actions/find-artifact
       with:
-        name: ${{inputs.artifact-name-prefix}}-${{ steps.fingerprint.outputs.hash}}.${{inputs.artifact-name-extension}}
+        name: ${{ env.ARTIFACT_NAME }}
 
     - name: Post Cached Build (if found)
       if: ${{ steps.cached-url.outputs.artifact-url && github.event_name == 'pull_request' }}
@@ -73,7 +74,7 @@ runs:
       if: ${{ !steps.cached-url.outputs.artifact-url }}
       uses: actions/upload-artifact@v4
       with:
-        name: ${{inputs.artifact-name-prefix}}-${{ steps.fingerprint.outputs.hash}}.${{inputs.artifact-name-extension}}
+        name: ${{ env.ARTIFACT_NAME }}
         path: ${{ inputs.artifact-output-path }}
         if-no-files-found: error
 
