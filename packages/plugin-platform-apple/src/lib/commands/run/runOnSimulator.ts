@@ -43,9 +43,8 @@ export async function runOnSimulator(
   }
   loader.stop(`Launched Simulator "${simulator.name}".`);
 
-  let buildOutput;
   if (!binaryPath) {
-    buildOutput = await buildProject(
+    await buildProject(
       xcodeProject,
       sourceDir,
       platform,
@@ -58,7 +57,6 @@ export async function runOnSimulator(
 
   loader.start(`Installing the app on "${simulator.name}"`);
   await installApp({
-    buildOutput: buildOutput ?? '',
     xcodeProject,
     sourceDir,
     mode,
