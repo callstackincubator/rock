@@ -7,9 +7,13 @@ inputs:
     required: false
     default: ${{ github.token }}
   scheme:
-    description: The workspace scheme to build
+    description: Xcode scheme to build
     required: false
-    default: "HelloWorld"
+    default: "RnefRemoteBuildTest"
+  mode:
+    description: Xcode scheme build configuration
+    required: false
+    default: "Debug"
 
 outputs:
   artifact-url:
@@ -27,7 +31,7 @@ runs:
 
     - name: Set artifact name
       run: |
-        echo "ARTIFACT_NAME=rnef-ios-${{ inputs.scheme }}-${{ steps.fingerprint.outputs.hash}}" >> $GITHUB_ENV
+        echo "ARTIFACT_NAME=rnef-ios-${{ inputs.mode }}-${{ steps.fingerprint.outputs.hash}}" >> $GITHUB_ENV
       shell: bash
 
     - name: Find artifact URL
@@ -47,14 +51,14 @@ runs:
       if: ${{ !steps.cached-url.outputs.artifact-url }}
       run: |
         cd ios
-        pod install --verbose
+        pod install
       shell: bash
 
     - name: Build iOS
       if: ${{ !steps.cached-url.outputs.artifact-url }}
       run: |
         cd ios
-        npx rnef build:ios --buildFolder="build"
+        npx rnef build:ios --buildFolder="build" --verbose
       shell: bash
 
     - name: Find Build Artifact
@@ -65,7 +69,7 @@ runs:
         APP_DIR=$(dirname "$APP_PATH")
         APP_BASENAME=$(basename "$APP_PATH")
 
-        ARTIFACT_PATH="$APP_DIR/${{ env.ARTIFACT_NAME }}.tar.gz"
+        ARTIFACT_PATH="$APP_DIR/app.tar.gz"
         tar -C "$APP_DIR" -czvf "$ARTIFACT_PATH" "$APP_BASENAME"
 
         echo "ARTIFACT_PATH=$ARTIFACT_PATH" >> $GITHUB_ENV

@@ -4,6 +4,7 @@ import installApp from './installApp.js';
 import { RunFlags } from './runOptions.js';
 import spawn from 'nano-spawn';
 import { spinner } from '@clack/prompts';
+import { fetchCachedBuild } from './fetchCachedBuild.js';
 
 export async function runOnSimulator(
   simulator: Device,
@@ -14,7 +15,25 @@ export async function runOnSimulator(
   scheme: string,
   args: RunFlags
 ) {
-  const { binaryPath, target } = args;
+  console.log('simulator', simulator);
+  console.log('xcodeProject', xcodeProject);
+  console.log('sourceDir', sourceDir);
+  console.log('platform', platform);
+  console.log('mode', mode);
+  console.log('scheme', scheme);
+  console.log('args', args);
+
+  if (!args.binaryPath) {
+    const cachedBuild = await fetchCachedBuild({
+      ci: 'github',
+      sourceDir,
+      mode: args.mode,
+    });
+    if (cachedBuild) {
+      // @todo replace with a more generic way to pass binary path
+      args.binaryPath = cachedBuild.binaryPath;
+    }
+  }
 
   /**
    * Booting simulator through `xcrun simctl boot` will boot it in the `headless` mode
@@ -44,7 +63,7 @@ export async function runOnSimulator(
   loader.stop(`Launched Simulator "${simulator.name}".`);
 
   let buildOutput;
-  if (!binaryPath) {
+  if (!args.binaryPath) {
     buildOutput = await buildProject(
       xcodeProject,
       sourceDir,
@@ -63,9 +82,9 @@ export async function runOnSimulator(
     sourceDir,
     mode,
     scheme,
-    target,
+    target: args.target,
     udid: simulator.udid,
-    binaryPath,
+    binaryPath: args.binaryPath,
     platform,
   });
   loader.stop(`Installed the app on "${simulator.name}".`);
