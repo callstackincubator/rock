@@ -1,4 +1,4 @@
-import { execSync } from 'child_process';
+import spawn from 'nano-spawn';
 import logger from '../logger.js';
 import { GITHUB_REPO_REGEX } from './patterns.js';
 
@@ -12,11 +12,13 @@ export type GitHubRepoDetails = {
   repository: string;
 };
 
-export function detectGitHubRepoDetails(): GitHubRepoDetails | null {
+export async function detectGitHubRepoDetails(): Promise<GitHubRepoDetails | null> {
   try {
-    const url = execSync('git config --get remote.origin.url', {
-      encoding: 'utf-8',
-    }).trim();
+    const { output: url } = await spawn('git', [
+      'config',
+      '--get',
+      'remote.origin.url',
+    ]);
 
     const match = url.match(GITHUB_REPO_REGEX);
     if (!match) {
