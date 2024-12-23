@@ -12,7 +12,7 @@
     "publish:verdaccio": "npm publish --registry http://localhost:4873 --userconfig ../../.npmrc"
   },
   "dependencies": {
-    "@clack/prompts": "^0.8.1",
+    "@clack/prompts": "^0.9.0",
     "@expo/fingerprint": "^0.11.2",
     "appdirsjs": "^1.2.7",
     "is-unicode-supported": "^2.1.0",
