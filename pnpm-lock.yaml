@@ -16,8 +16,8 @@ importers:
         version: 5.0.1(typescript@5.5.4)(vite@5.4.8(@types/node@18.16.9)(terser@5.36.0))
     devDependencies:
       '@clack/prompts':
-        specifier: ^0.8.2
-        version: 0.8.2
+        specifier: ^0.9.0
+        version: 0.9.0
       '@eslint/js':
         specifier: ^9.8.0
         version: 9.11.0
@@ -32,7 +32,7 @@ importers:
         version: 19.8.3(@babel/traverse@7.25.9)(@swc-node/register@1.9.2(@swc/core@1.5.29(@swc/helpers@0.5.13))(@swc/types@0.1.12)(typescript@5.5.4))(@swc/core@1.5.29(@swc/helpers@0.5.13))(@types/node@18.16.9)(nx@19.8.0(@swc-node/register@1.9.2(@swc/core@1.5.29(@swc/helpers@0.5.13))(@swc/types@0.1.12)(typescript@5.5.4))(@swc/core@1.5.29(@swc/helpers@0.5.13)))(typescript@5.5.4)(verdaccio@5.33.0(typanion@3.14.0))
       '@nx/vite':
         specifier: ^19.8.3
-        version: 19.8.3(@babel/traverse@7.25.9)(@swc-node/register@1.9.2(@swc/core@1.5.29(@swc/helpers@0.5.13))(@swc/types@0.1.12)(typescript@5.5.4))(@swc/core@1.5.29(@swc/helpers@0.5.13))(@types/node@18.16.9)(nx@19.8.0(@swc-node/register@1.9.2(@swc/core@1.5.29(@swc/helpers@0.5.13))(@swc/types@0.1.12)(typescript@5.5.4))(@swc/core@1.5.29(@swc/helpers@0.5.13)))(typescript@5.5.4)(verdaccio@5.33.0(typanion@3.14.0))(vite@5.4.8(@types/node@18.16.9)(terser@5.36.0))(vitest@2.1.2)
+        version: 19.8.3(@babel/traverse@7.25.9)(@swc-node/register@1.9.2(@swc/core@1.5.29(@swc/helpers@0.5.13))(@swc/types@0.1.12)(typescript@5.5.4))(@swc/core@1.5.29(@swc/helpers@0.5.13))(@types/node@18.16.9)(nx@19.8.0(@swc-node/register@1.9.2(@swc/core@1.5.29(@swc/helpers@0.5.13))(@swc/types@0.1.12)(typescript@5.5.4))(@swc/core@1.5.29(@swc/helpers@0.5.13)))(typescript@5.5.4)(verdaccio@5.33.0(typanion@3.14.0))(vite@5.4.8(@types/node@18.16.9)(terser@5.36.0))(vitest@2.1.2(@types/node@18.16.9)(@vitest/ui@2.1.2)(terser@5.36.0))
       '@nx/web':
         specifier: 19.8.3
         version: 19.8.3(@babel/traverse@7.25.9)(@swc-node/register@1.9.2(@swc/core@1.5.29(@swc/helpers@0.5.13))(@swc/types@0.1.12)(typescript@5.5.4))(@swc/core@1.5.29(@swc/helpers@0.5.13))(@types/node@18.16.9)(nx@19.8.0(@swc-node/register@1.9.2(@swc/core@1.5.29(@swc/helpers@0.5.13))(@swc/types@0.1.12)(typescript@5.5.4))(@swc/core@1.5.29(@swc/helpers@0.5.13)))(typescript@5.5.4)(verdaccio@5.33.0(typanion@3.14.0))
@@ -50,7 +50,7 @@ importers:
         version: 18.16.9
       '@vitest/coverage-v8':
         specifier: ^2.1.2
-        version: 2.1.2(vitest@2.1.2)
+        version: 2.1.2(vitest@2.1.2(@types/node@18.16.9)(@vitest/ui@2.1.2)(terser@5.36.0))
       '@vitest/ui':
         specifier: ^2.1.2
         version: 2.1.2(vitest@2.1.2)
@@ -94,8 +94,8 @@ importers:
   packages/cli:
     dependencies:
       '@clack/prompts':
-        specifier: ^0.8.1
-        version: 0.8.1
+        specifier: ^0.9.0
+        version: 0.9.0
       '@react-native-community/cli-config':
         specifier: ^16.0.2
         version: 16.0.2(typescript@5.5.4)
@@ -125,8 +125,8 @@ importers:
   packages/create-app:
     dependencies:
       '@clack/prompts':
-        specifier: ^0.8.1
-        version: 0.8.1
+        specifier: ^0.9.0
+        version: 0.9.0
       '@rnef/tools':
         specifier: ^0.0.1
         version: link:../tools
@@ -178,8 +178,8 @@ importers:
   packages/plugin-platform-android:
     dependencies:
       '@clack/prompts':
-        specifier: ^0.8.1
-        version: 0.8.1
+        specifier: ^0.9.0
+        version: 0.9.0
       '@react-native-community/cli-config-android':
         specifier: ^16.0.2
         version: 16.0.2
@@ -209,8 +209,8 @@ importers:
   packages/plugin-platform-apple:
     dependencies:
       '@clack/prompts':
-        specifier: ^0.7.0
-        version: 0.7.0
+        specifier: ^0.9.0
+        version: 0.9.0
       '@react-native-community/cli-config-apple':
         specifier: ^16.0.2
         version: 16.0.2
@@ -262,8 +262,8 @@ importers:
   packages/plugin-repack:
     dependencies:
       '@callstack/repack':
-        specifier: 5.0.0-rc.2
-        version: 5.0.0-rc.2(@react-native-community/cli-server-api@16.0.2)(@react-native-community/cli-types@16.0.2)(@react-native-community/cli@15.1.2(typescript@5.5.4))(@rspack/core@1.1.3(@swc/helpers@0.5.15))(@rspack/plugin-react-refresh@1.0.0(react-refresh@0.14.2))(react-native@0.76.3(@babel/core@7.25.2)(@babel/preset-env@7.25.4(@babel/core@7.25.2))(@react-native-community/cli-server-api@16.0.2)(react@18.3.1))(webpack@5.96.1(@swc/core@1.5.29(@swc/helpers@0.5.13)))
+        specifier: 5.0.0-rc.4
+        version: 5.0.0-rc.4(@react-native-community/cli-server-api@16.0.2)(@react-native-community/cli-types@16.0.2)(@react-native-community/cli@15.1.2(typescript@5.5.4))(@rspack/core@1.1.3(@swc/helpers@0.5.15))(react-native@0.76.3(@babel/core@7.25.2)(@babel/preset-env@7.25.4(@babel/core@7.25.2))(@react-native-community/cli-server-api@16.0.2)(react@18.3.1))(webpack@5.96.1(@swc/core@1.5.29(@swc/helpers@0.5.13)))
       '@rnef/tools':
         specifier: ^0.0.1
         version: link:../tools
@@ -296,8 +296,8 @@ importers:
   packages/tools:
     dependencies:
       '@clack/prompts':
-        specifier: ^0.8.1
-        version: 0.8.1
+        specifier: ^0.9.0
+        version: 0.9.0
       '@expo/fingerprint':
         specifier: ^0.11.2
         version: 0.11.2
@@ -1090,8 +1090,8 @@ packages:
   '@bcoe/v8-coverage@0.2.3':
     resolution: {integrity: sha512-0hYQ8SB4Db5zvZB4axdMHGwEaQjkZzFjQiN9LVYvIFB2nSUHW9tYpxWriPrWDASIxiaXax83REcLxuSdnGPZtw==}
 
-  '@callstack/repack-dev-server@5.0.0-rc.2':
-    resolution: {integrity: sha512-f4YxAsdL47LbBUwI2i+OaUkMhdfaHaI9Bkiv6Cr3+/8ugR4LV3u8kT8FcYdifZWfc1sWzPbhaJ9MLFQMKKLOgw==}
+  '@callstack/repack-dev-server@5.0.0-rc.4':
+    resolution: {integrity: sha512-0dwus2MvYEjPBhe9vJsSJRNoAFBovdaWAcKvMlCjUrNSTgkgFNj7sMPMNNDD5BngBunewW9jAavObB6sMmiQjQ==}
     engines: {node: '>=18'}
     peerDependencies:
       '@react-native-community/cli-server-api': '>=13.6.4'
@@ -1099,15 +1099,14 @@ packages:
       '@react-native-community/cli-server-api':
         optional: true
 
-  '@callstack/repack@5.0.0-rc.2':
-    resolution: {integrity: sha512-fhe1TjYS0E9mIAdRbZVngxhZxnpHb4h6RErJ3hPO/nIdhARvh2jn/+xY3GCgusd7Q7J8qcHWaGfXTbXeawCuYg==}
+  '@callstack/repack@5.0.0-rc.4':
+    resolution: {integrity: sha512-NqTK/GpiiH/g5GVEESmX09glV8hJMWZC1drW1oZWOsQbHPeMyC4fvzjoVzf0McZrR/uZi9VcGL02cOFmVTkeng==}
     engines: {node: '>=18'}
     peerDependencies:
       '@module-federation/enhanced': '>=0.6.10'
       '@react-native-community/cli': '*'
       '@react-native-community/cli-types': '*'
       '@rspack/core': '>=1'
-      '@rspack/plugin-react-refresh': '>=1'
       react-native: '>=0.74'
       webpack: '>=5.90'
     peerDependenciesMeta:
@@ -1118,24 +1117,11 @@ packages:
       webpack:
         optional: true
 
-  '@clack/core@0.3.4':
-    resolution: {integrity: sha512-H4hxZDXgHtWTwV3RAVenqcC4VbJZNegbBjlPvzOzCouXtS2y3sDvlO3IsbrPNWuLWPPlYVYPghQdSF64683Ldw==}
+  '@clack/core@0.4.0':
+    resolution: {integrity: sha512-YJCYBsyJfNDaTbvDUVSJ3SgSuPrcujarRgkJ5NLjexDZKvaOiVVJvAQYx8lIgG0qRT8ff0fPgqyBCVivanIZ+A==}
 
-  '@clack/core@0.3.5':
-    resolution: {integrity: sha512-5cfhQNH+1VQ2xLQlmzXMqUoiaH0lRBq9/CLW9lTyMbuKLC3+xEK01tHVvyut++mLOn5urSHmkm6I0Lg9MaJSTQ==}
-
-  '@clack/prompts@0.7.0':
-    resolution: {integrity: sha512-0MhX9/B4iL6Re04jPrttDm+BsP8y6mS7byuv0BvXgdXhbV5PdlsHt55dvNsuBCPZ7xq1oTAOOuotR9NFbQyMSA==}
-    bundledDependencies:
-      - is-unicode-supported
-
-  '@clack/prompts@0.8.1':
-    resolution: {integrity: sha512-I263nEUNbX4lPTX93trl1fkIvGrGlz6nUYkqOddF0ZmjqcxUgUlXmpUIUqfapirRKJrFddvwF+qdZgg8cSqF7g==}
-    bundledDependencies:
-      - is-unicode-supported
-
-  '@clack/prompts@0.8.2':
-    resolution: {integrity: sha512-6b9Ab2UiZwJYA9iMyboYyW9yJvAO9V753ZhS+DHKEjZRKAxPPOb7MXXu84lsPFG+vZt6FRFniZ8rXi+zCIw4yQ==}
+  '@clack/prompts@0.9.0':
+    resolution: {integrity: sha512-nGsytiExgUr4FL0pR/LeqxA28nz3E0cW7eLTSh3Iod9TGrbBt8Y7BHbV3mmkNC4G0evdYyQ3ZsbiBkk7ektArA==}
 
   '@cspotcode/source-map-support@0.8.1':
     resolution: {integrity: sha512-IchNf6dN4tHoMFIn/7OE8LWZ19Y6q/67Bmf6vnGREv8RSbBVb9LPJxEcnwrcwX6ixSvaiGoomAUvu4YSxXrVgw==}
@@ -7080,9 +7066,9 @@ snapshots:
 
   '@bcoe/v8-coverage@0.2.3': {}
 
-  '@callstack/repack-dev-server@5.0.0-rc.2(@react-native-community/cli-server-api@16.0.2)':
+  '@callstack/repack-dev-server@5.0.0-rc.4(@react-native-community/cli-server-api@16.0.2)':
     dependencies:
-      '@babel/code-frame': 7.24.7
+      '@babel/code-frame': 7.26.2
       '@fastify/middie': 8.3.3
       '@fastify/sensible': 5.6.0
       '@react-native/dev-middleware': 0.76.3
@@ -7099,9 +7085,9 @@ snapshots:
       - supports-color
       - utf-8-validate
 
-  '@callstack/repack@5.0.0-rc.2(@react-native-community/cli-server-api@16.0.2)(@react-native-community/cli-types@16.0.2)(@react-native-community/cli@15.1.2(typescript@5.5.4))(@rspack/core@1.1.3(@swc/helpers@0.5.15))(@rspack/plugin-react-refresh@1.0.0(react-refresh@0.14.2))(react-native@0.76.3(@babel/core@7.25.2)(@babel/preset-env@7.25.4(@babel/core@7.25.2))(@react-native-community/cli-server-api@16.0.2)(react@18.3.1))(webpack@5.96.1(@swc/core@1.5.29(@swc/helpers@0.5.13)))':
+  '@callstack/repack@5.0.0-rc.4(@react-native-community/cli-server-api@16.0.2)(@react-native-community/cli-types@16.0.2)(@react-native-community/cli@15.1.2(typescript@5.5.4))(@rspack/core@1.1.3(@swc/helpers@0.5.15))(react-native@0.76.3(@babel/core@7.25.2)(@babel/preset-env@7.25.4(@babel/core@7.25.2))(@react-native-community/cli-server-api@16.0.2)(react@18.3.1))(webpack@5.96.1(@swc/core@1.5.29(@swc/helpers@0.5.13)))':
     dependencies:
-      '@callstack/repack-dev-server': 5.0.0-rc.2(@react-native-community/cli-server-api@16.0.2)
+      '@callstack/repack-dev-server': 5.0.0-rc.4(@react-native-community/cli-server-api@16.0.2)
       '@discoveryjs/json-ext': 0.5.7
       '@react-native-community/cli': 15.1.2(typescript@5.5.4)
       '@react-native-community/cli-types': 16.0.2
@@ -7130,31 +7116,14 @@ snapshots:
       - supports-color
       - utf-8-validate
 
-  '@clack/core@0.3.4':
+  '@clack/core@0.4.0':
     dependencies:
       picocolors: 1.1.1
       sisteransi: 1.0.5
 
-  '@clack/core@0.3.5':
+  '@clack/prompts@0.9.0':
     dependencies:
-      picocolors: 1.1.1
-      sisteransi: 1.0.5
-
-  '@clack/prompts@0.7.0':
-    dependencies:
-      '@clack/core': 0.3.4
-      picocolors: 1.1.1
-      sisteransi: 1.0.5
-
-  '@clack/prompts@0.8.1':
-    dependencies:
-      '@clack/core': 0.3.4
-      picocolors: 1.1.1
-      sisteransi: 1.0.5
-
-  '@clack/prompts@0.8.2':
-    dependencies:
-      '@clack/core': 0.3.5
+      '@clack/core': 0.4.0
       picocolors: 1.1.1
       sisteransi: 1.0.5
 
@@ -7630,9 +7599,9 @@ snapshots:
       - '@swc/core'
       - debug
 
-  '@nrwl/vite@19.8.3(@babel/traverse@7.25.9)(@swc-node/register@1.9.2(@swc/core@1.5.29(@swc/helpers@0.5.13))(@swc/types@0.1.12)(typescript@5.5.4))(@swc/core@1.5.29(@swc/helpers@0.5.13))(@types/node@18.16.9)(nx@19.8.0(@swc-node/register@1.9.2(@swc/core@1.5.29(@swc/helpers@0.5.13))(@swc/types@0.1.12)(typescript@5.5.4))(@swc/core@1.5.29(@swc/helpers@0.5.13)))(typescript@5.5.4)(verdaccio@5.33.0(typanion@3.14.0))(vite@5.4.8(@types/node@18.16.9)(terser@5.36.0))(vitest@2.1.2)':
+  '@nrwl/vite@19.8.3(@babel/traverse@7.25.9)(@swc-node/register@1.9.2(@swc/core@1.5.29(@swc/helpers@0.5.13))(@swc/types@0.1.12)(typescript@5.5.4))(@swc/core@1.5.29(@swc/helpers@0.5.13))(@types/node@18.16.9)(nx@19.8.0(@swc-node/register@1.9.2(@swc/core@1.5.29(@swc/helpers@0.5.13))(@swc/types@0.1.12)(typescript@5.5.4))(@swc/core@1.5.29(@swc/helpers@0.5.13)))(typescript@5.5.4)(verdaccio@5.33.0(typanion@3.14.0))(vite@5.4.8(@types/node@18.16.9)(terser@5.36.0))(vitest@2.1.2(@types/node@18.16.9)(@vitest/ui@2.1.2)(terser@5.36.0))':
     dependencies:
-      '@nx/vite': 19.8.3(@babel/traverse@7.25.9)(@swc-node/register@1.9.2(@swc/core@1.5.29(@swc/helpers@0.5.13))(@swc/types@0.1.12)(typescript@5.5.4))(@swc/core@1.5.29(@swc/helpers@0.5.13))(@types/node@18.16.9)(nx@19.8.0(@swc-node/register@1.9.2(@swc/core@1.5.29(@swc/helpers@0.5.13))(@swc/types@0.1.12)(typescript@5.5.4))(@swc/core@1.5.29(@swc/helpers@0.5.13)))(typescript@5.5.4)(verdaccio@5.33.0(typanion@3.14.0))(vite@5.4.8(@types/node@18.16.9)(terser@5.36.0))(vitest@2.1.2)
+      '@nx/vite': 19.8.3(@babel/traverse@7.25.9)(@swc-node/register@1.9.2(@swc/core@1.5.29(@swc/helpers@0.5.13))(@swc/types@0.1.12)(typescript@5.5.4))(@swc/core@1.5.29(@swc/helpers@0.5.13))(@types/node@18.16.9)(nx@19.8.0(@swc-node/register@1.9.2(@swc/core@1.5.29(@swc/helpers@0.5.13))(@swc/types@0.1.12)(typescript@5.5.4))(@swc/core@1.5.29(@swc/helpers@0.5.13)))(typescript@5.5.4)(verdaccio@5.33.0(typanion@3.14.0))(vite@5.4.8(@types/node@18.16.9)(terser@5.36.0))(vitest@2.1.2(@types/node@18.16.9)(@vitest/ui@2.1.2)(terser@5.36.0))
     transitivePeerDependencies:
       - '@babel/traverse'
       - '@swc-node/register'
@@ -7978,9 +7947,9 @@ snapshots:
   '@nx/nx-win32-x64-msvc@19.8.3':
     optional: true
 
-  '@nx/vite@19.8.3(@babel/traverse@7.25.9)(@swc-node/register@1.9.2(@swc/core@1.5.29(@swc/helpers@0.5.13))(@swc/types@0.1.12)(typescript@5.5.4))(@swc/core@1.5.29(@swc/helpers@0.5.13))(@types/node@18.16.9)(nx@19.8.0(@swc-node/register@1.9.2(@swc/core@1.5.29(@swc/helpers@0.5.13))(@swc/types@0.1.12)(typescript@5.5.4))(@swc/core@1.5.29(@swc/helpers@0.5.13)))(typescript@5.5.4)(verdaccio@5.33.0(typanion@3.14.0))(vite@5.4.8(@types/node@18.16.9)(terser@5.36.0))(vitest@2.1.2)':
+  '@nx/vite@19.8.3(@babel/traverse@7.25.9)(@swc-node/register@1.9.2(@swc/core@1.5.29(@swc/helpers@0.5.13))(@swc/types@0.1.12)(typescript@5.5.4))(@swc/core@1.5.29(@swc/helpers@0.5.13))(@types/node@18.16.9)(nx@19.8.0(@swc-node/register@1.9.2(@swc/core@1.5.29(@swc/helpers@0.5.13))(@swc/types@0.1.12)(typescript@5.5.4))(@swc/core@1.5.29(@swc/helpers@0.5.13)))(typescript@5.5.4)(verdaccio@5.33.0(typanion@3.14.0))(vite@5.4.8(@types/node@18.16.9)(terser@5.36.0))(vitest@2.1.2(@types/node@18.16.9)(@vitest/ui@2.1.2)(terser@5.36.0))':
     dependencies:
-      '@nrwl/vite': 19.8.3(@babel/traverse@7.25.9)(@swc-node/register@1.9.2(@swc/core@1.5.29(@swc/helpers@0.5.13))(@swc/types@0.1.12)(typescript@5.5.4))(@swc/core@1.5.29(@swc/helpers@0.5.13))(@types/node@18.16.9)(nx@19.8.0(@swc-node/register@1.9.2(@swc/core@1.5.29(@swc/helpers@0.5.13))(@swc/types@0.1.12)(typescript@5.5.4))(@swc/core@1.5.29(@swc/helpers@0.5.13)))(typescript@5.5.4)(verdaccio@5.33.0(typanion@3.14.0))(vite@5.4.8(@types/node@18.16.9)(terser@5.36.0))(vitest@2.1.2)
+      '@nrwl/vite': 19.8.3(@babel/traverse@7.25.9)(@swc-node/register@1.9.2(@swc/core@1.5.29(@swc/helpers@0.5.13))(@swc/types@0.1.12)(typescript@5.5.4))(@swc/core@1.5.29(@swc/helpers@0.5.13))(@types/node@18.16.9)(nx@19.8.0(@swc-node/register@1.9.2(@swc/core@1.5.29(@swc/helpers@0.5.13))(@swc/types@0.1.12)(typescript@5.5.4))(@swc/core@1.5.29(@swc/helpers@0.5.13)))(typescript@5.5.4)(verdaccio@5.33.0(typanion@3.14.0))(vite@5.4.8(@types/node@18.16.9)(terser@5.36.0))(vitest@2.1.2(@types/node@18.16.9)(@vitest/ui@2.1.2)(terser@5.36.0))
       '@nx/devkit': 19.8.3(nx@19.8.0(@swc-node/register@1.9.2(@swc/core@1.5.29(@swc/helpers@0.5.13))(@swc/types@0.1.12)(typescript@5.5.4))(@swc/core@1.5.29(@swc/helpers@0.5.13)))
       '@nx/js': 19.8.3(@babel/traverse@7.25.9)(@swc-node/register@1.9.2(@swc/core@1.5.29(@swc/helpers@0.5.13))(@swc/types@0.1.12)(typescript@5.5.4))(@swc/core@1.5.29(@swc/helpers@0.5.13))(@types/node@18.16.9)(nx@19.8.0(@swc-node/register@1.9.2(@swc/core@1.5.29(@swc/helpers@0.5.13))(@swc/types@0.1.12)(typescript@5.5.4))(@swc/core@1.5.29(@swc/helpers@0.5.13)))(typescript@5.5.4)(verdaccio@5.33.0(typanion@3.14.0))
       '@phenomnomnominal/tsquery': 5.0.1(typescript@5.5.4)
@@ -9225,7 +9194,7 @@ snapshots:
       minimatch: 7.4.6
       semver: 7.6.3
 
-  '@vitest/coverage-v8@2.1.2(vitest@2.1.2)':
+  '@vitest/coverage-v8@2.1.2(vitest@2.1.2(@types/node@18.16.9)(@vitest/ui@2.1.2)(terser@5.36.0))':
     dependencies:
       '@ampproject/remapping': 2.3.0
       '@bcoe/v8-coverage': 0.2.3

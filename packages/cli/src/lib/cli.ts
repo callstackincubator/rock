@@ -57,11 +57,12 @@ export const cli = async ({ cwd, argv }: CliOptions = {}) => {
       });
 
     for (const opt of command.options || []) {
-      if (opt.parse) {
-        cmd.option(opt.name, opt.description, opt.parse, opt.default);
-      } else {
-        cmd.option(opt.name, opt.description, opt.default);
-      }
+      cmd.option(
+        opt.name,
+        opt.description,
+        opt.parse ?? ((val) => val),
+        opt.default
+      );
     }
   });
 

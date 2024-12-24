@@ -6,7 +6,6 @@ import { ApplePlatform, XcodeProjectInfo } from '../../types/index.js';
 import spawn, { SubprocessError } from 'nano-spawn';
 
 type Options = {
-  buildOutput: string;
   xcodeProject: XcodeProjectInfo;
   sourceDir: string;
   mode: string;
@@ -18,7 +17,6 @@ type Options = {
 };
 
 export default async function installApp({
-  buildOutput,
   xcodeProject,
   sourceDir,
   mode,
@@ -34,7 +32,7 @@ export default async function installApp({
     xcodeProject,
     sourceDir,
     mode,
-    buildOutput,
+    `export PLATFORM_NAME=${getPlatformSDK(platform)}`, // simulate build output
     scheme,
     target
   );
@@ -84,5 +82,18 @@ export default async function installApp({
       }`
     );
     throw error;
+  }
+}
+
+function getPlatformSDK(platform: ApplePlatform) {
+  switch (platform) {
+    case 'ios':
+      return 'iphonesimulator';
+    case 'macos':
+      return 'macosx';
+    case 'tvos':
+      return 'appletvsimulator';
+    case 'visionos':
+      return 'xrsimulator';
   }
 }

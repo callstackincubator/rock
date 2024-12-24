@@ -17,12 +17,15 @@ export type PluginApi = {
 
 type PluginType = (args: PluginApi) => PluginOutput;
 
-type ArgValue = string | boolean | string[];
+type ArgValue = string | string[] | number | boolean;
+
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+type ActionType<T = any> = (args: T) => void;
 
 type CommandType = {
   name: string;
   description: string;
-  action: <Args>(args: Args) => void;
+  action: ActionType;
   options?: Array<{
     name: string;
     description: string;

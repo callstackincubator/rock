@@ -9,7 +9,7 @@ inputs:
   scheme:
     description: Xcode scheme to build
     required: false
-    default: "RnefRemoteBuildTest"
+    default: "HelloWorld"
   mode:
     description: Xcode scheme build configuration
     required: false

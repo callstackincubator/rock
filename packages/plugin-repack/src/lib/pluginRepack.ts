@@ -8,31 +8,33 @@ type PluginConfig = {
   };
 };
 
-// @ts-expect-error todo type
-const startCommand = commands.find(
-  // @ts-expect-error todo type
-  (command) => command.name === 'start'
-);
-// @ts-expect-error todo type
-const bundleCommand = commands.find(
-  // @ts-expect-error todo type
-  (command) => command.name === 'bundle'
-);
+type StartArgs = Parameters<NonNullable<typeof startCommand>['func']>[2];
+type BundleArgs = Parameters<NonNullable<typeof bundleCommand>['func']>[2];
+
+const startCommand = commands.find((command) => command.name === 'start');
+const bundleCommand = commands.find((command) => command.name === 'bundle');
 
 export const pluginRepack =
   (pluginConfig: PluginConfig = {}) =>
   (api: PluginApi): PluginOutput => {
+    if (!startCommand) {
+      logger.error('Re.Pack "start" command not found.');
+      process.exit(1);
+    }
+
+    if (!bundleCommand) {
+      logger.error('Re.Pack "bundle" command not found.');
+      process.exit(1);
+    }
+
     api.registerCommand({
       name: 'start',
       description: 'Starts Re.Pack dev server.',
-      action: (args) => {
+      action: (args: StartArgs) => {
         const root = api.getProjectRoot();
         const platforms = api.getPlatforms();
-        startCommand.func(
-          undefined,
-          { root, platforms, ...pluginConfig },
-          args
-        );
+        // @ts-expect-error TODO fix getPlatforms type
+        startCommand.func([], { root, platforms, ...pluginConfig }, args);
       },
       options: startCommand.options,
     });
@@ -40,8 +42,7 @@ export const pluginRepack =
     api.registerCommand({
       name: 'bundle',
       description: 'Bundles JavaScript with Re.Pack.',
-      action: (args) => {
-        // @ts-expect-error todo type
+      action: (args: BundleArgs) => {
         if (!args.entryFile) {
           logger.error(
             '"rnef bundle" command is missing "--entry-file" argument.'
@@ -50,11 +51,8 @@ export const pluginRepack =
         }
         const root = api.getProjectRoot();
         const platforms = api.getPlatforms();
-        bundleCommand.func(
-          undefined,
-          { root, platforms, ...pluginConfig },
-          args
-        );
+        // @ts-expect-error TODO fix getPlatforms type
+        bundleCommand.func([], { root, platforms, ...pluginConfig }, args);
       },
       options: bundleCommand.options,
     });
