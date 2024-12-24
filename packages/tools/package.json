@@ -13,7 +13,7 @@
   },
   "dependencies": {
     "@clack/prompts": "^0.9.0",
-    "@expo/fingerprint": "^0.11.2",
+    "@expo/fingerprint": "^0.11.6",
     "@types/adm-zip": "^0.5.7",
     "adm-zip": "^0.5.16",
     "appdirsjs": "^1.2.7",
