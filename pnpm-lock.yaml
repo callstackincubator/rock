@@ -313,6 +313,9 @@ importers:
       is-unicode-supported:
         specifier: ^2.1.0
         version: 2.1.0
+      nano-spawn:
+        specifier: ^0.2.0
+        version: 0.2.0
       octokit:
         specifier: ^4.0.2
         version: 4.0.2
