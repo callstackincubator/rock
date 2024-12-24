@@ -15,14 +15,6 @@ export async function runOnSimulator(
   scheme: string,
   args: RunFlags
 ) {
-  console.log('simulator', simulator);
-  console.log('xcodeProject', xcodeProject);
-  console.log('sourceDir', sourceDir);
-  console.log('platform', platform);
-  console.log('mode', mode);
-  console.log('scheme', scheme);
-  console.log('args', args);
-
   if (!args.binaryPath) {
     const cachedBuild = await fetchCachedBuild({
       ci: 'github',

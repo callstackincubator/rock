@@ -5,7 +5,6 @@ import {
   formatArtifactName,
   getProjectRoot,
   hasGitHubToken,
-  logger,
   nativeFingerprint,
 } from '@rnef/tools';
 import { log, spinner } from '@clack/prompts';
@@ -70,9 +69,7 @@ export async function fetchCachedBuild({
     mode,
     hash: fingerprint.hash,
   });
-  console.log('artifactName', artifactName);
   const artifactPath = path.join(sourceDir, 'build/cache', artifactName);
-  console.log('artifactPath', artifactPath);
 
   if (fs.existsSync(artifactPath)) {
     const localBinaryPath = findIosBinary(artifactPath);
@@ -104,6 +101,11 @@ export async function fetchCachedBuild({
     `Downloaded cached build: ${color.cyan(path.relative(root, artifactPath))}.`
   );
 
+  // GitHub artifact for iOS is a tar.gz file (contained in the downloaded .zip file).
+  // The reason for this is that GitHub upload-artifact  drop execute file permission during packing to zip,
+  // so HelloWorld.app (and it's contents) is not executable.
+  // The recommended workaround is to pack to .tar.gz first.
+  // See: https://github.com/actions/upload-artifact?tab=readme-ov-file#permission-loss
   const tarPath = path.join(artifactPath, 'app.tar.gz');
   if (fs.existsSync(tarPath)) {
     await tar.extract({
@@ -115,8 +117,6 @@ export async function fetchCachedBuild({
   }
 
   const binaryPath = findIosBinary(artifactPath);
-  logger.debug(`Cached build path: ${binaryPath}`);
-
   return {
     fingerprint: fingerprint.hash,
     artifactName,
