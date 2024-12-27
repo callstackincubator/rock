@@ -1,10 +1,10 @@
 import fs, { PathLike } from 'node:fs';
 import { vi, test, Mock } from 'vitest';
+import { logger } from '@rnef/tools';
 import { AndroidProjectConfig } from '@react-native-community/cli-types';
 import { select } from '@clack/prompts';
 import spawn from 'nano-spawn';
 import { runAndroid, type Flags } from '../runAndroid.js';
-import { logger } from '@rnef/tools';
 
 const actualFs = await vi.importMock('node:fs');
 
@@ -41,19 +41,6 @@ vi.mock('@clack/prompts', () => {
   };
 });
 
-vi.mock(import('@rnef/tools'), async (importOriginal) => {
-  const actual = await importOriginal();
-  return {
-    ...actual,
-    getProjectRoot: vi.fn(() => '/mock/project/root'),
-    nativeFingerprint: vi.fn(() =>
-      Promise.resolve({ hash: '0000000000', sources: [] })
-    ),
-    queryLocalBuildCache: vi.fn(() => null),
-    createRemoteBuildCache: vi.fn(() => null),
-  };
-});
-
 const args: Flags = {
   tasks: undefined,
   mode: 'debug',
@@ -64,6 +51,7 @@ const args: Flags = {
   appIdSuffix: '',
   mainActivity: undefined,
   port: '8081',
+  remoteBuildCache: false,
 };
 const androidProject: AndroidProjectConfig = {
   appName: 'app',

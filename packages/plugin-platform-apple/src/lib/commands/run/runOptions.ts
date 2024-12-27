@@ -4,6 +4,7 @@ import { BuildFlags, getBuildOptions } from '../build/buildOptions.js';
 export interface RunFlags extends BuildFlags {
   binaryPath?: string;
   port: string;
+  remoteBuildCache?: boolean;
 }
 
 export const getRunOptions = ({ platformName }: BuilderCommand) => {
@@ -16,6 +17,10 @@ export const getRunOptions = ({ platformName }: BuilderCommand) => {
       name: '--binary-path <string>',
       description:
         'Path relative to project root where pre-built .app binary lives.',
+    },
+    {
+      name: '--no-remote-build-cache',
+      description: 'Do not use remote build cacheing.',
     },
     ...getBuildOptions({ platformName }),
   ];

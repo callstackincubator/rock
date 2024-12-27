@@ -26,6 +26,7 @@ export interface Flags extends BuildFlags {
   device?: string;
   binaryPath?: string;
   user?: string;
+  remoteBuildCache: boolean;
 }
 
 export type AndroidProject = NonNullable<Config['project']['android']>;
@@ -51,7 +52,7 @@ export async function runAndroid(
     ? [await promptForTaskSelection(mainTaskType, androidProject.sourceDir)]
     : [...(args.tasks ?? []), `${mainTaskType}${toPascalCase(args.mode)}`];
 
-  if (!args.binaryPath) {
+  if (!args.binaryPath && args.remoteBuildCache) {
     const cachedBuild = await fetchCachedBuild({ mode: args.mode });
     if (cachedBuild) {
       // @todo replace with a more generic way to pass binary path
@@ -208,5 +209,9 @@ export const runOptions = [
   {
     name: '--user <number>',
     description: 'Id of the User Profile you want to install the app on.',
+  },
+  {
+    name: '--no-remote-build-cache',
+    description: 'Do not use remote build cacheing.',
   },
 ];
