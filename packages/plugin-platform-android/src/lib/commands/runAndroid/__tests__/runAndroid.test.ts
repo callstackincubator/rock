@@ -41,6 +41,19 @@ vi.mock('@clack/prompts', () => {
   };
 });
 
+vi.mock(import('@rnef/tools'), async (importOriginal) => {
+  const actual = await importOriginal();
+  return {
+    ...actual,
+    getProjectRoot: vi.fn(() => '/mock/project/root'),
+    nativeFingerprint: vi.fn(() =>
+      Promise.resolve({ hash: '0000000000', sources: [] })
+    ),
+    queryLocalBuildCache: vi.fn(() => null),
+    createRemoteBuildCache: vi.fn(() => null),
+  };
+});
+
 const args: Flags = {
   tasks: undefined,
   mode: 'debug',
