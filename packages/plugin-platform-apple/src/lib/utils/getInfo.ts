@@ -53,7 +53,6 @@ export async function getInfo(
       loader.stop('Gathered Xcode project information.');
       return info;
     } catch (error) {
-      logger.log('');
       logger.error((error as SubprocessError).stderr);
       loader.stop('Failed to get a target list.', 1);
       process.exit(1);
