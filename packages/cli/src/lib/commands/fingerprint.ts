@@ -33,6 +33,7 @@ export async function nativeFingerprintCommand(
   outro('Success 🎉.');
 
   intro('Logger');
+  logger.success('Success\nSecond line');
   logger.error('Error\nSecond line');
   logger.warn('Warn\nSecond line');
   logger.info('Info\nSecond line');

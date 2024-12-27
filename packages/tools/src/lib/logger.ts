@@ -7,6 +7,7 @@ const unicode = isUnicodeSupported();
 const unicodeWithFallback = (c: string, fallback: string) =>
   unicode ? c : fallback;
 
+const SYMBOL_INFO = unicodeWithFallback('●', '•');
 const SYMBOL_DEBUG = unicodeWithFallback('●', '•');
 const SEPARATOR = ', ';
 
@@ -24,7 +25,9 @@ const success = (...messages: Array<string>) => {
 
 const info = (...messages: Array<string>) => {
   const output = formatMessages(messages);
-  clackLog.info(mapLines(output, color.cyan));
+  clackLog.message(mapLines(output, color.cyan), {
+    symbol: color.cyan(SYMBOL_INFO),
+  });
 };
 
 const warn = (...messages: Array<string>) => {
