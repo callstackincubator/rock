@@ -17,7 +17,7 @@ import {
 } from '../../types/index.js';
 import { RunFlags } from './runOptions.js';
 import { selectFromInteractiveMode } from '../../utils/selectFromInteractiveMode.js';
-import { outro, spinner } from '@clack/prompts';
+import { intro, outro, spinner } from '@clack/prompts';
 import { runOnMac } from './runOnMac.js';
 import { runOnMacCatalyst } from './runOnMacCatalyst.js';
 import { cacheRecentDevice } from './recentDevices.js';
@@ -28,6 +28,8 @@ export const createRun = async (
   args: RunFlags,
   projectRoot: string
 ) => {
+  intro('Running on iOS');
+
   const { readableName: platformReadableName } = getPlatformInfo(platformName);
   const { xcodeProject, sourceDir } = projectConfig;
 

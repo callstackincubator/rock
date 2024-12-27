@@ -11,4 +11,4 @@ export * from './lib/github/config.js';
 export * from './lib/build-cache/common.js';
 export * from './lib/build-cache/localBuildCache.js';
 export * from './lib/build-cache/gitHubBuildCache.js';
-export * from './lib/build-cache/factory.js';
+export * from './lib/build-cache/remoteBuildCacheFactory.js';

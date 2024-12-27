@@ -1,44 +1,40 @@
 import {
   LocalBuild,
-  createLocalBuildCache,
   createRemoteBuildCache,
   findFilesWithPattern,
   formatArtifactName,
   getProjectRoot,
   nativeFingerprint,
+  queryLocalBuildCache,
 } from '@rnef/tools';
 import { spinner } from '@clack/prompts';
 import path from 'node:path';
 import color from 'picocolors';
 
-export async function fetchCachedBuild(
-  sourceDir: string,
-  mode: string
-): Promise<LocalBuild | null> {
+export type FetchCachedBuildOptions = {
+  mode: string;
+};
+
+export async function fetchCachedBuild({
+  mode,
+}: FetchCachedBuildOptions): Promise<LocalBuild | null> {
   const loader = spinner();
   loader.start('Looking for a local cached build');
 
   const root = getProjectRoot();
   const artifactName = await calculateArtifactName(mode);
 
-  const localBuildCache = createLocalBuildCache({
-    sourceDir,
-    findBinary: findAndroidBinary,
-  });
-  const localCachedBuild = localBuildCache.query(artifactName);
-  if (localCachedBuild != null) {
+  const localBuild = queryLocalBuildCache(artifactName, { findBinary });
+  if (localBuild != null) {
     loader.stop(
       `Found local cached build: ${color.cyan(
-        path.relative(root, localCachedBuild.binaryPath)
+        path.relative(root, localBuild.binaryPath)
       )}`
     );
-    return localCachedBuild;
+    return localBuild;
   }
 
-  const remoteBuildCache = createRemoteBuildCache({
-    sourceDir,
-    findBinary: findAndroidBinary,
-  });
+  const remoteBuildCache = createRemoteBuildCache();
   if (!remoteBuildCache) {
     loader.stop(`No CI provider detected, skipping.`);
     return null;
@@ -53,18 +49,21 @@ export async function fetchCachedBuild(
 
   loader.message(`Downloading cached build from ${remoteBuildCache.name}`);
   const fetchedBuild = await remoteBuildCache.fetch(remoteBuild);
-  if (!fetchedBuild) {
-    loader.stop(`No cached build found for "${artifactName}".`);
+  const binaryPath = findBinary(fetchedBuild.artifactPath);
+  if (!binaryPath) {
+    loader.stop(`No binary found in "${artifactName}".`);
     return null;
   }
 
   loader.stop(
-    `Downloaded cached build: ${color.cyan(
-      path.relative(root, fetchedBuild.binaryPath)
-    )}.`
+    `Downloaded cached build: ${color.cyan(path.relative(root, binaryPath))}.`
   );
 
-  return fetchedBuild;
+  return {
+    name: fetchedBuild.name,
+    artifactPath: fetchedBuild.artifactPath,
+    binaryPath,
+  };
 }
 
 async function calculateArtifactName(mode: string) {
@@ -77,7 +76,7 @@ async function calculateArtifactName(mode: string) {
   });
 }
 
-function findAndroidBinary(path: string): string | null {
+function findBinary(path: string): string | null {
   const apks = findFilesWithPattern(path, /\.apk$/);
   if (apks.length > 0) {
     return apks[0];

@@ -1,18 +1,21 @@
 import * as fs from 'node:fs';
-import {
-  BuildCacheConfig,
-  getLocalArtifactPath,
-  LocalBuildCache,
-  LocalBuild,
-} from './common.js';
+import { getLocalArtifactPath } from './common.js';
 
-export function queryLocalBuild(
-  this: LocalBuildCache,
-  artifactName: string
+export type LocalBuildCacheConfig = {
+  findBinary: (path: string) => string | null;
+};
+
+export type LocalBuild = {
+  name: string;
+  artifactPath: string;
+  binaryPath: string;
+};
+
+export function queryLocalBuildCache(
+  artifactName: string,
+  { findBinary }: LocalBuildCacheConfig
 ): LocalBuild | null {
-  const { sourceDir, findBinary } = this.config;
-
-  const artifactPath = getLocalArtifactPath(sourceDir, artifactName);
+  const artifactPath = getLocalArtifactPath(artifactName);
   if (!fs.statSync(artifactPath, { throwIfNoEntry: false })?.isDirectory()) {
     return null;
   }
@@ -24,16 +27,7 @@ export function queryLocalBuild(
 
   return {
     name: artifactName,
-    artifactPath: artifactPath,
+    artifactPath,
     binaryPath,
-  };
-}
-
-export function createLocalBuildCache(
-  config: BuildCacheConfig
-): LocalBuildCache {
-  return {
-    config,
-    query: queryLocalBuild,
   };
 }

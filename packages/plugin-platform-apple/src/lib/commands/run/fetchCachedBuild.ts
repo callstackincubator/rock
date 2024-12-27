@@ -1,111 +1,99 @@
 import {
-  downloadGitHubArtifact,
-  fetchGitHubArtifactsByName,
+  createRemoteBuildCache,
   findDirectoriesWithPattern,
   formatArtifactName,
   getProjectRoot,
-  hasGitHubToken,
+  LocalBuild,
   nativeFingerprint,
+  queryLocalBuildCache,
 } from '@rnef/tools';
-import { log, spinner } from '@clack/prompts';
+import { spinner } from '@clack/prompts';
 import path from 'node:path';
 import color from 'picocolors';
 import fs from 'node:fs';
 import * as tar from 'tar';
 
-const ciHelpers = {
-  github: {
-    downloadArtifact: downloadGitHubArtifact,
-    fetchArtifactsByName: fetchGitHubArtifactsByName,
-    hasToken: hasGitHubToken,
-  },
-} as const;
-
-const ciHumanReadableNames = {
-  github: {
-    displayName: 'GitHub',
-    tokenName: 'GITHUB_TOKEN',
-  },
-};
-
-export type CachedBuild = {
-  fingerprint: string;
-  artifactName: string;
-  artifactPath: string;
-  binaryPath: string;
-};
-
 export type FetchCachedBuildOptions = {
-  ci: 'github';
-  sourceDir: string;
   mode: string;
 };
 
-// TODO: pass relevant build variables
 export async function fetchCachedBuild({
-  ci,
-  sourceDir,
   mode,
-}: FetchCachedBuildOptions): Promise<CachedBuild | null> {
-  const downloadArtifact = ciHelpers[ci].downloadArtifact;
-  const fetchArtifactsByName = ciHelpers[ci].fetchArtifactsByName;
-  const hasToken = ciHelpers[ci].hasToken;
-  const { displayName, tokenName } = ciHumanReadableNames[ci];
-
-  if (!hasToken()) {
-    log.warn(
-      `No ${displayName} token found, skipping cached build. Set ${tokenName} environment variable to use cached builds.`
-    );
-    return null;
-  }
-
+}: FetchCachedBuildOptions): Promise<LocalBuild | null> {
   const loader = spinner();
   loader.start('Looking for a local cached build');
 
   const root = getProjectRoot();
+  const artifactName = await calculateArtifactName(mode);
+
+  const localCachedBuild = queryLocalBuildCache(artifactName, { findBinary });
+  if (localCachedBuild != null) {
+    loader.stop(
+      `Found local cached build: ${color.cyan(
+        path.relative(root, localCachedBuild.binaryPath)
+      )}`
+    );
+    return localCachedBuild;
+  }
+
+  const remoteBuildCache = createRemoteBuildCache();
+  if (!remoteBuildCache) {
+    loader.stop(`No CI provider detected, skipping.`);
+    return null;
+  }
+
+  loader.message(`Looking for a cached build on ${remoteBuildCache.name}`);
+  const remoteBuild = await remoteBuildCache.query(artifactName);
+  if (!remoteBuild) {
+    loader.stop(`No cached build found for "${artifactName}".`);
+    return null;
+  }
+
+  loader.message(`Downloading cached build from ${remoteBuildCache.name}`);
+  const fetchedBuild = await remoteBuildCache.fetch(remoteBuild);
+  await extractArtifactTarball(fetchedBuild.artifactPath);
+  const binaryPath = findBinary(fetchedBuild.artifactPath);
+  if (!binaryPath) {
+    loader.stop(`No binary found in "${artifactName}".`);
+    return null;
+  }
+
+  loader.stop(
+    `Downloaded cached build: ${color.cyan(path.relative(root, binaryPath))}.`
+  );
+
+  return {
+    name: fetchedBuild.name,
+    artifactPath: fetchedBuild.artifactPath,
+    binaryPath,
+  };
+}
+
+async function calculateArtifactName(mode: string) {
+  const root = getProjectRoot();
   const fingerprint = await nativeFingerprint(root, { platform: 'ios' });
-  const artifactName = formatArtifactName({
+  return formatArtifactName({
     platform: 'ios',
     mode,
     hash: fingerprint.hash,
   });
-  const artifactPath = path.join(sourceDir, 'build/cache', artifactName);
+}
 
-  if (fs.existsSync(artifactPath)) {
-    const localBinaryPath = findIosBinary(artifactPath);
-    if (fs.existsSync(localBinaryPath)) {
-      loader.stop(
-        `Found local cached build: ${color.cyan(
-          path.relative(root, localBinaryPath)
-        )}`
-      );
-      return {
-        fingerprint: fingerprint.hash,
-        artifactName,
-        artifactPath,
-        binaryPath: localBinaryPath,
-      };
-    }
+function findBinary(artifactPath: string): string | null {
+  const apps = findDirectoriesWithPattern(artifactPath, /\.app$/);
+  if (apps.length > 0) {
+    return apps[0];
   }
 
-  loader.message(`Looking for a cached build on ${displayName}`);
-  const artifacts = await fetchArtifactsByName(artifactName);
-  if (artifacts.length === 0) {
-    loader.stop(`No cached build found for hash ${fingerprint.hash}.`);
-    return null;
-  }
+  return null;
+}
 
-  loader.message('Downloading cached build');
-  await downloadArtifact(artifacts[0].downloadUrl, artifactPath);
-  loader.stop(
-    `Downloaded cached build: ${color.cyan(path.relative(root, artifactPath))}.`
-  );
-
-  // GitHub artifact for iOS is a tar.gz file (contained in the downloaded .zip file).
-  // The reason for this is that GitHub upload-artifact  drop execute file permission during packing to zip,
-  // so HelloWorld.app (and it's contents) is not executable.
-  // The recommended workaround is to pack to .tar.gz first.
-  // See: https://github.com/actions/upload-artifact?tab=readme-ov-file#permission-loss
+// GitHub artifact for iOS is a tar.gz file (contained in the downloaded .zip file).
+// The reason for this is that GitHub upload-artifact  drop execute file permission during packing to zip,
+// so HelloWorld.app (and it's contents) is not executable.
+// The recommended workaround is to pack to .tar.gz first.
+// See: https://github.com/actions/upload-artifact?tab=readme-ov-file#permission-loss
+async function extractArtifactTarball(artifactPath: string) {
   const tarPath = path.join(artifactPath, 'app.tar.gz');
   if (fs.existsSync(tarPath)) {
     await tar.extract({
@@ -115,21 +103,4 @@ export async function fetchCachedBuild({
     });
     fs.unlinkSync(tarPath);
   }
-
-  const binaryPath = findIosBinary(artifactPath);
-  return {
-    fingerprint: fingerprint.hash,
-    artifactName,
-    artifactPath,
-    binaryPath,
-  };
-}
-
-function findIosBinary(artifactPath: string): string {
-  const apps = findDirectoriesWithPattern(artifactPath, /\.app$/);
-  if (apps.length > 0) {
-    return apps[0];
-  }
-
-  throw new Error('No iOS binary found in the artifact');
 }

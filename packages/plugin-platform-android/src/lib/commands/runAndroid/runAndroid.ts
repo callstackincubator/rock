@@ -52,10 +52,7 @@ export async function runAndroid(
     : [...(args.tasks ?? []), `${mainTaskType}${toPascalCase(args.mode)}`];
 
   if (!args.binaryPath) {
-    const cachedBuild = await fetchCachedBuild(
-      androidProject.sourceDir,
-      args.mode
-    );
+    const cachedBuild = await fetchCachedBuild({ mode: args.mode });
     if (cachedBuild) {
       // @todo replace with a more generic way to pass binary path
       args.binaryPath = cachedBuild.binaryPath;
