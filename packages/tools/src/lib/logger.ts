@@ -9,7 +9,7 @@ const unicodeWithFallback = (c: string, fallback: string) =>
 
 const SYMBOL_INFO = unicodeWithFallback('●', '•');
 const SYMBOL_DEBUG = unicodeWithFallback('●', '•');
-const SEPARATOR = ', ';
+const SEPARATOR = ' ';
 
 let verbose = false;
 
