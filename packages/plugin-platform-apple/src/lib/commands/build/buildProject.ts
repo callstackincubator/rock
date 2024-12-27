@@ -69,6 +69,7 @@ export const buildProject = async (
   try {
     const { output } = await spawn('xcodebuild', xcodebuildArgs, {
       cwd: sourceDir,
+      stdio: logger.isVerbose() ? 'inherit' : ['ignore', 'pipe', 'inherit'],
     });
     loader.stop(
       `Built the app with xcodebuild for ${scheme} scheme in ${mode} mode.`
