@@ -3,20 +3,20 @@ import {
   RemoteBuildCache,
   RemoteArtifact,
   LocalArtifact,
-} from './common.js';
+} from '../common.js';
+import { hasGitHubToken } from './config.js';
+import logger from '../../logger.js';
 import {
   downloadGitHubArtifact,
   fetchGitHubArtifactsByName,
-} from '../github/artifacts.js';
-import { hasGitHubToken } from '../github/config.js';
-import { log } from '@clack/prompts';
+} from './artifacts.js';
 
 export class GitHubBuildCache implements RemoteBuildCache {
   name = 'GitHub';
 
   async query(artifactName: string): Promise<RemoteArtifact | null> {
     if (!hasGitHubToken()) {
-      log.warn(
+      logger.warn(
         `No GitHub token found, skipping cached build. Set GITHUB_TOKEN environment variable to use cached builds.`
       );
       return null;
@@ -39,7 +39,7 @@ export class GitHubBuildCache implements RemoteBuildCache {
 
     return {
       name: artifact.name,
-      artifactPath: artifactPath,
+      path: artifactPath,
     };
   }
 }

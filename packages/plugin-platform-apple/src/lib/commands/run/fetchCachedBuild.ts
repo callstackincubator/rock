@@ -51,8 +51,8 @@ export async function fetchCachedBuild({
 
   loader.message(`Downloading cached build from ${remoteBuildCache.name}`);
   const fetchedBuild = await remoteBuildCache.fetch(remoteBuild);
-  await extractArtifactTarball(fetchedBuild.artifactPath);
-  const binaryPath = findBinary(fetchedBuild.artifactPath);
+  await extractArtifactTarball(fetchedBuild.path);
+  const binaryPath = findBinary(fetchedBuild.path);
   if (!binaryPath) {
     loader.stop(`No binary found in "${artifactName}".`);
     return null;
@@ -64,7 +64,7 @@ export async function fetchCachedBuild({
 
   return {
     name: fetchedBuild.name,
-    artifactPath: fetchedBuild.artifactPath,
+    artifactPath: fetchedBuild.path,
     binaryPath,
   };
 }
@@ -79,8 +79,8 @@ async function calculateArtifactName(mode: string) {
   });
 }
 
-function findBinary(artifactPath: string): string | null {
-  const apps = findDirectoriesWithPattern(artifactPath, /\.app$/);
+function findBinary(path: string): string | null {
+  const apps = findDirectoriesWithPattern(path, /\.app$/);
   if (apps.length > 0) {
     return apps[0];
   }

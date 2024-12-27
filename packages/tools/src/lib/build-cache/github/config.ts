@@ -1,5 +1,5 @@
 import spawn from 'nano-spawn';
-import logger from '../logger.js';
+import logger from '../../logger.js';
 import { GITHUB_REPO_REGEX } from './patterns.js';
 
 export function hasGitHubToken(): boolean {

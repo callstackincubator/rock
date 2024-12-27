@@ -10,21 +10,31 @@ export type RemoteArtifact = {
 
 export type LocalArtifact = {
   name: string;
-  artifactPath: string;
+  path: string;
 };
 
 export type RemoteBuildCache = {
   name: string;
-
-  query: (
-    this: RemoteBuildCache,
-    artifactName: string
-  ) => Promise<RemoteArtifact | null>;
-  fetch: (
-    this: RemoteBuildCache,
-    artifact: RemoteArtifact
-  ) => Promise<LocalArtifact>;
+  query(artifactName: string): Promise<RemoteArtifact | null>;
+  fetch(artifact: RemoteArtifact): Promise<LocalArtifact>;
 };
+
+type FormatArtifactNameParams = {
+  platform: string;
+  mode: string;
+  hash: string;
+};
+
+/**
+ * e.g. rnef-android-debug-1234567890
+ */
+export function formatArtifactName({
+  platform,
+  mode,
+  hash,
+}: FormatArtifactNameParams): string {
+  return `rnef-${platform}-${mode}-${hash}`;
+}
 
 export function getLocalArtifactPath(artifactName: string) {
   const root = getProjectRoot();

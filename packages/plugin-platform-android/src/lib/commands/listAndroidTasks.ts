@@ -59,7 +59,7 @@ export const promptForTaskSelection = async (
 ): Promise<string> => {
   const tasks = await getGradleTasks(taskType, sourceDir);
   if (!tasks.length) {
-    throw new Error(`No actionable ${taskType} tasks were found.`);
+    throw new Error(`No actionable ${taskType} tasks were found`);
   }
   const task = checkCancelPrompt<string>(
     await select({

@@ -6,23 +6,6 @@ import { detectGitHubRepoDetails } from './config.js';
 const PAGE_SIZE = 100; // Maximum allowed by GitHub API
 const GITHUB_TOKEN = process.env['GITHUB_TOKEN'];
 
-type FormatArtifactNameParams = {
-  platform: string;
-  mode: string;
-  hash: string;
-};
-
-/**
- * e.g. rnef-android-debug-1234567890
- */
-export function formatArtifactName({
-  platform,
-  mode,
-  hash,
-}: FormatArtifactNameParams): string {
-  return `rnef-${platform}-${mode}-${hash}`;
-}
-
 export type GitHubArtifact = {
   id: number;
   name: string;
