@@ -96,7 +96,7 @@ export async function fetchCachedBuild({
   }
 
   loader.message('Downloading cached build');
-  await downloadArtifact(artifacts[0], artifactPath);
+  await downloadArtifact(artifacts[0].downloadUrl, artifactPath);
   loader.stop(
     `Downloaded cached build: ${color.cyan(path.relative(root, artifactPath))}.`
   );

@@ -8,3 +8,7 @@ export * from './lib/project.js';
 
 export * from './lib/github/artifacts.js';
 export * from './lib/github/config.js';
+export * from './lib/build-cache/common.js';
+export * from './lib/build-cache/localBuildCache.js';
+export * from './lib/build-cache/gitHubBuildCache.js';
+export * from './lib/build-cache/factory.js';

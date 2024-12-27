@@ -4,7 +4,7 @@ import {
   Config,
 } from '@react-native-community/cli-types';
 import { checkCancelPrompt, logger } from '@rnef/tools';
-import { outro, select } from '@clack/prompts';
+import { intro, outro, select } from '@clack/prompts';
 import isInteractive from 'is-interactive';
 import { getDevices } from './adb.js';
 import { toPascalCase } from '../toPascalCase.js';
@@ -38,6 +38,8 @@ export async function runAndroid(
   args: Flags,
   projectRoot: string
 ) {
+  intro('Running Android app');
+
   normalizeArgs(args, projectRoot);
 
   const { deviceId } = args.interactive
@@ -51,7 +53,6 @@ export async function runAndroid(
 
   if (!args.binaryPath) {
     const cachedBuild = await fetchCachedBuild(
-      'github',
       androidProject.sourceDir,
       args.mode
     );

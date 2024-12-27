@@ -84,7 +84,7 @@ export async function fetchGitHubArtifactsByName(
 }
 
 export async function downloadGitHubArtifact(
-  artifact: GitHubArtifact,
+  downloadUrl: string,
   targetPath: string
 ): Promise<void> {
   try {
@@ -92,7 +92,7 @@ export async function downloadGitHubArtifact(
       recursive: true,
     });
 
-    const response = await fetch(artifact.downloadUrl, {
+    const response = await fetch(downloadUrl, {
       headers: {
         Authorization: `token ${GITHUB_TOKEN}`,
       },
