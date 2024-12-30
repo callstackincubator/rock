@@ -69,7 +69,7 @@ export const cli = async ({ cwd, argv }: CliOptions = {}) => {
     }
   });
 
-  program.parse(argv);
+  await program.parseAsync(argv);
 };
 
 function formatError(error: unknown) {
