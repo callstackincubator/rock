@@ -45,13 +45,16 @@ export const cli = async ({ cwd, argv }: CliOptions = {}) => {
     const cmd = program
       .command(command.name)
       .description(command.description || '')
-      .action((args) => {
+      .action(async (args) => {
         try {
-          command.action(args);
+          await command.action(args);
         } catch (error) {
           logger.error(
-            `Unexpected error while running "${command.name}": ${error}`
+            `Unexpected error while running "${command.name}": ${formatError(
+              error
+            )}`
           );
+
           process.exit(1);
         }
       });
@@ -68,3 +71,19 @@ export const cli = async ({ cwd, argv }: CliOptions = {}) => {
 
   program.parse(argv);
 };
+
+function formatError(error: unknown) {
+  if (error instanceof Error) {
+    return `${error.message}\n\n${error.stack}`;
+  }
+
+  if (typeof error === 'object' && error !== null) {
+    return JSON.stringify(error);
+  }
+
+  if (typeof error === 'string') {
+    return error;
+  }
+
+  return `${error}`;
+}
