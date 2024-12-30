@@ -1,5 +1,5 @@
-import { dirname } from 'path';
-import { fileURLToPath } from 'url';
+import { dirname } from 'node:path';
+import { fileURLToPath } from 'node:url';
 import { Command } from 'commander';
 import { getConfig } from '@rnef/config';
 import { createRequire } from 'module';
@@ -50,9 +50,8 @@ export const cli = async ({ cwd, argv }: CliOptions = {}) => {
           await command.action(args);
         } catch (error) {
           logger.error(
-            `Unexpected error while running "${command.name}": ${formatError(
-              error
-            )}`
+            `Unexpected error while running "${command.name}":`,
+            error
           );
 
           process.exit(1);
@@ -71,19 +70,3 @@ export const cli = async ({ cwd, argv }: CliOptions = {}) => {
 
   await program.parseAsync(argv);
 };
-
-function formatError(error: unknown) {
-  if (error instanceof Error) {
-    return `${error.message}\n\n${error.stack}`;
-  }
-
-  if (typeof error === 'object' && error !== null) {
-    return JSON.stringify(error);
-  }
-
-  if (typeof error === 'string') {
-    return error;
-  }
-
-  return `${error}`;
-}

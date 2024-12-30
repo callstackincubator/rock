@@ -1,3 +1,4 @@
+import util from 'node:util';
 import { log as clackLog } from '@clack/prompts';
 import color from 'picocolors';
 import isUnicodeSupported from 'is-unicode-supported';
@@ -11,7 +12,8 @@ const SYMBOL_DEBUG = unicodeWithFallback('●', '•');
 
 let verbose = false;
 
-const formatMessages = (messages: Array<string>) => messages.join(' ');
+const formatMessages = (elements: Array<unknown>) =>
+  elements.map((e) => util.inspect(e)).join(' ');
 
 const mapLines = (text: string, colorFn: (line: string) => string) =>
   text.split('\n').map(colorFn).join('\n');
@@ -36,17 +38,18 @@ const error = (...messages: Array<string>) => {
   clackLog.error(mapLines(output, color.red));
 };
 
-const debug = (...messages: Array<string>) => {
+const log = (...messages: Array<string>) => {
+  const output = formatMessages(messages);
+  clackLog.step(output);
+};
+
+const debug = (...messages: Array<unknown>) => {
   if (verbose) {
     const output = formatMessages(messages);
     clackLog.message(mapLines(output, color.dim), {
       symbol: color.dim(SYMBOL_DEBUG),
     });
   }
-};
-
-const log = (...messages: Array<string>) => {
-  clackLog.step(formatMessages(messages));
 };
 
 const setVerbose = (level: boolean) => {
