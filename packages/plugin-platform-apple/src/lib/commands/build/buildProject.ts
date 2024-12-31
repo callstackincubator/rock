@@ -75,7 +75,6 @@ export const buildProject = async (
     );
     return output;
   } catch (error) {
-    logger.log('');
     logger.log((error as SubprocessError).stdout);
     logger.error((error as SubprocessError).stderr);
     if (!xcodeProject.isWorkspace) {

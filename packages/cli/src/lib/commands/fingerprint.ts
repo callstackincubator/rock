@@ -1,5 +1,5 @@
 import { performance } from 'perf_hooks';
-import { outro, spinner } from '@clack/prompts';
+import { intro, outro, spinner } from '@clack/prompts';
 import { logger, nativeFingerprint } from '@rnef/tools';
 
 type NativeFingerprintCommandOptions = {
@@ -13,22 +13,20 @@ export async function nativeFingerprintCommand(
   path = path ?? '.';
   const platform = options?.platform ?? 'ios';
 
-  let start = 0;
-  if (logger.isVerbose()) {
-    start = performance.now();
-  }
+  intro('Native Fingerprint');
 
   const loader = spinner();
   loader.start("Calculating fingerprint for the project's native parts");
-  const fingerprint = await nativeFingerprint(path, { platform });
 
+  const start = performance.now();
+  const fingerprint = await nativeFingerprint(path, { platform });
+  const duration = performance.now() - start;
+
+  loader.stop(`Fingerprint calculated: ${fingerprint.hash}`);
   if (logger.isVerbose()) {
-    const duration = performance.now() - start;
-    logger.debug('Hash:', fingerprint.hash);
     logger.debug('Sources:', JSON.stringify(fingerprint.sources, null, 2));
     logger.debug(`Duration: ${(duration / 1000).toFixed(1)}s`);
   }
 
-  loader.stop(`Fingerprint calculated: ${fingerprint.hash}`);
   outro('Success 🎉.');
 }
