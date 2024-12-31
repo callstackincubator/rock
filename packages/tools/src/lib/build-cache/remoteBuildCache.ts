@@ -6,6 +6,7 @@ export function createRemoteBuildCache(): RemoteBuildCache | null {
   const ci = detectContinuousIntegration();
 
   if (ci === 'github') {
+    // @todo change to dynamic import when extracting all github logic to a plugin
     return new GitHubBuildCache();
   }
 
