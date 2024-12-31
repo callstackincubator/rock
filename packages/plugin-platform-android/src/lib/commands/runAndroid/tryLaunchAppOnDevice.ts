@@ -1,7 +1,7 @@
 import spawn from 'nano-spawn';
 import { AndroidProject, Flags } from './runAndroid.js';
 import { getAdbPath } from './adb.js';
-import { logger } from '@rnef/tools';
+import { logger, RnefError } from '@rnef/tools';
 import { tryRunAdbReverse } from './tryRunAdbReverse.js';
 import { spinner } from '@clack/prompts';
 
@@ -53,6 +53,7 @@ export async function tryLaunchAppOnDevice(
   loader.stop(
     `Launched the app on "${device}" and listening on port "${args.port}".`
   );
+
   if (stderr) {
     throw new RnefError(`Failed to launch the app on "${device}". ${stderr}`);
   }

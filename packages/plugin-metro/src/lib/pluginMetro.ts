@@ -4,7 +4,7 @@ import {
   bundleCommand,
   // @ts-expect-error missing typings
 } from '@react-native/community-cli-plugin';
-import { logger, RnefError } from '@rnef/tools';
+import { RnefError } from '@rnef/tools';
 
 type PluginConfig = {
   reactNativeVersion?: string;

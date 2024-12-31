@@ -1,4 +1,4 @@
-import spawn, { SubprocessError } from 'nano-spawn';
+import spawn from 'nano-spawn';
 import { XMLParser } from 'fast-xml-parser';
 import * as fs from 'fs';
 import * as path from 'path';
