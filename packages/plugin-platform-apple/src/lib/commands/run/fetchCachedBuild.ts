@@ -26,14 +26,10 @@ export async function fetchCachedBuild({
   const root = getProjectRoot();
   const artifactName = await calculateArtifactName(mode);
 
-  const localCachedBuild = queryLocalBuildCache(artifactName, { findBinary });
-  if (localCachedBuild != null) {
-    loader.stop(
-      `Found local cached build: ${color.cyan(
-        path.relative(root, localCachedBuild.binaryPath)
-      )}`
-    );
-    return localCachedBuild;
+  const localBuild = queryLocalBuildCache(artifactName, { findBinary });
+  if (localBuild != null) {
+    loader.stop(`Found local cached build: ${color.cyan(localBuild.name)}`);
+    return localBuild;
   }
 
   const remoteBuildCache = createRemoteBuildCache();
