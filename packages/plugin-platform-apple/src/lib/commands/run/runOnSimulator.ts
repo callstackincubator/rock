@@ -15,7 +15,7 @@ export async function runOnSimulator(
   scheme: string,
   args: RunFlags
 ) {
-  if (!args.binaryPath && args.remoteBuildCache) {
+  if (!args.binaryPath && args.remoteCache) {
     const cachedBuild = await fetchCachedBuild({ mode: args.mode });
     if (cachedBuild) {
       // @todo replace with a more generic way to pass binary path

@@ -51,7 +51,7 @@ const args: Flags = {
   appIdSuffix: '',
   mainActivity: undefined,
   port: '8081',
-  remoteBuildCache: false,
+  remoteCache: false,
 };
 const androidProject: AndroidProjectConfig = {
   appName: 'app',
