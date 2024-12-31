@@ -45,3 +45,6 @@ Thumbs.db
 # Local Templates
 *.tgz
 *.tar
+
+vite.config.*.timestamp*
+vitest.config.*.timestamp*
