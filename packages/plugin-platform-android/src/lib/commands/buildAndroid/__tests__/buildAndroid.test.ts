@@ -1,7 +1,7 @@
 import fs, { PathLike } from 'node:fs';
 import { vi, test, Mock, MockedFunction } from 'vitest';
 import { AndroidProjectConfig } from '@react-native-community/cli-types';
-import { logger } from '@rnef/tools';
+import { logger, RnefError } from '@rnef/tools';
 import spawn from 'nano-spawn';
 import { select } from '@clack/prompts';
 import { buildAndroid, type BuildFlags } from '../buildAndroid.js';
@@ -121,13 +121,11 @@ test('buildAndroid fails gracefully when gradle errors', async () => {
   vi.mocked(spawn).mockRejectedValueOnce({ stderr: 'gradle error' });
   vi.spyOn(logger, 'error');
 
-  try {
-    await buildAndroid(androidProject, args);
-  } catch {
-    expect(logger.error).toBeCalledWith(
-      'Failed to build the app. See the error above for details from Gradle.'
-    );
-  }
+  await expect(
+    buildAndroid(androidProject, args)
+  ).rejects.toThrowErrorMatchingInlineSnapshot(
+    `[RnefError: Failed to build the app. See the error above for details from Gradle.]`
+  );
 
   expect(vi.mocked(spawn)).toBeCalledWith(
     './gradlew',

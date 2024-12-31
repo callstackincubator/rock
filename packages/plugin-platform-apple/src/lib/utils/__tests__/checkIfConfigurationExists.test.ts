@@ -20,14 +20,11 @@ describe('checkIfConfigurationExists', () => {
   });
 
   test('should throw an error if project info does not contain selected configuration', () => {
-    checkIfConfigurationExists(CONFIGURATIONS, NON_EXISTING_CONFIG);
-
-    expect(logger.error).toHaveBeenCalledWith(
-      `Configuration "${NON_EXISTING_CONFIG}" does not exist in your project. Please use one of the existing configurations: ${CONFIGURATIONS.join(
-        ', '
-      )}`
+    expect(() =>
+      checkIfConfigurationExists(CONFIGURATIONS, NON_EXISTING_CONFIG)
+    ).toThrowErrorMatchingInlineSnapshot(
+      `[RnefError: Configuration "Test" does not exist in your project. Please use one of the existing configurations: Debug, Release]`
     );
-    expect(process.exit).toHaveBeenCalledWith(1);
   });
 
   test('should not throw an error if project info contains selected configuration', () => {
