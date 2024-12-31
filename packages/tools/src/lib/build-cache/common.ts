@@ -16,7 +16,7 @@ export type LocalArtifact = {
 export type RemoteBuildCache = {
   name: string;
   query(artifactName: string): Promise<RemoteArtifact | null>;
-  fetch(artifact: RemoteArtifact): Promise<LocalArtifact>;
+  download(artifact: RemoteArtifact): Promise<LocalArtifact>;
 };
 
 type FormatArtifactNameParams = {

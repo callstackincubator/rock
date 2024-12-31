@@ -76,7 +76,7 @@ export async function runAndroid(
         await selectAndLaunchDevice();
       } else {
         logger.debug(
-          'No booted devices or emulators found. Launching first available emulator...'
+          'No booted devices or emulators found. Launching first available emulator.'
         );
         await tryLaunchEmulator();
       }

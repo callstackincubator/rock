@@ -33,7 +33,7 @@ export class GitHubBuildCache implements RemoteBuildCache {
     };
   }
 
-  async fetch(artifact: RemoteArtifact): Promise<LocalArtifact> {
+  async download(artifact: RemoteArtifact): Promise<LocalArtifact> {
     const artifactPath = getLocalArtifactPath(artifact.name);
     await downloadGitHubArtifact(artifact.downloadUrl, artifactPath);
 

@@ -86,7 +86,7 @@ async function getAvailableDevicePort(
    */
   const devices = await getDevices();
   if (port > 5682) {
-    throw new Error('Failed to launch emulator...');
+    throw new Error('Failed to launch emulator');
   }
   if (devices.some((d) => d.includes(port.toString()))) {
     return await getAvailableDevicePort(port + 2);
