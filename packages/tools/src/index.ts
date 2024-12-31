@@ -10,4 +10,4 @@ export * from './lib/build-cache/common.js';
 export * from './lib/build-cache/localBuildCache.js';
 export * from './lib/build-cache/remoteBuildCacheFactory.js';
 export * from './lib/build-cache/github/config.js';
-export * from './lib/build-cache/github/gitHubBuildCache.js';
+export * from './lib/build-cache/github/GitHubBuildCache.js';

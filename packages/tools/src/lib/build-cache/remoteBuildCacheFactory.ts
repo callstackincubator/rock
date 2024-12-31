@@ -1,6 +1,6 @@
 import { detectContinuousIntegration } from '../ci.js';
 import { RemoteBuildCache } from './common.js';
-import { GitHubBuildCache } from './github/gitHubBuildCache.js';
+import { GitHubBuildCache } from './github/GitHubBuildCache.js';
 
 export function createRemoteBuildCache(): RemoteBuildCache | null {
   const ci = detectContinuousIntegration();
