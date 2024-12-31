@@ -7,27 +7,23 @@ const unicode = isUnicodeSupported();
 const unicodeWithFallback = (c: string, fallback: string) =>
   unicode ? c : fallback;
 
-const SYMBOL_INFO = unicodeWithFallback('●', '•');
 const SYMBOL_DEBUG = unicodeWithFallback('●', '•');
-const SEPARATOR = ' ';
 
 let verbose = false;
 
-const formatMessages = (messages: Array<string>) => messages.join(SEPARATOR);
+const formatMessages = (messages: Array<string>) => messages.join(' ');
 
 const mapLines = (text: string, colorFn: (line: string) => string) =>
   text.split('\n').map(colorFn).join('\n');
 
 const success = (...messages: Array<string>) => {
   const output = formatMessages(messages);
-  clackLog.success(mapLines(output, color.green));
+  clackLog.success(output);
 };
 
 const info = (...messages: Array<string>) => {
   const output = formatMessages(messages);
-  clackLog.message(mapLines(output, color.cyan), {
-    symbol: color.cyan(SYMBOL_INFO),
-  });
+  clackLog.info(output);
 };
 
 const warn = (...messages: Array<string>) => {
