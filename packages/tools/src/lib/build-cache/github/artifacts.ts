@@ -87,7 +87,7 @@ export async function downloadGitHubArtifact(
 
     const zipPath = targetPath + '.zip';
     const buffer = await response.arrayBuffer();
-    fs.writeFileSync(zipPath, Buffer.from(buffer));
+    fs.writeFileSync(zipPath, new Uint8Array(buffer));
 
     unzipFile(zipPath, targetPath);
     fs.unlinkSync(zipPath);
