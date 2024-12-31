@@ -3,7 +3,7 @@ import {
   findDirectoriesWithPattern,
   formatArtifactName,
   getProjectRoot,
-  LocalBuild,
+  type LocalBuild,
   nativeFingerprint,
   queryLocalBuildCache,
 } from '@rnef/tools';
