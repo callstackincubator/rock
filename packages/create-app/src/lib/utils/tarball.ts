@@ -28,7 +28,7 @@ export async function downloadTarballFromNpm(
     );
     // Write the tarball to disk
     const arrayBuffer = await response.arrayBuffer();
-    fs.writeFileSync(tarballPath, Buffer.from(arrayBuffer));
+    fs.writeFileSync(tarballPath, new Uint8Array(arrayBuffer));
 
     return tarballPath;
   } catch (error) {
