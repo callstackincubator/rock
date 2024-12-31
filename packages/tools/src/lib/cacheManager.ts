@@ -3,6 +3,7 @@ import fs from 'node:fs';
 import appDirs from 'appdirsjs';
 import logger from './logger.js';
 import color from 'picocolors';
+import { RnefError } from './error.js';
 
 type CacheKey = string;
 type Cache = { [key in CacheKey]?: string };
@@ -54,11 +55,12 @@ function removeProjectCache(name: string) {
     if (fs.existsSync(fullPath)) {
       fs.rmSync(fullPath, { recursive: true });
     }
-  } catch {
-    logger.error(
+  } catch (error) {
+    throw new RnefError(
       `Failed to remove cache for ${name}. If you experience any issues when running freshly initialized project, please remove the "${color.underline(
         path.join(cacheRootPath, name)
-      )}" folder manually.`
+      )}" folder manually.`,
+      { cause: error }
     );
   }
 }

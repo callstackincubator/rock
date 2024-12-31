@@ -1,4 +1,4 @@
-import { logger } from '@rnef/tools';
+import { logger, RnefError } from '@rnef/tools';
 import { getBuildPath } from './getBuildPath.js';
 import { getBuildSettings } from './getBuildSettings.js';
 import path from 'path';
@@ -76,12 +76,12 @@ export default async function installApp({
   try {
     await spawn('xcrun', ['simctl', 'launch', udid, bundleID]);
   } catch (error) {
-    logger.error(
+    throw new RnefError(
       `Failed to launch the app on simulator. ${
         (error as SubprocessError).stderr
-      }`
+      }`,
+      { cause: error }
     );
-    throw error;
   }
 }
 

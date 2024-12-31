@@ -1,4 +1,4 @@
-import { logger } from '@rnef/tools';
+import { logger, RnefError } from '@rnef/tools';
 
 export function checkIfConfigurationExists(
   configurations: string[],
@@ -10,12 +10,10 @@ export function checkIfConfigurationExists(
   }
 
   if (!configurations.includes(mode)) {
-    logger.error(
+    throw new RnefError(
       `Configuration "${mode}" does not exist in your project. Please use one of the existing configurations: ${configurations.join(
         ', '
       )}`
     );
-
-    process.exit(1);
   }
 }

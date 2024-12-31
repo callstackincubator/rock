@@ -4,7 +4,7 @@ import { getAdbPath } from './adb.js';
 import type { AndroidProject, Flags } from './runAndroid.js';
 import { spinner } from '@clack/prompts';
 import { promptForUser } from './listAndroidUsers.js';
-import { logger } from '@rnef/tools';
+import { logger, RnefError } from '@rnef/tools';
 
 export async function tryInstallAppOnDevice(
   device: string,
@@ -109,8 +109,9 @@ async function getInstallOutputFileName(
     return outputFile;
   }
 
-  logger.error(`Could not find the correct .${apkOrAab} file to install.`);
-  process.exit(1);
+  throw new RnefError(
+    `Could not find the correct .${apkOrAab} file to install.`
+  );
 }
 
 /**

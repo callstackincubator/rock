@@ -1,7 +1,7 @@
 import path from 'path';
 import fs from 'fs';
 import isInteractive from 'is-interactive';
-import { logger } from '@rnef/tools';
+import { logger, RnefError } from '@rnef/tools';
 import { listDevicesAndSimulators } from '../../utils/listDevices.js';
 import { promptForDeviceSelection } from '../../utils/prompts.js';
 import { getConfiguration } from '../build/getConfiguration.js';
@@ -32,10 +32,9 @@ export const createRun = async (
   const { xcodeProject, sourceDir } = projectConfig;
 
   if (!xcodeProject) {
-    logger.error(
+    throw new RnefError(
       `Could not find Xcode project files in "${sourceDir}" folder. Please make sure that you have installed Cocoapods and "${sourceDir}" is a valid path`
     );
-    process.exit(1);
   }
 
   normalizeArgs(args, projectRoot, xcodeProject);
@@ -76,7 +75,7 @@ export const createRun = async (
   loader.start('Looking for available devices and simulators');
   const devices = await listDevicesAndSimulators(platformName);
   if (devices.length === 0) {
-    return logger.error(
+    throw new RnefError(
       `${platformReadableName} devices or simulators not detected. Install simulators via Xcode or connect a physical ${platformReadableName} device`
     );
   }
@@ -132,10 +131,9 @@ export const createRun = async (
         if (simulator) {
           bootedSimulators.push(simulator);
         } else {
-          logger.error(
+          throw new RnefError(
             'No Apple simulators found. Install simulators via Xcode.'
           );
-          process.exit(1);
         }
       }
     }

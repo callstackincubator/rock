@@ -3,7 +3,7 @@ import {
   AndroidProjectConfig,
   Config,
 } from '@react-native-community/cli-types';
-import { checkCancelPrompt, logger } from '@rnef/tools';
+import { checkCancelPrompt, logger, RnefError } from '@rnef/tools';
 import { getDevices } from './adb.js';
 import { toPascalCase } from '../toPascalCase.js';
 import { tryLaunchAppOnDevice } from './tryLaunchAppOnDevice.js';
@@ -51,10 +51,9 @@ export async function runAndroid(
   if (deviceId) {
     await runGradle({ tasks, androidProject, args });
     if (!(await getDevices()).find((d) => d === deviceId)) {
-      logger.error(
+      throw new RnefError(
         `Device "${deviceId}" not found. Please run it first or use a different one.`
       );
-      process.exit(1);
     }
     await tryInstallAppOnDevice(deviceId, androidProject, args, tasks);
     await tryLaunchAppOnDevice(deviceId, androidProject, args);

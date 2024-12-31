@@ -54,6 +54,6 @@ export async function tryLaunchAppOnDevice(
     `Launched the app on "${device}" and listening on port "${args.port}".`
   );
   if (stderr) {
-    logger.error(`Failed to launch the app on "${device}". ${stderr}`);
+    throw new RnefError(`Failed to launch the app on "${device}". ${stderr}`);
   }
 }

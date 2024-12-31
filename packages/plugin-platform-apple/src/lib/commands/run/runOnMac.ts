@@ -1,4 +1,4 @@
-import { logger } from '@rnef/tools';
+import { logger, RnefError } from '@rnef/tools';
 import color from 'picocolors';
 import spawn from 'nano-spawn';
 import { getBuildPath } from './getBuildPath.js';
@@ -78,6 +78,6 @@ async function openApp({
   try {
     await spawn('open', [appPath]);
   } catch (e) {
-    logger.error('Failed to launch the app', e as string);
+    throw new RnefError('Failed to launch the app', { cause: e });
   }
 }

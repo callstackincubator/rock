@@ -1,7 +1,7 @@
 import type { BuildFlags } from './buildOptions.js';
 import { supportedPlatforms } from '../../utils/supportedPlatforms.js';
 import { ApplePlatform, XcodeProjectInfo } from '../../types/index.js';
-import { logger } from '@rnef/tools';
+import { logger, RnefError } from '@rnef/tools';
 import { simulatorDestinationMap } from './simulatorDestinationMap.js';
 import { spinner } from '@clack/prompts';
 import spawn, { SubprocessError } from 'nano-spawn';
@@ -77,15 +77,18 @@ export const buildProject = async (
   } catch (error) {
     logger.log((error as SubprocessError).stdout);
     logger.error((error as SubprocessError).stderr);
-    if (!xcodeProject.isWorkspace) {
-      logger.error(
-        `If your project uses CocoaPods, make sure to install pods with "pod install" in ${sourceDir} directory.`
-      );
-    }
     loader.stop(
       'Running xcodebuild failed. Check the error message above for details.',
       1
     );
-    throw new Error('Running xcodebuild failed');
+
+    if (!xcodeProject.isWorkspace) {
+      throw new RnefError(
+        `If your project uses CocoaPods, make sure to install pods with "pod install" in ${sourceDir} directory.`,
+        { cause: error }
+      );
+    }
+
+    throw new RnefError('Running xcodebuild failed', { cause: error });
   }
 };
