@@ -1,25 +1,13 @@
-import path from 'node:path';
-import fs from 'node:fs';
-import { ApplePlatform, Device } from '../../types/index.js';
 import { cacheManager, logger } from '@rnef/tools';
+import { ApplePlatform, Device } from '../../types/index.js';
 
-function getProjectNameFromPackageJson(projectRoot: string) {
-  const packageJsonPath = path.join(projectRoot, 'package.json');
-  return JSON.parse(fs.readFileSync(packageJsonPath, 'utf-8')).name;
-}
-
-export function cacheRecentDevice(
-  device: Device,
-  projectRoot: string,
-  platform: ApplePlatform
-) {
+export function cacheRecentDevice(device: Device, platform: ApplePlatform) {
   const cacheKey = 'recentDevicesUDID-' + platform;
-  const name = getProjectNameFromPackageJson(projectRoot);
   try {
-    const recentDevices = getRecentDevices(projectRoot, platform);
+    const recentDevices = getRecentDevices(platform);
     const newRecentDevices = [device.udid, ...recentDevices];
     const uniqueDevices = Array.from(new Set(newRecentDevices)).slice(0, 5);
-    cacheManager.set(name, cacheKey, JSON.stringify(uniqueDevices));
+    cacheManager.set(cacheKey, JSON.stringify(uniqueDevices));
   } catch (error) {
     logger.debug(
       `Failed to cache recent device ${device.name} with UDID ${device.udid}. ${error}`
@@ -27,13 +15,9 @@ export function cacheRecentDevice(
   }
 }
 
-function getRecentDevices(
-  projectRoot: string,
-  platform: ApplePlatform
-): string[] {
+function getRecentDevices(platform: ApplePlatform): string[] {
   const cacheKey = 'recentDevicesUDID-' + platform;
-  const name = getProjectNameFromPackageJson(projectRoot);
-  const recentDevicesString = cacheManager.get(name, cacheKey);
+  const recentDevicesString = cacheManager.get(cacheKey);
   try {
     return recentDevicesString ? JSON.parse(recentDevicesString) : [];
   } catch (error) {
@@ -44,10 +28,9 @@ function getRecentDevices(
 
 export function sortByRecentDevices(
   devices: Device[],
-  projectRoot: string,
   platform: ApplePlatform
 ) {
-  const recentDevices = getRecentDevices(projectRoot, platform);
+  const recentDevices = getRecentDevices(platform);
   const udids = Array.from(
     new Set([...recentDevices, ...devices.map(({ udid }) => udid)])
   );
