@@ -405,14 +405,16 @@ test('runAndroid fails to launch an app on not-connected device when specified w
   (spawn as Mock).mockImplementation((file, args) =>
     spawnMockImplementation(file, args)
   );
+  const logWarnSpy = vi.spyOn(logger, 'warn');
 
-  await expect(
-    runAndroid({ ...androidProject }, { ...args, device: 'emulator-5554' }, '/')
-  ).rejects.toThrowErrorMatchingInlineSnapshot(
-    `[RnefError: Device "emulator-5554" not found. Please run it first or use a different one.]`
+  await runAndroid(
+    { ...androidProject },
+    { ...args, device: 'emulator-5554' },
+    '/'
   );
-
-  expect(mocks.outroMock).not.toBeCalledWith('Success 🎉.');
+  expect(logWarnSpy).toBeCalledWith(
+    'No devices or emulators found matching "emulator-5554". Falling back to default emulator.'
+  );
 });
 
 test.each([
