@@ -10,7 +10,7 @@ const CACHE_FILE_NAME = 'project.json';
 type CacheKey = string;
 type Cache = { [key in CacheKey]?: string };
 
-function getCacheFile() {
+export function getCacheFile() {
   return path.join(getCacheRootPath(), CACHE_FILE_NAME);
 }
 
