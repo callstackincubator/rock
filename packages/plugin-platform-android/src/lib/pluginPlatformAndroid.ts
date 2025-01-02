@@ -11,6 +11,7 @@ import {
 } from './commands/runAndroid/runAndroid.js';
 import { projectConfig } from '@react-native-community/cli-config-android';
 import { AndroidProjectConfig } from '@react-native-community/cli-types';
+import { RnefError } from '@rnef/tools';
 
 type PluginConfig = AndroidProjectConfig;
 
@@ -26,7 +27,7 @@ export const pluginPlatformAndroid =
         if (androidConfig) {
           await buildAndroid(androidConfig, args as BuildFlags);
         } else {
-          throw new Error('Android project not found.');
+          throw new RnefError('Android project not found.');
         }
       },
       options: options,
@@ -46,7 +47,7 @@ export const pluginPlatformAndroid =
             projectRoot
           );
         } else {
-          throw new Error('Android project not found.');
+          throw new RnefError('Android project not found.');
         }
       },
       options: runOptions,

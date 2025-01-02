@@ -27,14 +27,7 @@ function parseTargetList(json: string): Info | undefined {
 
     return undefined;
   } catch (error) {
-    if (isErrorLike(error)) {
-      const match = error.message.match(/xcodebuild: error: (.*)/);
-      if (match) {
-        throw new Error(match[0]);
-      }
-    }
-
-    throw error;
+    throw new RnefError('Failed to parse target list', { cause: error });
   }
 }
 
@@ -121,7 +114,7 @@ export async function getInfo(
     }
 
     if (!Array.isArray(info.schemes)) {
-      throw new Error("This shouldn't happen since we set it earlier");
+      throw new RnefError("This shouldn't happen since we set it earlier");
     }
 
     // For subsequent projects, merge schemes list

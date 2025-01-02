@@ -3,6 +3,7 @@ import path from 'path';
 import packageJson from 'package-json';
 import * as tar from 'tar';
 import { getNameWithoutExtension } from './fs.js';
+import { RnefError } from '@rnef/tools';
 
 export async function downloadTarballFromNpm(
   packageName: string,
@@ -14,12 +15,14 @@ export async function downloadTarballFromNpm(
 
     const tarballUrl = metadata['dist']?.tarball;
     if (!tarballUrl) {
-      throw new Error('Tarball URL not found.');
+      throw new RnefError('Tarball URL not found.');
     }
 
     const response = await fetch(tarballUrl);
     if (!response.ok) {
-      throw new Error(`Failed to fetch package: ${response.statusText}`);
+      throw new RnefError(
+        `Failed to fetch package ${packageName}: ${response.statusText}`
+      );
     }
 
     const tarballPath = path.join(
@@ -32,7 +35,7 @@ export async function downloadTarballFromNpm(
 
     return tarballPath;
   } catch (error) {
-    console.error(`Error downloading package`, error);
+    console.error(`Error downloading package ${packageName}:`, error);
     throw error;
   }
 }

@@ -2,7 +2,7 @@ import { intro, multiselect, note, outro, select, text } from '@clack/prompts';
 import fs from 'node:fs';
 import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
-import { checkCancelPrompt } from '@rnef/tools';
+import { checkCancelPrompt, RnefError } from '@rnef/tools';
 import { parsePackageManagerFromUserAgent } from './parsers.js';
 import { validateProjectName } from '../validate-project-name.js';
 import { TemplateInfo } from '../templates.js';
@@ -74,7 +74,7 @@ export async function promptTemplate(
   templates: TemplateInfo[]
 ): Promise<TemplateInfo> {
   if (templates.length === 0) {
-    throw new Error('No templates found');
+    throw new RnefError('No templates found');
   }
 
   return checkCancelPrompt<TemplateInfo>(
@@ -93,7 +93,7 @@ export async function promptPlatforms(
   platforms: TemplateInfo[]
 ): Promise<TemplateInfo[]> {
   if (platforms.length === 0) {
-    throw new Error('No platforms found');
+    throw new RnefError('No platforms found');
   }
 
   return checkCancelPrompt<TemplateInfo[]>(
@@ -112,7 +112,7 @@ export async function promptPlugins(
   plugins: TemplateInfo[]
 ): Promise<TemplateInfo[]> {
   if (plugins.length === 0) {
-    throw new Error('No plugins found');
+    throw new RnefError('No plugins found');
   }
 
   return checkCancelPrompt<TemplateInfo[]>(
