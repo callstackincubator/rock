@@ -74,4 +74,4 @@ yarn-error.log
 !.yarn/versions
 
 # RNEF
-.rnef-build-cache/
+.rnef/
