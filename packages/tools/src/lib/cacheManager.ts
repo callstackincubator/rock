@@ -3,7 +3,7 @@ import fs from 'node:fs';
 import color from 'picocolors';
 import { RnefError } from './error.js';
 import logger from './logger.js';
-import { getProjectRoot } from './project.js';
+import { getCacheRootPath } from './project.js';
 
 type CacheKey = string;
 type Cache = { [key in CacheKey]?: string };
@@ -26,34 +26,17 @@ function loadCache(name: string): Cache | undefined {
 }
 
 function saveCache(name: string, cache: Cache) {
-  const fullPath = path.resolve(getCacheRootPath(), name);
-
-  fs.mkdirSync(path.dirname(fullPath), { recursive: true });
-  fs.writeFileSync(fullPath, JSON.stringify(cache, null, 2));
-}
-
-/**
- * Returns path to cache root.
- *
- * Cache is stored in: `.rnef/cache` directory in the project root.
- */
-function getCacheRootPath() {
-  const root = getProjectRoot();
-  const cachePath = path.join(root, '.rnef/cache');
-  if (!fs.existsSync(cachePath)) {
-    fs.mkdirSync(cachePath, { recursive: true });
-  }
-
-  return cachePath;
+  const cachePath = path.resolve(getCacheRootPath(), name);
+  fs.mkdirSync(path.dirname(cachePath), { recursive: true });
+  fs.writeFileSync(cachePath, JSON.stringify(cache, null, 2));
 }
 
 function removeProjectCache(name: string) {
   const cacheRootPath = getCacheRootPath();
   try {
-    const fullPath = path.resolve(cacheRootPath, name);
-
-    if (fs.existsSync(fullPath)) {
-      fs.rmSync(fullPath, { recursive: true });
+    const cachePath = path.resolve(cacheRootPath, name);
+    if (fs.existsSync(cachePath)) {
+      fs.rmSync(cachePath, { recursive: true });
     }
   } catch (error) {
     throw new RnefError(

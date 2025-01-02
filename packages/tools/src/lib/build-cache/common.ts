@@ -1,7 +1,7 @@
 import path from 'node:path';
 import { getProjectRoot } from '../project.js';
 
-export const LOCAL_BUILD_CACHE_DIRECTORY = '.rnef/cache/remote-build';
+export const LOCAL_BUILD_CACHE_DIRECTORY = 'remote-build';
 
 export type RemoteArtifact = {
   name: string;
@@ -37,6 +37,6 @@ export function formatArtifactName({
 }
 
 export function getLocalArtifactPath(artifactName: string) {
-  const root = getProjectRoot();
-  return path.join(root, LOCAL_BUILD_CACHE_DIRECTORY, artifactName);
+  const cache = getCacheRootPath();
+  return path.join(cache, LOCAL_BUILD_CACHE_DIRECTORY, artifactName);
 }

@@ -24,3 +24,12 @@ export function getProjectRoot(dir?: string) {
   const configPath = getProjectConfig(dir);
   return path.dirname(configPath);
 }
+
+/**
+ * Returns path to cache root.
+ *
+ * Cache is stored in: `.rnef/cache` directory in the project root.
+ */
+export function getCacheRootPath() {
+  return path.join(getProjectRoot(), '.rnef/cache');
+}
