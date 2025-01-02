@@ -1,9 +1,9 @@
 import path from 'node:path';
 import fs from 'node:fs';
-import appDirs from 'appdirsjs';
-import logger from './logger.js';
 import color from 'picocolors';
 import { RnefError } from './error.js';
+import logger from './logger.js';
+import { getProjectRoot } from './project.js';
 
 type CacheKey = string;
 type Cache = { [key in CacheKey]?: string };
@@ -33,18 +33,18 @@ function saveCache(name: string, cache: Cache) {
 }
 
 /**
- * Returns path to cache.
- * Cache is stored in:
- * home/user/.cache/rnef on Linux
- * /Users/User/Library/Caches/rnef on MacOS
- * C:\Users\User\AppData\Local\Temp\rnef on Windows
+ * Returns path to cache root.
+ *
+ * Cache is stored in: `.rnef/cache` directory in the project root.
  */
 function getCacheRootPath() {
-  const { cache } = appDirs.default({ appName: 'rnef' });
-  if (!fs.existsSync(cache)) {
-    fs.mkdirSync(cache, { recursive: true });
+  const root = getProjectRoot();
+  const cachePath = path.join(root, '.rnef/cache');
+  if (!fs.existsSync(cachePath)) {
+    fs.mkdirSync(cachePath, { recursive: true });
   }
-  return cache;
+
+  return cachePath;
 }
 
 function removeProjectCache(name: string) {
@@ -85,5 +85,5 @@ export default {
   get,
   set,
   removeProjectCache,
-  getCacheRootPath,
+  getCacheRootPath: getCacheRootPath,
 };
