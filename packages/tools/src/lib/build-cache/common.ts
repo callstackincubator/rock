@@ -1,7 +1,7 @@
 import path from 'node:path';
 import { getProjectRoot } from '../project.js';
 
-export const LOCAL_BUILD_CACHE_DIRECTORY = '.rnef-build-cache';
+export const LOCAL_BUILD_CACHE_DIRECTORY = '.rnef/cache/remote-build';
 
 export type RemoteArtifact = {
   name: string;
