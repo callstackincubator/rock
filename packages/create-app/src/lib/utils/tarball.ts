@@ -35,8 +35,9 @@ export async function downloadTarballFromNpm(
 
     return tarballPath;
   } catch (error) {
-    console.error(`Error downloading package ${packageName}:`, error);
-    throw error;
+    throw new RnefError(`Error downloading package ${packageName}`, {
+      cause: error,
+    });
   }
 }
 
