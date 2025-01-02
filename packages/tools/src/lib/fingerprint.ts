@@ -1,5 +1,6 @@
 import crypto from 'node:crypto';
 import { createFingerprintAsync, FingerprintSource } from '@expo/fingerprint';
+import { RnefError } from './error.js';
 
 const HASH_ALGORITHM = 'sha1';
 const EXCLUDED_SOURCES = [
@@ -63,6 +64,7 @@ function createSourceId(source: FingerprintSource) {
     case 'dir':
       return source.filePath;
     default:
-      throw new Error('Unsupported source type');
+      // @ts-expect-error: we intentionally want to detect invalid types
+      throw new RnefError(`Unsupported source type: ${source.type}`);
   }
 }

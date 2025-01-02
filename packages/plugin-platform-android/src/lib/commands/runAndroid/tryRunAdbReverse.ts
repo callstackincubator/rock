@@ -18,10 +18,10 @@ export async function tryRunAdbReverse(
 
     logger.debug(`Connecting "${device}" to the development server`);
     await spawn(adbPath, adbArgs, { stdio: ['ignore', 'ignore', 'inherit'] });
-  } catch (e) {
+  } catch (error) {
     throw new RnefError(
       `Failed to connect "${device}" to development server using "adb reverse"`,
-      { cause: e }
+      { cause: error }
     );
   }
 }
