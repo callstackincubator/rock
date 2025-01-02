@@ -55,6 +55,8 @@ export async function tryLaunchAppOnDevice(
   );
 
   if (stderr) {
-    throw new RnefError(`Failed to launch the app on "${device}". ${stderr}`);
+    throw new RnefError(`Failed to launch the app on "${device}"`, {
+      cause: stderr,
+    });
   }
 }
