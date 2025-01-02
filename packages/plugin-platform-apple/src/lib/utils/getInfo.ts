@@ -6,15 +6,6 @@ import { Info, XcodeProjectInfo } from '../types/index.js';
 import { logger, RnefError } from '@rnef/tools';
 import { spinner } from '@clack/prompts';
 
-function isErrorLike(err: unknown): err is { message: string } {
-  return Boolean(
-    err &&
-      typeof err === 'object' &&
-      'message' in err &&
-      typeof err.message === 'string'
-  );
-}
-
 function parseTargetList(json: string): Info | undefined {
   try {
     const info = JSON.parse(json);

@@ -2,6 +2,7 @@ import * as fs from 'node:fs';
 import { Octokit } from 'octokit';
 import AdmZip from 'adm-zip';
 import { detectGitHubRepoDetails } from './config.js';
+import logger from '../../logger.js';
 
 const PAGE_SIZE = 100; // Maximum allowed by GitHub API
 const GITHUB_TOKEN = process.env['GITHUB_TOKEN'];
@@ -16,14 +17,17 @@ export type GitHubArtifact = {
 
 export async function fetchGitHubArtifactsByName(
   name: string
-): Promise<GitHubArtifact[]> {
+): Promise<GitHubArtifact[] | []> {
   const octokit = new Octokit({
     auth: GITHUB_TOKEN,
   });
 
   const repoDetails = await detectGitHubRepoDetails();
   if (!repoDetails) {
-    throw new Error('Unable to detect GitHub repository details');
+    logger.warn(
+      'Unable to detect GitHub repository details. Proceeding with building locally using Gradle.'
+    );
+    return [];
   }
 
   const result: GitHubArtifact[] = [];

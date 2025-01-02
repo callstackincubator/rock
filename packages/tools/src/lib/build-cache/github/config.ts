@@ -31,7 +31,7 @@ export async function detectGitHubRepoDetails(): Promise<GitHubRepoDetails | nul
       repository: match[2],
     };
   } catch (error: unknown) {
-    logger.error('Unable to detect GitHub repository details:', error);
+    logger.debug('Unable to detect GitHub repository details:', error);
     return null;
   }
 }
