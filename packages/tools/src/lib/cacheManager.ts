@@ -18,7 +18,7 @@ function loadCache(): Cache {
   try {
     const cachePath = path.resolve(getCacheFile());
     if (!fs.existsSync(cachePath)) {
-      logger.debug('No cache found');
+      logger.debug(`No cache found at: ${cachePath}`);
       return {};
     }
 
