@@ -1,7 +1,11 @@
 import fs from 'node:fs';
 import path from 'node:path';
 import { spinner } from '@clack/prompts';
-import { resolveAbsolutePath, cancelPromptAndExit } from '@rnef/tools';
+import {
+  resolveAbsolutePath,
+  cancelPromptAndExit,
+  RnefError,
+} from '@rnef/tools';
 import {
   renameCommonFiles,
   replacePlaceholder,
@@ -147,7 +151,7 @@ async function extractPackage(absoluteTargetDir: string, pkg: TemplateInfo) {
   }
 
   // This should never happen as we have either NPM package or local path (tarball or directory).
-  throw new Error(
+  throw new RnefError(
     `Invalid state: template not found: ${JSON.stringify(pkg, null, 2)}`
   );
 }
