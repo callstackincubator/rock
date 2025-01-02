@@ -4,7 +4,7 @@ import {
   bundleCommand,
   // @ts-expect-error missing typings
 } from '@react-native/community-cli-plugin';
-import { logger } from '@rnef/tools';
+import { RnefError } from '@rnef/tools';
 
 type PluginConfig = {
   reactNativeVersion?: string;
@@ -88,10 +88,9 @@ export const pluginMetro =
         'Build the bundle for the provided JavaScript entry file with Metro.',
       action: (args: BundleCommandArgs) => {
         if (!args.platform || !args.bundleOutput || !args.entryFile) {
-          logger.error(
+          throw new RnefError(
             '"rnef bundle" command requires all of these flags to bundle JavaScript with Metro: \n  "--platform", "--bundle-output", "--entry-file"'
           );
-          process.exit(1);
         }
         const root = api.getProjectRoot();
         const reactNativeVersion = api.getReactNativeVersion();

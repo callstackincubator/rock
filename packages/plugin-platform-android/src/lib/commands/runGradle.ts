@@ -1,4 +1,4 @@
-import { logger } from '@rnef/tools';
+import { logger, RnefError } from '@rnef/tools';
 import type { AndroidProject, Flags } from './runAndroid/runAndroid.js';
 import { getAdbPath, getDevices } from './runAndroid/adb.js';
 import spawn from 'nano-spawn';
@@ -57,11 +57,11 @@ export async function runGradle({
     });
     loader.start('');
     loader.stop('Gradle build finished.');
-  } catch {
-    logger.error(
-      `Failed to build the app. See the error above for details from Gradle.`
+  } catch (error) {
+    throw new RnefError(
+      `Failed to build the app. See the error above for details from Gradle.`,
+      { cause: error }
     );
-    process.exit(1);
   }
 }
 

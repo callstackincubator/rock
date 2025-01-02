@@ -5,7 +5,7 @@ import {
   ProjectConfig,
   XcodeProjectInfo,
 } from '../../types/index.js';
-import { logger } from '@rnef/tools';
+import { logger, RnefError } from '@rnef/tools';
 import { outro, cancel } from '@clack/prompts';
 import path from 'path';
 import { selectFromInteractiveMode } from '../../utils/selectFromInteractiveMode.js';
@@ -22,10 +22,9 @@ export const createBuild = async (
   const { xcodeProject, sourceDir } = projectConfig;
 
   if (!xcodeProject) {
-    logger.error(
+    throw new RnefError(
       `Could not find Xcode project files in "${sourceDir}" folder. Please make sure that you have installed Cocoapods and "${sourceDir}" is a valid path`
     );
-    process.exit(1);
   }
 
   normalizeArgs(args, xcodeProject);

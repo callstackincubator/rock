@@ -8,6 +8,7 @@ import {
   BuildFlags,
 } from '@rnef/plugin-platform-apple';
 import { getProjectConfig } from '@react-native-community/cli-config-apple';
+import { RnefError } from '@rnef/tools';
 
 const projectConfig = getProjectConfig({ platformName: 'ios' });
 const buildOptions = getBuildOptions({ platformName: 'ios' });
@@ -26,7 +27,7 @@ export const pluginPlatformIOS =
         if (iosConfig) {
           await createBuild('ios', iosConfig, args as BuildFlags);
         } else {
-          throw new Error('iOS project not found.');
+          throw new RnefError('iOS project not found.');
         }
       },
       options: buildOptions,
@@ -42,7 +43,7 @@ export const pluginPlatformIOS =
         if (iosConfig) {
           await createRun('ios', iosConfig, args as RunFlags, projectRoot);
         } else {
-          throw new Error('iOS project not found.');
+          throw new RnefError('iOS project not found.');
         }
       },
       // @ts-expect-error: fix `simulator` is not defined in `RunFlags`

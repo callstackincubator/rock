@@ -2,7 +2,7 @@ import color from 'picocolors';
 import spawn from 'nano-spawn';
 import { select, spinner } from '@clack/prompts';
 import { getGradleWrapper } from './runGradle.js';
-import { checkCancelPrompt } from '@rnef/tools';
+import { checkCancelPrompt, RnefError } from '@rnef/tools';
 
 type GradleTask = {
   task: string;
@@ -59,7 +59,7 @@ export const promptForTaskSelection = async (
 ): Promise<string> => {
   const tasks = await getGradleTasks(taskType, sourceDir);
   if (!tasks.length) {
-    throw new Error(`No actionable ${taskType} tasks were found`);
+    throw new RnefError(`No actionable ${taskType} tasks were found.`);
   }
   const task = checkCancelPrompt<string>(
     await select({

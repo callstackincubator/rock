@@ -1,6 +1,6 @@
 import spawn from 'nano-spawn';
 import { getAdbPath } from './adb.js';
-import { logger } from '@rnef/tools';
+import { logger, RnefError } from '@rnef/tools';
 
 // Runs ADB reverse tcp:8081 tcp:8081 to allow loading the jsbundle from the packager
 export async function tryRunAdbReverse(
@@ -18,11 +18,10 @@ export async function tryRunAdbReverse(
 
     logger.debug(`Connecting "${device}" to the development server`);
     await spawn(adbPath, adbArgs, { stdio: ['ignore', 'ignore', 'inherit'] });
-  } catch (e) {
-    logger.error(
-      `Failed to connect "${device}" to development server using "adb reverse": ${
-        (e as { message: string }).message
-      }`
+  } catch (error) {
+    throw new RnefError(
+      `Failed to connect "${device}" to development server using "adb reverse"`,
+      { cause: error }
     );
   }
 }

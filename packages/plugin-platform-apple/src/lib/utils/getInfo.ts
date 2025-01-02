@@ -1,9 +1,9 @@
-import spawn, { SubprocessError } from 'nano-spawn';
+import spawn from 'nano-spawn';
 import { XMLParser } from 'fast-xml-parser';
 import * as fs from 'fs';
 import * as path from 'path';
 import { Info, XcodeProjectInfo } from '../types/index.js';
-import { logger } from '@rnef/tools';
+import { logger, RnefError } from '@rnef/tools';
 import { spinner } from '@clack/prompts';
 
 function isErrorLike(err: unknown): err is { message: string } {
@@ -27,14 +27,7 @@ function parseTargetList(json: string): Info | undefined {
 
     return undefined;
   } catch (error) {
-    if (isErrorLike(error)) {
-      const match = error.message.match(/xcodebuild: error: (.*)/);
-      if (match) {
-        throw new Error(match[0]);
-      }
-    }
-
-    throw error;
+    throw new RnefError('Failed to parse target list', { cause: error });
   }
 }
 
@@ -53,9 +46,10 @@ export async function getInfo(
       loader.stop('Gathered Xcode project information.');
       return info;
     } catch (error) {
-      logger.error((error as SubprocessError).stderr);
       loader.stop('Failed to get a target list.', 1);
-      process.exit(1);
+      throw new RnefError('Failed to get a target list.', {
+        cause: error,
+      });
     }
   }
 
@@ -120,7 +114,7 @@ export async function getInfo(
     }
 
     if (!Array.isArray(info.schemes)) {
-      throw new Error("This shouldn't happen since we set it earlier");
+      throw new RnefError("This shouldn't happen since we set it earlier");
     }
 
     // For subsequent projects, merge schemes list

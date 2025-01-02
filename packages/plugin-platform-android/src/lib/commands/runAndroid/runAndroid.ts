@@ -3,7 +3,7 @@ import {
   AndroidProjectConfig,
   Config,
 } from '@react-native-community/cli-types';
-import { checkCancelPrompt, logger } from '@rnef/tools';
+import { checkCancelPrompt, logger, RnefError } from '@rnef/tools';
 import { intro, outro, select } from '@clack/prompts';
 import isInteractive from 'is-interactive';
 import { getDevices } from './adb.js';
@@ -63,10 +63,9 @@ export async function runAndroid(
   if (deviceId) {
     await runGradle({ tasks, androidProject, args });
     if (!(await getDevices()).find((d) => d === deviceId)) {
-      logger.error(
+      throw new RnefError(
         `Device "${deviceId}" not found. Please run it first or use a different one.`
       );
-      process.exit(1);
     }
     await tryInstallAppOnDevice(deviceId, androidProject, args, tasks);
     await tryLaunchAppOnDevice(deviceId, androidProject, args);
@@ -99,7 +98,7 @@ async function selectAndLaunchDevice() {
   const device = await promptForDeviceSelection(allDevices);
 
   if (!device) {
-    throw new Error(
+    throw new RnefError(
       `Failed to select device, please try to run app without "--interactive" flag.`
     );
   }
@@ -133,7 +132,7 @@ function normalizeArgs(args: Flags, projectRoot: string) {
 
   if (args.binaryPath) {
     if (args.tasks) {
-      throw new Error(
+      throw new RnefError(
         'Both "--binary-path" and "--tasks" flags were specified, which are incompatible. Please specify only one.'
       );
     }
@@ -143,7 +142,7 @@ function normalizeArgs(args: Flags, projectRoot: string) {
       : path.join(projectRoot, args.binaryPath);
 
     if (args.binaryPath && !fs.existsSync(args.binaryPath)) {
-      throw new Error(
+      throw new RnefError(
         `"--binary-path" was specified, but the file was not found at "${args.binaryPath}".`
       );
     }
@@ -154,7 +153,7 @@ async function promptForDeviceSelection(
   allDevices: Array<DeviceData>
 ): Promise<DeviceData> {
   if (!allDevices.length) {
-    throw new Error(
+    throw new RnefError(
       'No devices and/or emulators connected. Please create emulator with Android Studio or connect Android device.'
     );
   }
