@@ -35,7 +35,7 @@ export async function promptForDeviceSelection(
   projectRoot: string,
   platformName: ApplePlatform
 ) {
-  const sortedDevices = sortByRecentDevices(devices, projectRoot, platformName);
+  const sortedDevices = sortByRecentDevices(devices, platformName);
   return checkCancelPrompt<Device>(
     await select({
       message: 'Select the device / simulator you want to use',

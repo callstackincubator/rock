@@ -1,7 +1,7 @@
 import path from 'node:path';
-import { getProjectRoot } from '../project.js';
+import { getCacheRootPath } from '../project.js';
 
-export const LOCAL_BUILD_CACHE_DIRECTORY = 'remote-build';
+export const BUILD_CACHE_DIR = 'remote-build';
 
 export type RemoteArtifact = {
   name: string;
@@ -37,6 +37,5 @@ export function formatArtifactName({
 }
 
 export function getLocalArtifactPath(artifactName: string) {
-  const cache = getCacheRootPath();
-  return path.join(cache, LOCAL_BUILD_CACHE_DIRECTORY, artifactName);
+  return path.join(getCacheRootPath(), BUILD_CACHE_DIR, artifactName);
 }

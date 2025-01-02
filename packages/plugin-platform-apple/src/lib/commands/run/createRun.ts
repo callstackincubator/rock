@@ -85,7 +85,7 @@ export const createRun = async (
   const device = await selectDevice(devices, args, platformName, projectRoot);
 
   if (device) {
-    cacheRecentDevice(device, projectRoot, platformName);
+    cacheRecentDevice(device, platformName);
     if (device.type === 'simulator') {
       await runOnSimulator(
         device,
@@ -122,7 +122,7 @@ export const createRun = async (
           platformName
         );
         bootedSimulators.push(simulator);
-        cacheRecentDevice(simulator, projectRoot, platformName);
+        cacheRecentDevice(simulator, platformName);
       } else {
         logger.debug(
           'No booted devices or simulators found. Launching first available simulator...'
