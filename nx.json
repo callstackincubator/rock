@@ -21,6 +21,7 @@
         "tsConfig": "{projectRoot}/tsconfig.lib.json",
         "buildableProjectDepsInPackageJsonType": "dependencies",
         "generateExportsField": true,
+        "generatePackageJson": false,
         "compilerOptions": {
           "module": "NodeNext",
           "outDir": "packages/{projectRoot}/dist"
