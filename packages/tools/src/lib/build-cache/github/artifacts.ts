@@ -24,9 +24,13 @@ export async function fetchGitHubArtifactsByName(
 
   const repoDetails = await detectGitHubRepoDetails();
   if (!repoDetails) {
+    // add visual space becuase this block is run within spinner.
+    // @todo remove when @clack/prompts fixes it
+    logger.log('');
     logger.warn(
       'Unable to detect GitHub repository details. Proceeding with building locally using Gradle.'
     );
+    logger.log('');
     return [];
   }
 

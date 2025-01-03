@@ -60,13 +60,12 @@ export async function runAndroid(
   }
 
   if (device) {
-    await runGradle({ tasks, androidProject, args });
-    // new devices can be connected after the build
-    const devices = await getDevices();
-    if (!devices.find((d) => d === device.deviceId)) {
+    if (!(await getDevices()).find((d) => d === device.deviceId)) {
+      // deviceId is undefined until it's launched, hence overwriting it here
       device.deviceId = await tryLaunchEmulator(device.readableName);
     }
     if (device.deviceId) {
+      await runGradle({ tasks, androidProject, args });
       await tryInstallAppOnDevice(device, androidProject, args, tasks);
       await tryLaunchAppOnDevice(device, androidProject, args);
     }
@@ -125,7 +124,7 @@ async function selectDevice(devices: DeviceData[], args: Flags) {
   }
   if (!device && args.device) {
     logger.warn(
-      `No devices or emulators found matching "${args.device}". Falling back to default emulator.`
+      `No devices or emulators found matching "${args.device}". Using available one instead.`
     );
   }
   return device;

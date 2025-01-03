@@ -413,7 +413,7 @@ test('runAndroid fails to launch an app on not-connected device when specified w
     '/'
   );
   expect(logWarnSpy).toBeCalledWith(
-    'No devices or emulators found matching "emulator-5554". Falling back to default emulator.'
+    'No devices or emulators found matching "emulator-5554". Using available one instead.'
   );
 });
 
