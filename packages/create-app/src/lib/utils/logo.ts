@@ -13,7 +13,7 @@ const LOGO = `
 
 const LOGO_WIDTH = 52;
 
-const TAG_LINE = 'The React Native Enterprise Framework';
+const TAG_LINE = 'React Native Enterprise Framework';
 const MADE_BY = 'Made with ❤️  by Callstack';
 
 export function printLogo(version: string) {

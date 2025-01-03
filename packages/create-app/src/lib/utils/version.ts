@@ -7,11 +7,12 @@ export function getRnefVersion() {
   try {
     const __dirname = dirname(fileURLToPath(import.meta.url));
 
-    const packageJsonPath = join(__dirname, '../../../package.json');
+    // Note: account for 'dist' folder
+    const packageJsonPath = join(__dirname, '../../../../package.json');
     const packageJson = JSON.parse(fs.readFileSync(packageJsonPath, 'utf-8'));
     return packageJson.version;
   } catch (error) {
-    logger.warn('Failed to get rnef version', error);
+    logger.warn('Failed to get RNEF version', error);
     return 'unknown';
   }
 }
