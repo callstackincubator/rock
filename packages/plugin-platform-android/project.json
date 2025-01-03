@@ -6,13 +6,7 @@
   "tags": [],
   "targets": {
     "build": {
-      "executor": "@nx/js:tsc",
-      "outputs": ["{options.outputPath}"],
-      "options": {
-        "outputPath": "packages/plugin-platform-android/dist",
-        "main": "packages/plugin-platform-android/src/index.ts",
-        "tsConfig": "packages/plugin-platform-android/tsconfig.lib.json"
-      }
+      "executor": "@nx/js:tsc"
     }
   }
 }

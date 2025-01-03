@@ -14,6 +14,7 @@
       "cache": true,
       "dependsOn": ["^build"],
       "inputs": ["default", "^default"],
+      "outputs": ["{options.outputPath}"],
       "options": {
         "outputPath": "{projectRoot}/dist",
         "main": "{projectRoot}/src/index.ts",
