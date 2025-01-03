@@ -37,9 +37,13 @@ import {
   downloadTarballFromNpm,
   extractTarballToTempDirectory,
 } from './utils/tarball.js';
+import { initGitRepo } from './utils/git-init.js';
+import { getRnefVersion } from './utils/version.js';
 
 export async function run() {
   const options = parseCliOptions(process.argv.slice(2));
+
+  const version = getRnefVersion();
 
   if (options.help) {
     printHelpMessage(TEMPLATES, PLATFORMS);
@@ -51,7 +55,7 @@ export async function run() {
     return;
   }
 
-  printLogo();
+  printLogo(version);
   printWelcomeMessage();
 
   const projectName =
@@ -86,6 +90,7 @@ export async function run() {
     : await promptPlugins(PLUGINS);
 
   const loader = spinner();
+
   loader.start('Applying template, platforms and plugins');
   await extractPackage(absoluteTargetDir, template);
   for (const platform of platforms) {
@@ -99,8 +104,11 @@ export async function run() {
   replacePlaceholder(absoluteTargetDir, projectName);
   rewritePackageJson(absoluteTargetDir, projectName);
   createConfig(absoluteTargetDir, platforms, plugins);
-
   loader.stop('Applied template, platforms and plugins.');
+
+  loader.start('Initializing git repo');
+  await initGitRepo(absoluteTargetDir, version);
+  loader.stop('Git repo initialized.');
 
   printByeMessage(absoluteTargetDir);
 }

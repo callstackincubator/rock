@@ -1,11 +1,9 @@
 import { intro, multiselect, note, outro, select, text } from '@clack/prompts';
-import fs from 'node:fs';
-import { dirname, join } from 'node:path';
-import { fileURLToPath } from 'node:url';
 import { checkCancelPrompt, RnefError } from '@rnef/tools';
 import { parsePackageManagerFromUserAgent } from './parsers.js';
 import { validateProjectName } from '../validate-project-name.js';
 import { TemplateInfo } from '../templates.js';
+import { getRnefVersion } from './version.js';
 
 export function printHelpMessage(
   templates: TemplateInfo[],
@@ -32,11 +30,7 @@ export function printHelpMessage(
 }
 
 export function printVersionMessage() {
-  const __dirname = dirname(fileURLToPath(import.meta.url));
-
-  const packageJsonPath = join(__dirname, '..', '..', 'package.json');
-  const packageJson = JSON.parse(fs.readFileSync(packageJsonPath, 'utf-8'));
-  console.log(`${packageJson.version}`);
+  console.log(`${getRnefVersion()}`);
 }
 
 export function printWelcomeMessage() {
