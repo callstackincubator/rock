@@ -1,8 +1,8 @@
 import * as fs from 'node:fs';
-import { Octokit } from 'octokit';
 import AdmZip from 'adm-zip';
-import { detectGitHubRepoDetails } from './config.js';
+import { Octokit } from 'octokit';
 import logger from '../../logger.js';
+import { detectGitHubRepoDetails } from './config.js';
 
 const PAGE_SIZE = 100; // Maximum allowed by GitHub API
 const GITHUB_TOKEN = process.env['GITHUB_TOKEN'];

@@ -1,7 +1,7 @@
-import spawn from 'nano-spawn';
 import fs from 'node:fs';
-import { listDevicesAndSimulators } from '../listDevices.js';
+import spawn from 'nano-spawn';
 import { Mock, vi } from 'vitest';
+import { listDevicesAndSimulators } from '../listDevices.js';
 
 vi.mock('nano-spawn');
 vi.mock('node:fs');

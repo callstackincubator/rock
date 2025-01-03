@@ -1,6 +1,6 @@
 import spawn from 'nano-spawn';
+import { describe, it,Mock, vi } from 'vitest';
 import { checkUsers } from '../listAndroidUsers.js';
-import { vi, Mock, describe, it } from 'vitest';
 // output of "adb -s ... shell pm users list" command
 const gradleOutput = `
 Users:

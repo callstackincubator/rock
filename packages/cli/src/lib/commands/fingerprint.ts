@@ -1,4 +1,4 @@
-import { performance } from 'perf_hooks';
+import { performance } from 'node:perf_hooks';
 import { intro, outro, spinner } from '@clack/prompts';
 import { logger, nativeFingerprint } from '@rnef/tools';
 

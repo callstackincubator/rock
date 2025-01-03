@@ -1,10 +1,10 @@
 import { logger, RnefError } from '@rnef/tools';
-import color from 'picocolors';
 import spawn from 'nano-spawn';
-import { getBuildPath } from './getBuildPath.js';
-import { getBuildSettings } from './getBuildSettings.js';
+import color from 'picocolors';
 import { XcodeProjectInfo } from '../../types/index.js';
 import { buildProject } from '../build/buildProject.js';
+import { getBuildPath } from './getBuildPath.js';
+import { getBuildSettings } from './getBuildSettings.js';
 import { RunFlags } from './runOptions.js';
 
 export async function runOnMac(

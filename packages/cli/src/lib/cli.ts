@@ -1,9 +1,9 @@
+import { createRequire } from 'node:module';
 import { dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
-import { Command } from 'commander';
 import { getConfig } from '@rnef/config';
-import { createRequire } from 'module';
 import { logger, resolveFilenameUp } from '@rnef/tools';
+import { Command } from 'commander';
 import { logConfig } from '../config.js';
 import { nativeFingerprintCommand } from './commands/fingerprint.js';
 

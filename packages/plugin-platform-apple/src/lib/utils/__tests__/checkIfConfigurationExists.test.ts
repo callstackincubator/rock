@@ -1,6 +1,6 @@
-import { describe, test, expect, vi, beforeEach, afterEach } from 'vitest';
-import { checkIfConfigurationExists } from '../checkIfConfigurationExists.js';
 import { logger } from '@rnef/tools';
+import { afterEach,beforeEach, describe, expect, test, vi } from 'vitest';
+import { checkIfConfigurationExists } from '../checkIfConfigurationExists.js';
 
 const CONFIGURATIONS = ['Debug', 'Release'];
 const NON_EXISTING_CONFIG = 'Test';

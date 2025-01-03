@@ -1,7 +1,7 @@
 import { select, spinner } from '@clack/prompts';
-import { getAdbPath } from './adb.js';
 import { checkCancelPrompt } from '@rnef/tools';
 import spawn from 'nano-spawn';
+import { getAdbPath } from './adb.js';
 
 type User = {
   id: string;

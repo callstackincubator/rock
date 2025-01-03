@@ -1,7 +1,7 @@
 import { logger } from '@rnef/tools';
+import spawn from 'nano-spawn';
 import color from 'picocolors';
 import { XcodeProjectInfo } from '../../types/index.js';
-import spawn from 'nano-spawn';
 
 export type BuildSettings = {
   TARGET_BUILD_DIR: string;

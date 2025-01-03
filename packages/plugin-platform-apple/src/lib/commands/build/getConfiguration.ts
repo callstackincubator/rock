@@ -1,9 +1,9 @@
-import { getInfo } from '../../utils/getInfo.js';
-import { checkIfConfigurationExists } from '../../utils/checkIfConfigurationExists.js';
-import { getPlatformInfo } from './../../utils/getPlatformInfo.js';
-import { ApplePlatform, XcodeProjectInfo } from '../../types/index.js';
 import { logger } from '@rnef/tools';
 import color from 'picocolors';
+import { ApplePlatform, XcodeProjectInfo } from '../../types/index.js';
+import { checkIfConfigurationExists } from '../../utils/checkIfConfigurationExists.js';
+import { getInfo } from '../../utils/getInfo.js';
+import { getPlatformInfo } from './../../utils/getPlatformInfo.js';
 
 export async function getConfiguration(
   xcodeProject: XcodeProjectInfo,

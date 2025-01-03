@@ -1,4 +1,7 @@
-import type { PluginOutput, PluginApi } from '@rnef/config';
+import { projectConfig } from '@react-native-community/cli-config-android';
+import { AndroidProjectConfig } from '@react-native-community/cli-types';
+import type { PluginApi,PluginOutput } from '@rnef/config';
+import { RnefError } from '@rnef/tools';
 import {
   buildAndroid,
   type BuildFlags,
@@ -9,9 +12,6 @@ import {
   runAndroid,
   runOptions,
 } from './commands/runAndroid/runAndroid.js';
-import { projectConfig } from '@react-native-community/cli-config-android';
-import { AndroidProjectConfig } from '@react-native-community/cli-types';
-import { RnefError } from '@rnef/tools';
 
 type PluginConfig = AndroidProjectConfig;
 

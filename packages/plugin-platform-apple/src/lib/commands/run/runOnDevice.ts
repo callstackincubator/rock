@@ -1,11 +1,11 @@
-import { ApplePlatform, Device, XcodeProjectInfo } from '../../types/index.js';
 import { logger } from '@rnef/tools';
+import spawn from 'nano-spawn';
 import color from 'picocolors';
+import { ApplePlatform, Device, XcodeProjectInfo } from '../../types/index.js';
 import { buildProject } from '../build/buildProject.js';
 import { getBuildPath } from './getBuildPath.js';
 import { getBuildSettings } from './getBuildSettings.js';
 import { RunFlags } from './runOptions.js';
-import spawn from 'nano-spawn';
 
 export async function runOnDevice(
   selectedDevice: Device,

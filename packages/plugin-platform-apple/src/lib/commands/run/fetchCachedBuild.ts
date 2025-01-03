@@ -1,3 +1,6 @@
+import fs from 'node:fs';
+import path from 'node:path';
+import { spinner } from '@clack/prompts';
 import {
   createRemoteBuildCache,
   findDirectoriesWithPattern,
@@ -7,10 +10,7 @@ import {
   nativeFingerprint,
   queryLocalBuildCache,
 } from '@rnef/tools';
-import { spinner } from '@clack/prompts';
-import path from 'node:path';
 import color from 'picocolors';
-import fs from 'node:fs';
 import * as tar from 'tar';
 
 export type FetchCachedBuildOptions = {

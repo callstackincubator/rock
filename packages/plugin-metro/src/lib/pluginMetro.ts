@@ -1,9 +1,9 @@
-import type { PluginOutput, PluginApi } from '@rnef/config';
 import {
-  startCommand,
   bundleCommand,
+  startCommand,
   // @ts-expect-error missing typings
 } from '@react-native/community-cli-plugin';
+import type { PluginApi,PluginOutput } from '@rnef/config';
 import { RnefError } from '@rnef/tools';
 
 type PluginConfig = {

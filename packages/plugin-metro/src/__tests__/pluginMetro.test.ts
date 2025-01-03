@@ -1,5 +1,5 @@
-import { pluginMetro } from '../lib/pluginMetro.js';
 import { expect, test } from 'vitest';
+import { pluginMetro } from '../lib/pluginMetro.js';
 
 const pluginApi = {
   registerCommand: vi.fn(),

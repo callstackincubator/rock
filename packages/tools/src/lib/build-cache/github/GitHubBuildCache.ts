@@ -1,15 +1,15 @@
+import logger from '../../logger.js';
 import {
   getLocalArtifactPath,
-  RemoteBuildCache,
-  RemoteArtifact,
   LocalArtifact,
+  RemoteArtifact,
+  RemoteBuildCache,
 } from '../common.js';
-import { hasGitHubToken } from './config.js';
-import logger from '../../logger.js';
 import {
   downloadGitHubArtifact,
   fetchGitHubArtifactsByName,
 } from './artifacts.js';
+import { hasGitHubToken } from './config.js';
 
 export class GitHubBuildCache implements RemoteBuildCache {
   name = 'GitHub';

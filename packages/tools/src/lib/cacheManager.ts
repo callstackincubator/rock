@@ -1,5 +1,5 @@
-import path from 'node:path';
 import fs from 'node:fs';
+import path from 'node:path';
 import color from 'picocolors';
 import { RnefError } from './error.js';
 import logger from './logger.js';

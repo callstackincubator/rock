@@ -1,10 +1,10 @@
-import type { BuildFlags } from './buildOptions.js';
-import { supportedPlatforms } from '../../utils/supportedPlatforms.js';
-import { ApplePlatform, XcodeProjectInfo } from '../../types/index.js';
-import { logger, RnefError } from '@rnef/tools';
-import { simulatorDestinationMap } from './simulatorDestinationMap.js';
 import { spinner } from '@clack/prompts';
+import { logger, RnefError } from '@rnef/tools';
 import spawn, { SubprocessError } from 'nano-spawn';
+import { ApplePlatform, XcodeProjectInfo } from '../../types/index.js';
+import { supportedPlatforms } from '../../utils/supportedPlatforms.js';
+import type { BuildFlags } from './buildOptions.js';
+import { simulatorDestinationMap } from './simulatorDestinationMap.js';
 
 export const buildProject = async (
   xcodeProject: XcodeProjectInfo,

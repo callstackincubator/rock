@@ -1,12 +1,12 @@
-import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
-import color from 'picocolors';
 import { logger } from '@rnef/tools';
-import { selectFromInteractiveMode } from '../selectFromInteractiveMode.js';
+import color from 'picocolors';
+import { afterEach,beforeEach, describe, expect, it, vi } from 'vitest';
 import { getInfo } from '../getInfo.js';
 import {
   promptForConfigurationSelection,
   promptForSchemeSelection,
 } from '../prompts.js';
+import { selectFromInteractiveMode } from '../selectFromInteractiveMode.js';
 
 // Mock dependencies
 vi.mock('@rnef/tools', () => ({

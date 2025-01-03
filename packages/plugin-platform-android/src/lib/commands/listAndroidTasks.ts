@@ -1,8 +1,8 @@
-import color from 'picocolors';
-import spawn from 'nano-spawn';
 import { select, spinner } from '@clack/prompts';
-import { getGradleWrapper } from './runGradle.js';
 import { checkCancelPrompt, RnefError } from '@rnef/tools';
+import spawn from 'nano-spawn';
+import color from 'picocolors';
+import { getGradleWrapper } from './runGradle.js';
 
 type GradleTask = {
   task: string;

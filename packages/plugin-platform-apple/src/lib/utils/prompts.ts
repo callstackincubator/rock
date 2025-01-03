@@ -1,8 +1,8 @@
 import { select } from '@clack/prompts';
-import color from 'picocolors';
 import { checkCancelPrompt } from '@rnef/tools';
-import { ApplePlatform, Device } from '../types/index.js';
+import color from 'picocolors';
 import { sortByRecentDevices } from '../commands/run/recentDevices.js';
+import { ApplePlatform, Device } from '../types/index.js';
 
 export async function promptForSchemeSelection(schemes: string[]) {
   return checkCancelPrompt<string>(

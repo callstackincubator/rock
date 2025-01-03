@@ -1,9 +1,9 @@
+import { spinner } from '@clack/prompts';
 import { logger, RnefError } from '@rnef/tools';
-import type { AndroidProject, Flags } from './runAndroid/runAndroid.js';
-import { getAdbPath, getDevices } from './runAndroid/adb.js';
 import spawn from 'nano-spawn';
 import type { BuildFlags } from './buildAndroid/buildAndroid.js';
-import { spinner } from '@clack/prompts';
+import { getAdbPath, getDevices } from './runAndroid/adb.js';
+import type { AndroidProject, Flags } from './runAndroid/runAndroid.js';
 
 export type RunGradleArgs = {
   tasks: string[];

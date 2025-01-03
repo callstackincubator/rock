@@ -1,10 +1,10 @@
-import spawn from 'nano-spawn';
-import { XMLParser } from 'fast-xml-parser';
-import * as fs from 'fs';
-import * as path from 'path';
-import { Info, XcodeProjectInfo } from '../types/index.js';
-import { logger, RnefError } from '@rnef/tools';
+import * as fs from 'node:fs';
+import * as path from 'node:path';
 import { spinner } from '@clack/prompts';
+import { logger, RnefError } from '@rnef/tools';
+import { XMLParser } from 'fast-xml-parser';
+import spawn from 'nano-spawn';
+import { Info, XcodeProjectInfo } from '../types/index.js';
 
 function parseTargetList(json: string): Info | undefined {
   try {

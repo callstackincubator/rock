@@ -1,26 +1,26 @@
-import path from 'path';
-import fs from 'fs';
-import isInteractive from 'is-interactive';
+import fs from 'node:fs';
+import path from 'node:path';
+import { intro, outro, spinner } from '@clack/prompts';
 import { logger, RnefError } from '@rnef/tools';
-import { listDevicesAndSimulators } from '../../utils/listDevices.js';
-import { promptForDeviceSelection } from '../../utils/prompts.js';
-import { getConfiguration } from '../build/getConfiguration.js';
-import { getPlatformInfo } from '../../utils/getPlatformInfo.js';
-import { matchingDevice } from './matchingDevice.js';
-import { runOnDevice } from './runOnDevice.js';
-import { runOnSimulator } from './runOnSimulator.js';
+import isInteractive from 'is-interactive';
 import {
   ApplePlatform,
   Device,
   ProjectConfig,
   XcodeProjectInfo,
 } from '../../types/index.js';
-import { RunFlags } from './runOptions.js';
+import { getPlatformInfo } from '../../utils/getPlatformInfo.js';
+import { listDevicesAndSimulators } from '../../utils/listDevices.js';
+import { promptForDeviceSelection } from '../../utils/prompts.js';
 import { selectFromInteractiveMode } from '../../utils/selectFromInteractiveMode.js';
-import { intro, outro, spinner } from '@clack/prompts';
+import { getConfiguration } from '../build/getConfiguration.js';
+import { matchingDevice } from './matchingDevice.js';
+import { cacheRecentDevice } from './recentDevices.js';
+import { runOnDevice } from './runOnDevice.js';
 import { runOnMac } from './runOnMac.js';
 import { runOnMacCatalyst } from './runOnMacCatalyst.js';
-import { cacheRecentDevice } from './recentDevices.js';
+import { runOnSimulator } from './runOnSimulator.js';
+import { RunFlags } from './runOptions.js';
 
 export const createRun = async (
   platformName: ApplePlatform,

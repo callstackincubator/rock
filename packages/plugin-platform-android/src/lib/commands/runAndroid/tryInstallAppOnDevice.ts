@@ -1,11 +1,11 @@
-import spawn from 'nano-spawn';
-import fs from 'fs';
-import { getAdbPath } from './adb.js';
-import type { AndroidProject, Flags } from './runAndroid.js';
+import fs from 'node:fs';
 import { spinner } from '@clack/prompts';
-import { promptForUser } from './listAndroidUsers.js';
 import { logger, RnefError } from '@rnef/tools';
+import spawn from 'nano-spawn';
+import { getAdbPath } from './adb.js';
 import { DeviceData } from './listAndroidDevices.js';
+import { promptForUser } from './listAndroidUsers.js';
+import type { AndroidProject, Flags } from './runAndroid.js';
 
 export async function tryInstallAppOnDevice(
   device: DeviceData,

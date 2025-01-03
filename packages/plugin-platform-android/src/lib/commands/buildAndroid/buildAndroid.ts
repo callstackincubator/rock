@@ -1,10 +1,10 @@
-import { AndroidProjectConfig } from '@react-native-community/cli-types';
-import { runGradle } from '../runGradle.js';
-import { promptForTaskSelection } from '../listAndroidTasks.js';
-import { findOutputFile } from '../runAndroid/tryInstallAppOnDevice.js';
 import { outro, spinner } from '@clack/prompts';
+import { AndroidProjectConfig } from '@react-native-community/cli-types';
 import { logger } from '@rnef/tools';
 import color from 'picocolors';
+import { promptForTaskSelection } from '../listAndroidTasks.js';
+import { findOutputFile } from '../runAndroid/tryInstallAppOnDevice.js';
+import { runGradle } from '../runGradle.js';
 import { toPascalCase } from '../toPascalCase.js';
 
 export interface BuildFlags {

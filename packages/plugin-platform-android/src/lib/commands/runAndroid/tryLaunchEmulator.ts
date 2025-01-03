@@ -1,7 +1,7 @@
-import os from 'os';
-import spawn, { SubprocessError } from 'nano-spawn';
-import { getDevices, getAdbPath } from './adb.js';
+import os from 'node:os';
 import { spinner } from '@clack/prompts';
+import spawn, { SubprocessError } from 'nano-spawn';
+import { getAdbPath, getDevices } from './adb.js';
 
 const emulatorCommand = process.env['ANDROID_HOME']
   ? `${process.env['ANDROID_HOME']}/emulator/emulator`

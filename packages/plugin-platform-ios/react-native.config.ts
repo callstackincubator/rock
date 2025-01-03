@@ -1,6 +1,6 @@
 import {
-  getProjectConfig,
   getDependencyConfig,
+  getProjectConfig,
 } from '@react-native-community/cli-config-apple';
 
 export default {

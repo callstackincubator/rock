@@ -1,11 +1,11 @@
+import { logger } from '@rnef/tools';
 import color from 'picocolors';
 import { XcodeProjectInfo } from '../types/index.js';
+import { getInfo } from './getInfo.js';
 import {
   promptForConfigurationSelection,
   promptForSchemeSelection,
 } from './prompts.js';
-import { logger } from '@rnef/tools';
-import { getInfo } from './getInfo.js';
 
 export async function selectFromInteractiveMode(
   xcodeProject: XcodeProjectInfo,

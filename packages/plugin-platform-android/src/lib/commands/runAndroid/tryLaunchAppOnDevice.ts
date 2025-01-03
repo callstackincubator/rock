@@ -1,10 +1,10 @@
-import spawn from 'nano-spawn';
-import { AndroidProject, Flags } from './runAndroid.js';
-import { getAdbPath } from './adb.js';
-import { logger, RnefError } from '@rnef/tools';
-import { tryRunAdbReverse } from './tryRunAdbReverse.js';
 import { spinner } from '@clack/prompts';
+import { logger, RnefError } from '@rnef/tools';
+import spawn from 'nano-spawn';
+import { getAdbPath } from './adb.js';
 import { DeviceData } from './listAndroidDevices.js';
+import { AndroidProject, Flags } from './runAndroid.js';
+import { tryRunAdbReverse } from './tryRunAdbReverse.js';
 
 export async function tryLaunchAppOnDevice(
   device: DeviceData,
