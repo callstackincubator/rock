@@ -221,7 +221,7 @@ export const runOptions = [
   {
     name: '--device <string>',
     description:
-      'Explicitly set the device or emulator to use by name by its name or ID (if launched).',
+      'Explicitly set the device or emulator to use by name or ID (if launched).',
   },
   {
     name: '--binary-path <string>',
