@@ -1,5 +1,8 @@
 import { loadConfigAsync } from '@react-native-community/cli-config';
-import { Config, DependencyConfig } from '@react-native-community/cli-types';
+import type {
+  Config,
+  DependencyConfig,
+} from '@react-native-community/cli-types';
 
 function isValidRNDependency(config: DependencyConfig) {
   return (

@@ -1,7 +1,8 @@
 import { select } from '@clack/prompts';
 import spawn from 'nano-spawn';
 import color from 'picocolors';
-import { describe, it, Mock, MockedFunction,vi } from 'vitest';
+import type { Mock, MockedFunction } from 'vitest';
+import { describe, it, vi } from 'vitest';
 import {
   parseTasksFromGradleFile,
   promptForTaskSelection,

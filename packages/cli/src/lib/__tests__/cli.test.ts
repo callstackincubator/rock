@@ -1,6 +1,6 @@
 import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
-import { expect,it } from 'vitest';
+import { expect, it } from 'vitest';
 import { cli } from '../cli.js';
 
 it('should throw when config not found', async () => {

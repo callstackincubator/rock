@@ -1,5 +1,6 @@
 import crypto from 'node:crypto';
-import { createFingerprintAsync, FingerprintSource } from '@expo/fingerprint';
+import type { FingerprintSource } from '@expo/fingerprint';
+import { createFingerprintAsync } from '@expo/fingerprint';
 import { RnefError } from './error.js';
 
 const HASH_ALGORITHM = 'sha1';

@@ -1,5 +1,5 @@
 import { cacheManager, logger } from '@rnef/tools';
-import { ApplePlatform, Device } from '../../types/index.js';
+import type { ApplePlatform, Device } from '../../types/index.js';
 
 export function cacheRecentDevice(device: Device, platform: ApplePlatform) {
   const cacheKey = 'recentDevicesUDID-' + platform;

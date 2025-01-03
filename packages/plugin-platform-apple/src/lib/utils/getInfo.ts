@@ -4,7 +4,7 @@ import { spinner } from '@clack/prompts';
 import { logger, RnefError } from '@rnef/tools';
 import { XMLParser } from 'fast-xml-parser';
 import spawn from 'nano-spawn';
-import { Info, XcodeProjectInfo } from '../types/index.js';
+import type { Info, XcodeProjectInfo } from '../types/index.js';
 
 function parseTargetList(json: string): Info | undefined {
   try {

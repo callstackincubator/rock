@@ -1,6 +1,6 @@
 import { projectConfig } from '@react-native-community/cli-config-android';
-import { AndroidProjectConfig } from '@react-native-community/cli-types';
-import type { PluginApi,PluginOutput } from '@rnef/config';
+import type { AndroidProjectConfig } from '@react-native-community/cli-types';
+import type { PluginApi, PluginOutput } from '@rnef/config';
 import { RnefError } from '@rnef/tools';
 import {
   buildAndroid,

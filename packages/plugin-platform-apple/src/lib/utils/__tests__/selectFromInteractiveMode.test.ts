@@ -1,6 +1,6 @@
 import { logger } from '@rnef/tools';
 import color from 'picocolors';
-import { afterEach,beforeEach, describe, expect, it, vi } from 'vitest';
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { getInfo } from '../getInfo.js';
 import {
   promptForConfigurationSelection,

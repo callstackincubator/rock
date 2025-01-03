@@ -1,9 +1,9 @@
 import spawn from 'nano-spawn';
-import { ApplePlatform, XcodeProjectInfo } from '../../types/index.js';
+import type { ApplePlatform, XcodeProjectInfo } from '../../types/index.js';
 import { buildProject } from '../build/buildProject.js';
 import { getBuildPath } from './getBuildPath.js';
 import { getBuildSettings } from './getBuildSettings.js';
-import { RunFlags } from './runOptions.js';
+import type { RunFlags } from './runOptions.js';
 
 export async function runOnMacCatalyst(
   platform: ApplePlatform,

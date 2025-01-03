@@ -1,11 +1,11 @@
 import path from 'node:path';
 import { spinner } from '@clack/prompts';
+import type { LocalBuild } from '@rnef/tools';
 import {
   createRemoteBuildCache,
   findFilesWithPattern,
   formatArtifactName,
   getProjectRoot,
-  LocalBuild,
   nativeFingerprint,
   queryLocalBuildCache,
 } from '@rnef/tools';

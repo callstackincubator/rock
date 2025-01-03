@@ -2,13 +2,13 @@ import path from 'node:path';
 import { cancel, outro } from '@clack/prompts';
 import { logger, RnefError } from '@rnef/tools';
 import isInteractive from 'is-interactive';
-import {
+import type {
   BuilderCommand,
   ProjectConfig,
   XcodeProjectInfo,
 } from '../../types/index.js';
 import { selectFromInteractiveMode } from '../../utils/selectFromInteractiveMode.js';
-import { BuildFlags } from './buildOptions.js';
+import type { BuildFlags } from './buildOptions.js';
 import { buildProject } from './buildProject.js';
 import { getConfiguration } from './getConfiguration.js';
 

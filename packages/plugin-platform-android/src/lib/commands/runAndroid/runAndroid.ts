@@ -1,19 +1,21 @@
 import fs from 'node:fs';
 import path from 'node:path';
 import { intro, outro, select } from '@clack/prompts';
-import {
+import type {
   AndroidProjectConfig,
   Config,
 } from '@react-native-community/cli-types';
 import { checkCancelPrompt, logger, RnefError } from '@rnef/tools';
 import isInteractive from 'is-interactive';
-import { BuildFlags, options } from '../buildAndroid/buildAndroid.js';
+import type { BuildFlags } from '../buildAndroid/buildAndroid.js';
+import { options } from '../buildAndroid/buildAndroid.js';
 import { promptForTaskSelection } from '../listAndroidTasks.js';
 import { runGradle } from '../runGradle.js';
 import { toPascalCase } from '../toPascalCase.js';
 import { getDevices } from './adb.js';
 import { fetchCachedBuild } from './fetchCachedBuild.js';
-import { DeviceData,listAndroidDevices } from './listAndroidDevices.js';
+import type { DeviceData } from './listAndroidDevices.js';
+import { listAndroidDevices } from './listAndroidDevices.js';
 import { tryInstallAppOnDevice } from './tryInstallAppOnDevice.js';
 import { tryLaunchAppOnDevice } from './tryLaunchAppOnDevice.js';
 import { tryLaunchEmulator } from './tryLaunchEmulator.js';

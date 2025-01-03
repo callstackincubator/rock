@@ -3,7 +3,7 @@ import {
   startCommand,
   // @ts-expect-error missing typings
 } from '@react-native/community-cli-plugin';
-import type { PluginApi,PluginOutput } from '@rnef/config';
+import type { PluginApi, PluginOutput } from '@rnef/config';
 import { RnefError } from '@rnef/tools';
 
 type PluginConfig = {

@@ -94,7 +94,7 @@ NPM_CONFIG_REGISTRY=http://localhost:4873 pnpm create @rnef/app --registry http:
 echo "node-linker=hoisted" > .npmrc
 NPM_CONFIG_REGISTRY=http://localhost:4873 pnpm install
 # Then link packages (see above)
-pnpm link --global ... 
+pnpm link --global ...
 
 # Clean up
 pnpm verdaccio-reset

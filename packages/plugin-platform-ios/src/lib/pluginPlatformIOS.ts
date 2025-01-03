@@ -1,12 +1,11 @@
 import { getProjectConfig } from '@react-native-community/cli-config-apple';
-import type { PluginApi,PluginOutput } from '@rnef/config';
+import type { PluginApi, PluginOutput } from '@rnef/config';
+import type { BuildFlags, RunFlags } from '@rnef/plugin-platform-apple';
 import {
-  BuildFlags,
   createBuild,
   createRun,
   getBuildOptions,
   getRunOptions,
-  RunFlags,
 } from '@rnef/plugin-platform-apple';
 import { RnefError } from '@rnef/tools';
 

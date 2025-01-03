@@ -1,10 +1,10 @@
 import logger from '../../logger.js';
-import {
-  getLocalArtifactPath,
+import type {
   LocalArtifact,
   RemoteArtifact,
   RemoteBuildCache,
 } from '../common.js';
+import { getLocalArtifactPath } from '../common.js';
 import {
   downloadGitHubArtifact,
   fetchGitHubArtifactsByName,

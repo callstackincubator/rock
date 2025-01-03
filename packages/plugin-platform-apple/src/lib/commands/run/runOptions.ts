@@ -1,5 +1,6 @@
-import { BuilderCommand } from '../../types/index.js';
-import { BuildFlags, getBuildOptions } from '../build/buildOptions.js';
+import type { BuilderCommand } from '../../types/index.js';
+import type { BuildFlags } from '../build/buildOptions.js';
+import { getBuildOptions } from '../build/buildOptions.js';
 
 export interface RunFlags extends BuildFlags {
   binaryPath?: string;

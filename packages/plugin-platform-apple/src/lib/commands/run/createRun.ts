@@ -3,7 +3,7 @@ import path from 'node:path';
 import { intro, outro, spinner } from '@clack/prompts';
 import { logger, RnefError } from '@rnef/tools';
 import isInteractive from 'is-interactive';
-import {
+import type {
   ApplePlatform,
   Device,
   ProjectConfig,
@@ -20,7 +20,7 @@ import { runOnDevice } from './runOnDevice.js';
 import { runOnMac } from './runOnMac.js';
 import { runOnMacCatalyst } from './runOnMacCatalyst.js';
 import { runOnSimulator } from './runOnSimulator.js';
-import { RunFlags } from './runOptions.js';
+import type { RunFlags } from './runOptions.js';
 
 export const createRun = async (
   platformName: ApplePlatform,

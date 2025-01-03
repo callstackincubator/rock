@@ -1,6 +1,6 @@
 import { logger } from '@rnef/tools';
 import color from 'picocolors';
-import { XcodeProjectInfo } from '../types/index.js';
+import type { XcodeProjectInfo } from '../types/index.js';
 import { getInfo } from './getInfo.js';
 import {
   promptForConfigurationSelection,

@@ -1,5 +1,5 @@
 import { logger } from '@rnef/tools';
-import { afterEach,beforeEach, describe, expect, test, vi } from 'vitest';
+import { afterEach, beforeEach, describe, expect, test, vi } from 'vitest';
 import { checkIfConfigurationExists } from '../checkIfConfigurationExists.js';
 
 const CONFIGURATIONS = ['Debug', 'Release'];

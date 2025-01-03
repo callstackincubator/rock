@@ -1,5 +1,5 @@
 import { outro, spinner } from '@clack/prompts';
-import { AndroidProjectConfig } from '@react-native-community/cli-types';
+import type { AndroidProjectConfig } from '@react-native-community/cli-types';
 import { logger } from '@rnef/tools';
 import color from 'picocolors';
 import { promptForTaskSelection } from '../listAndroidTasks.js';

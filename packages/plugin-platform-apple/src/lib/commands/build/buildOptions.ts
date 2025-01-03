@@ -1,4 +1,4 @@
-import { BuilderCommand } from '../../types/index.js';
+import type { BuilderCommand } from '../../types/index.js';
 import { getPlatformInfo } from '../../utils/getPlatformInfo.js';
 
 export type BuildFlags = {

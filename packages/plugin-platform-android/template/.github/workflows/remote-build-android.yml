@@ -8,7 +8,7 @@ on:
     branches:
       - main
 
-concurrency: 
+concurrency:
   group: remote-build-android-${{ github.ref }}
   cancel-in-progress: true
 
@@ -20,7 +20,7 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: Setup Node  
+      - name: Setup Node
         uses: actions/setup-node@v4
         with:
           node-version: '20'
@@ -34,4 +34,3 @@ jobs:
 
       - name: RNEF Remote Build - Android
         uses: ./.github/actions/rnef-remote-build-android
-

@@ -1,4 +1,4 @@
-import { Device } from '../../types/index.js';
+import type { Device } from '../../types/index.js';
 
 export function matchingDevice(devices: Array<Device>, deviceArg: string) {
   const deviceByName = devices.find(

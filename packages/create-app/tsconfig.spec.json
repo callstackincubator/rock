@@ -9,7 +9,7 @@
       "node",
       "vitest"
     ],
-    "module": "NodeNext",
+    "module": "NodeNext"
   },
   "include": [
     "vite.config.ts",
@@ -22,6 +22,7 @@
     "src/**/*.spec.js",
     "src/**/*.test.jsx",
     "src/**/*.spec.jsx",
-    "src/**/*.d.ts"
-, "e2e/e2e.test.ts"  ]
+    "src/**/*.d.ts",
+    "e2e/e2e.test.ts"
+  ]
 }

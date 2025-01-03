@@ -3,17 +3,17 @@ description: 'Github implementation of the RNEF Remote Build for iOS Simulator'
 
 inputs:
   github-token:
-    description: "GitHub Token"
+    description: 'GitHub Token'
     required: false
     default: ${{ github.token }}
   scheme:
     description: Xcode scheme to build
     required: false
-    default: "HelloWorld"
+    default: 'HelloWorld'
   mode:
     description: Xcode scheme build configuration
     required: false
-    default: "Debug"
+    default: 'Debug'
 
 outputs:
   artifact-url:
@@ -21,7 +21,7 @@ outputs:
     value: ${{ steps.cached-url.outcome == 'success' && steps.cached-url.outputs.artifact-url || steps.upload-artifact.outputs.artifact-url }}
 
 runs:
-  using: "composite"
+  using: 'composite'
   steps:
     - name: Native Fingerprint
       id: fingerprint

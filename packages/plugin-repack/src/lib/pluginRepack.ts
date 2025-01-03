@@ -1,5 +1,5 @@
 import commands from '@callstack/repack/commands/rspack';
-import type { PluginApi,PluginOutput } from '@rnef/config';
+import type { PluginApi, PluginOutput } from '@rnef/config';
 import { RnefError } from '@rnef/tools';
 
 type PluginConfig = {

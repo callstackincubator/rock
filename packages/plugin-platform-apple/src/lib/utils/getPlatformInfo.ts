@@ -1,4 +1,4 @@
-import { ApplePlatform } from '../types/index.js';
+import type { ApplePlatform } from '../types/index.js';
 
 interface PlatformInfo {
   readableName: string;

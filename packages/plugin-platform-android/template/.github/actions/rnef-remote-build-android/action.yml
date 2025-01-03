@@ -6,17 +6,17 @@ description: 'Github implementation of the RNEF Remote Build for Android'
 
 inputs:
   github-token:
-    description: "GitHub Token"
+    description: 'GitHub Token'
     required: false
     default: ${{ github.token }}
   artifact-output-path:
-    description: "Path to the build output artifact"
+    description: 'Path to the build output artifact'
     required: false
-    default: "android/app/build/outputs/apk/debug/app-debug.apk"
+    default: 'android/app/build/outputs/apk/debug/app-debug.apk'
   mode:
-    description: "Build mode"
+    description: 'Build mode'
     required: false
-    default: "debug"
+    default: 'debug'
 
 outputs:
   artifact-url:
@@ -24,7 +24,7 @@ outputs:
     value: ${{ steps.cached-url.outcome == 'success' && steps.cached-url.outputs.artifact-url || steps.upload-artifact.outputs.artifact-url }}
 
 runs:
-  using: "composite"
+  using: 'composite'
   steps:
     - name: Native Fingerprint
       id: fingerprint
@@ -49,7 +49,7 @@ runs:
       with:
         platform: Android
         artifact-url: ${{ steps.cached-url.outputs.artifact-url }}
-    
+
     - name: Install Java
       if: ${{ !steps.cached-url.outputs.artifact-url }}
       uses: actions/setup-java@v4
@@ -57,7 +57,7 @@ runs:
         java-version: 17
         distribution: adopt
         cache: gradle
-  
+
     - name: Validate Gradle wrapper
       if: ${{ !steps.cached-url.outputs.artifact-url }}
       uses: gradle/actions/wrapper-validation@v4

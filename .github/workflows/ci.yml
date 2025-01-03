@@ -10,7 +10,7 @@ permissions:
   actions: read
   contents: read
 
-concurrency: 
+concurrency:
   group: ci-${{ github.ref }}
   cancel-in-progress: true
 
@@ -54,4 +54,3 @@ jobs:
           pnpm verdaccio:publish
 
           NPM_CONFIG_REGISTRY=http://localhost:4873 pnpm exec nx affected -t e2e
-
