@@ -1,8 +1,8 @@
 import { intro, multiselect, note, outro, select, text } from '@clack/prompts';
 import { checkCancelPrompt, RnefError } from '@rnef/tools';
-import { parsePackageManagerFromUserAgent } from './parsers.js';
+import type { TemplateInfo } from '../templates.js';
 import { validateProjectName } from '../validate-project-name.js';
-import { TemplateInfo } from '../templates.js';
+import { parsePackageManagerFromUserAgent } from './parsers.js';
 import { getRnefVersion } from './version.js';
 
 export function printHelpMessage(

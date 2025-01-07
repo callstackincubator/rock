@@ -1,7 +1,7 @@
-import { logger } from '@rnef/tools';
 import * as fs from 'node:fs';
 import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
+import { logger } from '@rnef/tools';
 
 export function getRnefVersion() {
   try {
@@ -13,6 +13,6 @@ export function getRnefVersion() {
     return packageJson.version;
   } catch (error) {
     logger.warn('Failed to get RNEF version', error);
-    return 'unknown';
+    return null;
   }
 }

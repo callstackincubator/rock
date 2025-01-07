@@ -2,42 +2,42 @@ import fs from 'node:fs';
 import path from 'node:path';
 import { spinner } from '@clack/prompts';
 import {
-  resolveAbsolutePath,
   cancelPromptAndExit,
+  resolveAbsolutePath,
   RnefError,
 } from '@rnef/tools';
+import { gitInitStep } from './steps/git-init.js';
+import {
+  PLATFORMS,
+  PLUGINS,
+  resolveTemplate,
+  TemplateInfo,
+  TEMPLATES,
+} from './templates.js';
 import {
   renameCommonFiles,
   replacePlaceholder,
 } from './utils/edit-template.js';
 import { copyDirSync, isEmptyDirSync, removeDirSync } from './utils/fs.js';
 import { printLogo } from './utils/logo.js';
-import { parseCliOptions } from './utils/parse-cli-options.js';
 import { rewritePackageJson } from './utils/package-json.js';
+import { parseCliOptions } from './utils/parse-cli-options.js';
 import { parsePackageInfo } from './utils/parsers.js';
 import {
+  confirmOverrideFiles,
+  printByeMessage,
   printHelpMessage,
   printVersionMessage,
-  confirmOverrideFiles,
-  promptProjectName,
   printWelcomeMessage,
-  printByeMessage,
-  promptTemplate,
   promptPlatforms,
   promptPlugins,
+  promptProjectName,
+  promptTemplate,
 } from './utils/prompts.js';
-import {
-  TemplateInfo,
-  PLATFORMS,
-  resolveTemplate,
-  TEMPLATES,
-  PLUGINS,
-} from './templates.js';
 import {
   downloadTarballFromNpm,
   extractTarballToTempDirectory,
 } from './utils/tarball.js';
-import { initGitRepo } from './utils/git-init.js';
 import { getRnefVersion } from './utils/version.js';
 
 export async function run() {
@@ -106,9 +106,7 @@ export async function run() {
   createConfig(absoluteTargetDir, platforms, plugins);
   loader.stop('Applied template, platforms and plugins.');
 
-  loader.start('Initializing git repo');
-  await initGitRepo(absoluteTargetDir, version);
-  loader.stop('Git repo initialized.');
+  await gitInitStep(absoluteTargetDir, version);
 
   printByeMessage(absoluteTargetDir);
 }
