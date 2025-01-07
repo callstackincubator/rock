@@ -1,9 +1,9 @@
 import fs from 'node:fs';
 import path from 'node:path';
+import { RnefError } from '@rnef/tools';
 import packageJson from 'package-json';
 import * as tar from 'tar';
 import { getNameWithoutExtension } from './fs.js';
-import { RnefError } from '@rnef/tools';
 
 export async function downloadTarballFromNpm(
   packageName: string,

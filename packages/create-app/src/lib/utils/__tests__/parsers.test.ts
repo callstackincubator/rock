@@ -1,4 +1,4 @@
-import { describe, it, test, expect } from 'vitest';
+import { describe, expect, it, test } from 'vitest';
 import {
   parsePackageInfo,
   parsePackageManagerFromUserAgent,

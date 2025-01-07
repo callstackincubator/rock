@@ -7,13 +7,8 @@ import {
   RnefError,
 } from '@rnef/tools';
 import { gitInitStep } from './steps/git-init.js';
-import {
-  PLATFORMS,
-  PLUGINS,
-  resolveTemplate,
-  TemplateInfo,
-  TEMPLATES,
-} from './templates.js';
+import type { TemplateInfo } from './templates.js';
+import { PLATFORMS, PLUGINS, resolveTemplate, TEMPLATES } from './templates.js';
 import {
   renameCommonFiles,
   replacePlaceholder,
