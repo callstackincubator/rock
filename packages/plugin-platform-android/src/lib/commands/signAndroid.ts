@@ -54,7 +54,7 @@ async function runKeytool(
       { stdio: 'inherit' }
     );
 
-    logger.success(`Keystore generated at ${keystoreOutputPath}`);
+    logger.success(`Keystore generated at: ${color.cyan(keystoreOutputPath)}`);
     logger.warn(
       `Edit the ${color.bold('~/.gradle/gradle.properties')} or ${color.bold(
         './android/gradle.properties'
