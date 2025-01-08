@@ -22,6 +22,7 @@ import { getInfo } from '../../utils/getInfo.js';
 import { getPlatformInfo } from '../../utils/getPlatformInfo.js';
 import { getScheme } from '../../utils/getScheme.js';
 import { listDevicesAndSimulators } from '../../utils/listDevices.js';
+import resolvePods from '../../utils/pods/pods.js';
 import { fetchCachedBuild } from './fetchCachedBuild.js';
 import { matchingDevice } from './matchingDevice.js';
 import { cacheRecentDevice, sortByRecentDevices } from './recentDevices.js';
@@ -53,6 +54,15 @@ export const createRun = async (
   }
 
   const { readableName: platformReadableName } = getPlatformInfo(platformName);
+
+  if (!projectConfig.xcodeProject) {
+    throw new RnefError(
+      `Could not find Xcode project files in "${projectConfig.sourceDir}" folder. Please make sure that you have installed Cocoapods and "${projectConfig.sourceDir}" is a valid path`
+    );
+  }
+
+  projectConfig = await resolvePods(projectRoot, platformName, projectConfig);
+
   const { xcodeProject, sourceDir } = projectConfig;
 
   if (!xcodeProject) {

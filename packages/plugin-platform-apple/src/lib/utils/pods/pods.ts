@@ -1,0 +1,189 @@
+import { loadConfigAsync } from '@react-native-community/cli-config';
+import { getProjectConfig } from '@react-native-community/cli-config-apple';
+import type {
+  DependencyConfig,
+  IOSDependencyConfig,
+} from '@react-native-community/cli-types';
+import { cacheManager, RnefError } from '@rnef/tools';
+import { createHash } from 'crypto';
+import { existsSync } from 'fs';
+import fs from 'fs/promises';
+import path from 'path';
+import color from 'picocolors';
+import type { ProjectConfig } from '../../types/index.js';
+import type { ApplePlatform } from '../../types/index.js';
+import findPodfilePath from './findPodfilePath.js';
+import installPods from './installPods.js';
+
+interface NativeDependencies {
+  [key: string]: DependencyConfig;
+}
+
+async function loadPackageJSON(root: string) {
+  const packageJSONPath = path.join(root, 'package.json');
+  const packageJSONContent = await fs.readFile(packageJSONPath, 'utf-8');
+  const packageJSON = JSON.parse(packageJSONContent);
+  return packageJSON;
+}
+
+export function getPlatformDependencies(
+  dependencies: NativeDependencies,
+  platformName: ApplePlatform
+) {
+  return Object.keys(dependencies)
+    .filter((dependency) => dependencies[dependency].platforms?.[platformName])
+    .map(
+      (dependency) =>
+        `${dependency}@${
+          (
+            dependencies[dependency].platforms?.[
+              platformName
+            ] as IOSDependencyConfig
+          ).version
+        }`
+    )
+    .sort();
+}
+
+export function dependenciesToString(dependencies: string[]) {
+  return dependencies.join('\n');
+}
+
+export function generateMd5Hash(text: string) {
+  return createHash('md5').update(text).digest('hex');
+}
+
+export function compareMd5Hashes(hash1: string, hash2: string) {
+  return hash1 === hash2;
+}
+
+export function generateDependenciesHash(deps: string[]) {
+  return generateMd5Hash(JSON.stringify(deps));
+}
+
+export default async function resolvePods(
+  projectRoot: string,
+  platformName: string,
+  projectConfig: ProjectConfig
+): Promise<ProjectConfig> {
+  const { xcodeProject, sourceDir } = projectConfig;
+
+  if (!xcodeProject) {
+    throw new RnefError(
+      `Could not find Xcode project files in "${sourceDir}" folder. Please make sure that you have installed Cocoapods and "${sourceDir}" is a valid path`
+    );
+  }
+
+  const packageJson = await loadPackageJSON(projectRoot);
+  const packageJSONDependenciesHash = generateDependenciesHash(
+    Object.keys(packageJson.dependencies || {})
+  );
+
+  console.log('packageJsonDependenciesHash', packageJSONDependenciesHash);
+
+  const podfilePath = findPodfilePath(
+    projectRoot,
+    platformName as ApplePlatform
+  );
+  const podfile = podfilePath ? await fs.readFile(podfilePath, 'utf-8') : '';
+  const podfileHash = generateMd5Hash(podfile);
+
+  console.log('podfileHash', podfileHash);
+
+  const podfileLockPath = podfilePath
+    ? podfilePath.replace('.podfile', '.podfile.lock')
+    : '';
+  const podfileLock = podfileLockPath
+    ? await fs.readFile(podfileLockPath, 'utf-8')
+    : '';
+
+  const podfileLockHash = generateMd5Hash(podfileLock);
+
+  console.log('podfileLockHash', podfileLockHash);
+
+  const platformFolderPath = podfilePath
+    ? podfilePath.slice(0, podfilePath.lastIndexOf('/'))
+    : path.join(projectRoot, platformName);
+
+  const podsPath = path.join(platformFolderPath, 'Pods');
+  const arePodsInstalled = existsSync(podsPath);
+
+  const config = await loadConfigAsync({
+    selectedPlatform: platformName,
+  });
+
+  // There's a possibility to define a custom dependencies in `react-native.config.js`, that contain native code for a platform and that should also trigger install CocoaPods
+  const platformDependencies = getPlatformDependencies(
+    config.dependencies,
+    platformName as ApplePlatform
+  );
+  const platformDependenciesHash =
+    generateDependenciesHash(platformDependencies);
+
+  console.log('platformDependenciesHash', platformDependenciesHash);
+
+  const cachedDependenciesHash = cacheManager.get(
+    `${packageJson['name']}-dependencies`
+  );
+
+  const currentDependenciesHash = generateDependenciesHash([
+    podfileHash,
+    podfileLockHash,
+    platformDependenciesHash,
+    packageJSONDependenciesHash,
+  ]);
+  console.log({
+    cachedDependenciesHash,
+    currentDependenciesHash,
+  });
+
+  console.log(
+    compareMd5Hashes(currentDependenciesHash, cachedDependenciesHash || '')
+  );
+
+  if (
+    !compareMd5Hashes(currentDependenciesHash, cachedDependenciesHash || '') ||
+    !arePodsInstalled
+  ) {
+    console.log('3');
+
+    try {
+      await installPods({
+        skipBundleInstall: !!cachedDependenciesHash, // run `bundle install` only at the first time
+        newArchEnabled: true,
+        iosFolderPath: platformFolderPath,
+      });
+      cacheManager.set(
+        `${packageJson['name']}-dependencies`,
+        currentDependenciesHash
+      );
+    } catch {
+      const relativePath = path.relative(process.cwd(), platformFolderPath);
+
+      const command = cachedDependenciesHash
+        ? `cd ${relativePath} && bundle exec pod install`
+        : `bundle install && cd ${relativePath} && bundle exec pod install`;
+
+      throw new RnefError(
+        `Something went wrong while installing CocoaPods. Please run ${color.bold(
+          command
+        )} manually`
+      );
+    }
+  }
+
+  if (!xcodeProject.isWorkspace) {
+    const newProjectConfig = getProjectConfig({ platformName: 'ios' })(
+      projectRoot,
+      {}
+    );
+
+    if (newProjectConfig) {
+      return newProjectConfig;
+    } else {
+      throw new RnefError('Project config not found');
+    }
+  }
+
+  return projectConfig;
+}

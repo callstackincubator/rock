@@ -1,4 +1,7 @@
-import { getProjectConfig } from '@react-native-community/cli-config-apple';
+import {
+  getDependencyConfig,
+  getProjectConfig,
+} from '@react-native-community/cli-config-apple';
 import type { PluginApi, PluginOutput } from '@rnef/config';
 import type { BuildFlags, RunFlags } from '@rnef/platform-apple-helpers';
 import {
@@ -25,7 +28,7 @@ export const platformIOS =
         const iosConfig = projectConfig(projectRoot, {});
 
         if (iosConfig) {
-          await createBuild('ios', iosConfig, args as BuildFlags);
+          await createBuild('ios', iosConfig, args as BuildFlags, projectRoot);
         } else {
           throw new RnefError('iOS project not found.');
         }

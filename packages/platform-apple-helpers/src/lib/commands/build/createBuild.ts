@@ -1,10 +1,12 @@
 import path from 'node:path';
-import { isInteractive, logger, outro, RnefError } from '@rnef/tools';
+import { outro } from '@clack/prompts';
+import { isInteractive, logger, RnefError } from '@rnef/tools';
 import type { BuilderCommand, ProjectConfig } from '../../types/index.js';
 import { getBuildPaths } from '../../utils/buildPaths.js';
 import { getConfiguration } from '../../utils/getConfiguration.js';
 import { getInfo } from '../../utils/getInfo.js';
 import { getScheme } from '../../utils/getScheme.js';
+import resolvePods from '../../utils/pods/pods.js';
 import type { BuildFlags } from './buildOptions.js';
 import { buildProject } from './buildProject.js';
 import { exportArchive } from './exportArchive.js';
@@ -12,9 +14,10 @@ import { exportArchive } from './exportArchive.js';
 export const createBuild = async (
   platformName: BuilderCommand['platformName'],
   projectConfig: ProjectConfig,
-  args: BuildFlags
+  args: BuildFlags,
+  projectRoot: string
 ) => {
-  // TODO: add logic for installing Cocoapods based on @expo/fingerprint & pod-install package.
+  projectConfig = await resolvePods(projectRoot, platformName, projectConfig);
 
   const { xcodeProject, sourceDir } = projectConfig;
 
