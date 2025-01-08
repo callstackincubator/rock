@@ -1,5 +1,6 @@
 import { intro, multiselect, note, outro, select, text } from '@clack/prompts';
 import { checkCancelPrompt, RnefError } from '@rnef/tools';
+import path from 'path';
 import type { TemplateInfo } from '../templates.js';
 import { validateProjectName } from '../validate-project-name.js';
 import { parsePackageManagerFromUserAgent } from './parsers.js';
@@ -45,8 +46,10 @@ export function printByeMessage(targetDir: string) {
 
   const pkgManagerCommand = pkgManager?.name ?? 'npm';
 
+  const relativeDir = path.relative(process.cwd(), targetDir);
+
   const nextSteps = [
-    `cd ${targetDir}`,
+    `cd ${relativeDir}`,
     `${pkgManagerCommand} install`,
     `${pkgManagerCommand} run start`,
   ].join('\n');
