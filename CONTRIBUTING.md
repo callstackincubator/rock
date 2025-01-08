@@ -97,7 +97,7 @@ NPM_CONFIG_REGISTRY=http://localhost:4873 pnpm install
 pnpm link --global ...
 
 # Clean up
-pnpm verdaccio-reset
+pnpm verdaccio:reset
 ```
 
 ## Typechecking, linting and testing
