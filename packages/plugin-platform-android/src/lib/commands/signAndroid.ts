@@ -2,7 +2,7 @@ import path from 'node:path';
 import { group, intro, outro, text } from '@clack/prompts';
 import type { AndroidProjectConfig } from '@react-native-community/cli-types';
 import { checkCancelPrompt, logger, RnefError } from '@rnef/tools';
-import spawn from 'nano-spawn';
+import spawn, { type SubprocessError } from 'nano-spawn';
 import color from 'picocolors';
 
 export async function signAndroid(
@@ -60,6 +60,7 @@ async function runKeytool(
         './android/gradle.properties'
       )} file, and add the following (replace ***** with the correct keystore password):`
     );
+    // use console log to make it easy to copy-paste without messing with "|" characters injected by `logger.log`
     console.log(
       color.yellow(`
    RNEF_UPLOAD_STORE_FILE=release.keystore
@@ -69,8 +70,10 @@ async function runKeytool(
     );
   } catch (error) {
     throw new RnefError(
-      'Failed to generate keystore. Please try manually at https://reactnative.dev/docs/signed-apk-android',
-      { cause: error }
+      `Failed to generate keystore. Please try manually by following instructions at: ${color.cyan(
+        'https://reactnative.dev/docs/signed-apk-android'
+      )}`,
+      { cause: (error as SubprocessError).cause }
     );
   }
 }
