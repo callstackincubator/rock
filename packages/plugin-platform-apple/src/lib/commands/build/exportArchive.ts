@@ -1,8 +1,9 @@
-import { logger, RnefError } from '@rnef/tools';
 import { spinner } from '@clack/prompts';
-import spawn, { SubprocessError } from 'nano-spawn';
-import path from 'path';
+import { logger, RnefError } from '@rnef/tools';
 import { existsSync, readdirSync } from 'fs';
+import type { SubprocessError } from 'nano-spawn';
+import spawn from 'nano-spawn';
+import path from 'path';
 
 export const exportArchive = async ({
   sourceDir,
