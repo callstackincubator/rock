@@ -1,6 +1,6 @@
 import { spinner } from '@clack/prompts';
 import { logger, RnefError } from '@rnef/tools';
-import spawn, { SubprocessError } from 'nano-spawn';
+import spawn, { type SubprocessError } from 'nano-spawn';
 import color from 'picocolors';
 import type { BuildFlags } from './buildAndroid/buildAndroid.js';
 import { getAdbPath, getDevices } from './runAndroid/adb.js';

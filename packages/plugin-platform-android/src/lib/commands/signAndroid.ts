@@ -69,7 +69,8 @@ async function runKeytool(
     );
   } catch (error) {
     throw new RnefError(
-      'Failed to generate keystore. Please try manually at https://reactnative.dev/docs/signed-apk-android'
+      'Failed to generate keystore. Please try manually at https://reactnative.dev/docs/signed-apk-android',
+      { cause: error }
     );
   }
 }
