@@ -86,7 +86,7 @@ export default async function installApp({
   }
 }
 
-function getPlatformSDK(platform: ApplePlatform) {
+export function getPlatformSDK(platform: ApplePlatform) {
   switch (platform) {
     case 'ios':
       return 'iphonesimulator';

@@ -12,6 +12,7 @@ export type BuildFlags = {
   catalyst?: boolean;
   buildFolder?: string;
   destination?: string;
+  archive?: boolean;
 };
 
 export const getBuildOptions = ({ platformName }: BuilderCommand) => {
@@ -62,6 +63,11 @@ export const getBuildOptions = ({ platformName }: BuilderCommand) => {
     {
       name: '--destination <string>',
       description: 'Explicitly extend destination e.g. "arch=x86_64"',
+    },
+    {
+      name: '--archive',
+      description:
+        'Create an Xcode archive of the build, required for uploading to App Store Connect or distributing to TestFlight',
     },
   ];
 };

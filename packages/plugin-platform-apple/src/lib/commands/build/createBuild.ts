@@ -11,6 +11,9 @@ import { selectFromInteractiveMode } from '../../utils/selectFromInteractiveMode
 import type { BuildFlags } from './buildOptions.js';
 import { buildProject } from './buildProject.js';
 import { getConfiguration } from './getConfiguration.js';
+import { exportArchive } from './exportArchive.js';
+import { getBuildSettings } from '../run/getBuildSettings.js';
+import { getPlatformSDK } from '../run/installApp.js';
 
 export const createBuild = async (
   platformName: BuilderCommand['platformName'],
@@ -54,9 +57,22 @@ export const createBuild = async (
       mode,
       args
     );
+
+    if (args.archive) {
+      await exportArchive({
+        sourceDir,
+        archivePath: path.join(
+          sourceDir,
+          '.rnef/archive',
+          `${xcodeProject.name.replace('.xcworkspace', '')}.xcarchive`
+        ),
+        scheme,
+        mode,
+      });
+    }
     outro('Success 🎉.');
   } catch {
-    cancel('Command failed.');
+    cancel('Failed to archive the app.');
   }
 };
 
