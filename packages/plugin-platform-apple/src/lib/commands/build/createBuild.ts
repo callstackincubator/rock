@@ -71,8 +71,9 @@ export const createBuild = async (
       });
     }
     outro('Success 🎉.');
-  } catch {
-    cancel('Failed to archive the app.');
+  } catch (e) {
+    logger.error((e as Error).message);
+    process.exit(1);
   }
 };
 

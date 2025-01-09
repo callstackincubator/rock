@@ -1,8 +1,8 @@
-import { logger } from '@rnef/tools';
+import { logger, RnefError } from '@rnef/tools';
 import { spinner } from '@clack/prompts';
 import spawn, { SubprocessError } from 'nano-spawn';
 import path from 'path';
-import { readdirSync } from 'fs';
+import { existsSync, readdirSync } from 'fs';
 
 export const exportArchive = async ({
   sourceDir,
@@ -19,6 +19,16 @@ export const exportArchive = async ({
 
   loader.start('Exporting the archive...');
   const exportOptionsPlistPath = path.join(sourceDir, 'ExportOptions.plist');
+
+  if (!existsSync(exportOptionsPlistPath)) {
+    loader.stop('Failed to export the archive.', 1);
+    throw new RnefError(
+      `ExportOptions.plist not found, please create ${path.relative(
+        process.cwd(),
+        exportOptionsPlistPath
+      )} file with valid configuration for Archive export.`
+    );
+  }
 
   const exportPath = path.join(sourceDir, '.rnef/export');
   const xcodebuildArgs = [
