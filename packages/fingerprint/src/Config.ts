@@ -67,7 +67,9 @@ export async function loadConfigAsync(
 /**
  * Normalize the sourceSkips from enum number or string array to a valid enum number.
  */
-export function normalizeSourceSkips(sourceSkips: Config['sourceSkips']): SourceSkips {
+export function normalizeSourceSkips(
+  sourceSkips: Config['sourceSkips']
+): SourceSkips {
   if (sourceSkips == null) {
     return SourceSkips.None;
   }

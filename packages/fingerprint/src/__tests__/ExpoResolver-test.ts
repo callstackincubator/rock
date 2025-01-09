@@ -9,7 +9,9 @@ import {
 jest.mock('resolve-from');
 
 const projectRoot = '/app';
-const mockedResolveFrom = resolveFrom.silent as jest.MockedFunction<typeof resolveFrom.silent>;
+const mockedResolveFrom = resolveFrom.silent as jest.MockedFunction<
+  typeof resolveFrom.silent
+>;
 
 describe(resolveExpoVersion, () => {
   const expoPackageJsonPath = `${projectRoot}/node_modules/expo/package.json`;
@@ -22,7 +24,9 @@ describe(resolveExpoVersion, () => {
       const expoPackageJson = { version: '1.0.0' };
 
       mockedResolveFrom.mockReturnValueOnce(expoPackageJsonPath);
-      jest.doMock(expoPackageJsonPath, () => expoPackageJson, { virtual: true });
+      jest.doMock(expoPackageJsonPath, () => expoPackageJson, {
+        virtual: true,
+      });
 
       const version = resolveExpoVersion(projectRoot);
       expect(version).toBe('1.0.0');
@@ -57,7 +61,9 @@ describe(resolveExpoAutolinkingVersion, () => {
         }
         return undefined;
       });
-      jest.doMock(autolinkingPackageJsonPath, () => autolinkingPackageJson, { virtual: true });
+      jest.doMock(autolinkingPackageJsonPath, () => autolinkingPackageJson, {
+        virtual: true,
+      });
 
       const version = resolveExpoAutolinkingVersion(projectRoot);
       expect(version).toBe('1.0.0');
@@ -84,7 +90,9 @@ describe(satisfyExpoVersion, () => {
       const expoPackageJson = { version: '51.0.0' };
 
       mockedResolveFrom.mockReturnValue(expoPackageJsonPath);
-      jest.doMock(expoPackageJsonPath, () => expoPackageJson, { virtual: true });
+      jest.doMock(expoPackageJsonPath, () => expoPackageJson, {
+        virtual: true,
+      });
 
       expect(satisfyExpoVersion(projectRoot, '^51.0.0')).toBe(true);
       expect(satisfyExpoVersion(projectRoot, '<52.0.0')).toBe(true);
@@ -96,7 +104,9 @@ describe(satisfyExpoVersion, () => {
       const expoPackageJson = { version: '51.0.0' };
 
       mockedResolveFrom.mockReturnValue(expoPackageJsonPath);
-      jest.doMock(expoPackageJsonPath, () => expoPackageJson, { virtual: true });
+      jest.doMock(expoPackageJsonPath, () => expoPackageJson, {
+        virtual: true,
+      });
 
       expect(satisfyExpoVersion(projectRoot, '<51.0.0')).toBe(false);
       expect(satisfyExpoVersion(projectRoot, '50.0.0')).toBe(false);

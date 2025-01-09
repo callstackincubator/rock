@@ -34,7 +34,9 @@ export async function createFingerprintFromSourcesAsync(
 ): Promise<Fingerprint> {
   const limiter = pLimit(options.concurrentIoLimit);
   const fingerprintSources = await Promise.all(
-    sources.map((source) => createFingerprintSourceAsync(source, limiter, projectRoot, options))
+    sources.map((source) =>
+      createFingerprintSourceAsync(source, limiter, projectRoot, options)
+    )
   );
 
   const hasher = createHash(options.hashAlgorithm);
@@ -68,7 +70,12 @@ export async function createFingerprintSourceAsync(
       result = await createContentsHashResultsAsync(source, options);
       break;
     case 'file':
-      result = await createFileHashResultsAsync(source.filePath, limiter, projectRoot, options);
+      result = await createFileHashResultsAsync(
+        source.filePath,
+        limiter,
+        projectRoot,
+        options
+      );
       break;
     case 'dir':
       result = await profile(
@@ -121,26 +128,34 @@ export async function createFileHashResultsAsync(
 
   return limiter(() => {
     return new Promise<HashResultFile | null>((resolve, reject) => {
-      if (isIgnoredPathWithMatchObjects(filePath, options.ignorePathMatchObjects)) {
+      if (
+        isIgnoredPathWithMatchObjects(filePath, options.ignorePathMatchObjects)
+      ) {
         return resolve(null);
       }
 
       let resolved = false;
       const hasher = createHash(options.hashAlgorithm);
-      const fileHookTransform: FileHookTransform | null = options.fileHookTransform
-        ? new FileHookTransform(
-            { type: 'file', filePath },
-            options.fileHookTransform,
-            options.debug
-          )
-        : null;
-      let stream: Readable = createReadStream(path.join(projectRoot, filePath), {
-        highWaterMark: 1024,
-      });
+      const fileHookTransform: FileHookTransform | null =
+        options.fileHookTransform
+          ? new FileHookTransform(
+              { type: 'file', filePath },
+              options.fileHookTransform,
+              options.debug
+            )
+          : null;
+      let stream: Readable = createReadStream(
+        path.join(projectRoot, filePath),
+        {
+          highWaterMark: 1024,
+        }
+      );
       if (
         options.enableReactImportsPatcher &&
         options.platforms.includes('ios') &&
-        (filePath.endsWith('.h') || filePath.endsWith('.m') || filePath.endsWith('.mm'))
+        (filePath.endsWith('.h') ||
+          filePath.endsWith('.m') ||
+          filePath.endsWith('.mm'))
       ) {
         const transform = new ReactImportsPatchTransform();
         stream = pipeline(stream, transform, (err) => {
@@ -201,9 +216,9 @@ export async function createDirHashResultsAsync(
   if (isIgnoredPathWithMatchObjects(dirPath, options.ignoreDirMatchObjects)) {
     return null;
   }
-  const dirents = (await fs.readdir(path.join(projectRoot, dirPath), { withFileTypes: true })).sort(
-    (a, b) => a.name.localeCompare(b.name)
-  );
+  const dirents = (
+    await fs.readdir(path.join(projectRoot, dirPath), { withFileTypes: true })
+  ).sort((a, b) => a.name.localeCompare(b.name));
 
   const results = (
     await Promise.all(
@@ -219,7 +234,12 @@ export async function createDirHashResultsAsync(
           );
         } else if (dirent.isFile()) {
           const filePath = toPosixPath(path.join(dirPath, dirent.name));
-          return await createFileHashResultsAsync(filePath, limiter, projectRoot, options);
+          return await createFileHashResultsAsync(
+            filePath,
+            limiter,
+            projectRoot,
+            options
+          );
         }
 
         return null;
@@ -244,7 +264,9 @@ export async function createDirHashResultsAsync(
     type: 'dir',
     id: dirPath,
     hex,
-    ...(options.debug ? { debugInfo: { path: dirPath, children, hash: hex } } : undefined),
+    ...(options.debug
+      ? { debugInfo: { path: dirPath, children, hash: hex } }
+      : undefined),
   };
 }
 
@@ -273,7 +295,9 @@ export async function createContentsHashResultsAsync(
     source.contents = transformedContents;
   }
 
-  const hex = createHash(options.hashAlgorithm).update(source.contents).digest('hex');
+  const hex = createHash(options.hashAlgorithm)
+    .update(source.contents)
+    .digest('hex');
   const debugInfo = options.debug
     ? {
         hash: hex,

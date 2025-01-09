@@ -9,9 +9,13 @@ const FAKE_REACT_NATIVE_PACKAGE_JSON = {
 };
 jest.mock('fs/promises');
 jest.mock('resolve-from');
-jest.mock('/app/node_modules/react-native/package.json', () => FAKE_REACT_NATIVE_PACKAGE_JSON, {
-  virtual: true,
-});
+jest.mock(
+  '/app/node_modules/react-native/package.json',
+  () => FAKE_REACT_NATIVE_PACKAGE_JSON,
+  {
+    virtual: true,
+  }
+);
 
 describe(getPackageSourceAsync, () => {
   afterEach(() => {
@@ -19,8 +23,12 @@ describe(getPackageSourceAsync, () => {
   });
 
   it('should return package.json contents when packageJsonOnly=true', async () => {
-    const mockedResolveFrom = resolveFrom.silent as jest.MockedFunction<typeof resolveFrom.silent>;
-    mockedResolveFrom.mockReturnValueOnce('/app/node_modules/react-native/package.json');
+    const mockedResolveFrom = resolveFrom.silent as jest.MockedFunction<
+      typeof resolveFrom.silent
+    >;
+    mockedResolveFrom.mockReturnValueOnce(
+      '/app/node_modules/react-native/package.json'
+    );
 
     const source = await getPackageSourceAsync('/app', {
       packageName: 'react-native',
@@ -40,9 +48,16 @@ describe(getPackageSourceAsync, () => {
       '/app/node_modules/react-native/package.json',
       JSON.stringify(FAKE_REACT_NATIVE_PACKAGE_JSON)
     );
-    vol.writeFileSync('/app/node_modules/react-native/test.cpp', 'int foo() { return 0; }');
-    const mockedResolveFrom = resolveFrom.silent as jest.MockedFunction<typeof resolveFrom.silent>;
-    mockedResolveFrom.mockReturnValueOnce('/app/node_modules/react-native/package.json');
+    vol.writeFileSync(
+      '/app/node_modules/react-native/test.cpp',
+      'int foo() { return 0; }'
+    );
+    const mockedResolveFrom = resolveFrom.silent as jest.MockedFunction<
+      typeof resolveFrom.silent
+    >;
+    mockedResolveFrom.mockReturnValueOnce(
+      '/app/node_modules/react-native/package.json'
+    );
 
     const source = await getPackageSourceAsync('/app', {
       packageName: 'react-native',

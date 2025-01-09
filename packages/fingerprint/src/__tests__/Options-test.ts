@@ -17,9 +17,13 @@ describe(normalizeOptionsAsync, () => {
   it('should return the default options if no options are provided', async () => {
     const options = await normalizeOptionsAsync('/app');
     // @ts-expect-error: mutate the objects to only show patterns in the snapshot
-    options.ignorePathMatchObjects = options.ignorePathMatchObjects.map(({ pattern }) => pattern);
+    options.ignorePathMatchObjects = options.ignorePathMatchObjects.map(
+      ({ pattern }) => pattern
+    );
     // @ts-expect-error: mutate the objects to only show patterns in the snapshot
-    options.ignoreDirMatchObjects = options.ignoreDirMatchObjects.map(({ pattern }) => pattern);
+    options.ignoreDirMatchObjects = options.ignoreDirMatchObjects.map(
+      ({ pattern }) => pattern
+    );
     expect(options).toMatchSnapshot();
   });
 
@@ -32,9 +36,13 @@ const config = {
 module.exports = config;
 `;
       vol.fromJSON({ '/app/fingerprint.config.js': configContents });
-      jest.doMock('/app/fingerprint.config.js', () => requireString(configContents), {
-        virtual: true,
-      });
+      jest.doMock(
+        '/app/fingerprint.config.js',
+        () => requireString(configContents),
+        {
+          virtual: true,
+        }
+      );
 
       const { ignorePathMatchObjects } = await normalizeOptionsAsync('/app', {
         ignorePaths: ['ccc'],
@@ -56,9 +64,13 @@ const config = {
 module.exports = config;
 `;
       vol.fromJSON({ '/app/fingerprint.config.js': configContents });
-      jest.doMock('/app/fingerprint.config.js', () => requireString(configContents), {
-        virtual: true,
-      });
+      jest.doMock(
+        '/app/fingerprint.config.js',
+        () => requireString(configContents),
+        {
+          virtual: true,
+        }
+      );
 
       const { hashAlgorithm } = await normalizeOptionsAsync('/app');
       expect(hashAlgorithm).toBe('sha256');
@@ -75,11 +87,17 @@ const config = {
 module.exports = config;
 `;
       vol.fromJSON({ '/app/fingerprint.config.js': configContents });
-      jest.doMock('/app/fingerprint.config.js', () => requireString(configContents), {
-        virtual: true,
-      });
+      jest.doMock(
+        '/app/fingerprint.config.js',
+        () => requireString(configContents),
+        {
+          virtual: true,
+        }
+      );
 
-      const { hashAlgorithm } = await normalizeOptionsAsync('/app', { hashAlgorithm: 'md5' });
+      const { hashAlgorithm } = await normalizeOptionsAsync('/app', {
+        hashAlgorithm: 'md5',
+      });
       expect(hashAlgorithm).toBe('md5');
     });
   });
@@ -102,7 +120,9 @@ describe(`normalizeOptionsAsync - enableReactImportsPatcher`, () => {
   });
 
   it('should override ReactImportsPatcher if the option is provided', async () => {
-    const options = await normalizeOptionsAsync('/app', { enableReactImportsPatcher: true });
+    const options = await normalizeOptionsAsync('/app', {
+      enableReactImportsPatcher: true,
+    });
     expect(options.enableReactImportsPatcher).toBe(true);
   });
 
@@ -116,9 +136,13 @@ const config = {
 module.exports = config;
 `;
       vol.fromJSON({ '/app/fingerprint.config.js': configContents });
-      jest.doMock('/app/fingerprint.config.js', () => requireString(configContents), {
-        virtual: true,
-      });
+      jest.doMock(
+        '/app/fingerprint.config.js',
+        () => requireString(configContents),
+        {
+          virtual: true,
+        }
+      );
 
       const options = await normalizeOptionsAsync('/app');
       expect(options.enableReactImportsPatcher).toBe(true);

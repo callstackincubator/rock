@@ -26,9 +26,13 @@ const config = {
 module.exports = config;
 `;
       vol.fromJSON({ '/app/fingerprint.config.js': configContents });
-      jest.doMock('/app/fingerprint.config.js', () => requireString(configContents), {
-        virtual: true,
-      });
+      jest.doMock(
+        '/app/fingerprint.config.js',
+        () => requireString(configContents),
+        {
+          virtual: true,
+        }
+      );
       const config = await loadConfigAsync('/app', true);
       expect(config).toEqual({ hashAlgorithm: 'sha256' });
     });
@@ -107,9 +111,13 @@ const config = {
 module.exports = config;
 `;
       vol.fromJSON({ '/app/fingerprint.config.js': configContents });
-      jest.doMock('/app/fingerprint.config.js', () => requireString(configContents), {
-        virtual: true,
-      });
+      jest.doMock(
+        '/app/fingerprint.config.js',
+        () => requireString(configContents),
+        {
+          virtual: true,
+        }
+      );
       const config = await loadConfigAsync('/app', true);
       expect(config).toEqual({ debug: true });
     });
@@ -127,12 +135,18 @@ const config = {
 module.exports = config;
 `;
       vol.fromJSON({ '/app/fingerprint.config.js': configContents });
-      jest.doMock('/app/fingerprint.config.js', () => requireString(configContents), {
-        virtual: true,
-      });
+      jest.doMock(
+        '/app/fingerprint.config.js',
+        () => requireString(configContents),
+        {
+          virtual: true,
+        }
+      );
       const config = await loadConfigAsync('/app', true);
       expect(config).toEqual({
-        sourceSkips: SourceSkips.ExpoConfigRuntimeVersionIfString | SourceSkips.ExpoConfigNames,
+        sourceSkips:
+          SourceSkips.ExpoConfigRuntimeVersionIfString |
+          SourceSkips.ExpoConfigNames,
       });
     });
   });
@@ -145,7 +159,8 @@ describe(normalizeSourceSkips, () => {
 
   it('should return original number if sourceSkips is a number', () => {
     const skips: SourceSkips =
-      SourceSkips.ExpoConfigRuntimeVersionIfString | SourceSkips.ExpoConfigNames;
+      SourceSkips.ExpoConfigRuntimeVersionIfString |
+      SourceSkips.ExpoConfigNames;
     const result = normalizeSourceSkips(skips);
     expect(result).toEqual(skips);
   });
@@ -155,7 +170,10 @@ describe(normalizeSourceSkips, () => {
   });
 
   it('should return an array with normalized source skips', () => {
-    const result = normalizeSourceSkips(['ExpoConfigRuntimeVersionIfString', 'ExpoConfigNames']);
+    const result = normalizeSourceSkips([
+      'ExpoConfigRuntimeVersionIfString',
+      'ExpoConfigNames',
+    ]);
     expect(result).toEqual(
       SourceSkips.ExpoConfigRuntimeVersionIfString | SourceSkips.ExpoConfigNames
     );

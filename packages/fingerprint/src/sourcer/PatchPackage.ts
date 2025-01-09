@@ -9,7 +9,11 @@ export async function getPatchPackageSourcesAsync(
   projectRoot: string,
   options: NormalizedOptions
 ): Promise<HashSource[]> {
-  const result = await getFileBasedHashSourceAsync(projectRoot, 'patches', 'patchPackage');
+  const result = await getFileBasedHashSourceAsync(
+    projectRoot,
+    'patches',
+    'patchPackage'
+  );
   if (result != null) {
     debug(`Adding dir - ${chalk.dim('patches')}`);
     return [result];

@@ -2,7 +2,9 @@ import fs from 'fs/promises';
 
 import { Fingerprint } from '../../../build/Fingerprint.types';
 
-export default async function readFingerprintFileAsync(path: string): Promise<Fingerprint> {
+export default async function readFingerprintFileAsync(
+  path: string
+): Promise<Fingerprint> {
   try {
     return JSON.parse(await fs.readFile(path, 'utf-8'));
   } catch (e: any) {

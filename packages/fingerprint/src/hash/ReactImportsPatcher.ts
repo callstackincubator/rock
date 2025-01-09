@@ -21,7 +21,8 @@ export class ReactImportsPatchTransform extends Transform {
   private readLength: number = 0;
   private readonly lengthOfFilePortionContainingHeadersToTransform: number;
   private readonly transformFn: (chunk: string) => string;
-  private static DEFAULT_LENGTH_OF_FILE_PORTION_CONTAINING_HEADERS_TO_TRANSFORM = 16 * 1024; // 16KB
+  private static DEFAULT_LENGTH_OF_FILE_PORTION_CONTAINING_HEADERS_TO_TRANSFORM =
+    16 * 1024; // 16KB
 
   constructor(options?: Options) {
     super();
@@ -31,8 +32,13 @@ export class ReactImportsPatchTransform extends Transform {
     this.transformFn = options?.transformFn ?? patchChunk;
   }
 
-  _transform(chunk: any, _encoding: BufferEncoding, callback: TransformCallback): void {
-    const remainingLength = this.lengthOfFilePortionContainingHeadersToTransform - this.readLength;
+  _transform(
+    chunk: any,
+    _encoding: BufferEncoding,
+    callback: TransformCallback
+  ): void {
+    const remainingLength =
+      this.lengthOfFilePortionContainingHeadersToTransform - this.readLength;
     let result: string;
     if (remainingLength <= 0) {
       result = chunk.toString();
@@ -54,7 +60,10 @@ export class ReactImportsPatchTransform extends Transform {
  * @param headerSet prebuilt React-Core header set
  * @param chunk target chunk data
  */
-export function patchChunk(chunk: string, headerSet: Set<string> = HEADER_SET): string {
+export function patchChunk(
+  chunk: string,
+  headerSet: Set<string> = HEADER_SET
+): string {
   let transformContent = chunk.replace(
     /(?<=^\s*)#import\s+"(.+)"(?=\s*$)/gm,
     (match: string, headerName: string): string => {

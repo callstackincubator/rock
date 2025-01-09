@@ -18,7 +18,11 @@ export async function getBareAndroidSourcesAsync(
   options: NormalizedOptions
 ): Promise<HashSource[]> {
   if (options.platforms.includes('android')) {
-    const result = await getFileBasedHashSourceAsync(projectRoot, 'android', 'bareNativeDir');
+    const result = await getFileBasedHashSourceAsync(
+      projectRoot,
+      'android',
+      'bareNativeDir'
+    );
     if (result != null) {
       debug(`Adding bare native dir - ${chalk.dim('android')}`);
       return [result];
@@ -32,7 +36,11 @@ export async function getBareIosSourcesAsync(
   options: NormalizedOptions
 ): Promise<HashSource[]> {
   if (options.platforms.includes('ios')) {
-    const result = await getFileBasedHashSourceAsync(projectRoot, 'ios', 'bareNativeDir');
+    const result = await getFileBasedHashSourceAsync(
+      projectRoot,
+      'ios',
+      'bareNativeDir'
+    );
     if (result != null) {
       debug(`Adding bare native dir - ${chalk.dim('ios')}`);
       return [result];
@@ -50,9 +58,16 @@ export async function getPackageJsonScriptSourcesAsync(
   }
   let packageJson;
   try {
-    packageJson = require(resolveFrom(path.resolve(projectRoot), './package.json'));
+    packageJson = require(resolveFrom(
+      path.resolve(projectRoot),
+      './package.json'
+    ));
   } catch (e: unknown) {
-    debug(`Unable to read package.json from ${path.resolve(projectRoot)}/package.json: ` + e);
+    debug(
+      `Unable to read package.json from ${path.resolve(
+        projectRoot
+      )}/package.json: ` + e
+    );
     return [];
   }
   const results: HashSource[] = [];
@@ -69,8 +84,15 @@ export async function getPackageJsonScriptSourcesAsync(
   return results;
 }
 
-export async function getGitIgnoreSourcesAsync(projectRoot: string, options: NormalizedOptions) {
-  const result = await getFileBasedHashSourceAsync(projectRoot, '.gitignore', 'bareGitIgnore');
+export async function getGitIgnoreSourcesAsync(
+  projectRoot: string,
+  options: NormalizedOptions
+) {
+  const result = await getFileBasedHashSourceAsync(
+    projectRoot,
+    '.gitignore',
+    'bareGitIgnore'
+  );
   if (result != null) {
     debug(`Adding file - ${chalk.dim('.gitignore')}`);
     return [result];
@@ -87,7 +109,9 @@ export async function getCoreAutolinkingSourcesFromRncCliAsync(
     return [];
   }
   try {
-    const { stdout } = await spawnAsync('npx', ['react-native', 'config'], { cwd: projectRoot });
+    const { stdout } = await spawnAsync('npx', ['react-native', 'config'], {
+      cwd: projectRoot,
+    });
     const config = JSON.parse(stdout);
     const results: HashSource[] = await parseCoreAutolinkingSourcesAsync({
       config,
@@ -96,7 +120,9 @@ export async function getCoreAutolinkingSourcesFromRncCliAsync(
     });
     return results;
   } catch (e) {
-    debug(chalk.red(`Error adding react-native core autolinking sources.\n${e}`));
+    debug(
+      chalk.red(`Error adding react-native core autolinking sources.\n${e}`)
+    );
     return [];
   }
 }
@@ -106,7 +132,10 @@ export async function getCoreAutolinkingSourcesFromExpoAndroid(
   options: NormalizedOptions,
   useRNCoreAutolinkingFromExpo?: boolean
 ): Promise<HashSource[]> {
-  if (useRNCoreAutolinkingFromExpo === false || !options.platforms.includes('android')) {
+  if (
+    useRNCoreAutolinkingFromExpo === false ||
+    !options.platforms.includes('android')
+  ) {
     return [];
   }
   try {
@@ -130,7 +159,11 @@ export async function getCoreAutolinkingSourcesFromExpoAndroid(
     });
     return results;
   } catch (e) {
-    debug(chalk.red(`Error adding react-native core autolinking sources for android.\n${e}`));
+    debug(
+      chalk.red(
+        `Error adding react-native core autolinking sources for android.\n${e}`
+      )
+    );
     return [];
   }
 }
@@ -140,7 +173,10 @@ export async function getCoreAutolinkingSourcesFromExpoIos(
   options: NormalizedOptions,
   useRNCoreAutolinkingFromExpo?: boolean
 ): Promise<HashSource[]> {
-  if (useRNCoreAutolinkingFromExpo === false || !options.platforms.includes('ios')) {
+  if (
+    useRNCoreAutolinkingFromExpo === false ||
+    !options.platforms.includes('ios')
+  ) {
     return [];
   }
   try {
@@ -164,7 +200,11 @@ export async function getCoreAutolinkingSourcesFromExpoIos(
     });
     return results;
   } catch (e) {
-    debug(chalk.red(`Error adding react-native core autolinking sources for ios.\n${e}`));
+    debug(
+      chalk.red(
+        `Error adding react-native core autolinking sources for ios.\n${e}`
+      )
+    );
     return [];
   }
 }
@@ -208,11 +248,16 @@ async function parseCoreAutolinkingSourcesAsync({
   return results;
 }
 
-function stripRncoreAutolinkingAbsolutePaths(dependency: any, root: string): void {
+function stripRncoreAutolinkingAbsolutePaths(
+  dependency: any,
+  root: string
+): void {
   assert(dependency.root);
   const dependencyRoot = dependency.root;
   const cmakeDepRoot =
-    process.platform === 'win32' ? dependencyRoot.replace(/\\/g, '/') : dependencyRoot;
+    process.platform === 'win32'
+      ? dependencyRoot.replace(/\\/g, '/')
+      : dependencyRoot;
 
   dependency.root = toPosixPath(path.relative(root, dependencyRoot));
   for (const platformData of Object.values<any>(dependency.platforms)) {
@@ -242,9 +287,15 @@ function normalizePackageJsonScriptSources(
   scripts: Record<string, string>,
   options: NormalizedOptions
 ): string {
-  if (options.sourceSkips & SourceSkips.PackageJsonAndroidAndIosScriptsIfNotContainRun) {
+  if (
+    options.sourceSkips &
+    SourceSkips.PackageJsonAndroidAndIosScriptsIfNotContainRun
+  ) {
     // Replicate the behavior of `expo prebuild`
-    if (!scripts.android?.includes('run') || scripts.android === 'expo run:android') {
+    if (
+      !scripts.android?.includes('run') ||
+      scripts.android === 'expo run:android'
+    ) {
       delete scripts.android;
     }
     if (!scripts.ios?.includes('run') || scripts.ios === 'expo run:ios') {

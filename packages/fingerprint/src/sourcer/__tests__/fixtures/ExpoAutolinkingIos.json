@@ -73,7 +73,9 @@
     {
       "packageName": "expo-font",
       "packageVersion": "11.0.1",
-      "pods": [{ "podName": "EXFont", "podspecDir": "/app/node_modules/expo-font/ios" }],
+      "pods": [
+        { "podName": "EXFont", "podspecDir": "/app/node_modules/expo-font/ios" }
+      ],
       "swiftModuleNames": ["EXFont"],
       "modules": [],
       "appDelegateSubscribers": [],

@@ -1,6 +1,9 @@
 import { Transform, type TransformCallback } from 'stream';
 
-import type { FileHookTransformSource, FileHookTransformFunction } from '../Fingerprint.types';
+import type {
+  FileHookTransformSource,
+  FileHookTransformFunction,
+} from '../Fingerprint.types';
 
 /**
  * A transform stream that allows to hook into file contents and transform them.
@@ -26,8 +29,17 @@ export class FileHookTransform extends Transform {
 
   //#region - Transform implementations
 
-  _transform(chunk: any, encoding: BufferEncoding, callback: TransformCallback): void {
-    const result = this.transformFn(this.source, chunk, false /* isEndOfFile */, encoding);
+  _transform(
+    chunk: any,
+    encoding: BufferEncoding,
+    callback: TransformCallback
+  ): void {
+    const result = this.transformFn(
+      this.source,
+      chunk,
+      false /* isEndOfFile */,
+      encoding
+    );
     if (this.debug) {
       this._isTransformed ||= chunk !== result;
     }
@@ -38,7 +50,12 @@ export class FileHookTransform extends Transform {
   }
 
   _flush(callback: TransformCallback): void {
-    const result = this.transformFn(this.source, null, true /* isEndOfFile */, 'utf8');
+    const result = this.transformFn(
+      this.source,
+      null,
+      true /* isEndOfFile */,
+      'utf8'
+    );
     if (result) {
       this.push(result);
     }

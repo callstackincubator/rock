@@ -1,14 +1,21 @@
 import assert from 'assert';
 import path from 'path';
 
-import type { HashSource, HashSourceDir, HashSourceFile } from './Fingerprint.types';
+import type {
+  HashSource,
+  HashSourceDir,
+  HashSourceFile,
+} from './Fingerprint.types';
 
 const debug = require('debug')('expo:fingerprint:Dedup');
 
 /**
  * Strip duplicated sources, mainly for duplicated file or dir
  */
-export function dedupSources(sources: HashSource[], projectRoot: string): HashSource[] {
+export function dedupSources(
+  sources: HashSource[],
+  projectRoot: string
+): HashSource[] {
   const newSources: HashSource[] = [];
   for (const source of sources) {
     const [duplicatedItemIndex, shouldSwapSource] = findDuplicatedSourceIndex(
@@ -38,7 +45,10 @@ export function dedupSources(sources: HashSource[], projectRoot: string): HashSo
 /**
  * When two sources are duplicated, merge `src`'s reasons into `dst`
  */
-export function mergeSourceWithReasons(dst: HashSource, src: HashSource): HashSource {
+export function mergeSourceWithReasons(
+  dst: HashSource,
+  src: HashSource
+): HashSource {
   return dst;
 }
 
@@ -54,7 +64,9 @@ function findDuplicatedSourceIndex(
   let shouldSwapSource = false;
   if (source.type === 'contents') {
     return [
-      newSources.findIndex((item) => item.type === source.type && item.id === source.id) ?? null,
+      newSources.findIndex(
+        (item) => item.type === source.type && item.id === source.id
+      ) ?? null,
       shouldSwapSource,
     ];
   }

@@ -23,15 +23,19 @@ describe('updates managed support', () => {
   beforeAll(async () => {
     rimraf.sync(projectRoot);
     // Pin the SDK version to prevent the latest version breaking snapshots
-    await spawnAsync('bunx', ['create-expo-app', '-t', 'blank@sdk-51', projectName], {
-      stdio: 'inherit',
-      cwd: tmpDir,
-      env: {
-        ...process.env,
-        // Do not inherit the package manager from this repository
-        npm_config_user_agent: undefined,
-      },
-    });
+    await spawnAsync(
+      'bunx',
+      ['create-expo-app', '-t', 'blank@sdk-51', projectName],
+      {
+        stdio: 'inherit',
+        cwd: tmpDir,
+        env: {
+          ...process.env,
+          // Do not inherit the package manager from this repository
+          npm_config_user_agent: undefined,
+        },
+      }
+    );
 
     // Add appId
     const appConfigPath = path.join(projectRoot, 'app.json');

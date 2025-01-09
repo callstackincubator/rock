@@ -20,9 +20,13 @@ export type Command = (argv?: string[]) => void;
 const commands: { [command: string]: () => Promise<Command> } = {
   // Add a new command here
   'fingerprint:generate': () =>
-    import('./commands/generateFingerprint.js').then((i) => i.generateFingerprintAsync),
+    import('./commands/generateFingerprint.js').then(
+      (i) => i.generateFingerprintAsync
+    ),
   'fingerprint:diff': () =>
-    import('./commands/diffFingerprints.js').then((i) => i.diffFingerprintsAsync),
+    import('./commands/diffFingerprints.js').then(
+      (i) => i.diffFingerprintsAsync
+    ),
 };
 
 const args = arg(

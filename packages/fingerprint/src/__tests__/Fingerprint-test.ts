@@ -19,7 +19,9 @@ describe(diffFingerprintChangesAsync, () => {
   });
 
   it('should return empty array when fingerprint matched', async () => {
-    vol.fromJSON(require('../sourcer/__tests__/fixtures/ExpoManaged47Project.json'));
+    vol.fromJSON(
+      require('../sourcer/__tests__/fixtures/ExpoManaged47Project.json')
+    );
     const fingerprint = await createFingerprintAsync(
       '/app',
       await normalizeOptionsAsync('/app', { debug: true })
@@ -33,7 +35,9 @@ describe(diffFingerprintChangesAsync, () => {
   });
 
   it('should return diff from new item', async () => {
-    vol.fromJSON(require('../sourcer/__tests__/fixtures/ExpoManaged47Project.json'));
+    vol.fromJSON(
+      require('../sourcer/__tests__/fixtures/ExpoManaged47Project.json')
+    );
     const fingerprint: Fingerprint = {
       sources: [],
       hash: '',
@@ -52,16 +56,21 @@ describe(diffFingerprintChangesAsync, () => {
     function isPackage(item: FingerprintDiffItem): boolean {
       switch (item.op) {
         case 'added':
-          return item.addedSource.type === 'contents' && item.addedSource.id.startsWith('package:');
+          return (
+            item.addedSource.type === 'contents' &&
+            item.addedSource.id.startsWith('package:')
+          );
         case 'removed':
           return (
-            item.removedSource.type === 'contents' && item.removedSource.id.startsWith('package:')
+            item.removedSource.type === 'contents' &&
+            item.removedSource.id.startsWith('package:')
           );
         case 'changed':
           return (
             (item.beforeSource.type === 'contents' &&
               item.beforeSource.id.startsWith('package:')) ||
-            (item.afterSource.type === 'contents' && item.afterSource.id.startsWith('package:'))
+            (item.afterSource.type === 'contents' &&
+              item.afterSource.id.startsWith('package:'))
           );
       }
     }
@@ -90,8 +99,12 @@ describe(diffFingerprintChangesAsync, () => {
   });
 
   it('should return diff from contents changes', async () => {
-    vol.fromJSON(require('../sourcer/__tests__/fixtures/ExpoManaged47Project.json'));
-    const packageJson = JSON.parse(vol.readFileSync('/app/package.json', 'utf8').toString());
+    vol.fromJSON(
+      require('../sourcer/__tests__/fixtures/ExpoManaged47Project.json')
+    );
+    const packageJson = JSON.parse(
+      vol.readFileSync('/app/package.json', 'utf8').toString()
+    );
     jest.doMock('/app/package.json', () => packageJson, { virtual: true });
     const fingerprint = await createFingerprintAsync(
       '/app',
@@ -152,12 +165,16 @@ describe(diffFingerprintChangesAsync, () => {
   });
 
   it('should return diff from file changes', async () => {
-    vol.fromJSON(require('../sourcer/__tests__/fixtures/ExpoManaged47Project.json'));
+    vol.fromJSON(
+      require('../sourcer/__tests__/fixtures/ExpoManaged47Project.json')
+    );
     const fingerprint = await createFingerprintAsync(
       '/app',
       await normalizeOptionsAsync('/app', { debug: true })
     );
-    const config = JSON.parse(vol.readFileSync('/app/app.json', 'utf8').toString());
+    const config = JSON.parse(
+      vol.readFileSync('/app/app.json', 'utf8').toString()
+    );
     config.expo.jsEngine = 'jsc';
     vol.writeFileSync('/app/app.json', JSON.stringify(config, null, 2));
     const diff = await diffFingerprintChangesAsync(
@@ -199,7 +216,9 @@ describe(diffFingerprintChangesAsync, () => {
   });
 
   it('should return diff from dir changes', async () => {
-    vol.fromJSON(require('../sourcer/__tests__/fixtures/BareReactNative70Project.json'));
+    vol.fromJSON(
+      require('../sourcer/__tests__/fixtures/BareReactNative70Project.json')
+    );
     const fingerprint = await createFingerprintAsync(
       '/app',
       await normalizeOptionsAsync('/app', { debug: true })
@@ -416,7 +435,13 @@ describe(diffFingerprints, () => {
   it('should return diff from new items', () => {
     const fingerprint1: Fingerprint = {
       sources: [
-        { type: 'contents', id: 'contents1', contents: '1', reasons: [''], hash: 'contents1' },
+        {
+          type: 'contents',
+          id: 'contents1',
+          contents: '1',
+          reasons: [''],
+          hash: 'contents1',
+        },
       ],
       hash: '111',
     };
@@ -424,18 +449,34 @@ describe(diffFingerprints, () => {
       sources: [
         { type: 'file', filePath: 'ios/Podfile', reasons: [''], hash: 'file1' },
         { type: 'dir', filePath: 'android', reasons: [''], hash: 'dir1' },
-        { type: 'contents', id: 'contents1', contents: '1', reasons: [''], hash: 'contents1' },
+        {
+          type: 'contents',
+          id: 'contents1',
+          contents: '1',
+          reasons: [''],
+          hash: 'contents1',
+        },
       ],
       hash: '222',
     };
     expect(diffFingerprints(fingerprint1, fingerprint2)).toEqual([
       {
         op: 'added',
-        addedSource: { type: 'file', filePath: 'ios/Podfile', reasons: [''], hash: 'file1' },
+        addedSource: {
+          type: 'file',
+          filePath: 'ios/Podfile',
+          reasons: [''],
+          hash: 'file1',
+        },
       },
       {
         op: 'added',
-        addedSource: { type: 'dir', filePath: 'android', reasons: [''], hash: 'dir1' },
+        addedSource: {
+          type: 'dir',
+          filePath: 'android',
+          reasons: [''],
+          hash: 'dir1',
+        },
       },
     ]);
   });
@@ -445,21 +486,38 @@ describe(diffFingerprints, () => {
       sources: [
         { type: 'file', filePath: 'ios/Podfile', reasons: [''], hash: 'file1' },
         { type: 'dir', filePath: 'android', reasons: [''], hash: 'dir1' },
-        { type: 'contents', id: 'contents1', contents: '1', reasons: [''], hash: 'contents1' },
+        {
+          type: 'contents',
+          id: 'contents1',
+          contents: '1',
+          reasons: [''],
+          hash: 'contents1',
+        },
       ],
       hash: '111',
     };
     const fingerprint2: Fingerprint = {
       sources: [
         { type: 'file', filePath: 'ios/Podfile', reasons: [''], hash: 'file1' },
-        { type: 'contents', id: 'contents1', contents: '1', reasons: [''], hash: 'contents1' },
+        {
+          type: 'contents',
+          id: 'contents1',
+          contents: '1',
+          reasons: [''],
+          hash: 'contents1',
+        },
       ],
       hash: '222',
     };
     expect(diffFingerprints(fingerprint1, fingerprint2)).toEqual([
       {
         op: 'removed',
-        removedSource: { type: 'dir', filePath: 'android', reasons: [''], hash: 'dir1' },
+        removedSource: {
+          type: 'dir',
+          filePath: 'android',
+          reasons: [''],
+          hash: 'dir1',
+        },
       },
     ]);
   });
@@ -467,9 +525,27 @@ describe(diffFingerprints, () => {
   it('should return diff from new items - same array size with added/removed ops', () => {
     const fingerprint1: Fingerprint = {
       sources: [
-        { type: 'contents', id: 'contents1', contents: '1', reasons: [''], hash: 'contents1' },
-        { type: 'contents', id: 'contents2', contents: '2', reasons: [''], hash: 'contents2' },
-        { type: 'contents', id: 'contents3', contents: '3', reasons: [''], hash: 'contents3' },
+        {
+          type: 'contents',
+          id: 'contents1',
+          contents: '1',
+          reasons: [''],
+          hash: 'contents1',
+        },
+        {
+          type: 'contents',
+          id: 'contents2',
+          contents: '2',
+          reasons: [''],
+          hash: 'contents2',
+        },
+        {
+          type: 'contents',
+          id: 'contents3',
+          contents: '3',
+          reasons: [''],
+          hash: 'contents3',
+        },
       ],
       hash: '111',
     };
@@ -477,18 +553,34 @@ describe(diffFingerprints, () => {
       sources: [
         { type: 'file', filePath: 'ios/Podfile', reasons: [''], hash: 'file1' },
         { type: 'dir', filePath: 'android', reasons: [''], hash: 'dir1' },
-        { type: 'contents', id: 'contents1', contents: '1', reasons: [''], hash: 'contents1' },
+        {
+          type: 'contents',
+          id: 'contents1',
+          contents: '1',
+          reasons: [''],
+          hash: 'contents1',
+        },
       ],
       hash: '222',
     };
     expect(diffFingerprints(fingerprint1, fingerprint2)).toEqual([
       {
         op: 'added',
-        addedSource: { type: 'file', filePath: 'ios/Podfile', reasons: [''], hash: 'file1' },
+        addedSource: {
+          type: 'file',
+          filePath: 'ios/Podfile',
+          reasons: [''],
+          hash: 'file1',
+        },
       },
       {
         op: 'added',
-        addedSource: { type: 'dir', filePath: 'android', reasons: [''], hash: 'dir1' },
+        addedSource: {
+          type: 'dir',
+          filePath: 'android',
+          reasons: [''],
+          hash: 'dir1',
+        },
       },
       {
         op: 'removed',
@@ -532,9 +624,13 @@ describe('function api stability', () => {
   }
 
   it('createFingerprintAsync - maintains consistent hash and function signature expected by eas-cli', async () => {
-    vol.fromJSON(require('../sourcer/__tests__/fixtures/ExpoManaged47Project.json'));
+    vol.fromJSON(
+      require('../sourcer/__tests__/fixtures/ExpoManaged47Project.json')
+    );
     const createFingerprintFixedArgs = getCreateFingerprintFixedArgs();
-    const fingerprint = await Fingerprint.createFingerprintAsync(...createFingerprintFixedArgs);
+    const fingerprint = await Fingerprint.createFingerprintAsync(
+      ...createFingerprintFixedArgs
+    );
 
     expect(fingerprint).toEqual(
       expect.objectContaining({
@@ -550,19 +646,28 @@ describe('function api stability', () => {
     );
     fingerprint.sources.forEach((source) => {
       if (source.type === 'file' || source.type === 'dir') {
-        expect(source).toEqual(expect.objectContaining({ filePath: expect.any(String) }));
+        expect(source).toEqual(
+          expect.objectContaining({ filePath: expect.any(String) })
+        );
       } else if (source.type === 'contents') {
         expect(source).toEqual(
-          expect.objectContaining({ id: expect.any(String), contents: expect.any(String) })
+          expect.objectContaining({
+            id: expect.any(String),
+            contents: expect.any(String),
+          })
         );
       }
     });
   });
 
   it('diffFingerprint - accepts output from createFingerprintAsync with stable function signature expected by eas-cli', async () => {
-    vol.fromJSON(require('../sourcer/__tests__/fixtures/ExpoManaged47Project.json'));
+    vol.fromJSON(
+      require('../sourcer/__tests__/fixtures/ExpoManaged47Project.json')
+    );
     const createFingerprintFixedArgs = getCreateFingerprintFixedArgs();
-    const fingerprint = await Fingerprint.createFingerprintAsync(...createFingerprintFixedArgs);
+    const fingerprint = await Fingerprint.createFingerprintAsync(
+      ...createFingerprintFixedArgs
+    );
 
     // The fixed arguments as called by eas-cli
     const FIXED_ARGS = [fingerprint, fingerprint];

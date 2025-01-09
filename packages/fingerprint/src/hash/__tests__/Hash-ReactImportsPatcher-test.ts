@@ -36,7 +36,12 @@ describe(`createFileHashResultsAsync - use ReactImportsPatchTransform`, () => {
     vol.fromJSON(files);
     await Promise.all(
       Object.keys(files).map((filePath) =>
-        createFileHashResultsAsync(path.relative('/app', filePath), limiter, '/app', options)
+        createFileHashResultsAsync(
+          path.relative('/app', filePath),
+          limiter,
+          '/app',
+          options
+        )
       )
     );
     const mockTransform = ReactImportsPatchTransform as jest.MockedClass<
@@ -47,7 +52,10 @@ describe(`createFileHashResultsAsync - use ReactImportsPatchTransform`, () => {
 
   it(`should not use ReactImportsPatchTransform if no match platforms`, async () => {
     const limiter = pLimit(1);
-    const options = await normalizeOptionsAsync('/app', { debug: true, platforms: ['android'] });
+    const options = await normalizeOptionsAsync('/app', {
+      debug: true,
+      platforms: ['android'],
+    });
     const files = {
       '/app/ios/HelloWorld/Info.plist': '',
       '/app/ios/HelloWorld/AppDelegate.h': '',
@@ -58,7 +66,12 @@ describe(`createFileHashResultsAsync - use ReactImportsPatchTransform`, () => {
     vol.fromJSON(files);
     await Promise.all(
       Object.keys(files).map((filePath) =>
-        createFileHashResultsAsync(path.relative('/app', filePath), limiter, '/app', options)
+        createFileHashResultsAsync(
+          path.relative('/app', filePath),
+          limiter,
+          '/app',
+          options
+        )
       )
     );
     const mockTransform = ReactImportsPatchTransform as jest.MockedClass<
@@ -69,7 +82,10 @@ describe(`createFileHashResultsAsync - use ReactImportsPatchTransform`, () => {
 
   it(`should not use ReactImportsPatchTransform if no match files`, async () => {
     const limiter = pLimit(1);
-    const options = await normalizeOptionsAsync('/app', { debug: true, platforms: ['android'] });
+    const options = await normalizeOptionsAsync('/app', {
+      debug: true,
+      platforms: ['android'],
+    });
     const files = {
       '/app/ios/HelloWorld/Info.plist': '',
       '/app/android/build.gradle': '',
@@ -77,7 +93,12 @@ describe(`createFileHashResultsAsync - use ReactImportsPatchTransform`, () => {
     vol.fromJSON(files);
     await Promise.all(
       Object.keys(files).map((filePath) =>
-        createFileHashResultsAsync(path.relative('/app', filePath), limiter, '/app', options)
+        createFileHashResultsAsync(
+          path.relative('/app', filePath),
+          limiter,
+          '/app',
+          options
+        )
       )
     );
     const mockTransform = ReactImportsPatchTransform as jest.MockedClass<

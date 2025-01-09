@@ -23,8 +23,13 @@ async function runAsync(programName: string, args: string[] = []) {
   // @ts-expect-error: module internal _cache
   const loadedModulesBefore = new Set(Object.keys(module._cache));
 
-  const { getConfig } = require(resolveFrom(path.resolve(projectRoot), 'expo/config'));
-  const config = await getConfig(projectRoot, { skipSDKVersionRequirement: true });
+  const { getConfig } = require(resolveFrom(
+    path.resolve(projectRoot),
+    'expo/config'
+  ));
+  const config = await getConfig(projectRoot, {
+    skipSDKVersionRequirement: true,
+  });
   // @ts-expect-error: module internal _cache
   const loadedModules = Object.keys(module._cache)
     .filter((modulePath) => !loadedModulesBefore.has(modulePath))
@@ -34,7 +39,10 @@ async function runAsync(programName: string, args: string[] = []) {
   const filteredLoadedModules = loadedModules.filter(
     (modulePath) => !isIgnoredPath(modulePath, ignoredPaths)
   );
-  const result = JSON.stringify({ config, loadedModules: filteredLoadedModules });
+  const result = JSON.stringify({
+    config,
+    loadedModules: filteredLoadedModules,
+  });
   if (process.send) {
     process.send(result);
   } else {
@@ -47,7 +55,10 @@ if (require.main?.filename === __filename) {
   (async () => {
     const programIndex = process.argv.findIndex((arg) => arg === __filename);
     try {
-      await runAsync(process.argv[programIndex], process.argv.slice(programIndex + 1));
+      await runAsync(
+        process.argv[programIndex],
+        process.argv.slice(programIndex + 1)
+      );
     } catch (e) {
       console.error('Uncaught Error', e);
       process.exit(1);

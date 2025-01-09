@@ -55,7 +55,9 @@ async function createFixtureAsync(targetDir: string, outputFile: string) {
 
 (async () => {
   if (process.argv.length !== 4) {
-    console.log(`Usage: ${path.basename(process.argv[1])} targetDir outputFile`);
+    console.log(
+      `Usage: ${path.basename(process.argv[1])} targetDir outputFile`
+    );
     process.exit(1);
   }
   const targetDir = process.argv[2];

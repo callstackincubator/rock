@@ -1,5 +1,9 @@
 import { dedupSources } from './Dedup';
-import type { Fingerprint, FingerprintDiffItem, Options } from './Fingerprint.types';
+import type {
+  Fingerprint,
+  FingerprintDiffItem,
+  Options,
+} from './Fingerprint.types';
 import { normalizeOptionsAsync } from './Options';
 import { compareSource, sortSources } from './Sort';
 import { createFingerprintFromSourcesAsync } from './hash/Hash';
@@ -15,7 +19,11 @@ export async function createFingerprintAsync(
   const opts = await normalizeOptionsAsync(projectRoot, options);
   const sources = await getHashSourcesAsync(projectRoot, opts);
   const normalizedSources = sortSources(dedupSources(sources, projectRoot));
-  const fingerprint = await createFingerprintFromSourcesAsync(normalizedSources, projectRoot, opts);
+  const fingerprint = await createFingerprintFromSourcesAsync(
+    normalizedSources,
+    projectRoot,
+    opts
+  );
   return fingerprint;
 }
 
@@ -57,14 +65,21 @@ export function diffFingerprints(
   let index2 = 0;
   const diff: FingerprintDiffItem[] = [];
 
-  while (index1 < fingerprint1.sources.length && index2 < fingerprint2.sources.length) {
+  while (
+    index1 < fingerprint1.sources.length &&
+    index2 < fingerprint2.sources.length
+  ) {
     const source1 = fingerprint1.sources[index1];
     const source2 = fingerprint2.sources[index2];
 
     const compareResult = compareSource(source1, source2);
     if (compareResult === 0) {
       if (source1.hash !== source2.hash) {
-        diff.push({ op: 'changed', beforeSource: source1, afterSource: source2 });
+        diff.push({
+          op: 'changed',
+          beforeSource: source1,
+          afterSource: source2,
+        });
       }
       ++index1;
       ++index2;

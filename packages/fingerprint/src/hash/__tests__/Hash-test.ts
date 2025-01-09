@@ -135,7 +135,9 @@ describe(createContentsHashResultsAsync, () => {
       options
     );
 
-    const expectHex = createHash(options.hashAlgorithm).update(contents).digest('hex');
+    const expectHex = createHash(options.hashAlgorithm)
+      .update(contents)
+      .digest('hex');
     expect(result.id).toEqual(id);
     expect(result.hex).toEqual(expectHex);
   });
@@ -155,9 +157,16 @@ describe(createFileHashResultsAsync, () => {
     vol.mkdirSync('/app/assets');
     vol.writeFileSync(path.join('/app', filePath), contents);
 
-    const result = await createFileHashResultsAsync(filePath, limiter, '/app', options);
+    const result = await createFileHashResultsAsync(
+      filePath,
+      limiter,
+      '/app',
+      options
+    );
 
-    const expectHex = createHash(options.hashAlgorithm).update(contents).digest('hex');
+    const expectHex = createHash(options.hashAlgorithm)
+      .update(contents)
+      .digest('hex');
     expect(result?.id).toEqual(filePath);
     expect(result?.hex).toEqual(expectHex);
   });
@@ -166,11 +175,19 @@ describe(createFileHashResultsAsync, () => {
     const filePath = 'app.json';
     const contents = '{}';
     const limiter = pLimit(1);
-    const options = await normalizeOptionsAsync('/app', { debug: true, ignorePaths: ['*.json'] });
+    const options = await normalizeOptionsAsync('/app', {
+      debug: true,
+      ignorePaths: ['*.json'],
+    });
     vol.mkdirSync('/app');
     vol.writeFileSync(path.join('/app', filePath), contents);
 
-    const result = await createFileHashResultsAsync(filePath, limiter, '/app', options);
+    const result = await createFileHashResultsAsync(
+      filePath,
+      limiter,
+      '/app',
+      options
+    );
     expect(result).toBe(null);
   });
 });
@@ -190,7 +207,12 @@ describe(createDirHashResultsAsync, () => {
       '/app/android/build.gradle': '...',
     };
     vol.fromJSON(volJSON);
-    const result = await createDirHashResultsAsync('.', limiter, '/app', options);
+    const result = await createDirHashResultsAsync(
+      '.',
+      limiter,
+      '/app',
+      options
+    );
 
     expect(result?.id).toEqual('.');
     expect(result?.hex).not.toBe('');
@@ -210,7 +232,12 @@ describe(createDirHashResultsAsync, () => {
     };
     vol.fromJSON(volJSON);
 
-    const fingerprint1 = await createDirHashResultsAsync('.', limiter, '/app', options);
+    const fingerprint1 = await createDirHashResultsAsync(
+      '.',
+      limiter,
+      '/app',
+      options
+    );
 
     vol.reset();
     const volJSONIgnoreNativeProjects = {
@@ -218,7 +245,12 @@ describe(createDirHashResultsAsync, () => {
       '/app/app.json': '{}',
     };
     vol.fromJSON(volJSONIgnoreNativeProjects);
-    const fingerprint2 = await createDirHashResultsAsync('.', limiter, '/app', options);
+    const fingerprint2 = await createDirHashResultsAsync(
+      '.',
+      limiter,
+      '/app',
+      options
+    );
     expect(fingerprint1).toEqual(fingerprint2);
   });
 
@@ -237,9 +269,15 @@ describe(createDirHashResultsAsync, () => {
     };
     vol.fromJSON(volJSON);
 
-    const fingerprint1 = await createDirHashResultsAsync('.', limiter, '/app', options);
+    const fingerprint1 = await createDirHashResultsAsync(
+      '.',
+      limiter,
+      '/app',
+      options
+    );
     const iosDir = fingerprint1?.debugInfo?.children.find(
-      (child) => (child as DebugInfoDir)?.children != null && child?.path === 'ios'
+      (child) =>
+        (child as DebugInfoDir)?.children != null && child?.path === 'ios'
     ) as DebugInfoDir;
     expect(iosDir).toBeDefined();
     expect(iosDir.children.length).toBe(1);
@@ -256,7 +294,12 @@ describe(createDirHashResultsAsync, () => {
       '/app/android/build.gradle': '...',
     };
     vol.fromJSON(volJSON);
-    const result = await createDirHashResultsAsync('.', limiter, '/app', options);
+    const result = await createDirHashResultsAsync(
+      '.',
+      limiter,
+      '/app',
+      options
+    );
 
     vol.reset();
     const sortedVolJSON = {
@@ -266,7 +309,12 @@ describe(createDirHashResultsAsync, () => {
       '/app/ios/Podfile': '...',
     };
     vol.fromJSON(sortedVolJSON);
-    const sortedResult = await createDirHashResultsAsync('.', limiter, '/app', options);
+    const sortedResult = await createDirHashResultsAsync(
+      '.',
+      limiter,
+      '/app',
+      options
+    );
 
     expect(result?.id).toEqual(sortedResult?.id);
     expect(result?.hex).toEqual(sortedResult?.hex);
@@ -282,7 +330,11 @@ describe(createSourceId, () => {
     };
     expect(createSourceId(fileSource)).toBe('/app/app.json');
 
-    const dirSource: HashSource = { type: 'dir', filePath: '/app/ios', reasons: ['bareNativeDir'] };
+    const dirSource: HashSource = {
+      type: 'dir',
+      filePath: '/app/ios',
+      reasons: ['bareNativeDir'],
+    };
     expect(createSourceId(dirSource)).toBe('/app/ios');
   });
 

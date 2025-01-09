@@ -68,7 +68,10 @@ describe(getEasBuildSourcesAsync, () => {
 }`
     );
 
-    const sources = await getEasBuildSourcesAsync('/app', await normalizeOptionsAsync('/app'));
+    const sources = await getEasBuildSourcesAsync(
+      '/app',
+      await normalizeOptionsAsync('/app')
+    );
     expect(sources).toContainEqual(
       expect.objectContaining({
         type: 'file',
@@ -129,7 +132,10 @@ describe('getExpoAutolinkingSourcesAsync', () => {
       expoAutolinkingVersion
     );
     expect(sources).toContainEqual(
-      expect.objectContaining({ type: 'dir', filePath: 'node_modules/expo-modules-core' })
+      expect.objectContaining({
+        type: 'dir',
+        filePath: 'node_modules/expo-modules-core',
+      })
     );
     expect(sources).toMatchSnapshot();
   });
@@ -170,34 +176,53 @@ describe(getExpoConfigSourcesAsync, () => {
 
   it('should return empty array when expo package is not installed', async () => {
     vol.fromJSON(require('./fixtures/BareReactNative70Project.json'));
-    const mockedResolveFrom = resolveFrom.silent as jest.MockedFunction<typeof resolveFrom.silent>;
-    mockedResolveFrom.mockImplementationOnce((fromDirectory: string, moduleId: string) => {
-      const actualResolver = jest.requireActual('resolve-from').silent;
-      // To fake the case as no expo installed, trying to resolve as **nonexist/expo/config** module
-      return actualResolver(fromDirectory, 'nonexist/expo/config');
-    });
-    const sources = await getExpoConfigSourcesAsync('/app', await normalizeOptionsAsync('/app'));
+    const mockedResolveFrom = resolveFrom.silent as jest.MockedFunction<
+      typeof resolveFrom.silent
+    >;
+    mockedResolveFrom.mockImplementationOnce(
+      (fromDirectory: string, moduleId: string) => {
+        const actualResolver = jest.requireActual('resolve-from').silent;
+        // To fake the case as no expo installed, trying to resolve as **nonexist/expo/config** module
+        return actualResolver(fromDirectory, 'nonexist/expo/config');
+      }
+    );
+    const sources = await getExpoConfigSourcesAsync(
+      '/app',
+      await normalizeOptionsAsync('/app')
+    );
     expect(sources.length).toBe(0);
   });
 
   it('should contain expo config', async () => {
     vol.fromJSON(require('./fixtures/ExpoManaged47Project.json'));
-    const appJson = JSON.parse(vol.readFileSync('/app/app.json', 'utf8').toString());
-    const sources = await getExpoConfigSourcesAsync('/app', await normalizeOptionsAsync('/app'));
+    const appJson = JSON.parse(
+      vol.readFileSync('/app/app.json', 'utf8').toString()
+    );
+    const sources = await getExpoConfigSourcesAsync(
+      '/app',
+      await normalizeOptionsAsync('/app')
+    );
     const expoConfigSource = sources.find<HashSourceContents>(
       (source): source is HashSourceContents =>
         source.type === 'contents' && source.id === 'expoConfig'
     );
-    const expoConfig = JSON.parse(expoConfigSource?.contents?.toString() ?? 'null');
+    const expoConfig = JSON.parse(
+      expoConfigSource?.contents?.toString() ?? 'null'
+    );
     expect(expoConfig).not.toBeNull();
     expect(expoConfig.name).toEqual(appJson.expo.name);
   });
 
   it('should keep expo config contents in deterministic order', async () => {
     vol.fromJSON(require('./fixtures/ExpoManaged47Project.json'));
-    const sources = await getExpoConfigSourcesAsync('/app', await normalizeOptionsAsync('/app'));
+    const sources = await getExpoConfigSourcesAsync(
+      '/app',
+      await normalizeOptionsAsync('/app')
+    );
 
-    const appJsonContents = vol.readFileSync('/app/app.json', 'utf8').toString();
+    const appJsonContents = vol
+      .readFileSync('/app/app.json', 'utf8')
+      .toString();
     const appJson = JSON.parse(appJsonContents);
     const { name } = appJson.expo;
     // Re-insert name to change the object order
@@ -208,7 +233,10 @@ describe(getExpoConfigSourcesAsync, () => {
     vol.writeFileSync('/app/app.json', newAppJsonContents);
 
     // Even new app.json contents changed its order, the source contents should be the same.
-    const sources2 = await getExpoConfigSourcesAsync('/app', await normalizeOptionsAsync('/app'));
+    const sources2 = await getExpoConfigSourcesAsync(
+      '/app',
+      await normalizeOptionsAsync('/app')
+    );
     expect(sources).toEqual(sources2);
   });
 
@@ -216,7 +244,10 @@ describe(getExpoConfigSourcesAsync, () => {
     vol.fromJSON(require('./fixtures/ExpoManaged47Project.json'));
     vol.mkdirSync('/app/assets');
     vol.writeFileSync('/app/assets/icon.png', 'PNG data');
-    const sources = await getExpoConfigSourcesAsync('/app', await normalizeOptionsAsync('/app'));
+    const sources = await getExpoConfigSourcesAsync(
+      '/app',
+      await normalizeOptionsAsync('/app')
+    );
     expect(sources).toContainEqual(
       expect.objectContaining({
         type: 'file',
@@ -231,7 +262,8 @@ describe(getExpoConfigSourcesAsync, () => {
     vol.writeFileSync('/app/assets/images/splash-icon.png', 'PNG data');
 
     const config = {
-      exp: JSON.parse(vol.readFileSync('/app/app.json', 'utf8').toString()).expo,
+      exp: JSON.parse(vol.readFileSync('/app/app.json', 'utf8').toString())
+        .expo,
     };
     const configResult = JSON.stringify({ config, loadedModules: [] });
     const mockSpawnWithIpcAsync = spawnWithIpcAsync as jest.MockedFunction<
@@ -245,7 +277,10 @@ describe(getExpoConfigSourcesAsync, () => {
       signal: null,
       status: 0,
     });
-    const sources = await getExpoConfigSourcesAsync('/app', await normalizeOptionsAsync('/app'));
+    const sources = await getExpoConfigSourcesAsync(
+      '/app',
+      await normalizeOptionsAsync('/app')
+    );
     expect(sources).toContainEqual(
       expect.objectContaining({
         type: 'file',
@@ -275,7 +310,10 @@ describe(getExpoConfigSourcesAsync, () => {
       signal: null,
       status: 0,
     });
-    const sources = await getExpoConfigSourcesAsync('/app', await normalizeOptionsAsync('/app'));
+    const sources = await getExpoConfigSourcesAsync(
+      '/app',
+      await normalizeOptionsAsync('/app')
+    );
     expect(sources).toContainEqual(
       expect.objectContaining({
         type: 'file',
@@ -285,7 +323,8 @@ describe(getExpoConfigSourcesAsync, () => {
     expect(sources).toContainEqual(
       expect.objectContaining({
         type: 'file',
-        filePath: 'node_modules/third-party/node_modules/transitive-third-party/index.js',
+        filePath:
+          'node_modules/third-party/node_modules/transitive-third-party/index.js',
       })
     );
   });
@@ -314,13 +353,17 @@ export default ({ config }) => {
 
     const sources = await getExpoConfigSourcesAsync(
       '/app',
-      await normalizeOptionsAsync('/app', { sourceSkips: SourceSkips.ExpoConfigVersions })
+      await normalizeOptionsAsync('/app', {
+        sourceSkips: SourceSkips.ExpoConfigVersions,
+      })
     );
     const expoConfigSource = sources.find<HashSourceContents>(
       (source): source is HashSourceContents =>
         source.type === 'contents' && source.id === 'expoConfig'
     );
-    const expoConfig = JSON.parse(expoConfigSource?.contents?.toString() ?? 'null');
+    const expoConfig = JSON.parse(
+      expoConfigSource?.contents?.toString() ?? 'null'
+    );
     expect(expoConfig).not.toBeNull();
     expect(expoConfig.version).toBeUndefined();
     expect(expoConfig.android.versionCode).toBeUndefined();
@@ -349,16 +392,25 @@ const config = {
 module.exports = config;
 `;
       vol.writeFileSync('/app/fingerprint.config.js', configContents);
-      jest.doMock('/app/fingerprint.config.js', () => requireString(configContents), {
-        virtual: true,
-      });
+      jest.doMock(
+        '/app/fingerprint.config.js',
+        () => requireString(configContents),
+        {
+          virtual: true,
+        }
+      );
 
-      const sources = await getExpoConfigSourcesAsync('/app', await normalizeOptionsAsync('/app'));
+      const sources = await getExpoConfigSourcesAsync(
+        '/app',
+        await normalizeOptionsAsync('/app')
+      );
       const expoConfigSource = sources.find<HashSourceContents>(
         (source): source is HashSourceContents =>
           source.type === 'contents' && source.id === 'expoConfig'
       );
-      const expoConfig = JSON.parse(expoConfigSource?.contents?.toString() ?? 'null');
+      const expoConfig = JSON.parse(
+        expoConfigSource?.contents?.toString() ?? 'null'
+      );
       expect(expoConfig).not.toBeNull();
       expect(expoConfig.version).toBeUndefined();
       expect(expoConfig.android.versionCode).toBeUndefined();
@@ -391,7 +443,9 @@ export default ({ config }) => {
       (source): source is HashSourceContents =>
         source.type === 'contents' && source.id === 'expoConfig'
     );
-    const expoConfig = JSON.parse(expoConfigSource?.contents?.toString() ?? 'null');
+    const expoConfig = JSON.parse(
+      expoConfigSource?.contents?.toString() ?? 'null'
+    );
     expect(expoConfig).not.toBeNull();
     expect(expoConfig.runtimeVersion).toBeUndefined();
     expect(expoConfig.android.runtimeVersion).toBeUndefined();
@@ -422,7 +476,9 @@ export default ({ config }) => {
       (source): source is HashSourceContents =>
         source.type === 'contents' && source.id === 'expoConfig'
     );
-    const expoConfig = JSON.parse(expoConfigSource?.contents?.toString() ?? 'null');
+    const expoConfig = JSON.parse(
+      expoConfigSource?.contents?.toString() ?? 'null'
+    );
     expect(expoConfig).not.toBeNull();
     expect(expoConfig.runtimeVersion).toMatchObject({ policy: 'test' });
     expect(expoConfig.android.runtimeVersion).toMatchObject({ policy: 'test' });
@@ -436,7 +492,9 @@ export default ({ config }) => {
     vol.writeFileSync('/app/assets/icon.png', 'PNG data');
     const sources = await getExpoConfigSourcesAsync(
       '/app',
-      await normalizeOptionsAsync('/app', { sourceSkips: SourceSkips.ExpoConfigAssets })
+      await normalizeOptionsAsync('/app', {
+        sourceSkips: SourceSkips.ExpoConfigAssets,
+      })
     );
     expect(sources).not.toContainEqual(
       expect.objectContaining({
@@ -452,7 +510,9 @@ export default ({ config }) => {
     vol.writeFileSync('/app/assets/icon.png', 'PNG data');
     const sources = await getExpoConfigSourcesAsync(
       '/app',
-      await normalizeOptionsAsync('/app', { sourceSkips: SourceSkips.ExpoConfigAll })
+      await normalizeOptionsAsync('/app', {
+        sourceSkips: SourceSkips.ExpoConfigAll,
+      })
     );
     expect(sources).toEqual([]);
   });
@@ -467,7 +527,10 @@ describe(getExpoCNGPatchSourcesAsync, () => {
     vol.fromJSON(require('./fixtures/ExpoManaged47Project.json'));
     vol.fromJSON(require('./fixtures/PatchPackage.json'));
 
-    const sources = await getExpoCNGPatchSourcesAsync('/app', await normalizeOptionsAsync('/app'));
+    const sources = await getExpoCNGPatchSourcesAsync(
+      '/app',
+      await normalizeOptionsAsync('/app')
+    );
     expect(sources).toContainEqual(
       expect.objectContaining({
         type: 'dir',
@@ -499,7 +562,8 @@ describe('sortExpoAutolinkingConfig', () => {
           projects: [
             {
               name: 'expo-modules-core$android-annotation',
-              sourceDir: '/app/node_modules/expo-modules-core/android-annotation',
+              sourceDir:
+                '/app/node_modules/expo-modules-core/android-annotation',
             },
             {
               name: 'expo-modules-core',
@@ -507,7 +571,8 @@ describe('sortExpoAutolinkingConfig', () => {
             },
             {
               name: 'expo-modules-core$android-annotation-processor',
-              sourceDir: '/app/node_modules/expo-modules-core/android-annotation-processor',
+              sourceDir:
+                '/app/node_modules/expo-modules-core/android-annotation-processor',
             },
           ],
           modules: [],
@@ -517,7 +582,9 @@ describe('sortExpoAutolinkingConfig', () => {
 
     const result = sortExpoAutolinkingAndroidConfig(config);
     expect(result.modules[1].projects[0].name).toBe('expo-modules-core');
-    expect(result.modules[1].projects[1].name).toBe('expo-modules-core$android-annotation');
+    expect(result.modules[1].projects[1].name).toBe(
+      'expo-modules-core$android-annotation'
+    );
     expect(result.modules[1].projects[2].name).toBe(
       'expo-modules-core$android-annotation-processor'
     );
@@ -539,7 +606,11 @@ describe(getConfigPluginProps, () => {
       name: 'test',
       slug: 'test',
       version: '1.0.0',
-      plugins: ['plugin1', ['plugin2', { prop: 'value' }], ['plugin3', 'stringProp']],
+      plugins: [
+        'plugin1',
+        ['plugin2', { prop: 'value' }],
+        ['plugin3', 'stringProp'],
+      ],
     };
     expect(getConfigPluginProps(config, 'test')).toBeNull();
   });
@@ -549,7 +620,12 @@ describe(getConfigPluginProps, () => {
       name: 'test',
       slug: 'test',
       version: '1.0.0',
-      plugins: ['plugin1', ['plugin2', { prop: 'value' }], ['plugin3', 'stringProp'], 'test'],
+      plugins: [
+        'plugin1',
+        ['plugin2', { prop: 'value' }],
+        ['plugin3', 'stringProp'],
+        'test',
+      ],
     };
     expect(getConfigPluginProps(config, 'test')).toBeNull();
   });

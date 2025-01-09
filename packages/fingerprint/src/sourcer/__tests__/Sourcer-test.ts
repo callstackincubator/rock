@@ -14,9 +14,15 @@ describe(getHashSourcesAsync, () => {
     const sources = await getHashSourcesAsync(
       '/app',
       await normalizeOptionsAsync('/app', {
-        extraSources: [{ type: 'dir', filePath: '/app/scripts', reasons: ['extra'] }],
+        extraSources: [
+          { type: 'dir', filePath: '/app/scripts', reasons: ['extra'] },
+        ],
       })
     );
-    expect(sources).toContainEqual({ type: 'dir', filePath: '/app/scripts', reasons: ['extra'] });
+    expect(sources).toContainEqual({
+      type: 'dir',
+      filePath: '/app/scripts',
+      reasons: ['extra'],
+    });
   });
 });

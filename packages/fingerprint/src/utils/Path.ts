@@ -21,7 +21,9 @@ export function buildPathMatchObjects(
   paths: string[],
   minimatchOptions: minimatch.IOptions = { dot: true }
 ): IMinimatch[] {
-  return paths.map((filePath) => new minimatch.Minimatch(filePath, minimatchOptions));
+  return paths.map(
+    (filePath) => new minimatch.Minimatch(filePath, minimatchOptions)
+  );
 }
 
 /**
@@ -32,7 +34,9 @@ export function buildDirMatchObjects(
   minimatchOptions: minimatch.IOptions = { dot: true }
 ): IMinimatch[] {
   const dirIgnorePatterns: string[] = [];
-  const ignorePaths = ignorePathMatchObjects.filter((obj) => !obj.negate).map((obj) => obj.pattern);
+  const ignorePaths = ignorePathMatchObjects
+    .filter((obj) => !obj.negate)
+    .map((obj) => obj.pattern);
   const negatedIgnorePaths = ignorePathMatchObjects
     .filter((obj) => obj.negate)
     .map((obj) => obj.pattern);
@@ -61,7 +65,9 @@ export function buildDirMatchObjects(
     }
   }
 
-  return dirIgnorePatterns.map((pattern) => new minimatch.Minimatch(pattern, minimatchOptions));
+  return dirIgnorePatterns.map(
+    (pattern) => new minimatch.Minimatch(pattern, minimatchOptions)
+  );
 }
 
 /**
@@ -74,7 +80,9 @@ export function isIgnoredPathWithMatchObjects(
   let result = false;
   for (const minimatchObj of matchObjects) {
     const stripParentPrefix = minimatchObj.pattern.startsWith('**/');
-    const normalizedFilePath = normalizeFilePath(filePath, { stripParentPrefix });
+    const normalizedFilePath = normalizeFilePath(filePath, {
+      stripParentPrefix,
+    });
     const currMatch = minimatchObj.match(normalizedFilePath);
     if (minimatchObj.negate && result && !currMatch) {
       // Special handler for negate (!pattern).
@@ -107,7 +115,10 @@ const STRIP_PARENT_PREFIX_REGEX = /^(\.\.\/)+/g;
  *   However, minimatch '**' doesn't match the parent directories.
  *   We need to strip the `../` prefix to match the node_modules from parent directories.
  */
-export function normalizeFilePath(filePath: string, options: { stripParentPrefix?: boolean }) {
+export function normalizeFilePath(
+  filePath: string,
+  options: { stripParentPrefix?: boolean }
+) {
   if (options.stripParentPrefix) {
     return filePath.replace(STRIP_PARENT_PREFIX_REGEX, '');
   }
@@ -120,5 +131,7 @@ const REGEXP_REPLACE_SLASHES = /\\/g;
  * Convert any platform-specific path to a POSIX path.
  */
 export function toPosixPath(filePath: string): string {
-  return process.platform === 'win32' ? filePath.replace(REGEXP_REPLACE_SLASHES, '/') : filePath;
+  return process.platform === 'win32'
+    ? filePath.replace(REGEXP_REPLACE_SLASHES, '/')
+    : filePath;
 }

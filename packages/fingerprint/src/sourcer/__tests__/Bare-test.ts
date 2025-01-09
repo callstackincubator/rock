@@ -26,11 +26,21 @@ describe('getBareSourcesAsync', () => {
 
   it('should contain android and ios folders in bare react-native project', async () => {
     vol.fromJSON(require('./fixtures/BareReactNative70Project.json'));
-    let sources = await getBareAndroidSourcesAsync('/app', await normalizeOptionsAsync('/app'));
-    expect(sources).toContainEqual(expect.objectContaining({ filePath: 'android', type: 'dir' }));
+    let sources = await getBareAndroidSourcesAsync(
+      '/app',
+      await normalizeOptionsAsync('/app')
+    );
+    expect(sources).toContainEqual(
+      expect.objectContaining({ filePath: 'android', type: 'dir' })
+    );
 
-    sources = await getBareIosSourcesAsync('/app', await normalizeOptionsAsync('/app'));
-    expect(sources).toContainEqual(expect.objectContaining({ filePath: 'ios', type: 'dir' }));
+    sources = await getBareIosSourcesAsync(
+      '/app',
+      await normalizeOptionsAsync('/app')
+    );
+    expect(sources).toContainEqual(
+      expect.objectContaining({ filePath: 'ios', type: 'dir' })
+    );
   });
 });
 
@@ -82,7 +92,9 @@ describe(getPackageJsonScriptSourcesAsync, () => {
       );
       const sources = await getPackageJsonScriptSourcesAsync(
         '/app',
-        await normalizeOptionsAsync('/app', { sourceSkips: SourceSkips.PackageJsonScriptsAll })
+        await normalizeOptionsAsync('/app', {
+          sourceSkips: SourceSkips.PackageJsonScriptsAll,
+        })
       );
       expect(sources).toEqual([]);
     });
@@ -189,7 +201,9 @@ describe('getCoreAutolinkingSources', () => {
     getCoreAutolinkingSourcesFromRncCliAsyncWrapper,
   ]) {
     it('should contain react-native core autolinking projects', async () => {
-      const mockSpawnAsync = spawnAsync as jest.MockedFunction<typeof spawnAsync>;
+      const mockSpawnAsync = spawnAsync as jest.MockedFunction<
+        typeof spawnAsync
+      >;
       const fixture = fs.readFileSync(
         path.join(__dirname, 'fixtures', 'RncoreAutoLinkingFromRncCli.json'),
         'utf8'
@@ -201,7 +215,10 @@ describe('getCoreAutolinkingSources', () => {
         signal: null,
         output: [fixture, ''],
       });
-      const sources = await testFn('/root/apps/demo', await normalizeOptionsAsync('/app'));
+      const sources = await testFn(
+        '/root/apps/demo',
+        await normalizeOptionsAsync('/app')
+      );
       expect(sources).toContainEqual(
         expect.objectContaining({
           type: 'dir',
@@ -218,7 +235,9 @@ describe('getCoreAutolinkingSources', () => {
     });
 
     it('should not contain absolute paths', async () => {
-      const mockSpawnAsync = spawnAsync as jest.MockedFunction<typeof spawnAsync>;
+      const mockSpawnAsync = spawnAsync as jest.MockedFunction<
+        typeof spawnAsync
+      >;
       const fixture = fs.readFileSync(
         path.join(__dirname, 'fixtures', 'RncoreAutoLinkingFromRncCli.json'),
         'utf8'
@@ -230,7 +249,10 @@ describe('getCoreAutolinkingSources', () => {
         signal: null,
         output: [fixture, ''],
       });
-      const sources = await testFn('/root/apps/demo', await normalizeOptionsAsync('/app'));
+      const sources = await testFn(
+        '/root/apps/demo',
+        await normalizeOptionsAsync('/app')
+      );
       for (const source of sources) {
         if (source.type === 'dir' || source.type === 'file') {
           expect(source.filePath).not.toMatch(/^\/root/);
@@ -241,9 +263,15 @@ describe('getCoreAutolinkingSources', () => {
     });
 
     it('should gracefully ignore react-native-cli dependencies with a bad form', async () => {
-      const mockSpawnAsync = spawnAsync as jest.MockedFunction<typeof spawnAsync>;
+      const mockSpawnAsync = spawnAsync as jest.MockedFunction<
+        typeof spawnAsync
+      >;
       const fixture = fs.readFileSync(
-        path.join(__dirname, 'fixtures', 'RncoreAutoLinkingBadDependencyFromRncCli.json'),
+        path.join(
+          __dirname,
+          'fixtures',
+          'RncoreAutoLinkingBadDependencyFromRncCli.json'
+        ),
         'utf8'
       );
       mockSpawnAsync.mockResolvedValue({
@@ -253,7 +281,10 @@ describe('getCoreAutolinkingSources', () => {
         signal: null,
         output: [fixture, ''],
       });
-      const sources = await testFn('/root/apps/demo', await normalizeOptionsAsync('/app'));
+      const sources = await testFn(
+        '/root/apps/demo',
+        await normalizeOptionsAsync('/app')
+      );
 
       expect(sources).toContainEqual(
         expect.objectContaining({

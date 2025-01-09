@@ -5,9 +5,15 @@ import pLimit from 'p-limit';
 import path from 'path';
 
 import { createFingerprintAsync } from '../Fingerprint';
-import type { FileHookTransformSource, FileHookTransformFunction } from '../Fingerprint.types';
+import type {
+  FileHookTransformSource,
+  FileHookTransformFunction,
+} from '../Fingerprint.types';
 import { normalizeOptionsAsync } from '../Options';
-import { createContentsHashResultsAsync, createFileHashResultsAsync } from '../hash/Hash';
+import {
+  createContentsHashResultsAsync,
+  createFileHashResultsAsync,
+} from '../hash/Hash';
 
 jest.mock('fs');
 jest.mock('fs/promises');
@@ -38,8 +44,15 @@ describe('FileHookTransform', () => {
     vol.mkdirSync('/app/assets', { recursive: true });
     vol.writeFileSync(path.join('/app', filePath), contents);
 
-    const options = await normalizeOptionsAsync('/app', { fileHookTransform: mockHook });
-    const result = await createFileHashResultsAsync(filePath, limiter, '/app', options);
+    const options = await normalizeOptionsAsync('/app', {
+      fileHookTransform: mockHook,
+    });
+    const result = await createFileHashResultsAsync(
+      filePath,
+      limiter,
+      '/app',
+      options
+    );
     expect(mockHook).toHaveBeenCalledTimes(2);
     expect(mockHook.mock.calls[0][0]).toEqual({ type: 'file', filePath });
     expect(mockHook.mock.calls[0][1].toString()).toEqual(contents);
@@ -47,7 +60,9 @@ describe('FileHookTransform', () => {
     expect(mockHook.mock.calls[1][0]).toEqual({ type: 'file', filePath });
     expect(mockHook.mock.calls[1][1]).toBe(null);
     expect(mockHook.mock.calls[1][2]).toBe(true);
-    const expectHex = createHash(options.hashAlgorithm).update(contents).digest('hex');
+    const expectHex = createHash(options.hashAlgorithm)
+      .update(contents)
+      .digest('hex');
     expect(result.hex).toBe(expectHex);
   });
 
@@ -64,7 +79,8 @@ describe('FileHookTransform', () => {
           encoding: BufferEncoding
         ) => {
           if (chunk != null) {
-            const buffer = typeof chunk === 'string' ? Buffer.from(chunk, encoding) : chunk;
+            const buffer =
+              typeof chunk === 'string' ? Buffer.from(chunk, encoding) : chunk;
             recvBuffer = Buffer.concat([recvBuffer, buffer]);
           }
 
@@ -83,21 +99,38 @@ describe('FileHookTransform', () => {
     vol.mkdirSync('/app/assets', { recursive: true });
     vol.writeFileSync(path.join('/app', filePath), contents);
 
-    const options = await normalizeOptionsAsync('/app', { fileHookTransform: mockChunkBufferHook });
-    const result = await createFileHashResultsAsync(filePath, limiter, '/app', options);
-    const expectHex = createHash(options.hashAlgorithm).update(contents).digest('hex');
+    const options = await normalizeOptionsAsync('/app', {
+      fileHookTransform: mockChunkBufferHook,
+    });
+    const result = await createFileHashResultsAsync(
+      filePath,
+      limiter,
+      '/app',
+      options
+    );
+    const expectHex = createHash(options.hashAlgorithm)
+      .update(contents)
+      .digest('hex');
     expect(result.hex).toBe(expectHex);
 
     expect(recvBuffer.byteLength).toBe(fileSize);
-    const expectHex2 = createHash(options.hashAlgorithm).update(recvBuffer).digest('hex');
+    const expectHex2 = createHash(options.hashAlgorithm)
+      .update(recvBuffer)
+      .digest('hex');
     expect(result.hex).toBe(expectHex2);
   });
 
   it('should call hook function from createFingerprintAsync', async () => {
-    vol.fromJSON(require('../sourcer/__tests__/fixtures/ExpoManaged47Project.json'));
-    const packageJson = JSON.parse(vol.readFileSync('/app/package.json', 'utf8').toString());
+    vol.fromJSON(
+      require('../sourcer/__tests__/fixtures/ExpoManaged47Project.json')
+    );
+    const packageJson = JSON.parse(
+      vol.readFileSync('/app/package.json', 'utf8').toString()
+    );
     jest.doMock('/app/package.json', () => packageJson, { virtual: true });
-    const options = await normalizeOptionsAsync('/app', { fileHookTransform: mockHook });
+    const options = await normalizeOptionsAsync('/app', {
+      fileHookTransform: mockHook,
+    });
     await createFingerprintAsync('/app', options);
     expect(mockHook).toHaveBeenCalled();
   });
@@ -119,17 +152,25 @@ describe('FileHookTransform', () => {
           return chunk;
         }
       ) as jest.MockedFunction<FileHookTransformFunction>;
-    vol.fromJSON(require('../sourcer/__tests__/fixtures/ExpoManaged47Project.json'));
-    const packageJson = JSON.parse(vol.readFileSync('/app/package.json', 'utf8').toString());
+    vol.fromJSON(
+      require('../sourcer/__tests__/fixtures/ExpoManaged47Project.json')
+    );
+    const packageJson = JSON.parse(
+      vol.readFileSync('/app/package.json', 'utf8').toString()
+    );
     jest.doMock('/app/package.json', () => packageJson, { virtual: true });
-    const options = await normalizeOptionsAsync('/app', { fileHookTransform: mockExpoConfigHook });
+    const options = await normalizeOptionsAsync('/app', {
+      fileHookTransform: mockExpoConfigHook,
+    });
     const result = await createFingerprintAsync('/app', options);
     const expoConfig = result.sources.find(
       (source) => source.type === 'contents' && source.id === 'expoConfig'
     );
     // @ts-expect-error - typescript cannot infer contents type from FingerpintSource
     expect(expoConfig?.contents).toBe('EMPTYCONFIG');
-    const expectHex = createHash(options.hashAlgorithm).update('EMPTYCONFIG').digest('hex');
+    const expectHex = createHash(options.hashAlgorithm)
+      .update('EMPTYCONFIG')
+      .digest('hex');
     expect(expoConfig?.hash).toBe(expectHex);
   });
 });
@@ -165,7 +206,12 @@ describe('FileHookTransform - debugInfo.isTransformed', () => {
       fileHookTransform: mockHook,
       debug: true,
     });
-    const result = await createFileHashResultsAsync(filePath, limiter, '/app', options);
+    const result = await createFileHashResultsAsync(
+      filePath,
+      limiter,
+      '/app',
+      options
+    );
     expect(result.debugInfo?.path).toBe(filePath);
     expect(result.debugInfo?.isTransformed).toBe(true);
   });

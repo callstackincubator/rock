@@ -45,7 +45,10 @@ export async function getPackageSourceAsync(
   params: PackageSourcerParams
 ): Promise<HashSource | null> {
   const reason = `package:${params.packageName}`;
-  const packageJsonPath = resolveFrom.silent(projectRoot, `${params.packageName}/package.json`);
+  const packageJsonPath = resolveFrom.silent(
+    projectRoot,
+    `${params.packageName}/package.json`
+  );
   if (packageJsonPath == null) {
     return null;
   }

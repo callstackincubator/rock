@@ -53,7 +53,10 @@ export async function getExpoConfigSourcesAsync(
     });
   } catch (e: unknown) {
     if (e instanceof Error) {
-      console.warn(`Cannot get Expo config from an Expo project - ${e.message}: `, e.stack);
+      console.warn(
+        `Cannot get Expo config from an Expo project - ${e.message}: `,
+        e.stack
+      );
     }
     return [];
   } finally {
@@ -145,7 +148,10 @@ export async function getExpoConfigSourcesAsync(
   return results;
 }
 
-function normalizeExpoConfig(config: ExpoConfig, options: NormalizedOptions): ExpoConfig {
+function normalizeExpoConfig(
+  config: ExpoConfig,
+  options: NormalizedOptions
+): ExpoConfig {
   // Deep clone by JSON.parse/stringify that assumes the config is serializable.
   const normalizedConfig: ExpoConfig = JSON.parse(JSON.stringify(config));
 
@@ -223,17 +229,26 @@ async function createTempIgnoredFileAsync(
   options: NormalizedOptions
 ): Promise<string> {
   const ignoredFile = path.join(tmpDir, '.fingerprintignore');
-  const ignorePaths = options.ignorePathMatchObjects.map((match) => match.pattern);
+  const ignorePaths = options.ignorePathMatchObjects.map(
+    (match) => match.pattern
+  );
   await fs.writeFile(ignoredFile, ignorePaths.join('\n'));
   return ignoredFile;
 }
 
-export async function getEasBuildSourcesAsync(projectRoot: string, options: NormalizedOptions) {
+export async function getEasBuildSourcesAsync(
+  projectRoot: string,
+  options: NormalizedOptions
+) {
   const files = ['eas.json', '.easignore'];
   const results = (
     await Promise.all(
       files.map(async (file) => {
-        const result = await getFileBasedHashSourceAsync(projectRoot, file, 'easBuild');
+        const result = await getFileBasedHashSourceAsync(
+          projectRoot,
+          file,
+          'easBuild'
+        );
         if (result != null) {
           debug(`Adding eas file - ${chalk.dim(file)}`);
         }
@@ -258,30 +273,50 @@ export async function getExpoAutolinkingAndroidSourcesAsync(
     const results: HashSource[] = [];
     const { stdout } = await spawnAsync(
       'node',
-      [resolveExpoAutolinkingCliPath(projectRoot), 'resolve', '-p', 'android', '--json'],
+      [
+        resolveExpoAutolinkingCliPath(projectRoot),
+        'resolve',
+        '-p',
+        'android',
+        '--json',
+      ],
       { cwd: projectRoot }
     );
     const config = sortExpoAutolinkingAndroidConfig(JSON.parse(stdout));
     for (const module of config.modules) {
       for (const project of module.projects) {
-        const filePath = toPosixPath(path.relative(projectRoot, project.sourceDir));
+        const filePath = toPosixPath(
+          path.relative(projectRoot, project.sourceDir)
+        );
         project.sourceDir = filePath; // use relative path for the dir
-        debug(`Adding expo-modules-autolinking android dir - ${chalk.dim(filePath)}`);
+        debug(
+          `Adding expo-modules-autolinking android dir - ${chalk.dim(filePath)}`
+        );
         results.push({ type: 'dir', filePath, reasons });
       }
       if (module.plugins) {
         for (const plugin of module.plugins) {
-          const filePath = toPosixPath(path.relative(projectRoot, plugin.sourceDir));
+          const filePath = toPosixPath(
+            path.relative(projectRoot, plugin.sourceDir)
+          );
           plugin.sourceDir = filePath; // use relative path for the dir
-          debug(`Adding expo-modules-autolinking android dir - ${chalk.dim(filePath)}`);
+          debug(
+            `Adding expo-modules-autolinking android dir - ${chalk.dim(
+              filePath
+            )}`
+          );
           results.push({ type: 'dir', filePath, reasons });
         }
       }
       if (module.aarProjects) {
         for (const aarProject of module.aarProjects) {
           // use relative path for aarProject fields
-          aarProject.aarFilePath = toPosixPath(path.relative(projectRoot, aarProject.aarFilePath));
-          aarProject.projectDir = toPosixPath(path.relative(projectRoot, aarProject.projectDir));
+          aarProject.aarFilePath = toPosixPath(
+            path.relative(projectRoot, aarProject.aarFilePath)
+          );
+          aarProject.projectDir = toPosixPath(
+            path.relative(projectRoot, aarProject.projectDir)
+          );
         }
       }
     }
@@ -304,7 +339,11 @@ export async function getExpoCNGPatchSourcesAsync(
   projectRoot: string,
   options: NormalizedOptions
 ): Promise<HashSource[]> {
-  const result = await getFileBasedHashSourceAsync(projectRoot, 'cng-patches', 'expoCNGPatches');
+  const result = await getFileBasedHashSourceAsync(
+    projectRoot,
+    'cng-patches',
+    'expoCNGPatches'
+  );
   if (result != null) {
     debug(`Adding dir - ${chalk.dim('cng-patches')}`);
     return [result];
@@ -322,21 +361,33 @@ export async function getExpoAutolinkingIosSourcesAsync(
   }
 
   // expo-modules-autolinking 1.10.0 added support for apple platform
-  const platform = semver.lt(expoAutolinkingVersion, '1.10.0') ? 'ios' : 'apple';
+  const platform = semver.lt(expoAutolinkingVersion, '1.10.0')
+    ? 'ios'
+    : 'apple';
   try {
     const reasons = ['expoAutolinkingIos'];
     const results: HashSource[] = [];
     const { stdout } = await spawnAsync(
       'node',
-      [resolveExpoAutolinkingCliPath(projectRoot), 'resolve', '-p', platform, '--json'],
+      [
+        resolveExpoAutolinkingCliPath(projectRoot),
+        'resolve',
+        '-p',
+        platform,
+        '--json',
+      ],
       { cwd: projectRoot }
     );
     const config = JSON.parse(stdout);
     for (const module of config.modules) {
       for (const pod of module.pods) {
-        const filePath = toPosixPath(path.relative(projectRoot, pod.podspecDir));
+        const filePath = toPosixPath(
+          path.relative(projectRoot, pod.podspecDir)
+        );
         pod.podspecDir = filePath; // use relative path for the dir
-        debug(`Adding expo-modules-autolinking ios dir - ${chalk.dim(filePath)}`);
+        debug(
+          `Adding expo-modules-autolinking ios dir - ${chalk.dim(filePath)}`
+        );
         results.push({ type: 'dir', filePath, reasons });
       }
     }
@@ -355,7 +406,9 @@ export async function getExpoAutolinkingIosSourcesAsync(
 /**
  * Sort the expo-modules-autolinking android config to make it stable from hashing.
  */
-export function sortExpoAutolinkingAndroidConfig(config: Record<string, any>): Record<string, any> {
+export function sortExpoAutolinkingAndroidConfig(
+  config: Record<string, any>
+): Record<string, any> {
   for (const module of config.modules) {
     // Sort the projects by project.name
     module.projects.sort((a: Record<string, any>, b: Record<string, any>) =>
@@ -368,7 +421,10 @@ export function sortExpoAutolinkingAndroidConfig(config: Record<string, any>): R
 /**
  * Get the props for a config-plugin
  */
-export function getConfigPluginProps<Props>(config: ExpoConfig, pluginName: string): Props | null {
+export function getConfigPluginProps<Props>(
+  config: ExpoConfig,
+  pluginName: string
+): Props | null {
   const plugin = (config.plugins ?? []).find((plugin) => {
     if (Array.isArray(plugin)) {
       return plugin[0] === pluginName;

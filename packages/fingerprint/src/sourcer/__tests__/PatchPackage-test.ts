@@ -19,7 +19,10 @@ describe(getPatchPackageSourcesAsync, () => {
     vol.fromJSON(require('./fixtures/ExpoManaged47Project.json'));
     vol.fromJSON(require('./fixtures/PatchPackage.json'));
 
-    const sources = await getPatchPackageSourcesAsync('/app', await normalizeOptionsAsync('/app'));
+    const sources = await getPatchPackageSourcesAsync(
+      '/app',
+      await normalizeOptionsAsync('/app')
+    );
     expect(sources).toContainEqual(
       expect.objectContaining({
         type: 'dir',
@@ -45,7 +48,10 @@ describe('patch-package postinstall', () => {
       { virtual: true }
     );
 
-    const sources = await getHashSourcesAsync('/app', await normalizeOptionsAsync('/app'));
+    const sources = await getHashSourcesAsync(
+      '/app',
+      await normalizeOptionsAsync('/app')
+    );
     expect(sources).toContainEqual(
       expect.objectContaining({
         type: 'contents',

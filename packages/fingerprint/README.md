@@ -24,7 +24,10 @@ await Fingerprint.createFingerprintAsync('/projectRoot');
 Create a fingerprint from project
 
 ```ts
-function createFingerprintAsync(projectRoot: string, options?: Options): Promise<Fingerprint>;
+function createFingerprintAsync(
+  projectRoot: string,
+  options?: Options
+): Promise<Fingerprint>;
 ```
 
 Example:
@@ -52,7 +55,11 @@ console.log(fingerprint);
     {
       "type": "dir",
       "filePath": "node_modules/expo",
-      "reasons": ["expoAutolinkingIos", "expoAutolinkingAndroid", "bareRncliAutolinking"],
+      "reasons": [
+        "expoAutolinkingIos",
+        "expoAutolinkingAndroid",
+        "bareRncliAutolinking"
+      ],
       "hash": "1faee4057fa943300905750b51c3b0cbf05f4b0d"
     }
   ],
@@ -65,7 +72,10 @@ console.log(fingerprint);
 Create a native hash value from project
 
 ```ts
-function createProjectHashAsync(projectRoot: string, options?: Options): Promise<string>;
+function createProjectHashAsync(
+  projectRoot: string,
+  options?: Options
+): Promise<string>;
 ```
 
 Example:
@@ -111,7 +121,11 @@ const fingerprint = {
     {
       type: 'dir',
       filePath: 'node_modules/expo',
-      reasons: ['expoAutolinkingIos', 'expoAutolinkingAndroid', 'bareRncliAutolinking'],
+      reasons: [
+        'expoAutolinkingIos',
+        'expoAutolinkingAndroid',
+        'bareRncliAutolinking',
+      ],
       hash: '1faee4057fa943300905750b51c3b0cbf05f4b0d',
     },
   ],

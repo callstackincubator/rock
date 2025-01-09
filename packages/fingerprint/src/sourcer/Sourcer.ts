@@ -29,7 +29,8 @@ export async function getHashSourcesAsync(
   projectRoot: string,
   options: NormalizedOptions
 ): Promise<HashSource[]> {
-  const expoAutolinkingVersion = resolveExpoAutolinkingVersion(projectRoot) ?? '0.0.0';
+  const expoAutolinkingVersion =
+    resolveExpoAutolinkingVersion(projectRoot) ?? '0.0.0';
   const useRNCoreAutolinkingFromExpo =
     // expo-modules-autolinking supports the `react-native-config` core autolinking from 1.11.2.
     // To makes the `useRNCoreAutolinkingFromExpo` default to `true` for Expo SDK 52 and higher.

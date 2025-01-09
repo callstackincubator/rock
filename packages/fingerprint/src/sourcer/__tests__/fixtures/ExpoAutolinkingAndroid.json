@@ -3,7 +3,9 @@
     {
       "packageName": "expo",
       "packageVersion": "47.0.3",
-      "projects": [{ "name": "expo", "sourceDir": "/app/node_modules/expo/android" }],
+      "projects": [
+        { "name": "expo", "sourceDir": "/app/node_modules/expo/android" }
+      ],
       "modules": []
     },
     {
@@ -53,7 +55,12 @@
     {
       "packageName": "expo-font",
       "packageVersion": "11.0.1",
-      "projects": [{ "name": "expo-font", "sourceDir": "/app/node_modules/expo-font/android" }],
+      "projects": [
+        {
+          "name": "expo-font",
+          "sourceDir": "/app/node_modules/expo-font/android"
+        }
+      ],
       "modules": []
     },
     {

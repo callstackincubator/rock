@@ -14,7 +14,10 @@ export function error(...message: string[]): void {
 
 /** Print an error and provide additional info (the stack trace) in debug mode. */
 export function exception(e: Error): void {
-  error(chalk.red(e.toString()) + (process.env.EXPO_DEBUG ? '\n' + chalk.gray(e.stack) : ''));
+  error(
+    chalk.red(e.toString()) +
+      (process.env.EXPO_DEBUG ? '\n' + chalk.gray(e.stack) : '')
+  );
 }
 
 export function warn(...message: string[]): void {
@@ -27,7 +30,9 @@ export function log(...message: string[]): void {
 
 /** Clear the terminal of all text. */
 export function clear(): void {
-  process.stdout.write(process.platform === 'win32' ? '\x1B[2J\x1B[0f' : '\x1B[2J\x1B[3J\x1B[H');
+  process.stdout.write(
+    process.platform === 'win32' ? '\x1B[2J\x1B[0f' : '\x1B[2J\x1B[3J\x1B[H'
+  );
 }
 
 /** Log a message and exit the current process. If the `code` is non-zero then `console.error` will be used instead of `console.log`. */

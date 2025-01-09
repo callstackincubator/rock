@@ -22,15 +22,19 @@ describe('bare project test', () => {
 
   beforeAll(async () => {
     rimraf.sync(projectRoot);
-    await spawnAsync('bunx', ['create-expo-app', '-t', 'bare-minimum', projectName], {
-      stdio: 'inherit',
-      cwd: tmpDir,
-      env: {
-        ...process.env,
-        // Do not inherit the package manager from this repository
-        npm_config_user_agent: undefined,
-      },
-    });
+    await spawnAsync(
+      'bunx',
+      ['create-expo-app', '-t', 'bare-minimum', projectName],
+      {
+        stdio: 'inherit',
+        cwd: tmpDir,
+        env: {
+          ...process.env,
+          // Do not inherit the package manager from this repository
+          npm_config_user_agent: undefined,
+        },
+      }
+    );
   });
 
   afterAll(async () => {
@@ -63,22 +67,34 @@ describe('bare project test', () => {
     const contents = await fs.readFile(filePath, 'utf8');
     await fs.writeFile(
       filePath,
-      modifyPodfileContents(contents, /(:path)\s*=>.*,$/gm, `$1 => ../node_modules/react-native,`)
+      modifyPodfileContents(
+        contents,
+        /(:path)\s*=>.*,$/gm,
+        `$1 => ../node_modules/react-native,`
+      )
     );
     const hash2 = await createProjectHashAsync(projectRoot);
     expect(hash).not.toBe(hash2);
   });
 
   it('should have same hash for specifing android platform after changing podfile', async () => {
-    const hash = await createProjectHashAsync(projectRoot, { platforms: ['android'] });
+    const hash = await createProjectHashAsync(projectRoot, {
+      platforms: ['android'],
+    });
     const filePath = path.join(projectRoot, 'ios', 'Podfile');
     const contents = await fs.readFile(filePath, 'utf8');
     await fs.writeFile(
       filePath,
-      modifyPodfileContents(contents, /(:path)\s*=>.*,$/gm, `$1 => config[:reactNativePath],`)
+      modifyPodfileContents(
+        contents,
+        /(:path)\s*=>.*,$/gm,
+        `$1 => config[:reactNativePath],`
+      )
     );
     await fs.writeFile(filePath, contents);
-    const hash2 = await createProjectHashAsync(projectRoot, { platforms: ['android'] });
+    const hash2 = await createProjectHashAsync(projectRoot, {
+      platforms: ['android'],
+    });
     expect(hash).toBe(hash2);
   });
 });

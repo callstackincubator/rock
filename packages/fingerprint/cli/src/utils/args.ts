@@ -21,7 +21,10 @@ export function getProjectRoot(args: arg.Result<arg.Spec>) {
   return projectRoot;
 }
 
-export function getFileArgumentAtIndex(args: arg.Result<arg.Spec>, index: number) {
+export function getFileArgumentAtIndex(
+  args: arg.Result<arg.Spec>,
+  index: number
+) {
   const path = resolve(args._[index]);
   if (!existsSync(path)) {
     Log.exit(`Invalid file: ${path}`);
@@ -36,7 +39,10 @@ export function getFileArgumentAtIndex(args: arg.Result<arg.Spec>, index: number
  * @param argv extra strings
  * @returns processed args object.
  */
-export function assertArgs(schema: arg.Spec, argv: string[]): arg.Result<arg.Spec> {
+export function assertArgs(
+  schema: arg.Spec,
+  argv: string[]
+): arg.Result<arg.Spec> {
   try {
     return arg(schema, { argv });
   } catch (error: any) {

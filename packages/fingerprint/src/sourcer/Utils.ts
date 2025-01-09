@@ -26,7 +26,10 @@ export async function getFileBasedHashSourceAsync(
 /**
  * A version of `JSON.stringify` that keeps the keys sorted
  */
-export function stringifyJsonSorted(target: any, space?: string | number | undefined): string {
+export function stringifyJsonSorted(
+  target: any,
+  space?: string | number | undefined
+): string {
   return JSON.stringify(target, (_, value) => sortJson(value), space);
 }
 

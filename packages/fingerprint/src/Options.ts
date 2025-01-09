@@ -82,7 +82,8 @@ export const DEFAULT_IGNORE_PATHS = [
   ].join(',')}}/**/*`,
 ];
 
-export const DEFAULT_SOURCE_SKIPS = SourceSkips.PackageJsonAndroidAndIosScriptsIfNotContainRun;
+export const DEFAULT_SOURCE_SKIPS =
+  SourceSkips.PackageJsonAndroidAndIosScriptsIfNotContainRun;
 
 export async function normalizeOptionsAsync(
   projectRoot: string,
@@ -127,7 +128,10 @@ async function collectIgnorePathsAsync(
     ...(options?.dirExcludes?.map((dirExclude) => `${dirExclude}/**/*`) ?? []),
   ];
 
-  const fingerprintIgnorePath = path.join(projectRoot, FINGERPRINT_IGNORE_FILENAME);
+  const fingerprintIgnorePath = path.join(
+    projectRoot,
+    FINGERPRINT_IGNORE_FILENAME
+  );
   try {
     const fingerprintIgnore = await fs.readFile(fingerprintIgnorePath, 'utf8');
     const fingerprintIgnoreLines = fingerprintIgnore.split('\n');

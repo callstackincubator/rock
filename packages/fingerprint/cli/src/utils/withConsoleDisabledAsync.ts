@@ -1,4 +1,6 @@
-export async function withConsoleDisabledAsync<T>(block: () => Promise<T>): Promise<T> {
+export async function withConsoleDisabledAsync<T>(
+  block: () => Promise<T>
+): Promise<T> {
   const loggingFunctions = {
     log: console.log,
     warn: console.warn,
