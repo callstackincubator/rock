@@ -1,17 +1,20 @@
+import { createRequire } from 'node:module';
+import process from 'node:process';
 import spawnAsync from '@expo/spawn-async';
 import assert from 'assert';
 import chalk from 'chalk';
-import process from 'node:process';
+import makeDebug from 'debug';
 import path from 'path';
 import resolveFrom from 'resolve-from';
+import { resolveExpoAutolinkingCliPath } from '../ExpoResolver.js';
+import type { HashSource, NormalizedOptions } from '../Fingerprint.types.js';
+import { toPosixPath } from '../utils/Path.js';
+import { SourceSkips } from './SourceSkips.js';
+import { getFileBasedHashSourceAsync } from './Utils.js';
 
-import { resolveExpoAutolinkingCliPath } from '../ExpoResolver';
-import { SourceSkips } from './SourceSkips';
-import { getFileBasedHashSourceAsync } from './Utils';
-import type { HashSource, NormalizedOptions } from '../Fingerprint.types';
-import { toPosixPath } from '../utils/Path';
+const require = createRequire(import.meta.url);
 
-const debug = require('debug')('expo:fingerprint:sourcer:Bare');
+const debug = makeDebug('expo:fingerprint:sourcer:Bare');
 
 export async function getBareAndroidSourcesAsync(
   projectRoot: string,
@@ -293,13 +296,13 @@ function normalizePackageJsonScriptSources(
   ) {
     // Replicate the behavior of `expo prebuild`
     if (
-      !scripts.android?.includes('run') ||
-      scripts.android === 'expo run:android'
+      !scripts['android']?.includes('run') ||
+      scripts['android'] === 'expo run:android'
     ) {
-      delete scripts.android;
+      delete scripts['android'];
     }
-    if (!scripts.ios?.includes('run') || scripts.ios === 'expo run:ios') {
-      delete scripts.ios;
+    if (!scripts['ios']?.includes('run') || scripts['ios'] === 'expo run:ios') {
+      delete scripts['ios'];
     }
   }
   return JSON.stringify(scripts);

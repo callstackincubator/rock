@@ -1,10 +1,21 @@
 {
-  "extends": "../../../tsconfig.node",
+  "extends": "../../tsconfig.base.json",
   "compilerOptions": {
-    "allowJs": true,
-    "outDir": "./build",
-    "sourceMap": true
+    "forceConsistentCasingInFileNames": true,
+    "strict": true,
+    "noImplicitOverride": true,
+    "noPropertyAccessFromIndexSignature": true,
+    "noImplicitReturns": true,
+    "noFallthroughCasesInSwitch": true
   },
-  "include": ["./src", "e2e/__tests__/bare-test.ts"],
-  "exclude": ["**/__mocks__/*", "**/__tests__/*"]
+  "files": [],
+  "include": [],
+  "references": [
+    {
+      "path": "./tsconfig.lib.json"
+    },
+    {
+      "path": "./tsconfig.spec.json"
+    }
+  ]
 }

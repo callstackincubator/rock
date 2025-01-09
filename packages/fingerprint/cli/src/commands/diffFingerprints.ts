@@ -1,11 +1,11 @@
 import chalk from 'chalk';
 
-import { diffFingerprints } from '../../../build/index';
-import { Command } from '../cli';
-import { assertArgs, getFileArgumentAtIndex } from '../utils/args';
-import { CommandError } from '../utils/errors';
-import * as Log from '../utils/log';
-import readFingerprintFileAsync from '../utils/readFingerprintFileAsync';
+import { diffFingerprints } from '../../../build/index.js';
+import { Command } from '../cli.js';
+import { assertArgs, getFileArgumentAtIndex } from '../utils/args.js';
+import { CommandError } from '../utils/errors.js';
+import * as Log from '../utils/log.js';
+import readFingerprintFileAsync from '../utils/readFingerprintFileAsync.js';
 
 export const diffFingerprintsAsync: Command = async (argv) => {
   const args = assertArgs(

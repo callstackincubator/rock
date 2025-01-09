@@ -3,7 +3,7 @@ import { Transform, type TransformCallback } from 'stream';
 import type {
   FileHookTransformSource,
   FileHookTransformFunction,
-} from '../Fingerprint.types';
+} from '../Fingerprint.types.js';
 
 /**
  * A transform stream that allows to hook into file contents and transform them.
@@ -29,7 +29,7 @@ export class FileHookTransform extends Transform {
 
   //#region - Transform implementations
 
-  _transform(
+  override _transform(
     chunk: any,
     encoding: BufferEncoding,
     callback: TransformCallback
@@ -49,7 +49,7 @@ export class FileHookTransform extends Transform {
     callback();
   }
 
-  _flush(callback: TransformCallback): void {
+  override _flush(callback: TransformCallback): void {
     const result = this.transformFn(
       this.source,
       null,

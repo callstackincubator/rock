@@ -1,8 +1,8 @@
 import fs from 'fs/promises';
 import path from 'path';
 
-import type { HashSource } from '../Fingerprint.types';
-import { toPosixPath } from '../utils/Path';
+import type { HashSource } from '../Fingerprint.types.js';
+import { toPosixPath } from '../utils/Path.js';
 
 export async function getFileBasedHashSourceAsync(
   projectRoot: string,

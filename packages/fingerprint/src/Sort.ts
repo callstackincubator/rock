@@ -1,4 +1,4 @@
-import type { HashSource } from './Fingerprint.types';
+import type { HashSource } from './Fingerprint.types.js';
 
 export function sortSources<T extends HashSource>(sources: T[]): T[] {
   return sources.sort(compareSource);

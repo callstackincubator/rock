@@ -32,7 +32,7 @@ export class ReactImportsPatchTransform extends Transform {
     this.transformFn = options?.transformFn ?? patchChunk;
   }
 
-  _transform(
+  override _transform(
     chunk: any,
     _encoding: BufferEncoding,
     callback: TransformCallback

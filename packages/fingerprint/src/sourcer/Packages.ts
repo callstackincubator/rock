@@ -1,11 +1,13 @@
 import chalk from 'chalk';
+import makeDebug from 'debug';
+import { createRequire } from 'module';
 import path from 'path';
 import resolveFrom from 'resolve-from';
+import type { HashSource, NormalizedOptions } from '../Fingerprint.types.js';
+import { getFileBasedHashSourceAsync } from './Utils.js';
 
-import { getFileBasedHashSourceAsync } from './Utils';
-import type { HashSource, NormalizedOptions } from '../Fingerprint.types';
-
-const debug = require('debug')('expo:fingerprint:sourcer:Packages');
+const require = createRequire(import.meta.url);
+const debug = makeDebug('expo:fingerprint:sourcer:Packages');
 
 interface PackageSourcerParams {
   /**

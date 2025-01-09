@@ -2,14 +2,17 @@
  * A helper script to load the Expo config and loaded plugins from a project
  */
 
-import fs from 'fs/promises';
-import module from 'module';
 import process from 'node:process';
-import path from 'path';
+import { fileURLToPath } from 'node:url';
+import fs from 'fs/promises';
+import module, { createRequire } from 'module';
+import path, { dirname } from 'path';
 import resolveFrom from 'resolve-from';
+import { DEFAULT_IGNORE_PATHS } from '../Options.js';
+import { isIgnoredPath } from '../utils/Path.js';
 
-import { DEFAULT_IGNORE_PATHS } from '../Options';
-import { isIgnoredPath } from '../utils/Path';
+const require = createRequire(import.meta.url);
+const __dirname = dirname(fileURLToPath(import.meta.url));
 
 async function runAsync(programName: string, args: string[] = []) {
   if (args.length < 1) {
@@ -50,21 +53,21 @@ async function runAsync(programName: string, args: string[] = []) {
   }
 }
 
-// If running from the command line
-if (require.main?.filename === __filename) {
-  (async () => {
-    const programIndex = process.argv.findIndex((arg) => arg === __filename);
-    try {
-      await runAsync(
-        process.argv[programIndex],
-        process.argv.slice(programIndex + 1)
-      );
-    } catch (e) {
-      console.error('Uncaught Error', e);
-      process.exit(1);
-    }
-  })();
-}
+// // If running from the command line
+// if (require.main?.filename === __filename) {
+//   (async () => {
+//     const programIndex = process.argv.findIndex((arg) => arg === __filename);
+//     try {
+//       await runAsync(
+//         process.argv[programIndex],
+//         process.argv.slice(programIndex + 1)
+//       );
+//     } catch (e) {
+//       console.error('Uncaught Error', e);
+//       process.exit(1);
+//     }
+//   })();
+// }
 
 /**
  * Load the generated ignored paths file from caller and remove the file after loading
@@ -84,7 +87,9 @@ async function loadIgnoredPathsAsync(ignoredFile: string | null) {
         ignorePaths.push(trimmedLine);
       }
     }
-  } catch {}
+  } catch {
+    // Ignore
+  }
 
   return ignorePaths;
 }

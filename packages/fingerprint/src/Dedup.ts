@@ -1,13 +1,13 @@
 import assert from 'assert';
+import makeDebug from 'debug';
 import path from 'path';
-
 import type {
   HashSource,
   HashSourceDir,
   HashSourceFile,
-} from './Fingerprint.types';
+} from './Fingerprint.types.js';
 
-const debug = require('debug')('expo:fingerprint:Dedup');
+const debug = makeDebug('expo:fingerprint:Dedup');
 
 /**
  * Strip duplicated sources, mainly for duplicated file or dir

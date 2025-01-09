@@ -1,6 +1,6 @@
 import type { IMinimatch } from 'minimatch';
 
-import type { SourceSkips } from './sourcer/SourceSkips';
+import type { SourceSkips } from './sourcer/SourceSkips.js';
 
 export type FingerprintSource = HashSource & {
   /**

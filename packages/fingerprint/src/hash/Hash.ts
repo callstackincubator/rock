@@ -5,8 +5,8 @@ import pLimit from 'p-limit';
 import path from 'path';
 import { pipeline, type Readable } from 'stream';
 
-import { FileHookTransform } from './FileHookTransform';
-import { ReactImportsPatchTransform } from './ReactImportsPatcher';
+import { FileHookTransform } from './FileHookTransform.js';
+import { ReactImportsPatchTransform } from './ReactImportsPatcher.js';
 import type {
   DebugInfoDir,
   DebugInfoFile,
@@ -19,10 +19,10 @@ import type {
   HashSource,
   HashSourceContents,
   NormalizedOptions,
-} from '../Fingerprint.types';
-import { isIgnoredPathWithMatchObjects, toPosixPath } from '../utils/Path';
-import { nonNullish } from '../utils/Predicates';
-import { profile } from '../utils/Profile';
+} from '../Fingerprint.types.js';
+import { isIgnoredPathWithMatchObjects, toPosixPath } from '../utils/Path.js';
+import { nonNullish } from '../utils/Predicates.js';
+import { profile } from '../utils/Profile.js';
 
 /**
  * Create a `Fingerprint` from `HashSources` array

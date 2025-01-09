@@ -3,11 +3,15 @@ import type { IMinimatch } from 'minimatch';
 import os from 'os';
 import path from 'path';
 
-import { loadConfigAsync } from './Config';
-import { satisfyExpoVersion } from './ExpoResolver';
-import type { Config, NormalizedOptions, Options } from './Fingerprint.types';
-import { SourceSkips } from './sourcer/SourceSkips';
-import { buildDirMatchObjects, buildPathMatchObjects } from './utils/Path';
+import { loadConfigAsync } from './Config.js';
+import { satisfyExpoVersion } from './ExpoResolver.js';
+import type {
+  Config,
+  NormalizedOptions,
+  Options,
+} from './Fingerprint.types.js';
+import { SourceSkips } from './sourcer/SourceSkips.js';
+import { buildDirMatchObjects, buildPathMatchObjects } from './utils/Path.js';
 
 export const FINGERPRINT_IGNORE_FILENAME = '.fingerprintignore';
 

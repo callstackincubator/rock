@@ -4,9 +4,9 @@ import chalk from 'chalk';
 import Debug from 'debug';
 import { boolish } from 'getenv';
 
-import { runLegacyCLIAsync } from './runLegacyCLIAsync';
-import { logCmdError } from './utils/errors';
-import * as Log from './utils/log';
+import { runLegacyCLIAsync } from './runLegacyCLIAsync.js';
+import { logCmdError } from './utils/errors.js';
+import * as Log from './utils/log.js';
 
 // Setup before requiring `debug`.
 if (boolish('EXPO_DEBUG', false)) {

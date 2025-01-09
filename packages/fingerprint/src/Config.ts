@@ -1,12 +1,11 @@
+import makeDebug from 'debug';
 import fs from 'fs/promises';
 import path from 'path';
-
-import type { Config } from './Fingerprint.types';
-import { SourceSkips } from './sourcer/SourceSkips';
+import type { Config } from './Fingerprint.types.js';
+import { SourceSkips } from './sourcer/SourceSkips.js';
 
 const CONFIG_FILES = ['fingerprint.config.js', 'fingerprint.config.cjs'];
-
-const debug = require('debug')('expo:fingerprint:Config');
+const debug = makeDebug('expo:fingerprint:Config');
 
 type NormalizedConfig = Config & {
   sourceSkips?: SourceSkips;
@@ -20,7 +19,7 @@ type NormalizedConfig = Config & {
  */
 export async function loadConfigAsync(
   projectRoot: string,
-  silent: boolean = false
+  silent = false
 ): Promise<NormalizedConfig | null> {
   let configFile: string;
   try {

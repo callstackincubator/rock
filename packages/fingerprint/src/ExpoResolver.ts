@@ -1,6 +1,9 @@
+import { createRequire } from 'node:module';
 import path from 'path';
 import resolveFrom from 'resolve-from';
 import semver from 'semver';
+
+const require = createRequire(import.meta.url);
 
 let cachedExpoAutolinkingPackageRoot: [string, string] | null = null;
 

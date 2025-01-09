@@ -1,9 +1,9 @@
 import chalk from 'chalk';
+import makeDebug from 'debug';
+import type { HashSource, NormalizedOptions } from '../Fingerprint.types.js';
+import { getFileBasedHashSourceAsync } from './Utils.js';
 
-import { getFileBasedHashSourceAsync } from './Utils';
-import type { HashSource, NormalizedOptions } from '../Fingerprint.types';
-
-const debug = require('debug')('expo:fingerprint:sourcer:PatchPackage');
+const debug = makeDebug('expo:fingerprint:sourcer:PatchPackage');
 
 export async function getPatchPackageSourcesAsync(
   projectRoot: string,

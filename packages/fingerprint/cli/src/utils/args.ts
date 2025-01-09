@@ -4,7 +4,7 @@ import arg from 'arg';
 import { existsSync } from 'fs';
 import { resolve } from 'path';
 
-import * as Log from './log';
+import * as Log from './log.js';
 
 /**
  * Parse the first argument as a project directory.

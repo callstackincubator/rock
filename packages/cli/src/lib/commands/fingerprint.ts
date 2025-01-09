@@ -10,23 +10,28 @@ export async function nativeFingerprintCommand(
   path = '.',
   options?: NativeFingerprintCommandOptions
 ) {
-  path = path ?? '.';
-  const platform = options?.platform ?? 'ios';
+  try {
+    path = path ?? '.';
+    const platform = options?.platform ?? 'ios';
 
-  intro('Native Fingerprint');
+    intro('Native Fingerprint');
 
-  const loader = spinner();
-  loader.start("Calculating fingerprint for the project's native parts");
+    const loader = spinner();
+    loader.start("Calculating fingerprint for the project's native parts");
 
-  const start = performance.now();
-  const fingerprint = await nativeFingerprint(path, { platform });
-  const duration = performance.now() - start;
+    const start = performance.now();
+    const fingerprint = await nativeFingerprint(path, { platform });
+    const duration = performance.now() - start;
 
-  loader.stop(`Fingerprint calculated: ${fingerprint.hash}`);
-  if (logger.isVerbose()) {
-    logger.debug('Sources:', JSON.stringify(fingerprint.sources, null, 2));
-    logger.debug(`Duration: ${(duration / 1000).toFixed(1)}s`);
+    loader.stop(`Fingerprint calculated: ${fingerprint.hash}`);
+    if (logger.isVerbose()) {
+      logger.debug('Sources:', JSON.stringify(fingerprint.sources, null, 2));
+      logger.debug(`Duration: ${(duration / 1000).toFixed(1)}s`);
+    }
+
+    outro('Success 🎉.');
+  } catch (error) {
+    logger.error('Error while calculating fingerprint:', error);
+    outro('Failed 💥.');
   }
-
-  outro('Success 🎉.');
 }

@@ -1,13 +1,13 @@
-import { dedupSources } from './Dedup';
+import { dedupSources } from './Dedup.js';
 import type {
   Fingerprint,
   FingerprintDiffItem,
   Options,
-} from './Fingerprint.types';
-import { normalizeOptionsAsync } from './Options';
-import { compareSource, sortSources } from './Sort';
-import { createFingerprintFromSourcesAsync } from './hash/Hash';
-import { getHashSourcesAsync } from './sourcer/Sourcer';
+} from './Fingerprint.types.js';
+import { normalizeOptionsAsync } from './Options.js';
+import { compareSource, sortSources } from './Sort.js';
+import { createFingerprintFromSourcesAsync } from './hash/Hash.js';
+import { getHashSourcesAsync } from './sourcer/Sourcer.js';
 
 /**
  * Create a fingerprint from project

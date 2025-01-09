@@ -1,29 +1,29 @@
 import chalk from 'chalk';
+import makeDebug from 'debug';
 import semver from 'semver';
-
+import { resolveExpoAutolinkingVersion } from '../ExpoResolver.js';
+import type { HashSource, NormalizedOptions } from '../Fingerprint.types.js';
+import { profile } from '../utils/Profile.js';
 import {
   getBareAndroidSourcesAsync,
   getBareIosSourcesAsync,
-  getPackageJsonScriptSourcesAsync,
-  getGitIgnoreSourcesAsync,
-  getCoreAutolinkingSourcesFromRncCliAsync,
   getCoreAutolinkingSourcesFromExpoAndroid,
   getCoreAutolinkingSourcesFromExpoIos,
-} from './Bare';
+  getCoreAutolinkingSourcesFromRncCliAsync,
+  getGitIgnoreSourcesAsync,
+  getPackageJsonScriptSourcesAsync,
+} from './Bare.js';
 import {
   getEasBuildSourcesAsync,
   getExpoAutolinkingAndroidSourcesAsync,
   getExpoAutolinkingIosSourcesAsync,
-  getExpoConfigSourcesAsync,
   getExpoCNGPatchSourcesAsync,
-} from './Expo';
-import { resolveExpoAutolinkingVersion } from '../ExpoResolver';
-import { getDefaultPackageSourcesAsync } from './Packages';
-import { getPatchPackageSourcesAsync } from './PatchPackage';
-import type { HashSource, NormalizedOptions } from '../Fingerprint.types';
-import { profile } from '../utils/Profile';
+  getExpoConfigSourcesAsync,
+} from './Expo.js';
+import { getDefaultPackageSourcesAsync } from './Packages.js';
+import { getPatchPackageSourcesAsync } from './PatchPackage.js';
 
-const debug = require('debug')('expo:fingerprint:sourcer:Sourcer');
+const debug = makeDebug('expo:fingerprint:sourcer:Sourcer');
 
 export async function getHashSourcesAsync(
   projectRoot: string,

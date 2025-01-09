@@ -1,21 +1,21 @@
+import type { ExpoConfig, ProjectConfig } from '@expo/config';
 import spawnAsync from '@expo/spawn-async';
 import chalk from 'chalk';
-import type { ExpoConfig, ProjectConfig } from 'expo/config';
+import makeDebug from 'debug';
 import fs from 'fs/promises';
 import os from 'os';
 import path from 'path';
 import resolveFrom from 'resolve-from';
 import semver from 'semver';
+import { resolveExpoAutolinkingCliPath } from '../ExpoResolver.js';
+import type { HashSource, NormalizedOptions } from '../Fingerprint.types.js';
+import { toPosixPath } from '../utils/Path.js';
+import { spawnWithIpcAsync } from '../utils/SpawnIPC.js';
+import { getExpoConfigLoaderPath } from './ExpoConfigLoader.js';
+import { SourceSkips } from './SourceSkips.js';
+import { getFileBasedHashSourceAsync, stringifyJsonSorted } from './Utils.js';
 
-import { resolveExpoAutolinkingCliPath } from '../ExpoResolver';
-import { getExpoConfigLoaderPath } from './ExpoConfigLoader';
-import { SourceSkips } from './SourceSkips';
-import { getFileBasedHashSourceAsync, stringifyJsonSorted } from './Utils';
-import type { HashSource, NormalizedOptions } from '../Fingerprint.types';
-import { toPosixPath } from '../utils/Path';
-import { spawnWithIpcAsync } from '../utils/SpawnIPC';
-
-const debug = require('debug')('expo:fingerprint:sourcer:Expo');
+const debug = makeDebug('expo:fingerprint:sourcer:Expo');
 
 export async function getExpoConfigSourcesAsync(
   projectRoot: string,
@@ -174,8 +174,8 @@ function normalizeExpoConfig(
     if (typeof normalizedConfig.ios?.runtimeVersion === 'string') {
       delete normalizedConfig.ios.runtimeVersion;
     }
-    if (typeof normalizedConfig.web?.runtimeVersion === 'string') {
-      delete normalizedConfig.web.runtimeVersion;
+    if (typeof normalizedConfig.web?.['runtimeVersion'] === 'string') {
+      delete normalizedConfig.web['runtimeVersion'];
     }
   }
 
@@ -202,7 +202,7 @@ function normalizeExpoConfig(
 
   if (sourceSkips & SourceSkips.ExpoConfigEASProject) {
     delete normalizedConfig.owner;
-    delete normalizedConfig?.extra?.eas;
+    delete normalizedConfig?.extra?.['eas'];
     delete normalizedConfig?.updates?.url;
   }
 
@@ -283,7 +283,7 @@ export async function getExpoAutolinkingAndroidSourcesAsync(
       { cwd: projectRoot }
     );
     const config = sortExpoAutolinkingAndroidConfig(JSON.parse(stdout));
-    for (const module of config.modules) {
+    for (const module of config['modules']) {
       for (const project of module.projects) {
         const filePath = toPosixPath(
           path.relative(projectRoot, project.sourceDir)
@@ -409,10 +409,10 @@ export async function getExpoAutolinkingIosSourcesAsync(
 export function sortExpoAutolinkingAndroidConfig(
   config: Record<string, any>
 ): Record<string, any> {
-  for (const module of config.modules) {
+  for (const module of config['modules']) {
     // Sort the projects by project.name
     module.projects.sort((a: Record<string, any>, b: Record<string, any>) =>
-      a.name < b.name ? -1 : a.name > b.name ? 1 : 0
+      a['name'] < b['name'] ? -1 : a['name'] > b['name'] ? 1 : 0
     );
   }
   return config;
@@ -425,7 +425,7 @@ export function getConfigPluginProps<Props>(
   config: ExpoConfig,
   pluginName: string
 ): Props | null {
-  const plugin = (config.plugins ?? []).find((plugin) => {
+  const plugin = (config.plugins ?? []).find((plugin: any) => {
     if (Array.isArray(plugin)) {
       return plugin[0] === pluginName;
     }

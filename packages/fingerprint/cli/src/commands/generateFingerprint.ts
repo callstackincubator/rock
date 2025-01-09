@@ -1,12 +1,12 @@
 import chalk from 'chalk';
 import { boolish } from 'getenv';
 
-import { Options, createFingerprintAsync } from '../../../build/index';
-import { Command } from '../cli';
-import { assertArgs, getProjectRoot } from '../utils/args';
-import { CommandError } from '../utils/errors';
-import * as Log from '../utils/log';
-import { withConsoleDisabledAsync } from '../utils/withConsoleDisabledAsync';
+import { Options, createFingerprintAsync } from '../../../build/index.js';
+import { Command } from '../cli.js';
+import { assertArgs, getProjectRoot } from '../utils/args.js';
+import { CommandError } from '../utils/errors.js';
+import * as Log from '../utils/log.js';
+import { withConsoleDisabledAsync } from '../utils/withConsoleDisabledAsync.js';
 
 export const generateFingerprintAsync: Command = async (argv) => {
   const args = assertArgs(

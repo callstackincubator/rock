@@ -1,6 +1,6 @@
 import fs from 'fs/promises';
 
-import { Fingerprint } from '../../../build/Fingerprint.types';
+import { Fingerprint } from '../../../build/Fingerprint.types.js';
 
 export default async function readFingerprintFileAsync(
   path: string

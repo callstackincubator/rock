@@ -1,6 +1,6 @@
 import chalk from 'chalk';
 
-import type { NormalizedOptions } from '../Fingerprint.types';
+import type { NormalizedOptions } from '../Fingerprint.types.js';
 
 /**
  * Wrap a method and profile the time it takes to execute the method using `EXPO_PROFILE`.
