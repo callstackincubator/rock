@@ -1,5 +1,5 @@
+import path from 'node:path';
 import { logger } from '@rnef/tools';
-import path from 'path';
 import type { ApplePlatform } from '../../types/index.js';
 import { supportedPlatforms } from './../supportedPlatforms.js';
 import findAllPodfilePaths from './findAllPodfilePaths.js';

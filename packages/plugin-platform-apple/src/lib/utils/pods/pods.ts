@@ -1,3 +1,6 @@
+import { createHash } from 'node:crypto';
+import { existsSync, readFileSync } from 'node:fs';
+import path from 'node:path';
 import { loadConfigAsync } from '@react-native-community/cli-config';
 import { getProjectConfig } from '@react-native-community/cli-config-apple';
 import type {
@@ -5,10 +8,6 @@ import type {
   IOSDependencyConfig,
 } from '@react-native-community/cli-types';
 import { cacheManager, RnefError } from '@rnef/tools';
-import { createHash } from 'crypto';
-import { existsSync } from 'fs';
-import fs from 'fs/promises';
-import path from 'path';
 import color from 'picocolors';
 import type { ProjectConfig } from '../../types/index.js';
 import type { ApplePlatform } from '../../types/index.js';
@@ -21,7 +20,7 @@ interface NativeDependencies {
 
 async function loadPackageJSON(root: string) {
   const packageJSONPath = path.join(root, 'package.json');
-  const packageJSONContent = await fs.readFile(packageJSONPath, 'utf-8');
+  const packageJSONContent = readFileSync(packageJSONPath, 'utf-8');
   const packageJSON = JSON.parse(packageJSONContent);
   return packageJSON;
 }
@@ -79,33 +78,27 @@ export default async function resolvePods(
     Object.keys(packageJson.dependencies || {})
   );
 
-  console.log('packageJsonDependenciesHash', packageJSONDependenciesHash);
-
   const podfilePath = findPodfilePath(
     projectRoot,
     platformName as ApplePlatform
   );
-  const podfile = podfilePath ? await fs.readFile(podfilePath, 'utf-8') : '';
+  const podfile = podfilePath ? readFileSync(podfilePath, 'utf-8') : '';
   const podfileHash = generateMd5Hash(podfile);
-
-  console.log('podfileHash', podfileHash);
 
   const podfileLockPath = podfilePath
     ? podfilePath.replace('.podfile', '.podfile.lock')
     : '';
   const podfileLock = podfileLockPath
-    ? await fs.readFile(podfileLockPath, 'utf-8')
+    ? readFileSync(podfileLockPath, 'utf-8')
     : '';
 
   const podfileLockHash = generateMd5Hash(podfileLock);
 
-  console.log('podfileLockHash', podfileLockHash);
-
-  const platformFolderPath = podfilePath
+  const platformProjectPath = podfilePath
     ? podfilePath.slice(0, podfilePath.lastIndexOf('/'))
     : path.join(projectRoot, platformName);
 
-  const podsPath = path.join(platformFolderPath, 'Pods');
+  const podsPath = path.join(platformProjectPath, 'Pods');
   const arePodsInstalled = existsSync(podsPath);
 
   const config = await loadConfigAsync({
@@ -120,8 +113,6 @@ export default async function resolvePods(
   const platformDependenciesHash =
     generateDependenciesHash(platformDependencies);
 
-  console.log('platformDependenciesHash', platformDependenciesHash);
-
   const cachedDependenciesHash = cacheManager.get(
     `${packageJson['name']}-dependencies`
   );
@@ -132,33 +123,23 @@ export default async function resolvePods(
     platformDependenciesHash,
     packageJSONDependenciesHash,
   ]);
-  console.log({
-    cachedDependenciesHash,
-    currentDependenciesHash,
-  });
-
-  console.log(
-    compareMd5Hashes(currentDependenciesHash, cachedDependenciesHash || '')
-  );
 
   if (
     !compareMd5Hashes(currentDependenciesHash, cachedDependenciesHash || '') ||
     !arePodsInstalled
   ) {
-    console.log('3');
-
     try {
       await installPods({
         skipBundleInstall: !!cachedDependenciesHash, // run `bundle install` only at the first time
         newArchEnabled: true,
-        iosFolderPath: platformFolderPath,
+        platformProjectPath,
       });
       cacheManager.set(
         `${packageJson['name']}-dependencies`,
         currentDependenciesHash
       );
     } catch {
-      const relativePath = path.relative(process.cwd(), platformFolderPath);
+      const relativePath = path.relative(process.cwd(), platformProjectPath);
 
       const command = cachedDependenciesHash
         ? `cd ${relativePath} && bundle exec pod install`

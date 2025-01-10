@@ -1,6 +1,7 @@
+import fs from 'node:fs';
+import path from 'node:path';
 import { spinner } from '@clack/prompts';
 import { logger, RnefError } from '@rnef/tools';
-import fs from 'fs';
 import spawn from 'nano-spawn';
 import color from 'picocolors';
 import runBundleInstall from './runBundleInstall.js';
@@ -8,12 +9,13 @@ import runBundleInstall from './runBundleInstall.js';
 interface PodInstallOptions {
   skipBundleInstall?: boolean;
   newArchEnabled?: boolean;
-  iosFolderPath?: string;
+  platformProjectPath: string;
 }
 
 interface RunPodInstallOptions {
   shouldHandleRepoUpdate?: boolean;
   newArchEnabled?: boolean;
+  platformProjectPath: string;
 }
 
 interface SpawnError extends Error {
@@ -21,21 +23,22 @@ interface SpawnError extends Error {
   stdout: string;
 }
 
-async function runPodInstall(options?: RunPodInstallOptions) {
+async function runPodInstall(options: RunPodInstallOptions) {
   const shouldHandleRepoUpdate = options?.shouldHandleRepoUpdate || true;
   const loader = spinner();
   try {
     loader.start(
       `Installing CocoaPods dependencies ${color.bold(
-        options?.newArchEnabled ? 'with New Architecture' : ''
+        options.newArchEnabled ? 'with New Architecture' : ''
       )} ${color.dim('(this may take a few minutes)')}`
     );
 
     await spawn('bundle', ['exec', 'pod', 'install'], {
       env: {
-        RCT_NEW_ARCH_ENABLED: options?.newArchEnabled ? '1' : '0',
+        RCT_NEW_ARCH_ENABLED: options.newArchEnabled ? '1' : '0',
       },
       stdio: logger.isVerbose() ? 'inherit' : ['ignore', 'pipe', 'pipe'],
+      cwd: options.platformProjectPath,
     });
   } catch (error) {
     logger.debug(error as string);
@@ -52,7 +55,8 @@ async function runPodInstall(options?: RunPodInstallOptions) {
       await runPodUpdate();
       await runPodInstall({
         shouldHandleRepoUpdate: false,
-        newArchEnabled: options?.newArchEnabled,
+        newArchEnabled: options.newArchEnabled,
+        platformProjectPath: options.platformProjectPath,
       });
     } else {
       loader.stop('CocoaPods installation failed.');
@@ -125,25 +129,22 @@ async function installCocoaPods() {
   }
 }
 
-export default async function installPods(options?: PodInstallOptions) {
+export default async function installPods(options: PodInstallOptions) {
   const loader = spinner();
-  console.log('installPods');
+
   try {
-    if (!options?.iosFolderPath && !fs.existsSync('ios')) {
+    const hasPodfile = fs.existsSync(
+      path.join(options.platformProjectPath, 'Podfile')
+    );
+
+    if (!hasPodfile) {
       return;
     }
 
-    process.chdir(options?.iosFolderPath ?? 'ios');
-
-    const hasPods = fs.existsSync('Podfile');
-
-    if (!hasPods) {
-      return;
-    }
-
-    if (fs.existsSync('../Gemfile') && !options?.skipBundleInstall) {
-      await runBundleInstall();
-    } else if (!fs.existsSync('../Gemfile')) {
+    const gemfilePath = path.join(options.platformProjectPath, '../Gemfile');
+    if (fs.existsSync(gemfilePath) && !options?.skipBundleInstall) {
+      await runBundleInstall(options.platformProjectPath);
+    } else if (!fs.existsSync(gemfilePath)) {
       throw new RnefError(
         'Could not find the Gemfile. Currently the CLI requires to have this file in the root directory of the project to install CocoaPods. If your configuration is different, please install the CocoaPods manually.'
       );
@@ -155,14 +156,25 @@ export default async function installPods(options?: PodInstallOptions) {
       // with a failure
       await spawn('pod', ['--version'], {
         stdio: logger.isVerbose() ? 'inherit' : ['ignore', 'pipe', 'pipe'],
+        cwd: options.platformProjectPath,
       });
     } catch {
       loader.start('Installing CocoaPods');
       await installCocoaPods();
     }
-    console.log('runPodInstall');
-    await runPodInstall({ newArchEnabled: options?.newArchEnabled });
-  } finally {
-    process.chdir('..');
+
+    await runPodInstall({
+      newArchEnabled: options.newArchEnabled,
+      platformProjectPath: options.platformProjectPath,
+    });
+  } catch {
+    throw new RnefError(
+      `Something went wrong while installing CocoaPods. Please run ${color.bold(
+        `bundle install && cd ${path.relative(
+          process.cwd(),
+          options?.platformProjectPath ?? 'ios'
+        )} && bundle exec pod install`
+      )} manually`
+    );
   }
 }

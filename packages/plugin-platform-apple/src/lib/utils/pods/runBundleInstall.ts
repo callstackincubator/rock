@@ -3,13 +3,14 @@ import { logger, RnefError } from '@rnef/tools';
 import type { SubprocessError } from 'nano-spawn';
 import spawn from 'nano-spawn';
 
-async function runBundleInstall() {
+async function runBundleInstall(platformProjectPath: string) {
   const loader = spinner();
   try {
     loader.start('Installing Ruby Gems');
 
     await spawn('bundle', ['install'], {
       stdio: logger.isVerbose() ? 'inherit' : ['ignore', 'pipe', 'pipe'],
+      cwd: platformProjectPath,
     });
   } catch (error) {
     loader.stop('Ruby Gems installation failed.');
