@@ -67,7 +67,7 @@ export const getBuildOptions = ({ platformName }: BuilderCommand) => {
     {
       name: '--archive',
       description:
-        'Create an Xcode archive of the build, required for uploading to App Store Connect or distributing to TestFlight',
+        'Create an Xcode archive (IPA) of the build, required for uploading to App Store Connect or distributing to TestFlight',
     },
   ];
 };
