@@ -75,7 +75,7 @@ export async function runGradle({
       logger.error(cleanedErrorMessage);
     }
 
-    const hints = getErrorHints((error as SubprocessError).stdout);
+    const hints = getErrorHints((error as SubprocessError).stdout ?? '');
     throw new RnefError(
       hints ||
         'Failed to build the app. See the error above for details from Gradle.'

@@ -37,6 +37,9 @@ vi.mock('@clack/prompts', () => {
     isCancel: vi.fn(() => false),
     intro: vi.fn(),
     outro: mocks.outroMock,
+    log: {
+      error: vi.fn(),
+    },
   };
 });
 
@@ -110,7 +113,7 @@ test('buildAndroid runs gradle build with correct configuration for debug and ou
   expect(vi.mocked(spawn)).toBeCalledWith(
     './gradlew',
     ['app:bundleDebug', '-x', 'lint'],
-    { stdio: 'inherit', cwd: '/android' }
+    { stdio: 'pipe', cwd: '/android' }
   );
   expect(mocks.stopMock).toBeCalledWith(
     `Build output: ${color.cyan(
@@ -132,7 +135,7 @@ test('buildAndroid fails gracefully when gradle errors', async () => {
   expect(vi.mocked(spawn)).toBeCalledWith(
     './gradlew',
     ['app:bundleDebug', '-x', 'lint'],
-    { stdio: 'inherit', cwd: '/android' }
+    { stdio: 'pipe', cwd: '/android' }
   );
 });
 
@@ -168,7 +171,7 @@ test('buildAndroid runs selected "bundleRelease" task in interactive mode', asyn
     2,
     './gradlew',
     ['app:bundleRelease', '-x', 'lint'],
-    { stdio: 'inherit', cwd: '/android' }
+    { stdio: 'pipe', cwd: '/android' }
   );
   expect(mocks.startMock).toBeCalledWith(
     'Searching for available Gradle tasks...'
