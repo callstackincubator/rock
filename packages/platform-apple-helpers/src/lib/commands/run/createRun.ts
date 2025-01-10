@@ -61,9 +61,13 @@ export const createRun = async (
     );
   }
 
-  projectConfig = await resolvePods(projectRoot, platformName, projectConfig);
+  const resolvedConfig = await resolvePods(
+    projectRoot,
+    platformName,
+    projectConfig
+  );
 
-  const { xcodeProject, sourceDir } = projectConfig;
+  const { xcodeProject, sourceDir } = resolvedConfig;
 
   if (!xcodeProject) {
     throw new RnefError(
