@@ -65,8 +65,8 @@ export async function fetchGitHubArtifactsByName(
 
       page += 1;
     }
-  } catch {
-    // no artifacts found, skipping
+  } catch (error) {
+    logger.debug('Failed to fetch GitHub artifacts', error);
   }
 
   result.sort((a, b) => {
