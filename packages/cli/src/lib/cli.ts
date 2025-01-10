@@ -54,13 +54,13 @@ export const cli = async ({ cwd, argv }: CliOptions = {}) => {
             if (error.cause) {
               logger.error(`Cause: ${error.cause}`);
             }
-            process.exit(1);
           } else {
             logger.error(
               `Unexpected error while running "${command.name}":`,
               error
             );
           }
+          process.exit(1);
         }
       });
 
