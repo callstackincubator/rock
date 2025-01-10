@@ -1,5 +1,5 @@
 import { spinner } from '@clack/prompts';
-import { handleChildProcessTermination, logger, RnefError } from '@rnef/tools';
+import { logger, RnefError, setupChildProcessCleanup } from '@rnef/tools';
 import type { SubprocessError } from 'nano-spawn';
 import spawn from 'nano-spawn';
 import type { ApplePlatform, XcodeProjectInfo } from '../../types/index.js';
@@ -72,7 +72,7 @@ export const buildProject = async (
       cwd: sourceDir,
       stdio: logger.isVerbose() ? 'inherit' : ['ignore', 'pipe', 'pipe'],
     });
-    handleChildProcessTermination(childProcess);
+    setupChildProcessCleanup(childProcess);
     const { output } = await childProcess;
     loader.stop(
       `Built the app with xcodebuild for ${scheme} scheme in ${mode} mode.`

@@ -5,7 +5,7 @@ import type { Subprocess } from 'nano-spawn';
  * the parent process is terminated e.g. with SIGINT or SIGTERM signals.
  * This helper is intended for use in long-running tasks like building with xcodebuild, gradlew, bundling, etc.
  */
-export function handleChildProcessTermination(childProcess: Subprocess) {
+export function setupChildProcessCleanup(childProcess: Subprocess) {
   // overwrite @clack/prompts setting raw mode for spinner and prompts,
   // which prevents listening for SIGINT and SIGTERM
   process.stdin.setRawMode(false);

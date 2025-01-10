@@ -12,4 +12,4 @@ export * from './lib/build-cache/localBuildCache.js';
 export * from './lib/build-cache/remoteBuildCache.js';
 export * from './lib/build-cache/github/config.js';
 export * from './lib/build-cache/github/GitHubBuildCache.js';
-export { handleChildProcessTermination } from './lib/handleChildProcessTermination.js';
+export { setupChildProcessCleanup } from './lib/setupChildProcessCleanup.js';
