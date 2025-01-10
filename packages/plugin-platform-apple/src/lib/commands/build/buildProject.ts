@@ -2,7 +2,7 @@ import { spinner } from '@clack/prompts';
 import { logger, RnefError } from '@rnef/tools';
 import type { SubprocessError } from 'nano-spawn';
 import spawn from 'nano-spawn';
-import path from 'path';
+import path from 'node:path';
 import type { ApplePlatform, XcodeProjectInfo } from '../../types/index.js';
 import { supportedPlatforms } from '../../utils/supportedPlatforms.js';
 import type { BuildFlags } from './buildOptions.js';
