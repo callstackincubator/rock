@@ -2,6 +2,7 @@ import path from 'node:path';
 import { outro } from '@clack/prompts';
 import { logger, RnefError } from '@rnef/tools';
 import isInteractive from 'is-interactive';
+import { dim } from 'picocolors';
 import type {
   BuilderCommand,
   ProjectConfig,
@@ -82,6 +83,15 @@ export const createBuild = async (
 function normalizeArgs(args: BuildFlags, xcodeProject: XcodeProjectInfo) {
   if (!args.mode) {
     args.mode = 'Debug';
+  }
+  // Archive build can be only in Release mode
+  if (args.archive) {
+    logger.info(
+      `Switching build mode to Release, because ${dim(
+        '--archive'
+      )} flag was used`
+    );
+    args.mode = 'Release';
   }
   if (!args.scheme) {
     args.scheme = path.basename(
