@@ -82,14 +82,12 @@ export const createBuild = async (
 
 function normalizeArgs(args: BuildFlags, xcodeProject: XcodeProjectInfo) {
   if (!args.mode) {
+    logger.debug('Setting build mode to Debug by default');
     args.mode = 'Debug';
   }
-  // Archive build can be only in Release mode
-  if (args.archive) {
-    logger.info(
-      `Switching build mode to Release, because ${dim(
-        '--archive'
-      )} flag was used`
+  if (args.archive && !args.mode) {
+    logger.debug(
+      'Setting build mode to Release, because --archive flag was used'
     );
     args.mode = 'Release';
   }
