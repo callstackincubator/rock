@@ -64,13 +64,10 @@ export const exportArchive = async ({
     );
     return output;
   } catch (error) {
-    logger.log('');
-    logger.log((error as SubprocessError).stdout);
-    logger.error((error as SubprocessError).stderr);
     loader.stop(
       'Running xcodebuild failed. Check the error message above for details.',
       1
     );
-    throw new Error('Running xcodebuild failed');
+    throw new Error('Running xcodebuild failed', { cause: error });
   }
 };

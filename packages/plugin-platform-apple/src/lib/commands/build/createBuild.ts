@@ -1,21 +1,18 @@
 import path from 'node:path';
-import { cancel, outro } from '@clack/prompts';
+import { outro } from '@clack/prompts';
 import { logger, RnefError } from '@rnef/tools';
 import isInteractive from 'is-interactive';
-import { SubprocessError } from 'nano-spawn';
 import type {
   BuilderCommand,
   ProjectConfig,
   XcodeProjectInfo,
 } from '../../types/index.js';
+import { getBuildPaths } from '../../utils/buildPaths.js';
 import { selectFromInteractiveMode } from '../../utils/selectFromInteractiveMode.js';
-import { getBuildSettings } from '../run/getBuildSettings.js';
-import { getPlatformSDK } from '../run/installApp.js';
 import type { BuildFlags } from './buildOptions.js';
 import { buildProject } from './buildProject.js';
 import { exportArchive } from './exportArchive.js';
 import { getConfiguration } from './getConfiguration.js';
-import { getBuildPaths } from '../../utils/buildPaths.js';
 
 export const createBuild = async (
   platformName: BuilderCommand['platformName'],
@@ -77,9 +74,8 @@ export const createBuild = async (
       });
     }
     outro('Success 🎉.');
-  } catch (e) {
-    logger.error((e as Error).message);
-    process.exit(1);
+  } catch (error) {
+    throw new RnefError('Failed to create build', { cause: error });
   }
 };
 
