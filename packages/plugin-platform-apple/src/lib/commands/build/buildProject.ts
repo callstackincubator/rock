@@ -7,6 +7,7 @@ import type { ApplePlatform, XcodeProjectInfo } from '../../types/index.js';
 import { supportedPlatforms } from '../../utils/supportedPlatforms.js';
 import type { BuildFlags } from './buildOptions.js';
 import { simulatorDestinationMap } from './simulatorDestinationMap.js';
+import { getBuildPaths } from '../../utils/buildPaths.js';
 
 export const buildProject = async (
   xcodeProject: XcodeProjectInfo,
@@ -62,15 +63,17 @@ export const buildProject = async (
   // TODO: handle case when someone pass --buildFolder
 
   if (args.archive) {
+    const { archiveDir, derivedDir } = getBuildPaths(platformName);
+    const archiveName = `${xcodeProject.name.replace(
+      '.xcworkspace',
+      ''
+    )}.xcarchive`;
+
     xcodebuildArgs.push(
       '-derivedDataPath',
-      path.join(sourceDir, '.rnef/archive'),
+      derivedDir,
       '-archivePath',
-      path.join(
-        sourceDir,
-        '.rnef/archive',
-        `${xcodeProject.name.replace('.xcworkspace', '')}.xcarchive`
-      ),
+      path.join(archiveDir, archiveName),
       'archive'
     );
   }

@@ -4,17 +4,20 @@ import { existsSync, readdirSync } from 'fs';
 import type { SubprocessError } from 'nano-spawn';
 import spawn from 'nano-spawn';
 import path from 'path';
+import { getBuildPaths } from '../../utils/buildPaths.js';
 
 export const exportArchive = async ({
   sourceDir,
   archivePath,
   scheme,
   mode,
+  platformName,
 }: {
   sourceDir: string;
   archivePath: string;
   scheme: string;
   mode: string;
+  platformName: string;
 }) => {
   const loader = spinner();
 
@@ -31,13 +34,13 @@ export const exportArchive = async ({
     );
   }
 
-  const exportPath = path.join(sourceDir, '.rnef/export');
+  const { exportDir } = getBuildPaths(platformName);
   const xcodebuildArgs = [
     '-exportArchive',
     '-archivePath',
     archivePath,
     '-exportPath',
-    exportPath,
+    exportDir,
     '-exportOptionsPlist',
     exportOptionsPlistPath,
   ];
@@ -49,16 +52,14 @@ export const exportArchive = async ({
       cwd: sourceDir,
     });
     try {
-      ipaFiles = readdirSync(exportPath).filter((file) =>
-        file.endsWith('.ipa')
-      );
+      ipaFiles = readdirSync(exportDir).filter((file) => file.endsWith('.ipa'));
     } catch {
       ipaFiles = [];
     }
 
     loader.stop(
       `Exported the archive for ${scheme} scheme in ${mode} mode to ${
-        path.join(exportPath, ipaFiles[0]) ?? exportPath
+        path.join(exportDir, ipaFiles[0]) ?? exportDir
       }`
     );
     return output;

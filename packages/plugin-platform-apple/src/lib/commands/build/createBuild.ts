@@ -15,6 +15,7 @@ import type { BuildFlags } from './buildOptions.js';
 import { buildProject } from './buildProject.js';
 import { exportArchive } from './exportArchive.js';
 import { getConfiguration } from './getConfiguration.js';
+import { getBuildPaths } from '../../utils/buildPaths.js';
 
 export const createBuild = async (
   platformName: BuilderCommand['platformName'],
@@ -59,16 +60,20 @@ export const createBuild = async (
       args
     );
 
+    const { archiveDir } = getBuildPaths(platformName);
+
+    const archivePath = path.join(
+      archiveDir,
+      `${xcodeProject.name.replace('.xcworkspace', '')}.xcarchive`
+    );
+
     if (args.archive) {
       await exportArchive({
         sourceDir,
-        archivePath: path.join(
-          sourceDir,
-          '.rnef/archive',
-          `${xcodeProject.name.replace('.xcworkspace', '')}.xcarchive`
-        ),
+        archivePath,
         scheme,
         mode,
+        platformName,
       });
     }
     outro('Success 🎉.');
