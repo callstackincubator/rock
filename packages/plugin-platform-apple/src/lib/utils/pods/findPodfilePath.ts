@@ -22,7 +22,7 @@ export default function findPodfilePath(
         return true;
       }
 
-      if (project.indexOf(BUNDLE_VENDORED_PODFILE) > -1) {
+      if (project.includes(BUNDLE_VENDORED_PODFILE)) {
         // Ignore the podfile shipped with Cocoapods in bundle
         return false;
       }
