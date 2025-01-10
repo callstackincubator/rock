@@ -131,7 +131,6 @@ export default async function resolvePods(
     try {
       await installPods({
         skipBundleInstall: !!cachedDependenciesHash, // run `bundle install` only at the first time
-        newArchEnabled: true,
         platformProjectPath,
       });
       cacheManager.set(

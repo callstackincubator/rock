@@ -8,13 +8,11 @@ import runBundleInstall from './runBundleInstall.js';
 
 interface PodInstallOptions {
   skipBundleInstall?: boolean;
-  newArchEnabled?: boolean;
   platformProjectPath: string;
 }
 
 interface RunPodInstallOptions {
   shouldHandleRepoUpdate?: boolean;
-  newArchEnabled?: boolean;
   platformProjectPath: string;
 }
 
@@ -28,14 +26,14 @@ async function runPodInstall(options: RunPodInstallOptions) {
   const loader = spinner();
   try {
     loader.start(
-      `Installing CocoaPods dependencies ${color.bold(
-        options.newArchEnabled ? 'with New Architecture' : ''
-      )} ${color.dim('(this may take a few minutes)')}`
+      `Installing CocoaPods dependencies ${color.dim(
+        '(this may take a few minutes)'
+      )}`
     );
 
     await spawn('bundle', ['exec', 'pod', 'install'], {
       env: {
-        RCT_NEW_ARCH_ENABLED: options.newArchEnabled ? '1' : '0',
+        ['RCT_NEW_ARCH_ENABLED']: process.env['RCT_NEW_ARCH_ENABLED'] ?? '1',
       },
       stdio: logger.isVerbose() ? 'inherit' : ['ignore', 'pipe', 'pipe'],
       cwd: options.platformProjectPath,
@@ -55,7 +53,6 @@ async function runPodInstall(options: RunPodInstallOptions) {
       await runPodUpdate();
       await runPodInstall({
         shouldHandleRepoUpdate: false,
-        newArchEnabled: options.newArchEnabled,
         platformProjectPath: options.platformProjectPath,
       });
     } else {
@@ -164,7 +161,6 @@ export default async function installPods(options: PodInstallOptions) {
     }
 
     await runPodInstall({
-      newArchEnabled: options.newArchEnabled,
       platformProjectPath: options.platformProjectPath,
     });
   } catch {
