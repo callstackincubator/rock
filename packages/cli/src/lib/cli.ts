@@ -49,7 +49,7 @@ export const cli = async ({ cwd, argv }: CliOptions = {}) => {
         try {
           await command.action(args);
         } catch (error) {
-          if (error instanceof RnefError) {
+          if (!logger.isVerbose() && error instanceof RnefError) {
             logger.error(error.message);
             if (error.cause) {
               logger.error(`Cause: ${error.cause}`);
