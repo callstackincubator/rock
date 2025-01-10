@@ -18,7 +18,6 @@
     "@clack/prompts": "^0.9.0",
     "@react-native-community/cli-config": "^16.0.2",
     "@react-native-community/cli-config-apple": "^16.0.2",
-    "@react-native-community/cli-types": "^16.0.2",
     "@rnef/tools": "^0.2.0",
     "@types/adm-zip": "^0.5.7",
     "adm-zip": "^0.5.16",
@@ -28,6 +27,7 @@
     "tslib": "^2.3.0"
   },
   "devDependencies": {
+    "@react-native-community/cli-types": "^16.0.2",
     "@rnef/config": "^0.2.0"
   },
   "publishConfig": {
