@@ -37,32 +37,36 @@ export async function fetchGitHubArtifactsByName(
   const result: GitHubArtifact[] = [];
   let page = 1;
 
-  while (true) {
-    const response = await octokit.rest.actions.listArtifactsForRepo({
-      owner: repoDetails.owner,
-      repo: repoDetails.repository,
-      name,
-      per_page: PAGE_SIZE,
-      page,
-    });
+  try {
+    while (true) {
+      const response = await octokit.rest.actions.listArtifactsForRepo({
+        owner: repoDetails.owner,
+        repo: repoDetails.repository,
+        name,
+        per_page: PAGE_SIZE,
+        page,
+      });
 
-    const artifacts = response.data.artifacts
-      .filter((artifact) => !artifact.expired && artifact.workflow_run?.id)
-      .map((artifact) => ({
-        id: artifact.id,
-        name: artifact.name,
-        sizeInBytes: artifact.size_in_bytes,
-        expiresAt: artifact.expires_at,
-        downloadUrl: artifact.archive_download_url,
-      }));
+      const artifacts = response.data.artifacts
+        .filter((artifact) => !artifact.expired && artifact.workflow_run?.id)
+        .map((artifact) => ({
+          id: artifact.id,
+          name: artifact.name,
+          sizeInBytes: artifact.size_in_bytes,
+          expiresAt: artifact.expires_at,
+          downloadUrl: artifact.archive_download_url,
+        }));
 
-    result.push(...artifacts);
+      result.push(...artifacts);
 
-    if (artifacts.length < PAGE_SIZE) {
-      break;
+      if (artifacts.length < PAGE_SIZE) {
+        break;
+      }
+
+      page += 1;
     }
-
-    page += 1;
+  } catch {
+    // no artifacts found, skipping
   }
 
   result.sort((a, b) => {
