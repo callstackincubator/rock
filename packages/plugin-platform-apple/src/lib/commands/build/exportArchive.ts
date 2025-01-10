@@ -1,7 +1,6 @@
 import { spinner } from '@clack/prompts';
-import { logger, RnefError } from '@rnef/tools';
+import { RnefError } from '@rnef/tools';
 import { existsSync, readdirSync } from 'fs';
-import type { SubprocessError } from 'nano-spawn';
 import spawn from 'nano-spawn';
 import path from 'path';
 import { getBuildPaths } from '../../utils/buildPaths.js';
