@@ -2,7 +2,7 @@ import { createRequire } from 'node:module';
 import { dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { getConfig } from '@rnef/config';
-import { logger, resolveFilenameUp } from '@rnef/tools';
+import { logger, resolveFilenameUp, RnefError } from '@rnef/tools';
 import { Command } from 'commander';
 import { logConfig } from '../config.js';
 import { nativeFingerprintCommand } from './commands/fingerprint.js';
@@ -49,12 +49,18 @@ export const cli = async ({ cwd, argv }: CliOptions = {}) => {
         try {
           await command.action(args);
         } catch (error) {
-          logger.error(
-            `Unexpected error while running "${command.name}":`,
-            error
-          );
-
-          process.exit(1);
+          if (error instanceof RnefError) {
+            logger.error(error.message);
+            if (error.cause) {
+              logger.error(`Cause: ${error.cause}`);
+            }
+            process.exit(1);
+          } else {
+            logger.error(
+              `Unexpected error while running "${command.name}":`,
+              error
+            );
+          }
         }
       });
 
