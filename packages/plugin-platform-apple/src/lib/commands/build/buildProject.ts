@@ -60,18 +60,14 @@ export const buildProject = async (
     })(),
   ];
 
-  // TODO: handle case when someone pass --buildFolder
-
   if (args.archive) {
-    const { archiveDir, derivedDir } = getBuildPaths(platformName);
+    const { archiveDir } = getBuildPaths(platformName);
     const archiveName = `${xcodeProject.name.replace(
       '.xcworkspace',
       ''
     )}.xcarchive`;
 
     xcodebuildArgs.push(
-      '-derivedDataPath',
-      derivedDir,
       '-archivePath',
       path.join(archiveDir, archiveName),
       'archive'
