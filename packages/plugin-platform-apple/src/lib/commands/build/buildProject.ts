@@ -89,6 +89,13 @@ export const buildProject = async (
         args.archive ? 'Archiving' : 'Building'
       } the app with xcodebuild for ${scheme} scheme in ${mode} mode.`
     );
+  } else {
+    // @todo abstract loader to fall back to logger in non-tty mode.
+    logger.info(
+      `${
+        args.archive ? 'Archiving' : 'Building'
+      } the app with xcodebuild for ${scheme} scheme in ${mode} mode.`
+    );
   }
   logger.debug(`Running "xcodebuild ${xcodebuildArgs.join(' ')}.`);
   try {
@@ -100,6 +107,13 @@ export const buildProject = async (
     const { output } = await childProcess;
     if (!logger.isVerbose()) {
       loader.stop(
+        `${
+          args.archive ? 'Archived' : 'Built'
+        } the app with xcodebuild for ${scheme} scheme in ${mode} mode.`
+      );
+    } else {
+      // @todo abstract loader to fall back to logger in non-tty mode.
+      logger.info(
         `${
           args.archive ? 'Archived' : 'Built'
         } the app with xcodebuild for ${scheme} scheme in ${mode} mode.`
