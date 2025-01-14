@@ -4,29 +4,37 @@ import { spinner } from '@clack/prompts';
 import {
   createRemoteBuildCache,
   findDirectoriesWithPattern,
+  findFilesWithPattern,
   formatArtifactName,
   getProjectRoot,
   type LocalBuild,
+  logger,
   nativeFingerprint,
   queryLocalBuildCache,
 } from '@rnef/tools';
 import color from 'picocolors';
 import * as tar from 'tar';
 
+export type Distribution = 'simulator' | 'device';
+
 export type FetchCachedBuildOptions = {
+  distribution: Distribution;
   mode: string;
 };
 
 export async function fetchCachedBuild({
+  distribution,
   mode,
 }: FetchCachedBuildOptions): Promise<LocalBuild | null> {
   const loader = spinner();
   loader.start('Looking for a local cached build');
 
   const root = getProjectRoot();
-  const artifactName = await calculateArtifactName(mode);
+  const artifactName = await calculateArtifactName({ distribution, mode });
 
-  const localBuild = queryLocalBuildCache(artifactName, { findBinary });
+  const localBuild = queryLocalBuildCache(artifactName, {
+    findBinary: (path) => findBinary(distribution, path),
+  });
   if (localBuild != null) {
     loader.stop(`Found local cached build: ${color.cyan(localBuild.name)}`);
     return localBuild;
@@ -47,8 +55,8 @@ export async function fetchCachedBuild({
 
   loader.message(`Downloading cached build from ${remoteBuildCache.name}`);
   const fetchedBuild = await remoteBuildCache.download(remoteBuild);
-  await extractArtifactTarball(fetchedBuild.path);
-  const binaryPath = findBinary(fetchedBuild.path);
+  await extractArtifactTarballIfNeeded(fetchedBuild.path);
+  const binaryPath = findBinary(distribution, fetchedBuild.path);
   if (!binaryPath) {
     loader.stop(`No binary found in "${artifactName}".`);
     return null;
@@ -65,38 +73,63 @@ export async function fetchCachedBuild({
   };
 }
 
-async function calculateArtifactName(mode: string) {
+async function calculateArtifactName({
+  distribution,
+  mode,
+}: FetchCachedBuildOptions) {
   const root = getProjectRoot();
   const fingerprint = await nativeFingerprint(root, { platform: 'ios' });
   return formatArtifactName({
     platform: 'ios',
+    distribution,
     mode,
     hash: fingerprint.hash,
   });
 }
 
-function findBinary(path: string): string | null {
-  const apps = findDirectoriesWithPattern(path, /\.app$/);
-  if (apps.length > 0) {
-    return apps[0];
+function findBinary(distribution: string, path: string): string | null {
+  if (distribution === 'simulator') {
+    const apps = findDirectoriesWithPattern(path, /\.app$/);
+    if (apps.length > 0) {
+      logger.debug(
+        `Found simulator binaries (*.app): ${apps.join(
+          ', '
+        )}. Picking the first one: ${apps[0]}.`
+      );
+      return apps[0];
+    }
+  }
+
+  if (distribution === 'device') {
+    const ipas = findFilesWithPattern(path, /\.ipa$/);
+    if (ipas.length > 0) {
+      logger.debug(
+        `Found device binaries (*.ipa): ${ipas.join(
+          ', '
+        )}. Picking the first one: ${ipas[0]}.`
+      );
+      return ipas[0];
+    }
   }
 
   return null;
 }
 
-// GitHub artifact for iOS is a tar.gz file (contained in the downloaded .zip file).
-// The reason for this is that GitHub upload-artifact  drop execute file permission during packing to zip,
-// so HelloWorld.app (and it's contents) is not executable.
-// The recommended workaround is to pack to .tar.gz first.
-// See: https://github.com/actions/upload-artifact?tab=readme-ov-file#permission-loss
-async function extractArtifactTarball(artifactPath: string) {
+async function extractArtifactTarballIfNeeded(artifactPath: string) {
   const tarPath = path.join(artifactPath, 'app.tar.gz');
-  if (fs.existsSync(tarPath)) {
-    await tar.extract({
-      file: tarPath,
-      cwd: artifactPath,
-      gzip: true,
-    });
-    fs.unlinkSync(tarPath);
+
+  // If the tarball is not found, it means the artifact is already unpacked.
+  if (!fs.existsSync(tarPath)) {
+    return;
   }
+
+  // iOS simulator build artifact (*.app directory) is packed in .tar.gz file to
+  // preserve execute file permission.
+  // See: https://github.com/actions/upload-artifact?tab=readme-ov-file#permission-loss
+  await tar.extract({
+    file: tarPath,
+    cwd: artifactPath,
+    gzip: true,
+  });
+  fs.unlinkSync(tarPath);
 }

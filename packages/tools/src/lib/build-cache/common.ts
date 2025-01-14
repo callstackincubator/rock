@@ -21,19 +21,26 @@ export type RemoteBuildCache = {
 
 type FormatArtifactNameParams = {
   platform: string;
+  distribution?: string;
   mode: string;
   hash: string;
 };
 
 /**
- * e.g. rnef-android-debug-1234567890
+ * Used formats:
+ * - rnef-android-debug-1234567890
+ * - rnef-ios-simulator-debug-1234567890
+ * - rnef-ios-device-debug-1234567890
  */
 export function formatArtifactName({
   platform,
+  distribution,
   mode,
   hash,
 }: FormatArtifactNameParams): string {
-  return `rnef-${platform}-${mode}-${hash}`;
+  return `rnef-${platform}${
+    distribution ? `-${distribution}` : ''
+  }-${mode}-${hash}`;
 }
 
 export function getLocalArtifactPath(artifactName: string) {

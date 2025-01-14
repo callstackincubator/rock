@@ -7,6 +7,7 @@ import type {
   XcodeProjectInfo,
 } from '../../types/index.js';
 import { buildProject } from '../build/buildProject.js';
+import { fetchCachedBuild } from './fetchCachedBuild.js';
 import { getBuildPath } from './getBuildPath.js';
 import { getBuildSettings } from './getBuildSettings.js';
 import type { RunFlags } from './runOptions.js';
@@ -20,6 +21,17 @@ export async function runOnDevice(
   sourceDir: string,
   args: RunFlags
 ) {
+  if (!args.binaryPath && args.remoteCache) {
+    const cachedBuild = await fetchCachedBuild({
+      distribution: 'device',
+      mode: 'Release', // Remote device builds make no sense, do they?
+    });
+    if (cachedBuild) {
+      // @todo replace with a more generic way to pass binary path
+      args.binaryPath = cachedBuild.binaryPath;
+    }
+  }
+
   try {
     await spawn('ios-deploy', ['--version']);
   } catch {
