@@ -71,6 +71,7 @@ export const createBuild = async (
         scheme,
         mode,
         platformName,
+        exportExtraParams: args.exportExtraParams ?? [],
       });
     }
     outro('Success 🎉.');

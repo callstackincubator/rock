@@ -11,12 +11,14 @@ export const exportArchive = async ({
   scheme,
   mode,
   platformName,
+  exportExtraParams,
 }: {
   sourceDir: string;
   archivePath: string;
   scheme: string;
   mode: string;
   platformName: string;
+  exportExtraParams: string[];
 }) => {
   const loader = spinner();
 
@@ -42,6 +44,7 @@ export const exportArchive = async ({
     exportDir,
     '-exportOptionsPlist',
     exportOptionsPlistPath,
+    ...exportExtraParams,
   ];
 
   try {

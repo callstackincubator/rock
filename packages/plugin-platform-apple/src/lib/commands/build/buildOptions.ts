@@ -8,6 +8,7 @@ export type BuildFlags = {
   scheme: string;
   target?: string;
   extraParams?: string[];
+  exportExtraParams?: string[];
   device?: string;
   catalyst?: boolean;
   buildFolder?: string;
@@ -44,6 +45,12 @@ export const getBuildOptions = ({ platformName }: BuilderCommand) => {
     {
       name: '--extra-params <string>',
       description: 'Custom params that will be passed to xcodebuild command.',
+      parse: (val: string) => val.split(' '),
+    },
+    {
+      name: '--export-extra-params <string>',
+      description:
+        'Custom params that will be passed to xcodebuild export archive command.',
       parse: (val: string) => val.split(' '),
     },
     {
