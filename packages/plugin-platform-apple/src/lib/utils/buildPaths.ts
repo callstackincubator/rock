@@ -1,10 +1,8 @@
 import path from 'node:path';
-import { getProjectRoot } from '@rnef/tools';
+import { getCacheRootPath } from '@rnef/tools';
 
 export const getBuildPaths = (platformName: string) => {
-  const rootDir = getProjectRoot(process.cwd());
-
-  const buildDir = path.join(rootDir, '.rnef', platformName);
+  const buildDir = path.join(getCacheRootPath(), platformName);
 
   return {
     buildDir,

@@ -57,14 +57,14 @@ export const createBuild = async (
       args
     );
 
-    const { archiveDir } = getBuildPaths(platformName);
-
-    const archivePath = path.join(
-      archiveDir,
-      `${xcodeProject.name.replace('.xcworkspace', '')}.xcarchive`
-    );
-
     if (args.archive) {
+      const { archiveDir } = getBuildPaths(platformName);
+
+      const archivePath = path.join(
+        archiveDir,
+        `${xcodeProject.name.replace('.xcworkspace', '')}.xcarchive`
+      );
+
       await exportArchive({
         sourceDir,
         archivePath,
