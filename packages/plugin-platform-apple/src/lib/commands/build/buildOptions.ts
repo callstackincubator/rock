@@ -1,3 +1,4 @@
+import { parse } from 'shell-quote';
 import type { BuilderCommand } from '../../types/index.js';
 import { getPlatformInfo } from '../../utils/getPlatformInfo.js';
 
@@ -45,7 +46,7 @@ export const getBuildOptions = ({ platformName }: BuilderCommand) => {
     {
       name: '--extra-params <string>',
       description: 'Custom params that will be passed to xcodebuild command.',
-      parse: (val: string) => val.split(' '),
+      parse: (val: string) => parse(val),
     },
     {
       name: '--export-extra-params <string>',
@@ -53,7 +54,7 @@ export const getBuildOptions = ({ platformName }: BuilderCommand) => {
         'Custom params that will be passed to xcodebuild export archive command.\n' +
         'Example:\n' +
         '  --export-extra-params "-allowProvisioningUpdates"',
-      parse: (val: string) => val.split(' '),
+      parse: (val: string) => parse(val),
     },
     {
       name: '--device <string>',
