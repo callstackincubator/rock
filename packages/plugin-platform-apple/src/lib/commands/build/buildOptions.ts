@@ -50,7 +50,9 @@ export const getBuildOptions = ({ platformName }: BuilderCommand) => {
     {
       name: '--export-extra-params <string>',
       description:
-        'Custom params that will be passed to xcodebuild export archive command.',
+        'Custom params that will be passed to xcodebuild export archive command.\n' +
+        'Example:\n' +
+        '  --export-extra-params "-allowProvisioningUpdates"',
       parse: (val: string) => val.split(' '),
     },
     {
