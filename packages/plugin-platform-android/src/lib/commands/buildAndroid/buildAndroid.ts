@@ -1,8 +1,7 @@
 import { outro, spinner } from '@clack/prompts';
 import type { AndroidProjectConfig } from '@react-native-community/cli-types';
-import { logger } from '@rnef/tools';
+import { logger, parseArgs } from '@rnef/tools';
 import color from 'picocolors';
-import { parse } from 'shell-quote';
 import { promptForTaskSelection } from '../listAndroidTasks.js';
 import { findOutputFile } from '../runAndroid/tryInstallAppOnDevice.js';
 import { runGradle } from '../runGradle.js';
@@ -68,7 +67,7 @@ export const options = [
   {
     name: '--extra-params <string>',
     description: 'Custom params passed to gradle build command',
-    parse: (val: string) => parse(val),
+    parse: (val: string) => parseArgs(val),
   },
   {
     name: '-i --interactive',

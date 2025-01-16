@@ -20,6 +20,7 @@
     "nano-spawn": "^0.2.0",
     "octokit": "^4.0.2",
     "picocolors": "^1.1.1",
+    "string-argv": "^0.3.2",
     "ts-regex-builder": "^1.8.2",
     "tslib": "^2.3.0"
   },

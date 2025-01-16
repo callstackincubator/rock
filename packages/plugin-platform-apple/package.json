@@ -23,13 +23,11 @@
     "is-interactive": "^2.0.0",
     "nano-spawn": "^0.2.0",
     "picocolors": "^1.1.1",
-    "shell-quote": "link:shell-quote",
     "tar": "^7.4.3",
     "tslib": "^2.3.0"
   },
   "devDependencies": {
-    "@rnef/config": "^0.0.6",
-    "@types/shell-quote": "^1.7.5"
+    "@rnef/config": "^0.0.6"
   },
   "publishConfig": {
     "access": "restricted"

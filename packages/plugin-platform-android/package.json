@@ -23,13 +23,11 @@
     "is-interactive": "^2.0.0",
     "nano-spawn": "^0.2.0",
     "picocolors": "^1.1.1",
-    "shell-quote": "^1.8.2",
     "tslib": "^2.3.0"
   },
   "devDependencies": {
     "@react-native-community/cli-types": "^16.0.2",
-    "@rnef/config": "^0.0.6",
-    "@types/shell-quote": "^1.7.5"
+    "@rnef/config": "^0.0.6"
   },
   "publishConfig": {
     "access": "restricted"
