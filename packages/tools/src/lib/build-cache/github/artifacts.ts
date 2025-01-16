@@ -66,7 +66,18 @@ export async function fetchGitHubArtifactsByName(
       page += 1;
     }
   } catch (error) {
-    logger.debug('Failed to fetch GitHub artifacts', error);
+    if ((error as { message: string }).message.includes('Bad credentials')) {
+      logger.warn(
+        `Failed to fetch GitHub artifacts due to invalid GITHUB_TOKEN provided. 
+You may be using GITHUB_TOKEN configured in your shell config file, such as ~/.zshrc.
+Please generate a new token with access to this project and try again.`
+      );
+    } else {
+      logger.warn(
+        'Failed to fetch GitHub artifacts: ',
+        (error as { message: string }).message
+      );
+    }
   }
 
   result.sort((a, b) => {

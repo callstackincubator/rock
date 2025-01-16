@@ -31,8 +31,8 @@ export async function nativeFingerprint(
     platforms: [platform],
     dirExcludes: [
       'android/build',
-      'android/app/build',
-      'android/app/.cxx',
+      'android/**/build',
+      'android/**/.cxx',
       'ios/DerivedData',
       'ios/Pods',
       'node_modules',

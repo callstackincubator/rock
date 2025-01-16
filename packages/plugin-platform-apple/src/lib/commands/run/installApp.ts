@@ -28,47 +28,51 @@ export default async function installApp({
   platform,
 }: Options) {
   let appPath = binaryPath;
-
-  const buildSettings = await getBuildSettings(
-    xcodeProject,
-    sourceDir,
-    mode,
-    `export PLATFORM_NAME=${getPlatformSDK(platform)}`, // simulate build output
-    scheme,
-    target
-  );
-
-  if (!buildSettings) {
-    throw new Error('Failed to get build settings for your project');
-  }
-
-  if (!appPath) {
-    appPath = getBuildPath(buildSettings, platform);
-  }
-
-  const targetBuildDir = buildSettings.TARGET_BUILD_DIR;
-  const infoPlistPath = buildSettings.INFOPLIST_PATH;
-
-  if (!infoPlistPath) {
-    throw new Error('Failed to find Info.plist');
-  }
-
-  if (!targetBuildDir) {
-    throw new Error('Failed to get target build directory.');
-  }
-
-  logger.debug(`Installing "${path.basename(appPath)}"`);
+  let targetBuildDir;
+  let infoPlistPath = 'Info.plist';
 
   if (udid && appPath) {
     await spawn('xcrun', ['simctl', 'install', udid, appPath], {
       stdio: logger.isVerbose() ? 'inherit' : ['ignore', 'pipe', 'inherit'],
     });
+  } else {
+    const buildSettings = await getBuildSettings(
+      xcodeProject,
+      sourceDir,
+      mode,
+      `export PLATFORM_NAME=${getPlatformSDK(platform)}`, // simulate build output
+      scheme,
+      target
+    );
+
+    if (!buildSettings) {
+      throw new Error('Failed to get build settings for your project');
+    }
+
+    if (!appPath) {
+      appPath = getBuildPath(buildSettings, platform);
+    }
+
+    targetBuildDir = buildSettings.TARGET_BUILD_DIR;
+    infoPlistPath = buildSettings.INFOPLIST_PATH;
+
+    if (!infoPlistPath) {
+      throw new Error('Failed to find Info.plist');
+    }
+
+    if (!targetBuildDir) {
+      throw new Error('Failed to get target build directory.');
+    }
   }
+
+  logger.debug(`Installing "${path.basename(appPath)}"`);
+
+  const buildDir = targetBuildDir || appPath;
 
   const { stdout } = await spawn('/usr/libexec/PlistBuddy', [
     '-c',
     'Print:CFBundleIdentifier',
-    path.join(targetBuildDir, infoPlistPath),
+    path.join(buildDir, infoPlistPath),
   ]);
   const bundleID = stdout.trim();
 
