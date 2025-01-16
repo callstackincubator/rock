@@ -70,6 +70,7 @@ export async function fetchGitHubArtifactsByName(
       logger.warn(
         `Failed to fetch GitHub artifacts due to invalid GITHUB_TOKEN provided. 
 You may be using GITHUB_TOKEN configured in your shell config file, such as ~/.zshrc.
+Run "echo $GITHUB_TOKEN" to see the value.
 Please generate a new token with access to this project and try again.`
       );
     } else {
