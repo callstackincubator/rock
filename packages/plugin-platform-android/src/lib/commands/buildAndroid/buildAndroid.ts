@@ -67,7 +67,7 @@ export const options = [
   {
     name: '--extra-params <string>',
     description: 'Custom params passed to gradle build command',
-    parse: (val: string) => parseArgs(val),
+    parse: parseArgs,
   },
   {
     name: '-i --interactive',
