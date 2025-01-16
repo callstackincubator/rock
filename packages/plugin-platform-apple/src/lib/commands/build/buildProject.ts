@@ -75,7 +75,6 @@ export const buildProject = async (
   }
 
   if (args.extraParams) {
-    console.log('💜💜💜 args.extraParams', args.extraParams);
     xcodebuildArgs.push(...args.extraParams);
   }
 
