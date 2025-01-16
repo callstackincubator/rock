@@ -38,7 +38,8 @@ export async function getBuildSettings(
   const settings = JSON.parse(buildSettings);
 
   const targets = settings
-    .filter(({ target }: { target: string }) => target !== 'React') // skip React target
+    // skip React target if present; may happen in some older projects; @todo revisit
+    .filter(({ target }: { target: string }) => target !== 'React')
     .map(({ target: settingsTarget }: { target: string }) => settingsTarget);
 
   let selectedTarget = targets[0];
