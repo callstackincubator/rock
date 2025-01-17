@@ -16,7 +16,7 @@ type Options = {
   binaryPath?: string;
   platform: ApplePlatform;
 };
-console.log('xd');
+
 export default async function installApp({
   xcodeProject,
   sourceDir,
