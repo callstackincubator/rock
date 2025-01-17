@@ -39,6 +39,12 @@ npx create-rnef-app enterprise
 
 1. Remove `@react-native-community/cli` and related packages.
 
+1. Add `.rnef/` folder with caches to `.gitignore`:
+
+   ```
+   .rnef/
+   ```
+
 1. Add `rnef.config.mjs` file:
 
    ```mjs
@@ -59,10 +65,11 @@ npx create-rnef-app enterprise
 
 1. Update Android files:
 
-   In `android/app/build.gradle` uncomment the `cliFile` and update like this:
+   In `android/app/build.gradle` uncomment the `cliFile` and update with the new path:
 
-   ```gradle
-   cliFile = file("../../node_modules/@rnef/cli/src/bin.js")
+   ```diff
+   -// cliFile = file("../../node_modules/react-native/cli.js")
+   +cliFile = file("../../node_modules/@rnef/cli/src/bin.js")
    ```
 
    In `android/settings.gradle` change:
