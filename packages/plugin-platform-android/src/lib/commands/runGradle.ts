@@ -64,8 +64,8 @@ export async function runGradle({
   try {
     logger.debug(`Running ${gradleWrapper} ${gradleArgs.join(' ')}.`);
     const childProcess = spawn(gradleWrapper, gradleArgs, {
-      stdio: logger.isVerbose() ? 'inherit' : 'pipe',
       cwd: androidProject.sourceDir,
+      stdio: logger.isVerbose() ? 'inherit' : 'pipe',
     });
     setupChildProcessCleanup(childProcess);
     await childProcess;
