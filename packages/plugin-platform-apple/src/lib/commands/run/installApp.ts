@@ -49,10 +49,7 @@ export default async function installApp({
       throw new Error('Failed to get build settings for your project');
     }
 
-    if (!appPath) {
-      appPath = getBuildPath(buildSettings, platform);
-    }
-
+    appPath = getBuildPath(buildSettings, platform);
     targetBuildDir = buildSettings.TARGET_BUILD_DIR;
     infoPlistPath = buildSettings.INFOPLIST_PATH;
 
