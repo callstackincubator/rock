@@ -40,44 +40,37 @@ runs:
   steps:
     - name: Validate inputs
       run: |
-        if [ "${{ inputs.destination }}" != "simulator" && "${{ inputs.destination }}" != "device" ]; then
-          echo "Invalid destination: ${inputs.destination}". Allowed values: "simulator" or "device".
+        if [ "${{ inputs.destination }}" != "simulator" ] && [ "${{ inputs.destination }}" != "device" ]; then
+          echo "Invalid input 'destination': '${{ inputs.destination }}'. Allowed values: 'simulator' or 'device'."
           exit 1
         fi
 
-        if [ ${{ inputs.distribution }} == 'device' ]; then
-          SHOULD_FAIL=0
-
+        if [ "${{ inputs.destination }}" == "device" ]; then
           if [ -z "${{ inputs.certificate-base64 }}" ]; then
-            echo "Certificate ("certificate-base64") is required for device builds".
-            SHOULD_FAIL=1
+            echo "Input 'certificate-base64' is required for device builds."
+            exit 1
           fi
 
           if [ -z "${{ inputs.certificate-password }}" ]; then
-            echo "Certificate password ("certificate-password") is required for device builds".
-            SHOULD_FAIL
+            echo "  Input 'certificate-password' is required for device builds."
+            exit 1
           fi
 
           if [ -z "${{ inputs.provisioning-profile-base64 }}" ]; then
-            echo "Provisioning profile ("provisioning-profile-base64") is required for device builds".
-            SHOULD_FAIL
+            echo "Input 'provisioning-profile-base64' is required for device builds."
+            exit 1
           fi
 
           if [ -z "${{ inputs.provisioning-profile-name }}" ]; then
-            echo "Provisioning profile name is required for device builds".
-            SHOULD_FAIL
+            echo "Input 'provisioning-profile-name' is required for device builds."
+            exit 1
           fi
 
           if [ -z "${{ inputs.keychain-password }}" ]; then
-            echo "Keychain password ("keychain-password") is required for device builds".
-            SHOULD_FAIL
+            echo "Input 'keychain-password' is required for device builds."
+            exit 1
           fi
         fi
-
-        if [ $SHOULD_FAIL -eq 1 ]; then
-          exit 1
-        fi
-
       shell: bash
 
     - name: Native Fingerprint
