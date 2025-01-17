@@ -1,6 +1,11 @@
 import path from 'node:path';
 import { spinner } from '@clack/prompts';
-import { logger, RnefError, setupChildProcessCleanup } from '@rnef/tools';
+import {
+  logger,
+  RnefError,
+  setupChildProcessCleanup,
+  updateClock,
+} from '@rnef/tools';
 import type { SubprocessError } from 'nano-spawn';
 import spawn from 'nano-spawn';
 import type { ApplePlatform, XcodeProjectInfo } from '../../types/index.js';
@@ -78,20 +83,17 @@ export const buildProject = async (
     xcodebuildArgs.push(...args.extraParams);
   }
 
+  let clockInterval;
   const loader = spinner();
+  const message = `${
+    args.archive ? 'Archiving' : 'Building'
+  } the app with xcodebuild for ${scheme} scheme in ${mode} mode`;
   if (!logger.isVerbose()) {
-    loader.start(
-      `${
-        args.archive ? 'Archiving' : 'Building'
-      } the app with xcodebuild for ${scheme} scheme in ${mode} mode.`
-    );
+    loader.start(message);
+    clockInterval = updateClock(loader.message, message);
   } else {
     // @todo abstract loader to fall back to logger in non-tty mode.
-    logger.info(
-      `${
-        args.archive ? 'Archiving' : 'Building'
-      } the app with xcodebuild for ${scheme} scheme in ${mode} mode.`
-    );
+    logger.info(message);
   }
   logger.debug(`Running "xcodebuild ${xcodebuildArgs.join(' ')}.`);
   try {
@@ -133,5 +135,7 @@ export const buildProject = async (
     }
 
     throw new RnefError('Running xcodebuild failed', { cause: error });
+  } finally {
+    clearInterval(clockInterval);
   }
 };

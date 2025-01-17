@@ -1,5 +1,10 @@
 import { spinner } from '@clack/prompts';
-import { logger, RnefError } from '@rnef/tools';
+import {
+  logger,
+  RnefError,
+  setupChildProcessCleanup,
+  updateClock,
+} from '@rnef/tools';
 import spawn, { type SubprocessError } from 'nano-spawn';
 import color from 'picocolors';
 import type { BuildFlags } from './buildAndroid/buildAndroid.js';
@@ -20,9 +25,14 @@ export async function runGradle({
   if ('binaryPath' in args) {
     return;
   }
+  let clockInterval;
   const loader = spinner();
+  const message = `Building the app with Gradle in ${args.mode} mode`;
   if (!logger.isVerbose()) {
-    loader.start('Running Gradle build');
+    loader.start(message);
+    clockInterval = updateClock(loader.message, message);
+  } else {
+    logger.info(message);
   }
 
   const gradleArgs = getTaskNames(androidProject.appName, tasks);
@@ -53,18 +63,21 @@ export async function runGradle({
 
   try {
     logger.debug(`Running ${gradleWrapper} ${gradleArgs.join(' ')}.`);
-    await spawn(gradleWrapper, gradleArgs, {
-      cwd: androidProject.sourceDir,
+    const childProcess = spawn(gradleWrapper, gradleArgs, {
       stdio: logger.isVerbose() ? 'inherit' : 'pipe',
+      cwd: androidProject.sourceDir,
     });
+    setupChildProcessCleanup(childProcess);
+    await childProcess;
     if (!logger.isVerbose()) {
-      loader.stop('Gradle build finished.');
+      loader.stop(`Built the app in ${args.mode} mode.`);
+    } else {
+      logger.info(`Built the app in ${args.mode} mode.`);
     }
   } catch (error) {
     if (!logger.isVerbose()) {
-      loader.stop(`Gradle failed to build the app.`, 1);
+      loader.stop('Failed to build the app');
     }
-
     const cleanedErrorMessage = (error as SubprocessError).stderr
       .split('\n')
       .filter((line) => !gradleLinesToRemove.some((l) => line.includes(l)))
@@ -80,6 +93,8 @@ export async function runGradle({
       hints ||
         'Failed to build the app. See the error above for details from Gradle.'
     );
+  } finally {
+    clearInterval(clockInterval);
   }
 }
 

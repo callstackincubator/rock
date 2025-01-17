@@ -14,3 +14,4 @@ export * from './lib/build-cache/remoteBuildCache.js';
 export * from './lib/build-cache/github/config.js';
 export * from './lib/build-cache/github/GitHubBuildCache.js';
 export { setupChildProcessCleanup } from './lib/setupChildProcessCleanup.js';
+export { updateClock } from './lib/clock.js';
