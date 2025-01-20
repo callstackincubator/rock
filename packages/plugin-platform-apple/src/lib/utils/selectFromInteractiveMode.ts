@@ -1,6 +1,5 @@
 import { logger } from '@rnef/tools';
 import isInteractive from 'is-interactive';
-import color from 'picocolors';
 import type { XcodeProjectInfo } from '../types/index.js';
 import { getInfo } from './getInfo.js';
 import {
