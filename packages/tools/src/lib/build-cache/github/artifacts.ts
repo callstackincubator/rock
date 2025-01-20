@@ -1,6 +1,5 @@
 import * as fs from 'node:fs';
 import AdmZip from 'adm-zip';
-import { RnefError } from '../../error.js';
 import logger from '../../logger.js';
 import { detectGitHubRepoDetails } from './config.js';
 
