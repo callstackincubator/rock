@@ -49,19 +49,22 @@ export async function fetchGitHubArtifactsByName(
   const owner = repoDetails.owner;
   const repo = repoDetails.repository;
   const url = `https://api.github.com/repos/${owner}/${repo}/actions/artifacts?per_page=${PAGE_SIZE}&page=${page}`;
-  const headers = { Authorization: `Bearer ${GITHUB_TOKEN}` };
 
   try {
     while (true) {
       let data: GitHubArtifactResponse;
       try {
-        const response = await fetch(url, { headers });
+        const response = await fetch(url, {
+          headers: { Authorization: `token ${GITHUB_TOKEN}` },
+        });
         if (!response.ok) {
-          throw new Error(`HTTP error! status: ${response.status}`);
+          throw new Error(
+            `HTTP error: ${response.status} ${response.statusText}`
+          );
         }
         data = await response.json();
       } catch (error) {
-        throw new RnefError('Error fetching artifacts', { cause: error });
+        throw new Error(`Error fetching artifacts: ${error}`);
       }
 
       const artifacts = data.artifacts
@@ -88,7 +91,7 @@ export async function fetchGitHubArtifactsByName(
       page += 1;
     }
   } catch (error) {
-    if ((error as { message: string }).message.includes('Bad credentials')) {
+    if ((error as { message: string }).message.includes('401 Unauthorized')) {
       logger.warn(
         `Failed to fetch GitHub artifacts due to invalid GITHUB_TOKEN provided. 
 You may be using GITHUB_TOKEN configured in your shell config file, such as ~/.zshrc.
