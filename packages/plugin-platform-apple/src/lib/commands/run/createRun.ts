@@ -47,8 +47,8 @@ export const createRun = async (
       args.mode
     );
 
-    scheme = result.scheme ?? args.scheme;
-    mode = result.mode ?? args.mode;
+    scheme = result.scheme;
+    mode = result.mode;
   }
 
   normalizeArgs(args, projectRoot, xcodeProject);
