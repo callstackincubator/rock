@@ -1,13 +1,13 @@
 import * as fs from 'node:fs';
 import AdmZip from 'adm-zip';
-import { Octokit } from 'octokit';
+import { RnefError } from '../../error.js';
 import logger from '../../logger.js';
 import { detectGitHubRepoDetails } from './config.js';
 
 const PAGE_SIZE = 100; // Maximum allowed by GitHub API
 const GITHUB_TOKEN = process.env['GITHUB_TOKEN'];
 
-export type GitHubArtifact = {
+type GitHubArtifact = {
   id: number;
   name: string;
   expiresAt: string | null;
@@ -15,13 +15,23 @@ export type GitHubArtifact = {
   downloadUrl: string;
 };
 
+type GitHubArtifactResponse = {
+  artifacts: {
+    id: number;
+    name: string;
+    size_in_bytes: number;
+    expires_at: string | null;
+    archive_download_url: string;
+    expired: boolean;
+    workflow_run: {
+      id: number;
+    };
+  }[];
+};
+
 export async function fetchGitHubArtifactsByName(
   name: string
 ): Promise<GitHubArtifact[] | []> {
-  const octokit = new Octokit({
-    auth: GITHUB_TOKEN,
-  });
-
   const repoDetails = await detectGitHubRepoDetails();
   if (!repoDetails) {
     // add visual space becuase this block is run within spinner.
@@ -34,21 +44,33 @@ export async function fetchGitHubArtifactsByName(
     return [];
   }
 
-  const result: GitHubArtifact[] = [];
   let page = 1;
+  const result: GitHubArtifact[] = [];
+  const owner = repoDetails.owner;
+  const repo = repoDetails.repository;
+  const url = `https://api.github.com/repos/${owner}/${repo}/actions/artifacts?per_page=${PAGE_SIZE}&page=${page}`;
+  const headers = { Authorization: `Bearer ${GITHUB_TOKEN}` };
 
   try {
     while (true) {
-      const response = await octokit.rest.actions.listArtifactsForRepo({
-        owner: repoDetails.owner,
-        repo: repoDetails.repository,
-        name,
-        per_page: PAGE_SIZE,
-        page,
-      });
+      let data: GitHubArtifactResponse;
+      try {
+        const response = await fetch(url, { headers });
+        if (!response.ok) {
+          throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        data = await response.json();
+      } catch (error) {
+        throw new RnefError('Error fetching artifacts', { cause: error });
+      }
 
-      const artifacts = response.data.artifacts
-        .filter((artifact) => !artifact.expired && artifact.workflow_run?.id)
+      const artifacts = data.artifacts
+        .filter(
+          (artifact) =>
+            !artifact.expired &&
+            artifact.workflow_run?.id &&
+            artifact.name === name
+        )
         .map((artifact) => ({
           id: artifact.id,
           name: artifact.name,
