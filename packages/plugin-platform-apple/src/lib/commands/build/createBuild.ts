@@ -27,22 +27,46 @@ export const createBuild = async (
     );
   }
 
+  let scheme, mode;
+
+  if (args.interactive) {
+    const result = await selectFromInteractiveMode(
+      xcodeProject,
+      sourceDir,
+      args.scheme,
+      args.mode
+    );
+
+    scheme = result.scheme ?? args.scheme;
+    mode = result.mode ?? args.mode;
+  }
+
   normalizeArgs(args, xcodeProject);
 
-  const { scheme, mode } = args.interactive
-    ? await selectFromInteractiveMode(
-        xcodeProject,
-        sourceDir,
-        args.scheme,
-        args.mode
-      )
-    : await getConfiguration(
-        xcodeProject,
-        sourceDir,
-        args.scheme,
-        args.mode,
-        platformName
-      );
+  if (!args.interactive) {
+    const result = await getConfiguration(
+      xcodeProject,
+      sourceDir,
+      args.scheme,
+      args.mode,
+      platformName
+    );
+
+    scheme = result.scheme;
+    mode = result.mode;
+  }
+
+  if (!scheme) {
+    throw new RnefError(
+      'No scheme specified. Please provide a scheme using the --scheme flag or select one in interactive mode'
+    );
+  }
+
+  if (!mode) {
+    throw new RnefError(
+      'No mode specified. Please provide a mode using the --mode flag or select one in interactive mode'
+    );
+  }
 
   try {
     await buildProject(
