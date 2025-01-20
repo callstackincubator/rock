@@ -32,7 +32,6 @@ export async function promptForConfigurationSelection(
 
 export async function promptForDeviceSelection(
   devices: Device[],
-  projectRoot: string,
   platformName: ApplePlatform
 ) {
   const sortedDevices = sortByRecentDevices(devices, platformName);

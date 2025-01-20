@@ -82,7 +82,7 @@ export const createRun = async (
     );
   }
   loader.stop('Found available devices and simulators.');
-  const device = await selectDevice(devices, args, platformName, projectRoot);
+  const device = await selectDevice(devices, args, platformName);
 
   if (device) {
     cacheRecentDevice(device, platformName);
@@ -116,11 +116,7 @@ export const createRun = async (
     if (bootedSimulators.length === 0) {
       // fallback to present all devices when no device is selected
       if (isInteractive()) {
-        const simulator = await promptForDeviceSelection(
-          devices,
-          projectRoot,
-          platformName
-        );
+        const simulator = await promptForDeviceSelection(devices, platformName);
         bootedSimulators.push(simulator);
         cacheRecentDevice(simulator, platformName);
       } else {
@@ -158,13 +154,12 @@ export const createRun = async (
 async function selectDevice(
   devices: Device[],
   args: RunFlags,
-  platform: ApplePlatform,
-  projectRoot: string
+  platform: ApplePlatform
 ) {
   const { interactive } = args;
   let device;
   if (interactive) {
-    device = await promptForDeviceSelection(devices, projectRoot, platform);
+    device = await promptForDeviceSelection(devices, platform);
   } else if (args.device) {
     device = matchingDevice(devices, args.device);
   }
