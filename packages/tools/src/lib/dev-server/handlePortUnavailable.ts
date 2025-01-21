@@ -5,19 +5,19 @@ import {
   logChangePortInstructions,
 } from './port.js';
 
-const handlePortUnavailable = async (
+export const handlePortUnavailable = async (
   initialPort: number,
-  projectRoot: string,
+  projectRoot: string
 ): Promise<{
   port: number;
-  packager: boolean;
+  startDevServer: boolean;
 }> => {
-  const {nextPort, start} = await getNextPort(initialPort, projectRoot);
-  let packager = true;
+  const { nextPort, start } = await getNextPort(initialPort, projectRoot);
+  let startDevServer = true;
   let port = initialPort;
 
   if (!start) {
-    packager = false;
+    startDevServer = false;
     logAlreadyRunningBundler(nextPort);
   } else {
     const change = await askForPortChange(port, nextPort);
@@ -25,15 +25,10 @@ const handlePortUnavailable = async (
     if (change) {
       port = nextPort;
     } else {
-      packager = false;
+      startDevServer = false;
       logChangePortInstructions();
     }
   }
 
-  return {
-    port,
-    packager,
-  };
+  return { port, startDevServer };
 };
-
-export default handlePortUnavailable;

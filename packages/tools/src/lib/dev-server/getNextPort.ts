@@ -1,4 +1,4 @@
-import isPackagerRunning from './isPackagerRunning.js';
+import { isDevServerRunning } from './isDevServerRunning.js';
 
 type Result = {
   start: boolean;
@@ -15,21 +15,18 @@ const getNextPort = async (port: number, root: string): Promise<Result> => {
   const nextPort = port + 1;
   let start = true;
 
-  const result = await isPackagerRunning(nextPort);
+  const result = await isDevServerRunning(nextPort);
 
   const isRunning = typeof result === 'object' && result.status === 'running';
 
   if (isRunning && result.root === root) {
-    // Found running bundler for this project, so we do not need to start packager!
+    // Found running bundler for this project, so we do not need to start dev server!
     start = false;
   } else if (isRunning || result === 'unrecognized') {
     return getNextPort(nextPort, root);
   }
 
-  return {
-    start,
-    nextPort,
-  };
+  return { start, nextPort };
 };
 
 export default getNextPort;

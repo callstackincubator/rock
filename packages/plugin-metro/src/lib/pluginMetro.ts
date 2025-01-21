@@ -68,12 +68,12 @@ export const pluginMetro =
         const reactNativePath = api.getReactNativePath();
         const platforms = api.getPlatforms();
 
-        const {port, startPackager} = await findDevServerPort(
+        const {port, startDevServer} = await findDevServerPort(
           args.port ?? 8081,
           root,
         );
 
-        if (!startPackager) {
+        if (!startDevServer) {
           return;
         }
 

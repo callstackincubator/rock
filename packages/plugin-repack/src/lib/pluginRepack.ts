@@ -31,12 +31,12 @@ export const pluginRepack =
       action: async (args: StartArgs) => {
         const root = api.getProjectRoot();
         const platforms = api.getPlatforms();
-        const {port, startPackager} = await findDevServerPort(
+        const {port, startDevServer} = await findDevServerPort(
           args.port ?? 8081,
           root,
         );
 
-        if (!startPackager) {
+        if (!startDevServer) {
           return;
         }
 

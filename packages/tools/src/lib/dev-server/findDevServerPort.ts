@@ -1,39 +1,37 @@
-import handlePortUnavailable from './handlePortUnavailable.js';
-import isPackagerRunning from './isPackagerRunning.js';
-import {logAlreadyRunningBundler} from './port.js';
+import { handlePortUnavailable } from './handlePortUnavailable.js';
+import { isDevServerRunning } from './isDevServerRunning.js';
+import { logAlreadyRunningBundler } from './port.js';
 
-const findDevServerPort = async (
+export const findDevServerPort = async (
   initialPort: number,
-  root: string,
+  root: string
 ): Promise<{
   port: number;
-  startPackager: boolean;
+  startDevServer: boolean;
 }> => {
   let port = initialPort;
-  let startPackager = true;
+  let startDevServer = true;
 
-  const packagerStatus = await isPackagerRunning(port);
+  const devServerStatus = await isDevServerRunning(port);
 
   if (
-    typeof packagerStatus === 'object' &&
-    packagerStatus.status === 'running'
+    typeof devServerStatus === 'object' &&
+    devServerStatus.status === 'running'
   ) {
-    if (packagerStatus.root === root) {
-      startPackager = false;
+    if (devServerStatus.root === root) {
+      startDevServer = false;
       logAlreadyRunningBundler(port);
     } else {
       const result = await handlePortUnavailable(port, root);
-      [port, startPackager] = [result.port, result.packager];
+      [port, startDevServer] = [result.port, result.startDevServer];
     }
-  } else if (packagerStatus === 'unrecognized') {
+  } else if (devServerStatus === 'unrecognized') {
     const result = await handlePortUnavailable(port, root);
-    [port, startPackager] = [result.port, result.packager];
+    [port, startDevServer] = [result.port, result.startDevServer];
   }
 
   return {
     port,
-    startPackager,
+    startDevServer,
   };
 };
-
-export { findDevServerPort };
