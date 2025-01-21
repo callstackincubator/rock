@@ -6,12 +6,12 @@ import type {
   Device,
   ProjectConfig,
 } from '../../types/index.js';
+import { getInfo } from '../../utils/getInfo.js';
 import { getPlatformInfo } from '../../utils/getPlatformInfo.js';
 import { listDevicesAndSimulators } from '../../utils/listDevices.js';
 import { promptForDeviceSelection } from '../../utils/prompts.js';
 import { selectFromInteractiveMode } from '../../utils/selectFromInteractiveMode.js';
 import { getConfiguration } from '../build/getConfiguration.js';
-import { getInfo } from '../../utils/getInfo.js';
 import { matchingDevice } from './matchingDevice.js';
 import { cacheRecentDevice } from './recentDevices.js';
 import { runOnDevice } from './runOnDevice.js';
