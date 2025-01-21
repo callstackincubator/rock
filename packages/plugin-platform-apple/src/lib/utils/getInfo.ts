@@ -32,8 +32,13 @@ export async function getInfo(
         cwd: sourceDir,
       });
       const info = parseTargetList(stdout);
+      
+      if (!info) {
+        throw new RnefError('Failed to get Xcode project information');
+      }
+
       loader.stop('Gathered Xcode project information.');
-      return info;
+      return { ...info, isWorkspace: projectInfo.isWorkspace };
     } catch (error) {
       loader.stop('Failed to get a target list.', 1);
       throw new RnefError('Failed to get a target list.', {

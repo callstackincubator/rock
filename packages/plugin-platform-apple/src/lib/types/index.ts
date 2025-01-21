@@ -17,6 +17,7 @@ export type DeviceType = 'simulator' | 'device';
 
 export interface Info {
   name: string;
+  isWorkspace: boolean;
   schemes?: string[];
   configurations?: string[];
   targets?: string[];

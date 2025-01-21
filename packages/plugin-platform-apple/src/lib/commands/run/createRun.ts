@@ -5,13 +5,13 @@ import type {
   ApplePlatform,
   Device,
   ProjectConfig,
-  XcodeProjectInfo,
 } from '../../types/index.js';
 import { getPlatformInfo } from '../../utils/getPlatformInfo.js';
 import { listDevicesAndSimulators } from '../../utils/listDevices.js';
 import { promptForDeviceSelection } from '../../utils/prompts.js';
 import { selectFromInteractiveMode } from '../../utils/selectFromInteractiveMode.js';
 import { getConfiguration } from '../build/getConfiguration.js';
+import { getInfo } from '../../utils/getInfo.js';
 import { matchingDevice } from './matchingDevice.js';
 import { cacheRecentDevice } from './recentDevices.js';
 import { runOnDevice } from './runOnDevice.js';
@@ -37,46 +37,36 @@ export const createRun = async (
     );
   }
 
+  validateArgs(args, projectRoot);
+
   let scheme, mode;
+  const info = await getInfo(xcodeProject, sourceDir);
+
+  if (!info) {
+    throw new RnefError('Failed to get Xcode project information');
+  }
 
   if (args.interactive) {
-    const result = await selectFromInteractiveMode(
-      xcodeProject,
-      sourceDir,
-      args.scheme,
-      args.mode
-    );
-
+    const result = await selectFromInteractiveMode(info, args.scheme, args.mode);
+    
     scheme = result.scheme;
     mode = result.mode;
-  }
-
-  normalizeArgs(args, projectRoot, xcodeProject);
-
-  if (!args.interactive) {
-    const result = await getConfiguration(
-      xcodeProject,
-      sourceDir,
-      args.scheme,
-      args.mode,
-      platformName
-    );
-
-    scheme = result.scheme;
-    mode = result.mode;
-  }
-
-  if (!scheme) {
-    throw new RnefError(
-      'No scheme specified. Please provide a scheme using the --scheme flag or select one in interactive mode'
-    );
   }
 
   if (!mode) {
-    throw new RnefError(
-      'No mode specified. Please provide a mode using the --mode flag or select one in interactive mode'
-    );
+    mode = 'Debug';
   }
+
+  if (!scheme) {
+    scheme = path.basename(xcodeProject.name, path.extname(xcodeProject.name));
+  }
+
+  await getConfiguration(
+    info,
+    scheme,
+    mode,
+    platformName
+  );
 
   if (platformName === 'macos') {
     await runOnMac(xcodeProject, sourceDir, mode, scheme, args);
@@ -195,20 +185,7 @@ async function selectDevice(
   return device;
 }
 
-function normalizeArgs(
-  args: RunFlags,
-  projectRoot: string,
-  xcodeProject: XcodeProjectInfo
-) {
-  if (!args.mode) {
-    args.mode = 'Debug';
-  }
-  if (!args.scheme) {
-    args.scheme = path.basename(
-      xcodeProject.name,
-      path.extname(xcodeProject.name)
-    );
-  }
+function validateArgs(args: RunFlags, projectRoot: string) {
   if (args.binaryPath) {
     args.binaryPath = path.isAbsolute(args.binaryPath)
       ? args.binaryPath
@@ -219,5 +196,12 @@ function normalizeArgs(
         `"--binary-path" was specified, but the file was not found at "${args.binaryPath}".`
       );
     }
+  }
+
+  if (args.interactive && !isInteractive()) {
+    logger.warn(
+      'Interactive mode is not supported in non-interactive environments.'
+    );
+    args.interactive = false;
   }
 }

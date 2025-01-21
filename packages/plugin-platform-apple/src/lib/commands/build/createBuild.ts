@@ -1,11 +1,8 @@
 import path from 'node:path';
 import { isInteractive, logger, outro, RnefError } from '@rnef/tools';
-import type {
-  BuilderCommand,
-  ProjectConfig,
-  XcodeProjectInfo,
-} from '../../types/index.js';
+import type { BuilderCommand, ProjectConfig } from '../../types/index.js';
 import { getBuildPaths } from '../../utils/buildPaths.js';
+import { getInfo } from '../../utils/getInfo.js';
 import { selectFromInteractiveMode } from '../../utils/selectFromInteractiveMode.js';
 import type { BuildFlags } from './buildOptions.js';
 import { buildProject } from './buildProject.js';
@@ -27,12 +24,18 @@ export const createBuild = async (
     );
   }
 
+  validateArgs(args);
+
   let scheme, mode;
+  const info = await getInfo(xcodeProject, sourceDir);
+
+  if (!info) {
+    throw new RnefError('Failed to get Xcode project information');
+  }
 
   if (args.interactive) {
     const result = await selectFromInteractiveMode(
-      xcodeProject,
-      sourceDir,
+      info,
       args.scheme,
       args.mode
     );
@@ -41,32 +44,22 @@ export const createBuild = async (
     mode = result.mode;
   }
 
-  normalizeArgs(args, xcodeProject);
+  if (!mode) {
+    mode = 'Debug';
+  }
 
-  if (!args.interactive) {
-    const result = await getConfiguration(
-      xcodeProject,
-      sourceDir,
-      args.scheme,
-      args.mode,
-      platformName
+  if (args.archive && !mode) {
+    logger.debug(
+      'Setting build mode to Release, because --archive flag was used'
     );
-
-    scheme = result.scheme;
-    mode = result.mode;
+    mode = 'Release';
   }
 
   if (!scheme) {
-    throw new RnefError(
-      'No scheme specified. Please provide a scheme using the --scheme flag or select one in interactive mode'
-    );
+    scheme = path.basename(xcodeProject.name, path.extname(xcodeProject.name));
   }
 
-  if (!mode) {
-    throw new RnefError(
-      'No mode specified. Please provide a mode using the --mode flag or select one in interactive mode'
-    );
-  }
+  await getConfiguration(info, scheme, mode, platformName);
 
   try {
     await buildProject(
@@ -102,23 +95,7 @@ export const createBuild = async (
   }
 };
 
-function normalizeArgs(args: BuildFlags, xcodeProject: XcodeProjectInfo) {
-  if (!args.mode) {
-    logger.debug('Setting build mode to Debug by default');
-    args.mode = 'Debug';
-  }
-  if (args.archive && !args.mode) {
-    logger.debug(
-      'Setting build mode to Release, because --archive flag was used'
-    );
-    args.mode = 'Release';
-  }
-  if (!args.scheme) {
-    args.scheme = path.basename(
-      xcodeProject.name,
-      path.extname(xcodeProject.name)
-    );
-  }
+function validateArgs(args: BuildFlags) {
   if (args.interactive && !isInteractive()) {
     logger.warn(
       'Interactive mode is not supported in non-interactive environments.'

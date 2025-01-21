@@ -1,18 +1,15 @@
-import { logger } from '@rnef/tools';
+import { logger, RnefError } from '@rnef/tools';
 import color from 'picocolors';
-import type { ApplePlatform, XcodeProjectInfo } from '../../types/index.js';
+import type { ApplePlatform, Info } from '../../types/index.js';
 import { checkIfConfigurationExists } from '../../utils/checkIfConfigurationExists.js';
-import { getInfo } from '../../utils/getInfo.js';
 import { getPlatformInfo } from './../../utils/getPlatformInfo.js';
 
 export async function getConfiguration(
-  xcodeProject: XcodeProjectInfo,
-  sourceDir: string,
+  info: Info,
   inputScheme: string,
   inputMode: string,
   platformName: ApplePlatform
 ) {
-  const info = await getInfo(xcodeProject, sourceDir);
   checkIfConfigurationExists(info?.configurations ?? [], inputMode);
   let scheme = inputScheme;
 
@@ -30,13 +27,17 @@ export async function getConfiguration(
       );
 
       scheme = fallbackScheme;
+    } else {
+      throw new RnefError(
+        `Scheme "${color.bold(scheme)}" doesn't exist. Please provide a valid scheme.`
+      );
     }
   }
 
   logger.debug(
     `Found Xcode ${
-      xcodeProject.isWorkspace ? 'workspace' : 'project'
-    } "${color.bold(xcodeProject.name)}"`
+      info.isWorkspace ? 'workspace' : 'project'
+    } "${color.bold(info.name)}"`
   );
 
   return { scheme, mode: inputMode };

@@ -1,15 +1,13 @@
 import { logger } from '@rnef/tools';
 import isInteractive from 'is-interactive';
-import type { XcodeProjectInfo } from '../types/index.js';
-import { getInfo } from './getInfo.js';
+import type { Info } from '../types/index.js';
 import {
   promptForConfigurationSelection,
   promptForSchemeSelection,
 } from './prompts.js';
 
 export async function selectFromInteractiveMode(
-  xcodeProject: XcodeProjectInfo,
-  sourceDir: string,
+  info: Info,
   preselectedScheme?: string,
   preselectedMode?: string
 ): Promise<{ scheme?: string; mode?: string }> {
@@ -26,7 +24,6 @@ export async function selectFromInteractiveMode(
 
   let newScheme;
   let newMode;
-  const info = await getInfo(xcodeProject, sourceDir);
 
   const schemes = info?.schemes;
 
