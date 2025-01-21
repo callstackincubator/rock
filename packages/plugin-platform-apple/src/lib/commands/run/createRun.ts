@@ -30,7 +30,7 @@ export const createRun = async (
   intro('Running on iOS');
 
   if (!args.binaryPath && args.remoteCache) {
-    const cachedBuild = await fetchCachedBuild({ mode: args.mode });
+    const cachedBuild = await fetchCachedBuild({ mode: args.mode ?? 'Debug' });
     if (cachedBuild) {
       // @todo replace with a more generic way to pass binary path
       args.binaryPath = cachedBuild.binaryPath;
