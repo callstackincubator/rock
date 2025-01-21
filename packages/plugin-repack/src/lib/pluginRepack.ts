@@ -1,6 +1,6 @@
 import commands from '@callstack/repack/commands/rspack';
 import type { PluginApi, PluginOutput } from '@rnef/config';
-import { RnefError } from '@rnef/tools';
+import { findDevServerPort, RnefError } from '@rnef/tools';
 
 type PluginConfig = {
   platforms?: {
@@ -28,11 +28,20 @@ export const pluginRepack =
     api.registerCommand({
       name: 'start',
       description: 'Starts Re.Pack dev server.',
-      action: (args: StartArgs) => {
+      action: async (args: StartArgs) => {
         const root = api.getProjectRoot();
         const platforms = api.getPlatforms();
+        const {port, startPackager} = await findDevServerPort(
+          args.port ?? 8081,
+          root,
+        );
+
+        if (!startPackager) {
+          return;
+        }
+
         // @ts-expect-error TODO fix getPlatforms type
-        startCommand.func([], { root, platforms, ...pluginConfig }, args);
+        startCommand.func([], { root, platforms, ...pluginConfig }, {...args, port});
       },
       options: startCommand.options,
     });

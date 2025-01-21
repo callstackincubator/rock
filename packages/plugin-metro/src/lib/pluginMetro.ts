@@ -4,7 +4,7 @@ import {
   // @ts-expect-error missing typings
 } from '@react-native/community-cli-plugin';
 import type { PluginApi, PluginOutput } from '@rnef/config';
-import { RnefError } from '@rnef/tools';
+import { findDevServerPort, RnefError } from '@rnef/tools';
 
 type PluginConfig = {
   reactNativeVersion?: string;
@@ -62,11 +62,21 @@ export const pluginMetro =
     api.registerCommand({
       name: 'start',
       description: 'Starts Metro dev server.',
-      action: (args: StartCommandArgs) => {
+      action: async (args: StartCommandArgs) => {
         const root = api.getProjectRoot();
         const reactNativeVersion = api.getReactNativeVersion();
         const reactNativePath = api.getReactNativePath();
         const platforms = api.getPlatforms();
+
+        const {port, startPackager} = await findDevServerPort(
+          args.port ?? 8081,
+          root,
+        );
+
+        if (!startPackager) {
+          return;
+        }
+
         startCommand.func(
           undefined,
           {
@@ -76,7 +86,10 @@ export const pluginMetro =
             platforms,
             ...pluginConfig,
           },
-          args
+          {
+            ...args,
+            port,
+          }
         );
       },
       options: startCommand.options,
