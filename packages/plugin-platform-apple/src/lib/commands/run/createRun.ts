@@ -12,6 +12,7 @@ import { listDevicesAndSimulators } from '../../utils/listDevices.js';
 import { promptForDeviceSelection } from '../../utils/prompts.js';
 import { selectFromInteractiveMode } from '../../utils/selectFromInteractiveMode.js';
 import { getConfiguration } from '../build/getConfiguration.js';
+import { fetchCachedBuild } from './fetchCachedBuild.js';
 import { matchingDevice } from './matchingDevice.js';
 import { cacheRecentDevice } from './recentDevices.js';
 import { runOnDevice } from './runOnDevice.js';
@@ -27,6 +28,14 @@ export const createRun = async (
   projectRoot: string
 ) => {
   intro('Running on iOS');
+
+  if (!args.binaryPath && args.remoteCache) {
+    const cachedBuild = await fetchCachedBuild({ mode: args.mode });
+    if (cachedBuild) {
+      // @todo replace with a more generic way to pass binary path
+      args.binaryPath = cachedBuild.binaryPath;
+    }
+  }
 
   const { readableName: platformReadableName } = getPlatformInfo(platformName);
   const { xcodeProject, sourceDir } = projectConfig;

@@ -21,7 +21,7 @@ export const getRunOptions = ({ platformName }: BuilderCommand) => {
     },
     {
       name: '--no-remote-cache',
-      description: 'Do not use remote build cacheing.',
+      description: 'Do not use remote build caching.',
     },
     ...getBuildOptions({ platformName }),
   ];
