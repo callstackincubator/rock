@@ -37,11 +37,11 @@ jobs:
         with:
           destination: device
           mode: Release
-          certificate-base64: ${{ secrets.APPLE_BUILD_CERTIFICATE_BASE64 }}
-          certificate-password: ${{ secrets.APPLE_BUILD_CERTIFICATE_PASSWORD }}
-          provisioning-profile-base64: ${{ secrets.APPLE_BUILD_PROVISIONING_PROFILE_BASE64 }}
+          certificate-base64: ${{ secrets.RNEF_APPLE_CERTIFICATE_BASE64 }}
+          certificate-password: ${{ secrets.RNEF_APPLE_CERTIFICATE_PASSWORD }}
+          provisioning-profile-base64: ${{ secrets.RNEF_APPLE_PROVISIONING_PROFILE_BASE64 }}
           provisioning-profile-name: "Provisioning Profile"
-          keychain-password: ${{ secrets.KEYCHAIN_PASSWORD }}
+          keychain-password: ${{ secrets.RNEF_APPLE_KEYCHAIN_PASSWORD }}
 
       - name: RNEF Remote Build - iOS simulator
         uses: ./.github/actions/rnef-remote-build-ios

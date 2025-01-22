@@ -137,15 +137,20 @@ runs:
         npx rnef build:ios \
           ${{ inputs.destination == 'device' && '--archive' || '' }} \
           --mode ${{ inputs.mode }} \
+          --buildFolder "build"
           --verbose
       shell: bash
 
     - name: Find Build Artifact
       if: ${{ !steps.cached-url.outputs.artifact-url }}
       run: |
-        if [ "${{ inputs.destination }}" == "simulator" ]; then
-          # Need to compress with tar, as GH actions drop execute file permission during packing to zip
-          APP_PATH=$(find .rnef/cache/ios/export -maxdepth 1 -name '*.app' -type d | head -1)
+        if [ "${{ inputs.destination }}" == "device" ]; then
+          IPA_PATH=$(find .rnef/cache/ios/export -maxdepth 1 -name '*.ipa' -type f | head -1)
+          echo IPA_PATH $IPA_PATH
+          echo "ARTIFACT_PATH=$IPA_PATH" >> $GITHUB_ENV
+        else 
+          # Simulator build: needs to compress with tar, as GH actions drop execute file permission during packing to zip
+          APP_PATH=$(find ios/build -name '*.app' -type d | head -1 )
           APP_DIR=$(dirname "$APP_PATH")
           APP_BASENAME=$(basename "$APP_PATH")
 
@@ -153,10 +158,6 @@ runs:
           tar -C "$APP_DIR" -czvf "$ARTIFACT_PATH" "$APP_BASENAME"
 
           echo "ARTIFACT_PATH=$ARTIFACT_PATH" >> $GITHUB_ENV
-        else
-          IPA_PATH=$(find .rnef/cache/ios/export -maxdepth 1 -name '*.ipa' -type f | head -1)
-          echo IPA_PATH $IPA_PATH
-          echo "ARTIFACT_PATH=$IPA_PATH" >> $GITHUB_ENV
         fi
       shell: bash
 
