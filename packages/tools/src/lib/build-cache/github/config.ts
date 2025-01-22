@@ -22,7 +22,6 @@ export async function detectGitHubRepoDetails(): Promise<GitHubRepoDetails | nul
       const { output: remoteOutput } = await spawn('git', ['remote']);
       const remotes = remoteOutput.split('\n').filter(Boolean);
       if (remotes.length > 1) {
-        logger.log(); // create visual space
         gitRemote = checkCancelPrompt<string>(
           await select({
             message: 'Select git remote of your original project:',
@@ -33,8 +32,11 @@ export async function detectGitHubRepoDetails(): Promise<GitHubRepoDetails | nul
           })
         );
         cacheManager.set('gitRemote', gitRemote);
-      } else {
+      } else if (remotes.length === 1) {
         gitRemote = remotes[0];
+      } else {
+        logger.warn('No git remote found.');
+        return null;
       }
     }
     const { output: url } = await spawn('git', [
@@ -45,6 +47,7 @@ export async function detectGitHubRepoDetails(): Promise<GitHubRepoDetails | nul
 
     const match = url.match(GITHUB_REPO_REGEX);
     if (!match) {
+      logger.warn(`The remote URL ${url} doesn't look like a GitHub repo.`);
       return null;
     }
 
@@ -54,7 +57,8 @@ export async function detectGitHubRepoDetails(): Promise<GitHubRepoDetails | nul
       repository: match[2],
     };
   } catch (error: unknown) {
-    logger.debug('Unable to detect GitHub repository details:', error);
+    logger.warn('Unable to detect GitHub repository details.');
+    logger.debug(error);
     return null;
   }
 }

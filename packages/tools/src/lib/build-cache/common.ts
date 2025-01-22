@@ -13,8 +13,16 @@ export type LocalArtifact = {
   path: string;
 };
 
+type RepoDetails = {
+  url: string;
+  owner: string;
+  repository: string;
+};
+
 export type RemoteBuildCache = {
   name: string;
+  repoDetails: RepoDetails | null;
+  detectRepoDetails(): void;
   query(artifactName: string): Promise<RemoteArtifact | null>;
   download(artifact: RemoteArtifact): Promise<LocalArtifact>;
 };

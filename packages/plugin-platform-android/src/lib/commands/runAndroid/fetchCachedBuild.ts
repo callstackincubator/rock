@@ -36,7 +36,10 @@ export async function fetchCachedBuild({
     return null;
   }
 
-  loader.message(`Looking for a cached build on ${remoteBuildCache.name}`);
+  loader.stop(`No local build cached. Checking ${remoteBuildCache.name}.`);
+  await remoteBuildCache.detectRepoDetails();
+
+  loader.start(`Looking for a cached build on ${remoteBuildCache.name}`);
   const remoteBuild = await remoteBuildCache.query(artifactName);
   if (!remoteBuild) {
     loader.stop(`No cached build found for "${artifactName}".`);

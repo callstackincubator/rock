@@ -1,7 +1,7 @@
 import * as fs from 'node:fs';
 import AdmZip from 'adm-zip';
 import logger from '../../logger.js';
-import { detectGitHubRepoDetails } from './config.js';
+import { type GitHubRepoDetails } from './config.js';
 
 const PAGE_SIZE = 100; // Maximum allowed by GitHub API
 const GITHUB_TOKEN = process.env['GITHUB_TOKEN'];
@@ -29,20 +29,12 @@ type GitHubArtifactResponse = {
 };
 
 export async function fetchGitHubArtifactsByName(
-  name: string
+  name: string,
+  repoDetails: GitHubRepoDetails | null
 ): Promise<GitHubArtifact[] | []> {
-  const repoDetails = await detectGitHubRepoDetails();
   if (!repoDetails) {
-    // add visual space becuase this block is run within spinner.
-    // @todo remove when @clack/prompts fixes it
-    logger.log('');
-    logger.warn(
-      'Unable to detect GitHub repository details. Proceeding with building locally using Gradle.'
-    );
-    logger.log('');
     return [];
   }
-
   let page = 1;
   const result: GitHubArtifact[] = [];
   const owner = repoDetails.owner;
