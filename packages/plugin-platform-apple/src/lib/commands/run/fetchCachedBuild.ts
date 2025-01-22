@@ -87,32 +87,38 @@ async function calculateArtifactName({
   });
 }
 
-function findBinary(distribution: string, path: string): string | null {
-  if (distribution === 'simulator') {
-    const apps = findDirectoriesWithPattern(path, /\.app$/);
-    if (apps.length > 0) {
-      logger.debug(
-        `Found simulator binaries (*.app): ${apps.join(
-          ', '
-        )}. Picking the first one: ${apps[0]}.`
-      );
-      return apps[0];
-    }
+function findBinary(distribution: Distribution, path: string): string | null {
+  return distribution === 'device'
+    ? findDeviceBinary(path)
+    : findSimulatorBinary(path);
+}
+
+function findSimulatorBinary(path: string): string | null {
+  const apps = findDirectoriesWithPattern(path, /\.app$/);
+  if (apps.length === 0) {
+    return null;
   }
 
-  if (distribution === 'device') {
-    const ipas = findFilesWithPattern(path, /\.ipa$/);
-    if (ipas.length > 0) {
-      logger.debug(
-        `Found device binaries (*.ipa): ${ipas.join(
-          ', '
-        )}. Picking the first one: ${ipas[0]}.`
-      );
-      return ipas[0];
-    }
+  logger.debug(
+    `Found simulator binaries (*.app): ${apps.join(
+      ', '
+    )}. Picking the first one: ${apps[0]}.`
+  );
+  return apps[0];
+}
+
+function findDeviceBinary(path: string): string | null {
+  const ipas = findFilesWithPattern(path, /\.ipa$/);
+  if (ipas.length === 0) {
+    return null;
   }
 
-  return null;
+  logger.debug(
+    `Found device binaries (*.ipa): ${ipas.join(
+      ', '
+    )}. Picking the first one: ${ipas[0]}.`
+  );
+  return ipas[0];
 }
 
 async function extractArtifactTarballIfNeeded(artifactPath: string) {
