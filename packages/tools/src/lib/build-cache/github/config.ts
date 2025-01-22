@@ -24,7 +24,7 @@ export async function detectGitHubRepoDetails(): Promise<GitHubRepoDetails | nul
       if (remotes.length > 1) {
         gitRemote = checkCancelPrompt<string>(
           await select({
-            message: 'Select git remote of your original project:',
+            message: 'Select git remote of the upstream repository:',
             options: remotes.map((remote) => ({
               value: remote,
               label: remote,
