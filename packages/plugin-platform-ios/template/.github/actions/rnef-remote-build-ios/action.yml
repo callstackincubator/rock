@@ -7,7 +7,7 @@ inputs:
     required: false
     default: ${{ github.token }}
   destination:
-    description: 'Destination to build to: "simulator" or "device"'
+    description: 'Destination to build to: "simulator" or "device". Using "device" runs "rnef build:ios --archive" and code signing settings (certificate, provisioning profile, keychain password) are required.'
     required: false
     default: 'simulator' # 'simulator' or 'device'
   mode:
@@ -28,6 +28,9 @@ inputs:
     required: false
   keychain-password:
     description: '[Device Builds] Password that will protect temporary keychain used for signing (can be a random string)'
+    required: false
+  rnef-build-extra-params:
+    description: 'Extra parameters to pass to "rnef build:ios"'
     required: false
 
 outputs:
@@ -137,8 +140,8 @@ runs:
         npx rnef build:ios \
           ${{ inputs.destination == 'device' && '--archive' || '' }} \
           --mode ${{ inputs.mode }} \
-          --buildFolder "build"
-          --verbose
+          --buildFolder "build" \
+          ${{ inputs.rnef-build-extra-params }}
       shell: bash
 
     - name: Find Build Artifact

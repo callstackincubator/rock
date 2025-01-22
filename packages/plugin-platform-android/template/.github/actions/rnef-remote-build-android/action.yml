@@ -17,6 +17,9 @@ inputs:
     description: 'Build mode'
     required: false
     default: 'debug'
+  rnef-build-extra-params:
+    description: 'Extra parameters to pass to "rnef build:android"'
+    required: false
 
 outputs:
   artifact-url:
@@ -66,7 +69,7 @@ runs:
       if: ${{ !steps.cached-url.outputs.artifact-url }}
       run: |
         cd android
-        npx rnef build:android --tasks assembleDebug
+        npx rnef build:android ${{ inputs.rnef-build-extra-params }}
       shell: bash
 
     - name: Upload Artifact
