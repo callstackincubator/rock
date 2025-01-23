@@ -1,3 +1,4 @@
+import { getGitRemote } from '../../git.js';
 import logger from '../../logger.js';
 import type {
   LocalArtifact,
@@ -17,7 +18,10 @@ export class GitHubBuildCache implements RemoteBuildCache {
   repoDetails: GitHubRepoDetails | null = null;
 
   async detectRepoDetails() {
-    this.repoDetails = await detectGitHubRepoDetails();
+    const gitRemote = await getGitRemote();
+    this.repoDetails = gitRemote
+      ? await detectGitHubRepoDetails(gitRemote)
+      : null;
   }
 
   async query(artifactName: string): Promise<RemoteArtifact | null> {
