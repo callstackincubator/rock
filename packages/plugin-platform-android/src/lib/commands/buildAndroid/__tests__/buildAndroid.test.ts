@@ -11,6 +11,8 @@ import { buildAndroid, type BuildFlags } from '../buildAndroid.js';
 const actualFs = await vi.importMock('node:fs');
 
 vi.spyOn(tools, 'promptSelect');
+vi.spyOn(tools, 'intro');
+vi.spyOn(tools, 'outro').mockImplementation(() => mocks.outroMock);
 
 vi.mock('node:fs');
 vi.mock('nano-spawn', () => {
@@ -35,8 +37,6 @@ vi.mock('@clack/prompts', () => {
       message: vi.fn(),
     })),
     isCancel: vi.fn(() => false),
-    intro: vi.fn(),
-    outro: mocks.outroMock,
     log: {
       error: vi.fn(),
     },
@@ -177,5 +177,5 @@ test('buildAndroid runs selected "bundleRelease" task in interactive mode', asyn
     'Searching for available Gradle tasks...'
   );
   expect(mocks.stopMock).toBeCalledWith('Found 2 Gradle tasks.');
-  expect(mocks.outroMock).toBeCalledWith('Success 🎉.');
+  expect(tools.outro).toBeCalledWith('Success 🎉.');
 });

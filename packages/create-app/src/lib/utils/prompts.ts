@@ -1,6 +1,8 @@
-import { intro, note, outro, text } from '@clack/prompts';
+import { note, text } from '@clack/prompts';
 import {
   checkCancelPrompt,
+  intro,
+  outro,
   promptMultiselect,
   promptSelect,
   RnefError,

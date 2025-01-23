@@ -1,16 +1,10 @@
 import fs from 'node:fs';
 import path from 'node:path';
-import { intro, outro } from '@clack/prompts';
 import type {
   AndroidProjectConfig,
   Config,
 } from '@react-native-community/cli-types';
-import {
-  checkCancelPrompt,
-  logger,
-  promptSelect,
-  RnefError,
-} from '@rnef/tools';
+import { intro, logger, outro, promptSelect, RnefError } from '@rnef/tools';
 import isInteractive from 'is-interactive';
 import type { BuildFlags } from '../buildAndroid/buildAndroid.js';
 import { options } from '../buildAndroid/buildAndroid.js';

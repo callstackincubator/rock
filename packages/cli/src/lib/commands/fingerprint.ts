@@ -1,6 +1,6 @@
 import { performance } from 'node:perf_hooks';
-import { intro, outro, spinner } from '@clack/prompts';
-import { logger, nativeFingerprint } from '@rnef/tools';
+import { spinner } from '@clack/prompts';
+import { intro, logger, nativeFingerprint, outro } from '@rnef/tools';
 
 type NativeFingerprintCommandOptions = {
   platform: 'ios' | 'android';

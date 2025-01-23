@@ -1,6 +1,5 @@
 import path from 'node:path';
-import { outro } from '@clack/prompts';
-import { logger, RnefError } from '@rnef/tools';
+import { logger, outro, RnefError } from '@rnef/tools';
 import isInteractive from 'is-interactive';
 import type {
   BuilderCommand,

@@ -1,7 +1,13 @@
 import path from 'node:path';
-import { group, intro, outro, text } from '@clack/prompts';
+import { group, text } from '@clack/prompts';
 import type { AndroidProjectConfig } from '@react-native-community/cli-types';
-import { checkCancelPrompt, logger, RnefError } from '@rnef/tools';
+import {
+  checkCancelPrompt,
+  intro,
+  logger,
+  outro,
+  RnefError,
+} from '@rnef/tools';
 import spawn, { type SubprocessError } from 'nano-spawn';
 import color from 'picocolors';
 
