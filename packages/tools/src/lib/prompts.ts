@@ -1,4 +1,9 @@
-import type { MultiSelectOptions, SelectOptions } from '@clack/prompts';
+import type {
+  MultiSelectOptions,
+  PromptGroup,
+  PromptGroupOptions,
+  SelectOptions,
+} from '@clack/prompts';
 import * as clack from '@clack/prompts';
 
 export function intro(title?: string) {
@@ -7,6 +12,19 @@ export function intro(title?: string) {
 
 export function outro(message?: string) {
   return clack.outro(message);
+}
+
+export function note(message?: string, title?: string) {
+  return clack.note(message, title);
+}
+
+export async function promptText(options: clack.TextOptions): Promise<T> {
+  const result = await clack.text(options);
+  if (clack.isCancel(result)) {
+    cancelPromptAndExit();
+  }
+
+  return result;
 }
 
 export async function promptSelect<T>(options: SelectOptions<T>): Promise<T> {
@@ -29,6 +47,18 @@ export async function promptMultiselect<T>(
   return result;
 }
 
+export async function promptGroup<T>(
+  prompts: PromptGroup<T>,
+  options?: PromptGroupOptions<T> | undefined
+) {
+  const result = await clack.group(prompts, options);
+  if (clack.isCancel(result)) {
+    cancelPromptAndExit();
+  }
+
+  return result;
+}
+
 export function spinner() {
   const clackSpinner = clack.spinner();
   return {
@@ -41,12 +71,4 @@ export function spinner() {
 export function cancelPromptAndExit(message?: string): never {
   clack.cancel(message ?? 'Operation cancelled by user.');
   process.exit(0);
-}
-
-export function checkCancelPrompt<T>(value: unknown) {
-  if (clack.isCancel(value)) {
-    cancelPromptAndExit();
-  }
-
-  return value as T;
 }

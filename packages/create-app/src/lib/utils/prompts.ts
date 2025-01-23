@@ -1,10 +1,10 @@
-import { note, text } from '@clack/prompts';
 import {
-  checkCancelPrompt,
   intro,
+  note,
   outro,
   promptMultiselect,
   promptSelect,
+  promptText,
   RnefError,
 } from '@rnef/tools';
 import path from 'path';
@@ -66,12 +66,10 @@ export function printByeMessage(targetDir: string) {
 }
 
 export async function promptProjectName() {
-  return checkCancelPrompt<string>(
-    await text({
-      message: 'What is your app named?',
-      validate: validateProjectName,
-    })
-  );
+  return await promptText({
+    message: 'What is your app named?',
+    validate: validateProjectName,
+  });
 }
 
 export async function promptTemplate(
