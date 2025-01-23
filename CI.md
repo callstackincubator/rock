@@ -2,13 +2,13 @@
 
 ## Simulator
 
-Simulator build results in `*.app` *directory* (aka macOS "package"). This requires GitHub artifact to be first packed as tarball, before being uploaded as artifact. 
+Simulator build results in `*.app` _directory_ (aka macOS "package"). This requires GitHub artifact to be first packed as tarball, before being uploaded as artifact.
 
 Simulator builds do not require signing.
 
 ## Device
 
-Device build results in `*.ipa` *file*.
+Device build results in `*.ipa` _file_.
 
 ### Provisioning Profile
 
@@ -38,7 +38,7 @@ Certifcate can also be either Development or Distribution. Development certifica
 
 Certificate has a public and private part. Public part can be generally downloaded from Apple Developer portal, while private part is stored on a developer's machine and needs to be distributed separately (e.g. to other developers or CI).
 
-In order to generate an *.ipa file, a developer needs to put both public and private parts of the certificate on the CI.
+In order to generate an \*.ipa file, a developer needs to put both public and private parts of the certificate on the CI.
 
 #### Installing Apple Certificates on GitHub Actions
 
@@ -46,10 +46,9 @@ https://docs.github.com/en/actions/use-cases-and-examples/deploying/installing-a
 
 A modern alternative to Distribution certificate is "Distributed Managed" certificate, which is a managed certificate for which private part is stored on Apple's servers and Apple is actually handling the signing operation.
 
-
 ## Setup for CI
 
-The easiest way to setup CI for iOS device builds (*.ipa) is to use manual code signing.
+The easiest way to setup CI for iOS device builds (\*.ipa) is to use manual code signing.
 
 ### Manual Code Signing
 
@@ -58,11 +57,13 @@ In order to set up manual code signing ensure following Xcode project settings:
 Open Target => Signing & Capabilities => Release (tab)
 
 Make sure that:
-  - Automatic code signing is unticked
-  - Provisioning Profile is set to your distribution profile
-  - Team & Signing certficate should indicate your designed team & certificate
+
+- Automatic code signing is unticked
+- Provisioning Profile is set to your distribution profile
+- Team & Signing certficate should indicate your designed team & certificate
 
 These correspond to following `*.xcodeproj/project.pbxproj` settings:
+
 - `CODE_SIGN_STYLE = Manual;`
 - `"DEVELOPMENT_TEAM[sdk=iphoneos*]" = "[Your Apple Team ID]"`;
 - `"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Distribution"`;
@@ -80,7 +81,7 @@ After finishing the Xcode export, the output folder should also contain `ExportO
 
 You should export the certificate (incl. private key) and provisioning profile as base64 strings, as described in the [GitHub docs](https://docs.github.com/en/actions/use-cases-and-examples/deploying/installing-an-apple-certificate-on-macos-runners-for-xcode-development).
 
-In order build iOS device builds (*.ipa), you need to set up the following secrets on your GitHub repository:
+In order build iOS device builds (\*.ipa), you need to set up the following secrets on your GitHub repository:
 
 - `RNEF_APPLE_CERTIFICATE_BASE64`
 - `RNEF_APPLE_CERTIFICATE_PASSWORD`
