@@ -1,8 +1,7 @@
 import type { PathLike } from 'node:fs';
 import fs from 'node:fs';
-import { select } from '@clack/prompts';
 import type { AndroidProjectConfig } from '@react-native-community/cli-types';
-import { logger } from '@rnef/tools';
+import * as tools from '@rnef/tools';
 import spawn from 'nano-spawn';
 import type { Mock } from 'vitest';
 import { test, vi } from 'vitest';
@@ -17,6 +16,8 @@ const mocks = vi.hoisted(() => {
     outroMock: vi.fn(),
   };
 });
+
+vi.spyOn(tools, 'promptSelect');
 
 vi.mock('node:fs');
 
@@ -33,7 +34,6 @@ vi.mock('@clack/prompts', () => {
       stop: mocks.stopMock,
       message: vi.fn(),
     })),
-    select: vi.fn(),
     isCancel: vi.fn(() => false),
     intro: vi.fn(),
     outro: mocks.outroMock,
@@ -327,7 +327,7 @@ test.each([['release'], ['debug'], ['staging']])(
         adbDevicesOutput: adbDevicesTwoDevicesOutput,
       });
     });
-    vi.mocked(select).mockImplementation((opts) => {
+    vi.mocked(tools.promptSelect).mockImplementation((opts) => {
       if (opts.message === 'Select the device / emulator you want to use') {
         return Promise.resolve({
           deviceId: 'emulator-5554',
@@ -338,7 +338,7 @@ test.each([['release'], ['debug'], ['staging']])(
       }
       return Promise.resolve(undefined);
     });
-    const logErrorSpy = vi.spyOn(logger, 'error');
+    const logErrorSpy = vi.spyOn(tools.logger, 'error');
     await runAndroid({ ...androidProject }, { ...args, mode }, '/');
 
     expect(mocks.outroMock).toBeCalledWith('Success 🎉.');
@@ -377,7 +377,7 @@ test('runAndroid runs gradle build with custom --appId, --appIdSuffix and --main
   (spawn as Mock).mockImplementation((file, args) =>
     spawnMockImplementation(file, args)
   );
-  const logErrorSpy = vi.spyOn(logger, 'error');
+  const logErrorSpy = vi.spyOn(tools.logger, 'error');
   await runAndroid(
     { ...androidProject },
     {
@@ -407,7 +407,7 @@ test('runAndroid fails to launch an app on not-connected device when specified w
   (spawn as Mock).mockImplementation((file, args) =>
     spawnMockImplementation(file, args)
   );
-  const logWarnSpy = vi.spyOn(logger, 'warn');
+  const logWarnSpy = vi.spyOn(tools.logger, 'warn');
 
   await runAndroid(
     { ...androidProject },
@@ -464,7 +464,7 @@ test.each([
       return (actualFs as typeof fs).existsSync(file);
     });
 
-    vi.mocked(select).mockImplementation((opts) => {
+    vi.mocked(tools.promptSelect).mockImplementation((opts) => {
       if (opts.message === 'Select the device / emulator you want to use') {
         return Promise.resolve({
           deviceId: 'emulator-5554',

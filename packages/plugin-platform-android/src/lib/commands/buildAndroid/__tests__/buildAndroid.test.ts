@@ -1,8 +1,7 @@
 import type { PathLike } from 'node:fs';
 import fs from 'node:fs';
-import { select } from '@clack/prompts';
 import type { AndroidProjectConfig } from '@react-native-community/cli-types';
-import { logger } from '@rnef/tools';
+import * as tools from '@rnef/tools';
 import spawn from 'nano-spawn';
 import color from 'picocolors';
 import type { Mock, MockedFunction } from 'vitest';
@@ -10,6 +9,8 @@ import { test, vi } from 'vitest';
 import { buildAndroid, type BuildFlags } from '../buildAndroid.js';
 
 const actualFs = await vi.importMock('node:fs');
+
+vi.spyOn(tools, 'promptSelect');
 
 vi.mock('node:fs');
 vi.mock('nano-spawn', () => {
@@ -33,7 +34,6 @@ vi.mock('@clack/prompts', () => {
       stop: mocks.stopMock,
       message: vi.fn(),
     })),
-    select: vi.fn(),
     isCancel: vi.fn(() => false),
     intro: vi.fn(),
     outro: mocks.outroMock,
@@ -124,7 +124,7 @@ test('buildAndroid runs gradle build with correct configuration for debug and ou
 
 test('buildAndroid fails gracefully when gradle errors', async () => {
   vi.mocked(spawn).mockRejectedValueOnce({ stderr: 'gradle error' });
-  vi.spyOn(logger, 'error');
+  vi.spyOn(tools.logger, 'error');
 
   await expect(
     buildAndroid(androidProject, args)
@@ -149,9 +149,9 @@ test('buildAndroid runs selected "bundleRelease" task in interactive mode', asyn
     }
     return { output: 'output' };
   });
-  (select as MockedFunction<typeof select>).mockResolvedValueOnce(
-    Promise.resolve('bundleRelease')
-  );
+  (
+    tools.promptSelect as MockedFunction<typeof tools.promptSelect>
+  ).mockResolvedValueOnce(Promise.resolve('bundleRelease'));
   vi.mocked(fs.existsSync).mockImplementation((file: PathLike) => {
     if (file === '/android/app/build/outputs/bundle/release/app-release.aab') {
       return true;

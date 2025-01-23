@@ -1,4 +1,5 @@
 import type { AndroidProjectConfig } from '@react-native-community/cli-types';
+import * as tools from '@rnef/tools';
 import spawn from 'nano-spawn';
 import { test, vi } from 'vitest';
 import type { DeviceData } from '../listAndroidDevices.js';
@@ -14,10 +15,11 @@ vi.mock('nano-spawn', () => {
 vi.mock('@clack/prompts', () => {
   return {
     spinner: vi.fn(() => ({ start: vi.fn(), message: vi.fn(), stop: vi.fn() })),
-    select: vi.fn(),
     isCancel: vi.fn(() => false),
   };
 });
+
+vi.spyOn(tools, 'promptSelect');
 
 const OLD_ENV = process.env;
 
@@ -44,6 +46,7 @@ const args: Flags = {
   appId: '',
   appIdSuffix: '',
   mode: 'debug',
+  remoteCache: false,
 };
 
 const androidProject: AndroidProjectConfig = {
