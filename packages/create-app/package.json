@@ -19,7 +19,6 @@
   },
   "dependencies": {
     "@rnef/tools": "^0.1.4",
-    "@clack/prompts": "^0.9.0",
     "gradient-string": "^3.0.0",
     "minimist": "^1.2.8",
     "package-json": "^10.0.1",

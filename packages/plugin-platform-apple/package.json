@@ -15,7 +15,6 @@
     "publish:verdaccio": "npm publish --registry http://localhost:4873 --userconfig ../../.npmrc"
   },
   "dependencies": {
-    "@clack/prompts": "^0.9.0",
     "@react-native-community/cli-config-apple": "^16.0.2",
     "@rnef/tools": "^0.1.4",
     "fast-glob": "^3.3.2",
