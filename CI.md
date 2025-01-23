@@ -51,11 +51,12 @@ A modern alternative to Distribution certificate is "Distributed Managed" certif
 
 The easiest way to setup CI for iOS device builds (*.ipa) is to use manual code signing.
 
-### Code Signing
+### Manual Code Signing
 
-On order to do that, in Xcode project you need to set up the following:
+In order to set up manual code signing ensure following Xcode project settings:
 
 Open Target => Signing & Capabilities => Release (tab)
+
 Make sure that:
   - Automatic code signing is unticked
   - Provisioning Profile is set to your distribution profile
@@ -71,9 +72,9 @@ Also make sure that `PRODUCT_BUNDLE_IDENTIFIER` is valid and globally unique (i.
 
 ### Local building
 
-With this settings, running `rnef build:ios` should build and sign a local *.ipa file.
+Use Xcode to manually perform Archive and Export operations on the local machine.
 
-The output folder should also contain `ExportOptions.plist` file, which you should copy to your `ios` folder and commit to your git repository.
+After finishing the Xcode export, the output folder should also contain `ExportOptions.plist` file, which you should copy to your `ios` folder and commit to your git repository.
 
 ### Running on GitHub Actions
 

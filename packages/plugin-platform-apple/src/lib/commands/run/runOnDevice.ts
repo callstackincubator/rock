@@ -24,7 +24,7 @@ export async function runOnDevice(
   if (!args.binaryPath && args.remoteCache) {
     const cachedBuild = await fetchCachedBuild({
       distribution: 'device',
-      mode: 'Release', // Remote device builds make no sense, do they?
+      mode: 'Release', // Remote debug builds make no sense, do they?
     });
     if (cachedBuild) {
       // @todo replace with a more generic way to pass binary path
