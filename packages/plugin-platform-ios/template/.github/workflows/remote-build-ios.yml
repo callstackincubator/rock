@@ -13,7 +13,7 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
-  build:
+  build-device:
     runs-on: macos-latest
 
     steps:
@@ -42,6 +42,25 @@ jobs:
           provisioning-profile-base64: ${{ secrets.RNEF_APPLE_PROVISIONING_PROFILE_BASE64 }}
           provisioning-profile-name: "Provisioning Profile"
           keychain-password: ${{ secrets.RNEF_APPLE_KEYCHAIN_PASSWORD }}
+
+  build-simulator:
+    runs-on: macos-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: |
+          # Remove next line after public release
+          echo "//registry.npmjs.org/:_authToken=${{ secrets.NPM_TOKEN }}" > .npmrc
+          npm install
 
       - name: RNEF Remote Build - iOS simulator
         uses: ./.github/actions/rnef-remote-build-ios
