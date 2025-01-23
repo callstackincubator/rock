@@ -88,6 +88,20 @@ npx create-rnef-app enterprise
    +config = use_native_modules!(['npx', 'rnef', 'config', '-p', 'ios'])
    ```
 
+   In "Bundle React Native code and images" Build Phase in Xcode add:
+
+   ```diff
+   set -e
+   +if [[ -f "$PODS_ROOT/../.xcode.env" ]]; then
+   +source "$PODS_ROOT/../.xcode.env"
+   +fi
+   +if [[ -f "$PODS_ROOT/../.xcode.env.local" ]]; then
+   +source "$PODS_ROOT/../.xcode.env.local"
+   +fi
+   +export CLI_PATH="$("$NODE_BINARY" --print "require('path').dirname(require.resolve('@rnef/cli/package.json')) + '/dist/src/bin.js'")"
+   WITH_ENVIRONMENT="$REACT_NATIVE_PATH/scripts/xcode/with-environment.sh"
+   ```
+
 1. Cleanup native files:
 
    ```sh

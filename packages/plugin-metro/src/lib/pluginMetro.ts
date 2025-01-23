@@ -68,9 +68,9 @@ export const pluginMetro =
         const reactNativePath = api.getReactNativePath();
         const platforms = api.getPlatforms();
 
-        const {port, startDevServer} = await findDevServerPort(
+        const { port, startDevServer } = await findDevServerPort(
           args.port ?? 8081,
-          root,
+          root
         );
 
         if (!startDevServer) {
@@ -121,7 +121,14 @@ export const pluginMetro =
           args
         );
       },
-      options: bundleCommand.options,
+      options: [
+        ...bundleCommand.options,
+        {
+          name: '--config-cmd [string]',
+          description:
+            'Hack for Xcode build script pointing to wrong bundle command that recognizes this flag.',
+        },
+      ],
     });
 
     return {

@@ -3,8 +3,7 @@
   "version": "0.1.2",
   "type": "module",
   "exports": {
-    "types": "./dist/src/index.d.ts",
-    "import": "./dist/src/index.js"
+    "./package.json": "./package.json"
   },
   "bin": {
     "rnef": "./dist/src/bin.js"
