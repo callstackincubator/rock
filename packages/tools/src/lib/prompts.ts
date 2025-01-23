@@ -1,8 +1,19 @@
-import type { SelectOptions } from '@clack/prompts';
-import { cancel, isCancel, select } from '@clack/prompts';
+import type { MultiSelectOptions, SelectOptions } from '@clack/prompts';
+import { cancel, isCancel, multiselect, select } from '@clack/prompts';
 
 export async function promptSelect<T>(options: SelectOptions<T>): Promise<T> {
   const result = await select<T>(options);
+  if (isCancel(result)) {
+    cancelPromptAndExit();
+  }
+
+  return result;
+}
+
+export async function promptMultiselect<T>(
+  options: MultiSelectOptions<T>
+): Promise<T[]> {
+  const result = await multiselect<T>(options);
   if (isCancel(result)) {
     cancelPromptAndExit();
   }

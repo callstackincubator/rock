@@ -1,5 +1,10 @@
-import { intro, multiselect, note, outro, text } from '@clack/prompts';
-import { checkCancelPrompt, promptSelect, RnefError } from '@rnef/tools';
+import { intro, note, outro, text } from '@clack/prompts';
+import {
+  checkCancelPrompt,
+  promptMultiselect,
+  promptSelect,
+  RnefError,
+} from '@rnef/tools';
 import path from 'path';
 import type { TemplateInfo } from '../templates.js';
 import { validateProjectName } from '../validate-project-name.js';
@@ -91,16 +96,14 @@ export async function promptPlatforms(
     throw new RnefError('No platforms found');
   }
 
-  return checkCancelPrompt<TemplateInfo[]>(
-    await multiselect({
-      message: 'Select platforms:',
-      // @ts-expect-error todo
-      options: platforms.map((platform) => ({
-        value: platform,
-        label: platform.name,
-      })),
-    })
-  );
+  return await promptMultiselect({
+    message: 'Select platforms:',
+    // @ts-expect-error todo
+    options: platforms.map((platform) => ({
+      value: platform,
+      label: platform.name,
+    })),
+  });
 }
 
 export async function promptPlugins(
@@ -110,17 +113,15 @@ export async function promptPlugins(
     throw new RnefError('No plugins found');
   }
 
-  return checkCancelPrompt<TemplateInfo[]>(
-    await multiselect({
-      message: 'Select plugins:',
-      initialValues: [plugins[0]],
-      // @ts-expect-error todo fixup type
-      options: plugins.map((plugin) => ({
-        value: plugin,
-        label: plugin.name,
-      })),
-    })
-  );
+  return await promptMultiselect({
+    message: 'Select plugins:',
+    initialValues: [plugins[0]],
+    // @ts-expect-error todo fixup type
+    options: plugins.map((plugin) => ({
+      value: plugin,
+      label: plugin.name,
+    })),
+  });
 }
 
 export async function confirmOverrideFiles(targetDir: string) {
