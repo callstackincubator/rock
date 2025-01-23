@@ -1,9 +1,3 @@
-import type {
-  MultiSelectOptions,
-  PromptGroup,
-  PromptGroupOptions,
-  SelectOptions,
-} from '@clack/prompts';
 import * as clack from '@clack/prompts';
 
 export function intro(title?: string) {
@@ -27,7 +21,9 @@ export async function promptText(options: clack.TextOptions): Promise<T> {
   return result;
 }
 
-export async function promptSelect<T>(options: SelectOptions<T>): Promise<T> {
+export async function promptSelect<T>(
+  options: clack.SelectOptions<T>
+): Promise<T> {
   const result = await clack.select<T>(options);
   if (clack.isCancel(result)) {
     cancelPromptAndExit();
@@ -37,7 +33,7 @@ export async function promptSelect<T>(options: SelectOptions<T>): Promise<T> {
 }
 
 export async function promptMultiselect<T>(
-  options: MultiSelectOptions<T>
+  options: clack.MultiSelectOptions<T>
 ): Promise<T[]> {
   const result = await clack.multiselect<T>(options);
   if (clack.isCancel(result)) {
@@ -48,8 +44,8 @@ export async function promptMultiselect<T>(
 }
 
 export async function promptGroup<T>(
-  prompts: PromptGroup<T>,
-  options?: PromptGroupOptions<T> | undefined
+  prompts: clack.PromptGroup<T>,
+  options?: clack.PromptGroupOptions<T> | undefined
 ) {
   const result = await clack.group(prompts, options);
   if (clack.isCancel(result)) {
