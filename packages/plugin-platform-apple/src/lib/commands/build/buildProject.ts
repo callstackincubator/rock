@@ -1,9 +1,9 @@
 import path from 'node:path';
-import { spinner } from '@clack/prompts';
 import {
   logger,
   RnefError,
   setupChildProcessCleanup,
+  spinner,
   updateClock,
 } from '@rnef/tools';
 import type { SubprocessError } from 'nano-spawn';

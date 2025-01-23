@@ -10,17 +10,6 @@ import { buildAndroid, type BuildFlags } from '../buildAndroid.js';
 
 const actualFs = await vi.importMock('node:fs');
 
-vi.spyOn(tools, 'promptSelect');
-vi.spyOn(tools, 'intro');
-vi.spyOn(tools, 'outro').mockImplementation(() => mocks.outroMock);
-
-vi.mock('node:fs');
-vi.mock('nano-spawn', () => {
-  return {
-    default: vi.fn(),
-  };
-});
-
 const mocks = vi.hoisted(() => {
   return {
     startMock: vi.fn(),
@@ -29,13 +18,25 @@ const mocks = vi.hoisted(() => {
   };
 });
 
+vi.spyOn(tools, 'promptSelect');
+vi.spyOn(tools, 'intro');
+vi.spyOn(tools, 'outro').mockImplementation(() => mocks.outroMock);
+vi.spyOn(tools, 'spinner').mockImplementation(() => ({
+  start: mocks.startMock,
+  stop: mocks.stopMock,
+  message: vi.fn(),
+}));
+vi.spyOn(tools.logger, 'error');
+
+vi.mock('node:fs');
+vi.mock('nano-spawn', () => {
+  return {
+    default: vi.fn(),
+  };
+});
+
 vi.mock('@clack/prompts', () => {
   return {
-    spinner: vi.fn(() => ({
-      start: mocks.startMock,
-      stop: mocks.stopMock,
-      message: vi.fn(),
-    })),
     isCancel: vi.fn(() => false),
     log: {
       error: vi.fn(),

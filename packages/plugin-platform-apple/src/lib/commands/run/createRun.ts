@@ -1,7 +1,6 @@
 import fs from 'node:fs';
 import path from 'node:path';
-import { spinner } from '@clack/prompts';
-import { intro, logger, outro, RnefError } from '@rnef/tools';
+import { intro, logger, outro, RnefError, spinner } from '@rnef/tools';
 import isInteractive from 'is-interactive';
 import type {
   ApplePlatform,

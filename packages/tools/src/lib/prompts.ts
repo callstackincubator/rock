@@ -29,6 +29,15 @@ export async function promptMultiselect<T>(
   return result;
 }
 
+export function spinner() {
+  const clackSpinner = clack.spinner();
+  return {
+    start: (message?: string) => clackSpinner.start(message),
+    stop: (message?: string, code?: number) => clackSpinner.stop(message, code),
+    message: (message?: string) => clackSpinner.message(message),
+  };
+}
+
 export function cancelPromptAndExit(message?: string): never {
   clack.cancel(message ?? 'Operation cancelled by user.');
   process.exit(0);

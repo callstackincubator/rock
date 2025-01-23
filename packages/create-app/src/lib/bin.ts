@@ -1,10 +1,10 @@
 import fs from 'node:fs';
 import path from 'node:path';
-import { spinner } from '@clack/prompts';
 import {
   cancelPromptAndExit,
   resolveAbsolutePath,
   RnefError,
+  spinner,
 } from '@rnef/tools';
 import { gitInitStep } from './steps/git-init.js';
 import type { TemplateInfo } from './templates.js';

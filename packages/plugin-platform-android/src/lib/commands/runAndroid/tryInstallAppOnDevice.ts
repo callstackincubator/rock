@@ -1,6 +1,5 @@
 import fs from 'node:fs';
-import { spinner } from '@clack/prompts';
-import { logger, RnefError } from '@rnef/tools';
+import { logger, RnefError, spinner } from '@rnef/tools';
 import spawn from 'nano-spawn';
 import { getAdbPath } from './adb.js';
 import type { DeviceData } from './listAndroidDevices.js';

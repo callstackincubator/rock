@@ -1,5 +1,4 @@
-import { spinner } from '@clack/prompts';
-import { logger } from '@rnef/tools';
+import { logger, spinner } from '@rnef/tools';
 import spawn from 'nano-spawn';
 
 export async function gitInitStep(path: string, version: string | null) {

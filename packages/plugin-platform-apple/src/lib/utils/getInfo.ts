@@ -1,7 +1,6 @@
 import * as fs from 'node:fs';
 import * as path from 'node:path';
-import { spinner } from '@clack/prompts';
-import { logger, RnefError } from '@rnef/tools';
+import { logger, RnefError, spinner } from '@rnef/tools';
 import { XMLParser } from 'fast-xml-parser';
 import spawn from 'nano-spawn';
 import type { Info, XcodeProjectInfo } from '../types/index.js';

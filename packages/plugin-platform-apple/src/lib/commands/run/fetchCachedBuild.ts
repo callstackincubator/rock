@@ -1,6 +1,5 @@
 import fs from 'node:fs';
 import path from 'node:path';
-import { spinner } from '@clack/prompts';
 import {
   createRemoteBuildCache,
   findDirectoriesWithPattern,
@@ -11,6 +10,7 @@ import {
   logger,
   nativeFingerprint,
   queryLocalBuildCache,
+  spinner,
 } from '@rnef/tools';
 import color from 'picocolors';
 import * as tar from 'tar';

@@ -1,5 +1,4 @@
-import { spinner } from '@clack/prompts';
-import { checkCancelPrompt, promptSelect } from '@rnef/tools';
+import { promptSelect, spinner } from '@rnef/tools';
 import spawn from 'nano-spawn';
 import { getAdbPath } from './adb.js';
 

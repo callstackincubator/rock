@@ -1,5 +1,4 @@
 import path from 'node:path';
-import { spinner } from '@clack/prompts';
 import type { LocalBuild } from '@rnef/tools';
 import {
   createRemoteBuildCache,
@@ -8,6 +7,7 @@ import {
   getProjectRoot,
   nativeFingerprint,
   queryLocalBuildCache,
+  spinner,
 } from '@rnef/tools';
 import color from 'picocolors';
 

@@ -1,8 +1,8 @@
-import { spinner } from '@clack/prompts';
 import {
   logger,
   RnefError,
   setupChildProcessCleanup,
+  spinner,
   updateClock,
 } from '@rnef/tools';
 import spawn, { type SubprocessError } from 'nano-spawn';

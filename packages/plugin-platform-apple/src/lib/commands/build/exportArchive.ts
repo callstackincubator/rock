@@ -1,5 +1,4 @@
-import { spinner } from '@clack/prompts';
-import { RnefError } from '@rnef/tools';
+import { RnefError, spinner } from '@rnef/tools';
 import { existsSync, readdirSync } from 'fs';
 import spawn from 'nano-spawn';
 import path from 'path';
