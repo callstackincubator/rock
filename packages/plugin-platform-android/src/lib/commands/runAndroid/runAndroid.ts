@@ -1,11 +1,16 @@
 import fs from 'node:fs';
 import path from 'node:path';
-import { intro, outro, select } from '@clack/prompts';
+import { intro, outro } from '@clack/prompts';
 import type {
   AndroidProjectConfig,
   Config,
 } from '@react-native-community/cli-types';
-import { checkCancelPrompt, logger, RnefError } from '@rnef/tools';
+import {
+  checkCancelPrompt,
+  logger,
+  promptSelect,
+  RnefError,
+} from '@rnef/tools';
 import isInteractive from 'is-interactive';
 import type { BuildFlags } from '../buildAndroid/buildAndroid.js';
 import { options } from '../buildAndroid/buildAndroid.js';
@@ -183,17 +188,15 @@ async function promptForDeviceSelection(
       'No devices and/or emulators connected. Please create emulator with Android Studio or connect Android device.'
     );
   }
-  const selected = checkCancelPrompt<DeviceData>(
-    await select({
-      message: 'Select the device / emulator you want to use',
-      options: allDevices.map((d) => ({
-        label: `${d.readableName}${
-          d.type === 'phone' ? ' - (physical device)' : ''
-        }${d.connected ? ' (connected)' : ''}`,
-        value: d,
-      })),
-    })
-  );
+  const selected = await promptSelect({
+    message: 'Select the device / emulator you want to use',
+    options: allDevices.map((d) => ({
+      label: `${d.readableName}${
+        d.type === 'phone' ? ' - (physical device)' : ''
+      }${d.connected ? ' (connected)' : ''}`,
+      value: d,
+    })),
+  });
 
   return selected;
 }

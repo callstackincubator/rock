@@ -1,5 +1,5 @@
-import { select, spinner } from '@clack/prompts';
-import { checkCancelPrompt, RnefError } from '@rnef/tools';
+import { spinner } from '@clack/prompts';
+import { promptSelect, RnefError } from '@rnef/tools';
 import spawn from 'nano-spawn';
 import color from 'picocolors';
 import { getGradleWrapper } from './runGradle.js';
@@ -61,15 +61,14 @@ export const promptForTaskSelection = async (
   if (!tasks.length) {
     throw new RnefError(`No actionable ${taskType} tasks were found.`);
   }
-  const task = checkCancelPrompt<string>(
-    await select({
-      message: `Select ${taskType} task you want to perform`,
-      options: tasks.map((t) => ({
-        label: `${color.bold(t.task)} - ${t.description}`,
-        value: t.task,
-      })),
-    })
-  );
+
+  const task = await promptSelect({
+    message: `Select ${taskType} task you want to perform`,
+    options: tasks.map((t) => ({
+      label: `${color.bold(t.task)} - ${t.description}`,
+      value: t.task,
+    })),
+  });
 
   return task;
 };

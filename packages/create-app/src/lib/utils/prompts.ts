@@ -1,5 +1,5 @@
-import { intro, multiselect, note, outro, select, text } from '@clack/prompts';
-import { checkCancelPrompt, RnefError } from '@rnef/tools';
+import { intro, multiselect, note, outro, text } from '@clack/prompts';
+import { checkCancelPrompt, promptSelect, RnefError } from '@rnef/tools';
 import path from 'path';
 import type { TemplateInfo } from '../templates.js';
 import { validateProjectName } from '../validate-project-name.js';
@@ -74,16 +74,14 @@ export async function promptTemplate(
     throw new RnefError('No templates found');
   }
 
-  return checkCancelPrompt<TemplateInfo>(
-    await select({
-      message: 'Select a template:',
-      // @ts-expect-error todo
-      options: templates.map((template) => ({
-        value: template,
-        label: template.name,
-      })),
-    })
-  );
+  return promptSelect({
+    message: 'Select a template:',
+    // @ts-expect-error todo
+    options: templates.map((template) => ({
+      value: template,
+      label: template.name,
+    })),
+  });
 }
 
 export async function promptPlatforms(
@@ -126,14 +124,13 @@ export async function promptPlugins(
 }
 
 export async function confirmOverrideFiles(targetDir: string) {
-  const option = checkCancelPrompt<string>(
-    await select({
-      message: `"${targetDir}" is not empty, please choose:`,
-      options: [
-        { value: 'yes', label: 'Continue and override files' },
-        { value: 'no', label: 'Cancel operation' },
-      ],
-    })
-  );
-  return option === 'yes';
+  const option = await promptSelect({
+    message: `"${targetDir}" is not empty, please choose:`,
+    options: [
+      { value: true, label: 'Continue and override files' },
+      { value: false, label: 'Cancel operation' },
+    ],
+  });
+
+  return option === true;
 }
