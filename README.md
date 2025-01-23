@@ -98,6 +98,7 @@ npx create-rnef-app enterprise
    +if [[ -f "$PODS_ROOT/../.xcode.env.local" ]]; then
    +source "$PODS_ROOT/../.xcode.env.local"
    +fi
+   +export CONFIG_CMD="dummy"
    +export CLI_PATH="$("$NODE_BINARY" --print "require('path').dirname(require.resolve('@rnef/cli/package.json')) + '/dist/src/bin.js'")"
    WITH_ENVIRONMENT="$REACT_NATIVE_PATH/scripts/xcode/with-environment.sh"
    ```
