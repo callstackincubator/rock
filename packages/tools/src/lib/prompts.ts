@@ -12,7 +12,7 @@ export function note(message?: string, title?: string) {
   return clack.note(message, title);
 }
 
-export async function promptText(options: clack.TextOptions): Promise<T> {
+export async function promptText(options: clack.TextOptions): Promise<string> {
   const result = await clack.text(options);
   if (clack.isCancel(result)) {
     cancelPromptAndExit();
