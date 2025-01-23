@@ -1,10 +1,11 @@
 import * as fs from 'node:fs';
+import { password } from '@clack/prompts';
 import AdmZip from 'adm-zip';
 import logger from '../../logger.js';
+import { checkCancelPrompt } from '../../prompts.js';
 import { detectGitHubRepoDetails } from './config.js';
 
 const PAGE_SIZE = 100; // Maximum allowed by GitHub API
-const GITHUB_TOKEN = process.env['GITHUB_TOKEN'];
 
 type GitHubArtifact = {
   id: number;
@@ -27,6 +28,35 @@ type GitHubArtifactResponse = {
     };
   }[];
 };
+
+let _token: string | null = null;
+
+export function hasGitHubToken(): boolean {
+  return _token != null;
+}
+
+/**
+ *
+ * @returns true if has github token, false when user skipped to operation
+ */
+export async function promptGitHubTokenIfNeeded() {
+  if (_token != null) {
+    return true;
+  }
+
+  const token = checkCancelPrompt(
+    await password({
+      message: 'Enter your GitHub token (press Enter to skip):',
+    })
+  );
+
+  if (!token) {
+    return false;
+  }
+
+  _token = token;
+  return true;
+}
 
 export async function fetchGitHubArtifactsByName(
   name: string
@@ -54,7 +84,7 @@ export async function fetchGitHubArtifactsByName(
       let data: GitHubArtifactResponse;
       try {
         const response = await fetch(url, {
-          headers: { Authorization: `token ${GITHUB_TOKEN}` },
+          headers: { Authorization: `token ${_token}` },
         });
         if (!response.ok) {
           throw new Error(
@@ -125,7 +155,7 @@ export async function downloadGitHubArtifact(
 
     const response = await fetch(downloadUrl, {
       headers: {
-        Authorization: `token ${GITHUB_TOKEN}`,
+        Authorization: `token ${_token}`,
       },
     });
 

@@ -2,13 +2,14 @@ import fs from 'node:fs';
 import path from 'node:path';
 import { spinner } from '@clack/prompts';
 import {
-  createRemoteBuildCache,
+  getRemoteBuildCache,
   findDirectoriesWithPattern,
   formatArtifactName,
   getProjectRoot,
   type LocalBuild,
   nativeFingerprint,
   queryLocalBuildCache,
+  logger,
 } from '@rnef/tools';
 import color from 'picocolors';
 import * as tar from 'tar';
@@ -30,15 +31,23 @@ export async function fetchCachedBuild({
   if (localBuild != null) {
     loader.stop(`Found local cached build: ${color.cyan(localBuild.name)}`);
     return localBuild;
+  } else {
+    loader.stop(`No local cached build found for ${color.cyan(artifactName)}.`);
   }
 
-  const remoteBuildCache = createRemoteBuildCache();
+  const remoteBuildCache = getRemoteBuildCache();
   if (!remoteBuildCache) {
-    loader.stop(`No CI provider detected, skipping.`);
+    logger.debug(`No CI provider detected, skipping remote build cache.`);
     return null;
   }
 
-  loader.message(`Looking for a cached build on ${remoteBuildCache.name}`);
+  const hasToken = await remoteBuildCache.promptCredentialsIfNeeded();
+  if (!hasToken) {
+    logger.log(`No token provided, skipping remote build cache.`);
+    return null;
+  }
+
+  loader.start(`Looking for a cached build on ${remoteBuildCache.name}`);
   const remoteBuild = await remoteBuildCache.query(artifactName);
   if (!remoteBuild) {
     loader.stop(`No cached build found for "${artifactName}".`);

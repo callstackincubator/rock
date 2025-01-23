@@ -15,6 +15,7 @@ export type LocalArtifact = {
 
 export type RemoteBuildCache = {
   name: string;
+  promptCredentialsIfNeeded(): Promise<boolean>;
   query(artifactName: string): Promise<RemoteArtifact | null>;
   download(artifact: RemoteArtifact): Promise<LocalArtifact>;
 };

@@ -79,8 +79,8 @@ async function runKeytool(
 }
 
 async function prompts({ name, alias }: SignFlags) {
-  return checkCancelPrompt<{ name: string; alias: string }>(
-    group({
+  return checkCancelPrompt(
+    await group({
       name: () =>
         name
           ? Promise.resolve(name)

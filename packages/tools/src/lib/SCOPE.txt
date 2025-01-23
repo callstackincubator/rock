@@ -1,0 +1,11 @@
+# Query github token
+
+## Now
+- User needs to pass `GITHUB_TOKEN` env to the command
+- Not recommended or secure
+- This occurs at local machine, as on CI fetching remote build is not needed
+
+## Proposed
+- [ ] Query user for token if interactive
+- [ ] Store token in cache
+- [ ] Store token in more secure way if available (macoOS keychain)
