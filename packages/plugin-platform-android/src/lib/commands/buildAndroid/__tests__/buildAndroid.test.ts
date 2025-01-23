@@ -35,15 +35,6 @@ vi.mock('nano-spawn', () => {
   };
 });
 
-vi.mock('@clack/prompts', () => {
-  return {
-    isCancel: vi.fn(() => false),
-    log: {
-      error: vi.fn(),
-    },
-  };
-});
-
 const gradleTaskOutput = `
 > Task :tasks
 
@@ -125,7 +116,7 @@ test('buildAndroid runs gradle build with correct configuration for debug and ou
 
 test('buildAndroid fails gracefully when gradle errors', async () => {
   vi.mocked(spawn).mockRejectedValueOnce({ stderr: 'gradle error' });
-  vi.spyOn(tools.logger, 'error');
+  vi.spyOn(tools.logger, 'error').mockImplementation(() => {});
 
   await expect(
     buildAndroid(androidProject, args)

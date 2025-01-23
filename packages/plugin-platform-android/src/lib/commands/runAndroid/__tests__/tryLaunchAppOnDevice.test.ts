@@ -12,14 +12,14 @@ vi.mock('nano-spawn', () => {
   };
 });
 
-vi.mock('@clack/prompts', () => {
+vi.spyOn(tools, 'promptSelect');
+vi.spyOn(tools, 'spinner').mockImplementation(() => {
   return {
-    spinner: vi.fn(() => ({ start: vi.fn(), message: vi.fn(), stop: vi.fn() })),
-    isCancel: vi.fn(() => false),
+    start: vi.fn(),
+    stop: vi.fn(),
+    message: vi.fn(),
   };
 });
-
-vi.spyOn(tools, 'promptSelect');
 
 const OLD_ENV = process.env;
 

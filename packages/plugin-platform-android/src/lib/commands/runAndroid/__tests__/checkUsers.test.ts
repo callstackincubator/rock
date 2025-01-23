@@ -1,3 +1,4 @@
+import * as tools from '@rnef/tools';
 import spawn from 'nano-spawn';
 import type { Mock } from 'vitest';
 import { describe, it, vi } from 'vitest';
@@ -9,16 +10,17 @@ Users:
         UserInfo{10:Guest:404}
 `;
 
-vi.mock('nano-spawn', () => {
+vi.spyOn(tools, 'spinner').mockImplementation(() => {
   return {
-    default: vi.fn(),
+    start: vi.fn(),
+    stop: vi.fn(),
+    message: vi.fn(),
   };
 });
 
-vi.mock('@clack/prompts', () => {
+vi.mock('nano-spawn', () => {
   return {
-    spinner: vi.fn(() => ({ start: vi.fn(), message: vi.fn(), stop: vi.fn() })),
-    isCancel: vi.fn(() => false),
+    default: vi.fn(),
   };
 });
 

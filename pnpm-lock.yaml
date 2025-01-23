@@ -183,9 +183,6 @@ importers:
 
   packages/plugin-platform-android:
     dependencies:
-      '@clack/prompts':
-        specifier: ^0.9.0
-        version: 0.9.0
       '@react-native-community/cli-config-android':
         specifier: ^16.0.2
         version: 16.0.2

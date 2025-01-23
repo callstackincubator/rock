@@ -9,17 +9,17 @@ import {
 } from '../listAndroidTasks.js';
 
 vi.spyOn(tools, 'promptSelect');
+vi.spyOn(tools, 'spinner').mockImplementation(() => {
+  return {
+    start: vi.fn(),
+    stop: vi.fn(),
+    message: vi.fn(),
+  };
+});
 
 vi.mock('nano-spawn', () => {
   return {
     default: vi.fn(),
-  };
-});
-
-vi.mock('@clack/prompts', () => {
-  return {
-    spinner: vi.fn(() => ({ start: vi.fn(), message: vi.fn(), stop: vi.fn() })),
-    isCancel: vi.fn(() => false),
   };
 });
 

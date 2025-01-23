@@ -9,37 +9,25 @@ import { type Flags, runAndroid } from '../runAndroid.js';
 
 const actualFs = await vi.importMock('node:fs');
 
-const mocks = vi.hoisted(() => {
+vi.spyOn(tools, 'intro').mockImplementation(() => {});
+vi.spyOn(tools, 'outro').mockImplementation(() => {});
+vi.spyOn(tools, 'promptSelect');
+vi.spyOn(tools.logger, 'warn').mockImplementation(() => {});
+vi.spyOn(tools.logger, 'error').mockImplementation(() => {});
+vi.spyOn(tools.logger, 'log').mockImplementation(() => {});
+vi.spyOn(tools, 'spinner').mockImplementation(() => {
   return {
-    startMock: vi.fn(),
-    stopMock: vi.fn(),
-    outroMock: vi.fn(),
+    start: vi.fn(),
+    stop: vi.fn(),
+    message: vi.fn(),
   };
 });
-
-vi.spyOn(tools, 'promptSelect');
 
 vi.mock('node:fs');
 
 vi.mock('nano-spawn', () => {
   return {
     default: vi.fn(),
-  };
-});
-
-vi.mock('@clack/prompts', () => {
-  return {
-    spinner: vi.fn(() => ({
-      start: mocks.startMock,
-      stop: mocks.stopMock,
-      message: vi.fn(),
-    })),
-    isCancel: vi.fn(() => false),
-    intro: vi.fn(),
-    outro: mocks.outroMock,
-    log: {
-      warn: vi.fn(),
-    },
   };
 });
 
@@ -341,7 +329,7 @@ test.each([['release'], ['debug'], ['staging']])(
     const logErrorSpy = vi.spyOn(tools.logger, 'error');
     await runAndroid({ ...androidProject }, { ...args, mode }, '/');
 
-    expect(mocks.outroMock).toBeCalledWith('Success 🎉.');
+    expect(tools.outro).toBeCalledWith('Success 🎉.');
     expect(logErrorSpy).not.toBeCalled();
 
     // Runs installDebug with only active architecture arm64-v8a
@@ -389,7 +377,7 @@ test('runAndroid runs gradle build with custom --appId, --appIdSuffix and --main
     '/'
   );
 
-  expect(mocks.outroMock).toBeCalledWith('Success 🎉.');
+  expect(tools.outro).toBeCalledWith('Success 🎉.');
   expect(logErrorSpy).not.toBeCalled();
 
   // launches com.custom.suffix app with OtherActivity on emulator-5552

@@ -1,4 +1,4 @@
-import { logger } from '@rnef/tools';
+import * as tools from '@rnef/tools';
 import color from 'picocolors';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { getInfo } from '../getInfo.js';
@@ -9,11 +9,14 @@ import {
 import { selectFromInteractiveMode } from '../selectFromInteractiveMode.js';
 
 // Mock dependencies
-vi.mock('@rnef/tools', () => ({
-  logger: {
-    debug: vi.fn(),
-  },
-}));
+vi.spyOn(tools.logger, 'debug').mockImplementation(() => {});
+vi.spyOn(tools, 'spinner').mockImplementation(() => {
+  return {
+    start: vi.fn(),
+    stop: vi.fn(),
+    message: vi.fn(),
+  };
+});
 
 vi.mock('../getInfo', () => {
   return {
@@ -86,7 +89,7 @@ describe('selectFromInteractiveMode', () => {
       'Scheme2',
     ]);
     expect(result.scheme).toBe('SelectedScheme');
-    expect(logger.debug).toHaveBeenCalledWith(
+    expect(tools.logger.debug).toHaveBeenCalledWith(
       `Automatically selected ${color.bold('Debug')} configuration.`
     );
   });
@@ -115,7 +118,7 @@ describe('selectFromInteractiveMode', () => {
       'Release',
     ]);
     expect(result.mode).toBe('Release');
-    expect(logger.debug).toHaveBeenCalledWith(
+    expect(tools.logger.debug).toHaveBeenCalledWith(
       `Automatically selected ${color.bold('TestScheme')} scheme.`
     );
   });
@@ -144,12 +147,12 @@ describe('selectFromInteractiveMode', () => {
     });
     expect(promptForSchemeSelection).not.toHaveBeenCalled();
     expect(promptForConfigurationSelection).not.toHaveBeenCalled();
-    expect(logger.debug).toHaveBeenCalledTimes(2);
-    expect(logger.debug).toHaveBeenNthCalledWith(
+    expect(tools.logger.debug).toHaveBeenCalledTimes(2);
+    expect(tools.logger.debug).toHaveBeenNthCalledWith(
       1,
       `Automatically selected ${color.bold('TestScheme')} scheme.`
     );
-    expect(logger.debug).toHaveBeenNthCalledWith(
+    expect(tools.logger.debug).toHaveBeenNthCalledWith(
       2,
       `Automatically selected ${color.bold('Debug')} configuration.`
     );
