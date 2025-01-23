@@ -87,13 +87,15 @@ In order to build iOS device builds (`*.ipa`), you need to set up the following 
 - `RNEF_APPLE_PROVISIONING_PROFILE_BASE64`
 - `RNEF_APPLE_KEYCHAIN_PASSWORD`
 
-Alternatively, you can use respective input parameters in your `remote-build-ios.yml` workflow:
+Then you can use them as values for respective input parameters in your `remote-build-ios.yml` workflow:
 
-- `certificate-base64`
-- `certificate-password`
-- `provisioning-profile-base64`
-- `provisioning-profile-name`
-- `keychain-password`
+```yaml
+certificate-base64: ${{ secrets.RNEF_APPLE_CERTIFICATE_BASE64 }}
+certificate-password: ${{ secrets.RNEF_APPLE_CERTIFICATE_PASSWORD }}
+provisioning-profile-base64: ${{ secrets.RNEF_APPLE_PROVISIONING_PROFILE_BASE64 }}
+provisioning-profile-name: 'Your Provisioning Profile'
+keychain-password: ${{ secrets.RNEF_APPLE_KEYCHAIN_PASSWORD }}
+```
 
 Make sure that the `provisioning-profile-name` is the same as the one in your provisioning profile set in the Xcode project (see above).
 
