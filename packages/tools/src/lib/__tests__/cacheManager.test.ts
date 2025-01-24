@@ -36,6 +36,15 @@ describe('cacheManager', () => {
     expect(cacheManager.get('key')).toBe('value');
   });
 
+  test('remove should purge value from cache file', () => {
+    const cacheFile = getCacheFile();
+    fs.mkdirSync(path.dirname(cacheFile), { recursive: true });
+    fs.writeFileSync(cacheFile, JSON.stringify({ key: 'value' }, null, 2));
+
+    expect(cacheManager.remove('key')).toBeUndefined();
+    expect(JSON.parse(fs.readFileSync(cacheFile, 'utf8'))).toEqual({});
+  });
+
   test('should not remove cache if it does not exist', () => {
     vi.spyOn(fs, 'existsSync').mockReturnValue(false);
     vi.spyOn(fs, 'rmSync').mockReturnValue(undefined);
