@@ -1,5 +1,6 @@
 import path from 'node:path';
 import {
+  isInteractive,
   logger,
   RnefError,
   setupChildProcessCleanup,
@@ -83,49 +84,37 @@ export const buildProject = async (
     xcodebuildArgs.push(...args.extraParams);
   }
 
-  let clockInterval;
   const loader = spinner();
   const message = `${
     args.archive ? 'Archiving' : 'Building'
   } the app with xcodebuild for ${scheme} scheme in ${mode} mode`;
-  if (!logger.isVerbose()) {
-    loader.start(message);
-    clockInterval = updateClock(loader.message, message);
-  } else {
-    // @todo abstract loader to fall back to logger in non-tty mode.
-    logger.info(message);
-  }
+
+  loader.start(message);
+  const clockInterval = updateClock(loader.message, message);
+
   logger.debug(`Running "xcodebuild ${xcodebuildArgs.join(' ')}.`);
   try {
     const childProcess = spawn('xcodebuild', xcodebuildArgs, {
       cwd: sourceDir,
-      stdio: logger.isVerbose() ? 'inherit' : ['ignore', 'pipe', 'pipe'],
+      stdio:
+        logger.isVerbose() || !isInteractive()
+          ? 'inherit'
+          : ['ignore', 'pipe', 'pipe'],
     });
     setupChildProcessCleanup(childProcess);
     const { output } = await childProcess;
-    if (!logger.isVerbose()) {
-      loader.stop(
-        `${
-          args.archive ? 'Archived' : 'Built'
-        } the app with xcodebuild for ${scheme} scheme in ${mode} mode.`
-      );
-    } else {
-      // @todo abstract loader to fall back to logger in non-tty mode.
-      logger.info(
-        `${
-          args.archive ? 'Archived' : 'Built'
-        } the app with xcodebuild for ${scheme} scheme in ${mode} mode.`
-      );
-    }
+    loader.stop(
+      `${
+        args.archive ? 'Archived' : 'Built'
+      } the app with xcodebuild for ${scheme} scheme in ${mode} mode.`
+    );
     return output;
   } catch (error) {
-    if (!logger.isVerbose()) {
-      logger.error((error as SubprocessError).stderr);
-      loader.stop(
-        'Running xcodebuild failed. Check the error message above for details.',
-        1
-      );
-    }
+    logger.error((error as SubprocessError).stderr);
+    loader.stop(
+      'Running xcodebuild failed. Check the error message above for details.',
+      1
+    );
 
     if (!xcodeProject.isWorkspace) {
       throw new RnefError(

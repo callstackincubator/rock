@@ -4,8 +4,7 @@ import type {
   AndroidProjectConfig,
   Config,
 } from '@react-native-community/cli-types';
-import { intro, logger, outro, promptSelect, RnefError } from '@rnef/tools';
-import isInteractive from 'is-interactive';
+import { intro, isInteractive, logger, outro, promptSelect, RnefError } from '@rnef/tools';
 import type { BuildFlags } from '../buildAndroid/buildAndroid.js';
 import { options } from '../buildAndroid/buildAndroid.js';
 import { promptForTaskSelection } from '../listAndroidTasks.js';

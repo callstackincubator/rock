@@ -22,10 +22,9 @@ export async function nativeFingerprintCommand(
   const duration = performance.now() - start;
 
   loader.stop(`Fingerprint calculated: ${fingerprint.hash}`);
-  if (logger.isVerbose()) {
-    logger.debug('Sources:', JSON.stringify(fingerprint.sources, null, 2));
-    logger.debug(`Duration: ${(duration / 1000).toFixed(1)}s`);
-  }
+
+  logger.debug('Sources:', JSON.stringify(fingerprint.sources, null, 2));
+  logger.debug(`Duration: ${(duration / 1000).toFixed(1)}s`);
 
   outro('Success 🎉.');
 }

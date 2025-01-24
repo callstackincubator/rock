@@ -1,4 +1,6 @@
 import * as clack from '@clack/prompts';
+import { isInteractive } from './isInteractive.js';
+import logger from './logger.js';
 
 export function intro(title?: string) {
   return clack.intro(title);
@@ -56,11 +58,19 @@ export async function promptGroup<T>(
 }
 
 export function spinner() {
-  const clackSpinner = clack.spinner();
+  if (isInteractive()) {
+    const clackSpinner = clack.spinner();
+    return {
+      start: (message?: string) => clackSpinner.start(message),
+      stop: (message?: string, code?: number) =>
+        clackSpinner.stop(message, code),
+      message: (message?: string) => clackSpinner.message(message),
+    };
+  }
   return {
-    start: (message?: string) => clackSpinner.start(message),
-    stop: (message?: string, code?: number) => clackSpinner.stop(message, code),
-    message: (message?: string) => clackSpinner.message(message),
+    start: (message?: string) => logger.log(message),
+    stop: (message?: string, code?: number) => logger.log(message, code),
+    message: (message?: string) => logger.log(message),
   };
 }
 

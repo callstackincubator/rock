@@ -1,6 +1,5 @@
 import path from 'node:path';
-import { logger, outro, RnefError } from '@rnef/tools';
-import isInteractive from 'is-interactive';
+import { isInteractive, logger, outro, RnefError } from '@rnef/tools';
 import type {
   BuilderCommand,
   ProjectConfig,

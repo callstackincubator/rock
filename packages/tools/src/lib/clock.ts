@@ -1,7 +1,12 @@
+import { isInteractive } from './isInteractive.js';
+
 export function updateClock(
   updateMessage: (text: string) => void,
   prefix: string
 ) {
+  if (!isInteractive()) {
+    return;
+  }
   let seconds = 0;
 
   return setInterval(() => {

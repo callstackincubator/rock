@@ -1,7 +1,6 @@
 import fs from 'node:fs';
 import path from 'node:path';
-import { intro, logger, outro, RnefError, spinner } from '@rnef/tools';
-import isInteractive from 'is-interactive';
+import { intro, isInteractive, logger, outro, RnefError, spinner } from '@rnef/tools';
 import type {
   ApplePlatform,
   Device,

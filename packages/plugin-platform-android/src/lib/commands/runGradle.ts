@@ -1,4 +1,5 @@
 import {
+  isInteractive,
   logger,
   RnefError,
   setupChildProcessCleanup,
@@ -25,16 +26,12 @@ export async function runGradle({
   if ('binaryPath' in args) {
     return;
   }
-  let clockInterval;
   const loader = spinner();
   const message = `Building the app with Gradle in ${args.mode} mode`;
-  if (!logger.isVerbose()) {
-    loader.start(message);
-    clockInterval = updateClock(loader.message, message);
-  } else {
-    logger.info(message);
-  }
 
+  loader.start(message);
+
+  const clockInterval = updateClock(loader.message, message);
   const gradleArgs = getTaskNames(androidProject.appName, tasks);
 
   gradleArgs.push('-x', 'lint');
@@ -65,19 +62,13 @@ export async function runGradle({
     logger.debug(`Running ${gradleWrapper} ${gradleArgs.join(' ')}.`);
     const childProcess = spawn(gradleWrapper, gradleArgs, {
       cwd: androidProject.sourceDir,
-      stdio: logger.isVerbose() ? 'inherit' : 'pipe',
+      stdio: logger.isVerbose() || !isInteractive() ? 'inherit' : 'pipe',
     });
     setupChildProcessCleanup(childProcess);
     await childProcess;
-    if (!logger.isVerbose()) {
-      loader.stop(`Built the app in ${args.mode} mode.`);
-    } else {
-      logger.info(`Built the app in ${args.mode} mode.`);
-    }
+    loader.stop(`Built the app in ${args.mode} mode.`);
   } catch (error) {
-    if (!logger.isVerbose()) {
-      loader.stop('Failed to build the app');
-    }
+    loader.stop('Failed to build the app');
     const cleanedErrorMessage = (error as SubprocessError).stderr
       .split('\n')
       .filter((line) => !gradleLinesToRemove.some((l) => line.includes(l)))
