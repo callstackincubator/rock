@@ -1,5 +1,4 @@
-import { logger } from '@rnef/tools';
-import spawn from 'nano-spawn';
+import { logger, spawn } from '@rnef/tools';
 import color from 'picocolors';
 import type {
   ApplePlatform,

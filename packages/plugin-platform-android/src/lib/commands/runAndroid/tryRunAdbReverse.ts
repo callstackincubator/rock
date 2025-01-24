@@ -1,5 +1,4 @@
-import { logger, RnefError } from '@rnef/tools';
-import spawn from 'nano-spawn';
+import { logger, RnefError, spawn } from '@rnef/tools';
 import { getAdbPath } from './adb.js';
 
 // Runs ADB reverse tcp:8081 tcp:8081 to allow loading the jsbundle from the packager

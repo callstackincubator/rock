@@ -2,7 +2,7 @@ import type { PathLike } from 'node:fs';
 import fs from 'node:fs';
 import type { AndroidProjectConfig } from '@react-native-community/cli-types';
 import * as tools from '@rnef/tools';
-import spawn from 'nano-spawn';
+import { spawn } from '@rnef/tools';
 import type { Mock } from 'vitest';
 import { test, vi } from 'vitest';
 import { type Flags, runAndroid } from '../runAndroid.js';

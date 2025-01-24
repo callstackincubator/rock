@@ -1,5 +1,6 @@
 import path from 'node:path';
 import type { AndroidProjectConfig } from '@react-native-community/cli-types';
+import type { SubprocessError } from '@rnef/tools';
 import {
   intro,
   logger,
@@ -7,8 +8,8 @@ import {
   promptGroup,
   promptText,
   RnefError,
+  spawn,
 } from '@rnef/tools';
-import spawn, { type SubprocessError } from 'nano-spawn';
 import color from 'picocolors';
 
 export async function signAndroid(

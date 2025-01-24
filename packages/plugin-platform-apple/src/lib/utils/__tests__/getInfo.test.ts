@@ -1,5 +1,5 @@
 import * as fs from 'node:fs';
-import spawn from 'nano-spawn';
+import { spawn } from '@rnef/tools';
 import type { Mock } from 'vitest';
 import { describe, expect, it, vi } from 'vitest';
 import type { XcodeProjectInfo } from '../../types/index.js';

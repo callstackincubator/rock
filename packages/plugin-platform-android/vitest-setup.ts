@@ -1,7 +1,6 @@
 import { vi } from 'vitest';
 
 vi.mock('node:fs');
-vi.mock('nano-spawn');
 
 vi.mock('@rnef/tools', async (importOriginal) => {
   // eslint-disable-next-line @typescript-eslint/consistent-type-imports

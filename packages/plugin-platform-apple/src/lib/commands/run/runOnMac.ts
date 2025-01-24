@@ -1,5 +1,4 @@
-import { logger, RnefError } from '@rnef/tools';
-import spawn from 'nano-spawn';
+import { logger, RnefError, spawn } from '@rnef/tools';
 import color from 'picocolors';
 import type { XcodeProjectInfo } from '../../types/index.js';
 import { buildProject } from '../build/buildProject.js';

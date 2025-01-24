@@ -1,7 +1,5 @@
 import path from 'node:path';
-import { logger, RnefError } from '@rnef/tools';
-import type { SubprocessError } from 'nano-spawn';
-import spawn from 'nano-spawn';
+import { logger, RnefError, spawn, type SubprocessError } from '@rnef/tools';
 import type { ApplePlatform, XcodeProjectInfo } from '../../types/index.js';
 import { getBuildPath } from './getBuildPath.js';
 import { getBuildSettings } from './getBuildSettings.js';

@@ -1,5 +1,5 @@
 import type { AndroidProjectConfig } from '@react-native-community/cli-types';
-import spawn from 'nano-spawn';
+import { spawn } from '@rnef/tools';
 import type { Mock } from 'vitest';
 import { vi } from 'vitest';
 import { runGradle } from '../../runGradle.js';
@@ -49,6 +49,7 @@ describe('--appFolder', () => {
     mainActivity: 'MainActivity',
     port: '8081',
     activeArchOnly: false,
+    remoteCache: false,
   };
   const androidProject: AndroidProjectConfig = {
     appName: 'app',

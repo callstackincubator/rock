@@ -1,5 +1,4 @@
-import { spinner } from '@rnef/tools';
-import spawn from 'nano-spawn';
+import { spawn, spinner } from '@rnef/tools';
 import type {
   ApplePlatform,
   Device,

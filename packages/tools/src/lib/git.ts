@@ -1,7 +1,7 @@
-import spawn from 'nano-spawn';
 import cacheManager from './cacheManager.js';
 import logger from './logger.js';
 import { promptSelect } from './prompts.js';
+import { spawn } from './spawn.js';
 
 export async function getGitRemote() {
   let gitRemote = cacheManager.get('gitRemote');

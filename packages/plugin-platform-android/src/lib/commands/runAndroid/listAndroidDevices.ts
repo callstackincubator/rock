@@ -1,5 +1,5 @@
 import os from 'node:os';
-import spawn from 'nano-spawn';
+import { spawn } from '@rnef/tools';
 import { getAdbPath, getDevices } from './adb.js';
 import { getEmulators } from './tryLaunchEmulator.js';
 

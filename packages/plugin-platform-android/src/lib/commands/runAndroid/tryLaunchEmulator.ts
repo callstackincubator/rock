@@ -1,7 +1,6 @@
 import os from 'node:os';
-import { spinner } from '@rnef/tools';
-import type { SubprocessError } from 'nano-spawn';
-import spawn from 'nano-spawn';
+import type { SubprocessError } from '@rnef/tools';
+import { spawn, spinner } from '@rnef/tools';
 import { getAdbPath, getDevices } from './adb.js';
 
 const emulatorCommand = process.env['ANDROID_HOME']

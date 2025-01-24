@@ -2,10 +2,10 @@ import {
   isInteractive,
   logger,
   RnefError,
-  setupChildProcessCleanup,
+  spawn,
   spinner,
+  type SubprocessError,
 } from '@rnef/tools';
-import spawn, { type SubprocessError } from 'nano-spawn';
 import color from 'picocolors';
 import type { BuildFlags } from './buildAndroid/buildAndroid.js';
 import { getAdbPath, getDevices } from './runAndroid/adb.js';
@@ -57,12 +57,10 @@ export async function runGradle({
 
   try {
     logger.debug(`Running ${gradleWrapper} ${gradleArgs.join(' ')}.`);
-    const childProcess = spawn(gradleWrapper, gradleArgs, {
+    await spawn(gradleWrapper, gradleArgs, {
       cwd: androidProject.sourceDir,
       stdio: logger.isVerbose() || !isInteractive() ? 'inherit' : 'pipe',
     });
-    setupChildProcessCleanup(childProcess);
-    await childProcess;
     loader.stop(`Built the app in ${args.mode} mode.`);
   } catch (error) {
     loader.stop('Failed to build the app');

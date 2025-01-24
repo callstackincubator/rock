@@ -1,4 +1,4 @@
-import spawn from 'nano-spawn';
+import { spawn } from '@rnef/tools';
 import type { ApplePlatform, XcodeProjectInfo } from '../../types/index.js';
 import { buildProject } from '../build/buildProject.js';
 import { getBuildPath } from './getBuildPath.js';

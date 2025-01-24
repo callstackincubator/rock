@@ -1,5 +1,4 @@
-import { promptSelect, spinner } from '@rnef/tools';
-import spawn from 'nano-spawn';
+import { promptSelect, spawn, spinner } from '@rnef/tools';
 import { getAdbPath } from './adb.js';
 
 type User = {

@@ -1,5 +1,4 @@
-import { logger, RnefError, spinner } from '@rnef/tools';
-import spawn from 'nano-spawn';
+import { logger, RnefError, spawn, spinner } from '@rnef/tools';
 import { getAdbPath } from './adb.js';
 import type { DeviceData } from './listAndroidDevices.js';
 import type { AndroidProject, Flags } from './runAndroid.js';

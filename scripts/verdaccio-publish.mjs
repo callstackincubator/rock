@@ -1,6 +1,6 @@
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
-import { intro, spinner, outro } from '@clack/prompts';
+import { intro, outro, spinner } from '@clack/prompts';
 import spawn from 'nano-spawn';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));

@@ -1,5 +1,4 @@
-import * as tools from '@rnef/tools';
-import spawn from 'nano-spawn';
+import { promptSelect, spawn } from '@rnef/tools';
 import color from 'picocolors';
 import type { Mock, MockedFunction } from 'vitest';
 import { describe, it } from 'vitest';
@@ -101,9 +100,7 @@ const tasksList = [
 describe('promptForTaskSelection', () => {
   it('should prompt with correct tasks', async () => {
     (spawn as Mock).mockResolvedValueOnce({ output: gradleTaskOutput });
-    (
-      tools.promptSelect as MockedFunction<typeof tools.promptSelect>
-    ).mockResolvedValueOnce(
+    (promptSelect as MockedFunction<typeof promptSelect>).mockResolvedValueOnce(
       Promise.resolve({
         task: [],
       })
@@ -111,7 +108,7 @@ describe('promptForTaskSelection', () => {
 
     await promptForTaskSelection('install', 'sourceDir');
 
-    expect(tools.promptSelect).toHaveBeenCalledWith({
+    expect(promptSelect).toHaveBeenCalledWith({
       options: tasksList.map((t) => ({
         label: `${color.bold(t.task)} - ${t.description}`,
         value: t.task,

@@ -1,8 +1,7 @@
 import * as fs from 'node:fs';
 import * as path from 'node:path';
-import { logger, RnefError, spinner } from '@rnef/tools';
+import { logger, RnefError, spawn, spinner } from '@rnef/tools';
 import { XMLParser } from 'fast-xml-parser';
-import spawn from 'nano-spawn';
 import type { Info, XcodeProjectInfo } from '../types/index.js';
 
 function parseTargetList(json: string): Info | undefined {

@@ -1,13 +1,14 @@
 import type { AndroidProjectConfig } from '@react-native-community/cli-types';
-import spawn from 'nano-spawn';
+import { spawn } from '@rnef/tools';
 import { test, vi } from 'vitest';
 import type { DeviceData } from '../listAndroidDevices.js';
 import type { Flags } from '../runAndroid.js';
 import { tryLaunchAppOnDevice } from '../tryLaunchAppOnDevice.js';
 
-vi.mock('nano-spawn', () => {
+vi.mock('@rnef/tools', async () => {
   return {
-    default: vi.fn(() => Promise.resolve({ stdout: '', stderr: '' })),
+    ...(await vi.importActual('@rnef/tools')),
+    spawn: vi.fn(() => Promise.resolve({ stdout: '', stderr: '' })),
   };
 });
 

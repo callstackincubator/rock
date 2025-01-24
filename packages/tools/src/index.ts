@@ -13,6 +13,6 @@ export * from './lib/build-cache/localBuildCache.js';
 export * from './lib/build-cache/remoteBuildCache.js';
 export * from './lib/build-cache/github/config.js';
 export * from './lib/build-cache/github/GitHubBuildCache.js';
-export { setupChildProcessCleanup } from './lib/setupChildProcessCleanup.js';
 export { findDevServerPort } from './lib/dev-server/findDevServerPort.js';
 export { isInteractive } from './lib/isInteractive.js';
+export { spawn, type SubprocessError } from './lib/spawn.js';

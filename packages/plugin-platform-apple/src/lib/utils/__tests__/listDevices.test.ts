@@ -1,5 +1,5 @@
 import fs from 'node:fs';
-import spawn from 'nano-spawn';
+import { spawn } from '@rnef/tools';
 import type { Mock } from 'vitest';
 import { vi } from 'vitest';
 import { listDevicesAndSimulators } from '../listDevices.js';

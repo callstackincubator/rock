@@ -1,6 +1,5 @@
-import { RnefError, spinner } from '@rnef/tools';
+import { RnefError, spawn, spinner } from '@rnef/tools';
 import { existsSync, readdirSync } from 'fs';
-import spawn from 'nano-spawn';
 import path from 'path';
 import { getBuildPaths } from '../../utils/buildPaths.js';
 

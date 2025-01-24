@@ -1,5 +1,4 @@
-import { promptSelect, RnefError, spinner } from '@rnef/tools';
-import spawn from 'nano-spawn';
+import { promptSelect, RnefError, spawn, spinner } from '@rnef/tools';
 import color from 'picocolors';
 import { getGradleWrapper } from './runGradle.js';
 

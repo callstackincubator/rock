@@ -1,5 +1,4 @@
-import { logger, spinner } from '@rnef/tools';
-import spawn from 'nano-spawn';
+import { logger, spawn, spinner } from '@rnef/tools';
 
 export async function gitInitStep(path: string, version: string | null) {
   if (!(await hasGitClient())) {
