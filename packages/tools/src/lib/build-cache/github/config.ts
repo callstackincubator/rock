@@ -10,7 +10,7 @@ export function getGitHubToken(): string | undefined {
 
 export async function promptForGitHubToken() {
   const githubToken = (await promptPassword({
-    message: 'Pass your GITHUB_TOKEN',
+    message: 'Pass your GitHub Personal Access Token',
     validate: (value) =>
       value.length === 0 ? 'Value is required.' : undefined,
   })) as string;

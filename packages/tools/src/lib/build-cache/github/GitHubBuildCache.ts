@@ -30,7 +30,7 @@ export class GitHubBuildCache implements RemoteBuildCache {
       : null;
     if (!this.githubToken) {
       logger.warn(
-        `No GITHUB_TOKEN found. You can generate one at: ${color.cyan(
+        `No GitHub Personal Access Token found. You can generate one at: ${color.cyan(
           'https://github.com/settings/tokens'
         )}`
       );
@@ -40,7 +40,7 @@ export class GitHubBuildCache implements RemoteBuildCache {
 
   async query(artifactName: string): Promise<RemoteArtifact | null> {
     if (!getGitHubToken()) {
-      logger.warn(`No GITHUB_TOKEN found.`);
+      logger.warn(`No GitHub Personal Access Token found.`);
       return null;
     }
 
