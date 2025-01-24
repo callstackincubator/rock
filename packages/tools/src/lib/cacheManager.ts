@@ -63,9 +63,16 @@ function set(key: CacheKey, value: string) {
   saveCache(cache);
 }
 
+function remove(key: CacheKey) {
+  const cache = loadCache();
+  delete cache[key];
+  saveCache(cache);
+}
+
 export default {
   get,
   set,
+  remove,
   removeProjectCache,
   getCacheRootPath,
 };

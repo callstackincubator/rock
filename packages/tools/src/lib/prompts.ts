@@ -24,6 +24,17 @@ export async function promptText(options: clack.TextOptions): Promise<string> {
   return result;
 }
 
+export async function promptPassword(
+  options: clack.PasswordOptions
+): Promise<string> {
+  const result = await clack.password(options);
+  if (clack.isCancel(result)) {
+    cancelPromptAndExit();
+  }
+
+  return result;
+}
+
 export async function promptSelect<T>(
   options: clack.SelectOptions<T>
 ): Promise<T> {

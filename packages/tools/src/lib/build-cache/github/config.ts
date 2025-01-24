@@ -1,9 +1,21 @@
+import cacheManager from '../../cacheManager.js';
 import logger from '../../logger.js';
+import { promptPassword } from '../../prompts.js';
 import { spawn } from '../../spawn.js';
 import { GITHUB_REPO_REGEX } from './patterns.js';
 
-export function hasGitHubToken(): boolean {
-  return !!process.env['GITHUB_TOKEN'];
+export function getGitHubToken(): string | undefined {
+  return cacheManager.get('githubToken');
+}
+
+export async function promptForGitHubToken() {
+  const githubToken = (await promptPassword({
+    message: 'Pass your GITHUB_TOKEN',
+    validate: (value) =>
+      value.length === 0 ? 'Value is required.' : undefined,
+  })) as string;
+  cacheManager.set('githubToken', githubToken);
+  return githubToken;
 }
 
 export type GitHubRepoDetails = {

@@ -1,3 +1,4 @@
+import color from 'picocolors';
 import { getGitRemote } from '../../git.js';
 import logger from '../../logger.js';
 import type {
@@ -11,24 +12,35 @@ import {
   fetchGitHubArtifactsByName,
 } from './artifacts.js';
 import type { GitHubRepoDetails } from './config.js';
-import { detectGitHubRepoDetails, hasGitHubToken } from './config.js';
+import {
+  detectGitHubRepoDetails,
+  getGitHubToken,
+  promptForGitHubToken,
+} from './config.js';
 
 export class GitHubBuildCache implements RemoteBuildCache {
   name = 'GitHub';
   repoDetails: GitHubRepoDetails | null = null;
+  githubToken = getGitHubToken();
 
   async detectRepoDetails() {
     const gitRemote = await getGitRemote();
     this.repoDetails = gitRemote
       ? await detectGitHubRepoDetails(gitRemote)
       : null;
+    if (!this.githubToken) {
+      logger.warn(
+        `No GITHUB_TOKEN found. You can generate one at: ${color.cyan(
+          'https://github.com/settings/tokens'
+        )}`
+      );
+      this.githubToken = await promptForGitHubToken();
+    }
   }
 
   async query(artifactName: string): Promise<RemoteArtifact | null> {
-    if (!hasGitHubToken()) {
-      logger.warn(
-        `No GitHub token found, skipping cached build. Set GITHUB_TOKEN environment variable to use cached builds.`
-      );
+    if (!getGitHubToken()) {
+      logger.warn(`No GITHUB_TOKEN found.`);
       return null;
     }
 

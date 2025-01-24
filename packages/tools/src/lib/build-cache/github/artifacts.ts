@@ -1,10 +1,11 @@
 import * as fs from 'node:fs';
 import AdmZip from 'adm-zip';
+import color from 'picocolors';
+import cacheManager from '../../cacheManager.js';
 import logger from '../../logger.js';
-import { type GitHubRepoDetails } from './config.js';
+import { getGitHubToken, type GitHubRepoDetails } from './config.js';
 
 const PAGE_SIZE = 100; // Maximum allowed by GitHub API
-const GITHUB_TOKEN = process.env['GITHUB_TOKEN'];
 
 type GitHubArtifact = {
   id: number;
@@ -46,7 +47,7 @@ export async function fetchGitHubArtifactsByName(
       let data: GitHubArtifactResponse;
       try {
         const response = await fetch(url, {
-          headers: { Authorization: `token ${GITHUB_TOKEN}` },
+          headers: { Authorization: `token ${getGitHubToken()}` },
         });
         if (!response.ok) {
           throw new Error(
@@ -84,11 +85,13 @@ export async function fetchGitHubArtifactsByName(
   } catch (error) {
     if ((error as { message: string }).message.includes('401 Unauthorized')) {
       logger.warn(
-        `Failed to fetch GitHub artifacts due to invalid GITHUB_TOKEN provided. 
-You may be using GITHUB_TOKEN configured in your shell config file, such as ~/.zshrc.
-Run "echo $GITHUB_TOKEN" to see the value.
-Please generate a new token with access to this project and try again.`
+        `Failed to fetch GitHub artifacts due to invalid or expired GITHUB_TOKEN provided. 
+Please generate a new one at: ${color.cyan(
+          'https://github.com/settings/tokens'
+        )}.
+Next time you run the command, you will be prompted to enter the new token.`
       );
+      cacheManager.remove('githubToken');
     } else {
       logger.warn(
         'Failed to fetch GitHub artifacts: ',
@@ -117,7 +120,7 @@ export async function downloadGitHubArtifact(
 
     const response = await fetch(downloadUrl, {
       headers: {
-        Authorization: `token ${GITHUB_TOKEN}`,
+        Authorization: `token ${getGitHubToken()}`,
       },
     });
 
