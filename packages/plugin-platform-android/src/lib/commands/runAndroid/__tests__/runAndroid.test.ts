@@ -1,3 +1,4 @@
+import '@rnef/tools/mock';
 import type { PathLike } from 'node:fs';
 import fs from 'node:fs';
 import type { AndroidProjectConfig } from '@react-native-community/cli-types';
@@ -8,28 +9,6 @@ import { test, vi } from 'vitest';
 import { type Flags, runAndroid } from '../runAndroid.js';
 
 const actualFs = await vi.importMock('node:fs');
-
-vi.spyOn(tools, 'intro').mockImplementation(() => {});
-vi.spyOn(tools, 'outro').mockImplementation(() => {});
-vi.spyOn(tools, 'promptSelect');
-vi.spyOn(tools.logger, 'warn').mockImplementation(() => {});
-vi.spyOn(tools.logger, 'error').mockImplementation(() => {});
-vi.spyOn(tools.logger, 'log').mockImplementation(() => {});
-vi.spyOn(tools, 'spinner').mockImplementation(() => {
-  return {
-    start: vi.fn(),
-    stop: vi.fn(),
-    message: vi.fn(),
-  };
-});
-
-vi.mock('node:fs');
-
-vi.mock('nano-spawn', () => {
-  return {
-    default: vi.fn(),
-  };
-});
 
 const args: Flags = {
   tasks: undefined,
@@ -326,11 +305,10 @@ test.each([['release'], ['debug'], ['staging']])(
       }
       return Promise.resolve(undefined);
     });
-    const logErrorSpy = vi.spyOn(tools.logger, 'error');
     await runAndroid({ ...androidProject }, { ...args, mode }, '/');
 
     expect(tools.outro).toBeCalledWith('Success 🎉.');
-    expect(logErrorSpy).not.toBeCalled();
+    expect(tools.logger.error).not.toBeCalled();
 
     // Runs installDebug with only active architecture arm64-v8a
     expect(vi.mocked(spawn)).toBeCalledWith(

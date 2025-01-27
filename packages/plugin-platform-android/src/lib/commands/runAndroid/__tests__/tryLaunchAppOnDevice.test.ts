@@ -12,15 +12,6 @@ vi.mock('nano-spawn', () => {
   };
 });
 
-vi.spyOn(tools, 'promptSelect');
-vi.spyOn(tools, 'spinner').mockImplementation(() => {
-  return {
-    start: vi.fn(),
-    stop: vi.fn(),
-    message: vi.fn(),
-  };
-});
-
 const OLD_ENV = process.env;
 
 beforeEach(() => {

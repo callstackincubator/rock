@@ -18,22 +18,11 @@ const mocks = vi.hoisted(() => {
   };
 });
 
-vi.spyOn(tools, 'promptSelect');
-vi.spyOn(tools, 'intro');
-vi.spyOn(tools, 'outro').mockImplementation(() => mocks.outroMock);
 vi.spyOn(tools, 'spinner').mockImplementation(() => ({
   start: mocks.startMock,
   stop: mocks.stopMock,
   message: vi.fn(),
 }));
-vi.spyOn(tools.logger, 'error');
-
-vi.mock('node:fs');
-vi.mock('nano-spawn', () => {
-  return {
-    default: vi.fn(),
-  };
-});
 
 const gradleTaskOutput = `
 > Task :tasks
@@ -116,7 +105,6 @@ test('buildAndroid runs gradle build with correct configuration for debug and ou
 
 test('buildAndroid fails gracefully when gradle errors', async () => {
   vi.mocked(spawn).mockRejectedValueOnce({ stderr: 'gradle error' });
-  vi.spyOn(tools.logger, 'error').mockImplementation(() => {});
 
   await expect(
     buildAndroid(androidProject, args)

@@ -8,21 +8,6 @@ import {
   promptForTaskSelection,
 } from '../listAndroidTasks.js';
 
-vi.spyOn(tools, 'promptSelect');
-vi.spyOn(tools, 'spinner').mockImplementation(() => {
-  return {
-    start: vi.fn(),
-    stop: vi.fn(),
-    message: vi.fn(),
-  };
-});
-
-vi.mock('nano-spawn', () => {
-  return {
-    default: vi.fn(),
-  };
-});
-
 const gradleTaskOutput = `
 > Task :tasks
 

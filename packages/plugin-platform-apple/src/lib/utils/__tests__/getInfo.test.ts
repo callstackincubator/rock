@@ -5,16 +5,6 @@ import { describe, expect, it, vi } from 'vitest';
 import type { XcodeProjectInfo } from '../../types/index.js';
 import { getInfo } from '../getInfo.js';
 
-vi.mock('nano-spawn', () => {
-  return {
-    default: vi.fn(),
-  };
-});
-
-vi.mock('fs', () => ({
-  readFileSync: vi.fn(),
-}));
-
 const projectsOutput = `{
   "project" : {
     "configurations" : [

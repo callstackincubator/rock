@@ -9,10 +9,6 @@ describe('checkIfConfigurationExists', () => {
   beforeEach(() => {
     // Mock process.exit
     vi.spyOn(process, 'exit').mockImplementation(() => undefined as never);
-
-    // Mock logger methods
-    vi.spyOn(logger, 'error').mockImplementation(() => vi.fn());
-    vi.spyOn(logger, 'warn').mockImplementation(() => vi.fn());
   });
 
   afterEach(() => {

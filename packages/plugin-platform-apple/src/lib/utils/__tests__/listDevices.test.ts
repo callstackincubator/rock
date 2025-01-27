@@ -4,9 +4,6 @@ import type { Mock } from 'vitest';
 import { vi } from 'vitest';
 import { listDevicesAndSimulators } from '../listDevices.js';
 
-vi.mock('nano-spawn');
-vi.mock('node:fs');
-
 beforeEach(() => {
   (spawn as Mock)
     .mockResolvedValueOnce({ output: xcrunSimctlOutput })

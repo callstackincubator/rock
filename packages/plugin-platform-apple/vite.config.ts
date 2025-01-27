@@ -23,5 +23,6 @@ export default defineConfig({
       reportsDirectory: '../../coverage/packages/plugin-platform-apple',
       provider: 'v8',
     },
+    setupFiles: ['./vitest-setup.ts'],
   },
 });

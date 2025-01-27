@@ -10,20 +10,6 @@ Users:
         UserInfo{10:Guest:404}
 `;
 
-vi.spyOn(tools, 'spinner').mockImplementation(() => {
-  return {
-    start: vi.fn(),
-    stop: vi.fn(),
-    message: vi.fn(),
-  };
-});
-
-vi.mock('nano-spawn', () => {
-  return {
-    default: vi.fn(),
-  };
-});
-
 describe('check android users', () => {
   it('should correctly parse recieved users', async () => {
     (spawn as Mock).mockResolvedValueOnce({ stdout: gradleOutput });

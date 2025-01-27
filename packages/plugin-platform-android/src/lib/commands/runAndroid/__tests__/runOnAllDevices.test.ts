@@ -1,24 +1,9 @@
 import type { AndroidProjectConfig } from '@react-native-community/cli-types';
-import * as tools from '@rnef/tools';
 import spawn from 'nano-spawn';
 import type { Mock } from 'vitest';
 import { vi } from 'vitest';
 import { runGradle } from '../../runGradle.js';
 import type { Flags } from '../runAndroid.js';
-
-vi.spyOn(tools, 'spinner').mockImplementation(() => {
-  return {
-    start: vi.fn(),
-    stop: vi.fn(),
-    message: vi.fn(),
-  };
-});
-
-vi.mock('nano-spawn', () => {
-  return {
-    default: vi.fn(),
-  };
-});
 
 const gradleTaskOutput = `
 > Task :tasks

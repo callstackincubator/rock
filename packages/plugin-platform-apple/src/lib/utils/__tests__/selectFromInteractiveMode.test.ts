@@ -8,16 +8,6 @@ import {
 } from '../prompts.js';
 import { selectFromInteractiveMode } from '../selectFromInteractiveMode.js';
 
-// Mock dependencies
-vi.spyOn(tools.logger, 'debug').mockImplementation(() => {});
-vi.spyOn(tools, 'spinner').mockImplementation(() => {
-  return {
-    start: vi.fn(),
-    stop: vi.fn(),
-    message: vi.fn(),
-  };
-});
-
 vi.mock('../getInfo', () => {
   return {
     getInfo: vi.fn(() => Promise.resolve(undefined)),
