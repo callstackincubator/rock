@@ -1,7 +1,6 @@
-import * as tools from '@rnef/tools';
 import spawn from 'nano-spawn';
 import type { Mock } from 'vitest';
-import { describe, it, vi } from 'vitest';
+import { describe, it } from 'vitest';
 import { checkUsers } from '../listAndroidUsers.js';
 // output of "adb -s ... shell pm users list" command
 const gradleOutput = `

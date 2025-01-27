@@ -1,5 +1,4 @@
 import type { AndroidProjectConfig } from '@react-native-community/cli-types';
-import * as tools from '@rnef/tools';
 import spawn from 'nano-spawn';
 import { test, vi } from 'vitest';
 import type { DeviceData } from '../listAndroidDevices.js';

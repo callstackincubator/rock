@@ -310,7 +310,7 @@ test.each([['release'], ['debug'], ['staging']])(
     expect(tools.logger.error).not.toBeCalled();
 
     // Runs installDebug with only active architecture arm64-v8a
-    expect(vi.mocked(spawn)).toBeCalledWith(
+    expect(spawn).toBeCalledWith(
       './gradlew',
       [
         mode === 'release'
@@ -327,7 +327,7 @@ test.each([['release'], ['debug'], ['staging']])(
     );
 
     // launches com.test app with MainActivity on emulator-5552
-    expect(vi.mocked(spawn)).toBeCalledWith(
+    expect(spawn).toBeCalledWith(
       '/mock/android/home/platform-tools/adb',
       expect.arrayContaining([
         'emulator-5554',
@@ -358,7 +358,7 @@ test('runAndroid runs gradle build with custom --appId, --appIdSuffix and --main
   expect(logErrorSpy).not.toBeCalled();
 
   // launches com.custom.suffix app with OtherActivity on emulator-5552
-  expect(vi.mocked(spawn)).toBeCalledWith(
+  expect(spawn).toBeCalledWith(
     '/mock/android/home/platform-tools/adb',
     expect.arrayContaining([
       'emulator-5552',
@@ -453,7 +453,7 @@ test.each([
     );
 
     // we don't want to run installDebug when a device is selected, because gradle will install the app on all connected devices
-    expect(vi.mocked(spawn)).not.toBeCalledWith(
+    expect(spawn).not.toBeCalledWith(
       './gradlew',
       expect.arrayContaining([
         mode === 'release' ? 'app:installRelease' : 'app:installDebug',
@@ -461,7 +461,7 @@ test.each([
     );
 
     // Runs assemble debug task with active architectures arm64-v8a, armeabi-v7a
-    expect(vi.mocked(spawn)).toBeCalledWith(
+    expect(spawn).toBeCalledWith(
       './gradlew',
       [
         mode === 'release' ? 'app:assembleRelease' : 'app:assembleDebug',
@@ -474,7 +474,7 @@ test.each([
     );
 
     // launches com.test app with MainActivity on emulator-5554
-    expect(vi.mocked(spawn)).toBeCalledWith(
+    expect(spawn).toBeCalledWith(
       '/mock/android/home/platform-tools/adb',
       expect.arrayContaining([
         'emulator-5554',
@@ -510,7 +510,7 @@ test('runAndroid launches an app on all connected devices', async () => {
   await runAndroid({ ...androidProject }, { ...args }, '/');
 
   // Runs assemble debug task with active architectures arm64-v8a, armeabi-v7a
-  expect(vi.mocked(spawn)).toBeCalledWith(
+  expect(spawn).toBeCalledWith(
     './gradlew',
     [
       'app:installDebug',
@@ -523,14 +523,14 @@ test('runAndroid launches an app on all connected devices', async () => {
   );
 
   // launches com.test app with MainActivity on emulator-5552
-  expect(vi.mocked(spawn)).toBeCalledWith(
+  expect(spawn).toBeCalledWith(
     '/mock/android/home/platform-tools/adb',
     expect.arrayContaining(['emulator-5552', 'com.test/com.test.MainActivity']),
     { stdio: ['ignore', 'ignore', 'pipe'] }
   );
 
   // launches com.test app with MainActivity on emulator-5554
-  expect(vi.mocked(spawn)).toBeCalledWith(
+  expect(spawn).toBeCalledWith(
     '/mock/android/home/platform-tools/adb',
     expect.arrayContaining(['emulator-5554', 'com.test/com.test.MainActivity']),
     { stdio: ['ignore', 'ignore', 'pipe'] }
@@ -577,17 +577,17 @@ test('runAndroid skips building when --binary-path is passed', async () => {
   );
 
   // Skips gradle
-  expect(vi.mocked(spawn)).not.toBeCalledWith('./gradlew');
+  expect(spawn).not.toBeCalledWith('./gradlew');
 
   // launches com.test app with MainActivity on emulator-5554
-  expect(vi.mocked(spawn)).toBeCalledWith(
+  expect(spawn).toBeCalledWith(
     '/mock/android/home/platform-tools/adb',
     expect.arrayContaining(['emulator-5552', 'com.test/com.test.MainActivity']),
     { stdio: ['ignore', 'ignore', 'pipe'] }
   );
 
   // launches com.test app with MainActivity on emulator-5554
-  expect(vi.mocked(spawn)).toBeCalledWith(
+  expect(spawn).toBeCalledWith(
     '/mock/android/home/platform-tools/adb',
     expect.arrayContaining(['emulator-5554', 'com.test/com.test.MainActivity']),
     { stdio: ['ignore', 'ignore', 'pipe'] }

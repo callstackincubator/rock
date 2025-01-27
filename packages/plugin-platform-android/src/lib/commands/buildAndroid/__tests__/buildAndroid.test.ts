@@ -85,13 +85,10 @@ test('buildAndroid runs gradle build with correct configuration for debug and ou
 
   await buildAndroid(androidProject, args);
 
-  const spinnerMock = vi.mocked(tools.spinner).mock.results[0].value;
-
-  expect(vi.mocked(spawn)).toBeCalledWith(
-    './gradlew',
-    ['app:bundleDebug', '-x', 'lint'],
-    { stdio: 'inherit', cwd: '/android' }
-  );
+  expect(spawn).toBeCalledWith('./gradlew', ['app:bundleDebug', '-x', 'lint'], {
+    stdio: 'inherit',
+    cwd: '/android',
+  });
   expect(spinnerMock.stop).toBeCalledWith(
     `Build output: ${color.cyan(
       '/android/app/build/outputs/bundle/debug/app-debug.aab'
@@ -108,11 +105,10 @@ test('buildAndroid fails gracefully when gradle errors', async () => {
     `[RnefError: Failed to build the app. See the error above for details from Gradle.]`
   );
 
-  expect(vi.mocked(spawn)).toBeCalledWith(
-    './gradlew',
-    ['app:bundleDebug', '-x', 'lint'],
-    { stdio: 'inherit', cwd: '/android' }
-  );
+  expect(spawn).toBeCalledWith('./gradlew', ['app:bundleDebug', '-x', 'lint'], {
+    stdio: 'inherit',
+    cwd: '/android',
+  });
 });
 
 test('buildAndroid runs selected "bundleRelease" task in interactive mode', async () => {

@@ -2,7 +2,7 @@ import * as tools from '@rnef/tools';
 import spawn from 'nano-spawn';
 import color from 'picocolors';
 import type { Mock, MockedFunction } from 'vitest';
-import { describe, it, vi } from 'vitest';
+import { describe, it } from 'vitest';
 import {
   parseTasksFromGradleFile,
   promptForTaskSelection,
