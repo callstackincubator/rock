@@ -1,4 +1,3 @@
-import '@rnef/tools/mock';
 import type { PathLike } from 'node:fs';
 import fs from 'node:fs';
 import type { AndroidProjectConfig } from '@react-native-community/cli-types';

@@ -10,20 +10,6 @@ import { buildAndroid, type BuildFlags } from '../buildAndroid.js';
 
 const actualFs = await vi.importMock('node:fs');
 
-const mocks = vi.hoisted(() => {
-  return {
-    startMock: vi.fn(),
-    stopMock: vi.fn(),
-    outroMock: vi.fn(),
-  };
-});
-
-vi.spyOn(tools, 'spinner').mockImplementation(() => ({
-  start: mocks.startMock,
-  stop: mocks.stopMock,
-  message: vi.fn(),
-}));
-
 const gradleTaskOutput = `
 > Task :tasks
 
@@ -56,6 +42,14 @@ const androidProject: AndroidProjectConfig = {
   mainActivity: '.MainActivity',
   assets: [],
 };
+
+const spinnerMock = vi.hoisted(() => ({
+  start: vi.fn(),
+  stop: vi.fn(),
+  message: vi.fn(),
+}));
+
+vi.spyOn(tools, 'spinner').mockImplementation(() => spinnerMock);
 
 beforeEach(() => {
   vi.resetModules();
@@ -91,12 +85,14 @@ test('buildAndroid runs gradle build with correct configuration for debug and ou
 
   await buildAndroid(androidProject, args);
 
+  const spinnerMock = vi.mocked(tools.spinner).mock.results[0].value;
+
   expect(vi.mocked(spawn)).toBeCalledWith(
     './gradlew',
     ['app:bundleDebug', '-x', 'lint'],
     { stdio: 'inherit', cwd: '/android' }
   );
-  expect(mocks.stopMock).toBeCalledWith(
+  expect(spinnerMock.stop).toBeCalledWith(
     `Build output: ${color.cyan(
       '/android/app/build/outputs/bundle/debug/app-debug.aab'
     )}`
@@ -141,21 +137,21 @@ test('buildAndroid runs selected "bundleRelease" task in interactive mode', asyn
 
   await buildAndroid(androidProject, { ...args, interactive: true });
 
-  expect(vi.mocked(spawn)).toHaveBeenNthCalledWith(
+  expect(spawn).toHaveBeenNthCalledWith(
     1,
     './gradlew',
     ['tasks', '--group', 'build'],
     { cwd: '/android' }
   );
-  expect(vi.mocked(spawn)).toHaveBeenNthCalledWith(
+  expect(spawn).toHaveBeenNthCalledWith(
     2,
     './gradlew',
     ['app:bundleRelease', '-x', 'lint'],
     { stdio: 'inherit', cwd: '/android' }
   );
-  expect(mocks.startMock).toBeCalledWith(
+  expect(spinnerMock.start).toBeCalledWith(
     'Searching for available Gradle tasks...'
   );
-  expect(mocks.stopMock).toBeCalledWith('Found 2 Gradle tasks.');
+  expect(spinnerMock.stop).toBeCalledWith('Found 2 Gradle tasks.');
   expect(tools.outro).toBeCalledWith('Success 🎉.');
 });
