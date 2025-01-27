@@ -346,7 +346,7 @@ test.each([['release'], ['debug'], ['staging']])(
         '-PreactNativeDevServerPort=8081',
         '-PreactNativeArchitectures=arm64-v8a,armeabi-v7a',
       ],
-      { stdio: 'pipe', cwd: '/android' }
+      { stdio: 'inherit', cwd: '/android' }
     );
 
     // launches com.test app with MainActivity on emulator-5552
@@ -493,7 +493,7 @@ test.each([
         '-PreactNativeDevServerPort=8081',
         '-PreactNativeArchitectures=arm64-v8a,armeabi-v7a',
       ],
-      { stdio: 'pipe', cwd: '/android' }
+      { stdio: 'inherit', cwd: '/android' }
     );
 
     // launches com.test app with MainActivity on emulator-5554
@@ -542,7 +542,7 @@ test('runAndroid launches an app on all connected devices', async () => {
       '-PreactNativeDevServerPort=8081',
       '-PreactNativeArchitectures=arm64-v8a,armeabi-v7a',
     ],
-    { stdio: 'pipe', cwd: '/android' }
+    { stdio: 'inherit', cwd: '/android' }
   );
 
   // launches com.test app with MainActivity on emulator-5552
