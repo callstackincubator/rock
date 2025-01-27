@@ -5,7 +5,6 @@ import {
   RnefError,
   setupChildProcessCleanup,
   spinner,
-  updateClock,
 } from '@rnef/tools';
 import type { SubprocessError } from 'nano-spawn';
 import spawn from 'nano-spawn';
@@ -89,9 +88,7 @@ export const buildProject = async (
     args.archive ? 'Archiving' : 'Building'
   } the app with xcodebuild for ${scheme} scheme in ${mode} mode`;
 
-  loader.start(message);
-  const clockInterval = updateClock(loader.message, message);
-
+  loader.start(message, { kind: 'clock' });
   logger.debug(`Running "xcodebuild ${xcodebuildArgs.join(' ')}.`);
   try {
     const childProcess = spawn('xcodebuild', xcodebuildArgs, {
@@ -124,7 +121,5 @@ export const buildProject = async (
     }
 
     throw new RnefError('Running xcodebuild failed', { cause: error });
-  } finally {
-    clearInterval(clockInterval);
   }
 };
