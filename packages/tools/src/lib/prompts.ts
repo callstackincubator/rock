@@ -90,7 +90,7 @@ export type SpinnerOptions = {
 };
 
 export function spinner() {
-  if (!isInteractive()) {
+  if (logger.isVerbose() || !isInteractive()) {
     return {
       start: (message?: string) => logger.log(message),
       stop: (message?: string, code?: number) => logger.log(message, code),
