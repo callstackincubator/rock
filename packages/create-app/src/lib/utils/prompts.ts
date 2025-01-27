@@ -2,6 +2,7 @@ import {
   intro,
   note,
   outro,
+  promptConfirm,
   promptMultiselect,
   promptSelect,
   promptText,
@@ -125,13 +126,9 @@ export async function promptPlugins(
 }
 
 export async function confirmOverrideFiles(targetDir: string) {
-  const option = await promptSelect({
+  return await promptConfirm({
     message: `"${targetDir}" is not empty, please choose:`,
-    options: [
-      { value: true, label: 'Continue and override files' },
-      { value: false, label: 'Cancel operation' },
-    ],
+    confirmLabel: 'Continue and override files',
+    cancelLabel: 'Cancel operation',
   });
-
-  return option === true;
 }

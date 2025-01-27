@@ -1,24 +1,14 @@
 import logger from '../logger.js';
-import { promptSelect } from '../prompts.js';
+import { promptConfirm } from '../prompts.js';
 
 export const askForPortChange = async (port: number, nextPort: number) => {
   logger.info(`Another process is running on port ${port}.`);
 
-  const result = await promptSelect({
+  return await promptConfirm({
     message: `Use port ${nextPort} instead?`,
-    options: [
-      {
-        value: true,
-        label: 'Yes',
-      },
-      {
-        value: false,
-        label: 'No',
-      },
-    ],
+    confirmLabel: 'Yes',
+    cancelLabel: 'No',
   });
-
-  return result === true;
 };
 
 export const logAlreadyRunningBundler = (port: number) => {

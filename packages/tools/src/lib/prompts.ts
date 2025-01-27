@@ -27,12 +27,39 @@ export async function promptText(options: clack.TextOptions): Promise<string> {
 export async function promptSelect<T>(
   options: clack.SelectOptions<T>
 ): Promise<T> {
+  // If there is only one option, return it immediately
+  if (options.options.length === 1) {
+    return options.options[0].value as T;
+  }
+
   const result = await clack.select<T>(options);
   if (clack.isCancel(result)) {
     cancelPromptAndExit();
   }
 
   return result;
+}
+
+type ConfirmOptions = {
+  message: string;
+  confirmLabel?: string;
+  cancelLabel?: string;
+};
+
+export async function promptConfirm(options: ConfirmOptions): Promise<boolean> {
+  const result = await clack.select({
+    message: options.message,
+    options: [
+      { value: true, label: options.confirmLabel ?? 'Confirm' },
+      { value: false, label: options.cancelLabel ?? 'Cancel' },
+    ],
+  });
+
+  if (clack.isCancel(result)) {
+    cancelPromptAndExit();
+  }
+
+  return result === true;
 }
 
 export async function promptMultiselect<T>(
