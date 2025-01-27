@@ -7,6 +7,7 @@ vi.mock('@rnef/tools', async (importOriginal) => {
   const actual = await importOriginal<typeof import('@rnef/tools')>();
   return {
     ...actual,
+    // Logger
     logger: {
       ...actual.logger,
       success: vi.fn(),
@@ -16,6 +17,7 @@ vi.mock('@rnef/tools', async (importOriginal) => {
       debug: vi.fn(),
       log: vi.fn(),
     },
+    // Prompts
     intro: vi.fn(),
     outro: vi.fn(),
     note: vi.fn(),
@@ -28,5 +30,7 @@ vi.mock('@rnef/tools', async (importOriginal) => {
       stop: vi.fn(),
       message: vi.fn(),
     })),
+    // Spawn
+    spawn: vi.fn(),
   };
 });
