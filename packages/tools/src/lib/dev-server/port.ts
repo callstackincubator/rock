@@ -1,10 +1,10 @@
 import logger from '../logger.js';
 import { promptConfirm } from '../prompts.js';
 
-export const askForPortChange = async (port: number, nextPort: number) => {
+export const askForPortChange = (port: number, nextPort: number) => {
   logger.info(`Another process is running on port ${port}.`);
 
-  return await promptConfirm({
+  return promptConfirm({
     message: `Use port ${nextPort} instead?`,
     confirmLabel: 'Yes',
     cancelLabel: 'No',

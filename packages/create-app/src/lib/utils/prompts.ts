@@ -66,8 +66,8 @@ export function printByeMessage(targetDir: string) {
   outro('Done.');
 }
 
-export async function promptProjectName() {
-  return await promptText({
+export function promptProjectName(): Promise<string> {
+  return promptText({
     message: 'What is your app named?',
     validate: validateProjectName,
   });
@@ -90,14 +90,14 @@ export async function promptTemplate(
   });
 }
 
-export async function promptPlatforms(
+export function promptPlatforms(
   platforms: TemplateInfo[]
 ): Promise<TemplateInfo[]> {
   if (platforms.length === 0) {
     throw new RnefError('No platforms found');
   }
 
-  return await promptMultiselect({
+  return promptMultiselect({
     message: 'Select platforms:',
     // @ts-expect-error todo
     options: platforms.map((platform) => ({
@@ -107,14 +107,14 @@ export async function promptPlatforms(
   });
 }
 
-export async function promptPlugins(
+export function promptPlugins(
   plugins: TemplateInfo[]
 ): Promise<TemplateInfo[]> {
   if (plugins.length === 0) {
     throw new RnefError('No plugins found');
   }
 
-  return await promptMultiselect({
+  return promptMultiselect({
     message: 'Select plugins:',
     initialValues: [plugins[0]],
     // @ts-expect-error todo fixup type
@@ -125,8 +125,8 @@ export async function promptPlugins(
   });
 }
 
-export async function confirmOverrideFiles(targetDir: string) {
-  return await promptConfirm({
+export function confirmOverrideFiles(targetDir: string) {
+  return promptConfirm({
     message: `"${targetDir}" is not empty, please choose:`,
     confirmLabel: 'Continue and override files',
     cancelLabel: 'Cancel operation',
