@@ -86,7 +86,7 @@ test('buildAndroid runs gradle build with correct configuration for debug and ou
   await buildAndroid(androidProject, args);
 
   expect(spawn).toBeCalledWith('./gradlew', ['app:bundleDebug', '-x', 'lint'], {
-    stdio: 'pipe',
+    stdio: !tools.isInteractive() ? 'inherit' : 'pipe',
     cwd: '/android',
   });
   expect(spinnerMock.stop).toBeCalledWith(
@@ -106,7 +106,7 @@ test('buildAndroid fails gracefully when gradle errors', async () => {
   );
 
   expect(spawn).toBeCalledWith('./gradlew', ['app:bundleDebug', '-x', 'lint'], {
-    stdio: 'pipe',
+    stdio: !tools.isInteractive() ? 'inherit' : 'pipe',
     cwd: '/android',
   });
 });
@@ -143,7 +143,7 @@ test('buildAndroid runs selected "bundleRelease" task in interactive mode', asyn
     2,
     './gradlew',
     ['app:bundleRelease', '-x', 'lint'],
-    { stdio: 'pipe', cwd: '/android' }
+    { stdio: !tools.isInteractive() ? 'inherit' : 'pipe', cwd: '/android' }
   );
   expect(spinnerMock.start).toBeCalledWith(
     'Searching for available Gradle tasks...'
