@@ -1,3 +1,4 @@
+import { spinner } from '@rnef/tools';
 import spawn from 'nano-spawn';
 import type {
   ApplePlatform,
@@ -8,7 +9,6 @@ import { buildProject } from '../build/buildProject.js';
 import { fetchCachedBuild } from './fetchCachedBuild.js';
 import installApp from './installApp.js';
 import type { RunFlags } from './runOptions.js';
-import { spinner } from '@rnef/tools';
 
 export async function runOnSimulator(
   simulator: Device,

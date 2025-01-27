@@ -1,6 +1,6 @@
 import nx from '@nx/eslint-plugin';
-import jsoncParser from 'jsonc-eslint-parser';
 import simpleImportSort from 'eslint-plugin-simple-import-sort';
+import jsoncParser from 'jsonc-eslint-parser';
 
 export default [
   ...nx.configs['flat/base'],
@@ -49,6 +49,12 @@ export default [
     files: ['**/*.ts', '**/*.tsx', '**/*.js', '**/*.jsx'],
     // Override or add rules here
     rules: {},
+  },
+  {
+    files: ['**/*.test.ts', '**/__tests__/**'],
+    rules: {
+      '@typescript-eslint/no-empty-function': 'off',
+    },
   },
   {
     ignores: ['**/template/**/*.mjs', '**/dist/**', '**/__fixtures__/**'],
