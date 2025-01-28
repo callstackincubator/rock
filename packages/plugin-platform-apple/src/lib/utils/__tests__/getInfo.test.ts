@@ -1,5 +1,5 @@
 import * as fs from 'node:fs';
-import { spawn } from '@rnef/tools';
+import { isInteractive, spawn } from '@rnef/tools';
 import type { Mock } from 'vitest';
 import { describe, expect, it, vi } from 'vitest';
 import type { XcodeProjectInfo } from '../../types/index.js';
@@ -60,7 +60,10 @@ describe('getInfo', () => {
     expect(spawn).toHaveBeenCalledWith(
       'xcodebuild',
       ['-list', '-json', '-project', `some/path/YourProjectName.xcodeproj`],
-      { stdio: ['ignore', 'pipe', 'inherit'], cwd: 'some/path' }
+      {
+        stdio: isInteractive() ? ['ignore', 'pipe', 'inherit'] : 'pipe',
+        cwd: 'some/path',
+      }
     );
     expect(spawn).toHaveBeenCalledTimes(1);
 
