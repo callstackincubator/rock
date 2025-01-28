@@ -1,5 +1,4 @@
 import {
-  isInteractive,
   logger,
   RnefError,
   spawn,
@@ -59,7 +58,7 @@ export async function runGradle({
     logger.debug(`Running ${gradleWrapper} ${gradleArgs.join(' ')}.`);
     await spawn(gradleWrapper, gradleArgs, {
       cwd: androidProject.sourceDir,
-      stdio: logger.isVerbose() || !isInteractive() ? 'inherit' : 'pipe',
+      stdio: logger.isVerbose() ? 'inherit' : 'pipe',
     });
     loader.stop(`Built the app in ${args.mode} mode.`);
   } catch (error) {

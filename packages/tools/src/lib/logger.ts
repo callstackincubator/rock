@@ -2,6 +2,7 @@ import util from 'node:util';
 import { log as clackLog } from '@clack/prompts';
 import isUnicodeSupported from 'is-unicode-supported';
 import color from 'picocolors';
+import { isInteractive } from './isInteractive.js';
 
 const unicode = isUnicodeSupported();
 
@@ -50,7 +51,10 @@ const setVerbose = (level: boolean) => {
   verbose = level;
 };
 
-const isVerbose = () => verbose;
+const isVerbose = () => {
+  // For non-interactive environments, always show verbose logs
+  return !isInteractive() || verbose;
+};
 
 export default {
   success,

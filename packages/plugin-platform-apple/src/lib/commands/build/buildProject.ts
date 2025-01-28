@@ -1,6 +1,6 @@
 import path from 'node:path';
 import type { SubprocessError } from '@rnef/tools';
-import { isInteractive, logger, RnefError, spawn, spinner } from '@rnef/tools';
+import { logger, RnefError, spawn, spinner } from '@rnef/tools';
 import type { ApplePlatform, XcodeProjectInfo } from '../../types/index.js';
 import { getBuildPaths } from '../../utils/buildPaths.js';
 import { supportedPlatforms } from '../../utils/supportedPlatforms.js';
@@ -86,10 +86,7 @@ export const buildProject = async (
   try {
     const { output } = await spawn('xcodebuild', xcodebuildArgs, {
       cwd: sourceDir,
-      stdio:
-        logger.isVerbose() || !isInteractive()
-          ? 'inherit'
-          : ['ignore', 'pipe', 'pipe'],
+      stdio: logger.isVerbose() ? 'inherit' : ['ignore', 'pipe', 'pipe'],
     });
     loader.stop(
       `${
