@@ -8,7 +8,7 @@ inputs:
     description: 'Artifact name'
     required: false
   github-token:
-    description: A GitHub personal access token with write access to the project
+    description: A GitHub Personal Access Token with write access to the project
     required: false
     default: ${{ github.token }}
   repository:

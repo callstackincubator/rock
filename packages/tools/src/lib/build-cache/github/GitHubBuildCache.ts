@@ -30,9 +30,9 @@ export class GitHubBuildCache implements RemoteBuildCache {
       : null;
     if (!this.githubToken) {
       logger.warn(
-        `No GitHub Personal Access Token found. You can generate one at: ${color.cyan(
-          'https://github.com/settings/tokens'
-        )}`
+        `No GitHub Personal Access Token found necessary to download cached builds.
+Please generate one at: ${color.cyan('https://github.com/settings/tokens')}
+Include "repo", "workflow", and "read:org" permissions.`
       );
       this.githubToken = await promptForGitHubToken();
     }

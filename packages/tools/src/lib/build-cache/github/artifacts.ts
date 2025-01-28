@@ -85,10 +85,11 @@ export async function fetchGitHubArtifactsByName(
   } catch (error) {
     if ((error as { message: string }).message.includes('401 Unauthorized')) {
       logger.warn(
-        `Failed to fetch GitHub artifacts due to invalid or expired GitHub Personal Access Token provided. 
+        `Failed to fetch GitHub artifacts due to invalid or expired GitHub Personal Access Token provided.
 Please generate a new one at: ${color.cyan(
           'https://github.com/settings/tokens'
-        )}.
+        )}
+Include "repo", "workflow", and "read:org" permissions.
 Next time you run the command, you will be prompted to enter the new token.`
       );
       cacheManager.remove('githubToken');
