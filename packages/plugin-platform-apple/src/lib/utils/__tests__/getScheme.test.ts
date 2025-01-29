@@ -1,6 +1,6 @@
+import { promptSelect } from '@rnef/tools';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { getScheme } from '../getScheme.js';
-import { promptForSchemeSelection } from '../prompts.js';
 
 vi.mock('../prompts', () => ({
   promptForSchemeSelection: vi.fn(),
@@ -30,11 +30,11 @@ describe('getScheme', () => {
     );
 
     expect(result).toBe('TestScheme');
-    expect(promptForSchemeSelection).not.toHaveBeenCalled();
+    expect(promptSelect).not.toHaveBeenCalled();
   });
 
   it('should prompt for scheme selection when multiple schemes exist', async () => {
-    vi.mocked(promptForSchemeSelection).mockResolvedValueOnce('TestScheme');
+    vi.mocked(promptSelect).mockResolvedValueOnce('TestScheme');
 
     const result = await getScheme(
       ['StageScheme', 'TestScheme'],
@@ -43,10 +43,13 @@ describe('getScheme', () => {
       'ProjectName'
     );
 
-    expect(promptForSchemeSelection).toHaveBeenCalledWith([
-      'StageScheme',
-      'TestScheme',
-    ]);
+    expect(promptSelect).toHaveBeenCalledWith({
+      message: 'Select the scheme you want to use',
+      options: [
+        { label: 'StageScheme', value: 'StageScheme' },
+        { label: 'TestScheme', value: 'TestScheme' },
+      ],
+    });
     expect(result).toBe('TestScheme');
   });
 
@@ -59,6 +62,6 @@ describe('getScheme', () => {
     );
 
     expect(result).toBe('ProjectName');
-    expect(promptForSchemeSelection).not.toHaveBeenCalled();
+    expect(promptSelect).not.toHaveBeenCalled();
   });
 });

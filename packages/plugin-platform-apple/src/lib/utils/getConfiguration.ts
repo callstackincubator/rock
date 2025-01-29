@@ -1,6 +1,5 @@
-import { logger, RnefError } from '@rnef/tools';
+import { logger, promptSelect, RnefError } from '@rnef/tools';
 import type { Info } from '../types/index.js';
-import { promptForConfigurationSelection } from './prompts.js';
 
 export async function getConfiguration(
   configurations: Info['configurations'],
@@ -20,7 +19,7 @@ export async function getConfiguration(
   return mode;
 }
 
-export function invalidateConfiguration(
+function invalidateConfiguration(
   configurations: Info['configurations'],
   mode: string
 ) {
@@ -38,4 +37,14 @@ export function invalidateConfiguration(
         .join('')}`
     );
   }
+}
+
+function promptForConfigurationSelection(configurations: string[]) {
+  return promptSelect({
+    message: 'Select the configuration you want to use',
+    options: configurations.map((value) => ({
+      label: value,
+      value: value,
+    })),
+  });
 }

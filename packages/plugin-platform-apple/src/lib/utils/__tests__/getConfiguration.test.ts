@@ -1,9 +1,9 @@
+import { promptSelect } from '@rnef/tools';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { getConfiguration } from '../getConfiguration.js';
-import { promptForConfigurationSelection } from '../prompts.js';
 
 vi.mock('../prompts', () => ({
-  promptForConfigurationSelection: vi.fn(),
+  promptSelect: vi.fn(),
 }));
 
 vi.mock('picocolors', () => ({
@@ -25,11 +25,11 @@ describe('getConfiguration', () => {
     const result = await getConfiguration(undefined, 'Debug', true);
 
     expect(result).toBe('Debug');
-    expect(promptForConfigurationSelection).not.toHaveBeenCalled();
+    expect(promptSelect).not.toHaveBeenCalled();
   });
 
   it('should prompt for configuration selection when multiple configurations exist', async () => {
-    vi.mocked(promptForConfigurationSelection).mockResolvedValueOnce('Release');
+    vi.mocked(promptSelect).mockResolvedValueOnce('Release');
 
     const result = await getConfiguration(
       ['Debug', 'Release'],
@@ -37,10 +37,13 @@ describe('getConfiguration', () => {
       true
     );
 
-    expect(promptForConfigurationSelection).toHaveBeenCalledWith([
-      'Debug',
-      'Release',
-    ]);
+    expect(promptSelect).toHaveBeenCalledWith({
+      message: 'Select the configuration you want to use',
+      options: [
+        { label: 'Debug', value: 'Debug' },
+        { label: 'Release', value: 'Release' },
+      ],
+    });
     expect(result).toBe('Release');
   });
 
@@ -48,6 +51,6 @@ describe('getConfiguration', () => {
     const result = await getConfiguration(['Debug'], undefined, true);
 
     expect(result).toBe('Debug');
-    expect(promptForConfigurationSelection).not.toHaveBeenCalled();
+    expect(promptSelect).not.toHaveBeenCalled();
   });
 });

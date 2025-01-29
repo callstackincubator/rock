@@ -5,9 +5,11 @@ import {
   isInteractive,
   logger,
   outro,
+  promptSelect,
   RnefError,
   spinner,
 } from '@rnef/tools';
+import color from 'picocolors';
 import type {
   ApplePlatform,
   Device,
@@ -18,10 +20,9 @@ import { getInfo } from '../../utils/getInfo.js';
 import { getPlatformInfo } from '../../utils/getPlatformInfo.js';
 import { getScheme } from '../../utils/getScheme.js';
 import { listDevicesAndSimulators } from '../../utils/listDevices.js';
-import { promptForDeviceSelection } from '../../utils/prompts.js';
 import { fetchCachedBuild } from './fetchCachedBuild.js';
 import { matchingDevice } from './matchingDevice.js';
-import { cacheRecentDevice } from './recentDevices.js';
+import { cacheRecentDevice, sortByRecentDevices } from './recentDevices.js';
 import { runOnDevice } from './runOnDevice.js';
 import { runOnMac } from './runOnMac.js';
 import { runOnMacCatalyst } from './runOnMacCatalyst.js';
@@ -211,4 +212,21 @@ function validateArgs(args: RunFlags, projectRoot: string) {
     );
     args.interactive = false;
   }
+}
+
+function promptForDeviceSelection(
+  devices: Device[],
+  platformName: ApplePlatform
+) {
+  const sortedDevices = sortByRecentDevices(devices, platformName);
+  return promptSelect({
+    message: 'Select the device / simulator you want to use',
+    options: sortedDevices.map((d) => {
+      const markDevice = d.type === 'device' ? ` - (physical device)` : '';
+      return {
+        label: `${d.name} ${color.dim(`(${d.version})${markDevice}`)}`,
+        value: d,
+      };
+    }),
+  });
 }

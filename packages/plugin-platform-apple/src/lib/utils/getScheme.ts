@@ -1,7 +1,6 @@
-import { logger, RnefError } from '@rnef/tools';
+import { logger, promptSelect, RnefError } from '@rnef/tools';
 import path from 'path';
 import type { Info } from '../types/index.js';
-import { promptForSchemeSelection } from './prompts.js';
 
 export async function getScheme(
   schemes: Info['schemes'],
@@ -22,7 +21,7 @@ export async function getScheme(
   return scheme;
 }
 
-export function invalidateScheme(schemes: Info['schemes'], scheme: string) {
+function invalidateScheme(schemes: Info['schemes'], scheme: string) {
   if (!schemes || schemes.length === 0) {
     logger.warn(
       `Unable to check whether "${scheme}" scheme exists in your project`
@@ -36,4 +35,14 @@ export function invalidateScheme(schemes: Info['schemes'], scheme: string) {
         .join('')}`
     );
   }
+}
+
+function promptForSchemeSelection(schemes: string[]) {
+  return promptSelect({
+    message: 'Select the scheme you want to use',
+    options: schemes.map((value) => ({
+      label: value,
+      value: value,
+    })),
+  });
 }
