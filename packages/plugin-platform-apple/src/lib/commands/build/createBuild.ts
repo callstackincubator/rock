@@ -54,15 +54,18 @@ export const createBuild = async (
       mode,
       args
     );
+  } catch (error) {
+    throw new RnefError('Failed to create build', { cause: error });
+  }
 
-    if (args.archive) {
-      const { archiveDir } = getBuildPaths(platformName);
+  if (args.archive) {
+    const { archiveDir } = getBuildPaths(platformName);
 
-      const archivePath = path.join(
-        archiveDir,
-        `${xcodeProject.name.replace('.xcworkspace', '')}.xcarchive`
-      );
-
+    const archivePath = path.join(
+      archiveDir,
+      `${xcodeProject.name.replace('.xcworkspace', '')}.xcarchive`
+    );
+    try {
       await exportArchive({
         sourceDir,
         archivePath,
@@ -71,10 +74,11 @@ export const createBuild = async (
         platformName,
         exportExtraParams: args.exportExtraParams ?? [],
       });
+
+      outro('Success 🎉.');
+    } catch (error) {
+      throw new RnefError('Failed to create archive', { cause: error });
     }
-    outro('Success 🎉.');
-  } catch (error) {
-    throw new RnefError('Failed to create build', { cause: error });
   }
 };
 
