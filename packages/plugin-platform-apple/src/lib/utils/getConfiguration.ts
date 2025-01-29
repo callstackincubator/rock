@@ -1,0 +1,43 @@
+import { logger, RnefError } from '@rnef/tools';
+import type { Info } from '../types/index.js';
+import { promptForConfigurationSelection } from './prompts.js';
+
+export async function getConfiguration(
+  configurations: Info['configurations'],
+  preselectedMode: string | undefined,
+  interactive: boolean | undefined
+) {
+  let mode = preselectedMode;
+  if (interactive) {
+    if (configurations && configurations.length > 1) {
+      mode =
+        preselectedMode ??
+        (await promptForConfigurationSelection(configurations));
+    }
+  }
+  if (!mode) {
+    mode = 'Debug';
+  }
+  invalidateConfiguration(configurations, mode);
+  return mode;
+}
+
+export function invalidateConfiguration(
+  configurations: Info['configurations'],
+  mode: string
+) {
+  if (!configurations || configurations.length === 0) {
+    logger.warn(
+      `Unable to check whether "${mode}" configuration exists in your project`
+    );
+    return;
+  }
+
+  if (!configurations.includes(mode)) {
+    throw new RnefError(
+      `Configuration "${mode}" doesn't exist. Please use one of the existing configurations: ${configurations
+        .map((configuration) => `\n- ${configuration}`)
+        .join('')}`
+    );
+  }
+}

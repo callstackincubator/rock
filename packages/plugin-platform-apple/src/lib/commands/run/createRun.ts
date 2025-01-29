@@ -13,12 +13,12 @@ import type {
   Device,
   ProjectConfig,
 } from '../../types/index.js';
+import { getConfiguration } from '../../utils/getConfiguration.js';
 import { getInfo } from '../../utils/getInfo.js';
 import { getPlatformInfo } from '../../utils/getPlatformInfo.js';
+import { getScheme } from '../../utils/getScheme.js';
 import { listDevicesAndSimulators } from '../../utils/listDevices.js';
 import { promptForDeviceSelection } from '../../utils/prompts.js';
-import { selectFromInteractiveMode } from '../../utils/selectFromInteractiveMode.js';
-import { getConfiguration } from '../build/getConfiguration.js';
 import { fetchCachedBuild } from './fetchCachedBuild.js';
 import { matchingDevice } from './matchingDevice.js';
 import { cacheRecentDevice } from './recentDevices.js';
@@ -63,28 +63,17 @@ export const createRun = async (
   if (!info) {
     throw new RnefError('Failed to get Xcode project information');
   }
-  let scheme = args.scheme;
-  let mode = args.mode;
-  if (args.interactive) {
-    const result = await selectFromInteractiveMode(
-      info,
-      args.scheme,
-      args.mode
-    );
-
-    scheme = result.scheme;
-    mode = result.mode;
-  }
-
-  if (!mode) {
-    mode = 'Debug';
-  }
-
-  if (!scheme) {
-    scheme = path.basename(xcodeProject.name, path.extname(xcodeProject.name));
-  }
-
-  await getConfiguration(info, scheme, mode, platformName);
+  const scheme = await getScheme(
+    info.schemes,
+    args.scheme,
+    args.interactive,
+    xcodeProject.name
+  );
+  const mode = await getConfiguration(
+    info.configurations,
+    args.mode,
+    args.interactive
+  );
 
   if (platformName === 'macos') {
     await runOnMac(xcodeProject, sourceDir, mode, scheme, args);
