@@ -5,8 +5,8 @@ import { getPlatformInfo } from '../../utils/getPlatformInfo.js';
 export type BuildFlags = {
   verbose?: boolean;
   interactive?: boolean;
-  mode: string;
-  scheme: string;
+  mode?: string;
+  scheme?: string;
   target?: string;
   extraParams?: string[];
   exportExtraParams?: string[];

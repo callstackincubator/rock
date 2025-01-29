@@ -1,6 +1,13 @@
 import fs from 'node:fs';
 import path from 'node:path';
-import { intro, isInteractive, logger, outro, RnefError, spinner } from '@rnef/tools';
+import {
+  intro,
+  isInteractive,
+  logger,
+  outro,
+  RnefError,
+  spinner,
+} from '@rnef/tools';
 import type {
   ApplePlatform,
   Device,
@@ -30,9 +37,9 @@ export const createRun = async (
   intro('Running on iOS');
 
   if (!args.binaryPath && args.remoteCache) {
-    const cachedBuild = await fetchCachedBuild({ 
-      mode: args.mode ?? 'Debug', 
-      distribution: args.device ? 'device' : 'simulator'  // TODO: replace with better logic
+    const cachedBuild = await fetchCachedBuild({
+      mode: args.mode ?? 'Debug',
+      distribution: args.device ? 'device' : 'simulator', // TODO: replace with better logic
     });
     if (cachedBuild) {
       // @todo replace with a more generic way to pass binary path
@@ -51,32 +58,22 @@ export const createRun = async (
 
   validateArgs(args, projectRoot);
 
-  let scheme, mode;
   const info = await getInfo(xcodeProject, sourceDir);
 
   if (!info) {
     throw new RnefError('Failed to get Xcode project information');
   }
-
+  let scheme = args.scheme;
+  let mode = args.mode;
   if (args.interactive) {
-    if (!isInteractive()) {
-      logger.warn(
-        'Interactive mode is not supported in non-interactive environments.'
-      );
-  
-      scheme = args.scheme;
-      mode = args.mode;
-      
-    } else {
-      const result = await selectFromInteractiveMode(
+    const result = await selectFromInteractiveMode(
       info,
       args.scheme,
       args.mode
     );
 
-      scheme = result.scheme;
-      mode = result.mode;
-    }
+    scheme = result.scheme;
+    mode = result.mode;
   }
 
   if (!mode) {
@@ -87,12 +84,7 @@ export const createRun = async (
     scheme = path.basename(xcodeProject.name, path.extname(xcodeProject.name));
   }
 
-  await getConfiguration(
-    info,
-    scheme,
-    mode,
-    platformName
-  );
+  await getConfiguration(info, scheme, mode, platformName);
 
   if (platformName === 'macos') {
     await runOnMac(xcodeProject, sourceDir, mode, scheme, args);
