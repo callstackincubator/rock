@@ -74,12 +74,11 @@ export const createBuild = async (
         platformName,
         exportExtraParams: args.exportExtraParams ?? [],
       });
-
-      outro('Success 🎉.');
     } catch (error) {
       throw new RnefError('Failed to create archive', { cause: error });
     }
   }
+  outro('Success 🎉.');
 };
 
 function normalizeArgs(args: BuildFlags, xcodeProject: XcodeProjectInfo) {
