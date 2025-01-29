@@ -30,7 +30,10 @@ export const createRun = async (
   intro('Running on iOS');
 
   if (!args.binaryPath && args.remoteCache) {
-    const cachedBuild = await fetchCachedBuild({ mode: args.mode ?? 'Debug' });
+    const cachedBuild = await fetchCachedBuild({ 
+      mode: args.mode ?? 'Debug', 
+      distribution: args.device ? 'device' : 'simulator'  // TODO: replace with better logic
+    });
     if (cachedBuild) {
       // @todo replace with a more generic way to pass binary path
       args.binaryPath = cachedBuild.binaryPath;
@@ -56,10 +59,24 @@ export const createRun = async (
   }
 
   if (args.interactive) {
-    const result = await selectFromInteractiveMode(info, args.scheme, args.mode);
-    
-    scheme = result.scheme;
-    mode = result.mode;
+    if (!isInteractive()) {
+      logger.warn(
+        'Interactive mode is not supported in non-interactive environments.'
+      );
+  
+      scheme = args.scheme;
+      mode = args.mode;
+      
+    } else {
+      const result = await selectFromInteractiveMode(
+      info,
+      args.scheme,
+      args.mode
+    );
+
+      scheme = result.scheme;
+      mode = result.mode;
+    }
   }
 
   if (!mode) {

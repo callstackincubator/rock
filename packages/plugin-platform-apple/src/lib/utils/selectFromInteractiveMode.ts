@@ -1,5 +1,3 @@
-import { logger } from '@rnef/tools';
-import isInteractive from 'is-interactive';
 import type { Info } from '../types/index.js';
 import {
   promptForConfigurationSelection,
@@ -11,21 +9,10 @@ export async function selectFromInteractiveMode(
   preselectedScheme?: string,
   preselectedMode?: string
 ): Promise<{ scheme?: string; mode?: string }> {
-  if (!isInteractive()) {
-    logger.warn(
-      'Interactive mode is not supported in non-interactive environments.'
-    );
+  let newScheme = preselectedScheme;
+  let newMode = preselectedMode;
 
-    return {
-      scheme: preselectedScheme,
-      mode: preselectedMode,
-    };
-  }
-
-  let newScheme;
-  let newMode;
-
-  const schemes = info?.schemes;
+  const schemes = info.schemes;
 
   if (schemes && schemes.length > 1) {
     newScheme = preselectedScheme ?? await promptForSchemeSelection(schemes);

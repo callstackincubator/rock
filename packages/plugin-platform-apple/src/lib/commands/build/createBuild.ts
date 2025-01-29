@@ -33,15 +33,26 @@ export const createBuild = async (
     throw new RnefError('Failed to get Xcode project information');
   }
 
+  
   if (args.interactive) {
-    const result = await selectFromInteractiveMode(
+    if (!isInteractive()) {
+      logger.warn(
+        'Interactive mode is not supported in non-interactive environments.'
+      );
+  
+      scheme = args.scheme;
+      mode = args.mode;
+      
+    } else {
+      const result = await selectFromInteractiveMode(
       info,
       args.scheme,
       args.mode
     );
 
-    scheme = result.scheme;
-    mode = result.mode;
+      scheme = result.scheme;
+      mode = result.mode;
+    }
   }
 
   if (!mode) {
