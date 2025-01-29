@@ -9,10 +9,8 @@ export async function getConfiguration(
 ) {
   let mode = preselectedMode;
   if (interactive) {
-    if (configurations && configurations.length > 1) {
-      mode =
-        preselectedMode ??
-        (await promptForConfigurationSelection(configurations));
+    if (configurations && configurations.length > 1 && !preselectedMode) {
+      mode = await promptForConfigurationSelection(configurations);
     }
   }
   if (!mode) {

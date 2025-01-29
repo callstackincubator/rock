@@ -5,14 +5,14 @@ import { promptForSchemeSelection } from './prompts.js';
 
 export async function getScheme(
   schemes: Info['schemes'],
-  preselectedSchemes: string | undefined,
+  preselectedScheme: string | undefined,
   interactive: boolean | undefined,
   projectName: string
 ) {
-  let scheme = preselectedSchemes;
+  let scheme = preselectedScheme;
   if (interactive) {
-    if (schemes && schemes.length > 1) {
-      scheme = preselectedSchemes ?? (await promptForSchemeSelection(schemes));
+    if (schemes && schemes.length > 1 && !preselectedScheme) {
+      scheme = await promptForSchemeSelection(schemes);
     }
   }
   if (!scheme) {
