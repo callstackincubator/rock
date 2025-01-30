@@ -2,7 +2,7 @@ import type { AndroidProjectConfig } from '@react-native-community/cli-types';
 import { logger, outro, parseArgs, spinner } from '@rnef/tools';
 import color from 'picocolors';
 import { promptForTaskSelection } from '../listAndroidTasks.js';
-import { findOutputFile } from '../runAndroid/tryInstallAppOnDevice.js';
+import { findOutputFile } from '../runAndroid/findOutputFile.js';
 import { runGradle } from '../runGradle.js';
 import { toPascalCase } from '../toPascalCase.js';
 
