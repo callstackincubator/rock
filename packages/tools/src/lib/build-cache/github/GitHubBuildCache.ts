@@ -21,21 +21,24 @@ import {
 export class GitHubBuildCache implements RemoteBuildCache {
   name = 'GitHub';
   repoDetails: GitHubRepoDetails | null = null;
-  githubToken = getGitHubToken();
 
   async detectRepoDetails() {
     const gitRemote = await getGitRemote();
     this.repoDetails = gitRemote
       ? await detectGitHubRepoDetails(gitRemote)
       : null;
-    if (!this.githubToken) {
+    if (!this.repoDetails) {
+      return null;
+    }
+    if (!getGitHubToken()) {
       logger.warn(
         `No GitHub Personal Access Token found necessary to download cached builds.
 Please generate one at: ${color.cyan('https://github.com/settings/tokens')}
 Include "repo", "workflow", and "read:org" permissions.`
       );
-      this.githubToken = await promptForGitHubToken();
+      await promptForGitHubToken();
     }
+    return this.repoDetails;
   }
 
   async query(artifactName: string): Promise<RemoteArtifact | null> {
