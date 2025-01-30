@@ -6,7 +6,6 @@ import { getBuildPaths } from '../../utils/buildPaths.js';
 import { supportedPlatforms } from '../../utils/supportedPlatforms.js';
 import type { BuildFlags } from './buildOptions.js';
 import { simulatorDestinationMap } from './simulatorDestinationMap.js';
-
 export const buildProject = async (
   xcodeProject: XcodeProjectInfo,
   sourceDir: string,
@@ -14,7 +13,7 @@ export const buildProject = async (
   udid: string | undefined,
   scheme: string,
   mode: string,
-  args: BuildFlags
+  args: BuildFlags,
 ) => {
   const simulatorDest = simulatorDestinationMap[platformName];
 
@@ -26,6 +25,43 @@ export const buildProject = async (
     );
   }
 
+  function determineDestinations(): string[] {
+    if (args.package) {
+      return [
+        'generic/platform=iphoneos',
+        'generic/platform=iphonesimulator'
+      ]
+    }
+
+    if (args.device && typeof args.device === 'string') {
+      // Check if the device argument looks like a UDID (assuming UDIDs are alphanumeric and have specific length)
+      const isUDID = /^[A-Fa-f0-9-]{25,}$/.test(args.device);
+      if (isUDID) {
+        return [`id=${args.device}`];
+      } else {
+        // If it's a device name
+        return [`name=${args.device}`];
+      }
+    }
+
+    if (args.catalyst) {
+      return ['platform=macOS,variant=Mac Catalyst']
+    }
+
+    if (udid) {
+      return [`id=${udid}`]
+    }
+
+    if (mode === 'Debug' || args.device) {
+      return [`generic/platform=${simulatorDest}`]
+    }
+
+    return [`generic/platform=${platformName}` +
+      (args.destination ? ',' + args.destination : '')];
+  }
+
+  const destinations = determineDestinations().flatMap(destination => (['-destination', destination]))
+
   const xcodebuildArgs = [
     xcodeProject.isWorkspace ? '-workspace' : '-project',
     xcodeProject.name,
@@ -34,28 +70,7 @@ export const buildProject = async (
     mode,
     '-scheme',
     scheme,
-    '-destination',
-    (() => {
-      if (args.device && typeof args.device === 'string') {
-        // Check if the device argument looks like a UDID (assuming UDIDs are alphanumeric and have specific length)
-        const isUDID = /^[A-Fa-f0-9-]{25,}$/.test(args.device);
-        if (isUDID) {
-          return `id=${args.device}`;
-        } else {
-          // If it's a device name
-          return `name=${args.device}`;
-        }
-      }
-
-      return args.catalyst
-        ? 'platform=macOS,variant=Mac Catalyst'
-        : udid
-        ? `id=${udid}`
-        : mode === 'Debug' || args.device
-        ? `generic/platform=${simulatorDest}`
-        : `generic/platform=${platformName}` +
-          (args.destination ? ',' + args.destination : '');
-    })(),
+    ...destinations
   ];
 
   if (args.archive) {
