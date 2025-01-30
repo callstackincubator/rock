@@ -13,7 +13,7 @@ export const buildProject = async (
   udid: string | undefined,
   scheme: string,
   mode: string,
-  args: BuildFlags,
+  args: BuildFlags
 ) => {
   const simulatorDest = simulatorDestinationMap[platformName];
 
@@ -27,10 +27,7 @@ export const buildProject = async (
 
   function determineDestinations(): string[] {
     if (args.package) {
-      return [
-        'generic/platform=iphoneos',
-        'generic/platform=iphonesimulator'
-      ]
+      return ['generic/platform=iphoneos', 'generic/platform=iphonesimulator'];
     }
 
     if (args.device && typeof args.device === 'string') {
@@ -45,22 +42,27 @@ export const buildProject = async (
     }
 
     if (args.catalyst) {
-      return ['platform=macOS,variant=Mac Catalyst']
+      return ['platform=macOS,variant=Mac Catalyst'];
     }
 
     if (udid) {
-      return [`id=${udid}`]
+      return [`id=${udid}`];
     }
 
     if (mode === 'Debug' || args.device) {
-      return [`generic/platform=${simulatorDest}`]
+      return [`generic/platform=${simulatorDest}`];
     }
 
-    return [`generic/platform=${platformName}` +
-      (args.destination ? ',' + args.destination : '')];
+    return [
+      `generic/platform=${platformName}` +
+        (args.destination ? ',' + args.destination : ''),
+    ];
   }
 
-  const destinations = determineDestinations().flatMap(destination => (['-destination', destination]))
+  const destinations = determineDestinations().flatMap((destination) => [
+    '-destination',
+    destination,
+  ]);
 
   const xcodebuildArgs = [
     xcodeProject.isWorkspace ? '-workspace' : '-project',
@@ -70,7 +72,7 @@ export const buildProject = async (
     mode,
     '-scheme',
     scheme,
-    ...destinations
+    ...destinations,
   ];
 
   if (args.archive) {

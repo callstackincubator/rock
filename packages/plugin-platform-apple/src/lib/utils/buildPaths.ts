@@ -8,5 +8,6 @@ export const getBuildPaths = (platformName: string) => {
     buildDir,
     exportDir: path.join(buildDir, 'export'),
     archiveDir: path.join(buildDir, 'archive'),
+    packageDir: path.join(buildDir, 'package'),
   };
 };
