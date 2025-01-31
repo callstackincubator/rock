@@ -55,7 +55,8 @@ export const createBuild = async (
       args
     );
   } catch (error) {
-    throw new RnefError('Failed to create build', { cause: error });
+    const message = `Failed to create ${args.archive ? 'archive' : 'build'}`;
+    throw new RnefError(message, { cause: error });
   }
 
   if (args.archive) {
@@ -75,7 +76,7 @@ export const createBuild = async (
         exportExtraParams: args.exportExtraParams ?? [],
       });
     } catch (error) {
-      throw new RnefError('Failed to create archive', { cause: error });
+      throw new RnefError('Failed to export archive', { cause: error });
     }
   }
   outro('Success 🎉.');
