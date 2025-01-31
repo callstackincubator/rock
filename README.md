@@ -117,3 +117,5 @@ npx create-rnef-app enterprise
    ```
 
 1. Configure GitHub Actions for remote builds.
+
+1. Configure [Brownfield](./BROWNFIELD.md).
