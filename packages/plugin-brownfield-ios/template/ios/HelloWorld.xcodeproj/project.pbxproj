@@ -192,7 +192,7 @@
 				20D164892D4D7FAF0039A91E /* Sources */,
 				20D1648A2D4D7FAF0039A91E /* Frameworks */,
 				20D1648B2D4D7FAF0039A91E /* Resources */,
-				20D164A32D4D82600039A91E /* ShellScript */,
+				20D164A32D4D82600039A91E /* Bundle React Native code and images */,
 			);
 			buildRules = (
 			);
@@ -294,7 +294,7 @@
 			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-HelloWorld/Pods-HelloWorld-frameworks.sh\"\n";
 			showEnvVarsInLog = 0;
 		};
-		20D164A32D4D82600039A91E /* ShellScript */ = {
+		20D164A32D4D82600039A91E /* Bundle React Native code and images */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -303,7 +303,9 @@
 			);
 			inputPaths = (
 				"$(SRCROOT)/.xcode.env.local",
+				"$(SRCROOT)/.xcode.env",
 			);
+			name = "Bundle React Native code and images";
 			outputFileListPaths = (
 			);
 			outputPaths = (
