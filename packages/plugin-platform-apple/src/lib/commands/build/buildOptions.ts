@@ -15,7 +15,6 @@ export type BuildFlags = {
   buildFolder?: string;
   destination?: string;
   archive?: boolean;
-  package?: boolean;
 };
 
 export const getBuildOptions = ({ platformName }: BuilderCommand) => {
@@ -79,11 +78,6 @@ export const getBuildOptions = ({ platformName }: BuilderCommand) => {
       name: '--archive',
       description:
         'Create an Xcode archive (IPA) of the build, required for uploading to App Store Connect or distributing to TestFlight',
-    },
-    {
-      name: '--package',
-      description:
-        'Create an XCFramework of the build. Useful for brownfield applications.',
     },
   ];
 };
