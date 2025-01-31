@@ -59,10 +59,26 @@ b. Optionally copy the template from `./packages/plugin-brownfield-ios/template/
 
 ### 5. Generating the Framework Artifact
 
-a. Generate the framework artifact using the `rnef` cli:
+a. Add `@rnef/plugin-brownfield-ios` as a dependency
+b. Register the brownfield plugin in `rnef.config.mjs`
+
+    ```js
+    // ...
+    import { pluginBrownfieldIos } from '@rnef/plugin-brownfield-ios';
+
+    export default {
+      plugins: {
+        // ...
+        brownfieldIos: pluginBrownfieldIos(),
+      },
+      // ...
+    };
+    ```
+
+c. Generate the framework artifact using the `rnef` cli:
 
     ```sh
-    rnef build:ios --package --scheme <framework_target_name> --buildFolder "./rnef-build" 
+    rnef package:ios --scheme <framework_target_name>
     ```
 
 ---
