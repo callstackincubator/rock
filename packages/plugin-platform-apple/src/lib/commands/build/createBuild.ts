@@ -1,11 +1,10 @@
 import path from 'node:path';
-import { isInteractive, logger, outro, RnefError } from '@rnef/tools';
+import { getBuildPaths, isInteractive, logger, RnefError } from '@rnef/tools';
 import type {
   BuilderCommand,
   ProjectConfig,
   XcodeProjectInfo,
 } from '../../types/index.js';
-import { getBuildPaths } from '../../utils/buildPaths.js';
 import { selectFromInteractiveMode } from '../../utils/selectFromInteractiveMode.js';
 import type { BuildFlags } from './buildOptions.js';
 import { buildProject } from './buildProject.js';
@@ -79,8 +78,6 @@ export const createBuild = async (
       throw new RnefError('Failed to export archive', { cause: error });
     }
   }
-
-  outro('Success 🎉.');
 };
 
 function normalizeArgs(args: BuildFlags, xcodeProject: XcodeProjectInfo) {

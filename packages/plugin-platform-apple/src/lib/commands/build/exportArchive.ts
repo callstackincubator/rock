@@ -1,7 +1,6 @@
-import { RnefError, spawn, spinner } from '@rnef/tools';
+import { getBuildPaths, RnefError, spawn, spinner } from '@rnef/tools';
 import { existsSync, readdirSync } from 'fs';
 import path from 'path';
-import { getBuildPaths } from '../../utils/buildPaths.js';
 
 export const exportArchive = async ({
   sourceDir,

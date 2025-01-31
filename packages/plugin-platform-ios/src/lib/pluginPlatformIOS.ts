@@ -7,7 +7,7 @@ import {
   getBuildOptions,
   getRunOptions,
 } from '@rnef/plugin-platform-apple';
-import { RnefError } from '@rnef/tools';
+import { outro, RnefError } from '@rnef/tools';
 
 const projectConfig = getProjectConfig({ platformName: 'ios' });
 const buildOptions = getBuildOptions({ platformName: 'ios' });
@@ -28,6 +28,8 @@ export const pluginPlatformIOS =
         } else {
           throw new RnefError('iOS project not found.');
         }
+
+        outro('Success 🎉.');
       },
       options: buildOptions,
     });
