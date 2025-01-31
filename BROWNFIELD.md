@@ -26,6 +26,7 @@ e. Apply the following build settings:
 ### 2. Cocoapods Dependencies
 
 a. Add the new framework target to `ios/Podfile` with `inherit!`:
+
     ```ruby
     target '<project_name>' do
       #...
@@ -39,16 +40,27 @@ a. Add the new framework target to `ios/Podfile` with `inherit!`:
       post_install do |installer|
     end
     ```
+
 b. Go to `ios/` and run `pod install`
 
-### 3. Framework's Public API
+### 3. Script Phase for Bundling React Native Code and Images
+
+a. Go to the app target's Build Phases
+b. Expand the `Bundle React Native code and images` step and copy the code
+c. Go to the library target's Build Phases
+d. Hit the plus button on the top left and select `New Run Script Phase`
+e. Paste the script to the new script phase and rename the phase to `Bundle React Native code and images`
+f. Add `$(SRCROOT)/.xcode.env.local` and `$(SRCROOT)/.xcode.env` into the script phase's input files
+
+### 4. Framework's Public API
 
 a. Create a new swift file in the generated framework folder
-b. You can copy the template from `path/to/template`
+b. Optionally copy the template from `./packages/plugin-brownfield-ios/template/ios/HelloWorldReact/HelloWorldReact.swift` for a light abstraction
 
-### 4. Generating the Framework Artifact
+### 5. Generating the Framework Artifact
 
 a. Generate the framework artifact using the `rnef` cli:
+
     ```sh
     rnef build:ios --package --scheme <framework_target_name> --buildFolder "./rnef-build" 
     ```
