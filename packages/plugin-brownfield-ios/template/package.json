@@ -1,7 +1,9 @@
 {
-  "name": "rnef-plugin-metro-template",
+  "name": "rnef-plugin-brownfield-ios-template",
+  "scripts": {
+    "package:ios": "rnef package:ios --scheme HelloWorldReact"
+  },
   "devDependencies": {
-    "@rnef/plugin-metro": "^0.1.5",
-    "@react-native/metro-config": "0.77.0-rc.2"
+    "@rnef/plugin-brownfield-ios":  "^0.1.5"
   }
 }
