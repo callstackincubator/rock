@@ -11,7 +11,6 @@ import type { BuildFlags } from './buildOptions.js';
 import { buildProject } from './buildProject.js';
 import { exportArchive } from './exportArchive.js';
 import { getConfiguration } from './getConfiguration.js';
-import { mergeFrameworks } from './mergeFrameworks.js';
 
 export const createBuild = async (
   platformName: BuilderCommand['platformName'],
@@ -78,20 +77,6 @@ export const createBuild = async (
       });
     } catch (error) {
       throw new RnefError('Failed to export archive', { cause: error });
-    }
-  }
-
-  if (args.package) {
-    try {
-      await mergeFrameworks({
-        sourceDir,
-        scheme,
-        mode,
-        platformName,
-        buildFolder: args.buildFolder!,
-      });
-    } catch (error) {
-      throw new RnefError('Failed to create package', { cause: error });
     }
   }
 

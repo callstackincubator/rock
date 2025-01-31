@@ -1,10 +1,7 @@
 import { getProjectConfig } from '@react-native-community/cli-config-apple';
 import type { PluginApi, PluginOutput } from '@rnef/config';
-import {
-  createBuild,
-  getBuildOptions,
-} from '@rnef/plugin-platform-apple';
-import {  RnefError } from '@rnef/tools';
+import { createBuild, getBuildOptions } from '@rnef/plugin-platform-apple';
+import { RnefError } from '@rnef/tools';
 
 const projectConfig = getProjectConfig({ platformName: 'ios' });
 const buildOptions = getBuildOptions({ platformName: 'ios' });
@@ -23,6 +20,19 @@ export const pluginBrownfieldIos =
         //   await createBuild('ios', iosConfig, args as BuildFlags);
         // } else {
         //   throw new RnefError('iOS project not found.');
+        // }
+        // if (args.package) {
+        //   try {
+        //     await mergeFrameworks({
+        //       sourceDir,
+        //       scheme,
+        //       mode,
+        //       platformName,
+        //       buildFolder: args.buildFolder!,
+        //     });
+        //   } catch (error) {
+        //     throw new RnefError('Failed to create package', { cause: error });
+        //   }
         // }
       },
       options: buildOptions,
