@@ -1,7 +1,9 @@
 import { getProjectConfig } from '@react-native-community/cli-config-apple';
 import type { PluginApi, PluginOutput } from '@rnef/config';
+import type { BuildFlags } from '@rnef/plugin-platform-apple';
 import { createBuild, getBuildOptions } from '@rnef/plugin-platform-apple';
-import { RnefError } from '@rnef/tools';
+import { getBuildPaths, outro, RnefError } from '@rnef/tools';
+import { mergeFrameworks } from './mergeFrameworks.js';
 
 const projectConfig = getProjectConfig({ platformName: 'ios' });
 const buildOptions = getBuildOptions({ platformName: 'ios' });
@@ -12,28 +14,41 @@ export const pluginBrownfieldIos =
     api.registerCommand({
       name: 'package:ios',
       description: 'Emit a .xcframework file from React Native code.',
-      action: async (args) => {
-        // const projectRoot = api.getProjectRoot();
-        // const iosConfig = projectConfig(projectRoot, {});
-        //
-        // if (iosConfig) {
-        //   await createBuild('ios', iosConfig, args as BuildFlags);
-        // } else {
-        //   throw new RnefError('iOS project not found.');
-        // }
-        // if (args.package) {
-        //   try {
-        //     await mergeFrameworks({
-        //       sourceDir,
-        //       scheme,
-        //       mode,
-        //       platformName,
-        //       buildFolder: args.buildFolder!,
-        //     });
-        //   } catch (error) {
-        //     throw new RnefError('Failed to create package', { cause: error });
-        //   }
-        // }
+      action: async (args: BuildFlags) => {
+        const projectRoot = api.getProjectRoot();
+        const iosConfig = projectConfig(projectRoot, {});
+        const { derivedDataDir } = getBuildPaths('ios');
+
+        const destinations =
+          args.destinations ??
+          'generic/platform=iphoneos,generic/platform=iphonesimulator';
+
+        const buildFolder = args.buildFolder ?? derivedDataDir;
+        const mode = args.mode ?? 'Debug';
+
+        if (iosConfig) {
+          await createBuild('ios', iosConfig, {
+            ...args,
+            destinations,
+            buildFolder,
+          });
+        } else {
+          throw new RnefError('iOS project not found.');
+        }
+
+        try {
+          await mergeFrameworks({
+            scheme: args.scheme,
+            mode,
+            sourceDir: iosConfig.sourceDir,
+            platformName: 'ios',
+            buildFolder,
+          });
+        } catch (error) {
+          throw new RnefError('Failed to create package', { cause: error });
+        }
+
+        outro('Success 🎉.');
       },
       options: buildOptions,
     });
