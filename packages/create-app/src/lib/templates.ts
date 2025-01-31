@@ -49,6 +49,14 @@ export const PLUGINS: TemplateInfo[] = [
     directory: 'template',
     importName: 'pluginRepack',
   },
+  {
+    type: 'npm',
+    name: 'iOS Brownfield',
+    packageName: '@rnef/plugin-brownfield-ios',
+    version: 'latest',
+    directory: 'template',
+    importName: 'pluginBrownfieldIos',
+  },
 ];
 
 export const PLATFORMS: TemplateInfo[] = [
