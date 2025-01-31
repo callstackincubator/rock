@@ -26,8 +26,8 @@ export const buildProject = async (
   }
 
   function determineDestinations(): string[] {
-    if (args.package) {
-      return ['generic/platform=iphoneos', 'generic/platform=iphonesimulator'];
+    if (args.destinations != undefined) {
+      return args.destinations.split(',');
     }
 
     if (args.device && typeof args.device === 'string') {
@@ -53,10 +53,7 @@ export const buildProject = async (
       return [`generic/platform=${simulatorDest}`];
     }
 
-    return [
-      `generic/platform=${platformName}` +
-        (args.destination ? ',' + args.destination : ''),
-    ];
+    return [`generic/platform=${platformName}`];
   }
 
   const destinations = determineDestinations().flatMap((destination) => [
