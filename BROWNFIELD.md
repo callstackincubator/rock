@@ -28,6 +28,8 @@ e. Apply the following build settings:
 a. Add the new framework target to `ios/Podfile` with `inherit!`:
 
     ```ruby
+    # ios/Podfile
+
     target '<project_name>' do
       #...
 
@@ -63,6 +65,7 @@ a. Add `@rnef/plugin-brownfield-ios` as a dependency
 b. Register the brownfield plugin in `rnef.config.mjs`
 
     ```js
+    // rnef.config.mjs
     // ...
     import { pluginBrownfieldIos } from '@rnef/plugin-brownfield-ios';
 
@@ -78,7 +81,49 @@ b. Register the brownfield plugin in `rnef.config.mjs`
 c. Generate the framework artifact using the `rnef` cli:
 
     ```sh
-    rnef package:ios --scheme <framework_target_name>
+    rnef package:ios --scheme <framework_target_name> --mode Release
+    ```
+
+### 6. Consuming the Framework Artifact
+
+a. Drag the generated `.xcframework` file to your app
+b. Drag `ios/Pods/hermes-engine/destroot/Library/Frameworks/universal/hermes.xcframework` to your app
+c. Add the `window` property to your `AppDelegate`:
+
+    ```swift
+    //  AppDelegate.swift
+
+    import UIKit
+
+    @main
+    class AppDelegate: UIResponder, UIApplicationDelegate {
+        var window: UIWindow?
+
+        func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
+            window = UIWindow(frame: UIScreen.main.bounds)
+            // ...
+        }
+
+        // ...
+    }
+    ```
+d. Load the React Native view:
+
+    ```swift
+    //  MyViewController.swift
+
+    import UIKit
+
+    import <framework_target_name>React
+
+    class ViewController: UIViewController {
+
+        override func viewDidLoad() {
+            super.viewDidLoad()
+            // TODO: Make sure to handle the error more gracefully than crashing with `try!`
+            view = try! <project_name>ReactNativeManager().loadView(moduleName: "<project_name>", initialProps: nil, launchOptions: nil)
+        }
+    }
     ```
 
 ---
