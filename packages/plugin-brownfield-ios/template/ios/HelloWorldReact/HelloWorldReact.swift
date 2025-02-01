@@ -7,6 +7,7 @@ public enum ReactNativeManagerError: Error {
     case javaScriptBundleNotFound
 }
 
+/// The main entry point for loading React Native views
 public class HelloWorldReactNativeManager {
     public static var newArchEnabled: Bool {
         #if RCT_NEW_ARCH_ENABLED
