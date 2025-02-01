@@ -2,7 +2,7 @@ import { getProjectConfig } from '@react-native-community/cli-config-apple';
 import type { PluginApi, PluginOutput } from '@rnef/config';
 import type { BuildFlags } from '@rnef/plugin-platform-apple';
 import { createBuild, getBuildOptions } from '@rnef/plugin-platform-apple';
-import { getBuildPaths, outro, RnefError } from '@rnef/tools';
+import { getBuildPaths, intro, outro, RnefError } from '@rnef/tools';
 import { mergeFrameworks } from './mergeFrameworks.js';
 
 const projectConfig = getProjectConfig({ platformName: 'ios' });
@@ -15,6 +15,8 @@ export const pluginBrownfieldIos =
       name: 'package:ios',
       description: 'Emit a .xcframework file from React Native code.',
       action: async (args: BuildFlags) => {
+        intro("Packaging iOS project")
+
         const projectRoot = api.getProjectRoot();
         const iosConfig = projectConfig(projectRoot, {});
         const { derivedDataDir } = getBuildPaths('ios');
