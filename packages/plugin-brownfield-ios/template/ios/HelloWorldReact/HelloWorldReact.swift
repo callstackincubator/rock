@@ -7,7 +7,7 @@ public enum ReactNativeManagerError: Error {
     case javaScriptBundleNotFound
 }
 
-public class PackageReactNativeManager {
+public class HelloWorldReactNativeManager {
     public static var newArchEnabled: Bool {
         #if RCT_NEW_ARCH_ENABLED
             return true
@@ -47,7 +47,7 @@ public class PackageReactNativeManager {
     }
 }
 
-extension PackageReactNativeManager {
+extension HelloWorldReactNativeManager {
     private static func getJavaScriptBundleURL() -> URL? {
         #if DEBUG
             // Get the JavaScript bundle from the packager.
