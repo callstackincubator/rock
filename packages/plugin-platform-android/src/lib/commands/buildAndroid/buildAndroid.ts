@@ -7,7 +7,7 @@ import { runGradle } from '../runGradle.js';
 import { toPascalCase } from '../toPascalCase.js';
 
 export interface BuildFlags {
-  mode: string;
+  buildType: string;
   activeArchOnly?: boolean;
   tasks?: Array<string>;
   extraParams?: Array<string>;
@@ -22,7 +22,7 @@ export async function buildAndroid(
 
   const tasks = args.interactive
     ? [await promptForTaskSelection('bundle', androidProject.sourceDir)]
-    : [...(args.tasks ?? []), `bundle${toPascalCase(args.mode)}`];
+    : [...(args.tasks ?? []), `bundle${toPascalCase(args.buildType)}`];
 
   await runGradle({ tasks, androidProject, args });
 
@@ -37,25 +37,25 @@ export async function buildAndroid(
 }
 
 function normalizeArgs(args: BuildFlags) {
-  if (args.tasks && args.mode) {
+  if (args.tasks && args.buildType) {
     logger.warn(
-      'Both "--tasks" and "--mode" parameters were passed. Using "--tasks" for building the app.'
+      'Both "--tasks" and "--buildType" parameters were passed. Using "--tasks" for building the app.'
     );
   }
-  if (!args.mode) {
-    args.mode = 'debug';
+  if (!args.buildType) {
+    args.buildType = 'debug';
   }
 }
 
 export const options = [
   {
-    name: '-m --mode <string>',
-    description: "Specify your app's build variant",
+    name: '--buildType <string>',
+    description: "Specify your app's build type",
   },
   {
     name: '--tasks <list>',
     description:
-      'Run custom Gradle tasks. By default it\'s "assembleDebug". Will override passed mode argument.',
+      'Run custom Gradle tasks. By default it\'s "assembleDebug". Will override passed buildType argument.',
     parse: (val: string) => val.split(','),
   },
   {

@@ -49,10 +49,10 @@ export async function runAndroid(
   const mainTaskType = device ? 'assemble' : 'install';
   const tasks = args.interactive
     ? [await promptForTaskSelection(mainTaskType, androidProject.sourceDir)]
-    : [...(args.tasks ?? []), `${mainTaskType}${toPascalCase(args.mode)}`];
+    : [...(args.tasks ?? []), `${mainTaskType}${toPascalCase(args.buildType)}`];
 
   if (!args.binaryPath && args.remoteCache) {
-    const cachedBuild = await fetchCachedBuild({ mode: args.mode });
+    const cachedBuild = await fetchCachedBuild({ buildType: args.buildType });
     if (cachedBuild) {
       // @todo replace with a more generic way to pass binary path
       args.binaryPath = cachedBuild.binaryPath;
@@ -139,18 +139,18 @@ function matchingDevice(devices: Array<DeviceData>, deviceArg: string) {
 }
 
 function normalizeArgs(args: Flags, projectRoot: string) {
-  if (args.tasks && args.mode) {
+  if (args.tasks && args.buildType) {
     logger.warn(
-      'Both "--tasks" and "--mode" parameters were passed. Using "--tasks" for building the app.'
+      'Both "--tasks" and "--buildType" parameters were passed. Using "--tasks" for building the app.'
     );
   }
 
-  if (!args.mode) {
-    args.mode = 'debug';
+  if (!args.buildType) {
+    args.buildType = 'debug';
   }
 
   // turn on activeArchOnly for debug to speed up local builds
-  if (args.mode !== 'release' && args.activeArchOnly === undefined) {
+  if (args.buildType !== 'release' && args.activeArchOnly === undefined) {
     args.activeArchOnly = true;
   }
 

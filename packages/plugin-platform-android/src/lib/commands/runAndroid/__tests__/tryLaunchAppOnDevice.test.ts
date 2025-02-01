@@ -36,7 +36,7 @@ const args: Flags = {
   port: '8081',
   appId: '',
   appIdSuffix: '',
-  mode: 'debug',
+  buildType: 'debug',
   remoteCache: false,
 };
 
