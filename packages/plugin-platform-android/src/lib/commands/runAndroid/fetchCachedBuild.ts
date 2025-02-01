@@ -70,7 +70,7 @@ async function calculateArtifactName(mode: string) {
   const fingerprint = await nativeFingerprint(root, { platform: 'android' });
   return formatArtifactName({
     platform: 'android',
-    mode,
+    build: mode,
     hash: fingerprint.hash,
   });
 }

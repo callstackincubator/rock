@@ -85,7 +85,7 @@ async function calculateArtifactName({
   return formatArtifactName({
     platform: 'ios',
     distribution,
-    configuration,
+    build: configuration,
     hash: fingerprint.hash,
   });
 }
