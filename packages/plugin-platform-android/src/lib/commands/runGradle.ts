@@ -25,7 +25,7 @@ export async function runGradle({
     return;
   }
   const loader = spinner();
-  const message = `Building the app with Gradle in ${args.buildType} build type`;
+  const message = `Building the app with Gradle in ${args.buildVariant} build variant`;
 
   loader.start(message, { kind: 'clock' });
   const gradleArgs = getTaskNames(androidProject.appName, tasks);
@@ -60,7 +60,7 @@ export async function runGradle({
       cwd: androidProject.sourceDir,
       stdio: logger.isVerbose() ? 'inherit' : 'pipe',
     });
-    loader.stop(`Built the app in ${args.buildType} build type.`);
+    loader.stop(`Built the app in ${args.buildVariant} build variant.`);
   } catch (error) {
     loader.stop('Failed to build the app');
     const cleanedErrorMessage = (error as SubprocessError).stderr

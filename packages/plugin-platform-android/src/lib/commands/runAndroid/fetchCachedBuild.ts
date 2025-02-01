@@ -12,17 +12,17 @@ import {
 import color from 'picocolors';
 
 export type FetchCachedBuildOptions = {
-  buildType: string;
+  buildVariant: string;
 };
 
 export async function fetchCachedBuild({
-  buildType,
+  buildVariant,
 }: FetchCachedBuildOptions): Promise<LocalBuild | null> {
   const loader = spinner();
   loader.start('Looking for a local cached build');
 
   const root = getProjectRoot();
-  const artifactName = await calculateArtifactName(buildType);
+  const artifactName = await calculateArtifactName(buildVariant);
 
   const localBuild = queryLocalBuildCache(artifactName, { findBinary });
   if (localBuild != null) {
@@ -68,12 +68,12 @@ export async function fetchCachedBuild({
   };
 }
 
-async function calculateArtifactName(buildType: string) {
+async function calculateArtifactName(buildVariant: string) {
   const root = getProjectRoot();
   const fingerprint = await nativeFingerprint(root, { platform: 'android' });
   return formatArtifactName({
     platform: 'android',
-    build: buildType,
+    build: buildVariant,
     hash: fingerprint.hash,
   });
 }

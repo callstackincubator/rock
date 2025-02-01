@@ -13,8 +13,8 @@ inputs:
     description: 'Path to the build output artifact'
     required: false
     default: 'android/app/build/outputs/apk/debug/app-debug.apk'
-  buildType:
-    description: 'Build type'
+  buildVariant:
+    description: 'Build variant'
     required: false
     default: 'debug'
   tasks:
@@ -41,7 +41,7 @@ runs:
 
     - name: Set artifact name
       run: |
-        echo "ARTIFACT_NAME=rnef-android-${{ inputs.buildType }}-${{ steps.fingerprint.outputs.hash}}" >> $GITHUB_ENV
+        echo "ARTIFACT_NAME=rnef-android-${{ inputs.buildVariant }}-${{ steps.fingerprint.outputs.hash}}" >> $GITHUB_ENV
       shell: bash
 
     - name: Find artifact URL
@@ -73,7 +73,7 @@ runs:
       if: ${{ !steps.cached-url.outputs.artifact-url }}
       run: |
         npx rnef build:android \
-          --buildType "${{ inputs.buildType }}" \
+          --buildVariant "${{ inputs.buildVariant }}" \
           --tasks "${{ inputs.tasks }}" \
           ${{ inputs.rnef-build-extra-params }}
       shell: bash

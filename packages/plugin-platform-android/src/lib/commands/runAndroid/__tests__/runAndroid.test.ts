@@ -11,7 +11,7 @@ const actualFs = await vi.importMock('node:fs');
 
 const args: Flags = {
   tasks: undefined,
-  buildType: 'debug',
+  buildVariant: 'debug',
   activeArchOnly: true,
   extraParams: undefined,
   interactive: undefined,
@@ -265,8 +265,8 @@ function spawnMockImplementation(
 }
 
 test.each([['release'], ['debug'], ['staging']])(
-  'runAndroid runs gradle build with correct configuration for --buildType %s and launches on emulator-5554 when prompted with two devices available',
-  async (buildType) => {
+  'runAndroid runs gradle build with correct configuration for --buildVariant %s and launches on emulator-5554 when prompted with two devices available',
+  async (buildVariant) => {
     (spawn as Mock).mockImplementation((file, args) => {
       if (mockCallEmulatorAvdName(file, args, 'emulator-5554')) {
         return { output: emulatorAvdNameOutputPixel8 };
@@ -304,7 +304,7 @@ test.each([['release'], ['debug'], ['staging']])(
       }
       return Promise.resolve(undefined);
     });
-    await runAndroid({ ...androidProject }, { ...args, buildType }, '/');
+    await runAndroid({ ...androidProject }, { ...args, buildVariant }, '/');
 
     expect(tools.outro).toBeCalledWith('Success 🎉.');
     expect(tools.logger.error).not.toBeCalled();
@@ -313,9 +313,9 @@ test.each([['release'], ['debug'], ['staging']])(
     expect(spawn).toBeCalledWith(
       './gradlew',
       [
-        buildType === 'release'
+        buildVariant === 'release'
           ? 'app:installRelease'
-          : buildType === 'staging'
+          : buildVariant === 'staging'
           ? 'app:installStaging'
           : 'app:installDebug',
         '-x',
@@ -390,8 +390,8 @@ test.each([
   ['debug', true],
   ['debug', false],
 ])(
-  `runAndroid launches an app on a selected device emulator-5554 when connected in --buildType %s and --interactive %b`,
-  async (buildType, interactive) => {
+  `runAndroid launches an app on a selected device emulator-5554 when connected in --buildVariant %s and --interactive %b`,
+  async (buildVariant, interactive) => {
     (spawn as Mock).mockImplementation((file, args) => {
       if (mockCallEmulatorAvdName(file, args, 'emulator-5554')) {
         return { output: emulatorAvdNameOutputPixel8 };
@@ -440,7 +440,7 @@ test.each([
       }
       if (opts.message === 'Select assemble task you want to perform') {
         return Promise.resolve(
-          buildType === 'release' ? 'assembleRelease' : 'assembleDebug'
+          buildVariant === 'release' ? 'assembleRelease' : 'assembleDebug'
         );
       }
       return Promise.resolve(undefined);
@@ -448,7 +448,7 @@ test.each([
 
     await runAndroid(
       { ...androidProject },
-      { ...args, device: 'emulator-5554', buildType, interactive },
+      { ...args, device: 'emulator-5554', buildVariant, interactive },
       '/'
     );
 
@@ -456,7 +456,7 @@ test.each([
     expect(spawn).not.toBeCalledWith(
       './gradlew',
       expect.arrayContaining([
-        buildType === 'release' ? 'app:installRelease' : 'app:installDebug',
+        buildVariant === 'release' ? 'app:installRelease' : 'app:installDebug',
       ])
     );
 
@@ -464,7 +464,7 @@ test.each([
     expect(spawn).toBeCalledWith(
       './gradlew',
       [
-        buildType === 'release' ? 'app:assembleRelease' : 'app:assembleDebug',
+        buildVariant === 'release' ? 'app:assembleRelease' : 'app:assembleDebug',
         '-x',
         'lint',
         '-PreactNativeDevServerPort=8081',

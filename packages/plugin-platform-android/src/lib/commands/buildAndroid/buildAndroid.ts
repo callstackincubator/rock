@@ -7,7 +7,7 @@ import { runGradle } from '../runGradle.js';
 import { toPascalCase } from '../toPascalCase.js';
 
 export interface BuildFlags {
-  buildType: string;
+  buildVariant: string;
   activeArchOnly?: boolean;
   tasks?: Array<string>;
   extraParams?: Array<string>;
@@ -22,7 +22,7 @@ export async function buildAndroid(
 
   const tasks = args.interactive
     ? [await promptForTaskSelection('bundle', androidProject.sourceDir)]
-    : [...(args.tasks ?? []), `bundle${toPascalCase(args.buildType)}`];
+    : [...(args.tasks ?? []), `bundle${toPascalCase(args.buildVariant)}`];
 
   await runGradle({ tasks, androidProject, args });
 
@@ -37,25 +37,26 @@ export async function buildAndroid(
 }
 
 function normalizeArgs(args: BuildFlags) {
-  if (args.tasks && args.buildType) {
+  if (args.tasks && args.buildVariant) {
     logger.warn(
-      'Both "--tasks" and "--buildType" parameters were passed. Using "--tasks" for building the app.'
+      'Both "--tasks" and "--buildVariant" parameters were passed. Using "--tasks" for building the app.'
     );
   }
-  if (!args.buildType) {
-    args.buildType = 'debug';
+  if (!args.buildVariant) {
+    args.buildVariant = 'debug';
   }
 }
 
 export const options = [
   {
-    name: '--buildType <string>',
-    description: "Specify your app's build type",
+    name: '--buildVariant <string>',
+    description:
+      "Specify your app's build variant, which is constructed from build type and product flavor, e.g. 'debug' or 'freeRelease'.",
   },
   {
     name: '--tasks <list>',
     description:
-      'Run custom Gradle tasks. By default it\'s "assembleDebug". Will override passed buildType argument.',
+      'Run custom Gradle tasks. Will override the --buildVariant argument.',
     parse: (val: string) => val.split(','),
   },
   {
@@ -71,6 +72,6 @@ export const options = [
   {
     name: '-i --interactive',
     description:
-      'Explicitly select build type and flavour to use before running a build',
+      'Explicitly select build variant to use before running a build',
   },
 ];
