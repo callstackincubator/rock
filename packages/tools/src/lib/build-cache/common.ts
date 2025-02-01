@@ -1,5 +1,6 @@
 import path from 'node:path';
 import { getCacheRootPath } from '../project.js';
+import type { spinner } from '../prompts.js';
 
 export const BUILD_CACHE_DIR = 'remote-build';
 
@@ -24,7 +25,10 @@ export type RemoteBuildCache = {
   repoDetails: RepoDetails | null;
   detectRepoDetails(): Promise<RepoDetails | null>;
   query(artifactName: string): Promise<RemoteArtifact | null>;
-  download(artifact: RemoteArtifact): Promise<LocalArtifact>;
+  download(
+    artifact: RemoteArtifact,
+    loader: ReturnType<typeof spinner>
+  ): Promise<LocalArtifact>;
 };
 
 type FormatArtifactNameParams = {

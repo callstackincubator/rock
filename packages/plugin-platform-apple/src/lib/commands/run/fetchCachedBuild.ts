@@ -60,7 +60,7 @@ export async function fetchCachedBuild({
   }
 
   loader.message(`Downloading cached build from ${remoteBuildCache.name}`);
-  const fetchedBuild = await remoteBuildCache.download(remoteBuild);
+  const fetchedBuild = await remoteBuildCache.download(remoteBuild, loader);
   await extractArtifactTarballIfNeeded(fetchedBuild.path);
   const binaryPath = findBinary(distribution, fetchedBuild.path);
   if (!binaryPath) {
