@@ -7,11 +7,13 @@ test('formatConfig', () => {
     import { pluginPlatformAndroid } from '@rnef/plugin-platform-android';
     import { pluginMetro } from '@rnef/plugin-metro';
     import { pluginRepack } from '@rnef/plugin-repack';
+    import { pluginBrownfieldIos } from '@rnef/plugin-brownfield-ios';
 
     export default {
       plugins: {
         metro: pluginMetro(),
         repack: pluginRepack(),
+        brownfieldIos: pluginBrownfieldIos(),
       },
       platforms: {
         ios: pluginPlatformIOS(),
