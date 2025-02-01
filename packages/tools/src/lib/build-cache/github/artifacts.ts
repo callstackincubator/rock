@@ -147,7 +147,7 @@ export async function downloadGitHubArtifact(
               break;
             }
             downloadedBytes += value.length;
-            const progress = ((downloadedBytes / totalBytes) * 100).toFixed(2);
+            const progress = ((downloadedBytes / totalBytes) * 100).toFixed(0);
             loader.message(
               `Downloading cached build from ${name} (${progress}% of ${totalMB} MB)`
             );
