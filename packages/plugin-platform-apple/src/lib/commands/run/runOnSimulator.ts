@@ -13,7 +13,7 @@ export async function runOnSimulator(
   xcodeProject: XcodeProjectInfo,
   sourceDir: string,
   platform: ApplePlatform,
-  mode: string,
+  configuration: string,
   scheme: string,
   args: RunFlags
 ) {
@@ -51,7 +51,7 @@ export async function runOnSimulator(
       platform,
       simulator.udid,
       scheme,
-      mode,
+      configuration,
       args
     );
   }
@@ -60,7 +60,7 @@ export async function runOnSimulator(
   await installApp({
     xcodeProject,
     sourceDir,
-    mode,
+    configuration,
     scheme,
     target: args.target,
     udid: simulator.udid,

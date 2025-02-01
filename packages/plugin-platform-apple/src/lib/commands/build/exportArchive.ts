@@ -7,14 +7,14 @@ export const exportArchive = async ({
   sourceDir,
   archivePath,
   scheme,
-  mode,
+  configuration,
   platformName,
   exportExtraParams,
 }: {
   sourceDir: string;
   archivePath: string;
   scheme: string;
-  mode: string;
+  configuration: string;
   platformName: string;
   exportExtraParams: string[];
 }) => {
@@ -58,7 +58,7 @@ export const exportArchive = async ({
     }
 
     loader.stop(
-      `Exported the archive for ${scheme} scheme in ${mode} mode to ${
+      `Exported the archive for ${scheme} scheme in ${configuration} configuration to ${
         path.join(exportDir, ipaFiles[0]) ?? exportDir
       }`
     );

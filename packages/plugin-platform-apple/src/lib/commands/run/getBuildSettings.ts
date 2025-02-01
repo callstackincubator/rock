@@ -12,7 +12,7 @@ export type BuildSettings = {
 export async function getBuildSettings(
   xcodeProject: XcodeProjectInfo,
   sourceDir: string,
-  mode: string,
+  configuration: string,
   buildOutput: string,
   scheme: string,
   target?: string
@@ -27,7 +27,7 @@ export async function getBuildSettings(
       '-sdk',
       getPlatformName(buildOutput),
       '-configuration',
-      mode,
+      configuration,
       '-showBuildSettings',
       '-json',
     ],

@@ -5,7 +5,7 @@ import { getPlatformInfo } from '../../utils/getPlatformInfo.js';
 export type BuildFlags = {
   verbose?: boolean;
   interactive?: boolean;
-  mode?: string;
+  configuration?: string;
   scheme?: string;
   target?: string;
   extraParams?: string[];
@@ -31,7 +31,7 @@ export const getBuildOptions = ({ platformName }: BuilderCommand) => {
         'Explicitly select which scheme and configuration to use before running a build',
     },
     {
-      name: '--mode <string>',
+      name: '--configuration <string>',
       description:
         'Explicitly set the scheme configuration to use. This option is case sensitive.',
     },

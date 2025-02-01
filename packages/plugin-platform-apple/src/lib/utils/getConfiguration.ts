@@ -3,36 +3,40 @@ import type { Info } from '../types/index.js';
 
 export async function getConfiguration(
   configurations: Info['configurations'],
-  preselectedMode: string | undefined,
+  preselectedConfiguration: string | undefined,
   interactive: boolean | undefined
 ) {
-  let mode = preselectedMode;
+  let configuration = preselectedConfiguration;
   if (interactive) {
-    if (configurations && configurations.length > 1 && !preselectedMode) {
-      mode = await promptForConfigurationSelection(configurations);
+    if (
+      configurations &&
+      configurations.length > 1 &&
+      !preselectedConfiguration
+    ) {
+      configuration = await promptForConfigurationSelection(configurations);
     }
   }
-  if (!mode) {
-    mode = 'Debug';
+  if (!configuration) {
+    configuration = 'Debug';
   }
-  invalidateConfiguration(configurations, mode);
-  return mode;
+  invalidateConfiguration(configurations, configuration);
+  return configuration;
 }
 
 function invalidateConfiguration(
   configurations: Info['configurations'],
-  mode: string
+  configuration: string
 ) {
   if (!configurations || configurations.length === 0) {
     logger.warn(
-      `Unable to check whether "${mode}" configuration exists in your project`
+      `Unable to check whether "${configuration}" configuration exists in your project`
     );
     return;
   }
 
-  if (!configurations.includes(mode)) {
+  if (!configurations.includes(configuration)) {
     throw new RnefError(
-      `Configuration "${mode}" doesn't exist. Please use one of the existing configurations: ${configurations
+      `Configuration "${configuration}" doesn't exist. Please use one of the existing configurations: ${configurations
         .map((configuration) => `\n- ${configuration}`)
         .join('')}`
     );

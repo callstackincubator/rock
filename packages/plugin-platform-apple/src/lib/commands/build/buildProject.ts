@@ -13,7 +13,7 @@ export const buildProject = async (
   platformName: ApplePlatform,
   udid: string | undefined,
   scheme: string,
-  mode: string,
+  configuration: string,
   args: BuildFlags
 ) => {
   const simulatorDest = simulatorDestinationMap[platformName];
@@ -31,7 +31,7 @@ export const buildProject = async (
     xcodeProject.name,
     ...(args.buildFolder ? ['-derivedDataPath', args.buildFolder] : []),
     '-configuration',
-    mode,
+    configuration,
     '-scheme',
     scheme,
     '-destination',
@@ -51,7 +51,7 @@ export const buildProject = async (
         ? 'platform=macOS,variant=Mac Catalyst'
         : udid
         ? `id=${udid}`
-        : mode === 'Debug' || args.device
+        : configuration === 'Debug' || args.device
         ? `generic/platform=${simulatorDest}`
         : `generic/platform=${platformName}` +
           (args.destination ? ',' + args.destination : '');
@@ -79,7 +79,7 @@ export const buildProject = async (
   const loader = spinner();
   const message = `${
     args.archive ? 'Archiving' : 'Building'
-  } the app with xcodebuild for ${scheme} scheme in ${mode} mode`;
+  } the app with xcodebuild for ${scheme} scheme in ${configuration} configuration`;
 
   loader.start(message, { kind: 'clock' });
   logger.debug(`Running "xcodebuild ${xcodebuildArgs.join(' ')}.`);
@@ -91,7 +91,7 @@ export const buildProject = async (
     loader.stop(
       `${
         args.archive ? 'Archived' : 'Built'
-      } the app with xcodebuild for ${scheme} scheme in ${mode} mode.`
+      } the app with xcodebuild for ${scheme} scheme in ${configuration} configuration.`
     );
     return output;
   } catch (error) {

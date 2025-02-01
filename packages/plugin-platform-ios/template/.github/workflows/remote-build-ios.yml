@@ -36,7 +36,7 @@ jobs:
         uses: ./.github/actions/rnef-remote-build-ios
         with:
           destination: device
-          mode: Release
+          configuration: Release
           certificate-base64: ${{ secrets.RNEF_APPLE_CERTIFICATE_BASE64 }}
           certificate-password: ${{ secrets.RNEF_APPLE_CERTIFICATE_PASSWORD }}
           provisioning-profile-base64: ${{ secrets.RNEF_APPLE_PROVISIONING_PROFILE_BASE64 }}
@@ -66,4 +66,4 @@ jobs:
         uses: ./.github/actions/rnef-remote-build-ios
         with:
           destination: simulator
-          mode: Debug
+          configuration: Debug

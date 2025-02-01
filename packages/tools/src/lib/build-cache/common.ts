@@ -30,7 +30,7 @@ export type RemoteBuildCache = {
 type FormatArtifactNameParams = {
   platform: string;
   distribution?: string;
-  mode: string;
+  build: string;
   hash: string;
 };
 
@@ -43,12 +43,12 @@ type FormatArtifactNameParams = {
 export function formatArtifactName({
   platform,
   distribution,
-  mode,
+  build,
   hash,
 }: FormatArtifactNameParams): string {
   return `rnef-${platform}${
     distribution ? `-${distribution}` : ''
-  }-${mode}-${hash}`;
+  }-${build}-${hash}`;
 }
 
 export function getLocalArtifactPath(artifactName: string) {

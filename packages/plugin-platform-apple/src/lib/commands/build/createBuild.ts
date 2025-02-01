@@ -38,17 +38,17 @@ export const createBuild = async (
     args.interactive,
     xcodeProject.name
   );
-  let mode = await getConfiguration(
+  let configuration = await getConfiguration(
     info.configurations,
-    args.mode,
+    args.configuration,
     args.interactive
   );
 
-  if (args.archive && mode !== 'Release') {
+  if (args.archive && configuration !== 'Release') {
     logger.debug(
-      'Setting build mode to Release, because --archive flag was used'
+      'Setting build configuration to Release, because --archive flag was used'
     );
-    mode = 'Release';
+    configuration = 'Release';
   }
 
   try {
@@ -58,7 +58,7 @@ export const createBuild = async (
       platformName,
       undefined,
       scheme,
-      mode,
+      configuration,
       args
     );
 
@@ -74,7 +74,7 @@ export const createBuild = async (
         sourceDir,
         archivePath,
         scheme,
-        mode,
+        configuration,
         platformName,
         exportExtraParams: args.exportExtraParams ?? [],
       });

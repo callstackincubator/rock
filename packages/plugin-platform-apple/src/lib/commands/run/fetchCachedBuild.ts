@@ -19,18 +19,18 @@ export type Distribution = 'simulator' | 'device';
 
 export type FetchCachedBuildOptions = {
   distribution: Distribution;
-  mode: string;
+  configuration: string;
 };
 
 export async function fetchCachedBuild({
   distribution,
-  mode,
+  configuration,
 }: FetchCachedBuildOptions): Promise<LocalBuild | null> {
   const loader = spinner();
   loader.start('Looking for a local cached build');
 
   const root = getProjectRoot();
-  const artifactName = await calculateArtifactName({ distribution, mode });
+  const artifactName = await calculateArtifactName({ distribution, configuration });
 
   const localBuild = queryLocalBuildCache(artifactName, {
     findBinary: (path) => findBinary(distribution, path),
@@ -78,14 +78,14 @@ export async function fetchCachedBuild({
 
 async function calculateArtifactName({
   distribution,
-  mode,
+  configuration,
 }: FetchCachedBuildOptions) {
   const root = getProjectRoot();
   const fingerprint = await nativeFingerprint(root, { platform: 'ios' });
   return formatArtifactName({
     platform: 'ios',
     distribution,
-    mode,
+    configuration,
     hash: fingerprint.hash,
   });
 }

@@ -10,7 +10,7 @@ inputs:
     description: 'Destination to build to: "simulator" or "device". Using "device" runs "rnef build:ios --archive" and code signing settings (certificate, provisioning profile, keychain password) are required.'
     required: false
     default: 'simulator' # 'simulator' or 'device'
-  mode:
+  configuration:
     description: Xcode scheme configuration
     required: false
     default: 'Debug'
@@ -84,7 +84,7 @@ runs:
 
     - name: Set environment variables
       run: |
-        echo "ARTIFACT_NAME=rnef-ios-${{ inputs.destination }}-${{ inputs.mode }}-${{ steps.fingerprint.outputs.hash}}" >> $GITHUB_ENV
+        echo "ARTIFACT_NAME=rnef-ios-${{ inputs.destination }}-${{ inputs.configuration }}-${{ steps.fingerprint.outputs.hash}}" >> $GITHUB_ENV
         echo "PROFILE_DIR=$HOME/Library/MobileDevice/Provisioning Profiles" >> $GITHUB_ENV
       shell: bash
 
@@ -139,7 +139,7 @@ runs:
       run: |
         npx rnef build:ios \
           ${{ inputs.destination == 'device' && '--archive' || '' }} \
-          --mode ${{ inputs.mode }} \
+          --configuration ${{ inputs.configuration }} \
           --buildFolder "build" \
           ${{ inputs.rnef-build-extra-params }}
       shell: bash

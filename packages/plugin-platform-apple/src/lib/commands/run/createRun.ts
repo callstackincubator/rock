@@ -39,7 +39,7 @@ export const createRun = async (
 
   if (!args.binaryPath && args.remoteCache) {
     const cachedBuild = await fetchCachedBuild({
-      mode: args.mode ?? 'Debug',
+      configuration: args.configuration ?? 'Debug',
       distribution: args.device ? 'device' : 'simulator', // TODO: replace with better logic
     });
     if (cachedBuild) {
@@ -70,20 +70,20 @@ export const createRun = async (
     args.interactive,
     xcodeProject.name
   );
-  const mode = await getConfiguration(
+  const configuration = await getConfiguration(
     info.configurations,
-    args.mode,
+    args.configuration,
     args.interactive
   );
 
   if (platformName === 'macos') {
-    await runOnMac(xcodeProject, sourceDir, mode, scheme, args);
+    await runOnMac(xcodeProject, sourceDir, configuration, scheme, args);
     outro('Success 🎉.');
     return;
   } else if (args.catalyst) {
     await runOnMacCatalyst(
       platformName,
-      mode,
+      configuration,
       scheme,
       xcodeProject,
       sourceDir,
@@ -112,7 +112,7 @@ export const createRun = async (
         xcodeProject,
         sourceDir,
         platformName,
-        mode,
+        configuration,
         scheme,
         args
       );
@@ -120,7 +120,7 @@ export const createRun = async (
       await runOnDevice(
         device,
         platformName,
-        mode,
+        configuration,
         scheme,
         xcodeProject,
         sourceDir,
@@ -161,7 +161,7 @@ export const createRun = async (
         xcodeProject,
         sourceDir,
         platformName,
-        mode,
+        configuration,
         scheme,
         args
       );
