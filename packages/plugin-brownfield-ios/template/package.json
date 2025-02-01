@@ -1,7 +1,7 @@
 {
   "name": "rnef-plugin-brownfield-ios-template",
   "scripts": {
-    "package:ios": "rnef package:ios --scheme HelloWorldReact"
+    "package:ios": "rnef package:ios --scheme HelloWorldReact --mode Release"
   },
   "devDependencies": {
     "@rnef/plugin-brownfield-ios":  "^0.1.5"
