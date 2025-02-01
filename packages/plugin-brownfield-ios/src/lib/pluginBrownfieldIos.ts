@@ -15,7 +15,7 @@ export const pluginBrownfieldIos =
       name: 'package:ios',
       description: 'Emit a .xcframework file from React Native code.',
       action: async (args: BuildFlags) => {
-        intro("Packaging iOS project")
+        intro('Packaging iOS project');
 
         const projectRoot = api.getProjectRoot();
         const iosConfig = projectConfig(projectRoot, {});

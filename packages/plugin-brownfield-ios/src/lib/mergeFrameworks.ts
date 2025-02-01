@@ -1,4 +1,4 @@
-import { existsSync, readdirSync, rmdirSync, rmSync } from 'node:fs';
+import { existsSync, readdirSync, rmSync } from 'node:fs';
 import path from 'node:path';
 import { getBuildPaths, spawn, spinner } from '@rnef/tools';
 
@@ -35,13 +35,13 @@ export async function mergeFrameworks({
     `${scheme}.framework`
   );
 
-  const xcframeworkPath = path.join(packageDir, `${scheme}.xcframework`)
+  const xcframeworkPath = path.join(packageDir, `${scheme}.xcframework`);
 
   if (existsSync(xcframeworkPath)) {
-    loader.start("Removing old framework output")
-    rmSync(xcframeworkPath, {recursive: true, force: true})
-    
-    loader.stop("Removed old framework output")
+    loader.start('Removing old framework output');
+    rmSync(xcframeworkPath, { recursive: true, force: true });
+
+    loader.stop('Removed old framework output');
   }
 
   loader.start('Merging the frameworks...');
@@ -53,7 +53,7 @@ export async function mergeFrameworks({
     '-framework',
     simulatorPath,
     '-output',
-    xcframeworkPath
+    xcframeworkPath,
   ];
 
   try {
