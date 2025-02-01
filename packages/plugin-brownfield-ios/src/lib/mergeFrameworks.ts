@@ -1,6 +1,5 @@
-import { readdirSync } from 'node:fs';
+import { existsSync, readdirSync, rmdirSync, rmSync } from 'node:fs';
 import path from 'node:path';
-import { getBuildOptions } from '@rnef/plugin-platform-apple';
 import { getBuildPaths, spawn, spinner } from '@rnef/tools';
 
 /**
@@ -36,6 +35,15 @@ export async function mergeFrameworks({
     `${scheme}.framework`
   );
 
+  const xcframeworkPath = path.join(packageDir, `${scheme}.xcframework`)
+
+  if (existsSync(xcframeworkPath)) {
+    loader.start("Removing old framework output")
+    rmSync(xcframeworkPath, {recursive: true, force: true})
+    
+    loader.stop("Removed old framework output")
+  }
+
   loader.start('Merging the frameworks...');
 
   const xcodebuildArgs = [
@@ -45,7 +53,7 @@ export async function mergeFrameworks({
     '-framework',
     simulatorPath,
     '-output',
-    path.join(packageDir, `${scheme}.xcframework`),
+    xcframeworkPath
   ];
 
   try {
