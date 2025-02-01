@@ -176,6 +176,9 @@ importers:
       '@rnef/plugin-platform-apple':
         specifier: ^0.1.5
         version: link:../plugin-platform-apple
+      '@rnef/plugin-platform-ios':
+        specifier: ^0.1.5
+        version: link:../plugin-platform-ios
       '@rnef/tools':
         specifier: ^0.1.5
         version: link:../tools
