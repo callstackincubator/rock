@@ -116,4 +116,8 @@ npx create-rnef-app enterprise
    npx rnef run:ios
    ```
 
+   Additionally rename flags:
+
+   - `--mode` to `--buildVariant` for Android commands
+
 1. Configure GitHub Actions for remote builds.
