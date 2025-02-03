@@ -13,7 +13,7 @@ export type BuildFlags = {
   device?: string;
   catalyst?: boolean;
   buildFolder?: string;
-  destinations?: string;
+  destinations?: string[];
   archive?: boolean;
 };
 
@@ -71,9 +71,10 @@ export const getBuildOptions = ({ platformName }: BuilderCommand) => {
       value: 'build',
     },
     {
-      name: '--destinations <string[]>',
+      name: '--destinations <list>',
       description:
         'Explicitly defined destinations e.g. "arch=x86_64". You can also pass a comma separated array e.g. "generic/platform=iphoneos,generic/platform=iphonesimulator"',
+      parse: (val: string) => val.split(','),
     },
     {
       name: '--archive',

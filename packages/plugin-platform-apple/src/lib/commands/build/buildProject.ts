@@ -26,7 +26,7 @@ export const buildProject = async (
 
   function determineDestinations(): string[] {
     if (args.destinations != undefined) {
-      return args.destinations.split(',');
+      return args.destinations;
     }
 
     if (args.device && typeof args.device === 'string') {

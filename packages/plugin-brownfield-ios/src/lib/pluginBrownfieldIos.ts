@@ -21,9 +21,10 @@ export const pluginBrownfieldIos =
         const iosConfig = projectConfig(projectRoot, {});
         const { derivedDataDir } = getBuildPaths('ios');
 
-        const destinations =
-          args.destinations ??
-          'generic/platform=iphoneos,generic/platform=iphonesimulator';
+        const destinations = args.destinations ?? [
+          'generic/platform=iphoneos',
+          'generic/platform=iphonesimulator',
+        ];
 
         const buildFolder = args.buildFolder ?? derivedDataDir;
         const mode = args.mode ?? 'Debug';
