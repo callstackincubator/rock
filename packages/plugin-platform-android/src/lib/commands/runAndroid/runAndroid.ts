@@ -4,7 +4,14 @@ import type {
   AndroidProjectConfig,
   Config,
 } from '@react-native-community/cli-types';
-import { intro, isInteractive, logger, outro, promptSelect, RnefError } from '@rnef/tools';
+import {
+  intro,
+  isInteractive,
+  logger,
+  outro,
+  promptSelect,
+  RnefError,
+} from '@rnef/tools';
 import type { BuildFlags } from '../buildAndroid/buildAndroid.js';
 import { options } from '../buildAndroid/buildAndroid.js';
 import { promptForTaskSelection } from '../listAndroidTasks.js';
@@ -49,10 +56,15 @@ export async function runAndroid(
   const mainTaskType = device ? 'assemble' : 'install';
   const tasks = args.interactive
     ? [await promptForTaskSelection(mainTaskType, androidProject.sourceDir)]
-    : [...(args.tasks ?? []), `${mainTaskType}${toPascalCase(args.buildVariant)}`];
+    : [
+        ...(args.tasks ?? []),
+        `${mainTaskType}${toPascalCase(args.buildVariant)}`,
+      ];
 
   if (!args.binaryPath && args.remoteCache) {
-    const cachedBuild = await fetchCachedBuild({ buildVariant: args.buildVariant });
+    const cachedBuild = await fetchCachedBuild({
+      buildVariant: args.buildVariant,
+    });
     if (cachedBuild) {
       // @todo replace with a more generic way to pass binary path
       args.binaryPath = cachedBuild.binaryPath;
@@ -150,7 +162,11 @@ function normalizeArgs(args: Flags, projectRoot: string) {
   }
 
   // turn on activeArchOnly for debug to speed up local builds
-  if (args.buildVariant !== 'release' && args.activeArchOnly === undefined) {
+  if (
+    args.buildVariant !== 'release' &&
+    !args.buildVariant.endsWith('Release') &&
+    args.activeArchOnly === undefined
+  ) {
     args.activeArchOnly = true;
   }
 
