@@ -60,9 +60,7 @@ export async function mergeFrameworks({
   try {
     let xcframeworkFiles: string[] = [];
 
-    const { output } = await spawn('xcodebuild', xcodebuildArgs, {
-      cwd: sourceDir,
-    });
+    await spawn('xcodebuild', xcodebuildArgs, { cwd: sourceDir });
     try {
       xcframeworkFiles = readdirSync(packageDir).filter((file) =>
         file.endsWith('.xcframework')
@@ -76,7 +74,6 @@ export async function mergeFrameworks({
         path.join(packageDir, xcframeworkFiles[0]) ?? packageDir
       }`
     );
-    return output;
   } catch (error) {
     loader.stop(
       'Running xcodebuild failed. Check the error message above for details.',
