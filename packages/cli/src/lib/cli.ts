@@ -45,9 +45,9 @@ export const cli = async ({ cwd, argv }: CliOptions = {}) => {
     const cmd = program
       .command(command.name)
       .description(command.description || '')
-      .action(async (args) => {
+      .action(async (...args) => {
         try {
-          await command.action(args);
+          await command.action(...args);
         } catch (error) {
           if (!logger.isVerbose() && error instanceof RnefError) {
             logger.error(error.message);
@@ -63,6 +63,10 @@ export const cli = async ({ cwd, argv }: CliOptions = {}) => {
           process.exit(1);
         }
       });
+
+    for (const arg of command.args || []) {
+      cmd.argument(arg.name, arg.description, arg.default);
+    }
 
     for (const opt of command.options || []) {
       cmd.option(
