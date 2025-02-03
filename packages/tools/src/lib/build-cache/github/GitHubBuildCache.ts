@@ -1,6 +1,7 @@
 import color from 'picocolors';
 import { getGitRemote } from '../../git.js';
 import logger from '../../logger.js';
+import type { spinner } from '../../prompts.js';
 import type {
   LocalArtifact,
   RemoteArtifact,
@@ -61,9 +62,17 @@ Include "repo", "workflow", and "read:org" permissions.`
     };
   }
 
-  async download(artifact: RemoteArtifact): Promise<LocalArtifact> {
+  async download(
+    artifact: RemoteArtifact,
+    loader: ReturnType<typeof spinner>
+  ): Promise<LocalArtifact> {
     const artifactPath = getLocalArtifactPath(artifact.name);
-    await downloadGitHubArtifact(artifact.downloadUrl, artifactPath);
+    await downloadGitHubArtifact(
+      artifact.downloadUrl,
+      artifactPath,
+      this.name,
+      loader
+    );
 
     return {
       name: artifact.name,

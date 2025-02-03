@@ -3,6 +3,7 @@ import AdmZip from 'adm-zip';
 import color from 'picocolors';
 import cacheManager from '../../cacheManager.js';
 import logger from '../../logger.js';
+import type { spinner } from '../../prompts.js';
 import { getGitHubToken, type GitHubRepoDetails } from './config.js';
 
 const PAGE_SIZE = 100; // Maximum allowed by GitHub API
@@ -112,25 +113,54 @@ Next time you run the command, you will be prompted to enter the new token.`
 
 export async function downloadGitHubArtifact(
   downloadUrl: string,
-  targetPath: string
+  targetPath: string,
+  name: string,
+  loader: ReturnType<typeof spinner>
 ): Promise<void> {
   try {
-    fs.mkdirSync(targetPath, {
-      recursive: true,
-    });
+    fs.mkdirSync(targetPath, { recursive: true });
 
     const response = await fetch(downloadUrl, {
       headers: {
         Authorization: `token ${getGitHubToken()}`,
+        'Accept-Encoding': 'None',
       },
     });
 
-    if (!response.ok) {
+    if (!response.ok || !response.body) {
       throw new Error(`Failed to download artifact: ${response.statusText}`);
+    }
+    let responseData = response;
+    const contentLength = response.headers.get('content-length');
+
+    if (contentLength) {
+      const totalBytes = parseInt(contentLength, 10);
+      const totalMB = (totalBytes / 1024 / 1024).toFixed(2);
+      let downloadedBytes = 0;
+
+      const reader = response.body.getReader();
+      const stream = new ReadableStream({
+        async start(controller) {
+          while (true) {
+            const { done, value } = await reader.read();
+            if (done) {
+              break;
+            }
+            downloadedBytes += value.length;
+            const progress = ((downloadedBytes / totalBytes) * 100).toFixed(0);
+            loader.message(
+              `Downloading cached build from ${name} (${progress}% of ${totalMB} MB)`
+            );
+            controller.enqueue(value);
+          }
+          controller.close();
+        },
+      });
+      responseData = new Response(stream);
     }
 
     const zipPath = targetPath + '.zip';
-    const buffer = await response.arrayBuffer();
+    const buffer = await responseData.arrayBuffer();
     fs.writeFileSync(zipPath, new Uint8Array(buffer));
 
     unzipFile(zipPath, targetPath);

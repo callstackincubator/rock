@@ -5,7 +5,6 @@ import type {
   XcodeProjectInfo,
 } from '../../types/index.js';
 import { buildProject } from '../build/buildProject.js';
-import { fetchCachedBuild } from './fetchCachedBuild.js';
 import installApp from './installApp.js';
 import type { RunFlags } from './runOptions.js';
 
@@ -14,21 +13,10 @@ export async function runOnSimulator(
   xcodeProject: XcodeProjectInfo,
   sourceDir: string,
   platform: ApplePlatform,
-  mode: string,
+  configuration: string,
   scheme: string,
   args: RunFlags
 ) {
-  if (!args.binaryPath && args.remoteCache) {
-    const cachedBuild = await fetchCachedBuild({
-      distribution: 'simulator',
-      mode: args.mode,
-    });
-    if (cachedBuild) {
-      // @todo replace with a more generic way to pass binary path
-      args.binaryPath = cachedBuild.binaryPath;
-    }
-  }
-
   /**
    * Booting simulator through `xcrun simctl boot` will boot it in the `headless` mode
    * (running in the background).
@@ -63,7 +51,7 @@ export async function runOnSimulator(
       platform,
       simulator.udid,
       scheme,
-      mode,
+      configuration,
       args
     );
   }
@@ -72,7 +60,7 @@ export async function runOnSimulator(
   await installApp({
     xcodeProject,
     sourceDir,
-    mode,
+    configuration,
     scheme,
     target: args.target,
     udid: simulator.udid,

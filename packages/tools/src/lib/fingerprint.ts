@@ -36,6 +36,9 @@ export async function nativeFingerprint(
       'ios/DerivedData',
       'ios/Pods',
       'node_modules',
+      'android/local.properties',
+      'android/.idea',
+      'android/.gradle'
     ],
   });
 

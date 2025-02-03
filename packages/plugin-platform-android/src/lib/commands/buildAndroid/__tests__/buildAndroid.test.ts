@@ -29,7 +29,7 @@ bundleRelease - Bundles main outputs for all Release variants.`;
 
 const args: BuildFlags = {
   tasks: undefined,
-  mode: 'debug',
+  buildVariant: 'debug',
   activeArchOnly: false,
   extraParams: undefined,
   interactive: undefined,
@@ -111,7 +111,7 @@ test('buildAndroid fails gracefully when gradle errors', async () => {
   });
 });
 
-test('buildAndroid runs selected "bundleRelease" task in interactive mode', async () => {
+test('buildAndroid runs selected "bundleRelease" task in interactive buildVariant', async () => {
   (spawn as Mock).mockImplementation((file, args) => {
     if (file === './gradlew' && args[0] === 'tasks') {
       return { output: gradleTaskOutput };

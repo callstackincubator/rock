@@ -32,6 +32,11 @@ export async function getInfo(
         cwd: sourceDir,
       });
       const info = parseTargetList(stdout);
+
+      if (!info) {
+        throw new RnefError('Failed to get Xcode project information');
+      }
+
       loader.stop('Gathered Xcode project information.');
       return info;
     } catch (error) {

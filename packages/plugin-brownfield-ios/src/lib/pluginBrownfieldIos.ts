@@ -27,7 +27,7 @@ export const pluginBrownfieldIos =
         ];
 
         const buildFolder = args.buildFolder ?? derivedDataDir;
-        const mode = args.mode ?? 'Debug';
+        const configuration = args.configuration ?? 'Debug';
 
         if (iosConfig) {
           await createBuild('ios', iosConfig, {
@@ -39,10 +39,16 @@ export const pluginBrownfieldIos =
           throw new RnefError('iOS project not found.');
         }
 
+        if (!args.scheme) {
+          throw new RnefError(
+            'Scheme is required. Please provide "--scheme" flag.'
+          );
+        }
+
         try {
           await mergeFrameworks({
             scheme: args.scheme,
-            mode,
+            configuration,
             sourceDir: iosConfig.sourceDir,
             platformName: 'ios',
             buildFolder,

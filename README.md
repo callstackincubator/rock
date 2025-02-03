@@ -116,6 +116,14 @@ npx create-rnef-app enterprise
    npx rnef run:ios
    ```
 
+   Additionally rename flags:
+
+   - `--mode` to `--build-variant` for Android commands
+   - `--mode` to `--configuration` for iOS commands
+   - `--buildFolder` to `-build-folder` for iOS commands
+   - `--appId` to `--app-id` for Android commands
+   - `--appIdSuffix` to `--app-id-suffix` for Android commands
+
 1. Configure GitHub Actions for remote builds.
 
 1. Configure [Brownfield](./BROWNFIELD.md).

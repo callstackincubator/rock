@@ -5,8 +5,8 @@ import { getPlatformInfo } from '../../utils/getPlatformInfo.js';
 export type BuildFlags = {
   verbose?: boolean;
   interactive?: boolean;
-  mode: string;
-  scheme: string;
+  configuration?: string;
+  scheme?: string;
   target?: string;
   extraParams?: string[];
   exportExtraParams?: string[];
@@ -31,7 +31,7 @@ export const getBuildOptions = ({ platformName }: BuilderCommand) => {
         'Explicitly select which scheme and configuration to use before running a build',
     },
     {
-      name: '--mode <string>',
+      name: '--configuration <string>',
       description:
         'Explicitly set the scheme configuration to use. This option is case sensitive.',
     },
@@ -66,7 +66,7 @@ export const getBuildOptions = ({ platformName }: BuilderCommand) => {
       description: 'Run on Mac Catalyst.',
     },
     {
-      name: '--buildFolder <string>',
+      name: '--build-folder <string>',
       description: `Location for ${readableName} build artifacts. Corresponds to Xcode's "-derivedDataPath".`,
       value: 'build',
     },

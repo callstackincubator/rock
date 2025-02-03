@@ -7,7 +7,7 @@ import type { RunFlags } from './runOptions.js';
 
 export async function runOnMacCatalyst(
   platform: ApplePlatform,
-  mode: string,
+  configuration: string,
   scheme: string,
   xcodeProject: XcodeProjectInfo,
   sourceDir: string,
@@ -24,14 +24,14 @@ export async function runOnMacCatalyst(
     platform,
     undefined,
     scheme,
-    mode,
+    configuration,
     args
   );
 
   const buildSettings = await getBuildSettings(
     xcodeProject,
     sourceDir,
-    mode,
+    configuration,
     buildOutput,
     scheme
   );

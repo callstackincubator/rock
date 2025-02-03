@@ -4,7 +4,14 @@ import type {
   AndroidProjectConfig,
   Config,
 } from '@react-native-community/cli-types';
-import { intro, isInteractive, logger, outro, promptSelect, RnefError } from '@rnef/tools';
+import {
+  intro,
+  isInteractive,
+  logger,
+  outro,
+  promptSelect,
+  RnefError,
+} from '@rnef/tools';
 import type { BuildFlags } from '../buildAndroid/buildAndroid.js';
 import { options } from '../buildAndroid/buildAndroid.js';
 import { promptForTaskSelection } from '../listAndroidTasks.js';
@@ -49,10 +56,15 @@ export async function runAndroid(
   const mainTaskType = device ? 'assemble' : 'install';
   const tasks = args.interactive
     ? [await promptForTaskSelection(mainTaskType, androidProject.sourceDir)]
-    : [...(args.tasks ?? []), `${mainTaskType}${toPascalCase(args.mode)}`];
+    : [
+        ...(args.tasks ?? []),
+        `${mainTaskType}${toPascalCase(args.buildVariant)}`,
+      ];
 
   if (!args.binaryPath && args.remoteCache) {
-    const cachedBuild = await fetchCachedBuild({ mode: args.mode });
+    const cachedBuild = await fetchCachedBuild({
+      buildVariant: args.buildVariant,
+    });
     if (cachedBuild) {
       // @todo replace with a more generic way to pass binary path
       args.binaryPath = cachedBuild.binaryPath;
@@ -139,18 +151,22 @@ function matchingDevice(devices: Array<DeviceData>, deviceArg: string) {
 }
 
 function normalizeArgs(args: Flags, projectRoot: string) {
-  if (args.tasks && args.mode) {
+  if (args.tasks && args.buildVariant) {
     logger.warn(
-      'Both "--tasks" and "--mode" parameters were passed. Using "--tasks" for building the app.'
+      'Both "--tasks" and "--build-variant" parameters were passed. Using "--tasks" for building the app.'
     );
   }
 
-  if (!args.mode) {
-    args.mode = 'debug';
+  if (!args.buildVariant) {
+    args.buildVariant = 'debug';
   }
 
   // turn on activeArchOnly for debug to speed up local builds
-  if (args.mode !== 'release' && args.activeArchOnly === undefined) {
+  if (
+    args.buildVariant !== 'release' &&
+    !args.buildVariant.endsWith('Release') &&
+    args.activeArchOnly === undefined
+  ) {
     args.activeArchOnly = true;
   }
 
@@ -202,13 +218,13 @@ export const runOptions = [
     default: process.env['RCT_METRO_PORT'] || '8081',
   },
   {
-    name: '--appId <string>',
+    name: '--app-id <string>',
     description:
       'Specify an applicationId to launch after build. If not specified, `package` from AndroidManifest.xml will be used.',
     default: '',
   },
   {
-    name: '--appIdSuffix <string>',
+    name: '--app-id-suffix <string>',
     description: 'Specify an applicationIdSuffix to launch after build.',
     default: '',
   },

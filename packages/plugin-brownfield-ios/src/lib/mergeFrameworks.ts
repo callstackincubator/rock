@@ -9,13 +9,13 @@ import { getBuildPaths, spawn, spinner } from '@rnef/tools';
 export async function mergeFrameworks({
   sourceDir,
   scheme,
-  mode,
+  configuration,
   platformName,
   buildFolder,
 }: {
   sourceDir: string;
   scheme: string;
-  mode: string;
+  configuration: string;
   platformName: string;
   buildFolder: string;
 }) {
@@ -26,12 +26,12 @@ export async function mergeFrameworks({
 
   const iosPath = path.join(
     productsPath,
-    `${mode}-iphoneos`,
+    `${configuration}-iphoneos`,
     `${scheme}.framework`
   );
   const simulatorPath = path.join(
     productsPath,
-    `${mode}-iphonesimulator`,
+    `${configuration}-iphonesimulator`,
     `${scheme}.framework`
   );
 
@@ -71,7 +71,7 @@ export async function mergeFrameworks({
     }
 
     loader.stop(
-      `Exported the xcframework for ${scheme} scheme in ${mode} mode to ${
+      `Exported the xcframework for ${scheme} scheme in ${configuration} configuration to ${
         path.join(packageDir, xcframeworkFiles[0]) ?? packageDir
       }`
     );

@@ -9,7 +9,7 @@ import type { RunFlags } from './runOptions.js';
 export async function runOnMac(
   xcodeProject: XcodeProjectInfo,
   sourceDir: string,
-  mode: string,
+  configuration: string,
   scheme: string,
   args: RunFlags
 ) {
@@ -19,7 +19,7 @@ export async function runOnMac(
     'macos',
     undefined,
     scheme,
-    mode,
+    configuration,
     args
   );
 
@@ -27,7 +27,7 @@ export async function runOnMac(
     buildOutput,
     xcodeProject,
     sourceDir,
-    mode,
+    configuration,
     scheme,
     target: args.target,
     binaryPath: args.binaryPath,
@@ -38,7 +38,7 @@ type Options = {
   buildOutput: string;
   xcodeProject: XcodeProjectInfo;
   sourceDir: string;
-  mode: string;
+  configuration: string;
   scheme: string;
   target?: string;
   binaryPath?: string;
@@ -48,7 +48,7 @@ async function openApp({
   buildOutput,
   xcodeProject,
   sourceDir,
-  mode,
+  configuration,
   scheme,
   target,
   binaryPath,
@@ -58,7 +58,7 @@ async function openApp({
   const buildSettings = await getBuildSettings(
     xcodeProject,
     sourceDir,
-    mode,
+    configuration,
     buildOutput,
     scheme,
     target

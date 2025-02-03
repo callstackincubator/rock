@@ -1,19 +1,28 @@
 import fs from 'node:fs';
 import path from 'node:path';
-import { intro, isInteractive, logger, outro, RnefError, spinner } from '@rnef/tools';
+import {
+  intro,
+  isInteractive,
+  logger,
+  outro,
+  promptSelect,
+  RnefError,
+  spinner,
+} from '@rnef/tools';
+import color from 'picocolors';
 import type {
   ApplePlatform,
   Device,
   ProjectConfig,
-  XcodeProjectInfo,
 } from '../../types/index.js';
+import { getConfiguration } from '../../utils/getConfiguration.js';
+import { getInfo } from '../../utils/getInfo.js';
 import { getPlatformInfo } from '../../utils/getPlatformInfo.js';
+import { getScheme } from '../../utils/getScheme.js';
 import { listDevicesAndSimulators } from '../../utils/listDevices.js';
-import { promptForDeviceSelection } from '../../utils/prompts.js';
-import { selectFromInteractiveMode } from '../../utils/selectFromInteractiveMode.js';
-import { getConfiguration } from '../build/getConfiguration.js';
+import { fetchCachedBuild } from './fetchCachedBuild.js';
 import { matchingDevice } from './matchingDevice.js';
-import { cacheRecentDevice } from './recentDevices.js';
+import { cacheRecentDevice, sortByRecentDevices } from './recentDevices.js';
 import { runOnDevice } from './runOnDevice.js';
 import { runOnMac } from './runOnMac.js';
 import { runOnMacCatalyst } from './runOnMacCatalyst.js';
@@ -28,6 +37,17 @@ export const createRun = async (
 ) => {
   intro('Running on iOS');
 
+  if (!args.binaryPath && args.remoteCache) {
+    const cachedBuild = await fetchCachedBuild({
+      configuration: args.configuration ?? 'Debug',
+      distribution: args.device ? 'device' : 'simulator', // TODO: replace with better logic
+    });
+    if (cachedBuild) {
+      // @todo replace with a more generic way to pass binary path
+      args.binaryPath = cachedBuild.binaryPath;
+    }
+  }
+
   const { readableName: platformReadableName } = getPlatformInfo(platformName);
   const { xcodeProject, sourceDir } = projectConfig;
 
@@ -37,31 +57,33 @@ export const createRun = async (
     );
   }
 
-  normalizeArgs(args, projectRoot, xcodeProject);
+  validateArgs(args, projectRoot);
 
-  const { scheme, mode } = args.interactive
-    ? await selectFromInteractiveMode(
-        xcodeProject,
-        sourceDir,
-        args.scheme,
-        args.mode
-      )
-    : await getConfiguration(
-        xcodeProject,
-        sourceDir,
-        args.scheme,
-        args.mode,
-        platformName
-      );
+  const info = await getInfo(xcodeProject, sourceDir);
+
+  if (!info) {
+    throw new RnefError('Failed to get Xcode project information');
+  }
+  const scheme = await getScheme(
+    info.schemes,
+    args.scheme,
+    args.interactive,
+    xcodeProject.name
+  );
+  const configuration = await getConfiguration(
+    info.configurations,
+    args.configuration,
+    args.interactive
+  );
 
   if (platformName === 'macos') {
-    await runOnMac(xcodeProject, sourceDir, mode, scheme, args);
+    await runOnMac(xcodeProject, sourceDir, configuration, scheme, args);
     outro('Success 🎉.');
     return;
   } else if (args.catalyst) {
     await runOnMacCatalyst(
       platformName,
-      mode,
+      configuration,
       scheme,
       xcodeProject,
       sourceDir,
@@ -90,7 +112,7 @@ export const createRun = async (
         xcodeProject,
         sourceDir,
         platformName,
-        mode,
+        configuration,
         scheme,
         args
       );
@@ -98,7 +120,7 @@ export const createRun = async (
       await runOnDevice(
         device,
         platformName,
-        mode,
+        configuration,
         scheme,
         xcodeProject,
         sourceDir,
@@ -139,7 +161,7 @@ export const createRun = async (
         xcodeProject,
         sourceDir,
         platformName,
-        mode,
+        configuration,
         scheme,
         args
       );
@@ -171,20 +193,7 @@ async function selectDevice(
   return device;
 }
 
-function normalizeArgs(
-  args: RunFlags,
-  projectRoot: string,
-  xcodeProject: XcodeProjectInfo
-) {
-  if (!args.mode) {
-    args.mode = 'Debug';
-  }
-  if (!args.scheme) {
-    args.scheme = path.basename(
-      xcodeProject.name,
-      path.extname(xcodeProject.name)
-    );
-  }
+function validateArgs(args: RunFlags, projectRoot: string) {
   if (args.binaryPath) {
     args.binaryPath = path.isAbsolute(args.binaryPath)
       ? args.binaryPath
@@ -196,10 +205,28 @@ function normalizeArgs(
       );
     }
   }
+
   if (args.interactive && !isInteractive()) {
     logger.warn(
       'Interactive mode is not supported in non-interactive environments.'
     );
     args.interactive = false;
   }
+}
+
+function promptForDeviceSelection(
+  devices: Device[],
+  platformName: ApplePlatform
+) {
+  const sortedDevices = sortByRecentDevices(devices, platformName);
+  return promptSelect({
+    message: 'Select the device / simulator you want to use',
+    options: sortedDevices.map((d) => {
+      const markDevice = d.type === 'device' ? ` - (physical device)` : '';
+      return {
+        label: `${d.name} ${color.dim(`(${d.version})${markDevice}`)}`,
+        value: d,
+      };
+    }),
+  });
 }

@@ -7,7 +7,7 @@ import { getBuildSettings } from './getBuildSettings.js';
 type Options = {
   xcodeProject: XcodeProjectInfo;
   sourceDir: string;
-  mode: string;
+  configuration: string;
   scheme: string;
   target?: string;
   udid: string;
@@ -18,7 +18,7 @@ type Options = {
 export default async function installApp({
   xcodeProject,
   sourceDir,
-  mode,
+  configuration,
   scheme,
   target,
   udid,
@@ -33,7 +33,7 @@ export default async function installApp({
     const buildSettings = await getBuildSettings(
       xcodeProject,
       sourceDir,
-      mode,
+      configuration,
       `export PLATFORM_NAME=${getPlatformSDK(platform)}`, // simulate build output
       scheme,
       target

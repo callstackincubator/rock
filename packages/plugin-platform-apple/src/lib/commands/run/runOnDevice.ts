@@ -14,7 +14,7 @@ import type { RunFlags } from './runOptions.js';
 export async function runOnDevice(
   selectedDevice: Device,
   platform: ApplePlatform,
-  mode: string,
+  configuration: string,
   scheme: string,
   xcodeProject: XcodeProjectInfo,
   sourceDir: string,
@@ -23,7 +23,7 @@ export async function runOnDevice(
   if (!args.binaryPath && args.remoteCache) {
     const cachedBuild = await fetchCachedBuild({
       distribution: 'device',
-      mode: 'Release', // Remote debug builds make no sense, do they?
+      configuration: 'Release', // Remote debug builds make no sense, do they?
     });
     if (cachedBuild) {
       // @todo replace with a more generic way to pass binary path
@@ -49,14 +49,14 @@ export async function runOnDevice(
       platform,
       selectedDevice.udid,
       scheme,
-      mode,
+      configuration,
       args
     );
 
     const buildSettings = await getBuildSettings(
       xcodeProject,
       sourceDir,
-      mode,
+      configuration,
       buildOutput,
       scheme
     );
