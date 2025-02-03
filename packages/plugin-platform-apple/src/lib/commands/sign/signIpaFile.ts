@@ -1,9 +1,19 @@
 import fs from 'node:fs';
-import { logger, RnefError, spinner } from '@rnef/tools';
+import path from 'node:path';
+import {
+  findDirectoriesWithPattern,
+  logger,
+  RnefError,
+  spawn,
+  spinner,
+} from '@rnef/tools';
+import { generateEntitlementsFile } from './generateEntitlementsFile.js';
 import { unzipIpaFile } from './zipIpaFile.js';
 
 export type SignIpaFileOptions = {
   ipaPath: string;
+  identity: string;
+  outputPath?: string;
   platformName: string;
 };
 
@@ -14,8 +24,42 @@ export const signIpaFile = async (options: SignIpaFileOptions) => {
   const loader = spinner();
   loader.start(`Unzipping the IPA file...`);
   const extractedIpaPath = await unzipIpaFile(ipaPath, { platformName });
+  loader.stop(`Unzipped IPA file ${extractedIpaPath}`);
 
-  loader.stop('Done');
+  const payloadPath = path.join(extractedIpaPath, 'Payload/');
+  const appPath = findDirectoriesWithPattern(payloadPath, /\.app$/)[0];
+  if (!appPath) {
+    throw new RnefError(
+      `.app file not found in the extracted IPA file ${payloadPath}`
+    );
+  }
+
+  loader.start('Generating entitlements file...');
+  const ipaProfilePath = path.join(appPath, 'embedded.mobileprovision');
+  const entitlementsPath = await generateEntitlementsFile({
+    platformName,
+    provisioningProfilePath: ipaProfilePath,
+  });
+  loader.stop(`Generated entitlements file ${entitlementsPath}`);
+
+  loader.start('Signing the IPA contents...');
+  const codeSignArgs = [
+    '--force',
+    '--sign',
+    options.identity,
+    '--entitlements',
+    entitlementsPath,
+    appPath,
+  ];
+  const codeSignProcess = await spawn('codesign', codeSignArgs, {
+    cwd: extractedIpaPath,
+    stdio: logger.isVerbose() ? 'inherit' : ['ignore', 'pipe', 'pipe'],
+  });
+  logger.debug('Running codesign command: ', codeSignProcess.command);
+  logger.debug('Codesign stdout: ', codeSignProcess.stdout);
+  logger.debug('Codesign stderr: ', codeSignProcess.stderr);
+
+  loader.stop('Signing the IPA contents...');
 
   logger.debug('Extracted IPA path: ', extractedIpaPath);
 

@@ -4,29 +4,28 @@ import { getDotRnefPath, logger, spawn } from '@rnef/tools';
 
 export type GenerateEntitlementsFileOptions = {
   platformName: string;
-  provisioningProfile: string;
+  provisioningProfilePath: string;
 };
 
 export const generateEntitlementsFile = async ({
   platformName,
-  provisioningProfile,
+  provisioningProfilePath,
 }: GenerateEntitlementsFileOptions) => {
   const rnefPath = path.join(getDotRnefPath(), platformName, 'sign');
 
   const tempProfilePath = path.join(rnefPath, 'provisioning.mobileprovision');
-  const securityProcess = await spawn(
-    'security',
-    ['cms', '-D', '-i', provisioningProfile],
-    {
-      stdio: 'inherit',
-    }
-  );
+  const securityProcess = await spawn('security', [
+    'cms',
+    '-D',
+    '-i',
+    provisioningProfilePath,
+  ]);
   logger.debug('Running security command: ', securityProcess.command);
   logger.debug('Security stdout: ', securityProcess.stdout);
   logger.debug('Security stderr: ', securityProcess.stderr);
   fs.writeFileSync(tempProfilePath, securityProcess.stdout);
 
-  const plistBuddyProcess = await spawn('PlistBuddy', [
+  const plistBuddyProcess = await spawn('/usr/libexec/PlistBuddy', [
     '-x',
     '-c',
     'Print :Entitlements',
