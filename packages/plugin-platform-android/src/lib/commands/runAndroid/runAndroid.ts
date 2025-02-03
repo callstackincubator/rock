@@ -141,7 +141,7 @@ function matchingDevice(devices: Array<DeviceData>, deviceArg: string) {
 function normalizeArgs(args: Flags, projectRoot: string) {
   if (args.tasks && args.buildVariant) {
     logger.warn(
-      'Both "--tasks" and "--buildVariant" parameters were passed. Using "--tasks" for building the app.'
+      'Both "--tasks" and "--build-variant" parameters were passed. Using "--tasks" for building the app.'
     );
   }
 

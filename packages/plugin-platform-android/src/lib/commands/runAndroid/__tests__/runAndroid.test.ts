@@ -265,7 +265,7 @@ function spawnMockImplementation(
 }
 
 test.each([['release'], ['debug'], ['staging']])(
-  'runAndroid runs gradle build with correct configuration for --buildVariant %s and launches on emulator-5554 when prompted with two devices available',
+  'runAndroid runs gradle build with correct configuration for --build-variant %s and launches on emulator-5554 when prompted with two devices available',
   async (buildVariant) => {
     (spawn as Mock).mockImplementation((file, args) => {
       if (mockCallEmulatorAvdName(file, args, 'emulator-5554')) {
@@ -390,7 +390,7 @@ test.each([
   ['debug', true],
   ['debug', false],
 ])(
-  `runAndroid launches an app on a selected device emulator-5554 when connected in --buildVariant %s and --interactive %b`,
+  `runAndroid launches an app on a selected device emulator-5554 when connected in --build-variant %s and --interactive %b`,
   async (buildVariant, interactive) => {
     (spawn as Mock).mockImplementation((file, args) => {
       if (mockCallEmulatorAvdName(file, args, 'emulator-5554')) {

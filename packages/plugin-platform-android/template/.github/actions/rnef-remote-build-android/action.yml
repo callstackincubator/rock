@@ -73,7 +73,7 @@ runs:
       if: ${{ !steps.cached-url.outputs.artifact-url }}
       run: |
         npx rnef build:android \
-          --buildVariant "${{ inputs.buildVariant }}" \
+          --build-variant "${{ inputs.buildVariant }}" \
           --tasks "${{ inputs.tasks }}" \
           ${{ inputs.rnef-build-extra-params }}
       shell: bash

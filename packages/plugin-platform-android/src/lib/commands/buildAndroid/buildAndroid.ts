@@ -39,7 +39,7 @@ export async function buildAndroid(
 function normalizeArgs(args: BuildFlags) {
   if (args.tasks && args.buildVariant) {
     logger.warn(
-      'Both "--tasks" and "--buildVariant" parameters were passed. Using "--tasks" for building the app.'
+      'Both "--tasks" and "--build-variant" parameters were passed. Using "--tasks" for building the app.'
     );
   }
   if (!args.buildVariant) {
@@ -49,14 +49,14 @@ function normalizeArgs(args: BuildFlags) {
 
 export const options = [
   {
-    name: '--buildVariant <string>',
+    name: '--build-variant <string>',
     description:
       "Specify your app's build variant, which is constructed from build type and product flavor, e.g. 'debug' or 'freeRelease'.",
   },
   {
     name: '--tasks <list>',
     description:
-      'Run custom Gradle tasks. Will override the --buildVariant argument.',
+      'Run custom Gradle tasks. Will override the --build-variant argument.',
     parse: (val: string) => val.split(','),
   },
   {
