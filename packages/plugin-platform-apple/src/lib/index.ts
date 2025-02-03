@@ -9,3 +9,4 @@ export {
   signIpaFile,
   type SignIpaFileOptions,
 } from './commands/sign/signIpaFile.js';
+export { promptSigningIdentity } from './utils/signingIdentities.js';

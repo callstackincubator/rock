@@ -1,5 +1,8 @@
 import type { PluginApi } from '@rnef/config';
-import { signIpaFile } from '@rnef/plugin-platform-apple';
+import {
+  promptSigningIdentity,
+  signIpaFile,
+} from '@rnef/plugin-platform-apple';
 import { RnefError } from '@rnef/tools';
 
 export type SignFlags = {
@@ -7,7 +10,7 @@ export type SignFlags = {
   interactive?: boolean;
   ipa: string;
   output?: string;
-  identity: string;
+  identity?: string;
   jsbundle?: string;
 };
 
@@ -18,10 +21,13 @@ export const registerSignCommand = (api: PluginApi) => {
     options: getSignOptions(),
     action: async (args) => {
       validateSignArgs(args);
+
+      const identity = args.identity ?? (await promptSigningIdentity());
+
       await signIpaFile({
         platformName: 'ios',
         ipaPath: args.ipa,
-        identity: args.identity,
+        identity,
         outputPath: args.output,
       });
     },
@@ -35,10 +41,6 @@ export function validateSignArgs(args: unknown): asserts args is SignFlags {
 
   if (!('ipa' in args) || !args.ipa) {
     throw new RnefError('--ipa is required');
-  }
-
-  if (!('identity' in args) || !args.identity) {
-    throw new RnefError('--identity is required');
   }
 
   if ('output' in args && typeof args.output !== 'string') {
