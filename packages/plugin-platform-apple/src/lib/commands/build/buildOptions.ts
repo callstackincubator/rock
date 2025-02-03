@@ -66,7 +66,7 @@ export const getBuildOptions = ({ platformName }: BuilderCommand) => {
       description: 'Run on Mac Catalyst.',
     },
     {
-      name: '--buildFolder <string>',
+      name: '--build-folder <string>',
       description: `Location for ${readableName} build artifacts. Corresponds to Xcode's "-derivedDataPath".`,
       value: 'build',
     },

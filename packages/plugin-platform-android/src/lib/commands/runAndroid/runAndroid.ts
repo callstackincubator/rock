@@ -218,13 +218,13 @@ export const runOptions = [
     default: process.env['RCT_METRO_PORT'] || '8081',
   },
   {
-    name: '--appId <string>',
+    name: '--app-id <string>',
     description:
       'Specify an applicationId to launch after build. If not specified, `package` from AndroidManifest.xml will be used.',
     default: '',
   },
   {
-    name: '--appIdSuffix <string>',
+    name: '--app-id-suffix <string>',
     description: 'Specify an applicationIdSuffix to launch after build.',
     default: '',
   },

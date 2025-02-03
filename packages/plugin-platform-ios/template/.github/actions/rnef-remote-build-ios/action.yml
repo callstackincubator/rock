@@ -140,7 +140,7 @@ runs:
         npx rnef build:ios \
           ${{ inputs.destination == 'device' && '--archive' || '' }} \
           --configuration ${{ inputs.configuration }} \
-          --buildFolder "build" \
+          --build-folder "build" \
           ${{ inputs.rnef-build-extra-params }}
       shell: bash
 
