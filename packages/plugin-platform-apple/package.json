@@ -17,6 +17,8 @@
   "dependencies": {
     "@react-native-community/cli-config-apple": "^16.0.2",
     "@rnef/tools": "^0.1.7",
+    "@types/adm-zip": "^0.5.7",
+    "adm-zip": "^0.5.16",
     "fast-glob": "^3.3.2",
     "fast-xml-parser": "^4.5.0",
     "picocolors": "^1.1.1",

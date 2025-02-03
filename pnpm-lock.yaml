@@ -217,6 +217,12 @@ importers:
       '@rnef/tools':
         specifier: ^0.1.7
         version: link:../tools
+      '@types/adm-zip':
+        specifier: ^0.5.7
+        version: 0.5.7
+      adm-zip:
+        specifier: ^0.5.16
+        version: 0.5.16
       fast-glob:
         specifier: ^3.3.2
         version: 3.3.2

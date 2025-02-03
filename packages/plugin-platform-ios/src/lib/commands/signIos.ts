@@ -6,6 +6,7 @@ export type SignFlags = {
   verbose?: boolean;
   interactive?: boolean;
   ipa: string;
+  output?: string;
   identity: string;
   jsbundle?: string;
 };
@@ -21,6 +22,7 @@ export const registerSignCommand = (api: PluginApi) => {
         platformName: 'ios',
         ipaPath: args.ipa,
         identity: args.identity,
+        outputPath: args.output,
       });
     },
   });
@@ -38,6 +40,10 @@ export function validateSignArgs(args: unknown): asserts args is SignFlags {
   if (!('identity' in args) || !args.identity) {
     throw new RnefError('--identity is required');
   }
+
+  if ('output' in args && typeof args.output !== 'string') {
+    throw new RnefError('--output must be a string');
+  }
 }
 
 export const getSignOptions = () => {
@@ -54,6 +60,10 @@ export const getSignOptions = () => {
     {
       name: '--ipa <string>',
       description: 'Path to the IPA file to (re-)sign.',
+    },
+    {
+      name: '--output <string>',
+      description: 'Path to the output IPA file.',
     },
     {
       name: '--identity <string>',
