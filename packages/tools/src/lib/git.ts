@@ -24,7 +24,8 @@ export async function getGitRemote() {
   } else if (remotes.length === 1) {
     gitRemote = remotes[0];
   } else {
-    logger.warn('No git remote found.');
+    // @todo add "learn more" link to docs when available
+    logger.warn('No git remote found. Proceeding with local build.');
     return null;
   }
 

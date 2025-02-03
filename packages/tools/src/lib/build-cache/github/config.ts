@@ -15,7 +15,6 @@ export async function promptForGitHubToken() {
       value.length === 0 ? 'Value is required.' : undefined,
   })) as string;
   cacheManager.set('githubToken', githubToken);
-  return githubToken;
 }
 
 export type GitHubRepoDetails = {

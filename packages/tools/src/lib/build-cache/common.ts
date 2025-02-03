@@ -22,7 +22,7 @@ type RepoDetails = {
 export type RemoteBuildCache = {
   name: string;
   repoDetails: RepoDetails | null;
-  detectRepoDetails(): Promise<void>;
+  detectRepoDetails(): Promise<RepoDetails | null>;
   query(artifactName: string): Promise<RemoteArtifact | null>;
   download(artifact: RemoteArtifact): Promise<LocalArtifact>;
 };

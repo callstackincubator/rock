@@ -30,7 +30,10 @@ export async function fetchCachedBuild({
   loader.start('Looking for a local cached build');
 
   const root = getProjectRoot();
-  const artifactName = await calculateArtifactName({ distribution, configuration });
+  const artifactName = await calculateArtifactName({
+    distribution,
+    configuration,
+  });
 
   const localBuild = queryLocalBuildCache(artifactName, {
     findBinary: (path) => findBinary(distribution, path),
@@ -47,7 +50,10 @@ export async function fetchCachedBuild({
   }
 
   loader.stop(`No local build cached. Checking ${remoteBuildCache.name}.`);
-  await remoteBuildCache.detectRepoDetails();
+  const repoDetails = await remoteBuildCache.detectRepoDetails();
+  if (!repoDetails) {
+    return null;
+  }
 
   loader.start(`Looking for a cached build on ${remoteBuildCache.name}`);
   const remoteBuild = await remoteBuildCache.query(artifactName);

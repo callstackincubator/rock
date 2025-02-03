@@ -1,4 +1,3 @@
-import { loadConfigAsync } from '@react-native-community/cli-config';
 import type {
   Config,
   DependencyConfig,
@@ -27,6 +26,9 @@ function filterConfig(config: Config) {
 }
 
 export const logConfig = async (options: { platform?: string }) => {
+  const { loadConfigAsync } = await import(
+    '@react-native-community/cli-config'
+  );
   const config = await loadConfigAsync({
     selectedPlatform: options.platform,
   });
