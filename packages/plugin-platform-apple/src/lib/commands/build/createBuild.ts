@@ -1,9 +1,10 @@
 import path from 'node:path';
-import { getBuildPaths, isInteractive, logger, RnefError } from '@rnef/tools';
+import { isInteractive, logger, RnefError } from '@rnef/tools';
 import type {
   BuilderCommand,
   ProjectConfig,
 } from '../../types/index.js';
+import { getBuildPaths } from '../../utils/getBuildPaths.js';
 import { getConfiguration } from '../../utils/getConfiguration.js';
 import { getInfo } from '../../utils/getInfo.js';
 import { getScheme } from '../../utils/getScheme.js';

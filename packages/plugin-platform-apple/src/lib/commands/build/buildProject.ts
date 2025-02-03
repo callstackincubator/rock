@@ -1,10 +1,12 @@
 import path from 'node:path';
 import type { SubprocessError } from '@rnef/tools';
-import { getBuildPaths, logger, RnefError, spawn, spinner } from '@rnef/tools';
+import { logger, RnefError, spawn, spinner } from '@rnef/tools';
 import type { ApplePlatform, XcodeProjectInfo } from '../../types/index.js';
+import { getBuildPaths } from '../../utils/getBuildPaths.js';
 import { supportedPlatforms } from '../../utils/supportedPlatforms.js';
 import type { BuildFlags } from './buildOptions.js';
 import { simulatorDestinationMap } from './simulatorDestinationMap.js';
+
 export const buildProject = async (
   xcodeProject: XcodeProjectInfo,
   sourceDir: string,

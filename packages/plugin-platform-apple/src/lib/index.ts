@@ -5,3 +5,4 @@ export {
   BuildFlags,
 } from './../lib/commands/build/buildOptions.js';
 export { getRunOptions, RunFlags } from './../lib/commands/run/runOptions.js';
+export { getBuildPaths } from './../lib/utils/getBuildPaths.js';

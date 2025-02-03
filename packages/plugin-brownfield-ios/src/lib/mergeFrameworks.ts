@@ -1,6 +1,7 @@
 import { existsSync, readdirSync, rmSync } from 'node:fs';
 import path from 'node:path';
-import { getBuildPaths, spawn, spinner } from '@rnef/tools';
+import { getBuildPaths } from '@rnef/plugin-platform-apple';
+import { spawn, spinner } from '@rnef/tools';
 
 /**
  * Xcode emits different `.framework` file based on the destination (simulator arm64/x86_64, iphone arm64 etc.)

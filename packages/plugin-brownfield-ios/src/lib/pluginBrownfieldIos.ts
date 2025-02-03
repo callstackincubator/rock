@@ -1,8 +1,8 @@
 import { getProjectConfig } from '@react-native-community/cli-config-apple';
 import type { PluginApi, PluginOutput } from '@rnef/config';
 import type { BuildFlags } from '@rnef/plugin-platform-apple';
-import { createBuild, getBuildOptions } from '@rnef/plugin-platform-apple';
-import { getBuildPaths, intro, outro, RnefError } from '@rnef/tools';
+import { createBuild, getBuildOptions, getBuildPaths } from '@rnef/plugin-platform-apple';
+import { intro, outro, RnefError } from '@rnef/tools';
 import { mergeFrameworks } from './mergeFrameworks.js';
 
 const projectConfig = getProjectConfig({ platformName: 'ios' });
