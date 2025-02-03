@@ -1,0 +1,62 @@
+import type { PluginApi } from '@rnef/config';
+import { signIpaFile } from '@rnef/plugin-platform-apple';
+import { RnefError } from '@rnef/tools';
+
+export type SignFlags = {
+  verbose?: boolean;
+  interactive?: boolean;
+  ipa: string;
+  identity?: string;
+  jsbundle?: string;
+};
+
+export const registerSignCommand = (api: PluginApi) => {
+  api.registerCommand({
+    name: 'sign:ios',
+    description: 'Sign the iOS app',
+    options: getSignOptions(),
+    action: async (args) => {
+      validateSignArgs(args);
+      await signIpaFile({
+        ipaPath: args.ipa,
+        platformName: 'ios',
+      });
+    },
+  });
+};
+
+export function validateSignArgs(args: unknown): asserts args is SignFlags {
+  if (!args || typeof args !== 'object') {
+    throw new RnefError('args must be an object');
+  }
+
+  if (!('ipa' in args) || !args.ipa) {
+    throw new RnefError('--ipa is required');
+  }
+}
+
+export const getSignOptions = () => {
+  return [
+    {
+      name: '--verbose',
+      description: '',
+    },
+    {
+      name: '-i --interactive',
+      description:
+        'Explicitly select options for signing: ipa, identity, jsbundle',
+    },
+    {
+      name: '--ipa <string>',
+      description: 'Path to the IPA file to (re-)sign.',
+    },
+    {
+      name: '--identity <string>',
+      description: 'Identity to use for code signing.',
+    },
+    {
+      name: '--jsbundle <string>',
+      description: 'Path to the JS bundle to use before signing.',
+    },
+  ];
+};
