@@ -35,5 +35,5 @@ jobs:
       - name: RNEF Remote Build - Android
         uses: ./.github/actions/rnef-remote-build-android
         with:
-          buildVariant: debug
+          build-variant: debug
           tasks: assembleDebug  
