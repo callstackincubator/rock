@@ -55,9 +55,9 @@ export const pluginPlatformAndroid =
     });
 
     api.registerCommand({
-      name: 'keystore:android',
+      name: 'create-keystore:android',
       description:
-        'Generates a keystore file for signing Android release builds.',
+        'Creates a keystore file for signing Android release builds.',
       action: async (args) => {
         const projectRoot = api.getProjectRoot();
         const androidConfig = projectConfig(projectRoot);
