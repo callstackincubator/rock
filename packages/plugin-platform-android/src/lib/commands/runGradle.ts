@@ -84,7 +84,7 @@ export async function runGradle({
 function getErrorHints(output: string) {
   const signingMessage = output.includes('validateSigningRelease FAILED')
     ? `Hint: You can run "${color.bold(
-        'rnef sign:android'
+        'rnef keystore:android'
       )}" to generate a keystore file.`
     : '';
   return signingMessage;

@@ -12,23 +12,23 @@ import {
 } from '@rnef/tools';
 import color from 'picocolors';
 
-export async function signAndroid(
+export async function generateKeystore(
   androidProject: AndroidProjectConfig,
-  args: SignFlags
+  args: Flags
 ) {
   intro('Generate a keystore file for signing Android release builds.');
   await runKeytool(androidProject, args);
   outro('Success 🎉.');
 }
 
-type SignFlags = {
+type Flags = {
   name?: string;
   alias?: string;
 };
 
 async function runKeytool(
   androidProject: AndroidProjectConfig,
-  args: SignFlags
+  args: Flags
 ) {
   const { name, alias } = await prompts({ name: args.name, alias: args.alias });
   const keystoreOutputPath = path.join(
@@ -85,7 +85,7 @@ async function runKeytool(
   }
 }
 
-async function prompts({ name, alias }: SignFlags) {
+async function prompts({ name, alias }: Flags) {
   return promptGroup({
     name: () =>
       name
@@ -104,7 +104,7 @@ async function prompts({ name, alias }: SignFlags) {
   });
 }
 
-export const signOptions = [
+export const generateKeystoreOptions = [
   {
     name: '--name <string>',
     description: 'Name of the keystore file.',
