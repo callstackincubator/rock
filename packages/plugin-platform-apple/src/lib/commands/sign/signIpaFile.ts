@@ -2,13 +2,13 @@ import fs from 'node:fs';
 import path from 'node:path';
 import {
   findDirectoriesWithPattern,
-  getDotRnefPath,
   logger,
   RnefError,
   spawn,
   spinner,
 } from '@rnef/tools';
 import { generateEntitlementsFile } from './generateEntitlementsFile.js';
+import { getExtactedIpaPath } from './path.js';
 import { packIpa, unpackIpa } from './zip.js';
 
 export type SignIpaFileOptions = {
@@ -24,11 +24,7 @@ export const signIpaFile = async (options: SignIpaFileOptions) => {
 
   const loader = spinner();
   loader.start(`Unzipping the IPA file...`);
-  const extractedIpaPath = path.join(
-    getDotRnefPath(),
-    platformName,
-    'sign/content'
-  );
+  const extractedIpaPath = getExtactedIpaPath(platformName);
   unpackIpa(ipaPath, extractedIpaPath);
   loader.stop(`Unzipped IPA file ${extractedIpaPath}`);
 

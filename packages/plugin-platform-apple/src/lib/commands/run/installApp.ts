@@ -3,6 +3,7 @@ import { logger, RnefError, spawn, type SubprocessError } from '@rnef/tools';
 import type { ApplePlatform, XcodeProjectInfo } from '../../types/index.js';
 import { getBuildPath } from './getBuildPath.js';
 import { getBuildSettings } from './getBuildSettings.js';
+import { readPlistStringFromFile } from '../../utils/plist.js';
 
 type Options = {
   xcodeProject: XcodeProjectInfo;
@@ -64,13 +65,10 @@ export default async function installApp({
 
   const buildDir = targetBuildDir || appPath;
 
-  const { stdout } = await spawn('/usr/libexec/PlistBuddy', [
-    '-c',
-    'Print:CFBundleIdentifier',
+  const bundleID = readPlistStringFromFile(
     path.join(buildDir, infoPlistPath),
-  ]);
-  const bundleID = stdout.trim();
-
+    'CFBundleIdentifier'
+  );
   logger.debug(`Launching "${bundleID}"`);
 
   try {
