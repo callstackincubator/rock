@@ -104,7 +104,9 @@ export function spinner() {
   if (logger.isVerbose() || !isInteractive()) {
     return {
       start: (message?: string) => logger.log(message),
-      stop: (message?: string, code?: number) => logger.log(message, code),
+      stop: (message?: string, code = 0) => {
+        return code === 0 ? logger.log(message) : logger.error(message);
+      },
       message: (message?: string) => logger.log(message),
     };
   }
