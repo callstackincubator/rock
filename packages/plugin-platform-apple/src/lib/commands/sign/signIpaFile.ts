@@ -70,7 +70,7 @@ export const signIpaFile = async (options: SignIpaFileOptions) => {
   loader.start('Packing the IPA file...');
   const outputPath = options.outputPath ?? ipaPath;
   packIpa(extractedIpaPath, outputPath);
-  loader.stop(`Packed the IPA file: ${options.outputPath}`);
+  loader.stop(`Packed the IPA file: ${outputPath}`);
 };
 
 function validateOptions(options: SignIpaFileOptions) {
