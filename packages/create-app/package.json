@@ -1,6 +1,6 @@
 {
   "name": "@rnef/create-app",
-  "version": "0.0.1",
+  "version": "0.1.6",
   "type": "module",
   "exports": {
     "types": "./dist/src/index.d.ts",
@@ -10,7 +10,6 @@
     "dist"
   ],
   "scripts": {
-    "clean-dist": "rm -f dist/package.json",
     "publish:npm": "npm publish --access restricted",
     "publish:verdaccio": "npm publish --registry http://localhost:4873 --userconfig ../../.npmrc",
     "e2e": "vitest --config vite.e2e.config.js"
@@ -19,8 +18,7 @@
     "create-rnef-app": "./dist/src/bin.js"
   },
   "dependencies": {
-    "@rnef/tools": "^0.0.1",
-    "@clack/prompts": "^0.9.0",
+    "@rnef/tools": "^0.1.6",
     "gradient-string": "^3.0.0",
     "minimist": "^1.2.8",
     "package-json": "^10.0.1",
@@ -28,7 +26,7 @@
     "tslib": "^2.3.0"
   },
   "devDependencies": {
-    "@rnef/test-helpers": "^0.0.1",
+    "@rnef/test-helpers": "^0.1.6",
     "@types/gradient-string": "^1.1.6",
     "@types/minimist": "^1.2.5"
   },

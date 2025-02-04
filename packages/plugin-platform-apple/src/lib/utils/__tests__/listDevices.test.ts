@@ -1,10 +1,8 @@
-import spawn from 'nano-spawn';
 import fs from 'node:fs';
+import { spawn } from '@rnef/tools';
+import type { Mock } from 'vitest';
+import { vi } from 'vitest';
 import { listDevicesAndSimulators } from '../listDevices.js';
-import { Mock, vi } from 'vitest';
-
-vi.mock('nano-spawn');
-vi.mock('node:fs');
 
 beforeEach(() => {
   (spawn as Mock)

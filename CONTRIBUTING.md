@@ -28,7 +28,7 @@ And then in your test project:
 
 ```sh
 cd /my/test/project/
-pnpm link --global "@rnef/cli" "@rnef/config" "@rnef/tools" "@rnef/plugin-platform-android" "@rnef/plugin-platform-ios" "@rnef/create-app" "@rnef/plugin-metro" "@rnef/plugin-repack"
+pnpm link --global "@rnef/cli" "@rnef/config" "@rnef/tools" "@rnef/plugin-platform-android" "@rnef/plugin-platform-ios" "@rnef/plugin-platform-apple" "@rnef/create-app" "@rnef/plugin-metro" "@rnef/plugin-repack"
 ```
 
 Update entries in package.json to look like this:
@@ -93,9 +93,11 @@ NPM_CONFIG_REGISTRY=http://localhost:4873 pnpm create @rnef/app --registry http:
 # Then use pnpm install with registry
 echo "node-linker=hoisted" > .npmrc
 NPM_CONFIG_REGISTRY=http://localhost:4873 pnpm install
+# Then link packages (see above)
+pnpm link --global ...
 
 # Clean up
-pnpm verdaccio-reset
+pnpm verdaccio:reset
 ```
 
 ## Typechecking, linting and testing

@@ -6,21 +6,24 @@ description: 'Github implementation of the RNEF Remote Build for Android'
 
 inputs:
   github-token:
-    description: "GitHub Token"
+    description: 'GitHub Token'
     required: false
     default: ${{ github.token }}
   artifact-output-path:
-    description: "Path to the build output artifact"
+    description: 'Path to the build output artifact'
     required: false
-    default: "android/app/build/outputs/apk/debug/app-debug.apk"
-  artifact-name-prefix:
-    description: "Prefix for the artifact name"
+    default: 'android/app/build/outputs/apk/debug/app-debug.apk'
+  buildVariant:
+    description: 'Build variant'
     required: false
-    default: "app-debug"
-  artifact-name-extension:
-    description: "File extension for the artifact name"
+    default: 'debug'
+  tasks:
+    description: 'Gradle tasks to run'
     required: false
-    default: "apk"
+    default: 'assembleDebug'
+  rnef-build-extra-params:
+    description: 'Extra parameters to pass to "rnef build:android"'
+    required: false
 
 outputs:
   artifact-url:
@@ -28,19 +31,24 @@ outputs:
     value: ${{ steps.cached-url.outcome == 'success' && steps.cached-url.outputs.artifact-url || steps.upload-artifact.outputs.artifact-url }}
 
 runs:
-  using: "composite"
+  using: 'composite'
   steps:
     - name: Native Fingerprint
       id: fingerprint
       uses: ./.github/actions/rnef-native-fingerprint
       with:
-        platforms: android
+        platform: android
+
+    - name: Set artifact name
+      run: |
+        echo "ARTIFACT_NAME=rnef-android-${{ inputs.buildVariant }}-${{ steps.fingerprint.outputs.hash}}" >> $GITHUB_ENV
+      shell: bash
 
     - name: Find artifact URL
       id: cached-url
       uses: ./.github/actions/find-artifact
       with:
-        name: ${{inputs.artifact-name-prefix}}-${{ steps.fingerprint.outputs.hash}}.${{inputs.artifact-name-extension}}
+        name: ${{ env.ARTIFACT_NAME }}
 
     - name: Post Cached Build (if found)
       if: ${{ steps.cached-url.outputs.artifact-url && github.event_name == 'pull_request' }}
@@ -48,7 +56,7 @@ runs:
       with:
         platform: Android
         artifact-url: ${{ steps.cached-url.outputs.artifact-url }}
-    
+
     - name: Install Java
       if: ${{ !steps.cached-url.outputs.artifact-url }}
       uses: actions/setup-java@v4
@@ -56,7 +64,7 @@ runs:
         java-version: 17
         distribution: adopt
         cache: gradle
-  
+
     - name: Validate Gradle wrapper
       if: ${{ !steps.cached-url.outputs.artifact-url }}
       uses: gradle/actions/wrapper-validation@v4
@@ -64,16 +72,18 @@ runs:
     - name: Build Android
       if: ${{ !steps.cached-url.outputs.artifact-url }}
       run: |
-        cd android
-        npx rnef build:android --tasks assembleDebug
+        npx rnef build:android \
+          --build-variant "${{ inputs.buildVariant }}" \
+          --tasks "${{ inputs.tasks }}" \
+          ${{ inputs.rnef-build-extra-params }}
       shell: bash
 
-    - name: Upload APK
+    - name: Upload Artifact
       id: upload-artifact
       if: ${{ !steps.cached-url.outputs.artifact-url }}
       uses: actions/upload-artifact@v4
       with:
-        name: ${{inputs.artifact-name-prefix}}-${{ steps.fingerprint.outputs.hash}}.${{inputs.artifact-name-extension}}
+        name: ${{ env.ARTIFACT_NAME }}
         path: ${{ inputs.artifact-output-path }}
         if-no-files-found: error
 

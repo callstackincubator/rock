@@ -1,6 +1,6 @@
 {
   "name": "@rnef/plugin-platform-apple",
-  "version": "0.0.1",
+  "version": "0.1.6",
   "type": "module",
   "exports": {
     "types": "./dist/src/index.d.ts",
@@ -11,23 +11,20 @@
     "src"
   ],
   "scripts": {
-    "clean-dist": "rm -f dist/package.json",
     "publish:npm": "npm publish --access restricted",
     "publish:verdaccio": "npm publish --registry http://localhost:4873 --userconfig ../../.npmrc"
   },
   "dependencies": {
-    "@rnef/tools": "^0.0.1",
-    "@clack/prompts": "^0.9.0",
     "@react-native-community/cli-config-apple": "^16.0.2",
+    "@rnef/tools": "^0.1.6",
     "fast-glob": "^3.3.2",
     "fast-xml-parser": "^4.5.0",
-    "is-interactive": "^2.0.0",
-    "nano-spawn": "^0.2.0",
     "picocolors": "^1.1.1",
+    "tar": "^7.4.3",
     "tslib": "^2.3.0"
   },
   "devDependencies": {
-    "@rnef/config": "^0.0.1"
+    "@rnef/config": "^0.1.6"
   },
   "publishConfig": {
     "access": "restricted"

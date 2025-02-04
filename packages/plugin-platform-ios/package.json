@@ -1,6 +1,6 @@
 {
   "name": "@rnef/plugin-platform-ios",
-  "version": "0.0.1",
+  "version": "0.1.6",
   "type": "module",
   "exports": {
     "types": "./dist/src/index.d.ts",
@@ -13,17 +13,17 @@
     "react-native.config.ts"
   ],
   "scripts": {
-    "clean-dist": "rm -f dist/package.json",
     "publish:npm": "npm publish --access restricted",
     "publish:verdaccio": "npm publish --registry http://localhost:4873 --userconfig ../../.npmrc"
   },
   "dependencies": {
     "@react-native-community/cli-config-apple": "^16.0.2",
-    "tslib": "^2.3.0",
-    "@rnef/plugin-platform-apple": "^0.0.1"
+    "@rnef/plugin-platform-apple": "^0.1.6",
+    "@rnef/tools": "^0.1.6",
+    "tslib": "^2.3.0"
   },
   "devDependencies": {
-    "@rnef/config": "^0.0.1"
+    "@rnef/config": "^0.1.6"
   },
   "publishConfig": {
     "access": "restricted"

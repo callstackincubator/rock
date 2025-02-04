@@ -1,10 +1,11 @@
-import type { BuildFlags } from './buildOptions.js';
+import path from 'node:path';
+import type { SubprocessError } from '@rnef/tools';
+import { logger, RnefError, spawn, spinner } from '@rnef/tools';
+import type { ApplePlatform, XcodeProjectInfo } from '../../types/index.js';
+import { getBuildPaths } from '../../utils/buildPaths.js';
 import { supportedPlatforms } from '../../utils/supportedPlatforms.js';
-import { ApplePlatform, XcodeProjectInfo } from '../../types/index.js';
-import { logger } from '@rnef/tools';
+import type { BuildFlags } from './buildOptions.js';
 import { simulatorDestinationMap } from './simulatorDestinationMap.js';
-import { spinner } from '@clack/prompts';
-import spawn, { SubprocessError } from 'nano-spawn';
 
 export const buildProject = async (
   xcodeProject: XcodeProjectInfo,
@@ -12,7 +13,7 @@ export const buildProject = async (
   platformName: ApplePlatform,
   udid: string | undefined,
   scheme: string,
-  mode: string,
+  configuration: string,
   args: BuildFlags
 ) => {
   const simulatorDest = simulatorDestinationMap[platformName];
@@ -30,7 +31,7 @@ export const buildProject = async (
     xcodeProject.name,
     ...(args.buildFolder ? ['-derivedDataPath', args.buildFolder] : []),
     '-configuration',
-    mode,
+    configuration,
     '-scheme',
     scheme,
     '-destination',
@@ -50,43 +51,63 @@ export const buildProject = async (
         ? 'platform=macOS,variant=Mac Catalyst'
         : udid
         ? `id=${udid}`
-        : mode === 'Debug' || args.device
+        : configuration === 'Debug' || args.device
         ? `generic/platform=${simulatorDest}`
         : `generic/platform=${platformName}` +
           (args.destination ? ',' + args.destination : '');
     })(),
   ];
 
+  if (args.archive) {
+    const { archiveDir } = getBuildPaths(platformName);
+    const archiveName = `${xcodeProject.name.replace(
+      '.xcworkspace',
+      ''
+    )}.xcarchive`;
+
+    xcodebuildArgs.push(
+      '-archivePath',
+      path.join(archiveDir, archiveName),
+      'archive'
+    );
+  }
+
   if (args.extraParams) {
     xcodebuildArgs.push(...args.extraParams);
   }
 
   const loader = spinner();
-  loader.start(
-    `Builing the app with xcodebuild for ${scheme} scheme in ${mode} mode.`
-  );
+  const message = `${
+    args.archive ? 'Archiving' : 'Building'
+  } the app with xcodebuild for ${scheme} scheme in ${configuration} configuration`;
+
+  loader.start(message, { kind: 'clock' });
   logger.debug(`Running "xcodebuild ${xcodebuildArgs.join(' ')}.`);
   try {
     const { output } = await spawn('xcodebuild', xcodebuildArgs, {
       cwd: sourceDir,
+      stdio: logger.isVerbose() ? 'inherit' : ['ignore', 'pipe', 'pipe'],
     });
     loader.stop(
-      `Built the app with xcodebuild for ${scheme} scheme in ${mode} mode.`
+      `${
+        args.archive ? 'Archived' : 'Built'
+      } the app with xcodebuild for ${scheme} scheme in ${configuration} configuration.`
     );
     return output;
   } catch (error) {
-    logger.log('');
-    logger.log((error as SubprocessError).stdout);
     logger.error((error as SubprocessError).stderr);
-    if (!xcodeProject.isWorkspace) {
-      logger.error(
-        `If your project uses CocoaPods, make sure to install pods with "pod install" in ${sourceDir} directory.`
-      );
-    }
     loader.stop(
       'Running xcodebuild failed. Check the error message above for details.',
       1
     );
-    throw new Error('Running xcodebuild failed');
+
+    if (!xcodeProject.isWorkspace) {
+      throw new RnefError(
+        `If your project uses CocoaPods, make sure to install pods with "pod install" in ${sourceDir} directory.`,
+        { cause: error }
+      );
+    }
+
+    throw new RnefError('Running xcodebuild failed', { cause: error });
   }
 };

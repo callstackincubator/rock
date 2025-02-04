@@ -1,7 +1,7 @@
-import os from 'node:os';
 import fs from 'node:fs';
+import os from 'node:os';
 import path from 'node:path';
-import spawn from 'nano-spawn';
+import { spawn } from '@rnef/tools';
 import type { ApplePlatform, Device } from '../types/index.js';
 
 type DevicectlOutput = {

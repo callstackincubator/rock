@@ -1,7 +1,5 @@
-import { select, spinner } from '@clack/prompts';
+import { promptSelect, spawn, spinner } from '@rnef/tools';
 import { getAdbPath } from './adb.js';
-import { checkCancelPrompt } from '@rnef/tools';
-import spawn from 'nano-spawn';
 
 type User = {
   id: string;
@@ -52,17 +50,16 @@ export async function checkUsers(device: string): Promise<User[]> {
 export async function promptForUser(deviceId: string) {
   const users = await checkUsers(deviceId);
   if (users && users.length > 1) {
-    const selectedUser = checkCancelPrompt<User>(
-      await select({
-        message: 'Which profile would you like to launch your app into?',
-        options: users.map((user) => ({
-          label: user.name,
-          value: user,
-        })),
-      })
-    );
+    const selectedUser = await promptSelect({
+      message: 'Which profile would you like to launch your app into?',
+      options: users.map((user) => ({
+        label: user.name,
+        value: user,
+      })),
+    });
 
     return selectedUser;
   }
+
   return null;
 }

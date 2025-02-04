@@ -1,16 +1,15 @@
-import { logger } from '@rnef/tools';
+import { logger, RnefError, spawn } from '@rnef/tools';
 import color from 'picocolors';
-import spawn from 'nano-spawn';
+import type { XcodeProjectInfo } from '../../types/index.js';
+import { buildProject } from '../build/buildProject.js';
 import { getBuildPath } from './getBuildPath.js';
 import { getBuildSettings } from './getBuildSettings.js';
-import { XcodeProjectInfo } from '../../types/index.js';
-import { buildProject } from '../build/buildProject.js';
-import { RunFlags } from './runOptions.js';
+import type { RunFlags } from './runOptions.js';
 
 export async function runOnMac(
   xcodeProject: XcodeProjectInfo,
   sourceDir: string,
-  mode: string,
+  configuration: string,
   scheme: string,
   args: RunFlags
 ) {
@@ -20,7 +19,7 @@ export async function runOnMac(
     'macos',
     undefined,
     scheme,
-    mode,
+    configuration,
     args
   );
 
@@ -28,7 +27,7 @@ export async function runOnMac(
     buildOutput,
     xcodeProject,
     sourceDir,
-    mode,
+    configuration,
     scheme,
     target: args.target,
     binaryPath: args.binaryPath,
@@ -39,7 +38,7 @@ type Options = {
   buildOutput: string;
   xcodeProject: XcodeProjectInfo;
   sourceDir: string;
-  mode: string;
+  configuration: string;
   scheme: string;
   target?: string;
   binaryPath?: string;
@@ -49,7 +48,7 @@ async function openApp({
   buildOutput,
   xcodeProject,
   sourceDir,
-  mode,
+  configuration,
   scheme,
   target,
   binaryPath,
@@ -59,14 +58,14 @@ async function openApp({
   const buildSettings = await getBuildSettings(
     xcodeProject,
     sourceDir,
-    mode,
+    configuration,
     buildOutput,
     scheme,
     target
   );
 
   if (!buildSettings) {
-    throw new Error('Failed to get build settings for your project');
+    throw new RnefError('Failed to get build settings for your project');
   }
 
   if (!appPath) {
@@ -77,7 +76,7 @@ async function openApp({
 
   try {
     await spawn('open', [appPath]);
-  } catch (e) {
-    logger.error('Failed to launch the app', e as string);
+  } catch (error) {
+    throw new RnefError('Failed to launch the app', { cause: error });
   }
 }

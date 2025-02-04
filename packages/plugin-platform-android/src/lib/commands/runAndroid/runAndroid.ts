@@ -1,21 +1,29 @@
-import fs from 'fs';
-import {
+import fs from 'node:fs';
+import path from 'node:path';
+import type {
   AndroidProjectConfig,
   Config,
 } from '@react-native-community/cli-types';
-import { checkCancelPrompt, logger } from '@rnef/tools';
-import { getDevices } from './adb.js';
-import { toPascalCase } from '../toPascalCase.js';
-import { tryLaunchAppOnDevice } from './tryLaunchAppOnDevice.js';
-import { tryInstallAppOnDevice } from './tryInstallAppOnDevice.js';
-import { listAndroidDevices, DeviceData } from './listAndroidDevices.js';
-import { tryLaunchEmulator } from './tryLaunchEmulator.js';
-import path from 'path';
-import { BuildFlags, options } from '../buildAndroid/buildAndroid.js';
+import {
+  intro,
+  isInteractive,
+  logger,
+  outro,
+  promptSelect,
+  RnefError,
+} from '@rnef/tools';
+import type { BuildFlags } from '../buildAndroid/buildAndroid.js';
+import { options } from '../buildAndroid/buildAndroid.js';
 import { promptForTaskSelection } from '../listAndroidTasks.js';
 import { runGradle } from '../runGradle.js';
-import { outro, select } from '@clack/prompts';
-import isInteractive from 'is-interactive';
+import { toPascalCase } from '../toPascalCase.js';
+import { getDevices } from './adb.js';
+import { fetchCachedBuild } from './fetchCachedBuild.js';
+import type { DeviceData } from './listAndroidDevices.js';
+import { listAndroidDevices } from './listAndroidDevices.js';
+import { tryInstallAppOnDevice } from './tryInstallAppOnDevice.js';
+import { tryLaunchAppOnDevice } from './tryLaunchAppOnDevice.js';
+import { tryLaunchEmulator } from './tryLaunchEmulator.js';
 
 export interface Flags extends BuildFlags {
   appId: string;
@@ -25,6 +33,7 @@ export interface Flags extends BuildFlags {
   device?: string;
   binaryPath?: string;
   user?: string;
+  remoteCache: boolean;
 }
 
 export type AndroidProject = NonNullable<Config['project']['android']>;
@@ -37,34 +46,48 @@ export async function runAndroid(
   args: Flags,
   projectRoot: string
 ) {
+  intro('Running Android app');
+
   normalizeArgs(args, projectRoot);
 
-  const { deviceId } = args.interactive
-    ? await selectAndLaunchDevice()
-    : { deviceId: args.device };
+  const devices = await listAndroidDevices();
+  const device = await selectDevice(devices, args);
 
-  const mainTaskType = deviceId ? 'assemble' : 'install';
+  const mainTaskType = device ? 'assemble' : 'install';
   const tasks = args.interactive
     ? [await promptForTaskSelection(mainTaskType, androidProject.sourceDir)]
-    : [...(args.tasks ?? []), `${mainTaskType}${toPascalCase(args.mode)}`];
+    : [
+        ...(args.tasks ?? []),
+        `${mainTaskType}${toPascalCase(args.buildVariant)}`,
+      ];
 
-  if (deviceId) {
-    await runGradle({ tasks, androidProject, args });
-    if (!(await getDevices()).find((d) => d === deviceId)) {
-      logger.error(
-        `Device "${deviceId}" not found. Please run it first or use a different one.`
-      );
-      process.exit(1);
+  if (!args.binaryPath && args.remoteCache) {
+    const cachedBuild = await fetchCachedBuild({
+      buildVariant: args.buildVariant,
+    });
+    if (cachedBuild) {
+      // @todo replace with a more generic way to pass binary path
+      args.binaryPath = cachedBuild.binaryPath;
     }
-    await tryInstallAppOnDevice(deviceId, androidProject, args, tasks);
-    await tryLaunchAppOnDevice(deviceId, androidProject, args);
+  }
+
+  if (device) {
+    if (!(await getDevices()).find((d) => d === device.deviceId)) {
+      // deviceId is undefined until it's launched, hence overwriting it here
+      device.deviceId = await tryLaunchEmulator(device.readableName);
+    }
+    if (device.deviceId) {
+      await runGradle({ tasks, androidProject, args });
+      await tryInstallAppOnDevice(device, androidProject, args, tasks);
+      await tryLaunchAppOnDevice(device, androidProject, args);
+    }
   } else {
     if ((await getDevices()).length === 0) {
       if (isInteractive()) {
         await selectAndLaunchDevice();
       } else {
         logger.debug(
-          'No booted devices or emulators found. Launching first available mulator...'
+          'No booted devices or emulators found. Launching first available emulator.'
         );
         await tryLaunchEmulator();
       }
@@ -72,7 +95,10 @@ export async function runAndroid(
 
     await runGradle({ tasks, androidProject, args });
 
-    for (const device of await getDevices()) {
+    for (const device of await listAndroidDevices()) {
+      if (args.binaryPath) {
+        await tryInstallAppOnDevice(device, androidProject, args, tasks);
+      }
       await tryLaunchAppOnDevice(device, androidProject, args);
     }
   }
@@ -84,7 +110,7 @@ async function selectAndLaunchDevice() {
   const device = await promptForDeviceSelection(allDevices);
 
   if (!device) {
-    throw new Error(
+    throw new RnefError(
       `Failed to select device, please try to run app without "--interactive" flag.`
     );
   }
@@ -100,25 +126,53 @@ async function selectAndLaunchDevice() {
   return device;
 }
 
-function normalizeArgs(args: Flags, projectRoot: string) {
-  if (args.tasks && args.mode) {
+async function selectDevice(devices: DeviceData[], args: Flags) {
+  const { interactive } = args;
+  let device;
+  if (interactive) {
+    device = await selectAndLaunchDevice();
+  } else if (args.device) {
+    device = matchingDevice(devices, args.device);
+  }
+  if (!device && args.device) {
     logger.warn(
-      'Both "--tasks" and "--mode" parameters were passed. Using "--tasks" for building the app.'
+      `No devices or emulators found matching "${args.device}". Using available one instead.`
+    );
+  }
+  return device;
+}
+
+function matchingDevice(devices: Array<DeviceData>, deviceArg: string) {
+  const deviceByName = devices.find(
+    (device) => device.readableName === deviceArg
+  );
+  const deviceById = devices.find((d) => d.deviceId === deviceArg);
+  return deviceByName || deviceById;
+}
+
+function normalizeArgs(args: Flags, projectRoot: string) {
+  if (args.tasks && args.buildVariant) {
+    logger.warn(
+      'Both "--tasks" and "--build-variant" parameters were passed. Using "--tasks" for building the app.'
     );
   }
 
-  if (!args.mode) {
-    args.mode = 'debug';
+  if (!args.buildVariant) {
+    args.buildVariant = 'debug';
   }
 
   // turn on activeArchOnly for debug to speed up local builds
-  if (args.mode !== 'release' && args.activeArchOnly === undefined) {
+  if (
+    args.buildVariant !== 'release' &&
+    !args.buildVariant.endsWith('Release') &&
+    args.activeArchOnly === undefined
+  ) {
     args.activeArchOnly = true;
   }
 
   if (args.binaryPath) {
     if (args.tasks) {
-      throw new Error(
+      throw new RnefError(
         'Both "--binary-path" and "--tasks" flags were specified, which are incompatible. Please specify only one.'
       );
     }
@@ -128,7 +182,7 @@ function normalizeArgs(args: Flags, projectRoot: string) {
       : path.join(projectRoot, args.binaryPath);
 
     if (args.binaryPath && !fs.existsSync(args.binaryPath)) {
-      throw new Error(
+      throw new RnefError(
         `"--binary-path" was specified, but the file was not found at "${args.binaryPath}".`
       );
     }
@@ -139,21 +193,19 @@ async function promptForDeviceSelection(
   allDevices: Array<DeviceData>
 ): Promise<DeviceData> {
   if (!allDevices.length) {
-    throw new Error(
+    throw new RnefError(
       'No devices and/or emulators connected. Please create emulator with Android Studio or connect Android device.'
     );
   }
-  const selected = checkCancelPrompt<DeviceData>(
-    await select({
-      message: 'Select the device / emulator you want to use',
-      options: allDevices.map((d) => ({
-        label: `${d.readableName}${
-          d.type === 'phone' ? ' - (physical device)' : ''
-        }${d.connected ? ' (connected)' : ''}`,
-        value: d,
-      })),
-    })
-  );
+  const selected = await promptSelect({
+    message: 'Select the device / emulator you want to use',
+    options: allDevices.map((d) => ({
+      label: `${d.readableName}${
+        d.type === 'phone' ? ' - (physical device)' : ''
+      }${d.connected ? ' (connected)' : ''}`,
+      value: d,
+    })),
+  });
 
   return selected;
 }
@@ -166,13 +218,13 @@ export const runOptions = [
     default: process.env['RCT_METRO_PORT'] || '8081',
   },
   {
-    name: '--appId <string>',
+    name: '--app-id <string>',
     description:
       'Specify an applicationId to launch after build. If not specified, `package` from AndroidManifest.xml will be used.',
     default: '',
   },
   {
-    name: '--appIdSuffix <string>',
+    name: '--app-id-suffix <string>',
     description: 'Specify an applicationIdSuffix to launch after build.',
     default: '',
   },
@@ -183,8 +235,7 @@ export const runOptions = [
   {
     name: '--device <string>',
     description:
-      'Explicitly set the device to use by name. The value is not required ' +
-      'if you have a single device connected.',
+      'Explicitly set the device or emulator to use by name or ID (if launched).',
   },
   {
     name: '--binary-path <string>',
@@ -194,5 +245,9 @@ export const runOptions = [
   {
     name: '--user <number>',
     description: 'Id of the User Profile you want to install the app on.',
+  },
+  {
+    name: '--no-remote-cache',
+    description: 'Do not use remote build cacheing.',
   },
 ];

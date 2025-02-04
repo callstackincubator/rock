@@ -1,14 +1,11 @@
-import { Device } from '../../types/index.js';
+import type { Device } from '../../types/index.js';
 
-export function matchingDevice(
-  devices: Array<Device>,
-  deviceName: string | undefined
-) {
+export function matchingDevice(devices: Array<Device>, deviceArg: string) {
   const deviceByName = devices.find(
     (device) =>
-      device.name === deviceName || formattedDeviceName(device) === deviceName
+      device.name === deviceArg || formattedDeviceName(device) === deviceArg
   );
-  const deviceByUdid = devices.find((d) => d.udid === deviceName);
+  const deviceByUdid = devices.find((d) => d.udid === deviceArg);
   return deviceByName || deviceByUdid;
 }
 

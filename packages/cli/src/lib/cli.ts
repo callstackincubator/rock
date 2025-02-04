@@ -1,9 +1,9 @@
-import { dirname } from 'path';
-import { fileURLToPath } from 'url';
-import { Command } from 'commander';
+import { createRequire } from 'node:module';
+import { dirname } from 'node:path';
+import { fileURLToPath } from 'node:url';
 import { getConfig } from '@rnef/config';
-import { createRequire } from 'module';
-import { logger, resolveFilenameUp } from '@rnef/tools';
+import { logger, resolveFilenameUp, RnefError } from '@rnef/tools';
+import { Command } from 'commander';
 import { logConfig } from '../config.js';
 import { nativeFingerprintCommand } from './commands/fingerprint.js';
 
@@ -45,13 +45,21 @@ export const cli = async ({ cwd, argv }: CliOptions = {}) => {
     const cmd = program
       .command(command.name)
       .description(command.description || '')
-      .action((args) => {
+      .action(async (args) => {
         try {
-          command.action(args);
+          await command.action(args);
         } catch (error) {
-          logger.error(
-            `Unexpected error while running "${command.name}": ${error}`
-          );
+          if (!logger.isVerbose() && error instanceof RnefError) {
+            logger.error(error.message);
+            if (error.cause) {
+              logger.error(`Cause: ${error.cause}`);
+            }
+          } else {
+            logger.error(
+              `Unexpected error while running "${command.name}":`,
+              error
+            );
+          }
           process.exit(1);
         }
       });
@@ -66,5 +74,5 @@ export const cli = async ({ cwd, argv }: CliOptions = {}) => {
     }
   });
 
-  program.parse(argv);
+  await program.parseAsync(argv);
 };

@@ -1,5 +1,7 @@
 import crypto from 'node:crypto';
-import { createFingerprintAsync, FingerprintSource } from '@expo/fingerprint';
+import type { FingerprintSource } from '@expo/fingerprint';
+import { createFingerprintAsync } from '@expo/fingerprint';
+import { RnefError } from './error.js';
 
 const HASH_ALGORITHM = 'sha1';
 const EXCLUDED_SOURCES = [
@@ -7,8 +9,13 @@ const EXCLUDED_SOURCES = [
   'expoAutolinkingConfig:android',
 ];
 
-type FingerprintOptions = {
+export type FingerprintOptions = {
   platform: 'ios' | 'android';
+};
+
+export type FingerprintResult = {
+  hash: string;
+  sources: FingerprintSource[];
 };
 
 /**
@@ -17,18 +24,21 @@ type FingerprintOptions = {
 export async function nativeFingerprint(
   path: string,
   options: FingerprintOptions
-) {
+): Promise<FingerprintResult> {
   const platform = options.platform;
 
   const fingerprint = await createFingerprintAsync(path, {
     platforms: [platform],
     dirExcludes: [
       'android/build',
-      'android/app/build',
-      'android/app/.cxx',
+      'android/**/build',
+      'android/**/.cxx',
       'ios/DerivedData',
       'ios/Pods',
       'node_modules',
+      'android/local.properties',
+      'android/.idea',
+      'android/.gradle'
     ],
   });
 
@@ -63,6 +73,7 @@ function createSourceId(source: FingerprintSource) {
     case 'dir':
       return source.filePath;
     default:
-      throw new Error('Unsupported source type');
+      // @ts-expect-error: we intentionally want to detect invalid types
+      throw new RnefError(`Unsupported source type: ${source.type}`);
   }
 }

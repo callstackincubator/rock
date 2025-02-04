@@ -1,5 +1,6 @@
-import fs from 'fs';
-import path from 'path';
+import fs from 'node:fs';
+import path from 'node:path';
+import { RnefError } from '@rnef/tools';
 import packageJson from 'package-json';
 import * as tar from 'tar';
 import { getNameWithoutExtension } from './fs.js';
@@ -14,12 +15,14 @@ export async function downloadTarballFromNpm(
 
     const tarballUrl = metadata['dist']?.tarball;
     if (!tarballUrl) {
-      throw new Error('Tarball URL not found.');
+      throw new RnefError('Tarball URL not found.');
     }
 
     const response = await fetch(tarballUrl);
     if (!response.ok) {
-      throw new Error(`Failed to fetch package: ${response.statusText}`);
+      throw new RnefError(
+        `Failed to fetch package ${packageName}: ${response.statusText}`
+      );
     }
 
     const tarballPath = path.join(
@@ -28,12 +31,13 @@ export async function downloadTarballFromNpm(
     );
     // Write the tarball to disk
     const arrayBuffer = await response.arrayBuffer();
-    fs.writeFileSync(tarballPath, Buffer.from(arrayBuffer));
+    fs.writeFileSync(tarballPath, new Uint8Array(arrayBuffer));
 
     return tarballPath;
   } catch (error) {
-    console.error(`Error downloading package`, error);
-    throw error;
+    throw new RnefError(`Error downloading package ${packageName}`, {
+      cause: error,
+    });
   }
 }
 

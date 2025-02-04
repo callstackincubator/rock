@@ -1,11 +1,18 @@
-import { intro, multiselect, note, outro, select, text } from '@clack/prompts';
-import fs from 'node:fs';
-import { dirname, join } from 'node:path';
-import { fileURLToPath } from 'node:url';
-import { checkCancelPrompt } from '@rnef/tools';
-import { parsePackageManagerFromUserAgent } from './parsers.js';
+import {
+  intro,
+  note,
+  outro,
+  promptConfirm,
+  promptMultiselect,
+  promptSelect,
+  promptText,
+  RnefError,
+} from '@rnef/tools';
+import path from 'path';
+import type { TemplateInfo } from '../templates.js';
 import { validateProjectName } from '../validate-project-name.js';
-import { TemplateInfo } from '../templates.js';
+import { parsePackageManagerFromUserAgent } from './parsers.js';
+import { getRnefVersion } from './version.js';
 
 export function printHelpMessage(
   templates: TemplateInfo[],
@@ -32,11 +39,7 @@ export function printHelpMessage(
 }
 
 export function printVersionMessage() {
-  const __dirname = dirname(fileURLToPath(import.meta.url));
-
-  const packageJsonPath = join(__dirname, '..', '..', 'package.json');
-  const packageJson = JSON.parse(fs.readFileSync(packageJsonPath, 'utf-8'));
-  console.log(`${packageJson.version}`);
+  console.log(`${getRnefVersion()}`);
 }
 
 export function printWelcomeMessage() {
@@ -51,8 +54,10 @@ export function printByeMessage(targetDir: string) {
 
   const pkgManagerCommand = pkgManager?.name ?? 'npm';
 
+  const relativeDir = path.relative(process.cwd(), targetDir);
+
   const nextSteps = [
-    `cd ${targetDir}`,
+    `cd ${relativeDir}`,
     `${pkgManagerCommand} install`,
     `${pkgManagerCommand} run start`,
   ].join('\n');
@@ -61,82 +66,69 @@ export function printByeMessage(targetDir: string) {
   outro('Done.');
 }
 
-export async function promptProjectName() {
-  return checkCancelPrompt<string>(
-    await text({
-      message: 'What is your app named?',
-      validate: validateProjectName,
-    })
-  );
+export function promptProjectName(): Promise<string> {
+  return promptText({
+    message: 'What is your app named?',
+    validate: validateProjectName,
+  });
 }
 
 export async function promptTemplate(
   templates: TemplateInfo[]
 ): Promise<TemplateInfo> {
   if (templates.length === 0) {
-    throw new Error('No templates found');
+    throw new RnefError('No templates found');
   }
 
-  return checkCancelPrompt<TemplateInfo>(
-    await select({
-      message: 'Select a template:',
-      // @ts-expect-error todo
-      options: templates.map((template) => ({
-        value: template,
-        label: template.name,
-      })),
-    })
-  );
+  return promptSelect({
+    message: 'Select a template:',
+    // @ts-expect-error todo
+    options: templates.map((template) => ({
+      value: template,
+      label: template.name,
+    })),
+  });
 }
 
-export async function promptPlatforms(
+export function promptPlatforms(
   platforms: TemplateInfo[]
 ): Promise<TemplateInfo[]> {
   if (platforms.length === 0) {
-    throw new Error('No platforms found');
+    throw new RnefError('No platforms found');
   }
 
-  return checkCancelPrompt<TemplateInfo[]>(
-    await multiselect({
-      message: 'Select platforms:',
-      // @ts-expect-error todo
-      options: platforms.map((platform) => ({
-        value: platform,
-        label: platform.name,
-      })),
-    })
-  );
+  return promptMultiselect({
+    message: 'Select platforms:',
+    // @ts-expect-error todo
+    options: platforms.map((platform) => ({
+      value: platform,
+      label: platform.name,
+    })),
+  });
 }
 
-export async function promptPlugins(
+export function promptPlugins(
   plugins: TemplateInfo[]
 ): Promise<TemplateInfo[]> {
   if (plugins.length === 0) {
-    throw new Error('No plugins found');
+    throw new RnefError('No plugins found');
   }
 
-  return checkCancelPrompt<TemplateInfo[]>(
-    await multiselect({
-      message: 'Select plugins:',
-      initialValues: [plugins[0]],
-      // @ts-expect-error todo fixup type
-      options: plugins.map((plugin) => ({
-        value: plugin,
-        label: plugin.name,
-      })),
-    })
-  );
+  return promptMultiselect({
+    message: 'Select plugins:',
+    initialValues: [plugins[0]],
+    // @ts-expect-error todo fixup type
+    options: plugins.map((plugin) => ({
+      value: plugin,
+      label: plugin.name,
+    })),
+  });
 }
 
-export async function confirmOverrideFiles(targetDir: string) {
-  const option = checkCancelPrompt<string>(
-    await select({
-      message: `"${targetDir}" is not empty, please choose:`,
-      options: [
-        { value: 'yes', label: 'Continue and override files' },
-        { value: 'no', label: 'Cancel operation' },
-      ],
-    })
-  );
-  return option === 'yes';
+export function confirmOverrideFiles(targetDir: string) {
+  return promptConfirm({
+    message: `"${targetDir}" is not empty, please choose:`,
+    confirmLabel: 'Continue and override files',
+    cancelLabel: 'Cancel operation',
+  });
 }

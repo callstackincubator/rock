@@ -1,5 +1,5 @@
-import spawn from 'nano-spawn';
 import path from 'node:path';
+import { spawn } from '@rnef/tools';
 
 export function getAdbPath() {
   return process.env['ANDROID_HOME']

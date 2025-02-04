@@ -1,25 +1,11 @@
+import { promptSelect, spawn } from '@rnef/tools';
 import color from 'picocolors';
-import spawn from 'nano-spawn';
+import type { Mock, MockedFunction } from 'vitest';
+import { describe, it } from 'vitest';
 import {
   parseTasksFromGradleFile,
   promptForTaskSelection,
 } from '../listAndroidTasks.js';
-import { it, describe, vi, Mock, MockedFunction } from 'vitest';
-import { select } from '@clack/prompts';
-
-vi.mock('nano-spawn', () => {
-  return {
-    default: vi.fn(),
-  };
-});
-
-vi.mock('@clack/prompts', () => {
-  return {
-    spinner: vi.fn(() => ({ start: vi.fn(), message: vi.fn(), stop: vi.fn() })),
-    select: vi.fn(),
-    isCancel: vi.fn(() => false),
-  };
-});
 
 const gradleTaskOutput = `
 > Task :tasks
@@ -114,7 +100,7 @@ const tasksList = [
 describe('promptForTaskSelection', () => {
   it('should prompt with correct tasks', async () => {
     (spawn as Mock).mockResolvedValueOnce({ output: gradleTaskOutput });
-    (select as MockedFunction<typeof select>).mockResolvedValueOnce(
+    (promptSelect as MockedFunction<typeof promptSelect>).mockResolvedValueOnce(
       Promise.resolve({
         task: [],
       })
@@ -122,7 +108,7 @@ describe('promptForTaskSelection', () => {
 
     await promptForTaskSelection('install', 'sourceDir');
 
-    expect(select).toHaveBeenCalledWith({
+    expect(promptSelect).toHaveBeenCalledWith({
       options: tasksList.map((t) => ({
         label: `${color.bold(t.task)} - ${t.description}`,
         value: t.task,

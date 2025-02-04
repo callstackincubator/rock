@@ -1,22 +1,26 @@
 {
   "name": "@rnef/tools",
-  "version": "0.0.1",
+  "version": "0.1.6",
   "type": "module",
   "exports": {
     "types": "./dist/src/index.d.ts",
     "import": "./dist/src/index.js"
   },
   "scripts": {
-    "clean-dist": "rm -f dist/package.json",
     "publish:npm": "npm publish --access restricted",
     "publish:verdaccio": "npm publish --registry http://localhost:4873 --userconfig ../../.npmrc"
   },
   "dependencies": {
     "@clack/prompts": "^0.9.0",
-    "@expo/fingerprint": "^0.11.2",
+    "@expo/fingerprint": "^0.11.6",
+    "@types/adm-zip": "^0.5.7",
+    "adm-zip": "^0.5.16",
     "appdirsjs": "^1.2.7",
     "is-unicode-supported": "^2.1.0",
+    "nano-spawn": "^0.2.0",
     "picocolors": "^1.1.1",
+    "string-argv": "^0.3.2",
+    "ts-regex-builder": "^1.8.2",
     "tslib": "^2.3.0"
   },
   "publishConfig": {

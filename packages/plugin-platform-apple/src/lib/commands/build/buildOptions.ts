@@ -1,17 +1,20 @@
-import { BuilderCommand } from '../../types/index.js';
+import { parseArgs } from '@rnef/tools';
+import type { BuilderCommand } from '../../types/index.js';
 import { getPlatformInfo } from '../../utils/getPlatformInfo.js';
 
 export type BuildFlags = {
   verbose?: boolean;
   interactive?: boolean;
-  mode: string;
-  scheme: string;
+  configuration?: string;
+  scheme?: string;
   target?: string;
   extraParams?: string[];
+  exportExtraParams?: string[];
   device?: string;
   catalyst?: boolean;
   buildFolder?: string;
   destination?: string;
+  archive?: boolean;
 };
 
 export const getBuildOptions = ({ platformName }: BuilderCommand) => {
@@ -28,7 +31,7 @@ export const getBuildOptions = ({ platformName }: BuilderCommand) => {
         'Explicitly select which scheme and configuration to use before running a build',
     },
     {
-      name: '--mode <string>',
+      name: '--configuration <string>',
       description:
         'Explicitly set the scheme configuration to use. This option is case sensitive.',
     },
@@ -43,7 +46,15 @@ export const getBuildOptions = ({ platformName }: BuilderCommand) => {
     {
       name: '--extra-params <string>',
       description: 'Custom params that will be passed to xcodebuild command.',
-      parse: (val: string) => val.split(' '),
+      parse: parseArgs,
+    },
+    {
+      name: '--export-extra-params <string>',
+      description:
+        'Custom params that will be passed to xcodebuild export archive command.\n' +
+        'Example:\n' +
+        '  --export-extra-params "-allowProvisioningUpdates"',
+      parse: parseArgs,
     },
     {
       name: '--device <string>',
@@ -55,13 +66,18 @@ export const getBuildOptions = ({ platformName }: BuilderCommand) => {
       description: 'Run on Mac Catalyst.',
     },
     {
-      name: '--buildFolder <string>',
+      name: '--build-folder <string>',
       description: `Location for ${readableName} build artifacts. Corresponds to Xcode's "-derivedDataPath".`,
       value: 'build',
     },
     {
       name: '--destination <string>',
       description: 'Explicitly extend destination e.g. "arch=x86_64"',
+    },
+    {
+      name: '--archive',
+      description:
+        'Create an Xcode archive (IPA) of the build, required for uploading to App Store Connect or distributing to TestFlight',
     },
   ];
 };

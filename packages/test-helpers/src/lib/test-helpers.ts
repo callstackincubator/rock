@@ -1,6 +1,6 @@
 import * as fs from 'node:fs';
-import * as path from 'node:path';
 import * as os from 'node:os';
+import * as path from 'node:path';
 
 export const getTempDirectory = (name: string) =>
   path.resolve(os.tmpdir(), name);

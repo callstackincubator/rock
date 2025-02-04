@@ -12,7 +12,7 @@ inputs:
     description: 'The platform the build is for'
     required: true
   github-token:
-    description: A GitHub personal access token with write access to the project
+    description: A GitHub Personal Access Token with write access to the project
     required: false
     default: ${{ github.token }}
 runs:

@@ -1,6 +1,6 @@
-import type { PluginOutput, PluginApi } from '@rnef/config';
 import commands from '@callstack/repack/commands/rspack';
-import { logger } from '@rnef/tools';
+import type { PluginApi, PluginOutput } from '@rnef/config';
+import { findDevServerPort, RnefError } from '@rnef/tools';
 
 type PluginConfig = {
   platforms?: {
@@ -18,23 +18,30 @@ export const pluginRepack =
   (pluginConfig: PluginConfig = {}) =>
   (api: PluginApi): PluginOutput => {
     if (!startCommand) {
-      logger.error('Re.Pack "start" command not found.');
-      process.exit(1);
+      throw new RnefError('Re.Pack "start" command not found.');
     }
 
     if (!bundleCommand) {
-      logger.error('Re.Pack "bundle" command not found.');
-      process.exit(1);
+      throw new RnefError('Re.Pack "bundle" command not found.');
     }
 
     api.registerCommand({
       name: 'start',
       description: 'Starts Re.Pack dev server.',
-      action: (args: StartArgs) => {
+      action: async (args: StartArgs) => {
         const root = api.getProjectRoot();
         const platforms = api.getPlatforms();
+        const {port, startDevServer} = await findDevServerPort(
+          args.port ?? 8081,
+          root,
+        );
+
+        if (!startDevServer) {
+          return;
+        }
+
         // @ts-expect-error TODO fix getPlatforms type
-        startCommand.func([], { root, platforms, ...pluginConfig }, args);
+        startCommand.func([], { root, platforms, ...pluginConfig }, {...args, port});
       },
       options: startCommand.options,
     });
@@ -44,10 +51,9 @@ export const pluginRepack =
       description: 'Bundles JavaScript with Re.Pack.',
       action: (args: BundleArgs) => {
         if (!args.entryFile) {
-          logger.error(
+          throw new RnefError(
             '"rnef bundle" command is missing "--entry-file" argument.'
           );
-          process.exit(1);
         }
         const root = api.getProjectRoot();
         const platforms = api.getPlatforms();

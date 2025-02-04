@@ -1,21 +1,22 @@
-import { ApplePlatform, Device, XcodeProjectInfo } from '../../types/index.js';
+import { spawn, spinner } from '@rnef/tools';
+import type {
+  ApplePlatform,
+  Device,
+  XcodeProjectInfo,
+} from '../../types/index.js';
 import { buildProject } from '../build/buildProject.js';
 import installApp from './installApp.js';
-import { RunFlags } from './runOptions.js';
-import spawn from 'nano-spawn';
-import { spinner } from '@clack/prompts';
+import type { RunFlags } from './runOptions.js';
 
 export async function runOnSimulator(
   simulator: Device,
   xcodeProject: XcodeProjectInfo,
   sourceDir: string,
   platform: ApplePlatform,
-  mode: string,
+  configuration: string,
   scheme: string,
   args: RunFlags
 ) {
-  const { binaryPath, target } = args;
-
   /**
    * Booting simulator through `xcrun simctl boot` will boot it in the `headless` mode
    * (running in the background).
@@ -43,29 +44,27 @@ export async function runOnSimulator(
   }
   loader.stop(`Launched Simulator "${simulator.name}".`);
 
-  let buildOutput;
-  if (!binaryPath) {
-    buildOutput = await buildProject(
+  if (!args.binaryPath) {
+    await buildProject(
       xcodeProject,
       sourceDir,
       platform,
       simulator.udid,
       scheme,
-      mode,
+      configuration,
       args
     );
   }
 
   loader.start(`Installing the app on "${simulator.name}"`);
   await installApp({
-    buildOutput: buildOutput ?? '',
     xcodeProject,
     sourceDir,
-    mode,
+    configuration,
     scheme,
-    target,
+    target: args.target,
     udid: simulator.udid,
-    binaryPath,
+    binaryPath: args.binaryPath,
     platform,
   });
   loader.stop(`Installed the app on "${simulator.name}".`);

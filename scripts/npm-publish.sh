@@ -2,6 +2,7 @@
 set -e
 
 echo "Building all packages..."
+pnpm nx reset
 pnpm build
 
 read -p "Enter NPM OTP: " OTP

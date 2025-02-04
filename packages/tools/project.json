@@ -6,13 +6,7 @@
   "tags": [],
   "targets": {
     "build": {
-      "executor": "@nx/js:tsc",
-      "outputs": ["{options.outputPath}"],
-      "options": {
-        "outputPath": "packages/tools/dist",
-        "main": "packages/tools/src/index.ts",
-        "tsConfig": "packages/tools/tsconfig.lib.json"
-      }
+      "executor": "@nx/js:tsc"
     }
   }
 }

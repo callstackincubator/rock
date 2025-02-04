@@ -1,6 +1,6 @@
 {
   "name": "@rnef/plugin-metro",
-  "version": "0.0.1",
+  "version": "0.1.6",
   "type": "module",
   "exports": {
     "types": "./dist/src/index.d.ts",
@@ -12,18 +12,17 @@
     "template"
   ],
   "scripts": {
-    "clean-dist": "rm -f dist/package.json",
     "publish:npm": "npm publish --access restricted",
     "publish:verdaccio": "npm publish --registry http://localhost:4873 --userconfig ../../.npmrc"
   },
   "dependencies": {
-    "@rnef/tools": "^0.0.1",
+    "@rnef/tools": "^0.1.6",
     "@react-native-community/cli-server-api": "^16.0.2",
     "@react-native/community-cli-plugin": "0.77.0-rc.2",
     "tslib": "^2.3.0"
   },
   "devDependencies": {
-    "@rnef/config": "^0.0.1"
+    "@rnef/config": "^0.1.6"
   },
   "publishConfig": {
     "access": "restricted"

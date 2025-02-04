@@ -1,5 +1,5 @@
-import { pluginRepack } from '../lib/pluginRepack.js';
 import { expect, test } from 'vitest';
+import { pluginRepack } from '../lib/pluginRepack.js';
 
 const pluginApi = { registerCommand: vi.fn(), getProjectRoot: vi.fn() };
 

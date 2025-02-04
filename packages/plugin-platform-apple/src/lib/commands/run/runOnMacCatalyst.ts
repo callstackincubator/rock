@@ -1,13 +1,13 @@
-import { ApplePlatform, XcodeProjectInfo } from '../../types/index.js';
+import { spawn } from '@rnef/tools';
+import type { ApplePlatform, XcodeProjectInfo } from '../../types/index.js';
 import { buildProject } from '../build/buildProject.js';
 import { getBuildPath } from './getBuildPath.js';
 import { getBuildSettings } from './getBuildSettings.js';
-import { RunFlags } from './runOptions.js';
-import spawn from 'nano-spawn';
+import type { RunFlags } from './runOptions.js';
 
 export async function runOnMacCatalyst(
   platform: ApplePlatform,
-  mode: string,
+  configuration: string,
   scheme: string,
   xcodeProject: XcodeProjectInfo,
   sourceDir: string,
@@ -24,14 +24,14 @@ export async function runOnMacCatalyst(
     platform,
     undefined,
     scheme,
-    mode,
+    configuration,
     args
   );
 
   const buildSettings = await getBuildSettings(
     xcodeProject,
     sourceDir,
-    mode,
+    configuration,
     buildOutput,
     scheme
   );

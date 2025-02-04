@@ -1,23 +1,20 @@
 {
   "name": "@rnef/cli",
-  "version": "0.0.1",
+  "version": "0.1.6",
   "type": "module",
   "exports": {
-    "types": "./dist/src/index.d.ts",
-    "import": "./dist/src/index.js"
+    "./package.json": "./package.json"
   },
   "bin": {
     "rnef": "./dist/src/bin.js"
   },
   "scripts": {
-    "clean-dist": "rm -f dist/package.json",
     "publish:npm": "npm publish --access restricted",
     "publish:verdaccio": "npm publish --registry http://localhost:4873 --userconfig ../../.npmrc"
   },
   "dependencies": {
-    "@rnef/config": "^0.0.1",
-    "@rnef/tools": "^0.0.1",
-    "@clack/prompts": "^0.9.0",
+    "@rnef/config": "^0.1.6",
+    "@rnef/tools": "^0.1.6",
     "@react-native-community/cli-config": "^16.0.2",
     "commander": "^12.1.0",
     "tslib": "^2.3.0"

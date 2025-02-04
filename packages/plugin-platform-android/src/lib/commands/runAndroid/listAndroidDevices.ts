@@ -1,7 +1,7 @@
-import spawn from 'nano-spawn';
-import { getDevices, getAdbPath } from './adb.js';
+import os from 'node:os';
+import { spawn } from '@rnef/tools';
+import { getAdbPath, getDevices } from './adb.js';
 import { getEmulators } from './tryLaunchEmulator.js';
-import os from 'os';
 
 export type DeviceData = {
   deviceId: string | undefined;

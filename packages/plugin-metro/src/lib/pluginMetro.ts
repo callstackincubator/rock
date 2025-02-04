@@ -1,10 +1,10 @@
-import type { PluginOutput, PluginApi } from '@rnef/config';
 import {
-  startCommand,
   bundleCommand,
+  startCommand,
   // @ts-expect-error missing typings
 } from '@react-native/community-cli-plugin';
-import { logger } from '@rnef/tools';
+import type { PluginApi, PluginOutput } from '@rnef/config';
+import { findDevServerPort, RnefError } from '@rnef/tools';
 
 type PluginConfig = {
   reactNativeVersion?: string;
@@ -62,11 +62,21 @@ export const pluginMetro =
     api.registerCommand({
       name: 'start',
       description: 'Starts Metro dev server.',
-      action: (args: StartCommandArgs) => {
+      action: async (args: StartCommandArgs) => {
         const root = api.getProjectRoot();
         const reactNativeVersion = api.getReactNativeVersion();
         const reactNativePath = api.getReactNativePath();
         const platforms = api.getPlatforms();
+
+        const { port, startDevServer } = await findDevServerPort(
+          args.port ?? 8081,
+          root
+        );
+
+        if (!startDevServer) {
+          return;
+        }
+
         startCommand.func(
           undefined,
           {
@@ -76,7 +86,10 @@ export const pluginMetro =
             platforms,
             ...pluginConfig,
           },
-          args
+          {
+            ...args,
+            port,
+          }
         );
       },
       options: startCommand.options,
@@ -88,10 +101,9 @@ export const pluginMetro =
         'Build the bundle for the provided JavaScript entry file with Metro.',
       action: (args: BundleCommandArgs) => {
         if (!args.platform || !args.bundleOutput || !args.entryFile) {
-          logger.error(
+          throw new RnefError(
             '"rnef bundle" command requires all of these flags to bundle JavaScript with Metro: \n  "--platform", "--bundle-output", "--entry-file"'
           );
-          process.exit(1);
         }
         const root = api.getProjectRoot();
         const reactNativeVersion = api.getReactNativeVersion();
@@ -109,7 +121,14 @@ export const pluginMetro =
           args
         );
       },
-      options: bundleCommand.options,
+      options: [
+        ...bundleCommand.options,
+        {
+          name: '--config-cmd [string]',
+          description:
+            'Hack for Xcode build script pointing to wrong bundle command that recognizes this flag.',
+        },
+      ],
     });
 
     return {

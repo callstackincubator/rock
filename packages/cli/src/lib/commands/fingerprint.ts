@@ -1,10 +1,5 @@
-import { performance } from 'perf_hooks';
-import { outro, spinner } from '@clack/prompts';
-import {
-  logger,
-  nativeFingerprint,
-  resolveAbsolutePath,
-} from '@rnef/tools';
+import { performance } from 'node:perf_hooks';
+import { intro, logger, nativeFingerprint, outro, spinner } from '@rnef/tools';
 
 type NativeFingerprintCommandOptions = {
   platform: 'ios' | 'android';
@@ -16,23 +11,20 @@ export async function nativeFingerprintCommand(
 ) {
   path = path ?? '.';
   const platform = options?.platform ?? 'ios';
+
+  intro('Native Fingerprint');
+
   const loader = spinner();
-  logger.debug(`Fingerprinting "${resolveAbsolutePath(path)}"...`);
-
-  let start = 0;
-  if (logger.isVerbose()) {
-    start = performance.now();
-  }
-
   loader.start("Calculating fingerprint for the project's native parts");
-  const fingerprint = await nativeFingerprint(path, { platform });
 
-  if (logger.isVerbose()) {
-    const duration = performance.now() - start;
-    logger.debug('Hash:', fingerprint.hash);
-    logger.debug('Sources:', JSON.stringify(fingerprint.sources, null, 2));
-    logger.debug(`Duration: ${(duration / 1000).toFixed(1)}s`);
-  }
+  const start = performance.now();
+  const fingerprint = await nativeFingerprint(path, { platform });
+  const duration = performance.now() - start;
+
   loader.stop(`Fingerprint calculated: ${fingerprint.hash}`);
+
+  logger.debug('Sources:', JSON.stringify(fingerprint.sources, null, 2));
+  logger.debug(`Duration: ${(duration / 1000).toFixed(1)}s`);
+
   outro('Success 🎉.');
 }

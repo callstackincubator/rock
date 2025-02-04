@@ -1,26 +1,33 @@
-import { logger } from '@rnef/tools';
-import type { AndroidProject, Flags } from './runAndroid/runAndroid.js';
-import { getAdbPath, getDevices } from './runAndroid/adb.js';
-import spawn from 'nano-spawn';
+import {
+  logger,
+  RnefError,
+  spawn,
+  spinner,
+  type SubprocessError,
+} from '@rnef/tools';
+import color from 'picocolors';
 import type { BuildFlags } from './buildAndroid/buildAndroid.js';
-import { spinner } from '@clack/prompts';
+import { getAdbPath, getDevices } from './runAndroid/adb.js';
+import type { AndroidProject, Flags } from './runAndroid/runAndroid.js';
+
+export type RunGradleArgs = {
+  tasks: string[];
+  androidProject: AndroidProject;
+  args: BuildFlags | Flags;
+};
 
 export async function runGradle({
   tasks,
   androidProject,
   args,
-}: {
-  tasks: string[];
-  androidProject: AndroidProject;
-  args: BuildFlags | Flags;
-}) {
+}: RunGradleArgs) {
   if ('binaryPath' in args) {
     return;
   }
   const loader = spinner();
-  loader.start('');
-  loader.stop('Running Gradle build ↓');
+  const message = `Building the app with Gradle in ${args.buildVariant} build variant`;
 
+  loader.start(message, { kind: 'clock' });
   const gradleArgs = getTaskNames(androidProject.appName, tasks);
 
   gradleArgs.push('-x', 'lint');
@@ -50,18 +57,49 @@ export async function runGradle({
   try {
     logger.debug(`Running ${gradleWrapper} ${gradleArgs.join(' ')}.`);
     await spawn(gradleWrapper, gradleArgs, {
-      stdio: 'inherit',
       cwd: androidProject.sourceDir,
+      stdio: logger.isVerbose() ? 'inherit' : 'pipe',
     });
-    loader.start('');
-    loader.stop('Gradle build finished.');
-  } catch {
-    logger.error(
-      `Failed to build the app. See the error above for details from Gradle.`
+    loader.stop(`Built the app in ${args.buildVariant} build variant.`);
+  } catch (error) {
+    loader.stop('Failed to build the app');
+    const cleanedErrorMessage = (error as SubprocessError).stderr
+      .split('\n')
+      .filter((line) => !gradleLinesToRemove.some((l) => line.includes(l)))
+      .join('\n')
+      .trim();
+
+    if (cleanedErrorMessage) {
+      logger.error(cleanedErrorMessage);
+    }
+
+    const hints = getErrorHints((error as SubprocessError).stdout ?? '');
+    throw new RnefError(
+      hints ||
+        'Failed to build the app. See the error above for details from Gradle.'
     );
-    process.exit(1);
   }
 }
+
+function getErrorHints(output: string) {
+  const signingMessage = output.includes('validateSigningRelease FAILED')
+    ? `Hint: You can run "${color.bold(
+        'rnef create-keystore:android'
+      )}" to create a keystore file.`
+    : '';
+  return signingMessage;
+}
+
+const gradleLinesToRemove = [
+  'FAILURE: Build failed with an exception.',
+  '* Try:',
+  '> Run with --stacktrace option to get the stack trace.',
+  '> Run with --info or --debug option to get more log output.',
+  '> Run with --scan to get full insights.',
+  '> Get more help at [undefined](https://help.gradle.org).',
+  '> Get more help at https://help.gradle.org.',
+  'BUILD FAILED',
+];
 
 export function getGradleWrapper() {
   return process.platform.startsWith('win') ? 'gradlew.bat' : './gradlew';

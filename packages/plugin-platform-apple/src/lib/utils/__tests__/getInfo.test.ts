@@ -1,29 +1,38 @@
-import { describe, it, expect, vi, Mock } from 'vitest';
-import spawn from 'nano-spawn';
-import * as fs from 'fs';
+import * as fs from 'node:fs';
+import { isInteractive, spawn } from '@rnef/tools';
+import type { Mock } from 'vitest';
+import { describe, expect, it, vi } from 'vitest';
+import type { XcodeProjectInfo } from '../../types/index.js';
 import { getInfo } from '../getInfo.js';
-import { XcodeProjectInfo } from '../../types/index.js';
 
-vi.mock('nano-spawn', () => {
-  return {
-    default: vi.fn(),
-  };
-});
+const projectsOutput = `{
+  "project" : {
+    "configurations" : [
+      "Debug",
+      "Test",
+      "Release"
+    ],
+    "name" : "YourProjectName",
+    "schemes" : [
+      "YourProjectName-Dev",
+      "YourProjectName-Prod",
+      "NotificationService",
+      "TodayWidget"
+    ],
+    "targets" : [
+      "YourProjectName",
+      "YourProjectNameTests",
+      "TodayWidget",
+      "NotificationService"
+    ]
+  }
+}`;
 
-vi.mock('fs', () => ({
-  readFileSync: vi.fn(),
-}));
-
-describe('getInfo', () => {
-  it('handles non-project / workspace locations in a ', () => {
-    const name = `YourProjectName`;
-
-    vi.mocked(fs.readFileSync)
-      .mockReturnValueOnce(`<?xml version="1.0" encoding="UTF-8"?>
+const workspaceDataFileContents = `<?xml version="1.0" encoding="UTF-8"?>
 <Workspace
    version = "1.0">
    <FileRef
-      location = "group:${name}.xcodeproj">
+      location = "group:YourProjectName.xcodeproj">
    </FileRef>
    <FileRef
       location = "group:Pods/Pods.xcodeproj">
@@ -31,18 +40,55 @@ describe('getInfo', () => {
    <FileRef
       location = "group:container/some_other_file.mm">
    </FileRef>
-</Workspace>`);
+   <FileRef
+      location = "group:storekit/file.storekit">
+   </FileRef>
+</Workspace>`;
 
-    (spawn as Mock).mockResolvedValue({ stdout: '{}' });
+describe('getInfo', () => {
+  it('handles non-project / workspace locations in a ', async () => {
+    vi.mocked(fs.readFileSync).mockReturnValueOnce(workspaceDataFileContents);
 
-    getInfo({ isWorkspace: true, name } as XcodeProjectInfo, 'some/path');
+    (spawn as Mock).mockResolvedValue({ stdout: projectsOutput });
+
+    const info = await getInfo(
+      { isWorkspace: true, name: 'YourProjectName' } as XcodeProjectInfo,
+      'some/path'
+    );
 
     // Should not call on Pods or the other misc groups
     expect(spawn).toHaveBeenCalledWith(
       'xcodebuild',
-      ['-list', '-json', '-project', `some/path/${name}.xcodeproj`],
-      { stdio: ['ignore', 'pipe', 'inherit'], cwd: 'some/path' }
+      ['-list', '-json', '-project', `some/path/YourProjectName.xcodeproj`],
+      {
+        stdio: isInteractive() ? ['ignore', 'pipe', 'inherit'] : 'pipe',
+        cwd: 'some/path',
+      }
     );
+    expect(spawn).toHaveBeenCalledTimes(1);
+
+    expect(info).toMatchInlineSnapshot(`
+      {
+        "configurations": [
+          "Debug",
+          "Test",
+          "Release",
+        ],
+        "name": "YourProjectName",
+        "schemes": [
+          "YourProjectName-Dev",
+          "YourProjectName-Prod",
+          "NotificationService",
+          "TodayWidget",
+        ],
+        "targets": [
+          "YourProjectName",
+          "YourProjectNameTests",
+          "TodayWidget",
+          "NotificationService",
+        ],
+      }
+    `);
   });
 
   afterEach(() => {

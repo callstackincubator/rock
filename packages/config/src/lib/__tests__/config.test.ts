@@ -1,12 +1,8 @@
-import { vi, expect, beforeEach, afterEach, test } from 'vitest';
 import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
+import { cleanup, getTempDirectory, writeFiles } from '@rnef/test-helpers';
+import { afterEach, beforeEach, expect, test, vi } from 'vitest';
 import { getConfig } from '../config.js';
-import {
-  cleanup,
-  writeFiles,
-  getTempDirectory,
-} from '@rnef/test-helpers';
 
 let DIR: string;
 

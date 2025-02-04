@@ -1,6 +1,6 @@
 import {
-  projectConfig,
   dependencyConfig,
+  projectConfig,
 } from '@react-native-community/cli-config-android';
 
 export default {

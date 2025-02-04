@@ -1,16 +1,18 @@
-import type { PluginOutput, PluginApi } from '@rnef/config';
+import { projectConfig } from '@react-native-community/cli-config-android';
+import type { AndroidProjectConfig } from '@react-native-community/cli-types';
+import type { PluginApi, PluginOutput } from '@rnef/config';
+import { RnefError } from '@rnef/tools';
 import {
   buildAndroid,
   type BuildFlags,
   options,
 } from './commands/buildAndroid/buildAndroid.js';
+import { generateKeystore, generateKeystoreOptions } from './commands/generateKeystore.js';
 import {
   type Flags,
   runAndroid,
   runOptions,
 } from './commands/runAndroid/runAndroid.js';
-import { projectConfig } from '@react-native-community/cli-config-android';
-import { AndroidProjectConfig } from '@react-native-community/cli-types';
 
 type PluginConfig = AndroidProjectConfig;
 
@@ -26,7 +28,7 @@ export const pluginPlatformAndroid =
         if (androidConfig) {
           await buildAndroid(androidConfig, args as BuildFlags);
         } else {
-          throw new Error('Android project not found.');
+          throw new RnefError('Android project not found.');
         }
       },
       options: options,
@@ -46,10 +48,26 @@ export const pluginPlatformAndroid =
             projectRoot
           );
         } else {
-          throw new Error('Android project not found.');
+          throw new RnefError('Android project not found.');
         }
       },
       options: runOptions,
+    });
+
+    api.registerCommand({
+      name: 'create-keystore:android',
+      description:
+        'Creates a keystore file for signing Android release builds.',
+      action: async (args) => {
+        const projectRoot = api.getProjectRoot();
+        const androidConfig = projectConfig(projectRoot);
+        if (androidConfig) {
+          await generateKeystore(androidConfig, args);
+        } else {
+          throw new RnefError('Android project not found.');
+        }
+      },
+      options: generateKeystoreOptions,
     });
 
     return {

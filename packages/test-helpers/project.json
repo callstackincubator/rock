@@ -6,13 +6,7 @@
   "tags": [],
   "targets": {
     "build": {
-      "executor": "@nx/js:tsc",
-      "outputs": ["{options.outputPath}"],
-      "options": {
-        "outputPath": "packages/test-helpers/dist",
-        "main": "packages/test-helpers/src/index.ts",
-        "tsConfig": "packages/test-helpers/tsconfig.lib.json"
-      }
+      "executor": "@nx/js:tsc"
     }
   }
 }

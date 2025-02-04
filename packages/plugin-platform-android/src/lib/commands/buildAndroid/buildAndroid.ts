@@ -1,14 +1,13 @@
-import { AndroidProjectConfig } from '@react-native-community/cli-types';
-import { runGradle } from '../runGradle.js';
-import { promptForTaskSelection } from '../listAndroidTasks.js';
-import { findOutputFile } from '../runAndroid/tryInstallAppOnDevice.js';
-import { outro, spinner } from '@clack/prompts';
-import { logger } from '@rnef/tools';
+import type { AndroidProjectConfig } from '@react-native-community/cli-types';
+import { logger, outro, parseArgs, spinner } from '@rnef/tools';
 import color from 'picocolors';
+import { promptForTaskSelection } from '../listAndroidTasks.js';
+import { findOutputFile } from '../runAndroid/findOutputFile.js';
+import { runGradle } from '../runGradle.js';
 import { toPascalCase } from '../toPascalCase.js';
 
 export interface BuildFlags {
-  mode: string;
+  buildVariant: string;
   activeArchOnly?: boolean;
   tasks?: Array<string>;
   extraParams?: Array<string>;
@@ -23,7 +22,7 @@ export async function buildAndroid(
 
   const tasks = args.interactive
     ? [await promptForTaskSelection('bundle', androidProject.sourceDir)]
-    : [...(args.tasks ?? []), `bundle${toPascalCase(args.mode)}`];
+    : [...(args.tasks ?? []), `bundle${toPascalCase(args.buildVariant)}`];
 
   await runGradle({ tasks, androidProject, args });
 
@@ -38,25 +37,26 @@ export async function buildAndroid(
 }
 
 function normalizeArgs(args: BuildFlags) {
-  if (args.tasks && args.mode) {
+  if (args.tasks && args.buildVariant) {
     logger.warn(
-      'Both "--tasks" and "--mode" parameters were passed. Using "--tasks" for building the app.'
+      'Both "--tasks" and "--build-variant" parameters were passed. Using "--tasks" for building the app.'
     );
   }
-  if (!args.mode) {
-    args.mode = 'debug';
+  if (!args.buildVariant) {
+    args.buildVariant = 'debug';
   }
 }
 
 export const options = [
   {
-    name: '-m --mode <string>',
-    description: "Specify your app's build variant",
+    name: '--build-variant <string>',
+    description:
+      "Specify your app's build variant, which is constructed from build type and product flavor, e.g. 'debug' or 'freeRelease'.",
   },
   {
     name: '--tasks <list>',
     description:
-      'Run custom Gradle tasks. By default it\'s "assembleDebug". Will override passed mode argument.',
+      'Run custom Gradle tasks. Will override the --build-variant argument.',
     parse: (val: string) => val.split(','),
   },
   {
@@ -67,11 +67,11 @@ export const options = [
   {
     name: '--extra-params <string>',
     description: 'Custom params passed to gradle build command',
-    parse: (val: string) => val.split(' '),
+    parse: parseArgs,
   },
   {
     name: '-i --interactive',
     description:
-      'Explicitly select build type and flavour to use before running a build',
+      'Explicitly select build variant to use before running a build',
   },
 ];

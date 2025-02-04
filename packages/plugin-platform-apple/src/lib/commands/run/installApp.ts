@@ -1,15 +1,13 @@
-import { logger } from '@rnef/tools';
+import path from 'node:path';
+import { logger, RnefError, spawn, type SubprocessError } from '@rnef/tools';
+import type { ApplePlatform, XcodeProjectInfo } from '../../types/index.js';
 import { getBuildPath } from './getBuildPath.js';
 import { getBuildSettings } from './getBuildSettings.js';
-import path from 'path';
-import { ApplePlatform, XcodeProjectInfo } from '../../types/index.js';
-import spawn, { SubprocessError } from 'nano-spawn';
 
 type Options = {
-  buildOutput: string;
   xcodeProject: XcodeProjectInfo;
   sourceDir: string;
-  mode: string;
+  configuration: string;
   scheme: string;
   target?: string;
   udid: string;
@@ -18,10 +16,9 @@ type Options = {
 };
 
 export default async function installApp({
-  buildOutput,
   xcodeProject,
   sourceDir,
-  mode,
+  configuration,
   scheme,
   target,
   udid,
@@ -29,47 +26,48 @@ export default async function installApp({
   platform,
 }: Options) {
   let appPath = binaryPath;
-
-  const buildSettings = await getBuildSettings(
-    xcodeProject,
-    sourceDir,
-    mode,
-    buildOutput,
-    scheme,
-    target
-  );
-
-  if (!buildSettings) {
-    throw new Error('Failed to get build settings for your project');
-  }
+  let targetBuildDir;
+  let infoPlistPath = 'Info.plist';
 
   if (!appPath) {
+    const buildSettings = await getBuildSettings(
+      xcodeProject,
+      sourceDir,
+      configuration,
+      `export PLATFORM_NAME=${getPlatformSDK(platform)}`, // simulate build output
+      scheme,
+      target
+    );
+
+    if (!buildSettings) {
+      throw new Error('Failed to get build settings for your project');
+    }
+
     appPath = getBuildPath(buildSettings, platform);
+    targetBuildDir = buildSettings.TARGET_BUILD_DIR;
+    infoPlistPath = buildSettings.INFOPLIST_PATH;
+
+    if (!infoPlistPath) {
+      throw new Error('Failed to find Info.plist');
+    }
+
+    if (!targetBuildDir) {
+      throw new Error('Failed to get target build directory.');
+    }
   }
 
-  const targetBuildDir = buildSettings.TARGET_BUILD_DIR;
-  const infoPlistPath = buildSettings.INFOPLIST_PATH;
-
-  if (!infoPlistPath) {
-    throw new Error('Failed to find Info.plist');
-  }
-
-  if (!targetBuildDir) {
-    throw new Error('Failed to get target build directory.');
-  }
+  await spawn('xcrun', ['simctl', 'install', udid, appPath], {
+    stdio: logger.isVerbose() ? 'inherit' : ['ignore', 'pipe', 'inherit'],
+  });
 
   logger.debug(`Installing "${path.basename(appPath)}"`);
 
-  if (udid && appPath) {
-    await spawn('xcrun', ['simctl', 'install', udid, appPath], {
-      stdio: logger.isVerbose() ? 'inherit' : ['ignore', 'pipe', 'inherit'],
-    });
-  }
+  const buildDir = targetBuildDir || appPath;
 
   const { stdout } = await spawn('/usr/libexec/PlistBuddy', [
     '-c',
     'Print:CFBundleIdentifier',
-    path.join(targetBuildDir, infoPlistPath),
+    path.join(buildDir, infoPlistPath),
   ]);
   const bundleID = stdout.trim();
 
@@ -78,11 +76,24 @@ export default async function installApp({
   try {
     await spawn('xcrun', ['simctl', 'launch', udid, bundleID]);
   } catch (error) {
-    logger.error(
+    throw new RnefError(
       `Failed to launch the app on simulator. ${
         (error as SubprocessError).stderr
-      }`
+      }`,
+      { cause: error }
     );
-    throw error;
+  }
+}
+
+export function getPlatformSDK(platform: ApplePlatform) {
+  switch (platform) {
+    case 'ios':
+      return 'iphonesimulator';
+    case 'macos':
+      return 'macosx';
+    case 'tvos':
+      return 'appletvsimulator';
+    case 'visionos':
+      return 'xrsimulator';
   }
 }

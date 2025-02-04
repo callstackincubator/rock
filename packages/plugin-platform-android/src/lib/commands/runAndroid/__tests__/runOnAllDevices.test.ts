@@ -1,14 +1,9 @@
-import spawn from 'nano-spawn';
-import type { Flags } from '../runAndroid.js';
-import { AndroidProjectConfig } from '@react-native-community/cli-types';
-import { vi, Mock } from 'vitest';
+import type { AndroidProjectConfig } from '@react-native-community/cli-types';
+import { spawn } from '@rnef/tools';
+import type { Mock } from 'vitest';
+import { vi } from 'vitest';
 import { runGradle } from '../../runGradle.js';
-
-vi.mock('nano-spawn', () => {
-  return {
-    default: vi.fn(),
-  };
-});
+import type { Flags } from '../runAndroid.js';
 
 const gradleTaskOutput = `
 > Task :tasks
@@ -49,11 +44,12 @@ describe('--appFolder', () => {
   const args: Flags = {
     appId: '',
     tasks: undefined,
-    mode: 'debug',
+    buildVariant: 'debug',
     appIdSuffix: '',
     mainActivity: 'MainActivity',
     port: '8081',
     activeArchOnly: false,
+    remoteCache: false,
   };
   const androidProject: AndroidProjectConfig = {
     appName: 'app',

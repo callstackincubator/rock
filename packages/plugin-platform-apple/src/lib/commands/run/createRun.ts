@@ -1,26 +1,33 @@
-import path from 'path';
-import fs from 'fs';
-import isInteractive from 'is-interactive';
-import { logger } from '@rnef/tools';
-import { listDevicesAndSimulators } from '../../utils/listDevices.js';
-import { promptForDeviceSelection } from '../../utils/prompts.js';
-import { getConfiguration } from '../build/getConfiguration.js';
-import { getPlatformInfo } from '../../utils/getPlatformInfo.js';
-import { matchingDevice } from './matchingDevice.js';
-import { runOnDevice } from './runOnDevice.js';
-import { runOnSimulator } from './runOnSimulator.js';
+import fs from 'node:fs';
+import path from 'node:path';
 import {
+  intro,
+  isInteractive,
+  logger,
+  outro,
+  promptSelect,
+  RnefError,
+  spinner,
+} from '@rnef/tools';
+import color from 'picocolors';
+import type {
   ApplePlatform,
   Device,
   ProjectConfig,
-  XcodeProjectInfo,
 } from '../../types/index.js';
-import { RunFlags } from './runOptions.js';
-import { selectFromInteractiveMode } from '../../utils/selectFromInteractiveMode.js';
-import { outro, spinner } from '@clack/prompts';
+import { getConfiguration } from '../../utils/getConfiguration.js';
+import { getInfo } from '../../utils/getInfo.js';
+import { getPlatformInfo } from '../../utils/getPlatformInfo.js';
+import { getScheme } from '../../utils/getScheme.js';
+import { listDevicesAndSimulators } from '../../utils/listDevices.js';
+import { fetchCachedBuild } from './fetchCachedBuild.js';
+import { matchingDevice } from './matchingDevice.js';
+import { cacheRecentDevice, sortByRecentDevices } from './recentDevices.js';
+import { runOnDevice } from './runOnDevice.js';
 import { runOnMac } from './runOnMac.js';
 import { runOnMacCatalyst } from './runOnMacCatalyst.js';
-import { cacheRecentDevice } from './recentDevices.js';
+import { runOnSimulator } from './runOnSimulator.js';
+import type { RunFlags } from './runOptions.js';
 
 export const createRun = async (
   platformName: ApplePlatform,
@@ -28,41 +35,55 @@ export const createRun = async (
   args: RunFlags,
   projectRoot: string
 ) => {
+  intro('Running on iOS');
+
+  if (!args.binaryPath && args.remoteCache) {
+    const cachedBuild = await fetchCachedBuild({
+      configuration: args.configuration ?? 'Debug',
+      distribution: args.device ? 'device' : 'simulator', // TODO: replace with better logic
+    });
+    if (cachedBuild) {
+      // @todo replace with a more generic way to pass binary path
+      args.binaryPath = cachedBuild.binaryPath;
+    }
+  }
+
   const { readableName: platformReadableName } = getPlatformInfo(platformName);
   const { xcodeProject, sourceDir } = projectConfig;
 
   if (!xcodeProject) {
-    logger.error(
+    throw new RnefError(
       `Could not find Xcode project files in "${sourceDir}" folder. Please make sure that you have installed Cocoapods and "${sourceDir}" is a valid path`
     );
-    process.exit(1);
   }
 
-  normalizeArgs(args, projectRoot, xcodeProject);
+  validateArgs(args, projectRoot);
 
-  const { scheme, mode } = args.interactive
-    ? await selectFromInteractiveMode(
-        xcodeProject,
-        sourceDir,
-        args.scheme,
-        args.mode
-      )
-    : await getConfiguration(
-        xcodeProject,
-        sourceDir,
-        args.scheme,
-        args.mode,
-        platformName
-      );
+  const info = await getInfo(xcodeProject, sourceDir);
+
+  if (!info) {
+    throw new RnefError('Failed to get Xcode project information');
+  }
+  const scheme = await getScheme(
+    info.schemes,
+    args.scheme,
+    args.interactive,
+    xcodeProject.name
+  );
+  const configuration = await getConfiguration(
+    info.configurations,
+    args.configuration,
+    args.interactive
+  );
 
   if (platformName === 'macos') {
-    await runOnMac(xcodeProject, sourceDir, mode, scheme, args);
+    await runOnMac(xcodeProject, sourceDir, configuration, scheme, args);
     outro('Success 🎉.');
     return;
   } else if (args.catalyst) {
     await runOnMacCatalyst(
       platformName,
-      mode,
+      configuration,
       scheme,
       xcodeProject,
       sourceDir,
@@ -76,22 +97,22 @@ export const createRun = async (
   loader.start('Looking for available devices and simulators');
   const devices = await listDevicesAndSimulators(platformName);
   if (devices.length === 0) {
-    return logger.error(
+    throw new RnefError(
       `${platformReadableName} devices or simulators not detected. Install simulators via Xcode or connect a physical ${platformReadableName} device`
     );
   }
   loader.stop('Found available devices and simulators.');
-  const device = await selectDevice(devices, args, platformName, projectRoot);
+  const device = await selectDevice(devices, args, platformName);
 
   if (device) {
-    cacheRecentDevice(device, projectRoot, platformName);
+    cacheRecentDevice(device, platformName);
     if (device.type === 'simulator') {
       await runOnSimulator(
         device,
         xcodeProject,
         sourceDir,
         platformName,
-        mode,
+        configuration,
         scheme,
         args
       );
@@ -99,7 +120,7 @@ export const createRun = async (
       await runOnDevice(
         device,
         platformName,
-        mode,
+        configuration,
         scheme,
         xcodeProject,
         sourceDir,
@@ -115,13 +136,9 @@ export const createRun = async (
     if (bootedSimulators.length === 0) {
       // fallback to present all devices when no device is selected
       if (isInteractive()) {
-        const simulator = await promptForDeviceSelection(
-          devices,
-          projectRoot,
-          platformName
-        );
+        const simulator = await promptForDeviceSelection(devices, platformName);
         bootedSimulators.push(simulator);
-        cacheRecentDevice(simulator, projectRoot, platformName);
+        cacheRecentDevice(simulator, platformName);
       } else {
         logger.debug(
           'No booted devices or simulators found. Launching first available simulator...'
@@ -132,10 +149,9 @@ export const createRun = async (
         if (simulator) {
           bootedSimulators.push(simulator);
         } else {
-          logger.error(
+          throw new RnefError(
             'No Apple simulators found. Install simulators via Xcode.'
           );
-          process.exit(1);
         }
       }
     }
@@ -145,7 +161,7 @@ export const createRun = async (
         xcodeProject,
         sourceDir,
         platformName,
-        mode,
+        configuration,
         scheme,
         args
       );
@@ -158,41 +174,26 @@ export const createRun = async (
 async function selectDevice(
   devices: Device[],
   args: RunFlags,
-  platform: ApplePlatform,
-  projectRoot: string
+  platform: ApplePlatform
 ) {
   const { interactive } = args;
   let device;
   if (interactive) {
-    device = await promptForDeviceSelection(devices, projectRoot, platform);
+    device = await promptForDeviceSelection(devices, platform);
   } else if (args.device) {
     device = matchingDevice(devices, args.device);
-  } else if (!device) {
-    if (args.device) {
-      logger.warn(
-        `No devices or simulators found matching "${args.device}". Falling back to default simulator.`
-      );
-      // setting device to undefined to avoid buildProject to use it
-      args.device = undefined;
-    }
+  }
+  if (!device && args.device) {
+    logger.warn(
+      `No devices or simulators found matching "${args.device}". Falling back to default simulator.`
+    );
+    // setting device to undefined to avoid buildProject to use it
+    args.device = undefined;
   }
   return device;
 }
 
-function normalizeArgs(
-  args: RunFlags,
-  projectRoot: string,
-  xcodeProject: XcodeProjectInfo
-) {
-  if (!args.mode) {
-    args.mode = 'Debug';
-  }
-  if (!args.scheme) {
-    args.scheme = path.basename(
-      xcodeProject.name,
-      path.extname(xcodeProject.name)
-    );
-  }
+function validateArgs(args: RunFlags, projectRoot: string) {
   if (args.binaryPath) {
     args.binaryPath = path.isAbsolute(args.binaryPath)
       ? args.binaryPath
@@ -204,10 +205,28 @@ function normalizeArgs(
       );
     }
   }
+
   if (args.interactive && !isInteractive()) {
     logger.warn(
       'Interactive mode is not supported in non-interactive environments.'
     );
     args.interactive = false;
   }
+}
+
+function promptForDeviceSelection(
+  devices: Device[],
+  platformName: ApplePlatform
+) {
+  const sortedDevices = sortByRecentDevices(devices, platformName);
+  return promptSelect({
+    message: 'Select the device / simulator you want to use',
+    options: sortedDevices.map((d) => {
+      const markDevice = d.type === 'device' ? ` - (physical device)` : '';
+      return {
+        label: `${d.name} ${color.dim(`(${d.version})${markDevice}`)}`,
+        value: d,
+      };
+    }),
+  });
 }

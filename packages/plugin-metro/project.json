@@ -6,13 +6,7 @@
   "tags": [],
   "targets": {
     "build": {
-      "executor": "@nx/js:tsc",
-      "outputs": ["{options.outputPath}"],
-      "options": {
-        "outputPath": "packages/plugin-metro/dist",
-        "main": "packages/plugin-metro/src/index.ts",
-        "tsConfig": "packages/plugin-metro/tsconfig.lib.json"
-      }
+      "executor": "@nx/js:tsc"
     }
   }
 }

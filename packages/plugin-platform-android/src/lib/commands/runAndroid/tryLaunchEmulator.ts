@@ -1,7 +1,7 @@
-import os from 'os';
-import spawn from 'nano-spawn';
-import { getDevices, getAdbPath } from './adb.js';
-import { spinner } from '@clack/prompts';
+import os from 'node:os';
+import type { SubprocessError } from '@rnef/tools';
+import { spawn, spinner } from '@rnef/tools';
+import { getAdbPath, getDevices } from './adb.js';
 
 const emulatorCommand = process.env['ANDROID_HOME']
   ? `${process.env['ANDROID_HOME']}/emulator/emulator`
@@ -26,7 +26,7 @@ const launchEmulator = async (
   emulatorName: string,
   port: number,
   loader: ReturnType<typeof spinner>
-): Promise<boolean> => {
+): Promise<string> => {
   const manualCommand = `${emulatorCommand} @${emulatorName}`;
 
   const cp = spawn(emulatorCommand, [`@${emulatorName}`, '-port', `${port}`], {
@@ -36,7 +36,7 @@ const launchEmulator = async (
   (await cp.nodeChildProcess).unref();
   const timeout = 120;
 
-  return new Promise<boolean>((resolve, reject) => {
+  return new Promise<string>((resolve, reject) => {
     const bootCheckInterval = setInterval(async () => {
       const devices = await getDevices();
       const connected = port
@@ -49,11 +49,10 @@ const launchEmulator = async (
         );
         if (await isEmulatorBooted(connected)) {
           cleanup();
-          resolve(true);
+          resolve(connected);
         }
       }
     }, 1000);
-
     // Reject command after timeout
     const rejectTimeout = setTimeout(() => {
       stopWaitingAndReject(
@@ -86,7 +85,7 @@ async function getAvailableDevicePort(
    */
   const devices = await getDevices();
   if (port > 5682) {
-    throw new Error('Failed to launch emulator...');
+    throw new Error('Failed to launch emulator');
   }
   if (devices.some((d) => d.includes(port.toString()))) {
     return await getAvailableDevicePort(port + 2);
@@ -100,15 +99,16 @@ export async function tryLaunchEmulator(name?: string) {
   loader.start(`Looking for available emulators"`);
   const emulators = await getEmulators();
   const emulatorName = name ?? emulators[0];
+  let deviceId;
   if (emulators.length > 0) {
     try {
       loader.message(`Launching emulator "${emulatorName}"`);
-      await launchEmulator(emulatorName, port, loader);
-      loader.stop(`Launched emulator "${emulatorName}".`);
+      deviceId = await launchEmulator(emulatorName, port, loader);
+      loader.stop(`Launched ${emulatorName} emulator.`);
     } catch (error) {
       loader.stop(
-        `Failed to launch emulator "${emulatorName}". ${
-          (error as { message: string }).message
+        `Failed to launch ${emulatorName} emulator. ${
+          (error as SubprocessError).message
         }`,
         1
       );
@@ -119,6 +119,7 @@ export async function tryLaunchEmulator(name?: string) {
       1
     );
   }
+  return deviceId;
 }
 
 /**

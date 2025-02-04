@@ -1,7 +1,6 @@
-import { logger } from '@rnef/tools';
+import { logger, spawn } from '@rnef/tools';
 import color from 'picocolors';
-import { XcodeProjectInfo } from '../../types/index.js';
-import spawn from 'nano-spawn';
+import type { XcodeProjectInfo } from '../../types/index.js';
 
 export type BuildSettings = {
   TARGET_BUILD_DIR: string;
@@ -13,7 +12,7 @@ export type BuildSettings = {
 export async function getBuildSettings(
   xcodeProject: XcodeProjectInfo,
   sourceDir: string,
-  mode: string,
+  configuration: string,
   buildOutput: string,
   scheme: string,
   target?: string
@@ -28,7 +27,7 @@ export async function getBuildSettings(
       '-sdk',
       getPlatformName(buildOutput),
       '-configuration',
-      mode,
+      configuration,
       '-showBuildSettings',
       '-json',
     ],
@@ -37,9 +36,10 @@ export async function getBuildSettings(
 
   const settings = JSON.parse(buildSettings);
 
-  const targets = settings.map(
-    ({ target: settingsTarget }: { target: string }) => settingsTarget
-  );
+  const targets = settings
+    // skip React target if present; may happen in some older projects; @todo revisit
+    .filter(({ target }: { target: string }) => target !== 'React')
+    .map(({ target: settingsTarget }: { target: string }) => settingsTarget);
 
   let selectedTarget = targets[0];
 
@@ -54,6 +54,7 @@ export async function getBuildSettings(
       selectedTarget = target;
     }
   }
+  logger.debug(`Selected target: ${selectedTarget}`);
 
   // Find app in all building settings - look for WRAPPER_EXTENSION: 'app',
   const targetIndex = targets.indexOf(selectedTarget);

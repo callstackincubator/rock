@@ -1,21 +1,36 @@
-import { ApplePlatform, Device, XcodeProjectInfo } from '../../types/index.js';
-import { logger } from '@rnef/tools';
+import { logger, spawn } from '@rnef/tools';
 import color from 'picocolors';
+import type {
+  ApplePlatform,
+  Device,
+  XcodeProjectInfo,
+} from '../../types/index.js';
 import { buildProject } from '../build/buildProject.js';
+import { fetchCachedBuild } from './fetchCachedBuild.js';
 import { getBuildPath } from './getBuildPath.js';
 import { getBuildSettings } from './getBuildSettings.js';
-import { RunFlags } from './runOptions.js';
-import spawn from 'nano-spawn';
+import type { RunFlags } from './runOptions.js';
 
 export async function runOnDevice(
   selectedDevice: Device,
   platform: ApplePlatform,
-  mode: string,
+  configuration: string,
   scheme: string,
   xcodeProject: XcodeProjectInfo,
   sourceDir: string,
   args: RunFlags
 ) {
+  if (!args.binaryPath && args.remoteCache) {
+    const cachedBuild = await fetchCachedBuild({
+      distribution: 'device',
+      configuration: 'Release', // Remote debug builds make no sense, do they?
+    });
+    if (cachedBuild) {
+      // @todo replace with a more generic way to pass binary path
+      args.binaryPath = cachedBuild.binaryPath;
+    }
+  }
+
   try {
     await spawn('ios-deploy', ['--version']);
   } catch {
@@ -34,14 +49,14 @@ export async function runOnDevice(
       platform,
       selectedDevice.udid,
       scheme,
-      mode,
+      configuration,
       args
     );
 
     const buildSettings = await getBuildSettings(
       xcodeProject,
       sourceDir,
-      mode,
+      configuration,
       buildOutput,
       scheme
     );

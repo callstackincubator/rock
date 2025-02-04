@@ -1,7 +1,7 @@
-import { test, expect } from 'vitest'
-import { writeFiles, getTempDirectory, cleanup } from './test-helpers';
-import * as fs from 'fs';
-import * as path from 'path';
+import * as fs from 'node:fs';
+import * as path from 'node:path';
+import { expect, test } from 'vitest';
+import { cleanup, getTempDirectory, writeFiles } from './test-helpers';
 
 test('writeFiles in temp directory with cleanup', () => {
   const directory = getTempDirectory('test_helpers');

@@ -1,8 +1,6 @@
+import { promptSelect, RnefError, spawn, spinner } from '@rnef/tools';
 import color from 'picocolors';
-import spawn from 'nano-spawn';
-import { select, spinner } from '@clack/prompts';
 import { getGradleWrapper } from './runGradle.js';
-import { checkCancelPrompt } from '@rnef/tools';
 
 type GradleTask = {
   task: string;
@@ -59,17 +57,16 @@ export const promptForTaskSelection = async (
 ): Promise<string> => {
   const tasks = await getGradleTasks(taskType, sourceDir);
   if (!tasks.length) {
-    throw new Error(`No actionable ${taskType} tasks were found...`);
+    throw new RnefError(`No actionable ${taskType} tasks were found.`);
   }
-  const task = checkCancelPrompt<string>(
-    await select({
-      message: `Select ${taskType} task you want to perform`,
-      options: tasks.map((t) => ({
-        label: `${color.bold(t.task)} - ${t.description}`,
-        value: t.task,
-      })),
-    })
-  );
+
+  const task = await promptSelect({
+    message: `Select ${taskType} task you want to perform`,
+    options: tasks.map((t) => ({
+      label: `${color.bold(t.task)} - ${t.description}`,
+      value: t.task,
+    })),
+  });
 
   return task;
 };

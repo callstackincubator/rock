@@ -7,7 +7,7 @@ on:
   # Manaual trigger
   workflow_dispatch:
 
-concurrency: 
+concurrency:
   group: nightly-${{ github.ref }}
   cancel-in-progress: true
 
@@ -141,7 +141,7 @@ jobs:
           NPM_CONFIG_REGISTRY=http://localhost:4873 \
             NPM_CONFIG_NODE_LINKER=hoisted \
             pnpm install
-    
+
       - name: Install CocoaPods
         run: |
           cd ../NightlyDeploy

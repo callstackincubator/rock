@@ -1,41 +1,44 @@
 import fs from 'node:fs';
 import path from 'node:path';
-import { spinner } from '@clack/prompts';
-import { resolveAbsolutePath, cancelPromptAndExit } from '@rnef/tools';
+import {
+  cancelPromptAndExit,
+  resolveAbsolutePath,
+  RnefError,
+  spinner,
+} from '@rnef/tools';
+import { gitInitStep } from './steps/git-init.js';
+import type { TemplateInfo } from './templates.js';
+import { PLATFORMS, PLUGINS, resolveTemplate, TEMPLATES } from './templates.js';
 import {
   renameCommonFiles,
   replacePlaceholder,
 } from './utils/edit-template.js';
 import { copyDirSync, isEmptyDirSync, removeDirSync } from './utils/fs.js';
 import { printLogo } from './utils/logo.js';
-import { parseCliOptions } from './utils/parse-cli-options.js';
 import { rewritePackageJson } from './utils/package-json.js';
+import { parseCliOptions } from './utils/parse-cli-options.js';
 import { parsePackageInfo } from './utils/parsers.js';
 import {
+  confirmOverrideFiles,
+  printByeMessage,
   printHelpMessage,
   printVersionMessage,
-  confirmOverrideFiles,
-  promptProjectName,
   printWelcomeMessage,
-  printByeMessage,
-  promptTemplate,
   promptPlatforms,
   promptPlugins,
+  promptProjectName,
+  promptTemplate,
 } from './utils/prompts.js';
-import {
-  TemplateInfo,
-  PLATFORMS,
-  resolveTemplate,
-  TEMPLATES,
-  PLUGINS,
-} from './templates.js';
 import {
   downloadTarballFromNpm,
   extractTarballToTempDirectory,
 } from './utils/tarball.js';
+import { getRnefVersion } from './utils/version.js';
 
 export async function run() {
   const options = parseCliOptions(process.argv.slice(2));
+
+  const version = getRnefVersion();
 
   if (options.help) {
     printHelpMessage(TEMPLATES, PLATFORMS);
@@ -47,7 +50,7 @@ export async function run() {
     return;
   }
 
-  printLogo();
+  printLogo(version);
   printWelcomeMessage();
 
   const projectName =
@@ -82,6 +85,7 @@ export async function run() {
     : await promptPlugins(PLUGINS);
 
   const loader = spinner();
+
   loader.start('Applying template, platforms and plugins');
   await extractPackage(absoluteTargetDir, template);
   for (const platform of platforms) {
@@ -95,8 +99,9 @@ export async function run() {
   replacePlaceholder(absoluteTargetDir, projectName);
   rewritePackageJson(absoluteTargetDir, projectName);
   createConfig(absoluteTargetDir, platforms, plugins);
-
   loader.stop('Applied template, platforms and plugins.');
+
+  await gitInitStep(absoluteTargetDir, version);
 
   printByeMessage(absoluteTargetDir);
 }
@@ -147,7 +152,7 @@ async function extractPackage(absoluteTargetDir: string, pkg: TemplateInfo) {
   }
 
   // This should never happen as we have either NPM package or local path (tarball or directory).
-  throw new Error(
+  throw new RnefError(
     `Invalid state: template not found: ${JSON.stringify(pkg, null, 2)}`
   );
 }

@@ -1,16 +1,24 @@
-import spawn from 'nano-spawn';
-import { AndroidProject, Flags } from './runAndroid.js';
+import { logger, RnefError, spawn, spinner } from '@rnef/tools';
 import { getAdbPath } from './adb.js';
-import { logger } from '@rnef/tools';
+import type { DeviceData } from './listAndroidDevices.js';
+import type { AndroidProject, Flags } from './runAndroid.js';
 import { tryRunAdbReverse } from './tryRunAdbReverse.js';
-import { spinner } from '@clack/prompts';
 
 export async function tryLaunchAppOnDevice(
-  device: string,
+  device: DeviceData,
   androidProject: AndroidProject,
   args: Flags
 ) {
-  await tryRunAdbReverse(args.port, device);
+  let deviceId;
+  if (!device.deviceId) {
+    logger.debug(
+      `No device with id "${device.deviceId}", skipping launching the app.`
+    );
+    return;
+  } else {
+    deviceId = device.deviceId;
+  }
+  await tryRunAdbReverse(args.port, deviceId);
   const { appId, appIdSuffix } = args;
   const { packageName, mainActivity, applicationId } = androidProject;
 
@@ -41,19 +49,24 @@ export async function tryLaunchAppOnDevice(
     'android.intent.category.LAUNCHER',
   ];
 
-  adbArgs.unshift('-s', device);
+  adbArgs.unshift('-s', deviceId);
 
   const adbPath = getAdbPath();
   logger.debug(`Running ${adbPath} ${adbArgs.join(' ')}.`);
   const loader = spinner();
-  loader.start(`Installing the app on "${device}"...`);
+  loader.start(
+    `Installing the app on ${device.readableName} (id: ${deviceId})`
+  );
   const { stderr } = await spawn(adbPath, adbArgs, {
     stdio: ['ignore', 'ignore', 'pipe'],
   });
   loader.stop(
-    `Launched the app on "${device}" and listening on port "${args.port}".`
+    `Launched the app on ${device.readableName} (id: ${deviceId}) and listening on port ${args.port}.`
   );
+
   if (stderr) {
-    logger.error(`Failed to launch the app on "${device}". ${stderr}`);
+    throw new RnefError(`Failed to launch the app on "${deviceId}"`, {
+      cause: stderr,
+    });
   }
 }

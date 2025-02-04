@@ -1,6 +1,6 @@
-import path from 'path';
-import { BuildSettings } from './getBuildSettings.js';
-import { ApplePlatform } from '../../types/index.js';
+import path from 'node:path';
+import type { ApplePlatform } from '../../types/index.js';
+import type { BuildSettings } from './getBuildSettings.js';
 
 export function getBuildPath(
   buildSettings: BuildSettings,

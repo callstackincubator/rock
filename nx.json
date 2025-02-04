@@ -7,20 +7,21 @@
   "extends": "nx/presets/npm.json",
   "$schema": "./node_modules/nx/schemas/nx-schema.json",
   "namedInputs": {
-    "sharedGlobals": ["{workspaceRoot}/.github/workflows/ci.yml"],
-    "default": ["sharedGlobals"]
+    "default": ["{projectRoot}/**/*"]
   },
   "targetDefaults": {
     "@nx/js:tsc": {
       "cache": true,
       "dependsOn": ["^build"],
       "inputs": ["default", "^default"],
+      "outputs": ["{options.outputPath}"],
       "options": {
         "outputPath": "{projectRoot}/dist",
         "main": "{projectRoot}/src/index.ts",
         "tsConfig": "{projectRoot}/tsconfig.lib.json",
         "buildableProjectDepsInPackageJsonType": "dependencies",
         "generateExportsField": true,
+        "generatePackageJson": false,
         "compilerOptions": {
           "module": "NodeNext",
           "outDir": "packages/{projectRoot}/dist"

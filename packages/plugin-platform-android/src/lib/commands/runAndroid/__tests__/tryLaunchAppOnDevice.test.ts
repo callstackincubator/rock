@@ -1,20 +1,14 @@
-import { AndroidProjectConfig } from '@react-native-community/cli-types';
-import { tryLaunchAppOnDevice } from '../tryLaunchAppOnDevice.js';
+import type { AndroidProjectConfig } from '@react-native-community/cli-types';
+import { spawn } from '@rnef/tools';
+import { test, vi } from 'vitest';
+import type { DeviceData } from '../listAndroidDevices.js';
 import type { Flags } from '../runAndroid.js';
-import spawn from 'nano-spawn';
-import { vi, test } from 'vitest';
+import { tryLaunchAppOnDevice } from '../tryLaunchAppOnDevice.js';
 
-vi.mock('nano-spawn', () => {
+vi.mock('@rnef/tools', async () => {
   return {
-    default: vi.fn(() => Promise.resolve({ stdout: '', stderr: '' })),
-  };
-});
-
-vi.mock('@clack/prompts', () => {
-  return {
-    spinner: vi.fn(() => ({ start: vi.fn(), message: vi.fn(), stop: vi.fn() })),
-    select: vi.fn(),
-    isCancel: vi.fn(() => false),
+    ...(await vi.importActual('@rnef/tools')),
+    spawn: vi.fn(() => Promise.resolve({ stdout: '', stderr: '' })),
   };
 });
 
@@ -30,13 +24,20 @@ afterAll(() => {
   process.env = OLD_ENV;
 });
 
-const device = 'emulator-5554';
+const device: DeviceData = {
+  deviceId: 'emulator-5554',
+  readableName: 'Emulator 5554',
+  connected: true,
+  type: 'emulator',
+};
+
 const args: Flags = {
   activeArchOnly: false,
   port: '8081',
   appId: '',
   appIdSuffix: '',
-  mode: 'debug',
+  buildVariant: 'debug',
+  remoteCache: false,
 };
 
 const androidProject: AndroidProjectConfig = {
@@ -47,7 +48,6 @@ const androidProject: AndroidProjectConfig = {
   mainActivity: '.MainActivity',
   dependencyConfiguration: undefined,
   watchModeCommandParams: undefined,
-  unstable_reactLegacyComponentNames: undefined,
   assets: [],
 };
 

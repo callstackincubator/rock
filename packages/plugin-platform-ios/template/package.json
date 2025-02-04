@@ -4,6 +4,6 @@
     "ios": "rnef run:ios"
   },
   "devDependencies": {
-    "@rnef/plugin-platform-ios": "^0.0.1"
+    "@rnef/plugin-platform-ios": "^0.1.6"
   }
 }
