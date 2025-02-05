@@ -24,10 +24,10 @@ export async function runGradle({
   if ('binaryPath' in args) {
     return;
   }
-  const loader = spinner();
+  const loader = spinner({ indicator: 'timer' });
   const message = `Building the app with Gradle in ${args.buildVariant} build variant`;
 
-  loader.start(message, { kind: 'clock' });
+  loader.start(message);
   const gradleArgs = getTaskNames(androidProject.appName, tasks);
 
   gradleArgs.push('-x', 'lint');

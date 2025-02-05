@@ -1,5 +1,4 @@
 import * as clack from '@clack/prompts';
-import { updateClock } from './clock.js';
 import { isInteractive } from './isInteractive.js';
 import logger from './logger.js';
 
@@ -96,11 +95,7 @@ export async function promptGroup<T>(
   return result;
 }
 
-export type SpinnerOptions = {
-  kind?: 'clock' | 'dots';
-};
-
-export function spinner() {
+export function spinner(options?: clack.SpinnerOptions) {
   if (logger.isVerbose() || !isInteractive()) {
     return {
       start: (message?: string) => logger.log(message),
@@ -111,36 +106,17 @@ export function spinner() {
     };
   }
 
-  const clackSpinner = clack.spinner();
-  let clockInterval: NodeJS.Timeout | undefined;
+  const clackSpinner = clack.spinner(options);
 
   return {
-    start: (message?: string, options?: SpinnerOptions) => {
+    start: (message?: string) => {
       clackSpinner.start(message);
-
-      if (options?.kind === 'clock' && message) {
-        clockInterval = updateClock((m) => clackSpinner.message(m), message);
-      }
     },
     stop: (message?: string, code?: number) => {
       clackSpinner.stop(message, code);
-
-      if (clockInterval) {
-        clearInterval(clockInterval);
-        clockInterval = undefined;
-      }
     },
-    message: (message?: string, options?: SpinnerOptions) => {
+    message: (message?: string) => {
       clackSpinner.message(message);
-
-      if (clockInterval) {
-        clearInterval(clockInterval);
-        clockInterval = undefined;
-      }
-
-      if (options?.kind === 'clock' && message) {
-        clockInterval = updateClock((m) => clackSpinner.message(m), message);
-      }
     },
   };
 }
