@@ -55,12 +55,6 @@ export const createRun = async (
 
   const { readableName: platformReadableName } = getPlatformInfo(platformName);
 
-  if (!projectConfig.xcodeProject) {
-    throw new RnefError(
-      `Could not find Xcode project files in "${projectConfig.sourceDir}" folder. Please make sure that you have installed Cocoapods and "${projectConfig.sourceDir}" is a valid path`
-    );
-  }
-
   const resolvedConfig = await resolvePods(
     projectRoot,
     platformName,
