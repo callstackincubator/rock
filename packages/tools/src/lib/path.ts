@@ -2,6 +2,10 @@ import * as fs from 'node:fs';
 import * as nodePath from 'node:path';
 import { RnefError } from './error.js';
 
+export function relativeToCwd(path: string) {
+  return nodePath.relative(process.cwd(), path);
+}
+
 export function resolveAbsolutePath(path: string) {
   return nodePath.isAbsolute(path) ? path : nodePath.join(process.cwd(), path);
 }

@@ -3,36 +3,39 @@ import path from 'node:path';
 import {
   findDirectoriesWithPattern,
   logger,
+  relativeToCwd,
   RnefError,
   spawn,
   spinner,
 } from '@rnef/tools';
-import { generateEntitlementsFile } from './generateEntitlementsFile.js';
+import color from 'picocolors';
+import { promptSigningIdentity } from '../../utils/signingIdentities.js';
 import { getExtactedIpaPath } from './path.js';
+import {
+  generateEntitlementsFile,
+  getIdentityFromProfile,
+} from './provisionongProfile.js';
 import { packIpa, unpackIpa } from './zip.js';
 
 export type SignIpaFileOptions = {
   platformName: string;
   ipaPath: string;
-  identity: string;
+  identity?: string;
   outputPath?: string;
   jsBundlePath?: string;
 };
 
 export const signIpaFile = async (options: SignIpaFileOptions) => {
   validateOptions(options);
-  const {
-    platformName,
-    ipaPath,
-    identity,
-    jsBundlePath: sourceBundlePath,
-  } = options;
+  const { platformName, ipaPath, jsBundlePath: sourceBundlePath } = options;
 
   const loader = spinner();
   loader.start(`Unzipping the IPA file...`);
   const extractedIpaPath = getExtactedIpaPath(platformName);
   unpackIpa(ipaPath, extractedIpaPath);
-  loader.stop(`Unzipped IPA file ${extractedIpaPath}`);
+  loader.stop(
+    `Unzipped IPA contents: ${color.cyan(relativeToCwd(extractedIpaPath))}`
+  );
 
   const payloadPath = path.join(extractedIpaPath, 'Payload/');
   const appPath = findDirectoriesWithPattern(payloadPath, /\.app$/)[0];
@@ -43,40 +46,49 @@ export const signIpaFile = async (options: SignIpaFileOptions) => {
   }
 
   if (sourceBundlePath) {
+    loader.start('Replacing JS bundle...');
     replaceJsBundle({ appPath, sourceBundlePath });
+    loader.stop(`Replaced JS bundle with ${color.cyan(sourceBundlePath)}`);
+  }
+
+  const ipaProfilePath = path.join(appPath, 'embedded.mobileprovision');
+  let identity = options.identity;
+  if (!identity) {
+    const identityFromProfile = await getIdentityFromProfile(ipaProfilePath);
+    identity = await promptSigningIdentity(identityFromProfile);
   }
 
   loader.start('Generating entitlements file...');
-  const ipaProfilePath = path.join(appPath, 'embedded.mobileprovision');
   const entitlementsPath = await generateEntitlementsFile({
     platformName,
     provisioningProfilePath: ipaProfilePath,
   });
-  loader.stop(`Generated entitlements file ${entitlementsPath}`);
+  loader.stop(
+    `Generated entitlements file: ${color.cyan(
+      relativeToCwd(entitlementsPath)
+    )}`
+  );
 
   loader.start('Signing the IPA contents...');
   const codeSignArgs = [
     '--force',
     '--sign',
-    options.identity,
+    identity,
     '--entitlements',
     entitlementsPath,
     appPath,
   ];
-  const codeSignProcess = await spawn('codesign', codeSignArgs, {
+  await spawn('codesign', codeSignArgs, {
     cwd: extractedIpaPath,
     stdio: logger.isVerbose() ? 'inherit' : ['ignore', 'pipe', 'pipe'],
   });
-  logger.debug('Running codesign command: ', codeSignProcess.command);
-  logger.debug('Codesign stdout: ', codeSignProcess.stdout);
-  logger.debug('Codesign stderr: ', codeSignProcess.stderr);
 
-  loader.stop(`Signed the IPA contents with identity: ${identity}`);
+  loader.stop(`Signed the IPA contents with identity: ${color.cyan(identity)}`);
 
-  loader.start('Packing the IPA file...');
+  loader.start('Repacking the IPA file...');
   const outputPath = options.outputPath ?? ipaPath;
   packIpa(extractedIpaPath, outputPath);
-  loader.stop(`Packed the IPA file: ${outputPath}`);
+  loader.stop(`Repacked the IPA file: ${color.cyan(outputPath)}`);
 };
 
 function validateOptions(options: SignIpaFileOptions) {
@@ -108,6 +120,4 @@ function replaceJsBundle({
 
   logger.debug('Copying JS bundle from:', sourceBundlePath);
   fs.copyFileSync(sourceBundlePath, ipaJsBundlePath);
-
-  logger.log('Replaced JS bundle with:', sourceBundlePath);
 }

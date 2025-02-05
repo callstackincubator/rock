@@ -1,6 +1,6 @@
 import fs from 'node:fs';
 import { RnefError } from '@rnef/tools';
-import type { PlistObject, PlistValue } from 'plist';
+import type { PlistArray, PlistObject, PlistValue } from 'plist';
 import plist from 'plist';
 
 export function readPlistFile(path: string) {
@@ -25,12 +25,17 @@ export function getPlistObjectValue(plist: PlistValue, key: string) {
   return value;
 }
 
+export function getPlistArrayValue(plist: PlistValue, key: string) {
+  ensureObject(plist);
+  const value = plist[key];
+  ensureArray(value);
+  return value;
+}
+
 export function getStringValue(plist: PlistValue, key: string) {
   ensureObject(plist);
-
   const value = plist[key];
   ensureString(value);
-
   return value;
 }
 
@@ -49,5 +54,11 @@ export function ensureObject(value: PlistValue): asserts value is PlistObject {
     value instanceof Date
   ) {
     throw new RnefError(`PList: expected object value: ${value}`);
+  }
+}
+
+export function ensureArray(value: PlistValue): asserts value is PlistArray {
+  if (!Array.isArray(value)) {
+    throw new RnefError(`PList: expected array value: ${value}`);
   }
 }

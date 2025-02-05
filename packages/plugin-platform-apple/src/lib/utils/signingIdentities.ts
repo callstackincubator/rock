@@ -1,4 +1,4 @@
-import { promptSelect, spawn } from '@rnef/tools';
+import { logger, promptSelect, spawn } from '@rnef/tools';
 
 export type SigningIdentity = {
   hash: string;
@@ -43,13 +43,21 @@ export async function getValidSigningIdentities(): Promise<SigningIdentity[]> {
   return parseSigningIdentities(cmd.stdout);
 }
 
-export async function promptSigningIdentity() {
+export async function promptSigningIdentity(currentIdentity?: string | null) {
   const identities = await getValidSigningIdentities();
+
+  const current = currentIdentity
+    ? identities.find((i) => i.name === currentIdentity)
+    : undefined;
+  const other = identities.filter((i) => i.name !== currentIdentity);
+  const list = current ? [current, ...other] : other;
+
   return await promptSelect({
-    message: 'Select a signing identity',
-    options: identities.map((identity) => ({
+    message: 'Select a signing identity:',
+    options: list.map((identity) => ({
       label: identity.name,
-      value: identity.hash,
+      value: identity.name,
+      hint: identity.name === currentIdentity ? 'Current' : undefined,
     })),
   });
 }

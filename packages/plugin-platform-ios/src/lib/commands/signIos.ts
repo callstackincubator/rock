@@ -1,8 +1,5 @@
 import type { PluginApi } from '@rnef/config';
-import {
-  promptSigningIdentity,
-  signIpaFile,
-} from '@rnef/plugin-platform-apple';
+import { signIpaFile } from '@rnef/plugin-platform-apple';
 import { RnefError } from '@rnef/tools';
 
 export type SignFlags = {
@@ -53,12 +50,11 @@ export const registerSignCommand = (api: PluginApi) => {
     options: OPTIONS,
     action: async (ipaPath, args) => {
       validateSignArgs(args);
-      const identity = args.identity ?? (await promptSigningIdentity());
 
       await signIpaFile({
         platformName: 'ios',
         ipaPath,
-        identity,
+        identity: args.identity,
         outputPath: args.output,
         jsBundlePath: args.jsbundle,
       });
