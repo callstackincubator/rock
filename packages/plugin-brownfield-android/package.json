@@ -1,0 +1,30 @@
+{
+  "name": "@rnef/plugin-brownfield-android",
+  "version": "0.1.6",
+  "type": "module",
+  "exports": {
+    "types": "./dist/src/index.d.ts",
+    "import": "./dist/src/index.js"
+  },
+  "files": [
+    "dist",
+    "src",
+    "template"
+  ],
+  "scripts": {
+    "publish:npm": "npm publish --access restricted",
+    "publish:verdaccio": "npm publish --registry http://localhost:4873 --userconfig ../../.npmrc"
+  },
+  "dependencies": {
+    "@rnef/tools": "^0.2.0",
+    "@react-native-community/cli-server-api": "^16.0.2",
+    "@react-native/community-cli-plugin": "0.77.0-rc.2",
+    "tslib": "^2.3.0"
+  },
+  "devDependencies": {
+    "@rnef/config": "^0.2.0"
+  },
+  "publishConfig": {
+    "access": "restricted"
+  }
+}
