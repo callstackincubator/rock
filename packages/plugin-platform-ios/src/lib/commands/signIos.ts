@@ -60,6 +60,7 @@ export const registerSignCommand = (api: PluginApi) => {
         ipaPath,
         identity,
         outputPath: args.output,
+        jsBundlePath: args.jsbundle,
       });
     },
   });
