@@ -7,7 +7,7 @@ import { RnefError } from '@rnef/tools';
 
 export type SignFlags = {
   verbose?: boolean;
-  interactive?: boolean;
+  //interactive?: boolean;
   ipa: string;
   output?: string;
   identity?: string;
@@ -26,11 +26,11 @@ const OPTIONS = [
     name: '--verbose',
     description: '',
   },
-  {
-    name: '-i --interactive',
-    description:
-      'Explicitly select options for signing: ipa, identity, jsbundle',
-  },
+  // {
+  //   name: '-i --interactive',
+  //   description:
+  //     'Explicitly select options for signing: ipa, identity, jsbundle',
+  // },
   {
     name: '--output <string>',
     description: 'Path to the output IPA file.',
@@ -41,7 +41,7 @@ const OPTIONS = [
   },
   {
     name: '--jsbundle <string>',
-    description: 'Path to the JS bundle to use before signing.',
+    description: 'Path to the JS bundle to apply before signing.',
   },
 ];
 

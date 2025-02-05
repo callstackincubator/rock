@@ -12,15 +12,21 @@ import { getExtactedIpaPath } from './path.js';
 import { packIpa, unpackIpa } from './zip.js';
 
 export type SignIpaFileOptions = {
+  platformName: string;
   ipaPath: string;
   identity: string;
   outputPath?: string;
-  platformName: string;
+  jsBundlePath?: string;
 };
 
 export const signIpaFile = async (options: SignIpaFileOptions) => {
   validateOptions(options);
-  const { platformName, ipaPath, identity } = options;
+  const {
+    platformName,
+    ipaPath,
+    identity,
+    jsBundlePath: sourceBundlePath,
+  } = options;
 
   const loader = spinner();
   loader.start(`Unzipping the IPA file...`);
@@ -34,6 +40,10 @@ export const signIpaFile = async (options: SignIpaFileOptions) => {
     throw new RnefError(
       `.app file not found in the extracted IPA file ${payloadPath}`
     );
+  }
+
+  if (sourceBundlePath) {
+    replaceJsBundle({ appPath, sourceBundlePath });
   }
 
   loader.start('Generating entitlements file...');
@@ -73,4 +83,31 @@ function validateOptions(options: SignIpaFileOptions) {
   if (!fs.existsSync(options.ipaPath)) {
     throw new RnefError(`IPA file not found "${options.ipaPath}"`);
   }
+}
+
+type ReplaceJsBundleOptions = {
+  sourceBundlePath: string;
+  appPath: string;
+};
+
+function replaceJsBundle({
+  sourceBundlePath,
+  appPath,
+}: ReplaceJsBundleOptions) {
+  if (!fs.existsSync(sourceBundlePath)) {
+    throw new RnefError(
+      `Source bundle file does not exist: ${sourceBundlePath}`
+    );
+  }
+
+  const ipaJsBundlePath = path.join(appPath, 'main.jsbundle');
+  if (fs.existsSync(ipaJsBundlePath)) {
+    logger.debug('Removing existing JS bundle:', ipaJsBundlePath);
+    fs.unlinkSync(ipaJsBundlePath);
+  }
+
+  logger.debug('Copying JS bundle from:', sourceBundlePath);
+  fs.copyFileSync(sourceBundlePath, ipaJsBundlePath);
+
+  logger.log('Replaced JS bundle with:', sourceBundlePath);
 }
