@@ -1,4 +1,4 @@
-import { extractCertificateName } from '../provisionongProfile.js';
+import { extractCertificateName } from '../provisioningProfile.js';
 
 describe('extractCertificateName', () => {
   it('should extract certificate name from subject string', () => {
