@@ -2,6 +2,7 @@ import fs from 'node:fs';
 import path from 'node:path';
 import {
   findDirectoriesWithPattern,
+  getProjectRoot,
   logger,
   relativeToCwd,
   RnefError,
@@ -22,7 +23,9 @@ export type SignIpaFileOptions = {
   ipaPath: string;
   identity?: string;
   outputPath?: string;
+  buildJsBundle?: boolean;
   jsBundlePath?: string;
+  useHermes?: boolean;
 };
 
 export const signIpaFile = async (options: SignIpaFileOptions) => {
@@ -45,10 +48,30 @@ export const signIpaFile = async (options: SignIpaFileOptions) => {
     );
   }
 
-  if (sourceBundlePath) {
+  if (options.buildJsBundle && sourceBundlePath) {
+    throw new RnefError(
+      'Cannot build JS bundle (`--build-jsbundle`) and provide source JS bundle (`--jsbundle`) path at the same time.'
+    );
+  }
+
+  const ipaJsBundlePath = path.join(appPath, 'main.jsbundle');
+  if (options.buildJsBundle) {
+    loader.start('Building JS bundle...');
+    const assetsDestPath = path.join(appPath, 'assets');
+    await buildJsBundle({
+      bundleOutputPath: ipaJsBundlePath,
+      assetsDestPath,
+      useHermes: options.useHermes,
+    });
+    loader.stop(
+      `Built JS bundle: ${color.cyan(relativeToCwd(ipaJsBundlePath))}`
+    );
+  } else if (sourceBundlePath) {
     loader.start('Replacing JS bundle...');
     replaceJsBundle({ appPath, sourceBundlePath });
-    loader.stop(`Replaced JS bundle with ${color.cyan(sourceBundlePath)}`);
+    loader.stop(
+      `Replaced JS bundle with ${color.cyan(relativeToCwd(sourceBundlePath))}`
+    );
   }
 
   const ipaProfilePath = path.join(appPath, 'embedded.mobileprovision');
@@ -120,4 +143,66 @@ function replaceJsBundle({
 
   logger.debug('Copying JS bundle from:', sourceBundlePath);
   fs.copyFileSync(sourceBundlePath, ipaJsBundlePath);
+}
+
+type BuildJsBundleOptions = {
+  bundleOutputPath: string;
+  assetsDestPath: string;
+  useHermes?: boolean;
+};
+
+async function buildJsBundle(options: BuildJsBundleOptions) {
+  // Reasonable defaults
+  // If user wants to build bundle differently, they should use `rnef bundle` command directly
+  // and provide the JS bundle path to `--jsbundle` flag
+  const rnefBundleArgs = [
+    'bundle',
+    `--entry-file`,
+    `index.js`,
+    '--platform',
+    'ios',
+    `--dev`,
+    'false',
+    '--minify',
+    'false',
+    '--reset-cache',
+    '--bundle-output',
+    options.bundleOutputPath,
+    '--assets-dest',
+    options.assetsDestPath,
+  ];
+  await spawn('rnef', rnefBundleArgs, {
+    stdio: logger.isVerbose() ? 'inherit' : ['ignore', 'pipe', 'pipe'],
+  });
+
+  if (!options.useHermes) {
+    return;
+  }
+
+  const hermesPath = path.join(
+    getProjectRoot(),
+    'ios/Pods/hermes-engine/destroot/bin/hermesc'
+  );
+  const hermescArgs = [
+    '-emit-binary',
+    '-max-diagnostic-width=80',
+    '-O',
+    '-w',
+    '-out',
+    options.bundleOutputPath,
+    options.bundleOutputPath,
+  ];
+
+  try {
+    await spawn(hermesPath, hermescArgs, {
+      stdio: logger.isVerbose() ? 'inherit' : ['ignore', 'pipe', 'pipe'],
+    });
+  } catch (error) {
+    throw new RnefError(
+      'Compiling JS bundle with Hermes failed. Use `--no-hermes` flag to disable Hermes.',
+      {
+        cause: error,
+      }
+    );
+  }
 }

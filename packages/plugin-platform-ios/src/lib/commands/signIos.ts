@@ -8,7 +8,9 @@ export type SignFlags = {
   ipa: string;
   output?: string;
   identity?: string;
+  buildJsBundle?: boolean;
   jsbundle?: string;
+  noHermes?: boolean;
 };
 
 const ARGUMENTS = [
@@ -37,8 +39,16 @@ const OPTIONS = [
     description: 'Identity to use for code signing.',
   },
   {
+    name: '--build-jsbundle',
+    description: 'Build the JS bundle before signing.',
+  },
+  {
     name: '--jsbundle <string>',
     description: 'Path to the JS bundle to apply before signing.',
+  },
+  {
+    name: '--no-hermes',
+    description: 'Do not use Hermes to build the JS bundle.',
   },
 ];
 
@@ -56,7 +66,9 @@ export const registerSignCommand = (api: PluginApi) => {
         ipaPath,
         identity: args.identity,
         outputPath: args.output,
+        buildJsBundle: args.buildJsBundle,
         jsBundlePath: args.jsbundle,
+        useHermes: !args.noHermes,
       });
     },
   });

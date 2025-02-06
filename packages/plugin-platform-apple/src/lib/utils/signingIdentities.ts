@@ -1,4 +1,4 @@
-import { logger, promptSelect, spawn } from '@rnef/tools';
+import { promptSelect, spawn } from '@rnef/tools';
 
 export type SigningIdentity = {
   hash: string;
