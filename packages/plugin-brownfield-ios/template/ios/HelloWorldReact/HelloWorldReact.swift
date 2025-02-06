@@ -7,7 +7,7 @@ public enum ReactNativeManagerError: Error {
 }
 
 /// The main entry point for loading React Native views
-public class HelloWorldReactNativeManager {
+@objcMembers public class HelloWorldReactNativeManager {
     private let rootViewFactory: RCTRootViewFactory
 
     public init() throws(ReactNativeManagerError) {
