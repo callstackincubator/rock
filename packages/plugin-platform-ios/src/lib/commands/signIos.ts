@@ -6,7 +6,7 @@ export type SignFlags = {
   ipa: string;
   output?: string;
   identity?: string;
-  buildJsBundle?: boolean;
+  buildJsbundle?: boolean;
   jsbundle?: string;
   noHermes?: boolean;
 };
@@ -57,7 +57,7 @@ export const registerSignCommand = (api: PluginApi) => {
         ipaPath,
         identity: flags.identity,
         outputPath: flags.output,
-        buildJsBundle: flags.buildJsBundle,
+        buildJsBundle: flags.buildJsbundle,
         jsBundlePath: flags.jsbundle,
         useHermes: !flags.noHermes,
       });

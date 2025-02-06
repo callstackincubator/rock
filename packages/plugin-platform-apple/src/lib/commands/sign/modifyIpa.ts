@@ -74,7 +74,7 @@ export const modifyIpa = async (options: ModifyIpaOptions) => {
 
   loader.start('Signing the IPA contents...');
   await generateEntitlementsPlist({
-    provisioningPlistPath: appPaths.provisioningProfile,
+    provisioningPlistPath: tempPaths.provisioningPlist,
     outputPath: tempPaths.entitlementsPlist,
   });
 
