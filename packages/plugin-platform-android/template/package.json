@@ -4,6 +4,6 @@
     "android": "rnef run:android"
   },
   "devDependencies": {
-    "@rnef/plugin-platform-android": "^0.1.5"
+    "@rnef/plugin-platform-android": "^0.1.6"
   }
 }

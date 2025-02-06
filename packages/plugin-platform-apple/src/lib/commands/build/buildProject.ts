@@ -91,12 +91,12 @@ export const buildProject = async (
     xcodebuildArgs.push(...args.extraParams);
   }
 
-  const loader = spinner();
+  const loader = spinner({ indicator: 'timer' });
   const message = `${
     args.archive ? 'Archiving' : 'Building'
   } the app with xcodebuild for ${scheme} scheme in ${configuration} configuration`;
 
-  loader.start(message, { kind: 'clock' });
+  loader.start(message);
   logger.debug(`Running "xcodebuild ${xcodebuildArgs.join(' ')}.`);
   try {
     const { output } = await spawn('xcodebuild', xcodebuildArgs, {

@@ -7,12 +7,12 @@ import {
   type BuildFlags,
   options,
 } from './commands/buildAndroid/buildAndroid.js';
+import { generateKeystore, generateKeystoreOptions } from './commands/generateKeystore.js';
 import {
   type Flags,
   runAndroid,
   runOptions,
 } from './commands/runAndroid/runAndroid.js';
-import { signAndroid, signOptions } from './commands/signAndroid.js';
 
 type PluginConfig = AndroidProjectConfig;
 
@@ -55,19 +55,19 @@ export const pluginPlatformAndroid =
     });
 
     api.registerCommand({
-      name: 'sign:android',
+      name: 'create-keystore:android',
       description:
-        'Generates a keystore file for signing Android release builds.',
+        'Creates a keystore file for signing Android release builds.',
       action: async (args) => {
         const projectRoot = api.getProjectRoot();
         const androidConfig = projectConfig(projectRoot);
         if (androidConfig) {
-          await signAndroid(androidConfig, args);
+          await generateKeystore(androidConfig, args);
         } else {
           throw new RnefError('Android project not found.');
         }
       },
-      options: signOptions,
+      options: generateKeystoreOptions,
     });
 
     return {

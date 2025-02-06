@@ -1,6 +1,6 @@
 {
   "name": "@rnef/plugin-platform-apple",
-  "version": "0.1.5",
+  "version": "0.1.6",
   "type": "module",
   "exports": {
     "types": "./dist/src/index.d.ts",
@@ -16,7 +16,7 @@
   },
   "dependencies": {
     "@react-native-community/cli-config-apple": "^16.0.2",
-    "@rnef/tools": "^0.1.5",
+    "@rnef/tools": "^0.1.6",
     "fast-glob": "^3.3.2",
     "fast-xml-parser": "^4.5.0",
     "picocolors": "^1.1.1",
@@ -24,7 +24,7 @@
     "tslib": "^2.3.0"
   },
   "devDependencies": {
-    "@rnef/config": "^0.1.5"
+    "@rnef/config": "^0.1.6"
   },
   "publishConfig": {
     "access": "restricted"

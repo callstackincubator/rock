@@ -24,10 +24,10 @@ export async function runGradle({
   if ('binaryPath' in args) {
     return;
   }
-  const loader = spinner();
+  const loader = spinner({ indicator: 'timer' });
   const message = `Building the app with Gradle in ${args.buildVariant} build variant`;
 
-  loader.start(message, { kind: 'clock' });
+  loader.start(message);
   const gradleArgs = getTaskNames(androidProject.appName, tasks);
 
   gradleArgs.push('-x', 'lint');
@@ -84,8 +84,8 @@ export async function runGradle({
 function getErrorHints(output: string) {
   const signingMessage = output.includes('validateSigningRelease FAILED')
     ? `Hint: You can run "${color.bold(
-        'rnef sign:android'
-      )}" to generate a keystore file.`
+        'rnef create-keystore:android'
+      )}" to create a keystore file.`
     : '';
   return signingMessage;
 }
