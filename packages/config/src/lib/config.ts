@@ -26,11 +26,13 @@ type CommandType = {
   name: string;
   description: string;
   action: ActionType;
+  /** Positional arguments */
   args?: Array<{
     name: string;
     description: string;
     default?: ArgValue | undefined;
   }>;
+  /** Flags */
   options?: Array<{
     name: string;
     description: string;

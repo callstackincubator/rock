@@ -64,10 +64,12 @@ export const cli = async ({ cwd, argv }: CliOptions = {}) => {
         }
       });
 
+    // Positional args
     for (const arg of command.args || []) {
       cmd.argument(arg.name, arg.description, arg.default);
     }
 
+    // Flags
     for (const opt of command.options || []) {
       cmd.option(
         opt.name,
