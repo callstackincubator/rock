@@ -86,10 +86,16 @@ export const modifyIpa = async (options: ModifyIpaOptions) => {
     tempPaths.entitlementsPlist,
     appPath,
   ];
-  await spawn('codesign', codeSignArgs, {
-    cwd: tempPaths.content,
-    stdio: logger.isVerbose() ? 'inherit' : ['ignore', 'pipe', 'pipe'],
-  });
+  try {
+    await spawn('codesign', codeSignArgs, {
+      cwd: tempPaths.content,
+      stdio: logger.isVerbose() ? 'inherit' : ['ignore', 'pipe', 'pipe'],
+    });
+  } catch (error) {
+    throw new RnefError('Codesign failed', {
+      cause: error,
+    });
+  }
 
   loader.stop(`Signed the IPA contents with identity: ${color.cyan(identity)}`);
 
