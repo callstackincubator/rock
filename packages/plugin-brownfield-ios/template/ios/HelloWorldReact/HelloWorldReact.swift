@@ -1,5 +1,4 @@
 internal import React
-
 internal import React_RCTAppDelegate
 import UIKit
 
@@ -9,14 +8,6 @@ public enum ReactNativeManagerError: Error {
 
 /// The main entry point for loading React Native views
 public class HelloWorldReactNativeManager {
-    public static var newArchEnabled: Bool {
-        #if RCT_NEW_ARCH_ENABLED
-            return true
-        #else
-            return false
-        #endif
-    }
-
     private let rootViewFactory: RCTRootViewFactory
 
     public init() throws(ReactNativeManagerError) {
@@ -25,7 +16,8 @@ public class HelloWorldReactNativeManager {
         }
 
         let rootViewFactoryConfiguration = RCTRootViewFactoryConfiguration(
-            bundleURL: jsBundleURL, newArchEnabled: Self.newArchEnabled
+            bundleURL: jsBundleURL,
+            newArchEnabled: RCTIsNewArchEnabled()
         )
 
         rootViewFactory = RCTRootViewFactory(configuration: rootViewFactoryConfiguration)
