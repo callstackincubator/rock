@@ -1,22 +1,30 @@
 import { existsSync, mkdirSync, rmSync } from 'node:fs';
-import { logger } from '@rnef/tools';
+import { findDirectoriesWithPattern, RnefError } from '@rnef/tools';
 import AdmZip from 'adm-zip';
 
-export const unpackIpa = (ipaPath: string, outputPath: string) => {
-  if (existsSync(outputPath)) {
-    rmSync(outputPath, { recursive: true, force: true });
+export const unpackIpa = (ipaPath: string, destination: string): string => {
+  if (existsSync(destination)) {
+    rmSync(destination, { recursive: true, force: true });
   }
 
-  mkdirSync(outputPath, { recursive: true });
+  mkdirSync(destination, { recursive: true });
 
   const zip = new AdmZip(ipaPath);
-  logger.debug('Extracting IPA file to:', outputPath);
-  zip.extractAllTo(outputPath, true);
+  zip.extractAllTo(destination, true);
 
-  const payloadPath = `${outputPath}/Payload`;
+  const payloadPath = `${destination}/Payload`;
   if (!existsSync(payloadPath)) {
     throw new Error('Payload folder not found in the extracted IPA file');
   }
+
+  const appPath = findDirectoriesWithPattern(payloadPath, /\.app$/)[0];
+  if (!appPath) {
+    throw new RnefError(
+      `.app package not found in the extracted IPA file ${payloadPath}`
+    );
+  }
+
+  return appPath;
 };
 
 export const packIpa = (contentPath: string, ipaPath: string) => {
@@ -25,7 +33,6 @@ export const packIpa = (contentPath: string, ipaPath: string) => {
   }
 
   const zip = new AdmZip();
-  logger.debug('Creating new ZIP file at:', ipaPath);
   zip.addLocalFolder(contentPath);
   zip.writeZip(ipaPath);
 

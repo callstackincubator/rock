@@ -30,30 +30,17 @@ export type SignIpaFileOptions = {
 
 export const signIpaFile = async (options: SignIpaFileOptions) => {
   validateOptions(options);
-  const { platformName, ipaPath, jsBundlePath: sourceBundlePath } = options;
 
+  // 1. Extract IPA contents
   const loader = spinner();
   loader.start(`Unzipping the IPA file...`);
-  const extractedIpaPath = getExtactedIpaPath(platformName);
-  unpackIpa(ipaPath, extractedIpaPath);
+  const extractedIpaPath = getExtactedIpaPath(options.platformName);
+  const appPath = unpackIpa(options.ipaPath, extractedIpaPath);
   loader.stop(
     `Unzipped IPA contents: ${color.cyan(relativeToCwd(extractedIpaPath))}`
   );
 
-  const payloadPath = path.join(extractedIpaPath, 'Payload/');
-  const appPath = findDirectoriesWithPattern(payloadPath, /\.app$/)[0];
-  if (!appPath) {
-    throw new RnefError(
-      `.app file not found in the extracted IPA file ${payloadPath}`
-    );
-  }
-
-  if (options.buildJsBundle && sourceBundlePath) {
-    throw new RnefError(
-      'Cannot build JS bundle (`--build-jsbundle`) and provide source JS bundle (`--jsbundle`) path at the same time.'
-    );
-  }
-
+  // 2. Make IPA content changes if needed: build or swap JS bundle
   const ipaJsBundlePath = path.join(appPath, 'main.jsbundle');
   if (options.buildJsBundle) {
     loader.start('Building JS bundle...');
@@ -61,19 +48,25 @@ export const signIpaFile = async (options: SignIpaFileOptions) => {
     await buildJsBundle({
       bundleOutputPath: ipaJsBundlePath,
       assetsDestPath,
-      useHermes: options.useHermes,
+      useHermes: options.useHermes ?? true,
     });
     loader.stop(
       `Built JS bundle: ${color.cyan(relativeToCwd(ipaJsBundlePath))}`
     );
-  } else if (sourceBundlePath) {
+  } else if (options.jsBundlePath) {
     loader.start('Replacing JS bundle...');
-    replaceJsBundle({ appPath, sourceBundlePath });
+    replaceJsBundle({
+      sourceBundlePath: options.jsBundlePath,
+      targetBundlePath: ipaJsBundlePath,
+    });
     loader.stop(
-      `Replaced JS bundle with ${color.cyan(relativeToCwd(sourceBundlePath))}`
+      `Replaced JS bundle with ${color.cyan(
+        relativeToCwd(options.jsBundlePath)
+      )}`
     );
   }
 
+  // 3. Sign the IPA contents
   const ipaProfilePath = path.join(appPath, 'embedded.mobileprovision');
   let identity = options.identity;
   if (!identity) {
@@ -81,18 +74,12 @@ export const signIpaFile = async (options: SignIpaFileOptions) => {
     identity = await promptSigningIdentity(identityFromProfile);
   }
 
-  loader.start('Generating entitlements file...');
+  loader.start('Signing the IPA contents...');
   const entitlementsPath = await generateEntitlementsFile({
-    platformName,
+    platformName: options.platformName,
     provisioningProfilePath: ipaProfilePath,
   });
-  loader.stop(
-    `Generated entitlements file: ${color.cyan(
-      relativeToCwd(entitlementsPath)
-    )}`
-  );
 
-  loader.start('Signing the IPA contents...');
   const codeSignArgs = [
     '--force',
     '--sign',
@@ -108,8 +95,9 @@ export const signIpaFile = async (options: SignIpaFileOptions) => {
 
   loader.stop(`Signed the IPA contents with identity: ${color.cyan(identity)}`);
 
+  // 4. Repack the IPA file
   loader.start('Repacking the IPA file...');
-  const outputPath = options.outputPath ?? ipaPath;
+  const outputPath = options.outputPath ?? options.ipaPath;
   packIpa(extractedIpaPath, outputPath);
   loader.stop(`Repacked the IPA file: ${color.cyan(outputPath)}`);
 };
@@ -118,31 +106,33 @@ function validateOptions(options: SignIpaFileOptions) {
   if (!fs.existsSync(options.ipaPath)) {
     throw new RnefError(`IPA file not found "${options.ipaPath}"`);
   }
+
+  if (options.buildJsBundle && options.jsBundlePath) {
+    throw new RnefError(
+      'Cannot build JS bundle (`--build-jsbundle`) and provide source JS bundle (`--jsbundle`) path at the same time.'
+    );
+  }
+
+  if (options.jsBundlePath && !fs.existsSync(options.jsBundlePath)) {
+    throw new RnefError(`JS bundle file not found "${options.jsBundlePath}"`);
+  }
 }
 
 type ReplaceJsBundleOptions = {
   sourceBundlePath: string;
-  appPath: string;
+  targetBundlePath: string;
 };
 
 function replaceJsBundle({
   sourceBundlePath,
-  appPath,
+  targetBundlePath,
 }: ReplaceJsBundleOptions) {
-  if (!fs.existsSync(sourceBundlePath)) {
-    throw new RnefError(
-      `Source bundle file does not exist: ${sourceBundlePath}`
-    );
+  if (fs.existsSync(targetBundlePath)) {
+    fs.unlinkSync(targetBundlePath);
+    logger.debug('Removed existing JS bundle:', targetBundlePath);
   }
 
-  const ipaJsBundlePath = path.join(appPath, 'main.jsbundle');
-  if (fs.existsSync(ipaJsBundlePath)) {
-    logger.debug('Removing existing JS bundle:', ipaJsBundlePath);
-    fs.unlinkSync(ipaJsBundlePath);
-  }
-
-  logger.debug('Copying JS bundle from:', sourceBundlePath);
-  fs.copyFileSync(sourceBundlePath, ipaJsBundlePath);
+  fs.copyFileSync(sourceBundlePath, targetBundlePath);
 }
 
 type BuildJsBundleOptions = {
@@ -152,6 +142,11 @@ type BuildJsBundleOptions = {
 };
 
 async function buildJsBundle(options: BuildJsBundleOptions) {
+  if (fs.existsSync(options.bundleOutputPath)) {
+    fs.unlinkSync(options.bundleOutputPath);
+    logger.debug('Removed existing JS bundle:', options.bundleOutputPath);
+  }
+
   // Reasonable defaults
   // If user wants to build bundle differently, they should use `rnef bundle` command directly
   // and provide the JS bundle path to `--jsbundle` flag

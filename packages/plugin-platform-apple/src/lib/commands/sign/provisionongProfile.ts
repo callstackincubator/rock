@@ -1,6 +1,6 @@
 import crypto from 'node:crypto';
 import * as path from 'node:path';
-import { logger, spawn } from '@rnef/tools';
+import { logger, relativeToCwd, spawn } from '@rnef/tools';
 import type { PlistValue } from 'plist';
 import plist from 'plist';
 import {
@@ -42,6 +42,9 @@ export const generateEntitlementsFile = async ({
     'entitlements.plist'
   );
   writePlistFile(entitlementsPath, entitlements);
+  logger.debug(
+    `Generated entitlements file: ${relativeToCwd(entitlementsPath)}`
+  );
 
   return entitlementsPath;
 };
