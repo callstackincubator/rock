@@ -132,17 +132,21 @@ To be able to set this up, follow these steps:
 
    ```swift
    //  MyViewController.swift
-
    import UIKit
-
    import <framework_target_name>React
 
    class ViewController: UIViewController {
-
        override func viewDidLoad() {
            super.viewDidLoad()
-           // TODO: Make sure to handle the error more gracefully than crashing with `try!`
-           view = try! <project_name>ReactNativeManager().loadView(moduleName: "<project_name>", initialProps: nil, launchOptions: nil)
+           do {
+               view = try PackageReactNativeManager().loadView(
+                   moduleName: "TemplateTest",
+                   initialProps: nil,
+                   launchOptions: nil
+               )
+           } catch {
+               #warning("TODO: Handle React Native loading failures")
+           }
        }
    }
    ```
