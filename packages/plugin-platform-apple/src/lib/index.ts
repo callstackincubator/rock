@@ -8,5 +8,5 @@ export { getRunOptions, RunFlags } from './../lib/commands/run/runOptions.js';
 export {
   signIpaFile,
   type SignIpaFileOptions,
-} from './commands/sign/signIpaFile.js';
+} from './commands/sign/ipaFile.js';
 export { promptSigningIdentity } from './utils/signingIdentities.js';

@@ -22,7 +22,6 @@
     "fast-glob": "^3.3.2",
     "fast-xml-parser": "^4.5.0",
     "picocolors": "^1.1.1",
-    "plist": "^3.1.0",
     "tar": "^7.4.3",
     "tslib": "^2.3.0"
   },

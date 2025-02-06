@@ -1,26 +1,24 @@
 import crypto from 'node:crypto';
-import * as path from 'node:path';
-import { logger, relativeToCwd, spawn } from '@rnef/tools';
-import type { PlistValue } from 'plist';
-import plist from 'plist';
-import {
-  getPlistArrayValue,
-  getPlistObjectValue,
-  writePlistFile,
-} from '../../utils/plist.js';
+import fs from 'node:fs';
+import path from 'node:path';
+import { logger, relativeToCwd, RnefError, spawn } from '@rnef/tools';
+import { readBufferPromPlist, readKeyFromPlist } from '../../utils/plist.js';
 import { getSignPath } from './path.js';
 
-export async function decodeProvisioningProfilePlist(
-  encodeProfilePath: string
-): Promise<PlistValue> {
-  const securityProcess = await spawn('security', [
-    'cms',
-    '-D',
-    '-i',
-    encodeProfilePath,
-  ]);
-
-  return plist.parse(securityProcess.stdout);
+export async function decodeProvisioningProfileToPlist(
+  profilePath: string,
+  outputPath: string
+) {
+  try {
+    await spawn('security', ['cms', '-D', '-i', profilePath, '-o', outputPath]);
+  } catch (error) {
+    throw new RnefError(
+      `Failed to decode provisioning profile: ${profilePath}`,
+      {
+        cause: error,
+      }
+    );
+  }
 }
 
 export type GenerateEntitlementsFileOptions = {
@@ -32,16 +30,27 @@ export const generateEntitlementsFile = async ({
   platformName,
   provisioningProfilePath,
 }: GenerateEntitlementsFileOptions) => {
-  const profilePlist = await decodeProvisioningProfilePlist(
-    provisioningProfilePath
+  const provisioningProfilePlistPath = path.join(
+    getSignPath(platformName),
+    'provisioning-profile.plist'
   );
-  const entitlements = getPlistObjectValue(profilePlist, 'Entitlements');
+  await decodeProvisioningProfileToPlist(
+    provisioningProfilePath,
+    provisioningProfilePlistPath
+  );
+  const entitlements = await readKeyFromPlist(
+    provisioningProfilePlistPath,
+    'Entitlements',
+    {
+      xml: true,
+    }
+  );
 
   const entitlementsPath = path.join(
     getSignPath(platformName),
     'entitlements.plist'
   );
-  writePlistFile(entitlementsPath, entitlements);
+  fs.writeFileSync(entitlementsPath, entitlements);
   logger.debug(
     `Generated entitlements file: ${relativeToCwd(entitlementsPath)}`
   );
@@ -49,21 +58,13 @@ export const generateEntitlementsFile = async ({
   return entitlementsPath;
 };
 
-export async function getIdentityFromProfile(provisioningProfilePath: string) {
-  const profilePlist = await decodeProvisioningProfilePlist(
-    provisioningProfilePath
+export async function getIdentityFromProfile(
+  provisioningProfilePlistPath: string
+) {
+  const cert = await readBufferPromPlist(
+    provisioningProfilePlistPath,
+    'DeveloperCertificates:0'
   );
-  const cert = getPlistArrayValue(profilePlist, 'DeveloperCertificates')[0];
-  if (!cert) {
-    return null;
-  }
-
-  if (!(cert instanceof Buffer)) {
-    logger.warn(
-      `DeveloperCertificates[0] field is not buffer but ${typeof cert}`
-    );
-    return null;
-  }
 
   const decodedCert = new crypto.X509Certificate(cert);
   return extractCertificateName(decodedCert.subject);

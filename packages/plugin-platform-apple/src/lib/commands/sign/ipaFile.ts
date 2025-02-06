@@ -1,7 +1,6 @@
 import fs from 'node:fs';
 import path from 'node:path';
 import {
-  findDirectoriesWithPattern,
   getProjectRoot,
   logger,
   relativeToCwd,

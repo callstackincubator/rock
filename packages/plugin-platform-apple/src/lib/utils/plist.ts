@@ -1,64 +1,51 @@
-import fs from 'node:fs';
-import { RnefError } from '@rnef/tools';
-import type { PlistArray, PlistObject, PlistValue } from 'plist';
-import plist from 'plist';
+import { RnefError, spawn, SubprocessError } from '@rnef/tools';
 
-export function readPlistFile(path: string) {
-  const plistContent = fs.readFileSync(path, 'utf8');
-  return plist.parse(plistContent);
-}
+type PListBuddyOptions = {
+  xml?: boolean;
+};
 
-export function writePlistFile(path: string, value: PlistValue) {
-  const plistContent = plist.build(value);
-  fs.writeFileSync(path, plistContent);
-}
-
-export function readPlistStringFromFile(plistPath: string, key: string) {
-  const plist = readPlistFile(plistPath);
-  return getStringValue(plist, key);
-}
-
-export function getPlistObjectValue(plist: PlistValue, key: string) {
-  ensureObject(plist);
-  const value = plist[key];
-  ensureObject(value);
-  return value;
-}
-
-export function getPlistArrayValue(plist: PlistValue, key: string) {
-  ensureObject(plist);
-  const value = plist[key];
-  ensureArray(value);
-  return value;
-}
-
-export function getStringValue(plist: PlistValue, key: string) {
-  ensureObject(plist);
-  const value = plist[key];
-  ensureString(value);
-  return value;
-}
-
-export function ensureString(value: PlistValue): asserts value is string {
-  if (typeof value !== 'string') {
-    throw new RnefError(`PList: expected string value: ${value}`);
+export async function readKeyFromPlist(
+  plistPath: string,
+  key: string,
+  options: PListBuddyOptions = {}
+) {
+  try {
+    const result = await plistBuddy(plistPath, `Print:${key}`, options);
+    return result.stdout.trim();
+  } catch (error) {
+    throw new RnefError(`Error reading key ${key} from ${plistPath}`, {
+      cause: error instanceof SubprocessError ? error.stderr : error,
+    });
   }
 }
 
-export function ensureObject(value: PlistValue): asserts value is PlistObject {
-  if (
-    typeof value !== 'object' ||
-    value === null ||
-    Array.isArray(value) ||
-    value instanceof Buffer ||
-    value instanceof Date
-  ) {
-    throw new RnefError(`PList: expected object value: ${value}`);
+export async function readBufferPromPlist(
+  plistPath: string,
+  key: string
+): Promise<Buffer> {
+  try {
+    const result = await plistBuddy(plistPath, `Print:${key}`);
+    return Buffer.from(result.stdout);
+  } catch (error) {
+    throw new RnefError(`Error reading key ${key} from ${plistPath}`, {
+      cause: error instanceof SubprocessError ? error.stderr : error,
+    });
   }
 }
 
-export function ensureArray(value: PlistValue): asserts value is PlistArray {
-  if (!Array.isArray(value)) {
-    throw new RnefError(`PList: expected array value: ${value}`);
+async function plistBuddy(
+  path: string,
+  command: string,
+  options?: PListBuddyOptions
+) {
+  const plistBuddyArgs = ['-c', command, path];
+  if (options?.xml) {
+    plistBuddyArgs.unshift('-x');
   }
+
+  const result = await spawn('/usr/libexec/PlistBuddy', plistBuddyArgs, {
+    stdio: ['ignore', 'pipe', 'pipe'],
+  });
+
+  return result;
 }
