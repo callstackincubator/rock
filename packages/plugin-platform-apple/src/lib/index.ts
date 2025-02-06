@@ -5,8 +5,5 @@ export {
   BuildFlags,
 } from './../lib/commands/build/buildOptions.js';
 export { getRunOptions, RunFlags } from './../lib/commands/run/runOptions.js';
-export {
-  signIpaFile,
-  type SignIpaFileOptions,
-} from './commands/sign/ipaFile.js';
+export { modifyIpa, type ModifyIpaOptions } from './commands/sign/modifyIpa.js';
 export { promptSigningIdentity } from './utils/signingIdentities.js';

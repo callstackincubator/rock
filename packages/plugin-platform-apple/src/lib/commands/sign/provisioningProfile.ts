@@ -1,16 +1,22 @@
 import crypto from 'node:crypto';
 import fs from 'node:fs';
-import path from 'node:path';
 import { logger, relativeToCwd, RnefError, spawn } from '@rnef/tools';
 import { readBufferPromPlist, readKeyFromPlist } from '../../utils/plist.js';
-import { getSignPath } from './path.js';
 
+/**
+ * Decodes provisioning profile to XML plist.
+ * @param profilePath - Path to the provisioning profile.
+ * @param outputPath - Path to the output plist file.
+ */
 export async function decodeProvisioningProfileToPlist(
   profilePath: string,
   outputPath: string
 ) {
   try {
     await spawn('security', ['cms', '-D', '-i', profilePath, '-o', outputPath]);
+    logger.debug(
+      `Decoded provisioning profile to plist: ${relativeToCwd(outputPath)}`
+    );
   } catch (error) {
     throw new RnefError(
       `Failed to decode provisioning profile: ${profilePath}`,
@@ -22,50 +28,38 @@ export async function decodeProvisioningProfileToPlist(
 }
 
 export type GenerateEntitlementsFileOptions = {
-  platformName: string;
-  provisioningProfilePath: string;
+  provisioningPlistPath: string;
+  outputPath: string;
 };
 
-export const generateEntitlementsFile = async ({
-  platformName,
-  provisioningProfilePath,
+/**
+ * Generates entitlements plist from provisioning profile plist.
+ * @param provisioningPlistPath - Path to the provisioning profile plist.
+ * @param outputPath - Path to the output entitlements plist file.
+ */
+export const generateEntitlementsPlist = async ({
+  outputPath,
+  provisioningPlistPath,
 }: GenerateEntitlementsFileOptions) => {
-  const provisioningProfilePlistPath = path.join(
-    getSignPath(platformName),
-    'provisioning-profile.plist'
-  );
-  await decodeProvisioningProfileToPlist(
-    provisioningProfilePath,
-    provisioningProfilePlistPath
-  );
   const entitlements = await readKeyFromPlist(
-    provisioningProfilePlistPath,
+    provisioningPlistPath,
     'Entitlements',
     {
       xml: true,
     }
   );
 
-  const entitlementsPath = path.join(
-    getSignPath(platformName),
-    'entitlements.plist'
-  );
-  fs.writeFileSync(entitlementsPath, entitlements);
-  logger.debug(
-    `Generated entitlements file: ${relativeToCwd(entitlementsPath)}`
-  );
-
-  return entitlementsPath;
+  fs.writeFileSync(outputPath, entitlements);
+  logger.debug(`Generated entitlements file: ${relativeToCwd(outputPath)}`);
 };
 
-export async function getIdentityFromProfile(
-  provisioningProfilePlistPath: string
-) {
-  const cert = await readBufferPromPlist(
-    provisioningProfilePlistPath,
-    'DeveloperCertificates:0'
-  );
-
+/**
+ * Extract code sign identity from provisioning profile plist file.
+ * @param plistPath - Path to the provisioning profile plist file.
+ * @returns Code sign identity name.
+ */
+export async function getIdentityFromProvisioningPlist(plistPath: string) {
+  const cert = await readBufferPromPlist(plistPath, 'DeveloperCertificates:0');
   const decodedCert = new crypto.X509Certificate(cert);
   return extractCertificateName(decodedCert.subject);
 }

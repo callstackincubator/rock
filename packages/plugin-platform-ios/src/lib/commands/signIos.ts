@@ -1,10 +1,8 @@
 import type { PluginApi } from '@rnef/config';
-import { signIpaFile } from '@rnef/plugin-platform-apple';
-import { RnefError } from '@rnef/tools';
+import { modifyIpa } from '@rnef/plugin-platform-apple';
 
 export type SignFlags = {
   verbose?: boolean;
-  //interactive?: boolean;
   ipa: string;
   output?: string;
   identity?: string;
@@ -25,18 +23,13 @@ const OPTIONS = [
     name: '--verbose',
     description: '',
   },
-  // {
-  //   name: '-i --interactive',
-  //   description:
-  //     'Explicitly select options for signing: ipa, identity, jsbundle',
-  // },
-  {
-    name: '--output <string>',
-    description: 'Path to the output IPA file.',
-  },
   {
     name: '--identity <string>',
     description: 'Identity to use for code signing.',
+  },
+  {
+    name: '--output <string>',
+    description: 'Path to the output IPA file.',
   },
   {
     name: '--build-jsbundle',
@@ -58,28 +51,16 @@ export const registerSignCommand = (api: PluginApi) => {
     description: 'Sign the iOS app',
     args: ARGUMENTS,
     options: OPTIONS,
-    action: async (ipaPath, args) => {
-      validateSignArgs(args);
-
-      await signIpaFile({
+    action: async (ipaPath, flags: SignFlags) => {
+      await modifyIpa({
         platformName: 'ios',
         ipaPath,
-        identity: args.identity,
-        outputPath: args.output,
-        buildJsBundle: args.buildJsBundle,
-        jsBundlePath: args.jsbundle,
-        useHermes: !args.noHermes,
+        identity: flags.identity,
+        outputPath: flags.output,
+        buildJsBundle: flags.buildJsBundle,
+        jsBundlePath: flags.jsbundle,
+        useHermes: !flags.noHermes,
       });
     },
   });
 };
-
-export function validateSignArgs(args: unknown): asserts args is SignFlags {
-  if (!args || typeof args !== 'object') {
-    throw new RnefError('args must be an object');
-  }
-
-  if ('output' in args && typeof args.output !== 'string') {
-    throw new RnefError('--output must be a string');
-  }
-}
