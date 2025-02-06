@@ -1,5 +1,13 @@
 import fs from 'node:fs';
-import { logger, relativeToCwd, RnefError, spawn, spinner } from '@rnef/tools';
+import {
+  intro,
+  logger,
+  outro,
+  relativeToCwd,
+  RnefError,
+  spawn,
+  spinner,
+} from '@rnef/tools';
 import color from 'picocolors';
 import { promptSigningIdentity } from '../../utils/signingIdentities.js';
 import { buildJsBundle } from './bundle.js';
@@ -22,6 +30,8 @@ export type ModifyIpaOptions = {
 
 export const modifyIpa = async (options: ModifyIpaOptions) => {
   validateOptions(options);
+
+  intro(`Modifying IPA file`);
 
   // 1. Extract IPA contents
   const loader = spinner();
@@ -104,6 +114,8 @@ export const modifyIpa = async (options: ModifyIpaOptions) => {
   const outputPath = options.outputPath ?? options.ipaPath;
   packIpa(tempPaths.content, outputPath);
   loader.stop(`Repacked the IPA file: ${color.cyan(outputPath)}`);
+
+  outro('Success 🎉.');
 };
 
 function validateOptions(options: ModifyIpaOptions) {
