@@ -112,18 +112,21 @@ To be able to set this up, follow these steps:
 
    ```swift
    //  SceneDelegate.swift
-   class scenedelegate: uiresponder, uiwindowscenedelegate {
-       var window: uiwindow?
+   class SceneDelegate: UIResponder, UIWindowSceneDelegate {
+       var window: UIWindow?
 
-       func scene(_ scene: uiscene, willconnectto _: uiscenesession, options _: uiscene.connectionoptions) {
-           guard let windowscene = (scene as? uiwindowscene) else { return }
+       func scene(
+           _ scene: UIScene, willConnectTo _: UISceneSession,
+           options _: UIScene.ConnectionOptions
+       ) {
+           guard let windowScene = (scene as? UIWindowScene) else { return }
 
-           window = uiwindow(windowscene: windowscene)
+           window = UIWindow(windowScene: windowScene)
 
-           let customviewcontroller = customviewcontroller()
+           let customViewController = CustomViewController()
 
-           window.rootviewcontroller = customviewcontroller
-           window.makekeyandvisible()
+           window.rootViewController = customViewController
+           window.makeKeyAndVisible()
        }
    }
    ```
