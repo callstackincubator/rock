@@ -12,9 +12,9 @@ To be able to set this up, follow these steps:
 1. Add a new target and pick the `Framework` template
    ![Framework Target](./docs/assets/brownfield_framework_target.png)
 1. Make sure to give the library a distinct name. This name will be used when you import the library in native apps.
-1. Right click to the generated framework folder and pick `Convert to Group`. Cocoapods doesn't work properly with references at the moment.
+1. Right click to the generated framework folder and pick `Convert to Group`. Cocoapods doesn't work properly with references.
    ![The menu that appears when user right clicks on the generated framework folder](./docs/assets/brownfield_convert_to_group.png)
-1. Apply the following build settings:
+1. Apply the following build settings to the generated framework target:
 
    | Build Setting                   | Value | Description                                                                                                                                                                                                      |
    | ------------------------------- | ----- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
@@ -57,7 +57,7 @@ To be able to set this up, follow these steps:
 ### 4. Framework's Public API
 
 1. Create a new swift file in the generated framework folder
-1. Optionally copy the template from `./packages/plugin-brownfield-ios/template/ios/HelloWorldReact/HelloWorldReact.swift` for a light abstraction
+1. Optionally copy the template from [HelloWorldReact.swift](./packages/plugin-brownfield-ios/template/ios/HelloWorldReact/HelloWorldReact.swift) for a light abstraction
 
 ### 5. Generating the Framework Artifact
 
@@ -88,12 +88,12 @@ To be able to set this up, follow these steps:
 
 1. Drag the generated `.xcframework` file to your app
 1. Drag `ios/Pods/hermes-engine/destroot/Library/Frameworks/universal/hermes.xcframework` to your app
-1. Add the `window` property to your `AppDelegate`:
+1. Add the `window` property to your `AppDelegate` or `SceneDelegate`:
+
+   Option 1: `AppDelegate`
 
    ```swift
    //  AppDelegate.swift
-
-   import UIKit
 
    @main
    class AppDelegate: UIResponder, UIApplicationDelegate {
@@ -105,6 +105,26 @@ To be able to set this up, follow these steps:
        }
 
        // ...
+   }
+   ```
+
+   Option 2: `SceneDelegate`
+
+   ```swift
+   //  SceneDelegate.swift
+   class scenedelegate: uiresponder, uiwindowscenedelegate {
+       var window: uiwindow?
+
+       func scene(_ scene: uiscene, willconnectto _: uiscenesession, options _: uiscene.connectionoptions) {
+           guard let windowscene = (scene as? uiwindowscene) else { return }
+
+           window = uiwindow(windowscene: windowscene)
+
+           let customviewcontroller = customviewcontroller()
+
+           window.rootviewcontroller = customviewcontroller
+           window.makekeyandvisible()
+       }
    }
    ```
 
