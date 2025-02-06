@@ -1,4 +1,4 @@
-import { existsSync, readdirSync, rmSync } from 'node:fs';
+import { existsSync, rmSync } from 'node:fs';
 import path from 'node:path';
 import { getBuildPaths } from '@rnef/plugin-platform-apple';
 import { spawn, spinner } from '@rnef/tools';
@@ -58,20 +58,11 @@ export async function mergeFrameworks({
   ];
 
   try {
-    let xcframeworkFiles: string[] = [];
-
     await spawn('xcodebuild', xcodebuildArgs, { cwd: sourceDir });
-    try {
-      xcframeworkFiles = readdirSync(packageDir).filter((file) =>
-        file.endsWith('.xcframework')
-      );
-    } catch {
-      xcframeworkFiles = [];
-    }
 
     loader.stop(
       `Exported the xcframework for ${scheme} scheme in ${configuration} configuration to ${
-        path.join(packageDir, xcframeworkFiles[0]) ?? packageDir
+        path.join(packageDir, xcframeworkPath)
       }`
     );
   } catch (error) {
