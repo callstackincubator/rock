@@ -24,8 +24,8 @@
     "@react-native/community-cli-plugin": "*"
   },
   "devDependencies": {
-    "@rnef/config": "^0.1.6",
-    "@react-native/community-cli-plugin": "0.77.0-rc.2"
+    "@react-native/community-cli-plugin": "0.77.0-rc.2",
+    "@rnef/config": "^0.1.6"
   },
   "publishConfig": {
     "access": "restricted"
