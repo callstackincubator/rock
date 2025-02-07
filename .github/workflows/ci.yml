@@ -22,18 +22,8 @@ jobs:
         with:
           fetch-depth: 0
 
-      - uses: pnpm/action-setup@v4
-        with:
-          version: 10.2.1+sha256.f988f0d93b87e1da2d8cdf6ac7f45a01c6f843ae3606b4ca0f2ffd713b85f975
-
-      # Cache node_modules
-      - uses: actions/setup-node@v4
-        with:
-          node-version: 20
-          cache: 'pnpm'
-
-      - run: pnpm install --frozen-lockfile
-      - uses: nrwl/nx-set-shas@v4
+      - name: Setup
+        uses: ./.github/actions/setup-node
 
       # Nx Affected runs only tasks affected by the changes in this PR/commit. Learn more: https://nx.dev/ci/features/affected
       - name: Typecheck and lint
@@ -64,17 +54,8 @@ jobs:
         with:
           fetch-depth: 0
 
-      - uses: pnpm/action-setup@v4
-        with:
-          version: 10.2.1+sha256.f988f0d93b87e1da2d8cdf6ac7f45a01c6f843ae3606b4ca0f2ffd713b85f975
-
-      # Cache node_modules
-      - uses: actions/setup-node@v4
-        with:
-          node-version: 20
-          cache: 'pnpm'
-
-      - run: pnpm install --frozen-lockfile
+      - name: Setup
+        uses: ./.github/actions/setup-node   
 
       - name: Check changeset
         if: github.ref != 'refs/heads/main'

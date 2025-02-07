@@ -17,17 +17,8 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - uses: pnpm/action-setup@v4
-        with:
-          version: 10.2.1+sha256.f988f0d93b87e1da2d8cdf6ac7f45a01c6f843ae3606b4ca0f2ffd713b85f975
-
-      - uses: actions/setup-node@v4
-        with:
-          node-version: 20
-          cache: 'pnpm'
-
-      - run: pnpm install --frozen-lockfile
-      - uses: nrwl/nx-set-shas@v4
+      - name: Setup
+        uses: ./.github/actions/setup-node
 
       - name: Typecheck and lint
         run: pnpm lint typecheck
@@ -53,14 +44,8 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - uses: pnpm/action-setup@v4
-        with:
-          version: 10.2.1+sha256.f988f0d93b87e1da2d8cdf6ac7f45a01c6f843ae3606b4ca0f2ffd713b85f975
-
-      - uses: actions/setup-node@v4
-        with:
-          node-version: 20
-          cache: 'pnpm'
+      - name: Setup
+        uses: ./.github/actions/setup-node
 
       - name: Install Java
         uses: actions/setup-java@v4
@@ -68,9 +53,6 @@ jobs:
           java-version: 17
           distribution: adopt
           cache: gradle
-
-      - run: pnpm install --frozen-lockfile
-      - uses: nrwl/nx-set-shas@v4
 
       - name: Build framework
         run: pnpm build
@@ -106,17 +88,8 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - uses: pnpm/action-setup@v4
-        with:
-          version: 10.2.1+sha256.f988f0d93b87e1da2d8cdf6ac7f45a01c6f843ae3606b4ca0f2ffd713b85f975
-
-      - uses: actions/setup-node@v4
-        with:
-          node-version: 20
-          cache: 'pnpm'
-
-      - run: pnpm install --frozen-lockfile
-      - uses: nrwl/nx-set-shas@v4
+      - name: Setup
+        uses: ./.github/actions/setup-node
 
       - name: Build framework
         run: pnpm build
