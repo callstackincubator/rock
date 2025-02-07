@@ -55,5 +55,5 @@
   "nx": {
     "includedScripts": []
   },
-  "packageManager": "pnpm@9.11.0"
+  "packageManager": "pnpm@10.2.1+sha256.f988f0d93b87e1da2d8cdf6ac7f45a01c6f843ae3606b4ca0f2ffd713b85f975"
 }
