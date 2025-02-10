@@ -20,6 +20,7 @@ type RunGradleAarArgs = {
   tasks: string[];
   aarProject: AARConfig;
   args: BuildFlags | Flags;
+  isPublishTask?: boolean;
 };
 
 export type RunGradleArgs = {
@@ -103,12 +104,15 @@ export async function runGradleAar({
   tasks,
   aarProject,
   args,
+  isPublishTask = false,
 }: RunGradleAarArgs) {
   if ('binaryPath' in args) {
     return;
   }
   const loader = spinner({ indicator: 'timer' });
-  const message = `Building the AAR with Gradle in ${args.variant} build variant`;
+  const message = isPublishTask
+    ? 'Publishing the AAR'
+    : `Building the AAR with Gradle in ${args.variant} build variant`;
 
   loader.start(message);
   const gradleArgs = getTaskNames(aarProject.moduleName, tasks);
@@ -127,9 +131,13 @@ export async function runGradleAar({
       cwd: aarProject.sourceDir,
       stdio: logger.isVerbose() ? 'inherit' : 'pipe',
     });
-    loader.stop(`Built the AAR in ${args.variant} build variant.`);
+    loader.stop(
+      isPublishTask
+        ? 'Published the AAR to local maven (~/.m2/repository)'
+        : `Built the AAR in ${args.variant} build variant.`
+    );
   } catch (error) {
-    loader.stop('Failed to build the AAR');
+    loader.stop(`Failed to ${isPublishTask ? 'publish' : 'build'} the AAR`);
     const cleanedErrorMessage = (error as SubprocessError).stderr
       .split('\n')
       .filter((line) => !gradleLinesToRemove.some((l) => line.includes(l)))
@@ -143,7 +151,9 @@ export async function runGradleAar({
     const hints = getErrorHints((error as SubprocessError).stdout ?? '');
     throw new RnefError(
       hints ||
-        'Failed to build the AAR. See the error above for details from Gradle.'
+        `Failed to ${
+          isPublishTask ? 'publish' : 'build'
+        } the AAR. See the error above for details from Gradle.`
     );
   }
 }

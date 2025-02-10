@@ -53,6 +53,16 @@ export async function buildAar(
   outro('Success 🎉.');
 }
 
+export async function localPublishAar(
+  aarProject: AarProject,
+  args: BuildFlags
+) {
+  const tasks = ['publishToMavenLocal'];
+
+  await runGradleAar({ tasks, aarProject, args, isPublishTask: true });
+  outro('Success 🎉.');
+}
+
 function normalizeArgs(args: BuildFlags) {
   if (args.tasks && args.variant) {
     logger.warn(

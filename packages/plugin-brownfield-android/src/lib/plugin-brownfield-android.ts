@@ -1,14 +1,18 @@
 import { projectConfig } from '@react-native-community/cli-config-android';
 import type { PluginApi, PluginOutput } from '@rnef/config';
-import type { AarProject } from '@rnef/plugin-platform-android';
-import { buildAar, type BuildFlags } from '@rnef/plugin-platform-android';
+import {
+  type AarProject,
+  buildAar,
+  type BuildFlags,
+  localPublishAar,
+} from '@rnef/plugin-platform-android';
 import { intro, RnefError } from '@rnef/tools';
 
 export const pluginBrownfieldAndroid =
   () =>
   (api: PluginApi): PluginOutput => {
     api.registerCommand({
-      name: 'package:android',
+      name: 'package:aar',
       description: 'Emits a AAR file from React Native code.',
       action: async (args: BuildFlags) => {
         intro('Generating AAR');
@@ -27,6 +31,28 @@ export const pluginBrownfieldAndroid =
         }
       },
       options: opts,
+    });
+
+    api.registerCommand({
+      name: 'publish-local:aar',
+      description: 'Publishes a AAR to local maven repo',
+      action: async (args) => {
+        intro('Publishing AAR');
+
+        const projectRoot = api.getProjectRoot();
+        const androidConfig: AarProject = {
+          sourceDir: projectConfig(projectRoot)?.sourceDir ?? '',
+          moduleName: args.moduleName ?? '',
+          packageName: args.packageName ?? '',
+        };
+
+        if (androidConfig) {
+          await localPublishAar(androidConfig, args);
+        } else {
+          throw new RnefError('Android project not found.');
+        }
+      },
+      options: [opts[1]],
     });
 
     return {
