@@ -2,6 +2,7 @@ plugins {
     id("com.android.library")
     id("org.jetbrains.kotlin.android")
     id("org.bigfataar.plugin")
+    `maven-publish`
 }
 
 repositories {
@@ -43,6 +44,36 @@ android {
             res.srcDirs("$appBuildDir/generated/res/createBundleReleaseJsAndAssets")
             java.srcDirs("$moduleBuildDir/$autolinkingJavaSources")
         }
+    }
+}
+
+publishing {
+    publications {
+        create<MavenPublication>("mavenAar") {
+            groupId = "com.helloworldreact"
+            artifactId = "helloworld"
+            version = "0.0.1-local"
+            artifact("$moduleBuildDir/outputs/aar/helloworldreact-release.aar")
+
+            pom {
+                withXml {
+                    asNode().appendNode("dependencies").apply {
+                        configurations.getByName("api").allDependencies.forEach { dependency ->
+                            appendNode("dependency").apply {
+                                appendNode("groupId", dependency.group)
+                                appendNode("artifactId", dependency.name)
+                                appendNode("version", dependency.version)
+                                appendNode("scope", "compile")
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    repositories {
+        mavenLocal() // Publishes to the local Maven repository (~/.m2/repository)
     }
 }
 
