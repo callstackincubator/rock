@@ -165,7 +165,8 @@ function normalizeArgs(args: Flags, projectRoot: string) {
   if (
     args.variant !== 'release' &&
     !args.variant.endsWith('Release') &&
-    args.activeArchOnly === undefined
+    args.activeArchOnly === undefined && 
+    isInteractive()
   ) {
     args.activeArchOnly = true;
   }
