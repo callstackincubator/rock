@@ -40,7 +40,7 @@ async function plistBuddy(
   return result;
 }
 
-export async function readBufferPromPlist(
+export async function readBufferFromPlist(
   plistPath: string,
   key: string
 ): Promise<Buffer> {

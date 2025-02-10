@@ -1,7 +1,7 @@
 import crypto from 'node:crypto';
 import fs from 'node:fs';
 import { logger, relativeToCwd, RnefError, spawn } from '@rnef/tools';
-import { readBufferPromPlist, readKeyFromPlist } from '../../utils/plist.js';
+import { readBufferFromPlist, readKeyFromPlist } from '../../utils/plist.js';
 
 /**
  * Decodes provisioning profile to XML plist.
@@ -59,7 +59,7 @@ export const generateEntitlementsPlist = async ({
  * @returns Code sign identity name.
  */
 export async function getIdentityFromProvisioningPlist(plistPath: string) {
-  const cert = await readBufferPromPlist(plistPath, 'DeveloperCertificates:0');
+  const cert = await readBufferFromPlist(plistPath, 'DeveloperCertificates:0');
   const decodedCert = new crypto.X509Certificate(cert);
   return extractCertificateName(decodedCert.subject);
 }
