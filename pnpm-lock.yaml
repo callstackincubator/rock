@@ -283,12 +283,18 @@ importers:
 
   packages/plugin-brownfield-android:
     dependencies:
+      '@react-native-community/cli-config-android':
+        specifier: ^16.0.2
+        version: 16.0.2
       '@react-native-community/cli-server-api':
         specifier: ^16.0.2
         version: 16.0.2
       '@react-native/community-cli-plugin':
         specifier: 0.77.0-rc.2
         version: 0.77.0-rc.2(@babel/core@7.25.2)(@babel/preset-env@7.25.4(@babel/core@7.25.2))(@react-native-community/cli-server-api@16.0.2)
+      '@rnef/plugin-platform-android':
+        specifier: ^0.1.6
+        version: link:../plugin-platform-android
       '@rnef/tools':
         specifier: ^0.2.0
         version: link:../tools
