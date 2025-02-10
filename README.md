@@ -118,7 +118,7 @@ npx create-rnef-app enterprise
 
    Additionally rename flags:
 
-   - `--mode` to `--build-variant` for Android commands
+   - `--mode` to `--variant` for Android commands
    - `--mode` to `--configuration` for iOS commands
    - `--buildFolder` to `-build-folder` for iOS commands
    - `--appId` to `--app-id` for Android commands

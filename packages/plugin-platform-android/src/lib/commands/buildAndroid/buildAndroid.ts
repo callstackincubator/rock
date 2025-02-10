@@ -7,7 +7,7 @@ import { runGradle } from '../runGradle.js';
 import { toPascalCase } from '../toPascalCase.js';
 
 export interface BuildFlags {
-  buildVariant: string;
+  variant: string;
   activeArchOnly?: boolean;
   tasks?: Array<string>;
   extraParams?: Array<string>;
@@ -22,7 +22,7 @@ export async function buildAndroid(
 
   const tasks = args.interactive
     ? [await promptForTaskSelection('bundle', androidProject.sourceDir)]
-    : [...(args.tasks ?? []), `bundle${toPascalCase(args.buildVariant)}`];
+    : [...(args.tasks ?? []), `bundle${toPascalCase(args.variant)}`];
 
   await runGradle({ tasks, androidProject, args });
 
@@ -37,26 +37,26 @@ export async function buildAndroid(
 }
 
 function normalizeArgs(args: BuildFlags) {
-  if (args.tasks && args.buildVariant) {
+  if (args.tasks && args.variant) {
     logger.warn(
-      'Both "--tasks" and "--build-variant" parameters were passed. Using "--tasks" for building the app.'
+      'Both "--tasks" and "--variant" parameters were passed. Using "--tasks" for building the app.'
     );
   }
-  if (!args.buildVariant) {
-    args.buildVariant = 'debug';
+  if (!args.variant) {
+    args.variant = 'debug';
   }
 }
 
 export const options = [
   {
-    name: '--build-variant <string>',
+    name: '--variant <string>',
     description:
       "Specify your app's build variant, which is constructed from build type and product flavor, e.g. 'debug' or 'freeRelease'.",
   },
   {
     name: '--tasks <list>',
     description:
-      'Run custom Gradle tasks. Will override the --build-variant argument.',
+      'Run custom Gradle tasks. Will override the --variant argument.',
     parse: (val: string) => val.split(','),
   },
   {

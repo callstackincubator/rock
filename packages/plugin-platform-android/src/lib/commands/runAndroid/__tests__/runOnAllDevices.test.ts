@@ -44,7 +44,7 @@ describe('--appFolder', () => {
   const args: Flags = {
     appId: '',
     tasks: undefined,
-    buildVariant: 'debug',
+    variant: 'debug',
     appIdSuffix: '',
     mainActivity: 'MainActivity',
     port: '8081',

@@ -58,12 +58,12 @@ export async function runAndroid(
     ? [await promptForTaskSelection(mainTaskType, androidProject.sourceDir)]
     : [
         ...(args.tasks ?? []),
-        `${mainTaskType}${toPascalCase(args.buildVariant)}`,
+        `${mainTaskType}${toPascalCase(args.variant)}`,
       ];
 
   if (!args.binaryPath && args.remoteCache) {
     const cachedBuild = await fetchCachedBuild({
-      buildVariant: args.buildVariant,
+      variant: args.variant,
     });
     if (cachedBuild) {
       // @todo replace with a more generic way to pass binary path
@@ -151,20 +151,20 @@ function matchingDevice(devices: Array<DeviceData>, deviceArg: string) {
 }
 
 function normalizeArgs(args: Flags, projectRoot: string) {
-  if (args.tasks && args.buildVariant) {
+  if (args.tasks && args.variant) {
     logger.warn(
-      'Both "--tasks" and "--build-variant" parameters were passed. Using "--tasks" for building the app.'
+      'Both "--tasks" and "--variant" parameters were passed. Using "--tasks" for building the app.'
     );
   }
 
-  if (!args.buildVariant) {
-    args.buildVariant = 'debug';
+  if (!args.variant) {
+    args.variant = 'debug';
   }
 
   // turn on activeArchOnly for debug to speed up local builds
   if (
-    args.buildVariant !== 'release' &&
-    !args.buildVariant.endsWith('Release') &&
+    args.variant !== 'release' &&
+    !args.variant.endsWith('Release') &&
     args.activeArchOnly === undefined
   ) {
     args.activeArchOnly = true;
