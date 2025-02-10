@@ -1,7 +1,7 @@
 {
   "name": "rnef-plugin-brownfield-android-template",
   "scripts": {
-    "package:android": "rnef package:android --build-variant Release --module-name brownfieldtestreact --package-name com.brownfieldtestreact"
+    "package:android": "rnef package:android --build-variant Release --module-name helloworldreact --package-name com.helloworldreact"
   },
   "devDependencies": {
     "@rnef/plugin-brownfield-android":  "^0.1.6"
