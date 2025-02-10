@@ -36,3 +36,4 @@ jobs:
         uses: ./.github/actions/rnef-remote-build-android
         with:
           variant: debug
+          tasks: assembleDebug  
