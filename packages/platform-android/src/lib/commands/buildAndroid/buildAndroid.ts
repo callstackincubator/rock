@@ -1,7 +1,7 @@
 import type { AndroidProjectConfig } from '@react-native-community/cli-types';
 import { color, logger, outro, parseArgs, spinner } from '@rnef/tools';
 import { findOutputFile } from '../runAndroid/findOutputFile.js';
-import { runGradle } from '../runGradle.js';
+import { runGradle, runGradleAar } from '../runGradle.js';
 import { toPascalCase } from '../toPascalCase.js';
 
 export interface BuildFlags {
@@ -10,6 +10,8 @@ export interface BuildFlags {
   activeArchOnly?: boolean;
   tasks?: Array<string>;
   extraParams?: Array<string>;
+  moduleName?: string;
+  packageName?: string;
 }
 
 export async function buildAndroid(
@@ -30,6 +32,24 @@ export async function buildAndroid(
     loader.start('');
     loader.stop(`Build available at: ${color.cyan(outputFilePath)}`);
   }
+  outro('Success 🎉.');
+}
+
+export interface AarProject {
+  sourceDir: string;
+  moduleName: string;
+  packageName: string;
+}
+
+export async function buildAar(
+  aarProject: AarProject,
+  args: BuildFlags
+) {
+  normalizeArgs(args);
+
+  const tasks = [...(args.tasks ?? []), `assemble${toPascalCase(args.variant)}`];
+
+  await runGradleAar({ tasks, aarProject, args });
   outro('Success 🎉.');
 }
 
