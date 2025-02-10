@@ -1,4 +1,4 @@
-import { promptSelect, spawn } from '@rnef/tools';
+import { promptSelect, RnefError, spawn } from '@rnef/tools';
 
 export type SigningIdentity = {
   hash: string;
@@ -33,14 +33,20 @@ export function parseSigningIdentities(output: string): SigningIdentity[] {
 }
 
 export async function getValidSigningIdentities(): Promise<SigningIdentity[]> {
-  const cmd = await spawn('security', [
-    'find-identity',
-    '-v',
-    '-p',
-    'codesigning',
-  ]);
+  try {
+    const cmd = await spawn('security', [
+      'find-identity',
+      '-v',
+      '-p',
+      'codesigning',
+    ]);
 
-  return parseSigningIdentities(cmd.stdout);
+    return parseSigningIdentities(cmd.stdout);
+  } catch (error) {
+    throw new RnefError('Failed to load signing identities', {
+      cause: error,
+    });
+  }
 }
 
 export async function promptSigningIdentity(currentIdentity?: string | null) {

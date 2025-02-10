@@ -1,6 +1,6 @@
 import fs from 'node:fs';
-import path from 'node:path';
-import { getProjectRoot, logger, RnefError, spawn } from '@rnef/tools';
+import { logger, RnefError, spawn, SubprocessError } from '@rnef/tools';
+import { getHermescPath } from './utils.js';
 
 type BuildJsBundleOptions = {
   bundleOutputPath: string;
@@ -8,6 +8,9 @@ type BuildJsBundleOptions = {
   useHermes?: boolean;
 };
 
+/**
+ * This function is modelled after [react-native-xcode.sh](https://github.com/facebook/react-native/blob/main/packages/react-native/scripts/react-native-xcode.sh).
+ */
 export async function buildJsBundle(options: BuildJsBundleOptions) {
   if (fs.existsSync(options.bundleOutputPath)) {
     fs.unlinkSync(options.bundleOutputPath);
@@ -18,6 +21,7 @@ export async function buildJsBundle(options: BuildJsBundleOptions) {
   // If user wants to build bundle differently, they should use `rnef bundle` command directly
   // and provide the JS bundle path to `--jsbundle` flag
   const rnefBundleArgs = [
+    'rnef',
     'bundle',
     `--entry-file`,
     `index.js`,
@@ -33,18 +37,21 @@ export async function buildJsBundle(options: BuildJsBundleOptions) {
     '--assets-dest',
     options.assetsDestPath,
   ];
-  await spawn('rnef', rnefBundleArgs, {
-    stdio: logger.isVerbose() ? 'inherit' : ['ignore', 'pipe', 'pipe'],
-  });
+  try {
+    await spawn('npx', rnefBundleArgs, {
+      stdio: logger.isVerbose() ? 'inherit' : ['ignore', 'pipe', 'pipe'],
+    });
+  } catch (error) {
+    throw new RnefError('Failed to build JS bundle', {
+      cause: error instanceof SubprocessError ? error.stderr : error,
+    });
+  }
 
   if (!options.useHermes) {
     return;
   }
 
-  const hermesPath = path.join(
-    getProjectRoot(),
-    'ios/Pods/hermes-engine/destroot/bin/hermesc'
-  );
+  const hermesPath = getHermescPath();
   const hermescArgs = [
     '-emit-binary',
     '-max-diagnostic-width=80',
