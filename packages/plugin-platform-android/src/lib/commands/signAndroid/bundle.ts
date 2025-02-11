@@ -91,9 +91,9 @@ export function getHermescPath() {
 
   // Precompiled binaries: node_modules/react-native/sdks/hermesc/%OS-BIN%/hermesc
   const prebuildPaths = {
-    macos: `${basePath}/hermesc/macos/hermesc`,
-    linux: `${basePath}/hermesc/linux/hermesc`,
-    windows: `${basePath}/hermesc/win32/hermesc.exe`,
+    macos: `${basePath}/hermesc/osx-bin/hermesc`,
+    linux: `${basePath}/hermesc/linux64-bin/hermesc`,
+    windows: `${basePath}/hermesc/win64-bin/hermesc.exe`,
   };
 
   const os = getLocalOS();

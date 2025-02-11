@@ -7,12 +7,16 @@ import {
   type BuildFlags,
   options,
 } from './commands/buildAndroid/buildAndroid.js';
-import { generateKeystore, generateKeystoreOptions } from './commands/generateKeystore.js';
+import {
+  generateKeystore,
+  generateKeystoreOptions,
+} from './commands/generateKeystore.js';
 import {
   type Flags,
   runAndroid,
   runOptions,
 } from './commands/runAndroid/runAndroid.js';
+import { registerSignCommand } from './commands/signAndroid/signAndroid.js';
 
 type PluginConfig = AndroidProjectConfig;
 
@@ -69,6 +73,8 @@ export const pluginPlatformAndroid =
       },
       options: generateKeystoreOptions,
     });
+
+    registerSignCommand(api);
 
     return {
       name: 'plugin-platform-android',

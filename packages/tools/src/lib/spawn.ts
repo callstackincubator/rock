@@ -1,11 +1,13 @@
 import type { Options, Subprocess } from 'nano-spawn';
 import nanoSpawn, { SubprocessError } from 'nano-spawn';
+import logger from './logger.js';
 
 export function spawn(
   file: string,
   args?: readonly string[],
   options?: Options
 ): Subprocess {
+  logger.debug(`Running: ${file}`, ...(args ?? []));
   const childProcess = nanoSpawn(file, args, options);
   setupChildProcessCleanup(childProcess);
   return childProcess;

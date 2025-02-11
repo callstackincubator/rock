@@ -1,4 +1,5 @@
 import fs from 'node:fs';
+import path from 'node:path';
 import {
   intro,
   logger,
@@ -9,9 +10,8 @@ import {
   spinner,
 } from '@rnef/tools';
 import color from 'picocolors';
-import { promptSigningIdentity } from '../../utils/signingIdentities.js';
 import { buildJsBundle } from './bundle.js';
-import { getAppPaths, getTempPaths, packIpa, unpackIpa } from './utils.js';
+import { getSignOutputPath } from './utils.js';
 
 export type ModifyApkOptions = {
   apkPath: string;
@@ -26,37 +26,38 @@ export type ModifyApkOptions = {
 export const modifyApk = async (options: ModifyApkOptions) => {
   validateOptions(options);
 
-  intro(`Modifying IPA file`);
+  intro(`Modifying APK file`);
 
-  // 1. Extract IPA contents
   const loader = spinner();
+  const tempPath = getSignOutputPath();
 
-  //   // 2. Make IPA content changes if needed: build or swap JS bundle
-  const appPaths = getAppPaths(appPath);
+  // 1. Build JS bundle if needed
+
   if (options.buildJsBundle) {
+    const bundlePath = path.join(tempPath, 'assets/index.android.bundle');
     loader.start('Building JS bundle...');
     await buildJsBundle({
-      bundleOutputPath: appPaths.jsBundle,
-      assetsDestPath: appPaths.assetsDest,
+      bundleOutputPath: bundlePath,
+      assetsDestPath: path.join(tempPath, 'assets'),
       useHermes: options.useHermes ?? true,
     });
-    loader.stop(
-      `Built JS bundle: ${color.cyan(relativeToCwd(appPaths.jsBundle))}`
-    );
-  } else if (options.jsBundlePath) {
-    loader.start('Replacing JS bundle...');
-    fs.copyFileSync(options.jsBundlePath, appPaths.jsBundle);
-    loader.stop(
-      `Replaced JS bundle with ${color.cyan(
-        relativeToCwd(options.jsBundlePath)
-      )}`
-    );
+    loader.stop(`Built JS bundle: ${color.cyan(relativeToCwd(bundlePath))}`);
   }
 
-  loader.start(`Unzipping the IPA file...`);
-  const tempPaths = getTempPaths(options.platformName);
-  const appPath = unpackIpa(options.ipaPath, tempPaths.content);
-  loader.stop(`Unzipped IPA contents: ${color.cyan(relativeToCwd(appPath))}`);
+  //   else if (options.jsBundlePath) {
+  //     loader.start('Replacing JS bundle...');
+  //     fs.copyFileSync(options.jsBundlePath, appPaths.jsBundle);
+  //     loader.stop(
+  //       `Replaced JS bundle with ${color.cyan(
+  //         relativeToCwd(options.jsBundlePath)
+  //       )}`
+  //     );
+  //   }
+
+  //   loader.start(`Unzipping the IPA file...`);
+  //   const tempPaths = getTempPaths(options.platformName);
+  //   const appPath = unpackIpa(options.ipaPath, tempPaths.content);
+  //   loader.stop(`Unzipped IPA contents: ${color.cyan(relativeToCwd(appPath))}`);
 
   //   //   // 2. Make IPA content changes if needed: build or swap JS bundle
   //   const appPaths = getAppPaths(appPath);

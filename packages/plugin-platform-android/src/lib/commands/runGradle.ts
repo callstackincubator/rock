@@ -56,7 +56,6 @@ export async function runGradle({
   const gradleWrapper = getGradleWrapper();
 
   try {
-    logger.debug(`Running ${gradleWrapper} ${gradleArgs.join(' ')}.`);
     await spawn(gradleWrapper, gradleArgs, {
       cwd: androidProject.sourceDir,
       stdio: logger.isVerbose() ? 'inherit' : 'pipe',
