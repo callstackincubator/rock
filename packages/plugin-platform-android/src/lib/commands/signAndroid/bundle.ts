@@ -11,6 +11,7 @@ import {
 type BuildJsBundleOptions = {
   bundleOutputPath: string;
   assetsDestPath: string;
+  sourcemapOutputPath: string;
   useHermes?: boolean;
 };
 
@@ -20,25 +21,50 @@ export async function buildJsBundle(options: BuildJsBundleOptions) {
     logger.debug('Removed existing JS bundle:', options.bundleOutputPath);
   }
 
+  if (fs.existsSync(options.assetsDestPath)) {
+    fs.rmSync(options.assetsDestPath, { recursive: true });
+    logger.debug('Removed existing assets:', options.assetsDestPath);
+  }
+
+  if (fs.existsSync(options.sourcemapOutputPath)) {
+    fs.unlinkSync(options.sourcemapOutputPath);
+    logger.debug('Removed existing sourcemap:', options.sourcemapOutputPath);
+  }
+
+  // Captured params:
+  // bundle
+  //   --platform android
+  //   --dev false
+  //   --reset-cache
+  //   --entry-file <ProjectRoot>/index.js
+  //   --bundle-output <ProjectRoot>/android/app/build/generated/assets/createBundleReleaseJsAndAssets/index.android.bundle
+  //   --assets-dest <ProjectRoot>/android/app/build/generated/res/createBundleReleaseJsAndAssets
+  //   --sourcemap-output <ProjectRoot>/android/app/build/intermediates/sourcemaps/react/release/index.android.bundle.packager.map
+  //   --minify false
+  //   --verbose
+
   // Reasonable defaults
   // If user wants to build bundle differently, they should use `rnef bundle` command directly
   // and provide the JS bundle path to `--jsbundle` flag
   const rnefBundleArgs = [
     'rnef',
     'bundle',
-    `--entry-file`,
-    `index.js`,
     '--platform',
     'android',
     `--dev`,
     'false',
-    '--minify',
-    'false',
     '--reset-cache',
+    `--entry-file`,
+    `index.js`,
     '--bundle-output',
     options.bundleOutputPath,
     '--assets-dest',
     options.assetsDestPath,
+    '--sourcemap-output',
+    options.sourcemapOutputPath,
+    '--minify',
+    'false',
+    '--verbose',
   ];
   await spawn('npx', rnefBundleArgs, {
     stdio: logger.isVerbose() ? 'inherit' : ['ignore', 'pipe', 'pipe'],
@@ -49,6 +75,12 @@ export async function buildJsBundle(options: BuildJsBundleOptions) {
   }
 
   const hermescPath = getHermescPath();
+  if (!hermescPath) {
+    throw new RnefError(
+      'Hermesc binary not found. Use `--no-hermes` flag to disable Hermes.'
+    );
+  }
+
   const hermescArgs = [
     '-emit-binary',
     '-max-diagnostic-width=80',
@@ -58,7 +90,6 @@ export async function buildJsBundle(options: BuildJsBundleOptions) {
     options.bundleOutputPath,
     options.bundleOutputPath,
   ];
-
   try {
     await spawn(hermescPath, hermescArgs, {
       stdio: logger.isVerbose() ? 'inherit' : ['ignore', 'pipe', 'pipe'],

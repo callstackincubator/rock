@@ -38,7 +38,11 @@ export const modifyApk = async (options: ModifyApkOptions) => {
     loader.start('Building JS bundle...');
     await buildJsBundle({
       bundleOutputPath: bundlePath,
-      assetsDestPath: path.join(tempPath, 'assets'),
+      assetsDestPath: path.join(tempPath, 'res'),
+      sourcemapOutputPath: path.join(
+        tempPath,
+        'index.android.bundle.packager.map'
+      ),
       useHermes: options.useHermes ?? true,
     });
     loader.stop(`Built JS bundle: ${color.cyan(relativeToCwd(bundlePath))}`);
