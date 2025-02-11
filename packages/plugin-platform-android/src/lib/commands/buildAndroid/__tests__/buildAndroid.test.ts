@@ -83,7 +83,7 @@ test('buildAndroid runs gradle build with correct configuration for debug and ou
     return (actualFs as typeof fs).existsSync(file);
   });
 
-  await buildAndroid(androidProject, args);
+  await buildAndroid(androidProject, { ...args, aab: true });
 
   expect(spawn).toBeCalledWith('./gradlew', ['app:bundleDebug', '-x', 'lint'], {
     stdio: !tools.isInteractive() ? 'inherit' : 'pipe',
@@ -105,10 +105,14 @@ test('buildAndroid fails gracefully when gradle errors', async () => {
     `[RnefError: Failed to build the app. See the error above for details from Gradle.]`
   );
 
-  expect(spawn).toBeCalledWith('./gradlew', ['app:bundleDebug', '-x', 'lint'], {
-    stdio: !tools.isInteractive() ? 'inherit' : 'pipe',
-    cwd: '/android',
-  });
+  expect(spawn).toBeCalledWith(
+    './gradlew',
+    ['app:assembleDebug', '-x', 'lint'],
+    {
+      stdio: !tools.isInteractive() ? 'inherit' : 'pipe',
+      cwd: '/android',
+    }
+  );
 });
 
 test('buildAndroid runs selected "bundleRelease" task in interactive variant', async () => {
