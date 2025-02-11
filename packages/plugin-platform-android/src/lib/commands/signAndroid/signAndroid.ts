@@ -4,8 +4,6 @@ import {
   intro,
   outro,
   relativeToCwd,
-  removeDirIfNeeded,
-  removeFileIfNeeded,
   RnefError,
   spawn,
   spinner,
@@ -35,7 +33,6 @@ export async function signAndroid(options: SignAndroidOptions) {
   const tempApkPath = path.join(tempPath, 'app-unaligned.apk');
 
   const loader = spinner();
-  removeFileIfNeeded(tempApkPath);
 
   // 1. Build JS bundle if needed
   if (options.buildJsBundle) {
@@ -209,7 +206,7 @@ async function signApkFile({
     '--ks',
     keystorePath,
     '--ks-pass',
-    keystorePassword,
+    formatPassword(keystorePassword),
     apkPath,
   ];
   try {
@@ -222,4 +219,22 @@ async function signApkFile({
       }
     );
   }
+}
+
+/**
+ * apksigner expects the password into to be prefixed by the password type.
+ *
+ * @see https://developer.android.com/tools/apksigner
+ */
+function formatPassword(password: string) {
+  if (
+    password.startsWith('pass:') ||
+    password.startsWith('env:') ||
+    password.startsWith('file:') ||
+    password === 'stdin'
+  ) {
+    return password;
+  }
+
+  return `pass:${password}`;
 }
