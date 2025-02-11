@@ -8,6 +8,7 @@ import { toPascalCase } from '../toPascalCase.js';
 
 export interface BuildFlags {
   variant: string;
+  aab?: boolean;
   activeArchOnly?: boolean;
   tasks?: Array<string>;
   extraParams?: Array<string>;
@@ -19,10 +20,11 @@ export async function buildAndroid(
   args: BuildFlags
 ) {
   normalizeArgs(args);
-
+  // Use assemble task by default, but bundle if the flag is set
+  const buildTaskBase = args.aab ? 'bundle' : 'assemble';
   const tasks = args.interactive
     ? [await promptForTaskSelection('bundle', androidProject.sourceDir)]
-    : args.tasks ?? [`bundle${toPascalCase(args.variant)}`];
+    : args.tasks ?? [`${buildTaskBase}${toPascalCase(args.variant)}`];
 
   await runGradle({ tasks, androidProject, args });
 
@@ -50,19 +52,23 @@ function normalizeArgs(args: BuildFlags) {
 export const options = [
   {
     name: '--variant <string>',
+    description: `Specify your app's build variant, which is constructed from build type and product flavor, e.g. "debug" or "freeRelease".`,
+  },
+  {
+    name: '--aab',
     description:
-      "Specify your app's build variant, which is constructed from build type and product flavor, e.g. 'debug' or 'freeRelease'.",
+      'Produces an Android App Bundle (AAB) suited for app stores such as Google Play. If not set, APK is created.',
   },
   {
     name: '--tasks <list>',
     description:
-      'Run custom Gradle tasks. Will override the --variant argument.',
+      'Run custom Gradle tasks. Will override the "--variant" and "--bundle" arguments.',
     parse: (val: string) => val.split(','),
   },
   {
     name: '--active-arch-only',
     description:
-      'Build native libraries only for the current device architecture for debug builds.',
+      'Build native libraries only for the current device architecture. Set by default in debug builds and interactive environments.',
   },
   {
     name: '--extra-params <string>',
