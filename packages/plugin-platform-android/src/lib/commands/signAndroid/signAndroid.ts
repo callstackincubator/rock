@@ -1,71 +1,225 @@
-import type { PluginApi } from '@rnef/config';
-import { modifyApk } from './modifyApk.js';
+import fs from 'node:fs';
+import path from 'node:path';
+import {
+  intro,
+  outro,
+  relativeToCwd,
+  removeDirIfNeeded,
+  removeFileIfNeeded,
+  RnefError,
+  spawn,
+  spinner,
+} from '@rnef/tools';
+import AdmZip from 'adm-zip';
+import color from 'picocolors';
+import { findAndroidBuildTool, getAndroidBuildToolsPath } from '../../paths.js';
+import { buildJsBundle } from './bundle.js';
+import { getSignOutputPath } from './utils.js';
 
-export type SignFlags = {
-  verbose?: boolean;
-  apk: string;
-  output?: string;
+export type SignAndroidOptions = {
+  apkPath: string;
   keystore?: string;
   keystorePassword?: string;
-  buildJsbundle?: boolean;
-  jsbundle?: string;
-  noHermes?: boolean;
+  outputPath?: string;
+  buildJsBundle?: boolean;
+  jsBundlePath?: string;
+  useHermes?: boolean;
 };
 
-const ARGUMENTS = [
-  {
-    name: 'apk',
-    description: 'APK file path',
-  },
-];
+export async function signAndroid(options: SignAndroidOptions) {
+  validateOptions(options);
 
-const OPTIONS = [
-  {
-    name: '--verbose',
-    description: '',
-  },
-  {
-    name: '--keystore <string>',
-    description: 'Path to keystore file',
-  },
-  {
-    name: '--keystore-password <string>',
-    description: 'Password for keystore file',
-  },
-  {
-    name: '--output <string>',
-    description: 'Path to the output APK file.',
-  },
-  {
-    name: '--build-jsbundle',
-    description: 'Build the JS bundle before signing.',
-  },
-  {
-    name: '--jsbundle <string>',
-    description: 'Path to the JS bundle to apply before signing.',
-  },
-  {
-    name: '--no-hermes',
-    description: 'Do not use Hermes to build the JS bundle.',
-  },
-];
+  intro(`Modifying APK file`);
 
-export const registerSignCommand = (api: PluginApi) => {
-  api.registerCommand({
-    name: 'sign:android',
-    description: 'Sign the Android app',
-    args: ARGUMENTS,
-    options: OPTIONS,
-    action: async (apkPath, flags: SignFlags) => {
-      await modifyApk({
-        apkPath,
-        keystore: flags.keystore,
-        keystorePassword: flags.keystorePassword,
-        outputPath: flags.output,
-        buildJsBundle: flags.buildJsbundle,
-        jsBundlePath: flags.jsbundle,
-        useHermes: !flags.noHermes,
-      });
-    },
+  const tempPath = getSignOutputPath();
+  const tempApkPath = path.join(tempPath, 'app-unaligned.apk');
+
+  const loader = spinner();
+  removeFileIfNeeded(tempApkPath);
+
+  // 1. Build JS bundle if needed
+  if (options.buildJsBundle) {
+    const bundleOutputPath = path.join(tempPath, 'index.android.bundle');
+
+    loader.start('Building JS bundle...');
+    await buildJsBundle({
+      bundleOutputPath,
+      assetsDestPath: path.join(tempPath, 'res'),
+      sourcemapOutputPath: path.join(
+        tempPath,
+        'index.android.bundle.packager.map'
+      ),
+      useHermes: options.useHermes ?? true,
+    });
+    loader.stop(
+      `Built JS bundle: ${color.cyan(relativeToCwd(bundleOutputPath))}`
+    );
+
+    options.jsBundlePath = bundleOutputPath;
+  }
+
+  // 2. Copy output ZIP if needed
+  loader.start('Initializing output APK...');
+  try {
+    const zip = new AdmZip(options.apkPath);
+    zip.deleteFile('META-INF/*');
+    zip.writeZip(tempApkPath);
+  } catch (error) {
+    throw new RnefError(
+      `Failed to initialize output APK file: ${options.outputPath}`,
+      {
+        cause: error,
+      }
+    );
+  }
+  loader.stop(
+    `Initialized output APK: ${color.cyan(relativeToCwd(tempApkPath))}`
+  );
+
+  // 2. Replace JS bundle if provided
+  if (options.jsBundlePath) {
+    loader.start('Replacing JS bundle...');
+    await replaceJsBundle({
+      apkPath: tempApkPath,
+      jsBundlePath: options.jsBundlePath,
+    });
+    loader.stop(
+      `Replaced JS bundle with ${color.cyan(
+        relativeToCwd(options.jsBundlePath)
+      )}`
+    );
+  }
+
+  loader.start('Creating aligned APK file...');
+  const outputApkPath = options.outputPath ?? options.apkPath;
+  await alignApkFile(tempApkPath, outputApkPath);
+  loader.stop(
+    `Created aligned APK file: ${color.cyan(relativeToCwd(outputApkPath))}`
+  );
+
+  loader.start('Signing the APK file...');
+  const keystorePath = options.keystore ?? 'android/app/debug.keystore';
+  await signApkFile({
+    apkPath: outputApkPath,
+    keystorePath,
+    keystorePassword: options.keystorePassword ?? 'pass:android',
   });
+  loader.stop(`Signed the APK file with keystore: ${color.cyan(keystorePath)}`);
+
+  outro('Success 🎉.');
+}
+
+function validateOptions(options: SignAndroidOptions) {
+  if (!fs.existsSync(options.apkPath)) {
+    throw new RnefError(`APK file not found "${options.apkPath}"`);
+  }
+
+  if (options.buildJsBundle && options.jsBundlePath) {
+    throw new RnefError(
+      'Cannot build JS bundle (`--build-jsbundle`) and provide source JS bundle (`--jsbundle`) path at the same time.'
+    );
+  }
+
+  if (options.jsBundlePath && !fs.existsSync(options.jsBundlePath)) {
+    throw new RnefError(`JS bundle file not found "${options.jsBundlePath}"`);
+  }
+}
+
+type ReplaceJsBundleOptions = {
+  apkPath: string;
+  jsBundlePath: string;
 };
+
+async function replaceJsBundle({
+  apkPath,
+  jsBundlePath,
+}: ReplaceJsBundleOptions) {
+  try {
+    const zip = new AdmZip(apkPath);
+    zip.deleteFile('assets/index.android.bundle');
+    zip.addLocalFile(jsBundlePath, 'assets', 'index.android.bundle');
+    zip.writeZip(apkPath);
+  } catch (error) {
+    throw new RnefError(
+      `Failed to replace JS bundle in destination file: ${apkPath}}`,
+      {
+        cause: error,
+      }
+    );
+  }
+}
+
+async function alignApkFile(inputApkPath: string, outputApkPath: string) {
+  const zipAlignPath = findAndroidBuildTool('zipalign');
+  if (!zipAlignPath) {
+    throw new RnefError(
+      `"zipalign" not found in Android Build-Tools directory: ${getAndroidBuildToolsPath()}`
+    );
+  }
+
+  // See: https://developer.android.com/tools/zipalign#usage
+  const zipalignArgs = [
+    '-P', // aligns uncompressed .so files to the specified page size in KiB.
+    '16',
+    '-f', // Overwrites existing output file.
+    '-v', // Overwrites existing output file.
+    '4', // alignment in bytes, e.g. '4' provides 32-bit alignment
+    inputApkPath,
+    outputApkPath,
+  ];
+  try {
+    await spawn(zipAlignPath, zipalignArgs);
+  } catch (error) {
+    throw new RnefError(
+      `Failed to align APK file: ${zipAlignPath} ${zipalignArgs.join(' ')}`,
+      {
+        cause: error,
+      }
+    );
+  }
+}
+
+type SignApkOptions = {
+  apkPath: string;
+  keystorePath: string;
+  keystorePassword: string;
+};
+
+async function signApkFile({
+  apkPath,
+  keystorePath,
+  keystorePassword,
+}: SignApkOptions) {
+  if (!fs.existsSync(keystorePath)) {
+    throw new RnefError(
+      `Keystore file not found "${keystorePath}". Provide a valid keystore path using the "--keystore" option.`
+    );
+  }
+
+  const apksignerPath = findAndroidBuildTool('apksigner');
+  if (!apksignerPath) {
+    throw new RnefError(
+      `"apksigner" not found in Android Build-Tools directory: ${getAndroidBuildToolsPath()}`
+    );
+  }
+
+  // apksigner sign --ks-pass "pass:android" --ks "android/app/debug.keystore" "$OUTPUT2_APK"
+  const apksignerArgs = [
+    'sign',
+    '--ks',
+    keystorePath,
+    '--ks-pass',
+    keystorePassword,
+    apkPath,
+  ];
+  try {
+    await spawn(apksignerPath, apksignerArgs);
+  } catch (error) {
+    throw new RnefError(
+      `Failed to sign APK file: ${apksignerPath} ${apksignerArgs.join(' ')}`,
+      {
+        cause: error,
+      }
+    );
+  }
+}

@@ -16,7 +16,7 @@ import {
   runAndroid,
   runOptions,
 } from './commands/runAndroid/runAndroid.js';
-import { registerSignCommand } from './commands/signAndroid/signAndroid.js';
+import { registerSignCommand } from './commands/signAndroid/command.js';
 
 type PluginConfig = AndroidProjectConfig;
 

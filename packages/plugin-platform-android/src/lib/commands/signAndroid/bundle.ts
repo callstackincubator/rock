@@ -21,14 +21,14 @@ export async function buildJsBundle(options: BuildJsBundleOptions) {
     logger.debug('Removed existing JS bundle:', options.bundleOutputPath);
   }
 
-  if (fs.existsSync(options.assetsDestPath)) {
-    fs.rmSync(options.assetsDestPath, { recursive: true });
-    logger.debug('Removed existing assets:', options.assetsDestPath);
-  }
-
   if (fs.existsSync(options.sourcemapOutputPath)) {
     fs.unlinkSync(options.sourcemapOutputPath);
     logger.debug('Removed existing sourcemap:', options.sourcemapOutputPath);
+  }
+
+  if (fs.existsSync(options.assetsDestPath)) {
+    fs.rmSync(options.assetsDestPath, { recursive: true });
+    logger.debug('Removed existing assets:', options.assetsDestPath);
   }
 
   // Captured params:
