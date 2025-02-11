@@ -16,7 +16,7 @@ import { getSignOutputPath } from './utils.js';
 
 export type SignAndroidOptions = {
   apkPath: string;
-  keystore?: string;
+  keystorePath?: string;
   keystorePassword?: string;
   outputPath?: string;
   buildJsBundle?: boolean;
@@ -99,7 +99,7 @@ export async function signAndroid(options: SignAndroidOptions) {
   );
 
   loader.start('Signing the APK file...');
-  const keystorePath = options.keystore ?? 'android/app/debug.keystore';
+  const keystorePath = options.keystorePath ?? 'android/app/debug.keystore';
   await signApkFile({
     apkPath: outputApkPath,
     keystorePath,
