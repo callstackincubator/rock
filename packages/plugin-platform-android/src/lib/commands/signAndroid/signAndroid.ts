@@ -30,6 +30,10 @@ export async function signAndroid(options: SignAndroidOptions) {
   intro(`Modifying APK file`);
 
   const tempPath = getSignOutputPath();
+  if (fs.existsSync(tempPath)) {
+    fs.rmSync(tempPath, { recursive: true });
+  }
+
   const tempApkPath = path.join(tempPath, 'app-unaligned.apk');
 
   const loader = spinner();
