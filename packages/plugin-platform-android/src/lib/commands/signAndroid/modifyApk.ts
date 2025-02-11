@@ -9,6 +9,7 @@ import {
   spawn,
   spinner,
 } from '@rnef/tools';
+import AdmZip from 'adm-zip';
 import color from 'picocolors';
 import { buildJsBundle } from './bundle.js';
 import { getSignOutputPath } from './utils.js';
@@ -30,88 +31,127 @@ export const modifyApk = async (options: ModifyApkOptions) => {
 
   const loader = spinner();
   const tempPath = getSignOutputPath();
-
-  // 1. Build JS bundle if needed
-
-  if (options.buildJsBundle) {
-    const bundlePath = path.join(tempPath, 'assets/index.android.bundle');
-    loader.start('Building JS bundle...');
-    await buildJsBundle({
-      bundleOutputPath: bundlePath,
-      assetsDestPath: path.join(tempPath, 'res'),
-      sourcemapOutputPath: path.join(
-        tempPath,
-        'index.android.bundle.packager.map'
-      ),
-      useHermes: options.useHermes ?? true,
-    });
-    loader.stop(`Built JS bundle: ${color.cyan(relativeToCwd(bundlePath))}`);
+  const tempApkPath = path.join(tempPath, 'unaligned.apk');
+  if (fs.existsSync(tempApkPath)) {
+    fs.unlinkSync(tempApkPath);
   }
 
-  //   else if (options.jsBundlePath) {
-  //     loader.start('Replacing JS bundle...');
-  //     fs.copyFileSync(options.jsBundlePath, appPaths.jsBundle);
-  //     loader.stop(
-  //       `Replaced JS bundle with ${color.cyan(
-  //         relativeToCwd(options.jsBundlePath)
-  //       )}`
-  //     );
-  //   }
+  // 1. Build JS bundle if needed
+  if (options.buildJsBundle) {
+    const bundleOutputPath = path.join(tempPath, 'index.android.bundle');
+    if (fs.existsSync(bundleOutputPath)) {
+      fs.unlinkSync(bundleOutputPath);
+    }
 
-  //   loader.start(`Unzipping the IPA file...`);
-  //   const tempPaths = getTempPaths(options.platformName);
-  //   const appPath = unpackIpa(options.ipaPath, tempPaths.content);
-  //   loader.stop(`Unzipped IPA contents: ${color.cyan(relativeToCwd(appPath))}`);
+    const sourcemapOutputPath = path.join(
+      tempPath,
+      'index.android.bundle.packager.map'
+    );
+    if (fs.existsSync(sourcemapOutputPath)) {
+      fs.unlinkSync(sourcemapOutputPath);
+    }
 
-  //   //   // 2. Make IPA content changes if needed: build or swap JS bundle
-  //   const appPaths = getAppPaths(appPath);
-  //   if (options.buildJsBundle) {
-  //     loader.start('Building JS bundle...');
-  //     await buildJsBundle({
-  //       bundleOutputPath: appPaths.jsBundle,
-  //       assetsDestPath: appPaths.assetsDest,
-  //       useHermes: options.useHermes ?? true,
-  //     });
-  //     loader.stop(
-  //       `Built JS bundle: ${color.cyan(relativeToCwd(appPaths.jsBundle))}`
-  //     );
-  //   } else if (options.jsBundlePath) {
-  //     loader.start('Replacing JS bundle...');
-  //     fs.copyFileSync(options.jsBundlePath, appPaths.jsBundle);
-  //     loader.stop(
-  //       `Replaced JS bundle with ${color.cyan(
-  //         relativeToCwd(options.jsBundlePath)
-  //       )}`
-  //     );
-  //   }
+    const assetsDestPath = path.join(tempPath, 'res');
+    if (fs.existsSync(assetsDestPath)) {
+      fs.rmSync(assetsDestPath, { recursive: true });
+    }
 
-  //   loader.start('Signing the APK contents...');
-  //   const codeSignArgs = [
-  //     '--force',
-  //     '--sign',
-  //     identity,
-  //     '--entitlements',
-  //     tempPaths.entitlementsPlist,
-  //     appPath,
-  //   ];
-  //   try {
-  //     await spawn('codesign', codeSignArgs, {
-  //       cwd: tempPaths.content,
-  //       stdio: logger.isVerbose() ? 'inherit' : ['ignore', 'pipe', 'pipe'],
-  //     });
-  //   } catch (error) {
-  //     throw new RnefError('Codesign failed', {
-  //       cause: error,
-  //     });
-  //   }
+    loader.start('Building JS bundle...');
+    await buildJsBundle({
+      bundleOutputPath,
+      assetsDestPath,
+      sourcemapOutputPath,
+      useHermes: options.useHermes ?? true,
+    });
+    loader.stop(
+      `Built JS bundle: ${color.cyan(relativeToCwd(bundleOutputPath))}`
+    );
 
-  //   loader.stop(`Signed the IPA contents with identity: ${color.cyan(identity)}`);
+    options.jsBundlePath = bundleOutputPath;
+  }
 
-  //   // 4. Repack the IPA file
-  //   loader.start('Repacking the IPA file...');
-  //   const outputPath = options.outputPath ?? options.ipaPath;
-  //   packIpa(tempPaths.content, outputPath);
-  //   loader.stop(`Repacked the IPA file: ${color.cyan(outputPath)}`);
+  // 2. Copy output ZIP if needed
+  loader.start('Initializing output APK...');
+  try {
+    fs.copyFileSync(options.apkPath, tempApkPath);
+  } catch (error) {
+    throw new RnefError(
+      `Failed to copy APK file to destination path: ${options.outputPath}`,
+      {
+        cause: error,
+      }
+    );
+  }
+  loader.stop(
+    `Initialized output APK: ${color.cyan(relativeToCwd(tempApkPath))}`
+  );
+
+  const zip = new AdmZip(tempApkPath);
+
+  // 2. Replace JS bundle if provided
+  if (options.jsBundlePath) {
+    loader.start('Replacing JS bundle...');
+    try {
+      zip.deleteFile('assets/index.android.bundle');
+      zip.addLocalFile(options.jsBundlePath, 'assets', 'index.android.bundle');
+    } catch (error) {
+      throw new RnefError(
+        `Failed to replace JS bundle in destination file: ${options.outputPath}`,
+        {
+          cause: error,
+        }
+      );
+    }
+
+    loader.stop(
+      `Replaced JS bundle with ${color.cyan(
+        relativeToCwd(options.jsBundlePath)
+      )}`
+    );
+  }
+
+  loader.start('Creating aligned APK file...');
+  const outputApkPath = options.outputPath ?? options.apkPath;
+
+  // See: https://developer.android.com/tools/zipalign#usage
+  const zipalignArgs = [
+    '-P', // aligns uncompressed .so files to the specified page size in KiB.
+    '16',
+    '-f', // Overwrites existing output file.
+    '-v', // Overwrites existing output file.
+    '4', // alignment in bytes, e.g. '4' provides 32-bit alignment
+    tempApkPath,
+    outputApkPath,
+  ];
+
+  await spawn('zipalign', zipalignArgs);
+
+  loader.stop(
+    `Created aligned APK file: ${color.cyan(
+      relativeToCwd(options.outputPath ?? options.apkPath)
+    )}`
+  );
+
+  loader.start('Signing the APK file...');
+  const keystorePath = options.keystore ?? 'android/app/debug.keystore';
+  if (!fs.existsSync(keystorePath)) {
+    throw new RnefError(
+      `Keystore file not found "${keystorePath}". Provide a valid keystore path using the "--keystore" option.`
+    );
+  }
+
+  // apksigner sign --ks-pass "pass:android" --ks "android/app/debug.keystore" "$OUTPUT2_APK"
+  const apksignerArgs = [
+    'sign',
+    '--ks-pass',
+    'pass:android',
+    '--ks',
+    keystorePath,
+    outputApkPath,
+  ];
+  await spawn('apksigner', apksignerArgs);
+
+  loader.stop(`Signed the APK file with keystore: ${color.cyan(keystorePath)}`);
 
   outro('Success 🎉.');
 };
