@@ -56,10 +56,7 @@ export async function runAndroid(
   const mainTaskType = device ? 'assemble' : 'install';
   const tasks = args.interactive
     ? [await promptForTaskSelection(mainTaskType, androidProject.sourceDir)]
-    : [
-        ...(args.tasks ?? []),
-        `${mainTaskType}${toPascalCase(args.variant)}`,
-      ];
+    : args.tasks ?? [`${mainTaskType}${toPascalCase(args.variant)}`];
 
   if (!args.binaryPath && args.remoteCache) {
     const cachedBuild = await fetchCachedBuild({
@@ -165,7 +162,7 @@ function normalizeArgs(args: Flags, projectRoot: string) {
   if (
     args.variant !== 'release' &&
     !args.variant.endsWith('Release') &&
-    args.activeArchOnly === undefined && 
+    args.activeArchOnly === undefined &&
     isInteractive()
   ) {
     args.activeArchOnly = true;

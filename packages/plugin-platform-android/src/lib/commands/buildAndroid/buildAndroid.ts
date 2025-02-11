@@ -22,7 +22,7 @@ export async function buildAndroid(
 
   const tasks = args.interactive
     ? [await promptForTaskSelection('bundle', androidProject.sourceDir)]
-    : [...(args.tasks ?? []), `bundle${toPascalCase(args.variant)}`];
+    : args.tasks ?? [`bundle${toPascalCase(args.variant)}`];
 
   await runGradle({ tasks, androidProject, args });
 
