@@ -82,7 +82,7 @@ export async function buildJsBundle(options: BuildJsBundleOptions) {
     '-O',
     '-w',
     '-out',
-    options.bundleOutputPath,
+    options.bundleOutputPath, // Needs `-out` path, or otherwise outputs to stdout
     options.bundleOutputPath,
   ];
   try {
