@@ -13,6 +13,7 @@ import AdmZip from 'adm-zip';
 import color from 'picocolors';
 import { buildJsBundle } from './bundle.js';
 import { getSignOutputPath } from './utils.js';
+import { findAndroidBuildTool, getAndroidBuildToolsPath } from '../../paths.js';
 
 export type ModifyApkOptions = {
   apkPath: string;
@@ -112,6 +113,12 @@ export const modifyApk = async (options: ModifyApkOptions) => {
 
   loader.start('Creating aligned APK file...');
   const outputApkPath = options.outputPath ?? options.apkPath;
+  const zipAlignPath = findAndroidBuildTool('zipalign');
+  if (!zipAlignPath) {
+    throw new RnefError(
+      `"zipalign" not found in Android Build-Tools directory: ${getAndroidBuildToolsPath()}`
+    );
+  }
 
   // See: https://developer.android.com/tools/zipalign#usage
   const zipalignArgs = [
@@ -124,7 +131,7 @@ export const modifyApk = async (options: ModifyApkOptions) => {
     outputApkPath,
   ];
 
-  await spawn('zipalign', zipalignArgs);
+  await spawn(zipAlignPath, zipalignArgs);
 
   loader.stop(
     `Created aligned APK file: ${color.cyan(
@@ -140,6 +147,13 @@ export const modifyApk = async (options: ModifyApkOptions) => {
     );
   }
 
+  const apksignerPath = findAndroidBuildTool('apksigner');
+  if (!apksignerPath) {
+    throw new RnefError(
+      `"apksigner" not found in Android Build-Tools directory: ${getAndroidBuildToolsPath()}`
+    );
+  }
+
   // apksigner sign --ks-pass "pass:android" --ks "android/app/debug.keystore" "$OUTPUT2_APK"
   const apksignerArgs = [
     'sign',
@@ -149,7 +163,7 @@ export const modifyApk = async (options: ModifyApkOptions) => {
     keystorePath,
     outputApkPath,
   ];
-  await spawn('apksigner', apksignerArgs);
+  await spawn(apksignerPath, apksignerArgs);
 
   loader.stop(`Signed the APK file with keystore: ${color.cyan(keystorePath)}`);
 
