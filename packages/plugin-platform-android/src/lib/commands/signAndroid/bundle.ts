@@ -1,5 +1,12 @@
 import fs from 'node:fs';
-import { logger, RnefError, spawn } from '@rnef/tools';
+import path from 'node:path';
+import {
+  getLocalOS,
+  getProjectRoot,
+  logger,
+  RnefError,
+  spawn,
+} from '@rnef/tools';
 
 type BuildJsBundleOptions = {
   bundleOutputPath: string;
@@ -17,6 +24,7 @@ export async function buildJsBundle(options: BuildJsBundleOptions) {
   // If user wants to build bundle differently, they should use `rnef bundle` command directly
   // and provide the JS bundle path to `--jsbundle` flag
   const rnefBundleArgs = [
+    'rnef',
     'bundle',
     `--entry-file`,
     `index.js`,
@@ -32,7 +40,7 @@ export async function buildJsBundle(options: BuildJsBundleOptions) {
     '--assets-dest',
     options.assetsDestPath,
   ];
-  await spawn('rnef', rnefBundleArgs, {
+  await spawn('npx', rnefBundleArgs, {
     stdio: logger.isVerbose() ? 'inherit' : ['ignore', 'pipe', 'pipe'],
   });
 
@@ -40,12 +48,7 @@ export async function buildJsBundle(options: BuildJsBundleOptions) {
     return;
   }
 
-  // TODO: Add hermes path for android
-  const hermesPath = 'hermesc';
-  //   const hermesPath = path.join(
-  //     getProjectRoot(),
-  //     'ios/Pods/hermes-engine/destroot/bin/hermesc'
-  //   );
+  const hermescPath = getHermescPath();
   const hermescArgs = [
     '-emit-binary',
     '-max-diagnostic-width=80',
@@ -57,7 +60,7 @@ export async function buildJsBundle(options: BuildJsBundleOptions) {
   ];
 
   try {
-    await spawn(hermesPath, hermescArgs, {
+    await spawn(hermescPath, hermescArgs, {
       stdio: logger.isVerbose() ? 'inherit' : ['ignore', 'pipe', 'pipe'],
     });
   } catch (error) {
@@ -68,4 +71,31 @@ export async function buildJsBundle(options: BuildJsBundleOptions) {
       }
     );
   }
+}
+
+/**
+ * Get `hermesc` binary path.
+ * Based on: https://github.com/facebook/react-native/blob/f2c78af56ae492f49b90d0af61ca9bf4d124fca0/packages/gradle-plugin/react-native-gradle-plugin/src/main/kotlin/com/facebook/react/utils/PathUtils.kt#L48-L55
+ */
+export function getHermescPath() {
+  const basePath = path.join(
+    getProjectRoot(),
+    'node_modules/react-native/sdks/'
+  );
+
+  // Local build from source: node_modules/react-native/sdks/hermes/build/bin/hermesc
+  const localBuildPath = path.join(basePath, 'hermes/build/bin/hermesc');
+  if (fs.existsSync(localBuildPath)) {
+    return localBuildPath;
+  }
+
+  // Precompiled binaries: node_modules/react-native/sdks/hermesc/%OS-BIN%/hermesc
+  const prebuildPaths = {
+    macos: `${basePath}/hermesc/macos/hermesc`,
+    linux: `${basePath}/hermesc/linux/hermesc`,
+    windows: `${basePath}/hermesc/win32/hermesc.exe`,
+  };
+
+  const os = getLocalOS();
+  return prebuildPaths[os];
 }

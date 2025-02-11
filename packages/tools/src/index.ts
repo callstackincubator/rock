@@ -1,4 +1,5 @@
 export * from './lib/prompts.js';
+export * from './lib/env.js';
 export * from './lib/error.js';
 export { default as logger } from './lib/logger.js';
 export * from './lib/fingerprint.js';
