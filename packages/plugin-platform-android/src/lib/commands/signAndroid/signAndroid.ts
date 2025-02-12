@@ -34,8 +34,6 @@ export async function signAndroid(options: SignAndroidOptions) {
     fs.rmSync(tempPath, { recursive: true });
   }
 
-  const tempApkPath = path.join(tempPath, 'app-unaligned.apk');
-
   const loader = spinner();
 
   // 1. Build JS bundle if needed
@@ -59,7 +57,9 @@ export async function signAndroid(options: SignAndroidOptions) {
     options.jsBundlePath = bundleOutputPath;
   }
 
-  // 2. Copy output ZIP if needed
+  // 2. Initialize temporary APK file
+  const tempApkPath = path.join(tempPath, 'output-app.apk');
+
   loader.start('Initializing output APK...');
   try {
     const zip = new AdmZip(options.apkPath);
@@ -73,11 +73,9 @@ export async function signAndroid(options: SignAndroidOptions) {
       }
     );
   }
-  loader.stop(
-    `Initialized output APK: ${color.cyan(relativeToCwd(tempApkPath))}`
-  );
+  loader.stop(`Initialized output APK.`);
 
-  // 2. Replace JS bundle if provided
+  // 3. Replace JS bundle if provided
   if (options.jsBundlePath) {
     loader.start('Replacing JS bundle...');
     await replaceJsBundle({
@@ -87,17 +85,19 @@ export async function signAndroid(options: SignAndroidOptions) {
     loader.stop(
       `Replaced JS bundle with ${color.cyan(
         relativeToCwd(options.jsBundlePath)
-      )}`
+      )}.`
     );
   }
 
+  // 4. Align APK file
   loader.start('Creating aligned APK file...');
   const outputApkPath = options.outputPath ?? options.apkPath;
   await alignApkFile(tempApkPath, outputApkPath);
   loader.stop(
-    `Created aligned APK file: ${color.cyan(relativeToCwd(outputApkPath))}`
+    `Created aligned APK file: ${color.cyan(relativeToCwd(outputApkPath))}.`
   );
 
+  // 5. Sign APK file
   loader.start('Signing the APK file...');
   const keystorePath = options.keystorePath ?? 'android/app/debug.keystore';
   await signApkFile({
@@ -105,7 +105,9 @@ export async function signAndroid(options: SignAndroidOptions) {
     keystorePath,
     keystorePassword: options.keystorePassword ?? 'pass:android',
   });
-  loader.stop(`Signed the APK file with keystore: ${color.cyan(keystorePath)}`);
+  loader.stop(
+    `Signed the APK file with keystore: ${color.cyan(keystorePath)}.`
+  );
 
   outro('Success 🎉.');
 }
