@@ -90,11 +90,11 @@ export async function signAndroid(options: SignAndroidOptions) {
   }
 
   // 4. Align APK file
-  loader.start('Creating aligned APK file...');
+  loader.start('Aligning output APK file...');
   const outputApkPath = options.outputPath ?? options.apkPath;
   await alignApkFile(tempApkPath, outputApkPath);
   loader.stop(
-    `Created aligned APK file: ${color.cyan(relativeToCwd(outputApkPath))}.`
+    `Created output APK file: ${color.cyan(relativeToCwd(outputApkPath))}.`
   );
 
   // 5. Sign APK file
