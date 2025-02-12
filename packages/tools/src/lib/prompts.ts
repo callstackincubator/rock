@@ -110,15 +110,26 @@ export function spinner(options?: clack.SpinnerOptions) {
 
   return {
     start: (message?: string) => {
-      clackSpinner.start(message);
+      clackSpinner.start(formatStartMessage(message));
     },
     stop: (message?: string, code?: number) => {
       clackSpinner.stop(message, code);
     },
     message: (message?: string) => {
-      clackSpinner.message(message);
+      clackSpinner.message(formatStartMessage(message));
     },
   };
+}
+
+export function formatStartMessage(
+  text: string | undefined
+): string | undefined {
+  if (text === undefined) {
+    return undefined;
+  }
+
+  const messageWithoutDots = text.replace(/\.+$/, '');
+  return `${messageWithoutDots}...`;
 }
 
 export function cancelPromptAndExit(message?: string): never {
