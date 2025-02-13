@@ -119,7 +119,7 @@ function validateOptions(options: SignAndroidOptions) {
 
   if (options.buildJsBundle && options.jsBundlePath) {
     throw new RnefError(
-      'Cannot build JS bundle (`--build-jsbundle`) and provide source JS bundle (`--jsbundle`) path at the same time.'
+      'The "--build-jsbundle" flag is incompatible with "--jsbundle". Pick one.'
     );
   }
 
