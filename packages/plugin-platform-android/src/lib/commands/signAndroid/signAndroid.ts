@@ -228,7 +228,7 @@ async function signApkFile({
 }
 
 /**
- * apksigner expects the password into to be prefixed by the password type.
+ * apksigner expects the password info to be prefixed by the password type.
  *
  * @see https://developer.android.com/tools/apksigner
  */
