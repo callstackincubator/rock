@@ -156,7 +156,10 @@ async function alignApkFile(inputApkPath: string, outputApkPath: string) {
   const zipAlignPath = findAndroidBuildTool('zipalign');
   if (!zipAlignPath) {
     throw new RnefError(
-      `"zipalign" not found in Android Build-Tools directory: ${getAndroidBuildToolsPath()}`
+      `"zipalign" not found in Android Build-Tools directory: ${color.cyan(
+        getAndroidBuildToolsPath()
+      )}
+Please follow instructions at: https://reactnative.dev/docs/set-up-your-environment?platform=android'`
     );
   }
 
@@ -202,7 +205,10 @@ async function signApkFile({
   const apksignerPath = findAndroidBuildTool('apksigner');
   if (!apksignerPath) {
     throw new RnefError(
-      `"apksigner" not found in Android Build-Tools directory: ${getAndroidBuildToolsPath()}`
+      `"apksigner" not found in Android Build-Tools directory: ${color.cyan(
+        getAndroidBuildToolsPath()
+      )}
+Please follow instructions at: https://reactnative.dev/docs/set-up-your-environment?platform=android'`
     );
   }
 
