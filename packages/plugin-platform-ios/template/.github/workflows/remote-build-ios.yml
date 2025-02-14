@@ -37,11 +37,11 @@ jobs:
         with:
           destination: device
           configuration: Release
-          certificate-base64: ${{ secrets.RNEF_APPLE_CERTIFICATE_BASE64 }}
-          certificate-password: ${{ secrets.RNEF_APPLE_CERTIFICATE_PASSWORD }}
-          provisioning-profile-base64: ${{ secrets.RNEF_APPLE_PROVISIONING_PROFILE_BASE64 }}
-          provisioning-profile-name: "Provisioning Profile"
-          keychain-password: ${{ secrets.RNEF_APPLE_KEYCHAIN_PASSWORD }}
+          certificate-base64: ${{ secrets.APPLE_BUILD_CERTIFICATE_BASE64 }}
+          certificate-password: ${{ secrets.APPLE_BUILD_CERTIFICATE_PASSWORD }}
+          provisioning-profile-base64: ${{ secrets.APPLE_BUILD_PROVISIONING_PROFILE_BASE64 }}
+          provisioning-profile-name: "Distribution AdHoc RnefRemoteBuildTest"
+          keychain-password: ${{ secrets.APPLE_KEYCHAIN_PASSWORD }}
 
   build-simulator:
     runs-on: macos-latest

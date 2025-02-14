@@ -8,8 +8,8 @@ inputs:
   artifact-url:
     description: 'The URL of the artifact to post'
     required: true
-  platform:
-    description: 'The platform the build is for'
+  title:
+    description: 'The title of the GitHub comment'
     required: true
   github-token:
     description: A GitHub Personal Access Token with write access to the project

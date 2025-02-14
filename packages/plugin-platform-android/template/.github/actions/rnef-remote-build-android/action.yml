@@ -17,12 +17,26 @@ inputs:
     description: 'Build variant'
     required: false
     default: 'debug'
-  tasks:
-    description: 'Gradle tasks to run'
-    required: false
-    default: 'assembleDebug'
   rnef-build-extra-params:
     description: 'Extra parameters to pass to "rnef build:android"'
+    required: false
+  sign:
+    description: 'Whether to sign the build with release keystore'
+    required: false
+  keystore-base64:
+    description: 'Base64 version of the release keystore'
+    required: false
+  keystore-store-file:
+    description: 'Keystore store file name'
+    required: false
+  keystore-store-password:
+    description: 'Keystore store password'
+    required: false
+  keystore-key-alias:
+    description: 'Keystore key alias'
+    required: false
+  keystore-key-password:
+    description: 'Keystore key password'
     required: false
 
 outputs:
@@ -33,6 +47,36 @@ outputs:
 runs:
   using: 'composite'
   steps:
+    - name: Validate Inputs
+      run: |
+        if [ "${{ inputs.sign }}" == "true" ]; then
+          if [ -z "${{ inputs.keystore-base64 }}" ]; then
+            echo "Input 'keystore-base64' is required for signed builds."
+            exit 1
+          fi
+
+          if [ -z "${{ inputs.keystore-store-file }}" ]; then
+            echo "  Input 'keystore-store-file' is required for signed builds."
+            exit 1
+          fi
+
+          if [ -z "${{ inputs.keystore-store-password }}" ]; then
+            echo "Input 'keystore-store-password' is required for signed builds."
+            exit 1
+          fi
+
+          if [ -z "${{ inputs.keystore-key-alias }}" ]; then
+            echo "Input 'keystore-key-alias' is required for signed builds."
+            exit 1
+          fi
+
+          if [ -z "${{ inputs.keystore-key-password }}" ]; then
+            echo "Input 'keystore-key-password' is required for signed builds."
+            exit 1
+          fi
+        fi
+      shell: bash
+
     - name: Native Fingerprint
       id: fingerprint
       uses: ./.github/actions/rnef-native-fingerprint
@@ -54,7 +98,7 @@ runs:
       if: ${{ steps.cached-url.outputs.artifact-url && github.event_name == 'pull_request' }}
       uses: ./.github/actions/rnef-post-build
       with:
-        platform: Android
+        title: Android ${{ inputs.variant }} APK for all devices
         artifact-url: ${{ steps.cached-url.outputs.artifact-url }}
 
     - name: Install Java
@@ -69,12 +113,27 @@ runs:
       if: ${{ !steps.cached-url.outputs.artifact-url }}
       uses: gradle/actions/wrapper-validation@v4
 
+    - name: Create local gradle.properties
+      if: ${{ !steps.cached-url.outputs.artifact-url && inputs.sign }}
+      run: |
+        touch $HOME/.gradle/gradle.properties
+        echo "RNEF_UPLOAD_STORE_FILE=${{ inputs.keystore-store-file }}" >> $HOME/.gradle/gradle.properties
+        echo "RNEF_UPLOAD_STORE_PASSWORD=${{ inputs.keystore-store-password }}" >> $HOME/.gradle/gradle.properties
+        echo "RNEF_UPLOAD_KEY_ALIAS=${{ inputs.keystore-key-alias }}" >> $HOME/.gradle/gradle.properties
+        echo "RNEF_UPLOAD_KEY_PASSWORD=${{ inputs.keystore-key-password }}" >> $HOME/.gradle/gradle.properties
+      shell: bash
+
+    - name: Decode and store keystore file
+      if: ${{ !steps.cached-url.outputs.artifact-url && inputs.sign }}
+      run: |
+        echo "${{ inputs.keystore-base64 }}" | base64 --decode > android/app/release.keystore
+      shell: bash
+
     - name: Build Android
       if: ${{ !steps.cached-url.outputs.artifact-url }}
       run: |
         npx rnef build:android \
           --variant "${{ inputs.variant }}" \
-          --tasks "${{ inputs.tasks }}" \
           ${{ inputs.rnef-build-extra-params }}
       shell: bash
 
@@ -87,9 +146,16 @@ runs:
         path: ${{ inputs.artifact-output-path }}
         if-no-files-found: error
 
+    - name: Clean Up Keystore and gradle properties (signed builds only)
+      if: ${{ !steps.cached-url.outputs.artifact-url && inputs.sign }}
+      run: |
+        rm $HOME/.gradle/gradle.properties
+        rm android/app/release.keystore
+      shell: bash
+
     - name: Post Build
       if: ${{ !steps.cached-url.outputs.artifact-url && github.event_name == 'pull_request' }}
       uses: ./.github/actions/rnef-post-build
       with:
-        platform: Android
+        title: Android ${{ inputs.variant }} APK for all devices
         artifact-url: ${{ steps.upload-artifact.outputs.artifact-url }}

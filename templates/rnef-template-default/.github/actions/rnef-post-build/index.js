@@ -3,11 +3,11 @@ const github = require('@actions/github');
 
 async function run() {
   const token = core.getInput('github-token');
-  const platform = core.getInput('platform');
+  const titleInput = core.getInput('title');
   const artifactUrl = core.getInput('artifact-url');
 
-  const title = `## ${platform} Development Build`;
-  const body = `🔗 Download link: [${platform} build](${artifactUrl}).\n\n
+  const title = `## ${titleInput}`;
+  const body = `🔗 [Download link](${artifactUrl}).\n\n
 Note: if the download link expires, please re-run the workflow to generate a new build.\n\n
 *Generated at ${new Date().toISOString()} UTC*\n`;
 
