@@ -1,0 +1,20 @@
+name: Setup Node.js
+description: Setup Node.js, pnpm & nx
+
+runs:
+  using: composite
+  steps:
+    - uses: pnpm/action-setup@v4
+      with:
+        version: 10.2.1+sha256.f988f0d93b87e1da2d8cdf6ac7f45a01c6f843ae3606b4ca0f2ffd713b85f975
+
+      # Cache node_modules
+    - uses: actions/setup-node@v4
+      with:
+        node-version: 20
+        cache: 'pnpm'
+
+    - run: pnpm install --frozen-lockfile
+      shell: bash
+    
+    - uses: nrwl/nx-set-shas@v4

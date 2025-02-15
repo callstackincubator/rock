@@ -20,12 +20,19 @@ type PluginType = (args: PluginApi) => PluginOutput;
 type ArgValue = string | string[] | number | boolean;
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
-type ActionType<T = any> = (args: T) => void;
+type ActionType<T = any> = (...args: T[]) => void;
 
 type CommandType = {
   name: string;
   description: string;
   action: ActionType;
+  /** Positional arguments */
+  args?: Array<{
+    name: string;
+    description: string;
+    default?: ArgValue | undefined;
+  }>;
+  /** Flags */
   options?: Array<{
     name: string;
     description: string;

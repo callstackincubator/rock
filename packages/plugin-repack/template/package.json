@@ -1,7 +1,7 @@
 {
   "name": "rnef-plugin-repack-template",
   "devDependencies": {
-    "@rnef/plugin-repack": "^0.1.6",
+    "@rnef/plugin-repack": "^0.1.7",
     "@callstack/repack": "^5.0.0-rc.4",
     "@rspack/core": "^1.1.3",
     "@rspack/plugin-react-refresh": "^1.0.0",

@@ -15,25 +15,16 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
-  main:
+  validate:
+    name: Validate
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
         with:
           fetch-depth: 0
 
-      - uses: pnpm/action-setup@v4
-        with:
-          version: 9.11.0
-
-      # Cache node_modules
-      - uses: actions/setup-node@v4
-        with:
-          node-version: 20
-          cache: 'pnpm'
-
-      - run: pnpm install --frozen-lockfile
-      - uses: nrwl/nx-set-shas@v4
+      - name: Setup
+        uses: ./.github/actions/setup-node
 
       # Nx Affected runs only tasks affected by the changes in this PR/commit. Learn more: https://nx.dev/ci/features/affected
       - name: Typecheck and lint
@@ -54,3 +45,20 @@ jobs:
           pnpm verdaccio:publish
 
           NPM_CONFIG_REGISTRY=http://localhost:4873 pnpm exec nx affected -t e2e
+  
+  check-changeset:
+    name: Check Changeset
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Setup
+        uses: ./.github/actions/setup-node   
+
+      - name: Check changeset
+        if: github.ref != 'refs/heads/main'
+        run: pnpm changeset status --since=origin/${{ github.base_ref }}
+

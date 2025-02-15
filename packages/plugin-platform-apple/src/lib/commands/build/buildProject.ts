@@ -97,7 +97,6 @@ export const buildProject = async (
   } the app with xcodebuild for ${scheme} scheme in ${configuration} configuration`;
 
   loader.start(message);
-  logger.debug(`Running "xcodebuild ${xcodebuildArgs.join(' ')}.`);
   try {
     const { output } = await spawn('xcodebuild', xcodebuildArgs, {
       cwd: sourceDir,

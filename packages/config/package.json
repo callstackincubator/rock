@@ -1,6 +1,6 @@
 {
   "name": "@rnef/config",
-  "version": "0.1.6",
+  "version": "0.2.0",
   "type": "module",
   "exports": {
     "types": "./dist/src/index.d.ts",

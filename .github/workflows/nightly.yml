@@ -17,17 +17,8 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - uses: pnpm/action-setup@v4
-        with:
-          version: 9.11.0
-
-      - uses: actions/setup-node@v4
-        with:
-          node-version: 20
-          cache: 'pnpm'
-
-      - run: pnpm install --frozen-lockfile
-      - uses: nrwl/nx-set-shas@v4
+      - name: Setup
+        uses: ./.github/actions/setup-node
 
       - name: Typecheck and lint
         run: pnpm lint typecheck
@@ -53,14 +44,8 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - uses: pnpm/action-setup@v4
-        with:
-          version: 9.11.0
-
-      - uses: actions/setup-node@v4
-        with:
-          node-version: 20
-          cache: 'pnpm'
+      - name: Setup
+        uses: ./.github/actions/setup-node
 
       - name: Install Java
         uses: actions/setup-java@v4
@@ -68,9 +53,6 @@ jobs:
           java-version: 17
           distribution: adopt
           cache: gradle
-
-      - run: pnpm install --frozen-lockfile
-      - uses: nrwl/nx-set-shas@v4
 
       - name: Build framework
         run: pnpm build
@@ -106,17 +88,8 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - uses: pnpm/action-setup@v4
-        with:
-          version: 9.11.0
-
-      - uses: actions/setup-node@v4
-        with:
-          node-version: 20
-          cache: 'pnpm'
-
-      - run: pnpm install --frozen-lockfile
-      - uses: nrwl/nx-set-shas@v4
+      - name: Setup
+        uses: ./.github/actions/setup-node
 
       - name: Build framework
         run: pnpm build

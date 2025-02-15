@@ -1,17 +1,19 @@
-import type { Options, Subprocess, SubprocessError } from 'nano-spawn';
-import nanoSpawn from 'nano-spawn';
+import type { Options, Subprocess } from 'nano-spawn';
+import nanoSpawn, { SubprocessError } from 'nano-spawn';
+import logger from './logger.js';
 
 export function spawn(
   file: string,
   args?: readonly string[],
   options?: Options
 ): Subprocess {
+  logger.debug(`Running: ${file}`, ...(args ?? []));
   const childProcess = nanoSpawn(file, args, options);
   setupChildProcessCleanup(childProcess);
   return childProcess;
 }
 
-export type { SubprocessError };
+export { SubprocessError };
 
 function setupChildProcessCleanup(childProcess: Subprocess) {
   // https://stackoverflow.com/questions/53049939/node-daemon-wont-start-with-process-stdin-setrawmodetrue/53050098#53050098

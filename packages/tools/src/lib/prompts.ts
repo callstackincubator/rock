@@ -98,11 +98,11 @@ export async function promptGroup<T>(
 export function spinner(options?: clack.SpinnerOptions) {
   if (logger.isVerbose() || !isInteractive()) {
     return {
-      start: (message?: string) => logger.log(message),
+      start: (message?: string) => logger.log(formatStartMessage(message)),
       stop: (message?: string, code = 0) => {
         return code === 0 ? logger.log(message) : logger.error(message);
       },
-      message: (message?: string) => logger.log(message),
+      message: (message?: string) => logger.log(formatStartMessage(message)),
     };
   }
 
@@ -119,6 +119,17 @@ export function spinner(options?: clack.SpinnerOptions) {
       clackSpinner.message(message);
     },
   };
+}
+
+export function formatStartMessage(
+  text: string | undefined
+): string | undefined {
+  if (text === undefined) {
+    return undefined;
+  }
+
+  const messageWithoutDots = text.replace(/\.+$/, '');
+  return `${messageWithoutDots}...`;
 }
 
 export function cancelPromptAndExit(message?: string): never {

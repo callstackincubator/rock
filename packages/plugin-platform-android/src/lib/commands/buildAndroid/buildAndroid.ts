@@ -7,7 +7,8 @@ import { runGradle } from '../runGradle.js';
 import { toPascalCase } from '../toPascalCase.js';
 
 export interface BuildFlags {
-  buildVariant: string;
+  variant: string;
+  aab?: boolean;
   activeArchOnly?: boolean;
   tasks?: Array<string>;
   extraParams?: Array<string>;
@@ -19,10 +20,11 @@ export async function buildAndroid(
   args: BuildFlags
 ) {
   normalizeArgs(args);
-
+  // Use assemble task by default, but bundle if the flag is set
+  const buildTaskBase = args.aab ? 'bundle' : 'assemble';
   const tasks = args.interactive
     ? [await promptForTaskSelection('bundle', androidProject.sourceDir)]
-    : [...(args.tasks ?? []), `bundle${toPascalCase(args.buildVariant)}`];
+    : args.tasks ?? [`${buildTaskBase}${toPascalCase(args.variant)}`];
 
   await runGradle({ tasks, androidProject, args });
 
@@ -37,32 +39,36 @@ export async function buildAndroid(
 }
 
 function normalizeArgs(args: BuildFlags) {
-  if (args.tasks && args.buildVariant) {
+  if (args.tasks && args.variant) {
     logger.warn(
-      'Both "--tasks" and "--build-variant" parameters were passed. Using "--tasks" for building the app.'
+      'Both "--tasks" and "--variant" parameters were passed. Using "--tasks" for building the app.'
     );
   }
-  if (!args.buildVariant) {
-    args.buildVariant = 'debug';
+  if (!args.variant) {
+    args.variant = 'debug';
   }
 }
 
 export const options = [
   {
-    name: '--build-variant <string>',
+    name: '--variant <string>',
+    description: `Specify your app's build variant, which is constructed from build type and product flavor, e.g. "debug" or "freeRelease".`,
+  },
+  {
+    name: '--aab',
     description:
-      "Specify your app's build variant, which is constructed from build type and product flavor, e.g. 'debug' or 'freeRelease'.",
+      'Produces an Android App Bundle (AAB) suited for app stores such as Google Play. If not set, APK is created.',
   },
   {
     name: '--tasks <list>',
     description:
-      'Run custom Gradle tasks. Will override the --build-variant argument.',
+      'Run custom Gradle tasks. Will override the "--variant" and "--bundle" arguments.',
     parse: (val: string) => val.split(','),
   },
   {
     name: '--active-arch-only',
     description:
-      'Build native libraries only for the current device architecture for debug builds.',
+      'Build native libraries only for the current device architecture. Set by default in debug builds and interactive environments.',
   },
   {
     name: '--extra-params <string>',

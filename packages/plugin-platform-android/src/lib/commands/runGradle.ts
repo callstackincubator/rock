@@ -24,8 +24,9 @@ export async function runGradle({
   if ('binaryPath' in args) {
     return;
   }
+  const humanReadableTasks = tasks.join(', ');
   const loader = spinner({ indicator: 'timer' });
-  const message = `Building the app with Gradle in ${args.buildVariant} build variant`;
+  const message = `Building the app with Gradle using ${humanReadableTasks} ${tasks.length > 1 ? 'tasks' : 'task'}.`;
 
   loader.start(message);
   const gradleArgs = getTaskNames(androidProject.appName, tasks);
@@ -55,12 +56,11 @@ export async function runGradle({
   const gradleWrapper = getGradleWrapper();
 
   try {
-    logger.debug(`Running ${gradleWrapper} ${gradleArgs.join(' ')}.`);
     await spawn(gradleWrapper, gradleArgs, {
       cwd: androidProject.sourceDir,
       stdio: logger.isVerbose() ? 'inherit' : 'pipe',
     });
-    loader.stop(`Built the app in ${args.buildVariant} build variant.`);
+    loader.stop(`Built the app with Gradle using ${humanReadableTasks} ${tasks.length > 1 ? 'tasks' : 'task'}.`);
   } catch (error) {
     loader.stop('Failed to build the app');
     const cleanedErrorMessage = (error as SubprocessError).stderr

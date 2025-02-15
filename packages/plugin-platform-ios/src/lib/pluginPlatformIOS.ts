@@ -8,6 +8,7 @@ import {
   getRunOptions,
 } from '@rnef/plugin-platform-apple';
 import { outro, RnefError } from '@rnef/tools';
+import { registerSignCommand } from './commands/signIos.js';
 
 const projectConfig = getProjectConfig({ platformName: 'ios' });
 const buildOptions = getBuildOptions({ platformName: 'ios' });
@@ -50,6 +51,8 @@ export const pluginPlatformIOS =
       // @ts-expect-error: fix `simulator` is not defined in `RunFlags`
       options: runOptions,
     });
+
+    registerSignCommand(api);
 
     return {
       name: 'plugin-platform-ios',

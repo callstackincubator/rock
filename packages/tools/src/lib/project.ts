@@ -25,6 +25,10 @@ export function getProjectRoot(dir?: string) {
   return path.dirname(configPath);
 }
 
+export function getDotRnefPath() {
+  return path.join(getProjectRoot(), '.rnef');
+}
+
 /**
  * Returns path to cache root.
  *

@@ -10,7 +10,9 @@
     "lint": "nx run-many --target lint",
     "typecheck": "nx run-many --target typecheck",
     "watch": "nx watch --all -- nx run \\$NX_PROJECT_NAME:build",
+    "validate": "pnpm typecheck && pnpm lint && pnpm test",
     "link-packages": "node ./scripts/linkPackages.mjs",
+    "version": "changeset version",
     "publish:npm": "./scripts/npm-publish.sh",
     "verdaccio:init": "node ./scripts/verdaccio-init.mjs",
     "verdaccio:publish": "node ./scripts/verdaccio-publish.mjs",
@@ -22,6 +24,7 @@
     "vite-tsconfig-paths": "^5.0.1"
   },
   "devDependencies": {
+    "@changesets/cli": "^2.27.12",
     "@clack/prompts": "^0.10.0",
     "@eslint/js": "^9.8.0",
     "@nx/eslint": "20.3.0",
@@ -42,18 +45,19 @@
     "eslint-config-prettier": "^9.0.0",
     "eslint-plugin-simple-import-sort": "^12.1.1",
     "fast-glob": "^3.3.2",
+    "jsonc-eslint-parser": "^2.4.0",
     "nano-spawn": "^0.2.0",
     "nx": "20.3.0",
     "prettier": "^2.6.2",
     "ts-node": "10.9.1",
     "typescript": "5.6.3",
     "typescript-eslint": "^8.13.0",
-    "verdaccio": "^5.33.0",
+    "verdaccio": "^6.0.5",
     "vite": "^5.0.0",
     "vitest": "^2.1.2"
   },
   "nx": {
     "includedScripts": []
   },
-  "packageManager": "pnpm@9.11.0"
+  "packageManager": "pnpm@10.2.1+sha256.f988f0d93b87e1da2d8cdf6ac7f45a01c6f843ae3606b4ca0f2ffd713b85f975"
 }
