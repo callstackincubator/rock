@@ -26,6 +26,42 @@ export const buildProject = async (
     );
   }
 
+  function determineDestinations(): string[] {
+    if (args.destinations != undefined) {
+      return args.destinations;
+    }
+
+    if (args.device && typeof args.device === 'string') {
+      // Check if the device argument looks like a UDID (assuming UDIDs are alphanumeric and have specific length)
+      const isUDID = /^[A-Fa-f0-9-]{25,}$/.test(args.device);
+      if (isUDID) {
+        return [`id=${args.device}`];
+      } else {
+        // If it's a device name
+        return [`name=${args.device}`];
+      }
+    }
+
+    if (args.catalyst) {
+      return ['platform=macOS,variant=Mac Catalyst'];
+    }
+
+    if (udid) {
+      return [`id=${udid}`];
+    }
+
+    if (configuration === 'Debug' || args.device) {
+      return [`generic/platform=${simulatorDest}`];
+    }
+
+    return [`generic/platform=${platformName}`];
+  }
+
+  const destinations = determineDestinations().flatMap((destination) => [
+    '-destination',
+    destination,
+  ]);
+
   const xcodebuildArgs = [
     xcodeProject.isWorkspace ? '-workspace' : '-project',
     xcodeProject.name,
@@ -34,28 +70,7 @@ export const buildProject = async (
     configuration,
     '-scheme',
     scheme,
-    '-destination',
-    (() => {
-      if (args.device && typeof args.device === 'string') {
-        // Check if the device argument looks like a UDID (assuming UDIDs are alphanumeric and have specific length)
-        const isUDID = /^[A-Fa-f0-9-]{25,}$/.test(args.device);
-        if (isUDID) {
-          return `id=${args.device}`;
-        } else {
-          // If it's a device name
-          return `name=${args.device}`;
-        }
-      }
-
-      return args.catalyst
-        ? 'platform=macOS,variant=Mac Catalyst'
-        : udid
-        ? `id=${udid}`
-        : configuration === 'Debug' || args.device
-        ? `generic/platform=${simulatorDest}`
-        : `generic/platform=${platformName}` +
-          (args.destination ? ',' + args.destination : '');
-    })(),
+    ...destinations,
   ];
 
   if (args.archive) {
