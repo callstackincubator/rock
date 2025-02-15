@@ -42,7 +42,6 @@ export async function buildJsBundle(options: BuildJsBundleOptions) {
   // If user wants to build bundle differently, they should use `rnef bundle` command directly
   // and provide the JS bundle path to `--jsbundle` flag
   const rnefBundleArgs = [
-    'rnef',
     'bundle',
     '--platform',
     'android',
@@ -61,8 +60,9 @@ export async function buildJsBundle(options: BuildJsBundleOptions) {
     'false',
     '--verbose',
   ];
-  await spawn('npx', rnefBundleArgs, {
+  await spawn('rnef', rnefBundleArgs, {
     stdio: logger.isVerbose() ? 'inherit' : ['ignore', 'pipe', 'pipe'],
+    preferLocal: true,
   });
 
   if (!options.useHermes) {
