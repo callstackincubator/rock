@@ -1,4 +1,10 @@
-import { logger, spawn, spinner } from '@rnef/tools';
+import {
+  logger,
+  RnefError,
+  spawn,
+  spinner,
+  type SubprocessError,
+} from '@rnef/tools';
 import { getAdbPath } from './adb.js';
 import { findOutputFile } from './findOutputFile.js';
 import type { DeviceData } from './listAndroidDevices.js';
@@ -54,17 +60,15 @@ export async function tryInstallAppOnDevice(
   loader.start(
     `Installing the app on ${device.readableName} (id: ${deviceId})`
   );
-  const { stderr } = await spawn(adbPath, adbArgs, {
-    stdio: ['ignore', 'ignore', 'pipe'],
-  });
-  if (stderr) {
-    loader.stop(
-      `Failed to install the app on ${device.readableName} (id: ${deviceId}): ${stderr}.`,
-      1
-    );
-  } else {
+  try {
+    await spawn(adbPath, adbArgs, { stdio: ['ignore', 'ignore', 'pipe'] });
     loader.stop(
       `Installed the app on ${device.readableName} (id: ${deviceId}).`
     );
+  } catch (error) {
+    loader.stop(`Failed to install the app.`, 1);
+    throw new RnefError(`Failed to install the app on ${device.readableName}`, {
+      cause: (error as SubprocessError).stderr,
+    });
   }
 }
