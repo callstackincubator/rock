@@ -10,7 +10,7 @@ inputs:
     required: false
     default: ${{ github.token }}
   variant:
-    description: 'RNEF build variant'
+    description: 'Build variant'
     required: false
     default: 'debug'
   rnef-build-extra-params:
