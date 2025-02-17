@@ -57,7 +57,7 @@ export const pluginBrownfieldAndroid =
 
     return {
       name: 'plugin-brownfield-android',
-      description: 'RNEF plugin for everything Android.',
+      description: 'RNEF plugin for brownfield Android.',
     };
   };
 
