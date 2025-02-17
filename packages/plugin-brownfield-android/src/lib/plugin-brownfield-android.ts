@@ -11,13 +11,14 @@ import { intro, RnefError } from '@rnef/tools';
 export const pluginBrownfieldAndroid =
   () =>
   (api: PluginApi): PluginOutput => {
+    const projectRoot = api.getProjectRoot();
+
     api.registerCommand({
       name: 'package:aar',
       description: 'Emits a AAR file from React Native code.',
       action: async (args: BuildFlags) => {
         intro('Generating AAR');
 
-        const projectRoot = api.getProjectRoot();
         const androidConfig: AarProject = {
           sourceDir: projectConfig(projectRoot)?.sourceDir ?? '',
           moduleName: args.moduleName ?? '',
@@ -39,7 +40,6 @@ export const pluginBrownfieldAndroid =
       action: async (args) => {
         intro('Publishing AAR');
 
-        const projectRoot = api.getProjectRoot();
         const androidConfig: AarProject = {
           sourceDir: projectConfig(projectRoot)?.sourceDir ?? '',
           moduleName: args.moduleName ?? '',
