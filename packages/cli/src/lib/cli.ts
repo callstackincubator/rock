@@ -6,6 +6,7 @@ import { logger, resolveFilenameUp, RnefError } from '@rnef/tools';
 import { Command } from 'commander';
 import { logConfig } from '../config.js';
 import { nativeFingerprintCommand } from './commands/fingerprint.js';
+import { checkDeprecatedOptions } from './checkDeprecatedOptions.js';
 
 const require = createRequire(import.meta.url);
 const __dirname = dirname(fileURLToPath(import.meta.url));
@@ -19,6 +20,7 @@ type CliOptions = {
 export const cli = async ({ cwd, argv }: CliOptions = {}) => {
   if (argv) {
     logger.setVerbose(argv.includes('--verbose'));
+    checkDeprecatedOptions(argv);
   }
 
   const program = new Command();
