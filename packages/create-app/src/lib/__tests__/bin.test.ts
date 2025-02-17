@@ -9,10 +9,10 @@ test('formatConfig', () => {
     import { pluginRepack } from '@rnef/plugin-repack';
 
     export default {
-      plugins: {
-        metro: pluginMetro(),
-        repack: pluginRepack(),
-      },
+      plugins: [
+        pluginMetro(),
+        pluginRepack(),
+      ],
       platforms: {
         ios: pluginPlatformIOS(),
         android: pluginPlatformAndroid(),
@@ -26,9 +26,9 @@ test('formatConfig', () => {
     import { pluginMetro } from '@rnef/plugin-metro';
 
     export default {
-      plugins: {
-        metro: pluginMetro(),
-      },
+      plugins: [
+        pluginMetro(),
+      ],
       platforms: {
         ios: pluginPlatformIOS(),
       },
