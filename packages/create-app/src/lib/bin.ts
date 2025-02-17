@@ -183,11 +183,11 @@ export function formatConfig(
     .join('\n')}
 
 export default {
-  plugins: {
+  plugins: [
     ${pluginsWithImports
-      .map((template) => `${template.name}: ${template.importName}(),`)
+      .map((template) => `${template.importName}(),`)
       .join('\n    ')}
-  },
+  ],
   platforms: {
     ${platformsWithImports
       .map((template) => `${template.name}: ${template.importName}(),`)
