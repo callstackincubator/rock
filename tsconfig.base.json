@@ -31,7 +31,10 @@
       "@rnef/tools": ["packages/tools/src/index.ts"],
       "@rnef/plugin-platform-apple": [
         "packages/plugin-platform-apple/src/index.ts"
-      ]
+      ],
+      "@rnef/plugin-platform-visionos": [
+        "packages/plugin-platform-visionos/src/index.ts"
+      ],
     }
   },
   "exclude": ["node_modules", "tmp"]

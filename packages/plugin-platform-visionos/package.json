@@ -1,0 +1,27 @@
+{
+  "name": "@rnef/plugin-platform-visionos",
+  "version": "0.0.1",
+  "type": "module",
+  "exports": {
+    "types": "./dist/src/index.d.ts",
+    "import": "./dist/src/index.js"
+  },
+  "files": [
+    "dist",
+    "src",
+    "template",
+    "react-native.config.ts"
+  ],
+  "scripts": {
+    "clean-dist": "rm -f dist/package.json",
+    "publish:verdaccio": "npm publish --registry http://localhost:4873 --userconfig ../../.npmrc"
+  },
+  "dependencies": {
+    "@react-native-community/cli-config-apple": "^16.0.2",
+    "tslib": "^2.3.0",
+    "@callstack/rnef-plugin-platform-apple": "^0.0.1"
+  },
+  "devDependencies": {
+    "@callstack/rnef-config": "^0.0.1"
+  }
+}
