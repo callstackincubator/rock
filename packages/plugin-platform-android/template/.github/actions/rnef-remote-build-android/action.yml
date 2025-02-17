@@ -120,10 +120,20 @@ runs:
         echo "RNEF_UPLOAD_KEY_PASSWORD=${{ inputs.keystore-key-password }}" >> $HOME/.gradle/gradle.properties
       shell: bash
 
+    - name: Determine Android sourceDir and appName
+      if: ${{ !steps.cached-url.outputs.artifact-url }}
+      run: |
+        JSON_OUTPUT=$(npx rnef config -p android)
+        ANDROID_SOURCE_DIR=$(echo "$JSON_OUTPUT" | jq -r '.project.android.sourceDir')
+        APP_NAME=$(echo "$JSON_OUTPUT" | jq -r '.project.android.appName')
+        echo "ANDROID_SOURCE_DIR=$ANDROID_SOURCE_DIR" >> $GITHUB_ENV
+        echo "APP_NAME=$APP_NAME" >> $GITHUB_ENV
+      shell: bash
+
     - name: Decode and store keystore file
       if: ${{ !steps.cached-url.outputs.artifact-url && inputs.sign }}
       run: |
-        echo "${{ inputs.keystore-base64 }}" | base64 --decode > android/app/release.keystore
+        echo "${{ inputs.keystore-base64 }}" | base64 --decode > $ANDROID_SOURCE_DIR/$APP_NAME/release.keystore
       shell: bash
 
     - name: Build Android
@@ -137,7 +147,7 @@ runs:
     - name: Find Build Artifact
       if: ${{ !steps.cached-url.outputs.artifact-url }}
       run: |
-        APK_PATH=$(find android/app/build/outputs -name '*.apk' | head -1 )
+        APK_PATH=$(find $ANDROID_SOURCE_DIR/$APP_NAME/build/outputs -name '*.apk' | head -1 )
         echo APK_PATH $APK_PATH
         echo "ARTIFACT_PATH=$APK_PATH" >> $GITHUB_ENV
       shell: bash
@@ -155,7 +165,7 @@ runs:
       if: ${{ !steps.cached-url.outputs.artifact-url && inputs.sign }}
       run: |
         rm $HOME/.gradle/gradle.properties
-        rm android/app/release.keystore
+        rm $ANDROID_SOURCE_DIR/$APP_NAME/release.keystore
       shell: bash
 
     - name: Post Build

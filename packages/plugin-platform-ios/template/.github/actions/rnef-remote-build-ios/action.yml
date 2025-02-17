@@ -100,7 +100,7 @@ runs:
       with:
         title: iOS ${{ inputs.configuration }} ${{ inputs.destination == 'simulator' && 'APP for simulators' || 'IPA for physical devices' }}
         artifact-url: ${{ steps.cached-url.outputs.artifact-url }}
-    
+
     - name: Setup Code Signing (device builds only)
       if: ${{ !steps.cached-url.outputs.artifact-url && inputs.destination == 'device' }}
       run: |
@@ -127,10 +127,18 @@ runs:
         echo -n "${{ inputs.provisioning-profile-base64 }}" | base64 --decode -o "$PROFILE_PATH"
       shell: bash
 
+    - name: Determine iOS sourceDir
+      if: ${{ !steps.cached-url.outputs.artifact-url }}
+      run: |
+        JSON_OUTPUT=$(npx rnef config -p ios)
+        IOS_SOURCE_DIR=$(echo "$JSON_OUTPUT" | jq -r '.project.ios.sourceDir')
+        echo "IOS_SOURCE_DIR=$IOS_SOURCE_DIR" >> $GITHUB_ENV
+      shell: bash
+
     - name: Install Pods
       if: ${{ !steps.cached-url.outputs.artifact-url }}
       run: |
-        cd ios
+        cd $IOS_SOURCE_DIR
         pod install
       shell: bash
 
@@ -153,7 +161,7 @@ runs:
           echo "ARTIFACT_PATH=$IPA_PATH" >> $GITHUB_ENV
         else 
           # Simulator build: needs to compress with tar, as GH actions drop execute file permission during packing to zip
-          APP_PATH=$(find ios/build -name '*.app' -type d | head -1 )
+          APP_PATH=$(find $IOS_SOURCE_DIR/build -name '*.app' -type d | head -1 )
           APP_DIR=$(dirname "$APP_PATH")
           APP_BASENAME=$(basename "$APP_PATH")
 
