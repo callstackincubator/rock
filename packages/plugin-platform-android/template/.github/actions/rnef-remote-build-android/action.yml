@@ -9,12 +9,8 @@ inputs:
     description: 'GitHub Token'
     required: false
     default: ${{ github.token }}
-  artifact-output-path:
-    description: 'Path to the build output artifact'
-    required: false
-    default: 'android/app/build/outputs/apk/debug/app-debug.apk'
   variant:
-    description: 'Build variant'
+    description: 'RNEF build variant'
     required: false
     default: 'debug'
   rnef-build-extra-params:
@@ -116,6 +112,7 @@ runs:
     - name: Create local gradle.properties
       if: ${{ !steps.cached-url.outputs.artifact-url && inputs.sign }}
       run: |
+        mkdir -p $HOME/.gradle
         touch $HOME/.gradle/gradle.properties
         echo "RNEF_UPLOAD_STORE_FILE=${{ inputs.keystore-store-file }}" >> $HOME/.gradle/gradle.properties
         echo "RNEF_UPLOAD_STORE_PASSWORD=${{ inputs.keystore-store-password }}" >> $HOME/.gradle/gradle.properties
@@ -137,13 +134,21 @@ runs:
           ${{ inputs.rnef-build-extra-params }}
       shell: bash
 
+    - name: Find Build Artifact
+      if: ${{ !steps.cached-url.outputs.artifact-url }}
+      run: |
+        APK_PATH=$(find android/app/build/outputs -name '*.apk' -type d | head -1 )
+        echo APK_PATH $APK_PATH
+        echo "ARTIFACT_PATH=$APK_PATH" >> $GITHUB_ENV
+      shell: bash
+
     - name: Upload Artifact
       id: upload-artifact
       if: ${{ !steps.cached-url.outputs.artifact-url }}
       uses: actions/upload-artifact@v4
       with:
         name: ${{ env.ARTIFACT_NAME }}
-        path: ${{ inputs.artifact-output-path }}
+        path: ${{ env.ARTIFACT_PATH }}
         if-no-files-found: error
 
     - name: Clean Up Keystore and gradle properties (signed builds only)

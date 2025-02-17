@@ -191,10 +191,7 @@ Use in the GitHub Workflow file like this:
     keystore-store-password: ${{ secrets.RNEF_UPLOAD_STORE_PASSWORD }}
     keystore-key-alias: ${{ secrets.RNEF_UPLOAD_KEY_ALIAS }}
     keystore-key-password: ${{ secrets.RNEF_UPLOAD_KEY_PASSWORD }}
-    artifact-output-path: android/app/build/outputs/apk/release/app-release.apk
 ```
-
-Make sure that the `artifact-output-path` matches the path to your Android app variant.
 
 ### Alternative Settings
 
