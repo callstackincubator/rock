@@ -5,8 +5,8 @@ import { getConfig } from '@rnef/config';
 import { logger, resolveFilenameUp, RnefError } from '@rnef/tools';
 import { Command } from 'commander';
 import { logConfig } from '../config.js';
-import { nativeFingerprintCommand } from './commands/fingerprint.js';
 import { checkDeprecatedOptions } from './checkDeprecatedOptions.js';
+import { nativeFingerprintCommand } from './commands/fingerprint.js';
 
 const require = createRequire(import.meta.url);
 const __dirname = dirname(fileURLToPath(import.meta.url));
