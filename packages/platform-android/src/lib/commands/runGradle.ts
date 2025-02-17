@@ -29,6 +29,14 @@ export type RunGradleArgs = {
   args: BuildFlags | Flags;
 };
 
+const getCleanedErrorMessage = (error: SubprocessError) => {
+  return error.stderr
+    .split('\n')
+    .filter((line) => !gradleLinesToRemove.some((l) => line.includes(l)))
+    .join('\n')
+    .trim();
+};
+
 export async function runGradle({
   tasks,
   androidProject,
@@ -82,11 +90,9 @@ export async function runGradle({
     );
   } catch (error) {
     loader.stop('Failed to build the app');
-    const cleanedErrorMessage = (error as SubprocessError).stderr
-      .split('\n')
-      .filter((line) => !gradleLinesToRemove.some((l) => line.includes(l)))
-      .join('\n')
-      .trim();
+    const cleanedErrorMessage = getCleanedErrorMessage(
+      error as SubprocessError
+    );
 
     if (cleanedErrorMessage) {
       logger.error(cleanedErrorMessage);
@@ -138,11 +144,9 @@ export async function runGradleAar({
     );
   } catch (error) {
     loader.stop(`Failed to ${isPublishTask ? 'publish' : 'build'} the AAR`);
-    const cleanedErrorMessage = (error as SubprocessError).stderr
-      .split('\n')
-      .filter((line) => !gradleLinesToRemove.some((l) => line.includes(l)))
-      .join('\n')
-      .trim();
+    const cleanedErrorMessage = getCleanedErrorMessage(
+      error as SubprocessError
+    );
 
     if (cleanedErrorMessage) {
       logger.error(cleanedErrorMessage);
