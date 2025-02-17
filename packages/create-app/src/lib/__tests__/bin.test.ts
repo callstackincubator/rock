@@ -3,8 +3,8 @@ import { PLATFORMS, PLUGINS } from '../templates.js';
 
 test('formatConfig', () => {
   expect(formatConfig(PLATFORMS, PLUGINS)).toMatchInlineSnapshot(`
-    "import { pluginPlatformIOS } from '@rnef/plugin-platform-ios';
-    import { pluginPlatformAndroid } from '@rnef/plugin-platform-android';
+    "import { platformIOS } from '@rnef/platform-ios';
+    import { platformAndroid } from '@rnef/platform-android';
     import { pluginMetro } from '@rnef/plugin-metro';
     import { pluginRepack } from '@rnef/plugin-repack';
 
@@ -14,15 +14,15 @@ test('formatConfig', () => {
         pluginRepack(),
       ],
       platforms: {
-        ios: pluginPlatformIOS(),
-        android: pluginPlatformAndroid(),
+        ios: platformIOS(),
+        android: platformAndroid(),
       },
     };
     "
   `);
 
   expect(formatConfig([PLATFORMS[0]], [PLUGINS[0]])).toMatchInlineSnapshot(`
-    "import { pluginPlatformIOS } from '@rnef/plugin-platform-ios';
+    "import { platformIOS } from '@rnef/platform-ios';
     import { pluginMetro } from '@rnef/plugin-metro';
 
     export default {
@@ -30,7 +30,7 @@ test('formatConfig', () => {
         pluginMetro(),
       ],
       platforms: {
-        ios: pluginPlatformIOS(),
+        ios: platformIOS(),
       },
     };
     "

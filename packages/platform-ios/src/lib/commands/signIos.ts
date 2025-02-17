@@ -1,5 +1,5 @@
 import type { PluginApi } from '@rnef/config';
-import { modifyIpa } from '@rnef/plugin-platform-apple';
+import { modifyIpa } from '@rnef/platform-apple-helpers';
 
 export type SignFlags = {
   verbose?: boolean;

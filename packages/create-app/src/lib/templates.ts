@@ -55,18 +55,18 @@ export const PLATFORMS: TemplateInfo[] = [
   {
     type: 'npm',
     name: 'ios',
-    packageName: '@rnef/plugin-platform-ios',
+    packageName: '@rnef/platform-ios',
     version: 'latest',
     directory: 'template',
-    importName: 'pluginPlatformIOS',
+    importName: 'platformIOS',
   },
   {
     type: 'npm',
     name: 'android',
-    packageName: '@rnef/plugin-platform-android',
+    packageName: '@rnef/platform-android',
     version: 'latest',
     directory: 'template',
-    importName: 'pluginPlatformAndroid',
+    importName: 'platformAndroid',
   },
 ];
 

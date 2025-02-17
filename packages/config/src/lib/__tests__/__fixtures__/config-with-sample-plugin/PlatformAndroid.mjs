@@ -31,7 +31,7 @@ const buildOptions = [
   },
 ];
 
-export const PluginPlatformAndroid = () => (api) => {
+export const PlatformAndroid = () => (api) => {
   api.registerCommand({
     name: 'android:build',
     description: 'Build android',
@@ -47,9 +47,9 @@ export const PluginPlatformAndroid = () => (api) => {
   });
 
   return {
-    name: 'plugin-platform-android',
+    name: 'platform-android',
     description: 'test plugin for everything android.',
   };
 };
 
-export default PluginPlatformAndroid;
+export default PlatformAndroid;

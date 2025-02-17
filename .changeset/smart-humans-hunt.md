@@ -1,5 +1,5 @@
 ---
-'@rnef/plugin-platform-apple': patch
+'@rnef/platform-apple-helpers': patch
 ---
 
 feat(ios): replace --destination with --destinations

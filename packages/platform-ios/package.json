@@ -1,5 +1,5 @@
 {
-  "name": "@rnef/plugin-platform-apple",
+  "name": "@rnef/platform-ios",
   "version": "0.2.0",
   "type": "module",
   "exports": {
@@ -8,7 +8,9 @@
   },
   "files": [
     "dist",
-    "src"
+    "src",
+    "template",
+    "react-native.config.ts"
   ],
   "scripts": {
     "publish:npm": "npm publish --access restricted",
@@ -16,13 +18,8 @@
   },
   "dependencies": {
     "@react-native-community/cli-config-apple": "^16.0.2",
+    "@rnef/platform-apple-helpers": "^0.2.0",
     "@rnef/tools": "^0.2.0",
-    "@types/adm-zip": "^0.5.7",
-    "adm-zip": "^0.5.16",
-    "fast-glob": "^3.3.2",
-    "fast-xml-parser": "^4.5.0",
-    "picocolors": "^1.1.1",
-    "tar": "^7.4.3",
     "tslib": "^2.3.0"
   },
   "devDependencies": {

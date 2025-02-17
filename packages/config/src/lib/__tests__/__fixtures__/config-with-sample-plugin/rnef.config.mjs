@@ -1,9 +1,9 @@
 import { TestPlugin } from './SamplePlugin.mjs';
-import { PluginPlatformAndroid } from './PluginPlatformAndroid.mjs';
+import { PlatformAndroid } from './PlatformAndroid.mjs';
 
 export default {
   plugins: [TestPlugin()],
   platforms: {
-    android: PluginPlatformAndroid(),
+    android: PlatformAndroid(),
   },
 };

@@ -168,26 +168,7 @@ importers:
         specifier: ^1.2.5
         version: 1.2.5
 
-  packages/plugin-metro:
-    dependencies:
-      '@react-native-community/cli-server-api':
-        specifier: ^16.0.2
-        version: 16.0.2
-      '@rnef/tools':
-        specifier: ^0.2.0
-        version: link:../tools
-      tslib:
-        specifier: ^2.3.0
-        version: 2.8.1
-    devDependencies:
-      '@react-native/community-cli-plugin':
-        specifier: 0.77.0-rc.2
-        version: 0.77.0-rc.2(@babel/core@7.25.2)(@babel/preset-env@7.25.4(@babel/core@7.25.2))(@react-native-community/cli-server-api@16.0.2)
-      '@rnef/config':
-        specifier: ^0.2.0
-        version: link:../config
-
-  packages/plugin-platform-android:
+  packages/platform-android:
     dependencies:
       '@react-native-community/cli-config-android':
         specifier: ^16.0.2
@@ -203,7 +184,7 @@ importers:
         version: 1.1.1
       tslib:
         specifier: ^2.3.0
-        version: 2.7.0
+        version: 2.8.1
     devDependencies:
       '@react-native-community/cli-types':
         specifier: ^16.0.2
@@ -215,7 +196,7 @@ importers:
         specifier: ^0.5.7
         version: 0.5.7
 
-  packages/plugin-platform-apple:
+  packages/platform-apple-helpers:
     dependencies:
       '@react-native-community/cli-config-apple':
         specifier: ^16.0.2
@@ -231,10 +212,10 @@ importers:
         version: 0.5.16
       fast-glob:
         specifier: ^3.3.2
-        version: 3.3.2
+        version: 3.3.3
       fast-xml-parser:
         specifier: ^4.5.0
-        version: 4.5.0
+        version: 4.5.1
       picocolors:
         specifier: ^1.1.1
         version: 1.1.1
@@ -243,27 +224,46 @@ importers:
         version: 7.4.3
       tslib:
         specifier: ^2.3.0
-        version: 2.7.0
+        version: 2.8.1
     devDependencies:
       '@rnef/config':
         specifier: ^0.2.0
         version: link:../config
 
-  packages/plugin-platform-ios:
+  packages/platform-ios:
     dependencies:
       '@react-native-community/cli-config-apple':
         specifier: ^16.0.2
         version: 16.0.2
-      '@rnef/plugin-platform-apple':
+      '@rnef/platform-apple-helpers':
         specifier: ^0.2.0
-        version: link:../plugin-platform-apple
+        version: link:../platform-apple-helpers
       '@rnef/tools':
         specifier: ^0.2.0
         version: link:../tools
       tslib:
         specifier: ^2.3.0
-        version: 2.7.0
+        version: 2.8.1
     devDependencies:
+      '@rnef/config':
+        specifier: ^0.2.0
+        version: link:../config
+
+  packages/plugin-metro:
+    dependencies:
+      '@react-native-community/cli-server-api':
+        specifier: ^16.0.2
+        version: 16.0.2
+      '@rnef/tools':
+        specifier: ^0.2.0
+        version: link:../tools
+      tslib:
+        specifier: ^2.3.0
+        version: 2.8.1
+    devDependencies:
+      '@react-native/community-cli-plugin':
+        specifier: 0.77.0-rc.2
+        version: 0.77.0-rc.2(@babel/core@7.25.2)(@babel/preset-env@7.25.4(@babel/core@7.25.2))(@react-native-community/cli-server-api@16.0.2)
       '@rnef/config':
         specifier: ^0.2.0
         version: link:../config
@@ -3422,10 +3422,6 @@ packages:
 
   fast-uri@3.0.1:
     resolution: {integrity: sha512-MWipKbbYiYI0UC7cl8m/i/IWTqfC8YXsqjzybjddLsFjStroQzsHXkc73JutMvBiXmOvapk+axIl79ig5t55Bw==}
-
-  fast-xml-parser@4.5.0:
-    resolution: {integrity: sha512-/PlTQCI96+fZMAOLMZK4CWG1ItCbfZ/0jx7UIJFChPNrx7tcEgerUgWbeieCM9MfHInUDyK8DWYZ+YrywDJuTg==}
-    hasBin: true
 
   fast-xml-parser@4.5.1:
     resolution: {integrity: sha512-y655CeyUQ+jj7KBbYMc4FG01V8ZQqjN+gDYGJ50RtfsUB8iG9AmwmwoAgeKLJdmueKKMrH1RJ7yXHTSoczdv5w==}
@@ -7709,8 +7705,8 @@ snapshots:
     dependencies:
       '@react-native-community/cli-tools': 16.0.2
       chalk: 4.1.2
-      fast-glob: 3.3.2
-      fast-xml-parser: 4.5.0
+      fast-glob: 3.3.3
+      fast-xml-parser: 4.5.1
 
   '@react-native-community/cli-config-apple@15.1.2':
     dependencies:
@@ -7724,7 +7720,7 @@ snapshots:
       '@react-native-community/cli-tools': 16.0.2
       chalk: 4.1.2
       execa: 5.1.1
-      fast-glob: 3.3.2
+      fast-glob: 3.3.3
 
   '@react-native-community/cli-config@15.1.2(typescript@5.6.3)':
     dependencies:
@@ -8515,7 +8511,7 @@ snapshots:
       '@typescript-eslint/types': 8.19.0
       '@typescript-eslint/visitor-keys': 8.19.0
       debug: 4.4.0
-      fast-glob: 3.3.2
+      fast-glob: 3.3.3
       is-glob: 4.0.3
       minimatch: 9.0.5
       semver: 7.7.1
@@ -9922,10 +9918,6 @@ snapshots:
   fast-uri@2.4.0: {}
 
   fast-uri@3.0.1: {}
-
-  fast-xml-parser@4.5.0:
-    dependencies:
-      strnum: 1.0.5
 
   fast-xml-parser@4.5.1:
     dependencies:

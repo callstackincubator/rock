@@ -1,12 +1,12 @@
 import { getProjectConfig } from '@react-native-community/cli-config-apple';
 import type { PluginApi, PluginOutput } from '@rnef/config';
-import type { BuildFlags, RunFlags } from '@rnef/plugin-platform-apple';
+import type { BuildFlags, RunFlags } from '@rnef/platform-apple-helpers';
 import {
   createBuild,
   createRun,
   getBuildOptions,
   getRunOptions,
-} from '@rnef/plugin-platform-apple';
+} from '@rnef/platform-apple-helpers';
 import { RnefError } from '@rnef/tools';
 import { registerSignCommand } from './commands/signIos.js';
 
@@ -14,7 +14,7 @@ const projectConfig = getProjectConfig({ platformName: 'ios' });
 const buildOptions = getBuildOptions({ platformName: 'ios' });
 const runOptions = getRunOptions({ platformName: 'ios' });
 
-export const pluginPlatformIOS =
+export const platformIOS =
   () =>
   (api: PluginApi): PluginOutput => {
     api.registerCommand({
@@ -53,9 +53,9 @@ export const pluginPlatformIOS =
     registerSignCommand(api);
 
     return {
-      name: 'plugin-platform-ios',
+      name: 'platform-ios',
       description: 'RNEF plugin for everything iOS.',
     };
   };
 
-export default pluginPlatformIOS;
+export default platformIOS;

@@ -1,7 +1,7 @@
 {
-  "name": "plugin-platform-ios",
+  "name": "platform-apple-helpers",
   "$schema": "../../node_modules/nx/schemas/project-schema.json",
-  "sourceRoot": "packages/plugin-platform-ios/src",
+  "sourceRoot": "packages/platform-apple-helpers/src",
   "projectType": "library",
   "tags": [],
   "targets": {

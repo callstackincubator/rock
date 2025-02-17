@@ -7,7 +7,7 @@ import { registerSignCommand } from './commands/signAndroid/command.js';
 
 type PluginConfig = AndroidProjectConfig;
 
-export const pluginPlatformAndroid =
+export const platformAndroid =
   (pluginConfig: PluginConfig) =>
   (api: PluginApi): PluginOutput => {
     registerBuildCommand(api);
@@ -16,9 +16,9 @@ export const pluginPlatformAndroid =
     registerSignCommand(api);
 
     return {
-      name: 'plugin-platform-android',
+      name: 'platform-android',
       description: 'RNEF plugin for everything Android.',
     };
   };
 
-export default pluginPlatformAndroid;
+export default platformAndroid;

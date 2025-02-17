@@ -1,0 +1,9 @@
+{
+  "name": "rnef-platform-ios-template",
+  "scripts": {
+    "ios": "rnef run:ios"
+  },
+  "devDependencies": {
+    "@rnef/platform-ios": "^0.1.7"
+  }
+}

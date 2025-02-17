@@ -1,0 +1,9 @@
+{
+  "name": "rnef-platform-android-template",
+  "scripts": {
+    "android": "rnef run:android"
+  },
+  "devDependencies": {
+    "@rnef/platform-android": "^0.1.7"
+  }
+}

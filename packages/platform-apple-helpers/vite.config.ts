@@ -4,7 +4,7 @@ import { defineConfig } from 'vite';
 
 export default defineConfig({
   root: __dirname,
-  cacheDir: '../../node_modules/.vite/packages/plugin-platform-ios',
+  cacheDir: '../../node_modules/.vite/packages/platform-apple-helpers',
 
   plugins: [nxViteTsPaths(), nxCopyAssetsPlugin(['*.md'])],
 
@@ -20,8 +20,9 @@ export default defineConfig({
     include: ['src/**/*.{test,spec}.{js,mjs,cjs,ts,mts,cts,jsx,tsx}'],
     reporters: ['default'],
     coverage: {
-      reportsDirectory: '../../coverage/packages/plugin-platform-ios',
+      reportsDirectory: '../../coverage/packages/platform-apple-helpers',
       provider: 'v8',
     },
+    setupFiles: ['./vitest-setup.ts'],
   },
 });
