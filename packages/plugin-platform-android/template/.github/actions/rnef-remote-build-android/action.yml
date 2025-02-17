@@ -137,7 +137,7 @@ runs:
     - name: Find Build Artifact
       if: ${{ !steps.cached-url.outputs.artifact-url }}
       run: |
-        APK_PATH=$(find android/app/build/outputs -name '*.apk' -type d | head -1 )
+        APK_PATH=$(find android/app/build/outputs -name '*.apk' | head -1 )
         echo APK_PATH $APK_PATH
         echo "ARTIFACT_PATH=$APK_PATH" >> $GITHUB_ENV
       shell: bash
