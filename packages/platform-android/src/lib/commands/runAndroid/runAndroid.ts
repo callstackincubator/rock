@@ -4,13 +4,15 @@ import type {
   AndroidProjectConfig,
   Config,
 } from '@react-native-community/cli-types';
+import type {
+  SupportedRemoteCacheProviders} from '@rnef/tools';
 import {
   intro,
   isInteractive,
   logger,
   outro,
   promptSelect,
-  RnefError,
+  RnefError
 } from '@rnef/tools';
 import type { BuildFlags } from '../buildAndroid/buildAndroid.js';
 import { options } from '../buildAndroid/buildAndroid.js';
@@ -44,7 +46,8 @@ export type AndroidProject = NonNullable<Config['project']['android']>;
 export async function runAndroid(
   androidProject: AndroidProjectConfig,
   args: Flags,
-  projectRoot: string
+  projectRoot: string,
+  remoteCacheProvider: SupportedRemoteCacheProviders | undefined
 ) {
   intro('Running Android app');
 
@@ -61,6 +64,7 @@ export async function runAndroid(
   if (!args.binaryPath && args.remoteCache) {
     const cachedBuild = await fetchCachedBuild({
       variant: args.variant,
+      remoteCacheProvider,
     });
     if (cachedBuild) {
       // @todo replace with a more generic way to pass binary path

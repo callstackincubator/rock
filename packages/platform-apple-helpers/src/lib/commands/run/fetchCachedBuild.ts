@@ -1,5 +1,7 @@
 import fs from 'node:fs';
 import path from 'node:path';
+import type {
+  SupportedRemoteCacheProviders} from '@rnef/tools';
 import {
   createRemoteBuildCache,
   findDirectoriesWithPattern,
@@ -10,21 +12,23 @@ import {
   logger,
   nativeFingerprint,
   queryLocalBuildCache,
-  spinner,
+  spinner
 } from '@rnef/tools';
 import color from 'picocolors';
 import * as tar from 'tar';
 
 export type Distribution = 'simulator' | 'device';
 
-export type FetchCachedBuildOptions = {
+type FetchCachedBuildOptions = {
   distribution: Distribution;
   configuration: string;
+  remoteCacheProvider: SupportedRemoteCacheProviders | undefined;
 };
 
 export async function fetchCachedBuild({
   distribution,
   configuration,
+  remoteCacheProvider,
 }: FetchCachedBuildOptions): Promise<LocalBuild | null> {
   const loader = spinner();
   loader.start('Looking for a local cached build');
@@ -43,9 +47,13 @@ export async function fetchCachedBuild({
     return localBuild;
   }
 
-  const remoteBuildCache = createRemoteBuildCache();
+  if (!remoteCacheProvider) {
+    return null;
+  }
+
+  const remoteBuildCache = await createRemoteBuildCache(remoteCacheProvider);
   if (!remoteBuildCache) {
-    loader.stop(`No CI provider detected, skipping.`);
+    loader.stop(`No remote cache provider set, skipping.`);
     return null;
   }
 
@@ -85,7 +93,7 @@ export async function fetchCachedBuild({
 async function calculateArtifactName({
   distribution,
   configuration,
-}: FetchCachedBuildOptions) {
+}: Omit<FetchCachedBuildOptions, 'remoteCacheProvider'>) {
   const root = getProjectRoot();
   const fingerprint = await nativeFingerprint(root, { platform: 'ios' });
   return formatArtifactName({

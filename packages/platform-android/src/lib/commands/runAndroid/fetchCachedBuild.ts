@@ -1,5 +1,5 @@
 import path from 'node:path';
-import type { LocalBuild } from '@rnef/tools';
+import type { LocalBuild, SupportedRemoteCacheProviders } from '@rnef/tools';
 import {
   createRemoteBuildCache,
   findFilesWithPattern,
@@ -11,12 +11,14 @@ import {
 } from '@rnef/tools';
 import color from 'picocolors';
 
-export type FetchCachedBuildOptions = {
+type FetchCachedBuildOptions = {
   variant: string;
+  remoteCacheProvider: SupportedRemoteCacheProviders | undefined;
 };
 
 export async function fetchCachedBuild({
   variant,
+  remoteCacheProvider,
 }: FetchCachedBuildOptions): Promise<LocalBuild | null> {
   const loader = spinner();
   loader.start('Looking for a local cached build');
@@ -30,9 +32,13 @@ export async function fetchCachedBuild({
     return localBuild;
   }
 
-  const remoteBuildCache = createRemoteBuildCache();
+  if (!remoteCacheProvider) {
+    return null;
+  }
+
+  const remoteBuildCache = await createRemoteBuildCache(remoteCacheProvider);
   if (!remoteBuildCache) {
-    loader.stop(`No CI provider detected, skipping.`);
+    loader.stop(`No supported remote provider set, skipping.`);
     return null;
   }
 

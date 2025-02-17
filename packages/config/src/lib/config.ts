@@ -13,7 +13,10 @@ export type PluginApi = {
   getReactNativeVersion: () => string;
   getReactNativePath: () => string;
   getPlatforms: () => { [platform: string]: object };
+  getRemoteCacheProvider: () => SupportedRemoteCacheProviders | undefined;
 };
+
+type SupportedRemoteCacheProviders = 'github-actions';
 
 type PluginType = (args: PluginApi) => PluginOutput;
 
@@ -48,6 +51,7 @@ type ConfigType = {
   plugins?: PluginType[];
   platforms?: Record<string, PluginType>;
   commands?: Array<CommandType>;
+  remoteCacheProvider?: SupportedRemoteCacheProviders;
 };
 
 type ConfigOutput = {
@@ -109,6 +113,7 @@ export async function getConfig(
     getReactNativeVersion: () => config.reactNativeVersion as string,
     getReactNativePath: () => config.reactNativePath as string,
     getPlatforms: () => config.platforms as { [platform: string]: object },
+    getRemoteCacheProvider: () => config.remoteCacheProvider,
   };
 
   if (config.plugins) {

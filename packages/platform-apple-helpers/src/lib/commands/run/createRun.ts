@@ -1,5 +1,7 @@
 import fs from 'node:fs';
 import path from 'node:path';
+import type {
+  SupportedRemoteCacheProviders} from '@rnef/tools';
 import {
   intro,
   isInteractive,
@@ -7,7 +9,7 @@ import {
   outro,
   promptSelect,
   RnefError,
-  spinner,
+  spinner
 } from '@rnef/tools';
 import color from 'picocolors';
 import type {
@@ -33,7 +35,8 @@ export const createRun = async (
   platformName: ApplePlatform,
   projectConfig: ProjectConfig,
   args: RunFlags,
-  projectRoot: string
+  projectRoot: string,
+  remoteCacheProvider: SupportedRemoteCacheProviders | undefined
 ) => {
   intro('Running on iOS');
 
@@ -41,6 +44,7 @@ export const createRun = async (
     const cachedBuild = await fetchCachedBuild({
       configuration: args.configuration ?? 'Debug',
       distribution: args.device ? 'device' : 'simulator', // TODO: replace with better logic
+      remoteCacheProvider
     });
     if (cachedBuild) {
       // @todo replace with a more generic way to pass binary path
@@ -124,6 +128,7 @@ export const createRun = async (
         scheme,
         xcodeProject,
         sourceDir,
+        remoteCacheProvider,
         args
       );
     }

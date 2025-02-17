@@ -6,7 +6,6 @@ export * from './lib/fingerprint.js';
 export { default as cacheManager } from './lib/cacheManager.js';
 export * from './lib/parse-args.js';
 export * from './lib/path.js';
-export * from './lib/ci.js';
 export * from './lib/project.js';
 
 export * from './lib/build-cache/common.js';

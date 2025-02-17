@@ -41,7 +41,13 @@ export const platformIOS =
         const iosConfig = projectConfig(projectRoot, {});
 
         if (iosConfig) {
-          await createRun('ios', iosConfig, args as RunFlags, projectRoot);
+          await createRun(
+            'ios',
+            iosConfig,
+            args as RunFlags,
+            projectRoot,
+            api.getRemoteCacheProvider()
+          );
         } else {
           throw new RnefError('iOS project not found.');
         }

@@ -20,7 +20,8 @@ export function registerRunCommand(
         await runAndroid(
           androidConfig,
           { ...pluginConfig, ...(args as Flags) },
-          projectRoot
+          projectRoot,
+          api.getRemoteCacheProvider()
         );
       } else {
         throw new RnefError('Android project not found.');

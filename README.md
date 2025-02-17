@@ -53,13 +53,12 @@ npx create-rnef-app enterprise
    import { pluginMetro } from '@rnef/plugin-metro';
 
    export default {
-     plugins: {
-       metro: pluginMetro(),
-     },
+     plugins: [pluginMetro()],
      platforms: {
        ios: platformIOS(),
        android: platformAndroid(),
      },
+     remoteCacheProvider: 'github-actions',
    };
    ```
 

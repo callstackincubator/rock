@@ -1,3 +1,4 @@
+import type { SupportedRemoteCacheProviders } from '@rnef/tools';
 import { logger, spawn } from '@rnef/tools';
 import color from 'picocolors';
 import type {
@@ -18,12 +19,14 @@ export async function runOnDevice(
   scheme: string,
   xcodeProject: XcodeProjectInfo,
   sourceDir: string,
+  remoteCacheProvider: SupportedRemoteCacheProviders | undefined,
   args: RunFlags
 ) {
   if (!args.binaryPath && args.remoteCache) {
     const cachedBuild = await fetchCachedBuild({
       distribution: 'device',
       configuration: 'Release', // Remote debug builds make no sense, do they?
+      remoteCacheProvider,
     });
     if (cachedBuild) {
       // @todo replace with a more generic way to pass binary path
