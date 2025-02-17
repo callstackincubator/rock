@@ -45,7 +45,7 @@ type ConfigType = {
   root?: string;
   reactNativeVersion?: string;
   reactNativePath?: string;
-  plugins?: Record<string, PluginType>;
+  plugins?: PluginType[];
   platforms?: Record<string, PluginType>;
   commands?: Array<CommandType>;
 };
@@ -113,8 +113,8 @@ export async function getConfig(
 
   if (config.plugins) {
     // plugins register commands
-    for (const plugin in config.plugins) {
-      config.plugins[plugin](api);
+    for (const plugin of config.plugins) {
+      plugin(api);
     }
   }
 
