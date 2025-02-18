@@ -1,7 +1,4 @@
-import {
-  getDependencyConfig,
-  getProjectConfig,
-} from '@react-native-community/cli-config-apple';
+import { getProjectConfig } from '@react-native-community/cli-config-apple';
 import type { PluginApi, PluginOutput } from '@rnef/config';
 import type { BuildFlags, RunFlags } from '@rnef/platform-apple-helpers';
 import {

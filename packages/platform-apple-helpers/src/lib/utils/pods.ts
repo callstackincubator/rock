@@ -2,127 +2,62 @@ import { createHash } from 'node:crypto';
 import { existsSync, readFileSync } from 'node:fs';
 import fs from 'node:fs';
 import path from 'node:path';
-import type {
-  DependencyConfig,
-  IOSDependencyConfig,
-} from '@react-native-community/cli-types';
+import type { IOSDependencyConfig } from '@react-native-community/cli-types';
 import { cacheManager, RnefError, spinner } from '@rnef/tools';
 import type { SubprocessError } from 'nano-spawn';
 import spawn from 'nano-spawn';
 import color from 'picocolors';
 import type { ApplePlatform } from '../types/index.js';
 
-interface NativeDependencies {
-  [key: string]: DependencyConfig;
-}
-
-function loadPackageJSON(root: string) {
-  const packageJSONPath = path.join(root, 'package.json');
-  const packageJSONContent = readFileSync(packageJSONPath, 'utf-8');
-  const packageJSON = JSON.parse(packageJSONContent);
-  return packageJSON;
-}
-
-function getPlatformDependencies(
-  dependencies: NativeDependencies,
-  platformName: ApplePlatform
-) {
-  return Object.keys(dependencies)
-    .filter((dependency) => dependencies[dependency].platforms?.[platformName])
-    .map(
-      (dependency) =>
-        `${dependency}@${
-          (
-            dependencies[dependency].platforms?.[
-              platformName
-            ] as IOSDependencyConfig
-          ).version
-        }`
-    )
-    .sort();
-}
-
-function generateMd5Hash(text: string) {
-  return createHash('md5').update(text).digest('hex');
-}
-
-function compareMd5Hashes(hash1: string, hash2: string) {
-  return hash1 === hash2;
-}
-
-function generateDependenciesHash(deps: string[]) {
-  return generateMd5Hash(JSON.stringify(deps));
-}
-
 export async function installPodsIfNeeded(
   projectRoot: string,
   platformName: ApplePlatform,
   sourceDir: string
 ) {
-  const packageJson = await loadPackageJSON(projectRoot);
-  const packageJSONDependenciesHash = generateDependenciesHash(
-    Object.keys(packageJson.dependencies || {})
-  );
-
-  const podfilePath = path.join(sourceDir, 'Podfile');
-  const podfile = podfilePath ? readFileSync(podfilePath, 'utf-8') : '';
-  const podfileHash = generateMd5Hash(podfile);
-
-  const podfileLockPath = podfilePath
-    ? podfilePath.replace('.podfile', '.podfile.lock')
-    : '';
-  const podfileLock = podfileLockPath
-    ? readFileSync(podfileLockPath, 'utf-8')
-    : '';
-
-  const podfileLockHash = generateMd5Hash(podfileLock);
-
+  const packageJson = loadPackageJSON(projectRoot);
   const podsPath = path.join(sourceDir, 'Pods');
-  const arePodsInstalled = existsSync(podsPath);
+  const podfilePath = path.join(sourceDir, 'Podfile');
+  const podfileLockPath = podfilePath + '.lock';
 
-  const { loadConfigAsync } = await import(
-    '@react-native-community/cli-config'
-  );
-  const config = await loadConfigAsync({
-    selectedPlatform: platformName,
-  });
+  let podfile;
+  try {
+    podfile = readFileSync(podfilePath, 'utf-8');
+  } catch {
+    throw new RnefError(`No Podfile found at: ${podfilePath}`);
+  }
+
+  let podfileLock;
+  try {
+    podfileLock = readFileSync(podfileLockPath, 'utf-8');
+  } catch {
+    // No Podfile.lock, continue
+  }
 
   // There's a possibility to define a custom dependencies in `react-native.config.js`, that contain native code for a platform and that should also trigger install CocoaPods
-  const platformDependencies = getPlatformDependencies(
-    config.dependencies,
-    platformName as ApplePlatform
-  );
-  const platformDependenciesHash =
-    generateDependenciesHash(platformDependencies);
-
-  const cachedDependenciesHash = cacheManager.get(
-    `${packageJson['name']}-dependencies`
-  );
+  const platformDependencies = await getPlatformDependencies(platformName);
 
   const currentDependenciesHash = generateDependenciesHash([
-    podfileHash,
-    podfileLockHash,
-    platformDependenciesHash,
-    packageJSONDependenciesHash,
+    generateMd5Hash(podfile),
+    generateMd5Hash(podfileLock ?? ''),
+    generateDependenciesHash(platformDependencies),
+    generateDependenciesHash(Object.keys(packageJson.dependencies || {})),
   ]);
+  const cacheKey = `${packageJson['name']}-dependencies`;
+  const cachedDependenciesHash = cacheManager.get(cacheKey);
+  const podsDirExists = existsSync(podsPath);
+  const hashChanged =
+    cachedDependenciesHash &&
+    !compareMd5Hashes(currentDependenciesHash, cachedDependenciesHash);
 
-  if (
-    (cachedDependenciesHash &&
-      !compareMd5Hashes(currentDependenciesHash, cachedDependenciesHash)) ||
-    !arePodsInstalled
-  ) {
+  if (!podsDirExists || hashChanged) {
     try {
       await installPods({
         skipBundleInstall: !!cachedDependenciesHash, // run `bundle install` first time only
         platformProjectPath: sourceDir,
       });
-      cacheManager.set(
-        `${packageJson['name']}-dependencies`,
-        currentDependenciesHash
-      );
+      cacheManager.set(cacheKey, currentDependenciesHash);
     } catch {
       const relativePath = path.relative(process.cwd(), sourceDir);
-
       const command = cachedDependenciesHash
         ? `cd ${relativePath} && bundle exec pod install`
         : `bundle install && cd ${relativePath} && bundle exec pod install`;
@@ -273,4 +208,44 @@ async function runBundleInstall(cwd: string) {
   }
 
   loader.stop('Installed Ruby Gems.');
+}
+
+function loadPackageJSON(root: string) {
+  const packageJSONPath = path.join(root, 'package.json');
+  const packageJSONContent = readFileSync(packageJSONPath, 'utf-8');
+  const packageJSON = JSON.parse(packageJSONContent);
+  return packageJSON;
+}
+
+async function getPlatformDependencies(platformName: ApplePlatform) {
+  const { loadConfigAsync } = await import(
+    '@react-native-community/cli-config'
+  );
+  const config = await loadConfigAsync({ selectedPlatform: platformName });
+  const dependencies = config.dependencies;
+  return Object.keys(dependencies)
+    .filter((dependency) => dependencies[dependency].platforms?.[platformName])
+    .map(
+      (dependency) =>
+        `${dependency}@${
+          (
+            dependencies[dependency].platforms?.[
+              platformName
+            ] as IOSDependencyConfig
+          ).version
+        }`
+    )
+    .sort();
+}
+
+function generateMd5Hash(text: string) {
+  return createHash('md5').update(text).digest('hex');
+}
+
+function compareMd5Hashes(hash1: string, hash2: string) {
+  return hash1 === hash2;
+}
+
+function generateDependenciesHash(deps: string[]) {
+  return generateMd5Hash(JSON.stringify(deps));
 }
