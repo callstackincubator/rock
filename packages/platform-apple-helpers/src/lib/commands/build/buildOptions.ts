@@ -15,7 +15,8 @@ export type BuildFlags = {
   buildFolder?: string;
   destinations?: string[];
   archive?: boolean;
-  installPods?: boolean;
+  installPods: boolean;
+  newArch: boolean;
 };
 
 export const getBuildOptions = ({ platformName }: BuilderCommand) => {
@@ -85,6 +86,11 @@ export const getBuildOptions = ({ platformName }: BuilderCommand) => {
     {
       name: '--no-install-pods',
       description: 'Skip automatic CocoaPods installation',
+    },
+    {
+      name: '--no-new-arch',
+      description:
+        'Run React Native in legacy async architecture.',
     },
   ];
 };

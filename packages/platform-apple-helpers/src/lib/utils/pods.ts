@@ -12,7 +12,8 @@ import type { ApplePlatform } from '../types/index.js';
 export async function installPodsIfNeeded(
   projectRoot: string,
   platformName: ApplePlatform,
-  sourceDir: string
+  sourceDir: string,
+  newArch: boolean
 ) {
   const packageJson = loadPackageJSON(projectRoot);
   const podsPath = path.join(sourceDir, 'Pods');
@@ -56,7 +57,7 @@ export async function installPodsIfNeeded(
 
   if (!podsDirExists || hashChanged) {
     try {
-      await installPods({ projectRoot, sourceDir, podfilePath });
+      await installPods({ projectRoot, sourceDir, podfilePath, newArch });
       cacheManager.set(cacheKey, calculateCurrentHash());
     } catch {
       const relativePath = path.relative(process.cwd(), sourceDir);
@@ -75,6 +76,7 @@ ${color.bold(command)}`
 async function runPodInstall(options: {
   shouldHandleRepoUpdate?: boolean;
   sourceDir: string;
+  newArch: boolean;
 }) {
   await validatePodCommand(options.sourceDir);
 
@@ -82,12 +84,10 @@ async function runPodInstall(options: {
   const loader = spinner({ indicator: 'timer' });
   try {
     loader.start('Installing CocoaPods dependencies');
-
     await spawn('bundle', ['exec', 'pod', 'install'], {
       env: {
-        RCT_NEW_ARCH_ENABLED: process.env['RCT_NEW_ARCH_ENABLED'] ?? '1',
-        RCT_IGNORE_PODS_DEPRECATION:
-          process.env['RCT_IGNORE_PODS_DEPRECATION'] ?? '1',
+        RCT_NEW_ARCH_ENABLED: options.newArch ? '1' : '0',
+        RCT_IGNORE_PODS_DEPRECATION: '1',
       },
       cwd: options.sourceDir,
     });
@@ -106,6 +106,7 @@ async function runPodInstall(options: {
       await runPodInstall({
         shouldHandleRepoUpdate: false,
         sourceDir: options.sourceDir,
+        newArch: options.newArch,
       });
     } else {
       loader.stop('CocoaPods installation failed.', 1);
@@ -143,6 +144,7 @@ async function installPods(options: {
   sourceDir: string;
   projectRoot: string;
   podfilePath: string;
+  newArch: boolean;
 }) {
   try {
     if (!existsSync(options.podfilePath)) {
@@ -152,7 +154,10 @@ async function installPods(options: {
       return;
     }
     await runBundleInstall(options.sourceDir, options.projectRoot);
-    await runPodInstall({ sourceDir: options.sourceDir });
+    await runPodInstall({
+      sourceDir: options.sourceDir,
+      newArch: options.newArch,
+    });
   } catch {
     throw new RnefError(
       `Something went wrong while installing CocoaPods. Please run ${color.bold(
