@@ -1,7 +1,7 @@
 import fs from 'node:fs';
 import path from 'node:path';
-import { spinner } from '@clack/prompts';
-import { logger, RnefError } from '@rnef/tools';
+import { logger, RnefError, spinner } from '@rnef/tools';
+import type { SubprocessError } from 'nano-spawn';
 import spawn from 'nano-spawn';
 import color from 'picocolors';
 import runBundleInstall from './runBundleInstall.js';
@@ -23,17 +23,15 @@ interface SpawnError extends Error {
 
 async function runPodInstall(options: RunPodInstallOptions) {
   const shouldHandleRepoUpdate = options?.shouldHandleRepoUpdate || true;
-  const loader = spinner();
+  const loader = spinner({ indicator: 'timer' });
   try {
-    loader.start(
-      `Installing CocoaPods dependencies ${color.dim(
-        '(this may take a few minutes)'
-      )}`
-    );
+    loader.start('Installing CocoaPods dependencies');
 
     await spawn('bundle', ['exec', 'pod', 'install'], {
       env: {
-        ['RCT_NEW_ARCH_ENABLED']: process.env['RCT_NEW_ARCH_ENABLED'] ?? '1',
+        RCT_NEW_ARCH_ENABLED: process.env['RCT_NEW_ARCH_ENABLED'] ?? '1',
+        RCT_IGNORE_PODS_DEPRECATION:
+          process.env['RCT_IGNORE_PODS_DEPRECATION'] ?? '1',
       },
       stdio: logger.isVerbose() ? 'inherit' : ['ignore', 'pipe', 'pipe'],
       cwd: options.platformProjectPath,
@@ -69,13 +67,9 @@ async function runPodInstall(options: RunPodInstallOptions) {
 }
 
 async function runPodUpdate() {
-  const loader = spinner();
+  const loader = spinner({ indicator: 'timer' });
   try {
-    loader.start(
-      `Updating CocoaPods repositories ${color.dim(
-        '(this may take a few minutes)'
-      )}`
-    );
+    loader.start('Updating CocoaPods repositories');
     spawn('pod', ['repo', 'update'], {
       stdio: logger.isVerbose() ? 'inherit' : ['ignore', 'pipe', 'pipe'],
     });
@@ -91,44 +85,7 @@ async function runPodUpdate() {
   }
 }
 
-async function installCocoaPodsWithGem() {
-  const options = ['install', 'cocoapods', '--no-document'];
-
-  try {
-    // First attempt to install `cocoapods`
-    await spawn('gem', options, {
-      stdio: logger.isVerbose() ? 'inherit' : ['ignore', 'pipe', 'pipe'],
-    });
-  } catch {
-    // If that doesn't work then try with sudo
-    // await runSudo(`gem ${options.join(' ')}`);
-  }
-}
-
-async function installCocoaPods() {
-  const loader = spinner();
-
-  loader.start('Installing CocoaPods');
-
-  try {
-    await installCocoaPodsWithGem();
-
-    loader.stop();
-  } catch (error) {
-    loader.stop();
-    logger.error((error as SpawnError).stderr);
-
-    throw new RnefError(
-      `An error occurred while trying to install CocoaPods, which is required by this template.\nPlease try again manually: sudo gem install cocoapods.\nCocoaPods documentation: ${color.dim(
-        'https://cocoapods.org/'
-      )}`
-    );
-  }
-}
-
 export default async function installPods(options: PodInstallOptions) {
-  const loader = spinner();
-
   try {
     const hasPodfile = fs.existsSync(
       path.join(options.platformProjectPath, 'Podfile')
@@ -155,9 +112,11 @@ export default async function installPods(options: PodInstallOptions) {
         stdio: logger.isVerbose() ? 'inherit' : ['ignore', 'pipe', 'pipe'],
         cwd: options.platformProjectPath,
       });
-    } catch {
-      loader.start('Installing CocoaPods');
-      await installCocoaPods();
+    } catch (error) {
+      throw new RnefError(
+        '"pod" command not found. Please make sure to install CocoaPods correctly',
+        { cause: (error as SubprocessError).stderr }
+      );
     }
 
     await runPodInstall({

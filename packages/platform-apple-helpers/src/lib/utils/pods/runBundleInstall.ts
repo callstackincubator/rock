@@ -3,24 +3,23 @@ import { logger, RnefError } from '@rnef/tools';
 import type { SubprocessError } from 'nano-spawn';
 import spawn from 'nano-spawn';
 
-async function runBundleInstall(platformProjectPath: string) {
+async function runBundleInstall(cwd: string) {
   const loader = spinner();
   try {
     loader.start('Installing Ruby Gems');
-
     await spawn('bundle', ['install'], {
       stdio: logger.isVerbose() ? 'inherit' : ['ignore', 'pipe', 'pipe'],
-      cwd: platformProjectPath,
+      cwd,
     });
   } catch (error) {
-    loader.stop('Ruby Gems installation failed.');
-    logger.error(
-      (error as SubprocessError).stderr || (error as SubprocessError).stdout
+    loader.stop('Ruby Gems installation failed.', 1);
+    throw new RnefError(
+      `Looks like your iOS environment is not properly set.`,
+      { cause: (error as SubprocessError).stdout }
     );
-    throw new RnefError(`Looks like your iOS environment is not properly set.`);
   }
 
-  loader.stop('Ruby Gems installed successfully.');
+  loader.stop('Installed Ruby Gems.');
 }
 
 export default runBundleInstall;
