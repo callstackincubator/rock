@@ -27,7 +27,9 @@ export const createBuild = async (
 
   validateArgs(args);
 
-  await installPodsIfNeeded(projectRoot, platformName, sourceDir);
+  if (args.installPods) {
+    await installPodsIfNeeded(projectRoot, platformName, sourceDir);
+  }
 
   const info = await getInfo(xcodeProject, sourceDir);
 
