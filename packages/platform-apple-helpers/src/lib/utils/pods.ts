@@ -51,7 +51,7 @@ export async function installPodsIfNeeded(
 
   if (!podsDirExists || hashChanged) {
     try {
-      await installPods({ projectRoot, sourceDir });
+      await installPods({ projectRoot, sourceDir, podfilePath });
       cacheManager.set(cacheKey, currentDependenciesHash);
     } catch {
       const relativePath = path.relative(process.cwd(), sourceDir);
@@ -60,9 +60,8 @@ export async function installPodsIfNeeded(
         : `bundle install && cd ${relativePath} && bundle exec pod install`;
 
       throw new RnefError(
-        `Something went wrong while installing CocoaPods. Please run ${color.bold(
-          command
-        )} manually`
+        `Something went wrong while installing CocoaPods. Please run: 
+${color.bold(command)}`
       );
     }
   }
@@ -72,6 +71,8 @@ async function runPodInstall(options: {
   shouldHandleRepoUpdate?: boolean;
   sourceDir: string;
 }) {
+  await validatePodCommand(options.sourceDir);
+
   const shouldHandleRepoUpdate = options?.shouldHandleRepoUpdate || true;
   const loader = spinner({ indicator: 'timer' });
   try {
@@ -136,27 +137,17 @@ async function runPodUpdate(cwd: string) {
 async function installPods(options: {
   sourceDir: string;
   projectRoot: string;
+  podfilePath: string;
 }) {
   try {
-    const hasPodfile = fs.existsSync(path.join(options.sourceDir, 'Podfile'));
+    const hasPodfile = fs.existsSync(options.podfilePath);
 
     if (!hasPodfile) {
       return;
     }
 
-    const gemfilePath = path.join(options.projectRoot, 'Gemfile');
-    if (fs.existsSync(gemfilePath)) {
-      await runBundleInstall(options.sourceDir);
-    } else if (!fs.existsSync(gemfilePath)) {
-      throw new RnefError(
-        `Could not find the Gemfile at ${gemfilePath}. Currently the CLI requires to have this file in the root directory of the project to install CocoaPods. If your configuration is different, please install the CocoaPods manually.`
-      );
-    }
-
-    await validatePodCommand(options.sourceDir);
-    await runPodInstall({
-      sourceDir: options.sourceDir,
-    });
+    await runBundleInstall(options.sourceDir, options.projectRoot);
+    await runPodInstall({ sourceDir: options.sourceDir });
   } catch {
     throw new RnefError(
       `Something went wrong while installing CocoaPods. Please run ${color.bold(
@@ -187,7 +178,14 @@ async function validatePodCommand(sourceDir: string) {
   }
 }
 
-async function runBundleInstall(sourceDir: string) {
+async function runBundleInstall(sourceDir: string, projectRoot: string) {
+  const gemfilePath = path.join(projectRoot, 'Gemfile');
+  if (!fs.existsSync(gemfilePath)) {
+    throw new RnefError(
+      `Could not find the Gemfile at ${gemfilePath}. Currently the CLI requires to have this file in the root directory of the project to install CocoaPods. If your configuration is different, please install the CocoaPods manually.`
+    );
+  }
+
   const loader = spinner();
   try {
     loader.start('Installing Ruby Gems');
