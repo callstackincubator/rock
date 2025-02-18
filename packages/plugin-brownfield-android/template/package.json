@@ -1,10 +1,10 @@
 {
   "name": "rnef-plugin-brownfield-android-template",
   "scripts": {
-    "package:aar": "rnef package:aar --build-variant Release --module-name helloworldreact --package-name com.helloworldreact",
+    "package:aar": "rnef package:aar --variant Release --module-name helloworldreact --package-name com.helloworldreact",
     "publish-local:aar": "pnpm package:aar && rnef publish-local:aar --module-name helloworldreact"
   },
   "devDependencies": {
-    "@rnef/plugin-brownfield-android":  "^0.1.6"
+    "@rnef/plugin-brownfield-android":  "^0.2.0"
   }
 }

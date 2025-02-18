@@ -5,7 +5,7 @@ import {
   buildAar,
   type BuildFlags,
   localPublishAar,
-} from '@rnef/plugin-platform-android';
+} from '@rnef/platform-android';
 import { intro, RnefError } from '@rnef/tools';
 
 export const pluginBrownfieldAndroid =
@@ -63,7 +63,7 @@ export const pluginBrownfieldAndroid =
 
 const opts = [
   {
-    name: '--build-variant <string>',
+    name: '--variant <string>',
     description:
       "Specify your app's build variant, which is constructed from build type and product flavor, e.g. 'debug' or 'freeRelease'.",
   },
