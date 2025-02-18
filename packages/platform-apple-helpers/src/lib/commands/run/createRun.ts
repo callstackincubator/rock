@@ -22,7 +22,7 @@ import { getInfo } from '../../utils/getInfo.js';
 import { getPlatformInfo } from '../../utils/getPlatformInfo.js';
 import { getScheme } from '../../utils/getScheme.js';
 import { listDevicesAndSimulators } from '../../utils/listDevices.js';
-import resolvePods from '../../utils/pods/pods.js';
+import { installPodsIfNeeded } from '../../utils/pods.js';
 import { fetchCachedBuild } from './fetchCachedBuild.js';
 import { matchingDevice } from './matchingDevice.js';
 import { cacheRecentDevice, sortByRecentDevices } from './recentDevices.js';
@@ -53,15 +53,7 @@ export const createRun = async (
     }
   }
 
-  const { readableName: platformReadableName } = getPlatformInfo(platformName);
-
-  const resolvedConfig = await resolvePods(
-    projectRoot,
-    platformName,
-    projectConfig
-  );
-
-  const { xcodeProject, sourceDir } = resolvedConfig;
+  const { xcodeProject, sourceDir } = projectConfig;
 
   if (!xcodeProject) {
     throw new RnefError(
@@ -70,6 +62,8 @@ export const createRun = async (
   }
 
   validateArgs(args, projectRoot);
+
+  await installPodsIfNeeded(projectRoot, platformName, sourceDir);
 
   const info = await getInfo(xcodeProject, sourceDir);
 
@@ -109,8 +103,9 @@ export const createRun = async (
   loader.start('Looking for available devices and simulators');
   const devices = await listDevicesAndSimulators(platformName);
   if (devices.length === 0) {
+    const { readableName } = getPlatformInfo(platformName);
     throw new RnefError(
-      `${platformReadableName} devices or simulators not detected. Install simulators via Xcode or connect a physical ${platformReadableName} device`
+      `No devices or simulators detected. Install simulators via Xcode or connect a physical ${readableName} device.`
     );
   }
   loader.stop('Found available devices and simulators.');

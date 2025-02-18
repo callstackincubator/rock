@@ -57,9 +57,13 @@ export default async function installApp({
     }
   }
 
-  await spawn('xcrun', ['simctl', 'install', udid, appPath], {
-    stdio: logger.isVerbose() ? 'inherit' : ['ignore', 'pipe', 'inherit'],
-  });
+  try {
+    await spawn('xcrun', ['simctl', 'install', udid, appPath]);
+  } catch (error) {
+    throw new RnefError('Failed to install the app on Simulator', {
+      cause: (error as SubprocessError).stderr,
+    });
+  }
 
   logger.debug(`Installing "${path.basename(appPath)}"`);
 
@@ -74,12 +78,9 @@ export default async function installApp({
   try {
     await spawn('xcrun', ['simctl', 'launch', udid, bundleID]);
   } catch (error) {
-    throw new RnefError(
-      `Failed to launch the app on simulator. ${
-        (error as SubprocessError).stderr
-      }`,
-      { cause: error }
-    );
+    throw new RnefError(`Failed to launch the app on Simulator`, {
+      cause: (error as SubprocessError).stderr,
+    });
   }
 }
 

@@ -6,7 +6,7 @@ import { getBuildPaths } from '../../utils/buildPaths.js';
 import { getConfiguration } from '../../utils/getConfiguration.js';
 import { getInfo } from '../../utils/getInfo.js';
 import { getScheme } from '../../utils/getScheme.js';
-import resolvePods from '../../utils/pods/pods.js';
+import { installPodsIfNeeded } from '../../utils/pods.js';
 import type { BuildFlags } from './buildOptions.js';
 import { buildProject } from './buildProject.js';
 import { exportArchive } from './exportArchive.js';
@@ -17,13 +17,7 @@ export const createBuild = async (
   args: BuildFlags,
   projectRoot: string
 ) => {
-  const resolvedConfig = await resolvePods(
-    projectRoot,
-    platformName,
-    projectConfig
-  );
-
-  const { xcodeProject, sourceDir } = resolvedConfig;
+  const { xcodeProject, sourceDir } = projectConfig;
 
   if (!xcodeProject) {
     throw new RnefError(
@@ -32,6 +26,8 @@ export const createBuild = async (
   }
 
   validateArgs(args);
+
+  await installPodsIfNeeded(projectRoot, platformName, sourceDir);
 
   const info = await getInfo(xcodeProject, sourceDir);
 
