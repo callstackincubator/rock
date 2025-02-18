@@ -3,7 +3,7 @@ import { existsSync, readFileSync } from 'node:fs';
 import fs from 'node:fs';
 import path from 'node:path';
 import type { IOSDependencyConfig } from '@react-native-community/cli-types';
-import { cacheManager, RnefError, spinner } from '@rnef/tools';
+import { cacheManager, logger, RnefError, spinner } from '@rnef/tools';
 import type { SubprocessError } from 'nano-spawn';
 import spawn from 'nano-spawn';
 import color from 'picocolors';
@@ -18,6 +18,7 @@ export async function installPodsIfNeeded(
   const podsPath = path.join(sourceDir, 'Pods');
   const podfilePath = path.join(sourceDir, 'Podfile');
   const podfileLockPath = podfilePath + '.lock';
+  const manifestLockPath = path.join(podsPath, 'Manifest.lock');
 
   let podfile;
   try {
@@ -26,33 +27,37 @@ export async function installPodsIfNeeded(
     throw new RnefError(`No Podfile found at: ${podfilePath}`);
   }
 
-  let podfileLock;
+  let podfileLock: string | undefined;
   try {
     podfileLock = readFileSync(podfileLockPath, 'utf-8');
   } catch {
-    // No Podfile.lock, continue
+    logger.debug('No Podfile.lock, continue');
   }
 
   // There's a possibility to define a custom dependencies in `react-native.config.js`, that contain native code for a platform and that should also trigger install CocoaPods
   const platformDependencies = await getPlatformDependencies(platformName);
 
-  const currentDependenciesHash = generateDependenciesHash([
-    generateMd5Hash(podfile),
-    generateMd5Hash(podfileLock ?? ''),
-    generateDependenciesHash(platformDependencies),
-    generateDependenciesHash(Object.keys(packageJson.dependencies || {})),
-  ]);
+  const calculateCurrentHash = () => {
+    return generateDependenciesHash([
+      generateMd5Hash(podfile),
+      generateMd5Hash(podfileLock ?? ''),
+      getLockfileChecksum(podfileLockPath),
+      getLockfileChecksum(manifestLockPath),
+      generateDependenciesHash(platformDependencies),
+      generateDependenciesHash(Object.keys(packageJson.dependencies || {})),
+    ]);
+  };
   const cacheKey = `${packageJson['name']}-dependencies`;
   const cachedDependenciesHash = cacheManager.get(cacheKey);
   const podsDirExists = existsSync(podsPath);
   const hashChanged =
     cachedDependenciesHash &&
-    !compareMd5Hashes(currentDependenciesHash, cachedDependenciesHash);
+    !compareMd5Hashes(calculateCurrentHash(), cachedDependenciesHash);
 
   if (!podsDirExists || hashChanged) {
     try {
       await installPods({ projectRoot, sourceDir, podfilePath });
-      cacheManager.set(cacheKey, currentDependenciesHash);
+      cacheManager.set(cacheKey, calculateCurrentHash());
     } catch {
       const relativePath = path.relative(process.cwd(), sourceDir);
       const command = cachedDependenciesHash
@@ -140,12 +145,12 @@ async function installPods(options: {
   podfilePath: string;
 }) {
   try {
-    const hasPodfile = fs.existsSync(options.podfilePath);
-
-    if (!hasPodfile) {
+    if (!existsSync(options.podfilePath)) {
+      logger.debug(
+        `No Podfile at ${options.podfilePath}. Skipping pod install.`
+      );
       return;
     }
-
     await runBundleInstall(options.sourceDir, options.projectRoot);
     await runPodInstall({ sourceDir: options.sourceDir });
   } catch {
@@ -241,4 +246,23 @@ function compareMd5Hashes(hash1: string, hash2: string) {
 
 function generateDependenciesHash(deps: string[]) {
   return generateMd5Hash(JSON.stringify(deps));
+}
+
+/**
+ * Gets the checksum of Podfile.lock or Pods/Manifest.lock
+ */
+function getLockfileChecksum(lockfilePath: string) {
+  try {
+    const checksumLine = fs
+      .readFileSync(lockfilePath, 'utf8')
+      .split('\n')
+      .find((line) => line.includes('PODFILE CHECKSUM'));
+
+    if (checksumLine) {
+      return checksumLine.split(': ')[1];
+    }
+  } catch (error) {
+    logger.debug(`Failed to load the lockfile ${lockfilePath}`, error);
+  }
+  return '';
 }
