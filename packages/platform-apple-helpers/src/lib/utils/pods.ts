@@ -1,5 +1,4 @@
 import { createHash } from 'node:crypto';
-import { existsSync, readFileSync } from 'node:fs';
 import fs from 'node:fs';
 import path from 'node:path';
 import type { IOSDependencyConfig } from '@react-native-community/cli-types';
@@ -23,14 +22,14 @@ export async function installPodsIfNeeded(
 
   let podfile;
   try {
-    podfile = readFileSync(podfilePath, 'utf-8');
+    podfile = fs.readFileSync(podfilePath, 'utf-8');
   } catch {
     throw new RnefError(`No Podfile found at: ${podfilePath}`);
   }
 
   let podfileLock: string | undefined;
   try {
-    podfileLock = readFileSync(podfileLockPath, 'utf-8');
+    podfileLock = fs.readFileSync(podfileLockPath, 'utf-8');
   } catch {
     logger.debug('No Podfile.lock, continue');
   }
@@ -50,7 +49,7 @@ export async function installPodsIfNeeded(
   };
   const cacheKey = `${packageJson['name']}-dependencies`;
   const cachedDependenciesHash = cacheManager.get(cacheKey);
-  const podsDirExists = existsSync(podsPath);
+  const podsDirExists = fs.existsSync(podsPath);
   const hashChanged =
     cachedDependenciesHash &&
     !compareMd5Hashes(calculateCurrentHash(), cachedDependenciesHash);
@@ -79,6 +78,11 @@ async function runPodInstall(options: {
   newArch: boolean;
 }) {
   await validatePodCommand(options.sourceDir);
+
+  // Remove build folder to avoid codegen path clashes when developing native modules
+  if (fs.existsSync('./build')) {
+    fs.rmSync('build', { recursive: true });
+  }
 
   const shouldHandleRepoUpdate = options?.shouldHandleRepoUpdate || true;
   const loader = spinner({ indicator: 'timer' });
@@ -147,7 +151,7 @@ async function installPods(options: {
   newArch: boolean;
 }) {
   try {
-    if (!existsSync(options.podfilePath)) {
+    if (!fs.existsSync(options.podfilePath)) {
       logger.debug(
         `No Podfile at ${options.podfilePath}. Skipping pod install.`
       );
@@ -215,7 +219,7 @@ async function runBundleInstall(sourceDir: string, projectRoot: string) {
 
 function loadPackageJSON(root: string) {
   const packageJSONPath = path.join(root, 'package.json');
-  const packageJSONContent = readFileSync(packageJSONPath, 'utf-8');
+  const packageJSONContent = fs.readFileSync(packageJSONPath, 'utf-8');
   const packageJSON = JSON.parse(packageJSONContent);
   return packageJSON;
 }
