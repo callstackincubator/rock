@@ -51,10 +51,7 @@ export async function installPodsIfNeeded(
 
   if (!podsDirExists || hashChanged) {
     try {
-      await installPods({
-        skipBundleInstall: !!cachedDependenciesHash, // run `bundle install` first time only
-        platformProjectPath: sourceDir,
-      });
+      await installPods({ projectRoot, sourceDir });
       cacheManager.set(cacheKey, currentDependenciesHash);
     } catch {
       const relativePath = path.relative(process.cwd(), sourceDir);
@@ -73,7 +70,7 @@ export async function installPodsIfNeeded(
 
 async function runPodInstall(options: {
   shouldHandleRepoUpdate?: boolean;
-  platformProjectPath: string;
+  sourceDir: string;
 }) {
   const shouldHandleRepoUpdate = options?.shouldHandleRepoUpdate || true;
   const loader = spinner({ indicator: 'timer' });
@@ -86,7 +83,7 @@ async function runPodInstall(options: {
         RCT_IGNORE_PODS_DEPRECATION:
           process.env['RCT_IGNORE_PODS_DEPRECATION'] ?? '1',
       },
-      cwd: options.platformProjectPath,
+      cwd: options.sourceDir,
     });
   } catch (error) {
     const stderr = (error as SubprocessError).stderr;
@@ -99,10 +96,10 @@ async function runPodInstall(options: {
      * prevent infinite loop (unlikely scenario)
      */
     if (stderr.includes('pod repo update') && shouldHandleRepoUpdate) {
-      await runPodUpdate(options.platformProjectPath);
+      await runPodUpdate(options.sourceDir);
       await runPodInstall({
         shouldHandleRepoUpdate: false,
-        platformProjectPath: options.platformProjectPath,
+        sourceDir: options.sourceDir,
       });
     } else {
       loader.stop('CocoaPods installation failed.', 1);
@@ -137,37 +134,35 @@ async function runPodUpdate(cwd: string) {
 }
 
 async function installPods(options: {
-  skipBundleInstall?: boolean;
-  platformProjectPath: string;
+  sourceDir: string;
+  projectRoot: string;
 }) {
   try {
-    const hasPodfile = fs.existsSync(
-      path.join(options.platformProjectPath, 'Podfile')
-    );
+    const hasPodfile = fs.existsSync(path.join(options.sourceDir, 'Podfile'));
 
     if (!hasPodfile) {
       return;
     }
 
-    const gemfilePath = path.join(options.platformProjectPath, '../Gemfile');
-    if (fs.existsSync(gemfilePath) && !options?.skipBundleInstall) {
-      await runBundleInstall(options.platformProjectPath);
+    const gemfilePath = path.join(options.projectRoot, 'Gemfile');
+    if (fs.existsSync(gemfilePath)) {
+      await runBundleInstall(options.sourceDir);
     } else if (!fs.existsSync(gemfilePath)) {
       throw new RnefError(
-        'Could not find the Gemfile. Currently the CLI requires to have this file in the root directory of the project to install CocoaPods. If your configuration is different, please install the CocoaPods manually.'
+        `Could not find the Gemfile at ${gemfilePath}. Currently the CLI requires to have this file in the root directory of the project to install CocoaPods. If your configuration is different, please install the CocoaPods manually.`
       );
     }
 
-    await validatePodCommand(options.platformProjectPath);
+    await validatePodCommand(options.sourceDir);
     await runPodInstall({
-      platformProjectPath: options.platformProjectPath,
+      sourceDir: options.sourceDir,
     });
   } catch {
     throw new RnefError(
       `Something went wrong while installing CocoaPods. Please run ${color.bold(
         `bundle install && cd ${path.relative(
           process.cwd(),
-          options?.platformProjectPath ?? 'ios'
+          options.sourceDir
         )} && bundle exec pod install`
       )} manually`
     );
@@ -179,9 +174,9 @@ async function installPods(options: {
  * multiple versions of "pod" command and even though it's there, it exits
  * with a failure
  */
-async function validatePodCommand(cwd: string) {
+async function validatePodCommand(sourceDir: string) {
   try {
-    await spawn('pod', ['--version'], { cwd });
+    await spawn('pod', ['--version'], { cwd: sourceDir });
   } catch (error) {
     const stderr =
       (error as SubprocessError).stderr || (error as SubprocessError).stdout;
@@ -192,11 +187,11 @@ async function validatePodCommand(cwd: string) {
   }
 }
 
-async function runBundleInstall(cwd: string) {
+async function runBundleInstall(sourceDir: string) {
   const loader = spinner();
   try {
     loader.start('Installing Ruby Gems');
-    await spawn('bundle', ['install'], { cwd });
+    await spawn('bundle', ['install'], { cwd: sourceDir });
   } catch (error) {
     const stderr =
       (error as SubprocessError).stderr || (error as SubprocessError).stdout;
