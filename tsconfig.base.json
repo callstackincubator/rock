@@ -31,6 +31,9 @@
       "@rnef/tools": ["packages/tools/src/index.ts"],
       "@rnef/platform-apple-helpers": [
         "packages/platform-apple-helpers/src/index.ts"
+      ],
+      "@rnef/plugin-brownfield-android": [
+        "packages/plugin-brownfield-android/src/index.ts"
       ]
     }
   },
