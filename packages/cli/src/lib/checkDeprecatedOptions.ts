@@ -8,18 +8,18 @@ const checkDeprecatedCommand = (argv: string[], oldCmd: string, newCmd: string, 
     const index = argv.indexOf(oldCmd);
     let args = argv.slice(index + 1);
     
-    logger.warn(`⚠️ Deprecated command "${oldCmd}" detected.`);
+    logger.error(`Deprecated command "${oldCmd}" detected.`);
     
     deprecatedFlags.forEach(({ old, new: newFlag }) => {
       if (args.includes(old)) {
-        logger.warn(
-          `⚠️ Deprecated flag "${old}" detected in "${oldCmd}" command. Please migrate to "${newFlag}".`
+        logger.error(
+          `Deprecated flag "${old}" detected in "${oldCmd}" command. Please migrate to "${newFlag}".`
         );
         args = args.map(arg => arg === old ? newFlag : arg);
       }
     });
 
-    logger.info(`Use: ${color.bold(binEntry)} ${color.bold(newCmd)} ${color.bold(args.join(' '))}`);
+    logger.error(`Use: ${color.bold(binEntry)} ${color.bold(newCmd)} ${color.bold(args.join(' '))}`);
     process.exit(1);
   }
 };
@@ -32,15 +32,15 @@ const checkCurrentCommand = (argv: string[], cmd: string, deprecatedFlags: Array
     deprecatedFlags.forEach(({ old, new: newFlag }) => {
       if (args.includes(old)) {
         hasDeprecatedFlags = true;
-        logger.warn(
-          `⚠️ Deprecated flag "${old}" detected for "${cmd}". Please migrate to "${newFlag}".`
+        logger.error(
+          `Deprecated flag "${old}" detected for "${cmd}". Please migrate to "${newFlag}".`
         );
         args = args.map(arg => arg === old ? newFlag : arg);
       }
     });
     
     if (hasDeprecatedFlags) {
-      logger.info(`Use: ${color.bold(binEntry)} ${color.bold(cmd)} ${color.bold(args.join(' '))}`);
+      logger.error(`Use: ${color.bold(binEntry)} ${color.bold(cmd)} ${color.bold(args.join(' '))}`);
       process.exit(1);
     }
   }
