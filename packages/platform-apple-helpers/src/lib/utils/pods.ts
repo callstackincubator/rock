@@ -3,7 +3,14 @@ import fs from 'node:fs';
 import path from 'node:path';
 import type { IOSDependencyConfig } from '@react-native-community/cli-types';
 import type { SubprocessError } from '@rnef/tools';
-import { cacheManager, color, logger, RnefError, spawn, spinner } from '@rnef/tools';
+import {
+  cacheManager,
+  color,
+  logger,
+  RnefError,
+  spawn,
+  spinner,
+} from '@rnef/tools';
 import type { ApplePlatform } from '../types/index.js';
 
 export async function installPodsIfNeeded(
@@ -74,8 +81,11 @@ async function runPodInstall(options: {
   shouldHandleRepoUpdate?: boolean;
   sourceDir: string;
   newArch: boolean;
+  useBundler: boolean;
 }) {
-  await validatePodCommand(options.sourceDir);
+  if (!options.useBundler) {
+    await validatePodCommand(options.sourceDir);
+  }
 
   // Remove build folder to avoid codegen path clashes when developing native modules
   if (fs.existsSync('./build')) {
@@ -86,7 +96,9 @@ async function runPodInstall(options: {
   const loader = spinner({ indicator: 'timer' });
   try {
     loader.start('Installing CocoaPods dependencies');
-    await spawn('bundle', ['exec', 'pod', 'install'], {
+    const command = options.useBundler ? 'bundle' : 'pod';
+    const args = options.useBundler ? ['exec', 'pod', 'install'] : ['install'];
+    await spawn(command, args, {
       env: {
         RCT_NEW_ARCH_ENABLED: options.newArch ? '1' : '0',
         RCT_IGNORE_PODS_DEPRECATION: '1',
@@ -104,11 +116,12 @@ async function runPodInstall(options: {
      * prevent infinite loop (unlikely scenario)
      */
     if (stderr.includes('pod repo update') && shouldHandleRepoUpdate) {
-      await runPodUpdate(options.sourceDir);
+      await runPodUpdate(options.sourceDir, options.useBundler);
       await runPodInstall({
         shouldHandleRepoUpdate: false,
         sourceDir: options.sourceDir,
         newArch: options.newArch,
+        useBundler: options.useBundler,
       });
     } else {
       loader.stop('CocoaPods installation failed. ', 1);
@@ -124,11 +137,15 @@ Learn more at: ${color.dim('https://cocoapods.org/')}`,
   loader.stop('CocoaPods installed successfully.');
 }
 
-async function runPodUpdate(cwd: string) {
+async function runPodUpdate(cwd: string, useBundler: boolean) {
   const loader = spinner({ indicator: 'timer' });
   try {
     loader.start('Updating CocoaPods repositories');
-    await spawn('pod', ['repo', 'update'], { cwd });
+    if (useBundler) {
+      await spawn('bundle', ['exec', 'pod', 'repo', 'update'], { cwd });
+    } else {
+      await spawn('pod', ['repo', 'update'], { cwd });
+    }
   } catch (error) {
     const stderr =
       (error as SubprocessError).stderr || (error as SubprocessError).stdout;
@@ -136,7 +153,7 @@ async function runPodUpdate(cwd: string) {
 
     throw new RnefError(
       `Failed to update CocoaPods repositories for iOS project. Please try again manually: 
-cd ${cwd} && pod repo update.`,
+cd ${cwd} && bundle exec pod repo update.`,
       { cause: stderr }
     );
   }
@@ -152,10 +169,14 @@ async function installPods(options: {
     logger.debug(`No Podfile at ${options.podfilePath}. Skipping pod install.`);
     return;
   }
-  await runBundleInstall(options.sourceDir, options.projectRoot);
+  const useBundler = await runBundleInstall(
+    options.sourceDir,
+    options.projectRoot
+  );
   await runPodInstall({
     sourceDir: options.sourceDir,
     newArch: options.newArch,
+    useBundler,
   });
 }
 
@@ -177,11 +198,15 @@ async function validatePodCommand(sourceDir: string) {
 async function runBundleInstall(sourceDir: string, projectRoot: string) {
   const gemfilePath = path.join(projectRoot, 'Gemfile');
   if (!fs.existsSync(gemfilePath)) {
-    throw new RnefError(
-      `Could not find the Gemfile at ${gemfilePath}. 
-Currently the CLI requires to have this file in the root directory of the project to install CocoaPods. 
-If your configuration is different, please install the CocoaPods manually.`
+    logger.warn(
+      `Could not find the Gemfile at: ${color.cyan(gemfilePath)}.
+The default React Native Template uses Gemfile to leverage Ruby Bundler and we advice the same.
+If you use Gemfile, make sure it's ${color.bold(
+        'in the project root directory'
+      )}.
+Falling back to installing CocoaPods using globally installed "pod".`
     );
+    return false;
   }
 
   const loader = spinner();
@@ -198,6 +223,7 @@ If your configuration is different, please install the CocoaPods manually.`
   }
 
   loader.stop('Installed Ruby Gems.');
+  return true;
 }
 
 async function getNativeDependencies(platformName: ApplePlatform) {
