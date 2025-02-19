@@ -5,7 +5,7 @@ import {
   RnefError,
   spawn,
   spinner,
-  SubprocessError,
+  type SubprocessError,
 } from '@rnef/tools';
 import { XMLParser } from 'fast-xml-parser';
 import type { Info, XcodeProjectInfo } from '../types/index.js';

@@ -2,9 +2,8 @@ import { createHash } from 'node:crypto';
 import fs from 'node:fs';
 import path from 'node:path';
 import type { IOSDependencyConfig } from '@react-native-community/cli-types';
-import { cacheManager, color, logger, RnefError, spinner } from '@rnef/tools';
-import type { SubprocessError } from 'nano-spawn';
-import spawn from 'nano-spawn';
+import type { SubprocessError } from '@rnef/tools';
+import { cacheManager, color, logger, RnefError, spawn, spinner } from '@rnef/tools';
 import type { ApplePlatform } from '../types/index.js';
 
 export async function installPodsIfNeeded(
