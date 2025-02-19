@@ -1,6 +1,8 @@
 import * as fs from 'node:fs';
 import { createRequire } from 'node:module';
 import * as path from 'node:path';
+import { logger } from '@rnef/tools';
+import { ConfigTypeSchema } from './schema.js';
 
 export type PluginOutput = {
   name: string;
@@ -100,6 +102,13 @@ export async function getConfig(
   dir: string = process.cwd()
 ): Promise<ConfigOutput> {
   const config = await importUp(dir, 'rnef.config');
+
+  const { error } = ConfigTypeSchema.validate(config);
+
+  if (error) {
+    logger.error(`Invalid config: ${error.message}`);
+    process.exit(1);
+  }
 
   if (!config.root) {
     config.root = process.cwd();

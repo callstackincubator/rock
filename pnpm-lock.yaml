@@ -133,6 +133,12 @@ importers:
 
   packages/config:
     dependencies:
+      '@rnef/tools':
+        specifier: ^0.2.0
+        version: link:../tools
+      joi:
+        specifier: ^17.13.3
+        version: 17.13.3
       tslib:
         specifier: ^2.3.0
         version: 2.7.0
