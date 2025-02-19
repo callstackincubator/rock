@@ -166,7 +166,9 @@ async function installPods(options: {
   newArch: boolean;
 }) {
   if (!fs.existsSync(options.podfilePath)) {
-    logger.debug(`No Podfile at ${options.podfilePath}. Skipping pod installation.`);
+    logger.debug(
+      `No Podfile at ${options.podfilePath}. Skipping pod installation.`
+    );
     return;
   }
   const useBundler = await runBundleInstall(
@@ -191,14 +193,14 @@ async function validatePodCommand(sourceDir: string) {
   } catch (error) {
     const stderr =
       (error as SubprocessError).stderr || (error as SubprocessError).stdout;
-    throw new RnefError('CocoaPods "pod" command failed.', { cause: stderr });
+    throw new RnefError(`CocoaPods "pod" command failed.`, { cause: stderr });
   }
 }
 
 async function runBundleInstall(sourceDir: string, projectRoot: string) {
   const gemfilePath = path.join(projectRoot, 'Gemfile');
   if (!fs.existsSync(gemfilePath)) {
-    logger.warn(
+    logger.debug(
       `Could not find the Gemfile at: ${color.cyan(gemfilePath)}
 The default React Native Template uses Gemfile to leverage Ruby Bundler and we advice the same.
 If you use Gemfile, make sure it's ${color.bold(
