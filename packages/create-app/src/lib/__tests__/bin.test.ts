@@ -3,36 +3,36 @@ import { PLATFORMS, PLUGINS } from '../templates.js';
 
 test('formatConfig', () => {
   expect(formatConfig(PLATFORMS, PLUGINS)).toMatchInlineSnapshot(`
-    "import { pluginPlatformIOS } from '@rnef/plugin-platform-ios';
-    import { pluginPlatformAndroid } from '@rnef/plugin-platform-android';
+    "import { platformIOS } from '@rnef/platform-ios';
+    import { platformAndroid } from '@rnef/platform-android';
     import { pluginMetro } from '@rnef/plugin-metro';
     import { pluginRepack } from '@rnef/plugin-repack';
     import { pluginBrownfieldIos } from '@rnef/plugin-brownfield-ios';
 
     export default {
-      plugins: {
-        metro: pluginMetro(),
-        repack: pluginRepack(),
-        brownfieldIos: pluginBrownfieldIos(),
-      },
+      plugins: [
+        pluginMetro(),
+        pluginRepack(),
+        pluginBrownfieldIos(),
+      ],
       platforms: {
-        ios: pluginPlatformIOS(),
-        android: pluginPlatformAndroid(),
+        ios: platformIOS(),
+        android: platformAndroid(),
       },
     };
     "
   `);
 
   expect(formatConfig([PLATFORMS[0]], [PLUGINS[0]])).toMatchInlineSnapshot(`
-    "import { pluginPlatformIOS } from '@rnef/plugin-platform-ios';
+    "import { platformIOS } from '@rnef/platform-ios';
     import { pluginMetro } from '@rnef/plugin-metro';
 
     export default {
-      plugins: {
-        metro: pluginMetro(),
-      },
+      plugins: [
+        pluginMetro(),
+      ],
       platforms: {
-        ios: pluginPlatformIOS(),
+        ios: platformIOS(),
       },
     };
     "

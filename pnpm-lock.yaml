@@ -168,33 +168,99 @@ importers:
         specifier: ^1.2.5
         version: 1.2.5
 
-  packages/plugin-brownfield-ios:
+  packages/platform-android:
+    dependencies:
+      '@react-native-community/cli-config-android':
+        specifier: ^16.0.2
+        version: 16.0.2
+      '@rnef/tools':
+        specifier: ^0.2.0
+        version: link:../tools
+      adm-zip:
+        specifier: ^0.5.16
+        version: 0.5.16
+      tslib:
+        specifier: ^2.3.0
+        version: 2.8.1
+    devDependencies:
+      '@react-native-community/cli-types':
+        specifier: ^16.0.2
+        version: 16.0.2
+      '@rnef/config':
+        specifier: ^0.2.0
+        version: link:../config
+      '@types/adm-zip':
+        specifier: ^0.5.7
+        version: 0.5.7
+
+  packages/platform-apple-helpers:
     dependencies:
       '@react-native-community/cli-config-apple':
         specifier: ^16.0.2
         version: 16.0.2
-      '@react-native-community/cli-server-api':
-        specifier: ^16.0.2
-        version: 16.0.2
-      '@react-native/community-cli-plugin':
-        specifier: 0.77.0-rc.2
-        version: 0.77.0-rc.2(@babel/core@7.25.2)(@babel/preset-env@7.25.4(@babel/core@7.25.2))(@react-native-community/cli-server-api@16.0.2)
-      '@rnef/plugin-platform-apple':
-        specifier: ^0.1.5
-        version: 0.1.7
-      '@rnef/plugin-platform-ios':
-        specifier: ^0.1.5
-        version: 0.1.7
       '@rnef/tools':
-        specifier: ^0.1.5
-        version: 0.1.7
+        specifier: ^0.2.0
+        version: link:../tools
+      '@types/adm-zip':
+        specifier: ^0.5.7
+        version: 0.5.7
+      adm-zip:
+        specifier: ^0.5.16
+        version: 0.5.16
+      fast-glob:
+        specifier: ^3.3.2
+        version: 3.3.3
+      fast-xml-parser:
+        specifier: ^4.5.0
+        version: 4.5.1
+      tar:
+        specifier: ^7.4.3
+        version: 7.4.3
       tslib:
         specifier: ^2.3.0
         version: 2.8.1
     devDependencies:
       '@rnef/config':
-        specifier: ^0.1.5
-        version: 0.1.7
+        specifier: ^0.2.0
+        version: link:../config
+
+  packages/platform-ios:
+    dependencies:
+      '@react-native-community/cli-config-apple':
+        specifier: ^16.0.2
+        version: 16.0.2
+      '@rnef/platform-apple-helpers':
+        specifier: ^0.2.0
+        version: link:../platform-apple-helpers
+      '@rnef/tools':
+        specifier: ^0.2.0
+        version: link:../tools
+      tslib:
+        specifier: ^2.3.0
+        version: 2.8.1
+    devDependencies:
+      '@rnef/config':
+        specifier: ^0.2.0
+        version: link:../config
+
+  packages/plugin-brownfield-ios:
+    dependencies:
+      '@react-native-community/cli-config-apple':
+        specifier: ^16.0.2
+        version: 16.0.2
+      '@rnef/platform-apple-helpers':
+        specifier: ^0.2.0
+        version: link:../platform-apple-helpers
+      '@rnef/tools':
+        specifier: ^0.2.0
+        version: link:../tools
+      tslib:
+        specifier: ^2.3.0
+        version: 2.8.1
+    devDependencies:
+      '@rnef/config':
+        specifier: ^0.2.0
+        version: link:../config
 
   packages/plugin-metro:
     dependencies:
@@ -211,87 +277,6 @@ importers:
       '@react-native/community-cli-plugin':
         specifier: 0.77.0-rc.2
         version: 0.77.0-rc.2(@babel/core@7.25.2)(@babel/preset-env@7.25.4(@babel/core@7.25.2))(@react-native-community/cli-server-api@16.0.2)
-      '@rnef/config':
-        specifier: ^0.2.0
-        version: link:../config
-
-  packages/plugin-platform-android:
-    dependencies:
-      '@react-native-community/cli-config-android':
-        specifier: ^16.0.2
-        version: 16.0.2
-      '@rnef/tools':
-        specifier: ^0.2.0
-        version: link:../tools
-      adm-zip:
-        specifier: ^0.5.16
-        version: 0.5.16
-      picocolors:
-        specifier: ^1.1.1
-        version: 1.1.1
-      tslib:
-        specifier: ^2.3.0
-        version: 2.7.0
-    devDependencies:
-      '@react-native-community/cli-types':
-        specifier: ^16.0.2
-        version: 16.0.2
-      '@rnef/config':
-        specifier: ^0.2.0
-        version: link:../config
-      '@types/adm-zip':
-        specifier: ^0.5.7
-        version: 0.5.7
-
-  packages/plugin-platform-apple:
-    dependencies:
-      '@react-native-community/cli-config-apple':
-        specifier: ^16.0.2
-        version: 16.0.2
-      '@rnef/tools':
-        specifier: ^0.2.0
-        version: link:../tools
-      '@types/adm-zip':
-        specifier: ^0.5.7
-        version: 0.5.7
-      adm-zip:
-        specifier: ^0.5.16
-        version: 0.5.16
-      fast-glob:
-        specifier: ^3.3.2
-        version: 3.3.2
-      fast-xml-parser:
-        specifier: ^4.5.0
-        version: 4.5.0
-      picocolors:
-        specifier: ^1.1.1
-        version: 1.1.1
-      tar:
-        specifier: ^7.4.3
-        version: 7.4.3
-      tslib:
-        specifier: ^2.3.0
-        version: 2.7.0
-    devDependencies:
-      '@rnef/config':
-        specifier: ^0.2.0
-        version: link:../config
-
-  packages/plugin-platform-ios:
-    dependencies:
-      '@react-native-community/cli-config-apple':
-        specifier: ^16.0.2
-        version: 16.0.2
-      '@rnef/plugin-platform-apple':
-        specifier: ^0.2.0
-        version: link:../plugin-platform-apple
-      '@rnef/tools':
-        specifier: ^0.2.0
-        version: link:../tools
-      tslib:
-        specifier: ^2.3.0
-        version: 2.7.0
-    devDependencies:
       '@rnef/config':
         specifier: ^0.2.0
         version: link:../config
@@ -1853,18 +1838,6 @@ packages:
     peerDependenciesMeta:
       '@types/react':
         optional: true
-
-  '@rnef/config@0.1.7':
-    resolution: {integrity: sha512-fMC7ZEpe+10o+g5HJ1Iye+1vFJZvbTH8SjKvpG79LvK4vJftxxjWfCYGqj663Ev+DNlf+CbOZUKdqA0SFBw+Bw==}
-
-  '@rnef/plugin-platform-apple@0.1.7':
-    resolution: {integrity: sha512-Ym1eAIYXBUu7CKLeYfcKDGqu4J4idgPtqx04jVZR+ID57DrzA32hsqkR7bJNQrIvBGqxUm43wG2VCwLeZWRfdA==}
-
-  '@rnef/plugin-platform-ios@0.1.7':
-    resolution: {integrity: sha512-6NQHLyZTrVSYx5gR2ux0eosKBjeWmnAjjMlqYJPmFVzW3QYBXSuqkY/N/Y6uXfWEjvPNIUiDAEm9mBsm7KbGxw==}
-
-  '@rnef/tools@0.1.7':
-    resolution: {integrity: sha512-NZE6wQBygzwYpKMWWhb1Dd+2s/CaqnYEbQs0xeYo8YNO7KR5OmBkLu/hKXKYp/p4vSSGF0eIrnmErhntqkH2vg==}
 
   '@rollup/rollup-android-arm-eabi@4.24.0':
     resolution: {integrity: sha512-Q6HJd7Y6xdB48x8ZNVDOqsbh2uByBhgK8PiQgPhwkIw/HC/YX5Ghq2mQY5sRMZWHb3VsFkWooUVOZHKr7DmDIA==}
@@ -3462,10 +3435,6 @@ packages:
 
   fast-uri@3.0.1:
     resolution: {integrity: sha512-MWipKbbYiYI0UC7cl8m/i/IWTqfC8YXsqjzybjddLsFjStroQzsHXkc73JutMvBiXmOvapk+axIl79ig5t55Bw==}
-
-  fast-xml-parser@4.5.0:
-    resolution: {integrity: sha512-/PlTQCI96+fZMAOLMZK4CWG1ItCbfZ/0jx7UIJFChPNrx7tcEgerUgWbeieCM9MfHInUDyK8DWYZ+YrywDJuTg==}
-    hasBin: true
 
   fast-xml-parser@4.5.1:
     resolution: {integrity: sha512-y655CeyUQ+jj7KBbYMc4FG01V8ZQqjN+gDYGJ50RtfsUB8iG9AmwmwoAgeKLJdmueKKMrH1RJ7yXHTSoczdv5w==}
@@ -7749,8 +7718,8 @@ snapshots:
     dependencies:
       '@react-native-community/cli-tools': 16.0.2
       chalk: 4.1.2
-      fast-glob: 3.3.2
-      fast-xml-parser: 4.5.0
+      fast-glob: 3.3.3
+      fast-xml-parser: 4.5.1
 
   '@react-native-community/cli-config-apple@15.1.2':
     dependencies:
@@ -7764,7 +7733,7 @@ snapshots:
       '@react-native-community/cli-tools': 16.0.2
       chalk: 4.1.2
       execa: 5.1.1
-      fast-glob: 3.3.2
+      fast-glob: 3.3.3
 
   '@react-native-community/cli-config@15.1.2(typescript@5.6.3)':
     dependencies:
@@ -8196,47 +8165,6 @@ snapshots:
       react: 18.3.1
       react-native: 0.76.3(@babel/core@7.25.2)(@babel/preset-env@7.25.4(@babel/core@7.25.2))(@react-native-community/cli-server-api@16.0.2)(react@18.3.1)
 
-  '@rnef/config@0.1.7':
-    dependencies:
-      tslib: 2.8.1
-
-  '@rnef/plugin-platform-apple@0.1.7':
-    dependencies:
-      '@react-native-community/cli-config-apple': 16.0.2
-      '@rnef/tools': 0.1.7
-      fast-glob: 3.3.3
-      fast-xml-parser: 4.5.1
-      picocolors: 1.1.1
-      tar: 7.4.3
-      tslib: 2.8.1
-    transitivePeerDependencies:
-      - supports-color
-
-  '@rnef/plugin-platform-ios@0.1.7':
-    dependencies:
-      '@react-native-community/cli-config-apple': 16.0.2
-      '@rnef/plugin-platform-apple': 0.1.7
-      '@rnef/tools': 0.1.7
-      tslib: 2.8.1
-    transitivePeerDependencies:
-      - supports-color
-
-  '@rnef/tools@0.1.7':
-    dependencies:
-      '@clack/prompts': 0.10.0
-      '@expo/fingerprint': 0.11.6
-      '@types/adm-zip': 0.5.7
-      adm-zip: 0.5.16
-      appdirsjs: 1.2.7
-      is-unicode-supported: 2.1.0
-      nano-spawn: 0.2.0
-      picocolors: 1.1.1
-      string-argv: 0.3.2
-      ts-regex-builder: 1.8.2
-      tslib: 2.8.1
-    transitivePeerDependencies:
-      - supports-color
-
   '@rollup/rollup-android-arm-eabi@4.24.0':
     optional: true
 
@@ -8596,7 +8524,7 @@ snapshots:
       '@typescript-eslint/types': 8.19.0
       '@typescript-eslint/visitor-keys': 8.19.0
       debug: 4.4.0
-      fast-glob: 3.3.2
+      fast-glob: 3.3.3
       is-glob: 4.0.3
       minimatch: 9.0.5
       semver: 7.7.1
@@ -10003,10 +9931,6 @@ snapshots:
   fast-uri@2.4.0: {}
 
   fast-uri@3.0.1: {}
-
-  fast-xml-parser@4.5.0:
-    dependencies:
-      strnum: 1.0.5
 
   fast-xml-parser@4.5.1:
     dependencies:

@@ -1,7 +1,7 @@
 import util from 'node:util';
 import { log as clackLog } from '@clack/prompts';
 import isUnicodeSupported from 'is-unicode-supported';
-import color from 'picocolors';
+import { color } from './color.js';
 import { isInteractive } from './isInteractive.js';
 
 const unicode = isUnicodeSupported();

@@ -21,16 +21,16 @@
       "@rnef/config": ["packages/config/src/index.ts"],
       "@rnef/plugin-metro": ["packages/plugin-metro/src/index.ts"],
       "@rnef/plugin-repack": ["packages/plugin-repack/src/index.ts"],
-      "@rnef/plugin-platform-android": [
-        "packages/plugin-platform-android/src/index.ts"
+      "@rnef/platform-android": [
+        "packages/platform-android/src/index.ts"
       ],
-      "@rnef/plugin-platform-ios": [
-        "packages/plugin-platform-ios/src/index.ts"
+      "@rnef/platform-ios": [
+        "packages/platform-ios/src/index.ts"
       ],
       "@rnef/test-helpers": ["packages/test-helpers/src/index.ts"],
       "@rnef/tools": ["packages/tools/src/index.ts"],
-      "@rnef/plugin-platform-apple": [
-        "packages/plugin-platform-apple/src/index.ts"
+      "@rnef/platform-apple-helpers": [
+        "packages/platform-apple-helpers/src/index.ts"
       ]
     }
   },

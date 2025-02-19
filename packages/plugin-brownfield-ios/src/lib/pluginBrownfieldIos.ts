@@ -1,7 +1,11 @@
 import { getProjectConfig } from '@react-native-community/cli-config-apple';
 import type { PluginApi, PluginOutput } from '@rnef/config';
-import type { BuildFlags } from '@rnef/plugin-platform-apple';
-import { createBuild, getBuildOptions, getBuildPaths } from '@rnef/plugin-platform-apple';
+import {
+  type BuildFlags,
+  createBuild,
+  getBuildOptions,
+  getBuildPaths,
+} from '@rnef/platform-apple-helpers';
 import { intro, outro, RnefError } from '@rnef/tools';
 import { mergeFrameworks } from './mergeFrameworks.js';
 

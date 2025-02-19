@@ -1,0 +1,68 @@
+name: Remote Build Android
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
+concurrency:
+  group: remote-build-android-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  build-release:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: |
+          # Remove next line after public release
+          echo "//registry.npmjs.org/:_authToken=${{ secrets.NPM_TOKEN }}" > .npmrc
+          npm install
+
+      - name: RNEF Remote Build - Android device
+        uses: ./.github/actions/rnef-remote-build-android
+        with:
+          sign: true
+          variant: release
+          keystore-base64: ${{ secrets.KEYSTORE_BASE64 }}
+          keystore-store-file: ${{ secrets.RNEF_UPLOAD_STORE_FILE }}
+          keystore-store-password: ${{ secrets.RNEF_UPLOAD_STORE_PASSWORD }}
+          keystore-key-alias: ${{ secrets.RNEF_UPLOAD_KEY_ALIAS }}
+          keystore-key-password: ${{ secrets.RNEF_UPLOAD_KEY_PASSWORD }}
+  
+  build-debug:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: |
+          # Remove next line after public release
+          echo "//registry.npmjs.org/:_authToken=${{ secrets.NPM_TOKEN }}" > .npmrc
+          npm install
+
+      - name: RNEF Remote Build - Android
+        uses: ./.github/actions/rnef-remote-build-android
+        with:
+          variant: debug

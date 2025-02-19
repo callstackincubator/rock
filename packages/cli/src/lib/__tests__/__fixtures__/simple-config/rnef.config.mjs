@@ -1,4 +1,4 @@
 export default {
-  plugins: {},
+  plugins: [],
   commands: [{ name: 'test', description: 'Test command', action: () => {} }],
 };

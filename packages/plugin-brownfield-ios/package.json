@@ -1,6 +1,6 @@
 {
   "name": "@rnef/plugin-brownfield-ios",
-  "version": "0.1.5",
+  "version": "0.2.0",
   "type": "module",
   "exports": {
     "types": "./dist/src/index.d.ts",
@@ -17,15 +17,12 @@
   },
   "dependencies": {
     "@react-native-community/cli-config-apple": "^16.0.2",
-    "@rnef/tools": "^0.1.5",
-    "@rnef/plugin-platform-ios": "^0.1.5",
-    "@rnef/plugin-platform-apple": "^0.1.5",
-    "@react-native-community/cli-server-api": "^16.0.2",
-    "@react-native/community-cli-plugin": "0.77.0-rc.2",
+    "@rnef/tools": "^0.2.0",
+    "@rnef/platform-apple-helpers": "^0.2.0",
     "tslib": "^2.3.0"
   },
   "devDependencies": {
-    "@rnef/config": "^0.1.5"
+    "@rnef/config": "^0.2.0"
   },
   "publishConfig": {
     "access": "restricted"

@@ -4,6 +4,8 @@ import type { spinner } from '../prompts.js';
 
 export const BUILD_CACHE_DIR = 'remote-build';
 
+export type SupportedRemoteCacheProviders = 'github-actions';
+
 export type RemoteArtifact = {
   name: string;
   downloadUrl: string;

@@ -1,6 +1,6 @@
 import { existsSync, rmSync } from 'node:fs';
 import path from 'node:path';
-import { getBuildPaths } from '@rnef/plugin-platform-apple';
+import { getBuildPaths } from '@rnef/platform-apple-helpers';
 import { spawn, spinner } from '@rnef/tools';
 
 /**

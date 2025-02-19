@@ -1,12 +1,10 @@
-import { detectContinuousIntegration } from '../ci.js';
 import type { RemoteBuildCache } from './common.js';
-import { GitHubBuildCache } from './github/GitHubBuildCache.js';
 
-export function createRemoteBuildCache(): RemoteBuildCache | null {
-  const ci = detectContinuousIntegration();
-
-  if (ci === 'github') {
-    // @todo change to dynamic import when extracting all github logic to a plugin
+export async function createRemoteBuildCache(
+  remoteCacheProvider: 'github-actions'
+): Promise<RemoteBuildCache | null> {
+  if (remoteCacheProvider === 'github-actions') {
+    const { GitHubBuildCache } = await import('./github/GitHubBuildCache.js');
     return new GitHubBuildCache();
   }
 

@@ -24,7 +24,7 @@ test.each([['.js'], ['.mjs'], ['.ts']])(
     DIR = getTempDirectory('test_config');
     writeFiles(DIR, {
       [`rnef.config${ext}`]: `module.exports = {
-  plugins: {},
+  plugins: [],
 }`,
     });
     const config = await getConfig(DIR);
@@ -48,9 +48,7 @@ test('should load plugin that registers a command', async () => {
   };
 };
 module.exports = {
-  plugins: {
-    "test-plugin": TestPlugin(),
-  },
+  plugins: [TestPlugin()],
 };
 `,
   });

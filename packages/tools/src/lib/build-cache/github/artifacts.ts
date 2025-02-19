@@ -1,7 +1,7 @@
 import * as fs from 'node:fs';
 import AdmZip from 'adm-zip';
-import color from 'picocolors';
 import cacheManager from '../../cacheManager.js';
+import { color } from '../../color.js';
 import logger from '../../logger.js';
 import type { spinner } from '../../prompts.js';
 import { getGitHubToken, type GitHubRepoDetails } from './config.js';
