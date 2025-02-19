@@ -13,12 +13,42 @@ export async function installPodsIfNeeded(
   sourceDir: string,
   newArch: boolean
 ) {
-  const packageJson = loadPackageJSON(projectRoot);
   const podsPath = path.join(sourceDir, 'Pods');
   const podfilePath = path.join(sourceDir, 'Podfile');
+
+  // There's a possibility to define a custom dependencies in `react-native.config.js`, that contain native code for a platform and that should also trigger install CocoaPods
+  const nativeDependencies = await getNativeDependencies(platformName);
+
+  const cacheKey = `pods-dependencies`;
+  const cachedDependenciesHash = cacheManager.get(cacheKey);
+  const podsDirExists = fs.existsSync(podsPath);
+  const hashChanged =
+    cachedDependenciesHash &&
+    !compareMd5Hashes(
+      calculateCurrentHash({ podfilePath, podsPath, nativeDependencies }),
+      cachedDependenciesHash
+    );
+
+  if (!podsDirExists || hashChanged) {
+    await installPods({ projectRoot, sourceDir, podfilePath, newArch });
+    cacheManager.set(
+      cacheKey,
+      calculateCurrentHash({ podfilePath, podsPath, nativeDependencies })
+    );
+  }
+}
+
+const calculateCurrentHash = ({
+  podfilePath,
+  podsPath,
+  nativeDependencies,
+}: {
+  podfilePath: string;
+  podsPath: string;
+  nativeDependencies: string[];
+}) => {
   const podfileLockPath = podfilePath + '.lock';
   const manifestLockPath = path.join(podsPath, 'Manifest.lock');
-
   let podfile;
   try {
     podfile = fs.readFileSync(podfilePath, 'utf-8');
@@ -32,44 +62,14 @@ export async function installPodsIfNeeded(
   } catch {
     logger.debug('No Podfile.lock, continue');
   }
-
-  // There's a possibility to define a custom dependencies in `react-native.config.js`, that contain native code for a platform and that should also trigger install CocoaPods
-  const platformDependencies = await getPlatformDependencies(platformName);
-
-  const calculateCurrentHash = () => {
-    return generateDependenciesHash([
-      generateMd5Hash(podfile),
-      generateMd5Hash(podfileLock ?? ''),
-      getLockfileChecksum(podfileLockPath),
-      getLockfileChecksum(manifestLockPath),
-      generateDependenciesHash(platformDependencies),
-      generateDependenciesHash(Object.keys(packageJson.dependencies || {})),
-    ]);
-  };
-  const cacheKey = `${packageJson['name']}-dependencies`;
-  const cachedDependenciesHash = cacheManager.get(cacheKey);
-  const podsDirExists = fs.existsSync(podsPath);
-  const hashChanged =
-    cachedDependenciesHash &&
-    !compareMd5Hashes(calculateCurrentHash(), cachedDependenciesHash);
-
-  if (!podsDirExists || hashChanged) {
-    try {
-      await installPods({ projectRoot, sourceDir, podfilePath, newArch });
-      cacheManager.set(cacheKey, calculateCurrentHash());
-    } catch {
-      const relativePath = path.relative(process.cwd(), sourceDir);
-      const command = cachedDependenciesHash
-        ? `cd ${relativePath} && bundle exec pod install`
-        : `bundle install && cd ${relativePath} && bundle exec pod install`;
-
-      throw new RnefError(
-        `Something went wrong while installing CocoaPods. Please run: 
-${color.bold(command)}`
-      );
-    }
-  }
-}
+  return generateDependenciesHash([
+    generateMd5Hash(podfile),
+    generateMd5Hash(podfileLock ?? ''),
+    getLockfileChecksum(podfileLockPath),
+    getLockfileChecksum(manifestLockPath),
+    generateDependenciesHash(nativeDependencies),
+  ]);
+};
 
 async function runPodInstall(options: {
   shouldHandleRepoUpdate?: boolean;
@@ -112,10 +112,11 @@ async function runPodInstall(options: {
         newArch: options.newArch,
       });
     } else {
-      loader.stop('CocoaPods installation failed.', 1);
+      loader.stop('CocoaPods installation failed. ', 1);
 
       throw new RnefError(
-        `Looks like your iOS environment is not properly set.`,
+        `CocoaPods installation failed. Please make sure your environment is correctly set up. 
+Learn more at: ${color.dim('https://cocoapods.org/')}`,
         { cause: stderr }
       );
     }
@@ -135,9 +136,8 @@ async function runPodUpdate(cwd: string) {
     loader.stop();
 
     throw new RnefError(
-      `Failed to update CocoaPods repositories for iOS project.\nPlease try again manually: "pod repo update".\nCocoaPods documentation: ${color.dim(
-        'https://cocoapods.org/'
-      )}`,
+      `Failed to update CocoaPods repositories for iOS project. Please try again manually: 
+cd ${cwd} && pod repo update.`,
       { cause: stderr }
     );
   }
@@ -149,28 +149,15 @@ async function installPods(options: {
   podfilePath: string;
   newArch: boolean;
 }) {
-  try {
-    if (!fs.existsSync(options.podfilePath)) {
-      logger.debug(
-        `No Podfile at ${options.podfilePath}. Skipping pod install.`
-      );
-      return;
-    }
-    await runBundleInstall(options.sourceDir, options.projectRoot);
-    await runPodInstall({
-      sourceDir: options.sourceDir,
-      newArch: options.newArch,
-    });
-  } catch {
-    throw new RnefError(
-      `Something went wrong while installing CocoaPods. Please run ${color.bold(
-        `bundle install && cd ${path.relative(
-          process.cwd(),
-          options.sourceDir
-        )} && bundle exec pod install`
-      )} manually`
-    );
+  if (!fs.existsSync(options.podfilePath)) {
+    logger.debug(`No Podfile at ${options.podfilePath}. Skipping pod install.`);
+    return;
   }
+  await runBundleInstall(options.sourceDir, options.projectRoot);
+  await runPodInstall({
+    sourceDir: options.sourceDir,
+    newArch: options.newArch,
+  });
 }
 
 /*
@@ -184,10 +171,7 @@ async function validatePodCommand(sourceDir: string) {
   } catch (error) {
     const stderr =
       (error as SubprocessError).stderr || (error as SubprocessError).stdout;
-    throw new RnefError(
-      '"pod" command not found. Please make sure to install CocoaPods correctly',
-      { cause: stderr }
-    );
+    throw new RnefError('CocoaPods "pod" command failed.', { cause: stderr });
   }
 }
 
@@ -195,7 +179,9 @@ async function runBundleInstall(sourceDir: string, projectRoot: string) {
   const gemfilePath = path.join(projectRoot, 'Gemfile');
   if (!fs.existsSync(gemfilePath)) {
     throw new RnefError(
-      `Could not find the Gemfile at ${gemfilePath}. Currently the CLI requires to have this file in the root directory of the project to install CocoaPods. If your configuration is different, please install the CocoaPods manually.`
+      `Could not find the Gemfile at ${gemfilePath}. 
+Currently the CLI requires to have this file in the root directory of the project to install CocoaPods. 
+If your configuration is different, please install the CocoaPods manually.`
     );
   }
 
@@ -207,23 +193,15 @@ async function runBundleInstall(sourceDir: string, projectRoot: string) {
     const stderr =
       (error as SubprocessError).stderr || (error as SubprocessError).stdout;
     loader.stop('Ruby Gems installation failed.', 1);
-    throw new RnefError(
-      `Looks like your iOS environment is not properly set.`,
-      { cause: stderr }
-    );
+    throw new RnefError(`Failed to install Ruby Gems with "bundle install".`, {
+      cause: stderr,
+    });
   }
 
   loader.stop('Installed Ruby Gems.');
 }
 
-function loadPackageJSON(root: string) {
-  const packageJSONPath = path.join(root, 'package.json');
-  const packageJSONContent = fs.readFileSync(packageJSONPath, 'utf-8');
-  const packageJSON = JSON.parse(packageJSONContent);
-  return packageJSON;
-}
-
-async function getPlatformDependencies(platformName: ApplePlatform) {
+async function getNativeDependencies(platformName: ApplePlatform) {
   const { loadConfigAsync } = await import(
     '@react-native-community/cli-config'
   );
