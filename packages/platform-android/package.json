@@ -20,7 +20,6 @@
     "@react-native-community/cli-config-android": "^16.0.2",
     "@rnef/tools": "^0.2.0",
     "adm-zip": "^0.5.16",
-    "picocolors": "^1.1.1",
     "tslib": "^2.3.0"
   },
   "devDependencies": {

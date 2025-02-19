@@ -1,5 +1,4 @@
-import { promptSelect, RnefError, spawn, spinner } from '@rnef/tools';
-import color from 'picocolors';
+import { color, promptSelect, RnefError, spawn, spinner } from '@rnef/tools';
 import { getGradleWrapper } from './runGradle.js';
 
 type GradleTask = {

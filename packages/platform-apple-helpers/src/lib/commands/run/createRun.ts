@@ -3,6 +3,7 @@ import path from 'node:path';
 import type {
   SupportedRemoteCacheProviders} from '@rnef/tools';
 import {
+  color,
   intro,
   isInteractive,
   logger,
@@ -11,7 +12,6 @@ import {
   RnefError,
   spinner
 } from '@rnef/tools';
-import color from 'picocolors';
 import type {
   ApplePlatform,
   Device,

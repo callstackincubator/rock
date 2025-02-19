@@ -4,6 +4,7 @@ import type { AndroidProjectConfig } from '@react-native-community/cli-types';
 import type { PluginApi } from '@rnef/config';
 import type { SubprocessError } from '@rnef/tools';
 import {
+  color,
   intro,
   logger,
   outro,
@@ -12,7 +13,6 @@ import {
   RnefError,
   spawn,
 } from '@rnef/tools';
-import color from 'picocolors';
 
 export function registerCreateKeystoreCommand(api: PluginApi) {
   api.registerCommand({

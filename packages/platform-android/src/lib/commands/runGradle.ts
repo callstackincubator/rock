@@ -1,11 +1,11 @@
 import {
+  color,
   logger,
   RnefError,
   spawn,
   spinner,
   type SubprocessError,
 } from '@rnef/tools';
-import color from 'picocolors';
 import type { BuildFlags } from './buildAndroid/buildAndroid.js';
 import { getAdbPath, getDevices } from './runAndroid/adb.js';
 import type { AndroidProject, Flags } from './runAndroid/runAndroid.js';
@@ -26,7 +26,9 @@ export async function runGradle({
   }
   const humanReadableTasks = tasks.join(', ');
   const loader = spinner({ indicator: 'timer' });
-  const message = `Building the app with Gradle using ${humanReadableTasks} ${tasks.length > 1 ? 'tasks' : 'task'}.`;
+  const message = `Building the app with Gradle using ${humanReadableTasks} ${
+    tasks.length > 1 ? 'tasks' : 'task'
+  }.`;
 
   loader.start(message);
   const gradleArgs = getTaskNames(androidProject.appName, tasks);
@@ -60,7 +62,11 @@ export async function runGradle({
       cwd: androidProject.sourceDir,
       stdio: logger.isVerbose() ? 'inherit' : 'pipe',
     });
-    loader.stop(`Built the app with Gradle using ${humanReadableTasks} ${tasks.length > 1 ? 'tasks' : 'task'}.`);
+    loader.stop(
+      `Built the app with Gradle using ${humanReadableTasks} ${
+        tasks.length > 1 ? 'tasks' : 'task'
+      }.`
+    );
   } catch (error) {
     loader.stop('Failed to build the app');
     const cleanedErrorMessage = (error as SubprocessError).stderr

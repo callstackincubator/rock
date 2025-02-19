@@ -1,5 +1,4 @@
-import { promptSelect, spawn } from '@rnef/tools';
-import color from 'picocolors';
+import { color, promptSelect, spawn } from '@rnef/tools';
 import type { Mock, MockedFunction } from 'vitest';
 import { describe, it } from 'vitest';
 import {

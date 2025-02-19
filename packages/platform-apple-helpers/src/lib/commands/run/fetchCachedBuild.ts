@@ -3,6 +3,7 @@ import path from 'node:path';
 import type {
   SupportedRemoteCacheProviders} from '@rnef/tools';
 import {
+  color,
   createRemoteBuildCache,
   findDirectoriesWithPattern,
   findFilesWithPattern,
@@ -14,7 +15,6 @@ import {
   queryLocalBuildCache,
   spinner
 } from '@rnef/tools';
-import color from 'picocolors';
 import * as tar from 'tar';
 
 export type Distribution = 'simulator' | 'device';

@@ -1,6 +1,7 @@
 import path from 'node:path';
 import type { LocalBuild, SupportedRemoteCacheProviders } from '@rnef/tools';
 import {
+  color,
   createRemoteBuildCache,
   findFilesWithPattern,
   formatArtifactName,
@@ -9,7 +10,6 @@ import {
   queryLocalBuildCache,
   spinner,
 } from '@rnef/tools';
-import color from 'picocolors';
 
 type FetchCachedBuildOptions = {
   variant: string;

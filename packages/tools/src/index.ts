@@ -16,3 +16,4 @@ export * from './lib/build-cache/github/GitHubBuildCache.js';
 export { findDevServerPort } from './lib/dev-server/findDevServerPort.js';
 export { isInteractive } from './lib/isInteractive.js';
 export { spawn, SubprocessError } from './lib/spawn.js';
+export { color } from './lib/color.js';

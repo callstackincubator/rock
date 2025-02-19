@@ -6,12 +6,6 @@ vi.mock('../prompts', () => ({
   promptSelect: vi.fn(),
 }));
 
-vi.mock('picocolors', () => ({
-  default: {
-    bold: vi.fn((str) => str),
-  },
-}));
-
 describe('getConfiguration', () => {
   beforeEach(() => {
     vi.clearAllMocks();

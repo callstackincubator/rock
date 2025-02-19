@@ -1,5 +1,4 @@
-import { logger, spawn } from '@rnef/tools';
-import color from 'picocolors';
+import { color, logger, spawn } from '@rnef/tools';
 import type { XcodeProjectInfo } from '../../types/index.js';
 
 export type BuildSettings = {

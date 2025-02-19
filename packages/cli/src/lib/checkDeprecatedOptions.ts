@@ -1,5 +1,4 @@
-import { logger } from '@rnef/tools';
-import color from 'picocolors';
+import { color, logger } from '@rnef/tools';
 
 const npxBin = 'npx rnef';
 

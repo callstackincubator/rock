@@ -1,6 +1,5 @@
 import type { SupportedRemoteCacheProviders } from '@rnef/tools';
-import { logger, spawn } from '@rnef/tools';
-import color from 'picocolors';
+import { color, logger, spawn } from '@rnef/tools';
 import type {
   ApplePlatform,
   Device,

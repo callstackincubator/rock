@@ -1,5 +1,6 @@
 import fs from 'node:fs';
 import {
+  color,
   intro,
   isInteractive,
   logger,
@@ -9,7 +10,6 @@ import {
   spawn,
   spinner,
 } from '@rnef/tools';
-import color from 'picocolors';
 import { promptSigningIdentity } from '../../utils/signingIdentities.js';
 import { buildJsBundle } from './bundle.js';
 import {

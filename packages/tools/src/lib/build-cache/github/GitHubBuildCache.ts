@@ -1,4 +1,4 @@
-import color from 'picocolors';
+import { color } from '../../color.js';
 import { getGitRemote } from '../../git.js';
 import logger from '../../logger.js';
 import type { spinner } from '../../prompts.js';

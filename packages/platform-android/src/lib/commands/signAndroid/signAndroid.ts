@@ -1,6 +1,7 @@
 import fs from 'node:fs';
 import path from 'node:path';
 import {
+  color,
   intro,
   outro,
   relativeToCwd,
@@ -9,7 +10,6 @@ import {
   spinner,
 } from '@rnef/tools';
 import AdmZip from 'adm-zip';
-import color from 'picocolors';
 import { findAndroidBuildTool, getAndroidBuildToolsPath } from '../../paths.js';
 import { buildJsBundle } from './bundle.js';
 import { getSignOutputPath } from './utils.js';
