@@ -135,13 +135,6 @@ runs:
         echo "IOS_SOURCE_DIR=$IOS_SOURCE_DIR" >> $GITHUB_ENV
       shell: bash
 
-    - name: Install Pods
-      if: ${{ !steps.cached-url.outputs.artifact-url }}
-      run: |
-        cd $IOS_SOURCE_DIR
-        pod install
-      shell: bash
-
     - name: Build iOS
       if: ${{ !steps.cached-url.outputs.artifact-url }}
       run: |

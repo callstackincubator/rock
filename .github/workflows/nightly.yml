@@ -115,13 +115,6 @@ jobs:
             NPM_CONFIG_NODE_LINKER=hoisted \
             pnpm install
 
-      - name: Install CocoaPods
-        run: |
-          cd ../NightlyDeploy
-          bundle install
-          cd ios
-          bundle exec pod install
-
       - name: Build iOS template
         run: |
           cd ../NightlyDeploy

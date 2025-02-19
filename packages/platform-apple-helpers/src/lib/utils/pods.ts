@@ -166,7 +166,7 @@ async function installPods(options: {
   newArch: boolean;
 }) {
   if (!fs.existsSync(options.podfilePath)) {
-    logger.debug(`No Podfile at ${options.podfilePath}. Skipping pod install.`);
+    logger.debug(`No Podfile at ${options.podfilePath}. Skipping pod installation.`);
     return;
   }
   const useBundler = await runBundleInstall(
@@ -199,7 +199,7 @@ async function runBundleInstall(sourceDir: string, projectRoot: string) {
   const gemfilePath = path.join(projectRoot, 'Gemfile');
   if (!fs.existsSync(gemfilePath)) {
     logger.warn(
-      `Could not find the Gemfile at: ${color.cyan(gemfilePath)}.
+      `Could not find the Gemfile at: ${color.cyan(gemfilePath)}
 The default React Native Template uses Gemfile to leverage Ruby Bundler and we advice the same.
 If you use Gemfile, make sure it's ${color.bold(
         'in the project root directory'
