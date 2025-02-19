@@ -59,11 +59,8 @@ describe('getInfo', () => {
     // Should not call on Pods or the other misc groups
     expect(spawn).toHaveBeenCalledWith(
       'xcodebuild',
-      ['-list', '-json', '-project', `some/path/YourProjectName.xcodeproj`],
-      {
-        stdio: isInteractive() ? ['ignore', 'pipe', 'inherit'] : 'pipe',
-        cwd: 'some/path',
-      }
+      ['-list', '-json', '-project', `YourProjectName.xcodeproj`],
+      { cwd: 'some/path' }
     );
     expect(spawn).toHaveBeenCalledTimes(1);
 
