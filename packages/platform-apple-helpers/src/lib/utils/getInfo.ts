@@ -1,6 +1,12 @@
 import * as fs from 'node:fs';
 import * as path from 'node:path';
-import { logger, RnefError, spawn, spinner } from '@rnef/tools';
+import {
+  logger,
+  RnefError,
+  spawn,
+  spinner,
+  SubprocessError,
+} from '@rnef/tools';
 import { XMLParser } from 'fast-xml-parser';
 import type { Info, XcodeProjectInfo } from '../types/index.js';
 
@@ -71,26 +77,17 @@ export async function getInfo(
     try {
       const buildOutput = await spawn(
         'xcodebuild',
-        [
-          '-list',
-          '-json',
-          '-project',
-          path.join(sourceDir, location.replace('group:', '')),
-        ],
-        {
-          cwd: sourceDir,
-          stdio: logger.isVerbose() ? 'pipe' : ['ignore', 'pipe', 'inherit'],
-        }
+        ['-list', '-json', '-project', location.replace('group:', '')],
+        { cwd: sourceDir }
       );
       stdout = buildOutput.stdout;
       logger.debug(stdout);
       logger.debug(buildOutput.stderr);
     } catch (error) {
-      loader.stop(
-        'Failed to get project info. Check the error message above for details.',
-        1
-      );
-      throw error;
+      loader.stop('Failed to get project info.', 1);
+      throw new RnefError('Failed to get project info', {
+        cause: (error as SubprocessError).stderr,
+      });
     }
     const projectInfo = parseTargetList(stdout);
     if (!projectInfo) {
