@@ -22,12 +22,12 @@ export async function installPodsIfNeeded(
   const cacheKey = `pods-dependencies`;
   const cachedDependenciesHash = cacheManager.get(cacheKey);
   const podsDirExists = fs.existsSync(podsPath);
-  const hashChanged =
-    cachedDependenciesHash &&
-    !compareMd5Hashes(
-      calculateCurrentHash({ podfilePath, podsPath, nativeDependencies }),
-      cachedDependenciesHash
-    );
+  const hashChanged = cachedDependenciesHash
+    ? !compareMd5Hashes(
+        calculateCurrentHash({ podfilePath, podsPath, nativeDependencies }),
+        cachedDependenciesHash
+      )
+    : true;
 
   if (!podsDirExists || hashChanged) {
     await installPods({ projectRoot, sourceDir, podfilePath, newArch });
