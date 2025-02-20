@@ -1,6 +1,6 @@
 import fs from 'node:fs';
 import path from 'node:path';
-import { getProjectRoot, logger, RnefError, spawn } from '@rnef/tools';
+import { getProjectRoot, RnefError, spawn } from '@rnef/tools';
 
 function getHermescPath() {
   const hermesPath = path.join(
@@ -32,15 +32,11 @@ export async function runHermes({
   ];
 
   try {
-    await spawn(hermesPath, hermescArgs, {
-      stdio: logger.isVerbose() ? 'inherit' : ['ignore', 'pipe', 'pipe'],
-    });
+    await spawn(hermesPath, hermescArgs);
   } catch (error) {
     throw new RnefError(
       'Compiling JS bundle with Hermes failed. Use `--no-hermes` flag to disable Hermes.',
-      {
-        cause: error,
-      }
+      { cause: error }
     );
   }
 }

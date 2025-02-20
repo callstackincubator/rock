@@ -14,12 +14,12 @@ export async function runHermesByPlatform({
   switch (platform) {
     case 'ios': {
       const { runHermes } = await import('@rnef/platform-ios');
-      runHermes({ bundleOutputPath: bundleOutput });
+      await runHermes({ bundleOutputPath: bundleOutput });
       break;
     }
     case 'android': {
       const { runHermes } = await import('@rnef/platform-android');
-      runHermes({ bundleOutputPath: bundleOutput });
+      await runHermes({ bundleOutputPath: bundleOutput });
       break;
     }
     default: {
@@ -28,7 +28,7 @@ export async function runHermesByPlatform({
         const platformName = platforms[platform](api).name;
         const { runHermes } = await import(platformName);
         if (runHermes) {
-          runHermes({ bundleOutputPath: bundleOutput });
+          await runHermes({ bundleOutputPath: bundleOutput });
         } else {
           logger.warn(
             `No "runHermes" function exported from for the "${platformName}" platform.`

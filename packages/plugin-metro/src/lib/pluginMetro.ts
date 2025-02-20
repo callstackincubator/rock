@@ -4,7 +4,15 @@ import {
   // @ts-expect-error missing typings
 } from '@react-native/community-cli-plugin';
 import type { PluginApi, PluginOutput } from '@rnef/config';
-import { findDevServerPort, RnefError } from '@rnef/tools';
+import {
+  color,
+  findDevServerPort,
+  intro,
+  logger,
+  outro,
+  RnefError,
+  spinner,
+} from '@rnef/tools';
 import { runHermesByPlatform } from './runHermesByPlatform.js';
 
 type PluginConfig = {
@@ -108,11 +116,13 @@ export const pluginMetro =
             '"rnef bundle" command requires all of these flags to bundle JavaScript with Metro: \n  "--platform", "--bundle-output", "--entry-file"'
           );
         }
+        intro('Compiling JS bundle with Metro');
         const root = api.getProjectRoot();
         const reactNativeVersion = api.getReactNativeVersion();
         const reactNativePath = api.getReactNativePath();
         const platforms = api.getPlatforms();
-        bundleCommand.func(
+
+        await bundleCommand.func(
           undefined,
           {
             root,
@@ -123,13 +133,26 @@ export const pluginMetro =
           },
           args
         );
+
         if (args.hermes) {
-          runHermesByPlatform({
+          const loader = spinner();
+          loader.start('Running Hermes compiler...');
+          await runHermesByPlatform({
             platform: args.platform,
             bundleOutput: args.bundleOutput,
             api,
           });
+          loader.stop(
+            `Hermes bytecode bundle created at: ${color.cyan(
+              args.bundleOutput
+            )}`
+          );
+        } else {
+          logger.info(
+            `JavaScript bundle created at: ${color.cyan(args.bundleOutput)}`
+          );
         }
+        outro('Success 🎉.');
       },
       options: [
         ...bundleCommand.options,

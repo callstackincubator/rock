@@ -1,6 +1,6 @@
 import fs from 'node:fs';
 import path from 'node:path';
-import { getLocalOS, logger, RnefError, spawn } from '@rnef/tools';
+import { getLocalOS, RnefError, spawn } from '@rnef/tools';
 import { getReactNativePackagePath } from './utils.js';
 
 export async function runHermes({
@@ -25,15 +25,11 @@ export async function runHermes({
     bundleOutputPath,
   ];
   try {
-    await spawn(hermescPath, hermescArgs, {
-      stdio: logger.isVerbose() ? 'inherit' : ['ignore', 'pipe', 'pipe'],
-    });
+    await spawn(hermescPath, hermescArgs);
   } catch (error) {
     throw new RnefError(
       'Compiling JS bundle with Hermes failed. Use `--no-hermes` flag to disable Hermes.',
-      {
-        cause: error,
-      }
+      { cause: error }
     );
   }
 }

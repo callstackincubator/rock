@@ -1,6 +1,13 @@
 import commands from '@callstack/repack/commands/rspack';
 import type { PluginApi, PluginOutput } from '@rnef/config';
-import { findDevServerPort, RnefError } from '@rnef/tools';
+import {
+  color,
+  findDevServerPort,
+  intro,
+  logger,
+  RnefError,
+  spinner,
+} from '@rnef/tools';
 import { runHermesByPlatform } from './runHermesByPlatform.js';
 
 type PluginConfig = {
@@ -56,16 +63,21 @@ export const pluginRepack =
     api.registerCommand({
       name: 'bundle',
       description: 'Bundles JavaScript with Re.Pack.',
-      action: (args: BundleArgs) => {
+      action: async (args: BundleArgs) => {
         if (!args.entryFile) {
           throw new RnefError(
             '"rnef bundle" command is missing "--entry-file" argument.'
           );
         }
+        intro('Compiling JS bundle with Re.Pack');
         const root = api.getProjectRoot();
         const platforms = api.getPlatforms();
-        // @ts-expect-error TODO fix getPlatforms type
-        bundleCommand.func([], { root, platforms, ...pluginConfig }, args);
+        await bundleCommand.func(
+          [],
+          // @ts-expect-error TODO fix getPlatforms type
+          { root, platforms, ...pluginConfig },
+          args
+        );
 
         if (args.hermes) {
           if (!args.bundleOutput) {
@@ -73,11 +85,23 @@ export const pluginRepack =
               'Missing "--bundle-output" argument to run "bundle --hermes".'
             );
           }
-          runHermesByPlatform({
+
+          const loader = spinner();
+          loader.start('Running Hermes compiler...');
+          await runHermesByPlatform({
             platform: args.platform,
             bundleOutput: args.bundleOutput,
             api,
           });
+          loader.stop(
+            `Hermes bytecode bundle created at: ${color.cyan(
+              args.bundleOutput
+            )}`
+          );
+        } else {
+          logger.info(
+            `JavaScript bundle created at: ${color.cyan(args.bundleOutput)}`
+          );
         }
       },
       options: bundleCommand.options,
