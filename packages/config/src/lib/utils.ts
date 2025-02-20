@@ -6,32 +6,36 @@ export function formatValidationError(config: unknown, error: any): string {
     if (typeof value === 'function') {
       return '[Function]';
     }
-    if (Array.isArray(value) && value.some(item => typeof item === 'function')) {
-      return value.map(item => typeof item === 'function' ? '[Function]' : item);
+    if (
+      Array.isArray(value) &&
+      value.some((item) => typeof item === 'function')
+    ) {
+      return value.map((item) =>
+        typeof item === 'function' ? '[Function]' : item
+      );
     }
     return value;
   };
 
   const errorDetails = error.details[0];
   const path = errorDetails.path;
-  
   const configString = JSON.stringify(config, configReplacer, 2);
   const lines = configString.split('\n');
+  const lastPathKey = path[path.length - 1];
   let line = 1;
   let column = 0;
-  
+
   for (let i = 0; i < lines.length; i++) {
-    if (lines[i].includes(`"${path[path.length - 1]}"`)) {
+    if (lines[i].includes(`"${lastPathKey}"`)) {
       line = i + 1;
-      column = lines[i].indexOf(`"${path[path.length - 1]}"`);
+      column = lines[i].indexOf(`"${lastPathKey}"`) + 1;
       break;
     }
   }
 
-  return codeFrameColumns(configString, {
-    start: { line, column }
-  }, {
-    message: error.message,
-    highlightCode: true
-  });
+  return codeFrameColumns(
+    configString,
+    { start: { line, column } },
+    { message: error.message, highlightCode: true }
+  );
 }

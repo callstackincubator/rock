@@ -1,7 +1,7 @@
 import * as fs from 'node:fs';
 import { createRequire } from 'node:module';
 import * as path from 'node:path';
-import { logger } from '@rnef/tools';
+import { color, logger } from '@rnef/tools';
 import { ConfigTypeSchema } from './schema.js';
 import { formatValidationError } from './utils.js';
 
@@ -63,7 +63,10 @@ type ConfigOutput = {
 
 const extensions = ['.js', '.ts', '.mjs'];
 
-const importUp = async (dir: string, name: string): Promise<ConfigType> => {
+const importUp = async (
+  dir: string,
+  name: string
+): Promise<{ config: ConfigType; filePathWithExt: string }> => {
   const filePath = path.join(dir, name);
 
   for (const ext of extensions) {
@@ -78,7 +81,7 @@ const importUp = async (dir: string, name: string): Promise<ConfigType> => {
         config = require(filePathWithExt);
       }
 
-      return config;
+      return { config, filePathWithExt };
     }
   }
 
@@ -93,25 +96,30 @@ const importUp = async (dir: string, name: string): Promise<ConfigType> => {
 export async function getConfig(
   dir: string = process.cwd()
 ): Promise<ConfigOutput> {
-  let config = await importUp(dir, 'rnef.config');
+  // eslint-disable-next-line prefer-const
+  let { config, filePathWithExt } = await importUp(dir, 'rnef.config');
 
   const { error } = ConfigTypeSchema.validate(config);
 
   if (error) {
-    logger.error('Invalid config:\n' + formatValidationError(config, error));
+    logger.error(
+      `Invalid config at ${color.cyan(
+        path.relative(process.cwd(), filePathWithExt)
+      )}:\n` + formatValidationError(config, error)
+    );
     process.exit(1);
   }
 
   config = {
-      root: dir,
-      get reactNativePath() {
-        return resolveReactNativePath(config.root || dir);
-      },
-      get reactNativeVersion() {
-        return getReactNativeVersion(config.root || dir);
-      },
-      ...config,
-  }
+    root: dir,
+    get reactNativePath() {
+      return resolveReactNativePath(config.root || dir);
+    },
+    get reactNativeVersion() {
+      return getReactNativeVersion(config.root || dir);
+    },
+    ...config,
+  };
 
   const api = {
     registerCommand: (command: CommandType) => {
