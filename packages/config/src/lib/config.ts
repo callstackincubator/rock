@@ -2,6 +2,7 @@ import * as fs from 'node:fs';
 import { createRequire } from 'node:module';
 import * as path from 'node:path';
 import { codeFrameColumns } from '@babel/code-frame';
+import { logger } from '@rnef/tools';
 import { ConfigTypeSchema } from './schema.js';
 
 export type PluginOutput = {
@@ -131,7 +132,7 @@ export async function getConfig(
       highlightCode: true
     });
 
-    console.error('Invalid config:\n' + frame);
+    logger.error('Invalid config:\n' + frame);
     process.exit(1);
   }
 
