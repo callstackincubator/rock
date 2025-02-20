@@ -11,9 +11,9 @@ import {
   logger,
   outro,
   RnefError,
+  runHermes,
   spinner,
 } from '@rnef/tools';
-import { runHermesByPlatform } from './runHermesByPlatform.js';
 
 type PluginConfig = {
   reactNativeVersion?: string;
@@ -137,11 +137,7 @@ export const pluginMetro =
         if (args.hermes) {
           const loader = spinner();
           loader.start('Running Hermes compiler...');
-          await runHermesByPlatform({
-            platform: args.platform,
-            bundleOutput: args.bundleOutput,
-            api,
-          });
+          await runHermes({ bundleOutputPath: args.bundleOutput });
           loader.stop(
             `Hermes bytecode bundle created at: ${color.cyan(
               args.bundleOutput

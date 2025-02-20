@@ -22,5 +22,3 @@ export const platformAndroid =
   };
 
 export default platformAndroid;
-
-export { runHermes } from './commands/signAndroid/runHermes.js';

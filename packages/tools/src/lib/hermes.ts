@@ -1,14 +1,24 @@
 import fs from 'node:fs';
+import { createRequire } from 'node:module';
 import path from 'node:path';
-import { getLocalOS, RnefError, spawn } from '@rnef/tools';
-import { getReactNativePackagePath } from './utils.js';
+import { getLocalOS } from './env.js';
+import { RnefError } from './error.js';
+import { getProjectRoot } from './project.js';
+import { spawn } from './spawn.js';
+
+function getReactNativePackagePath() {
+  const require = createRequire(import.meta.url);
+  const root = getProjectRoot();
+  const input = require.resolve('react-native', { paths: [root] });
+  return path.dirname(input);
+}
 
 export async function runHermes({
   bundleOutputPath,
 }: {
   bundleOutputPath: string;
 }) {
-  const hermescPath = await getHermescPath();
+  const hermescPath = getHermescPath();
   if (!hermescPath) {
     throw new RnefError(
       'Hermesc binary not found. Use `--no-hermes` flag to disable Hermes.'
@@ -38,8 +48,8 @@ export async function runHermes({
  * Get `hermesc` binary path.
  * Based on: https://github.com/facebook/react-native/blob/f2c78af56ae492f49b90d0af61ca9bf4d124fca0/packages/gradle-plugin/react-native-gradle-plugin/src/main/kotlin/com/facebook/react/utils/PathUtils.kt#L48-L55
  */
-export async function getHermescPath() {
-  const reactNativePath = await getReactNativePackagePath();
+function getHermescPath() {
+  const reactNativePath = getReactNativePackagePath();
 
   // Local build from source: node_modules/react-native/sdks/hermes/build/bin/hermesc
   const localBuildPath = path.join(

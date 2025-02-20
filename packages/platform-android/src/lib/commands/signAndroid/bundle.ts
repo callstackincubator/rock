@@ -1,6 +1,5 @@
 import fs from 'node:fs';
-import { logger, spawn } from '@rnef/tools';
-import { runHermes } from './runHermes.js';
+import { logger, runHermes, spawn } from '@rnef/tools';
 
 type BuildJsBundleOptions = {
   bundleOutputPath: string;

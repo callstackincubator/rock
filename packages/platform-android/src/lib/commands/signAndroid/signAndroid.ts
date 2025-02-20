@@ -2,6 +2,7 @@ import fs from 'node:fs';
 import path from 'node:path';
 import {
   color,
+  getDotRnefPath,
   intro,
   outro,
   relativeToCwd,
@@ -12,7 +13,6 @@ import {
 import AdmZip from 'adm-zip';
 import { findAndroidBuildTool, getAndroidBuildToolsPath } from '../../paths.js';
 import { buildJsBundle } from './bundle.js';
-import { getSignOutputPath } from './utils.js';
 
 export type SignAndroidOptions = {
   apkPath: string;
@@ -249,4 +249,8 @@ function formatPassword(password: string) {
   }
 
   return `pass:${password}`;
+}
+
+function getSignOutputPath() {
+  return path.join(getDotRnefPath(), 'android/sign');
 }

@@ -20,9 +20,7 @@
     "tslib": "^2.3.0"
   },
   "devDependencies": {
-    "@rnef/config": "^0.3.0",
-    "@rnef/platform-android": "^0.3.0",
-    "@rnef/platform-ios": "^0.3.0"
+    "@rnef/config": "^0.3.0"
   },
   "peerDependencies": {
     "@callstack/repack": "5.0.0-rc.4",
@@ -30,14 +28,6 @@
     "@rspack/plugin-react-refresh": "^1.0.0",
     "@swc/helpers": "^0.5.15",
     "babel-loader": "^9.2.1"
-  },
-  "peerDependenciesMeta": {
-    "@rnef/platform-android": {
-      "optional": true
-    },
-    "@rnef/platform-ios": {
-      "optional": true
-    }
   },
   "publishConfig": {
     "access": "restricted"

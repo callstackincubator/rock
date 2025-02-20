@@ -22,20 +22,10 @@
   },
   "devDependencies": {
     "@react-native/community-cli-plugin": "0.77.0-rc.2",
-    "@rnef/config": "^0.3.0",
-    "@rnef/platform-android": "^0.3.0",
-    "@rnef/platform-ios": "^0.3.0"
+    "@rnef/config": "^0.3.0"
   },
   "peerDependencies": {
     "@react-native/community-cli-plugin": "*"
-  },
-  "peerDependenciesMeta": {
-    "@rnef/platform-android": {
-      "optional": true
-    },
-    "@rnef/platform-ios": {
-      "optional": true
-    }
   },
   "publishConfig": {
     "access": "restricted"
