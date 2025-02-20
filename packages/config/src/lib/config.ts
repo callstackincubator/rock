@@ -96,7 +96,7 @@ export async function getConfig(
   let config = await importUp(dir, 'rnef.config');
 
   const { error } = ConfigTypeSchema.validate(config);
-  
+
   if (error) {
     logger.error('Invalid config:\n' + formatValidationError(config, error));
     process.exit(1);
@@ -111,10 +111,6 @@ export async function getConfig(
         return getReactNativeVersion(config.root || dir);
       },
       ...config,
-  }
-
-  if (!config.root) {
-    config.root = process.cwd();
   }
 
   const api = {
