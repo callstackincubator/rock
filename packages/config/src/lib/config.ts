@@ -103,9 +103,9 @@ export async function getConfig(
 
   if (error) {
     logger.error(
-      `Invalid config at ${color.cyan(
+      `Invalid ${color.cyan(
         path.relative(process.cwd(), filePathWithExt)
-      )}:\n` + formatValidationError(config, error)
+      )} file:\n` + formatValidationError(config, error)
     );
     process.exit(1);
   }
