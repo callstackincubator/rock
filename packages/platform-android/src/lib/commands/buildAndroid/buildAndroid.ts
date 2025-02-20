@@ -47,7 +47,7 @@ export async function buildAar(
 ) {
   normalizeArgs(args);
 
-  const tasks = [...(args.tasks ?? []), `assemble${toPascalCase(args.variant)}`];
+  const tasks = [`assemble${toPascalCase(args.variant)}`];
 
   await runGradleAar({ tasks, aarProject, args });
   outro('Success 🎉.');
