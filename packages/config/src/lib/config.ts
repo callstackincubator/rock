@@ -1,9 +1,9 @@
 import * as fs from 'node:fs';
 import { createRequire } from 'node:module';
 import * as path from 'node:path';
-import { codeFrameColumns } from '@babel/code-frame';
 import { logger } from '@rnef/tools';
 import { ConfigTypeSchema } from './schema.js';
+import { formatValidationError } from './utils.js';
 
 export type PluginOutput = {
   name: string;
@@ -95,44 +95,10 @@ export async function getConfig(
 ): Promise<ConfigOutput> {
   let config = await importUp(dir, 'rnef.config');
 
-  // Functions by default are replaced with null in the preview, so we replace them with [Function]
-  const configReplacer = (_: string, value: unknown) => {
-    if (typeof value === 'function') {
-      return '[Function]';
-    }
-    if (Array.isArray(value) && value.some(item => typeof item === 'function')) {
-      return value.map(item => typeof item === 'function' ? '[Function]' : item);
-    }
-    return value;
-  };
-
   const { error } = ConfigTypeSchema.validate(config);
+  
   if (error) {
-    const errorDetails = error.details[0];
-    const path = errorDetails.path;
-    
-    // Use the custom replacer when converting config to string
-    const configString = JSON.stringify(config, configReplacer, 2);
-    const lines = configString.split('\n');
-    let line = 1;
-    let column = 0;
-    
-    for (let i = 0; i < lines.length; i++) {
-      if (lines[i].includes(`"${path[path.length - 1]}"`)) {
-        line = i + 1;
-        column = lines[i].indexOf(`"${path[path.length - 1]}"`);
-        break;
-      }
-    }
-
-    const frame = codeFrameColumns(configString, {
-      start: { line, column }
-    }, {
-      message: error.message,
-      highlightCode: true
-    });
-
-    logger.error('Invalid config:\n' + frame);
+    logger.error('Invalid config:\n' + formatValidationError(config, error));
     process.exit(1);
   }
 
