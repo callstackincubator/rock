@@ -24,7 +24,7 @@
     "@react-native/community-cli-plugin": "*"
   },
   "devDependencies": {
-    "@react-native/community-cli-plugin": "0.77.0-rc.2",
+    "@react-native/community-cli-plugin": "0.78.0",
     "@rnef/config": "^0.3.0"
   },
   "publishConfig": {
