@@ -1,4 +1,5 @@
 import { projectConfig } from '@react-native-community/cli-config-android';
+import type { AndroidProjectConfig } from '@react-native-community/cli-types';
 import type { PluginApi, PluginOutput } from '@rnef/config';
 import {
   type AarProject,
@@ -8,6 +9,17 @@ import {
 } from '@rnef/platform-android';
 import { intro, RnefError } from '@rnef/tools';
 
+const getAarConfig = (
+  args: BuildFlags,
+  androidConfig: AndroidProjectConfig
+) => {
+  const config: AarProject = {
+    sourceDir: androidConfig.sourceDir,
+    moduleName: args.moduleName ?? '',
+    packageName: args.packageName ?? '',
+  };
+  return config;
+};
 export const pluginBrownfieldAndroid =
   () =>
   (api: PluginApi): PluginOutput => {
@@ -15,45 +27,39 @@ export const pluginBrownfieldAndroid =
 
     api.registerCommand({
       name: 'package:aar',
-      description: 'Produces an AAR file suitable for including React Native app in native projects.',
+      description:
+        'Produces an AAR file suitable for including React Native app in native projects.',
       action: async (args: BuildFlags) => {
         intro('Creating an AAR file');
 
         const androidConfig = projectConfig(projectRoot);
 
         if (androidConfig) {
-          const config: AarProject = {
-            sourceDir: androidConfig.sourceDir,
-            moduleName: args.moduleName ?? '',
-            packageName: args.packageName ?? '',
-          };
+          const config = getAarConfig(args, androidConfig);
           await buildAar(config, args);
         } else {
           throw new RnefError('Android project not found.');
         }
       },
-      options: opts,
+      options: packageAarOptions,
     });
 
     api.registerCommand({
       name: 'publish-local:aar',
       description: 'Publishes a AAR to local maven repo',
-      action: async (args) => {
+      action: async (args: BuildFlags) => {
         intro('Publishing AAR');
 
-        const androidConfig: AarProject = {
-          sourceDir: projectConfig(projectRoot)?.sourceDir ?? '',
-          moduleName: args.moduleName ?? '',
-          packageName: args.packageName ?? '',
-        };
+        const androidConfig = projectConfig(projectRoot);
 
         if (androidConfig) {
-          await localPublishAar(androidConfig, args);
+          const config = getAarConfig(args, androidConfig);
+          await localPublishAar(config, args);
         } else {
           throw new RnefError('Android project not found.');
         }
       },
-      options: [opts[1]],
+      options: publishAarOptions,
     });
 
     return {
@@ -62,7 +68,7 @@ export const pluginBrownfieldAndroid =
     };
   };
 
-const opts = [
+const packageAarOptions = [
   {
     name: '--variant <string>',
     description:
@@ -72,8 +78,11 @@ const opts = [
     name: '--module-name <string>',
     description: 'AAR module name',
   },
+];
+
+const publishAarOptions = [
   {
-    name: '--package-name <string>',
-    description: 'AAR package name',
+    name: '--module-name <string>',
+    description: 'AAR module name',
   },
 ];

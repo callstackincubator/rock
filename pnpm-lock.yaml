@@ -286,12 +286,6 @@ importers:
       '@react-native-community/cli-config-android':
         specifier: ^16.0.2
         version: 16.0.2
-      '@react-native-community/cli-server-api':
-        specifier: ^16.0.2
-        version: 16.0.2
-      '@react-native/community-cli-plugin':
-        specifier: 0.77.0-rc.2
-        version: 0.77.0-rc.2(@babel/core@7.25.2)(@babel/preset-env@7.25.4(@babel/core@7.25.2))(@react-native-community/cli-server-api@16.0.2)
       '@rnef/platform-android':
         specifier: ^0.2.0
         version: link:../platform-android
@@ -302,6 +296,9 @@ importers:
         specifier: ^2.3.0
         version: 2.8.1
     devDependencies:
+      '@react-native-community/cli-types':
+        specifier: ^16.0.2
+        version: 16.0.2
       '@rnef/config':
         specifier: ^0.2.0
         version: link:../config
