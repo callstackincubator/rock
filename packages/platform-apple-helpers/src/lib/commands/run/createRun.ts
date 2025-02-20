@@ -1,5 +1,6 @@
 import fs from 'node:fs';
 import path from 'node:path';
+import { getProjectConfig } from '@react-native-community/cli-config-apple';
 import type {
   SupportedRemoteCacheProviders} from '@rnef/tools';
 import {
@@ -53,21 +54,32 @@ export const createRun = async (
     }
   }
 
-  const { xcodeProject, sourceDir } = projectConfig;
 
-  if (!xcodeProject) {
+  if (!projectConfig.xcodeProject) {
     throw new RnefError(
-      `Could not find Xcode project files in "${sourceDir}" folder. Please make sure that you have installed Cocoapods and "${sourceDir}" is a valid path`
+      `Could not find Xcode project files in "${projectConfig.sourceDir}" folder. Please make sure that you have installed Cocoapods and "${projectConfig.sourceDir}" is a valid path`
     );
   }
 
   validateArgs(args, projectRoot);
 
   if (args.installPods) {
-    await installPodsIfNeeded(projectRoot, platformName, sourceDir, args.newArch);
+    await installPodsIfNeeded(projectRoot, platformName, projectConfig.sourceDir, args.newArch);
+    // When the project is not a workspace, we need to get the project config again, because running pods install might have generated .xcworkspace project. This should be only case in new project.
+
+    if (projectConfig.xcodeProject?.isWorkspace === false) {
+      const newProjectConfig = getProjectConfig({ platformName })(projectRoot, {});
+      if (newProjectConfig) {
+        projectConfig = newProjectConfig;
+      }
+    }
   }
 
-  const info = await getInfo(xcodeProject, sourceDir);
+  if (!projectConfig.xcodeProject) {
+    throw new RnefError('Failed to get Xcode project information');
+  }
+
+  const info = await getInfo(projectConfig.xcodeProject, projectConfig.sourceDir);
 
   if (!info) {
     throw new RnefError('Failed to get Xcode project information');
@@ -76,7 +88,7 @@ export const createRun = async (
     info.schemes,
     args.scheme,
     args.interactive,
-    xcodeProject.name
+    projectConfig.xcodeProject.name
   );
   const configuration = await getConfiguration(
     info.configurations,
@@ -85,7 +97,7 @@ export const createRun = async (
   );
 
   if (platformName === 'macos') {
-    await runOnMac(xcodeProject, sourceDir, configuration, scheme, args);
+    await runOnMac(projectConfig.xcodeProject, projectConfig.sourceDir, configuration, scheme, args);
     outro('Success 🎉.');
     return;
   } else if (args.catalyst) {
@@ -93,8 +105,8 @@ export const createRun = async (
       platformName,
       configuration,
       scheme,
-      xcodeProject,
-      sourceDir,
+      projectConfig.xcodeProject,
+      projectConfig.sourceDir,
       args
     );
     outro('Success 🎉.');
@@ -118,8 +130,8 @@ export const createRun = async (
     if (device.type === 'simulator') {
       await runOnSimulator(
         device,
-        xcodeProject,
-        sourceDir,
+        projectConfig.xcodeProject,
+        projectConfig.sourceDir,
         platformName,
         configuration,
         scheme,
@@ -131,8 +143,8 @@ export const createRun = async (
         platformName,
         configuration,
         scheme,
-        xcodeProject,
-        sourceDir,
+        projectConfig.xcodeProject,
+        projectConfig.sourceDir,
         remoteCacheProvider,
         args
       );
@@ -168,8 +180,8 @@ export const createRun = async (
     for (const simulator of bootedSimulators) {
       await runOnSimulator(
         simulator,
-        xcodeProject,
-        sourceDir,
+        projectConfig.xcodeProject,
+        projectConfig.sourceDir,
         platformName,
         configuration,
         scheme,
