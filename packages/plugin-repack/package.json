@@ -20,7 +20,9 @@
     "tslib": "^2.3.0"
   },
   "devDependencies": {
-    "@rnef/config": "^0.3.0"
+    "@rnef/config": "^0.3.0",
+    "@rnef/platform-android": "^0.3.0",
+    "@rnef/platform-ios": "^0.3.0"
   },
   "peerDependencies": {
     "@callstack/repack": "5.0.0-rc.4",

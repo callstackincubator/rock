@@ -280,6 +280,12 @@ importers:
       '@rnef/config':
         specifier: ^0.3.0
         version: link:../config
+      '@rnef/platform-android':
+        specifier: ^0.3.0
+        version: link:../platform-android
+      '@rnef/platform-ios':
+        specifier: ^0.3.0
+        version: link:../platform-ios
 
   packages/plugin-repack:
     dependencies:
@@ -308,6 +314,12 @@ importers:
       '@rnef/config':
         specifier: ^0.3.0
         version: link:../config
+      '@rnef/platform-android':
+        specifier: ^0.3.0
+        version: link:../platform-android
+      '@rnef/platform-ios':
+        specifier: ^0.3.0
+        version: link:../platform-ios
 
   packages/test-helpers:
     dependencies:

@@ -20,6 +20,12 @@
     "@react-native-community/cli-server-api": "^16.0.2",
     "tslib": "^2.3.0"
   },
+  "devDependencies": {
+    "@react-native/community-cli-plugin": "0.77.0-rc.2",
+    "@rnef/config": "^0.3.0",
+    "@rnef/platform-android": "^0.3.0",
+    "@rnef/platform-ios": "^0.3.0"
+  },
   "peerDependencies": {
     "@react-native/community-cli-plugin": "*"
   },
@@ -30,10 +36,6 @@
     "@rnef/platform-ios": {
       "optional": true
     }
-  },
-  "devDependencies": {
-    "@react-native/community-cli-plugin": "0.77.0-rc.2",
-    "@rnef/config": "^0.3.0"
   },
   "publishConfig": {
     "access": "restricted"
