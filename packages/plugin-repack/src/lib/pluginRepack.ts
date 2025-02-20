@@ -18,6 +18,7 @@ type PluginConfig = {
 
 type StartArgs = Parameters<NonNullable<typeof startCommand>['func']>[2];
 type BundleArgs = Parameters<NonNullable<typeof bundleCommand>['func']>[2] & {
+  // custom flags
   hermes: boolean;
 };
 
@@ -100,7 +101,14 @@ export const pluginRepack =
           );
         }
       },
-      options: bundleCommand.options,
+      options: [
+        ...bundleCommand.options,
+        {
+          name: '--hermes',
+          description:
+            'Passes the output JS bundle to Hermes compiler and outputs a bytecode file.',
+        },
+      ],
     });
 
     return {
