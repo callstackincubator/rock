@@ -11,11 +11,15 @@
     "publish:verdaccio": "npm publish --registry http://localhost:4873 --userconfig ../../.npmrc"
   },
   "dependencies": {
+    "@babel/code-frame": "^7.26.2",
     "@rnef/tools": "^0.2.0",
     "joi": "^17.13.3",
     "tslib": "^2.3.0"
   },
   "publishConfig": {
     "access": "restricted"
+  },
+  "devDependencies": {
+    "@types/babel__code-frame": "^7.0.6"
   }
 }
