@@ -59,7 +59,7 @@ export const platformIOS =
     registerSignCommand(api);
 
     return {
-      name: 'platform-ios',
+      name: '@rnef/platform-ios',
       description: 'RNEF plugin for everything iOS.',
     };
   };

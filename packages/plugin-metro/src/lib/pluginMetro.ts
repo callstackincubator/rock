@@ -5,6 +5,7 @@ import {
 } from '@react-native/community-cli-plugin';
 import type { PluginApi, PluginOutput } from '@rnef/config';
 import { findDevServerPort, RnefError } from '@rnef/tools';
+import { runHermesByPlatform } from './runHermesByPlatform.js';
 
 type PluginConfig = {
   reactNativeVersion?: string;
@@ -54,6 +55,8 @@ type BundleCommandArgs = {
   unstableTransformProfile: string;
   indexedRamBundle?: boolean;
   resolverOption?: Array<string>;
+  // custom flags
+  hermes: boolean;
 };
 
 export const pluginMetro =
@@ -99,7 +102,7 @@ export const pluginMetro =
       name: 'bundle',
       description:
         'Build the bundle for the provided JavaScript entry file with Metro.',
-      action: (args: BundleCommandArgs) => {
+      action: async (args: BundleCommandArgs) => {
         if (!args.platform || !args.bundleOutput || !args.entryFile) {
           throw new RnefError(
             '"rnef bundle" command requires all of these flags to bundle JavaScript with Metro: \n  "--platform", "--bundle-output", "--entry-file"'
@@ -120,13 +123,25 @@ export const pluginMetro =
           },
           args
         );
+        if (args.hermes) {
+          runHermesByPlatform({
+            platform: args.platform,
+            bundleOutput: args.bundleOutput,
+            api,
+          });
+        }
       },
       options: [
         ...bundleCommand.options,
         {
           name: '--config-cmd [string]',
           description:
-            'Hack for Xcode build script pointing to wrong bundle command that recognizes this flag.',
+            '[Internal] A hack for Xcode build script pointing to wrong bundle command that recognizes this flag. Do not use.',
+        },
+        {
+          name: '--hermes',
+          description:
+            'Passes the output JS bundle to Hermes compiler and outputs a bytecode file.',
         },
       ],
     });

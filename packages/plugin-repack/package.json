@@ -29,6 +29,14 @@
     "@swc/helpers": "^0.5.15",
     "babel-loader": "^9.2.1"
   },
+  "peerDependenciesMeta": {
+    "@rnef/platform-android": {
+      "optional": true
+    },
+    "@rnef/platform-ios": {
+      "optional": true
+    }
+  },
   "publishConfig": {
     "access": "restricted"
   }

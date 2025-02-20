@@ -1,6 +1,7 @@
 import commands from '@callstack/repack/commands/rspack';
 import type { PluginApi, PluginOutput } from '@rnef/config';
 import { findDevServerPort, RnefError } from '@rnef/tools';
+import { runHermesByPlatform } from './runHermesByPlatform.js';
 
 type PluginConfig = {
   platforms?: {
@@ -9,7 +10,9 @@ type PluginConfig = {
 };
 
 type StartArgs = Parameters<NonNullable<typeof startCommand>['func']>[2];
-type BundleArgs = Parameters<NonNullable<typeof bundleCommand>['func']>[2];
+type BundleArgs = Parameters<NonNullable<typeof bundleCommand>['func']>[2] & {
+  hermes: boolean;
+};
 
 const startCommand = commands.find((command) => command.name === 'start');
 const bundleCommand = commands.find((command) => command.name === 'bundle');
@@ -31,17 +34,21 @@ export const pluginRepack =
       action: async (args: StartArgs) => {
         const root = api.getProjectRoot();
         const platforms = api.getPlatforms();
-        const {port, startDevServer} = await findDevServerPort(
+        const { port, startDevServer } = await findDevServerPort(
           args.port ?? 8081,
-          root,
+          root
         );
 
         if (!startDevServer) {
           return;
         }
 
-        // @ts-expect-error TODO fix getPlatforms type
-        startCommand.func([], { root, platforms, ...pluginConfig }, {...args, port});
+        startCommand.func(
+          [],
+          // @ts-expect-error TODO fix getPlatforms type
+          { root, platforms, ...pluginConfig },
+          { ...args, port }
+        );
       },
       options: startCommand.options,
     });
@@ -59,6 +66,19 @@ export const pluginRepack =
         const platforms = api.getPlatforms();
         // @ts-expect-error TODO fix getPlatforms type
         bundleCommand.func([], { root, platforms, ...pluginConfig }, args);
+
+        if (args.hermes) {
+          if (!args.bundleOutput) {
+            throw new RnefError(
+              'Missing "--bundle-output" argument to run "bundle --hermes".'
+            );
+          }
+          runHermesByPlatform({
+            platform: args.platform,
+            bundleOutput: args.bundleOutput,
+            api,
+          });
+        }
       },
       options: bundleCommand.options,
     });
