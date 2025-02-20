@@ -137,7 +137,7 @@ importers:
         specifier: ^7.26.2
         version: 7.26.2
       '@rnef/tools':
-        specifier: ^0.2.0
+        specifier: ^0.3.0
         version: link:../tools
       joi:
         specifier: ^17.13.3
