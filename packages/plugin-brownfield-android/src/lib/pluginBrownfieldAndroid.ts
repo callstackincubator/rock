@@ -15,18 +15,19 @@ export const pluginBrownfieldAndroid =
 
     api.registerCommand({
       name: 'package:aar',
-      description: 'Emits a AAR file from React Native code.',
+      description: 'Produces an AAR file suitable for including React Native app in native projects.',
       action: async (args: BuildFlags) => {
-        intro('Generating AAR');
+        intro('Creating an AAR file');
 
-        const androidConfig: AarProject = {
-          sourceDir: projectConfig(projectRoot)?.sourceDir ?? '',
-          moduleName: args.moduleName ?? '',
-          packageName: args.packageName ?? '',
-        };
+        const androidConfig = projectConfig(projectRoot);
 
         if (androidConfig) {
-          await buildAar(androidConfig, args);
+          const config: AarProject = {
+            sourceDir: androidConfig.sourceDir,
+            moduleName: args.moduleName ?? '',
+            packageName: args.packageName ?? '',
+          };
+          await buildAar(config, args);
         } else {
           throw new RnefError('Android project not found.');
         }
