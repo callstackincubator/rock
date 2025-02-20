@@ -1,7 +1,6 @@
 import fs from 'node:fs';
 import path from 'node:path';
-import type {
-  SupportedRemoteCacheProviders} from '@rnef/tools';
+import type { SupportedRemoteCacheProviders } from '@rnef/tools';
 import {
   color,
   createRemoteBuildCache,
@@ -13,7 +12,7 @@ import {
   logger,
   nativeFingerprint,
   queryLocalBuildCache,
-  spinner
+  spinner,
 } from '@rnef/tools';
 import * as tar from 'tar';
 
@@ -48,13 +47,22 @@ export async function fetchCachedBuild({
   }
 
   if (!remoteCacheProvider) {
-    loader.stop(`No remote cache provider set, skipping.`); // TODO: add link to docs how to set it
+    loader.stop(`No remote cache provider set, skipping.`);
+    logger.info(`Hint: You can set it through the rnef.config.js file:
+{
+  remoteCacheProvider: 'github-actions'
+}
+      `);
     return null;
   }
 
   const remoteBuildCache = await createRemoteBuildCache(remoteCacheProvider);
   if (!remoteBuildCache) {
-    loader.stop(`No remote cache provider found, skipping.`); // TODO: add link to docs how to set it
+    loader.stop(`No remote cache provider found, skipping.`);
+    // @todo revisit after config validation
+    logger.info(
+      `Your provider set is "${remoteCacheProvider}". Available providers are: "github-actions"`
+    );
     return null;
   }
 
