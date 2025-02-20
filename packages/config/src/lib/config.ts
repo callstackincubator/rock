@@ -51,6 +51,7 @@ type ConfigType = {
   root?: string;
   reactNativeVersion?: string;
   reactNativePath?: string;
+  bundler?: PluginType;
   plugins?: PluginType[];
   platforms?: Record<string, PluginType>;
   commands?: Array<CommandType>;
@@ -144,6 +145,10 @@ export async function getConfig(
     for (const platform in config.platforms) {
       config.platforms[platform](api);
     }
+  }
+
+  if (config.bundler) {
+    config.bundler(api);
   }
 
   const outputConfig: ConfigOutput = {

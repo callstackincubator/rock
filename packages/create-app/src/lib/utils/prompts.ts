@@ -109,9 +109,9 @@ export function promptPlatforms(
 
 export function promptPlugins(
   plugins: TemplateInfo[]
-): Promise<TemplateInfo[]> {
+): Promise<TemplateInfo[] | null> {
   if (plugins.length === 0) {
-    throw new RnefError('No plugins found');
+    return Promise.resolve(null);
   }
 
   return promptMultiselect({
@@ -121,6 +121,24 @@ export function promptPlugins(
     options: plugins.map((plugin) => ({
       value: plugin,
       label: plugin.name,
+    })),
+  });
+}
+
+export function promptBundlers(
+  bundlers: TemplateInfo[]
+): Promise<TemplateInfo> {
+  if (bundlers.length === 0) {
+    throw new RnefError('No bundlers found');
+  }
+
+  return promptSelect({
+    message: 'Select bundler:',
+    initialValues: [bundlers[0]],
+    // @ts-expect-error todo fixup type
+    options: bundlers.map((bundler) => ({
+      value: bundler,
+      label: bundler.name,
     })),
   });
 }

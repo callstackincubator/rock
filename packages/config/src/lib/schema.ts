@@ -38,6 +38,7 @@ const ConfigTypeSchema = Joi.object({
   root: Joi.string().optional(),
   reactNativeVersion: Joi.string().optional(),
   reactNativePath: Joi.string().optional(),
+  bundler: Joi.func().required(),
   plugins: Joi.array().items(PluginTypeSchema).optional(),
   platforms: Joi.object().pattern(Joi.string(), PluginTypeSchema).optional(),
   commands: Joi.array().items(CommandTypeSchema).optional(),

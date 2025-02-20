@@ -8,7 +8,13 @@ import {
 } from '@rnef/tools';
 import { gitInitStep } from './steps/git-init.js';
 import type { TemplateInfo } from './templates.js';
-import { PLATFORMS, PLUGINS, resolveTemplate, TEMPLATES } from './templates.js';
+import {
+  BUNDLERS,
+  PLATFORMS,
+  PLUGINS,
+  resolveTemplate,
+  TEMPLATES,
+} from './templates.js';
 import {
   renameCommonFiles,
   replacePlaceholder,
@@ -24,6 +30,7 @@ import {
   printHelpMessage,
   printVersionMessage,
   printWelcomeMessage,
+  promptBundlers,
   promptPlatforms,
   promptPlugins,
   promptProjectName,
@@ -80,6 +87,10 @@ export async function run() {
     ? options.platforms.map((p) => resolveTemplate(PLATFORMS, p))
     : await promptPlatforms(PLATFORMS);
 
+  const bundler = options.bundler
+    ? resolveTemplate(BUNDLERS, options.bundler)
+    : await promptBundlers(BUNDLERS);
+
   const plugins = options.plugins
     ? options.plugins.map((p) => resolveTemplate(PLUGINS, p))
     : await promptPlugins(PLUGINS);
@@ -91,14 +102,15 @@ export async function run() {
   for (const platform of platforms) {
     await extractPackage(absoluteTargetDir, platform);
   }
-  for (const plugin of plugins) {
+  await extractPackage(absoluteTargetDir, bundler);
+  for (const plugin of plugins ?? []) {
     await extractPackage(absoluteTargetDir, plugin);
   }
 
   renameCommonFiles(absoluteTargetDir);
   replacePlaceholder(absoluteTargetDir, projectName);
   rewritePackageJson(absoluteTargetDir, projectName);
-  createConfig(absoluteTargetDir, platforms, plugins);
+  createConfig(absoluteTargetDir, platforms, plugins, bundler);
   loader.stop('Applied template, platforms and plugins.');
 
   await gitInitStep(absoluteTargetDir, version);
@@ -160,22 +172,25 @@ async function extractPackage(absoluteTargetDir: string, pkg: TemplateInfo) {
 function createConfig(
   absoluteTargetDir: string,
   platforms: TemplateInfo[],
-  plugins: TemplateInfo[]
+  plugins: TemplateInfo[] | null,
+  bundler: TemplateInfo
 ) {
   const rnefConfig = path.join(absoluteTargetDir, 'rnef.config.mjs');
-  fs.writeFileSync(rnefConfig, formatConfig(platforms, plugins));
+  fs.writeFileSync(rnefConfig, formatConfig(platforms, plugins, bundler));
 }
 
 export function formatConfig(
   platforms: TemplateInfo[],
-  plugins: TemplateInfo[]
+  plugins: TemplateInfo[] | null,
+  bundler: TemplateInfo
 ) {
   const platformsWithImports = platforms.filter(
     (template) => template.importName
   );
-  const pluginsWithImports = plugins.filter((template) => template.importName);
-
-  return `${[...platformsWithImports, ...pluginsWithImports]
+  const pluginsWithImports = plugins
+    ? plugins.filter((template) => template.importName)
+    : [];
+  return `${[...platformsWithImports, ...pluginsWithImports, bundler]
     .map(
       (template) =>
         `import { ${template.importName} } from '${template.packageName}';`
@@ -183,11 +198,16 @@ export function formatConfig(
     .join('\n')}
 
 export default {
-  plugins: [
+  ${
+    pluginsWithImports
+      ? `plugins: [
     ${pluginsWithImports
       .map((template) => `${template.importName}(),`)
       .join('\n    ')}
-  ],
+  ],`
+      : ''
+  }
+  bundler: ${bundler.name}: ${bundler.importName}(),
   platforms: {
     ${platformsWithImports
       .map((template) => `${template.name}: ${template.importName}(),`)

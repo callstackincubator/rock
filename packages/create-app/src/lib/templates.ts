@@ -32,7 +32,9 @@ export const TEMPLATES: TemplateInfo[] = [
   },
 ];
 
-export const PLUGINS: TemplateInfo[] = [
+export const PLUGINS: TemplateInfo[] = [];
+
+export const BUNDLERS: TemplateInfo[] = [
   {
     type: 'npm',
     name: 'metro',
