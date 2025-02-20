@@ -430,7 +430,7 @@ Next, we need to leverage `rnef` to generate `aar`:
 1. Generate the framework artifact using the `rnef` cli. Add the following to your `package.json` and run with your package manager like `pnpm publish-aar` or `yarn publish-aar`:
 
    ```.json
-   "package:aar": "rnef package:aar --variant Release --module-name rnbrownfield --package-name com.callstack.rnbrownfield",
+   "package:aar": "rnef package:aar --variant Release --module-name rnbrownfield",
    "publish-aar": "pnpm package:aar && rnef publish-local:aar --module-name rnbrownfield"
    ```
 
