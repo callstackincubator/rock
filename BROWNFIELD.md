@@ -585,7 +585,7 @@ index 4888bcc..4a54182 100644
 
 ```
 
-You see an error for `fragmentContainer` not found. We need to add a place holder container for attaching our fragment. Let’s add the following code:
+We'll need to add a placeholder container for attaching our fragment. Let’s add the following code:
 
 ```diff
 diff --git a/app/src/main/res/layout/activity_main.xml b/app/src/main/res/layout/activity_main.xml
