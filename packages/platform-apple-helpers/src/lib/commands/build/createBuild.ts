@@ -1,5 +1,6 @@
 import path from 'node:path';
 import { outro } from '@clack/prompts';
+import { getProjectConfig } from '@react-native-community/cli-config-apple';
 import { isInteractive, logger, RnefError } from '@rnef/tools';
 import type { BuilderCommand, ProjectConfig } from '../../types/index.js';
 import { getBuildPaths } from '../../utils/buildPaths.js';
@@ -17,7 +18,7 @@ export const createBuild = async (
   args: BuildFlags,
   projectRoot: string
 ) => {
-  const { xcodeProject, sourceDir } = projectConfig;
+  let { xcodeProject, sourceDir } = projectConfig;
 
   if (!xcodeProject) {
     throw new RnefError(
@@ -34,6 +35,23 @@ export const createBuild = async (
       sourceDir,
       args.newArch
     );
+    // When the project is not a workspace, we need to get the project config again,
+    // because running pods install might have generated .xcworkspace project.
+    // This should be only case in new project.
+    if (xcodeProject?.isWorkspace === false) {
+      const newProjectConfig = getProjectConfig({ platformName })(
+        projectRoot,
+        {}
+      );
+      if (newProjectConfig) {
+        xcodeProject = newProjectConfig.xcodeProject;
+        sourceDir = newProjectConfig.sourceDir;
+      }
+    }
+  }
+
+  if (!xcodeProject) {
+    throw new RnefError('Failed to get Xcode project information');
   }
 
   const info = await getInfo(xcodeProject, sourceDir);
