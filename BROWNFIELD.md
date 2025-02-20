@@ -118,12 +118,12 @@ index ba19363..cf53ff2 100644
 </details>
 
 <details>
-<summary>Step 4 - add RNBridgeManager</summary>
+<summary>Step 4 - add ReactNativeHostManager</summary>
 <br/>
 
 Here we are going to add the code required to load react-native application and expose it as a function.
 
-- Add a file called `RNBridgeManager.kt` in `rnbrownfield` module then add the following code to it:
+- Add a file called `ReactNativeHostManager.kt` in `rnbrownfield` module then add the following code to it:
 
 ```kt
 import android.app.Application
@@ -134,9 +134,9 @@ import com.facebook.react.defaults.DefaultReactNativeHost
 import com.facebook.react.soloader.OpenSourceMergedSoMapping
 import com.facebook.soloader.SoLoader
 
-class RNBridgeManager {
+class ReactNativeHostManager {
     companion object {
-        val shared: RNBridgeManager by lazy { RNBridgeManager() }
+        val shared: ReactNativeHostManager by lazy { ReactNativeHostManager() }
         private var reactNativeHost: ReactNativeHost? = null
     }
 
@@ -326,7 +326,7 @@ object RNViewFactory {
         params: Bundle? = null,
     ): FrameLayout {
         val reactView = ReactRootView(context)
-        val reactNativeHost = RNBridgeManager.shared.getReactNativeHost()
+        val reactNativeHost = ReactNativeHostManager.shared.getReactNativeHost()
         val instanceManager: ReactInstanceManager? = reactNativeHost?.reactInstanceManager
         reactView.startReactApplication(
             instanceManager,
@@ -473,7 +473,7 @@ To consume the AAR from local maven, we will need to add `mavenLocal` for provid
     
     ```
     
-Perform, sync and run the App to make sure everything works at this step. Next, we are going to initialize the react-native bridge manger in `MainActivity` :
+Perform, sync and run the App to make sure everything works at this step. Next, we are going to initialize the react-native host manager in `MainActivity` :
     
     ```diff
     diff --git a/app/src/main/java/com/hurali/androidapp/MainActivity.kt b/app/src/main/java/com/hurali/androidapp/MainActivity.kt
@@ -484,7 +484,7 @@ Perform, sync and run the App to make sure everything works at this step. Next, 
      import androidx.appcompat.app.AppCompatActivity
      import androidx.core.view.ViewCompat
      import androidx.core.view.WindowInsetsCompat
-    +import com.callstack.rnbrownfield.RNBridgeManager
+    +import com.callstack.rnbrownfield.ReactNativeHostManager
      
      class MainActivity : AppCompatActivity() {
          override fun onCreate(savedInstanceState: Bundle?) {
@@ -492,7 +492,7 @@ Perform, sync and run the App to make sure everything works at this step. Next, 
                  v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom)
                  insets
              }
-    +        RNBridgeManager.shared.initialize(this.application)
+    +        ReactNativeHostManager.shared.initialize(this.application)
          }
      }
     \ No newline at end of file
@@ -559,7 +559,7 @@ index 4888bcc..4a54182 100644
  import androidx.appcompat.app.AppCompatActivity
  import androidx.core.view.ViewCompat
 @@ -8,6 +9,8 @@ import androidx.core.view.WindowInsetsCompat
- import com.callstack.rnbrownfield.RNBridgeManager
+ import com.callstack.rnbrownfield.ReactNativeHostManager
  
  class MainActivity : AppCompatActivity() {
 +    private lateinit var showRNAppBtn: Button
@@ -570,7 +570,7 @@ index 4888bcc..4a54182 100644
 @@ -18,5 +21,13 @@ class MainActivity : AppCompatActivity() {
              insets
          }
-         RNBridgeManager.shared.initialize(this.application)
+         ReactNativeHostManager.shared.initialize(this.application)
 +
 +        showRNAppBtn = findViewById(R.id.show_rn_app_btn)
 +        showRNAppBtn.setOnClickListener {

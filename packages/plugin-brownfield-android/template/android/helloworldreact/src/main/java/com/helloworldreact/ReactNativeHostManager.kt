@@ -8,9 +8,9 @@ import com.facebook.react.defaults.DefaultReactNativeHost
 import com.facebook.react.soloader.OpenSourceMergedSoMapping
 import com.facebook.soloader.SoLoader
 
-class RNBridgeManager {
+class ReactNativeHostManager {
     companion object {
-        val shared: RNBridgeManager by lazy { RNBridgeManager() }
+        val shared: ReactNativeHostManager by lazy { ReactNativeHostManager() }
         private var reactNativeHost: ReactNativeHost? = null
     }
 
