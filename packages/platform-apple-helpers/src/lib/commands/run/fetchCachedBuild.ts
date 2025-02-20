@@ -48,12 +48,13 @@ export async function fetchCachedBuild({
   }
 
   if (!remoteCacheProvider) {
+    loader.stop(`No remote cache provider set, skipping.`); // TODO: add link to docs how to set it
     return null;
   }
 
   const remoteBuildCache = await createRemoteBuildCache(remoteCacheProvider);
   if (!remoteBuildCache) {
-    loader.stop(`No remote cache provider set, skipping.`); // TODO: add link to docs how to set it
+    loader.stop(`No remote cache provider found, skipping.`); // TODO: add link to docs how to set it
     return null;
   }
 
