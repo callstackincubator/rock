@@ -2,7 +2,7 @@ import type {
   SubprocessError,
   SupportedRemoteCacheProviders,
 } from '@rnef/tools';
-import { logger, spawn, spinner } from '@rnef/tools';
+import { spawn, spinner } from '@rnef/tools';
 import type {
   ApplePlatform,
   Device,
