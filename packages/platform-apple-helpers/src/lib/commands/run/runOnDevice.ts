@@ -1,5 +1,8 @@
-import type { SupportedRemoteCacheProviders } from '@rnef/tools';
-import { color, logger, spawn } from '@rnef/tools';
+import type {
+  SubprocessError,
+  SupportedRemoteCacheProviders,
+} from '@rnef/tools';
+import { logger, spawn, spinner } from '@rnef/tools';
 import type {
   ApplePlatform,
   Device,
@@ -33,16 +36,6 @@ export async function runOnDevice(
     }
   }
 
-  try {
-    await spawn('ios-deploy', ['--version']);
-  } catch {
-    throw new Error(
-      `Failed to install the app on the device because we couldn't execute the "ios-deploy" command. Please install it by running "${color.bold(
-        'brew install ios-deploy'
-      )}" and try again.`
-    );
-  }
-
   let buildOutput, appPath;
   if (!args.binaryPath) {
     buildOutput = await buildProject(
@@ -72,23 +65,29 @@ export async function runOnDevice(
     appPath = args.binaryPath;
   }
 
-  const iosDeployInstallArgs = [
-    '--bundle',
-    appPath,
-    '--id',
+  const deviceCtlArgs = [
+    'devicectl',
+    'device',
+    'install',
+    'app',
+    '--device',
     selectedDevice.udid,
-    '--justlaunch',
+    appPath,
   ];
-
-  logger.info(`Installing and launching your app on ${selectedDevice.name}`);
+  const loader = spinner();
+  loader.start(`Installing and launching your app on ${selectedDevice.name}`);
 
   try {
-    await spawn('ios-deploy', iosDeployInstallArgs, { stdio: 'inherit' });
+    await spawn('xcrun', deviceCtlArgs, { cwd: sourceDir });
   } catch (error) {
-    throw new Error(
-      `Failed to install the app on the device with "ios-deploy": ${error}`
+    loader.stop(
+      `Installing and launching your app on ${selectedDevice.name} [stopped]`
     );
+    throw new Error(`Failed to install the app on the ${selectedDevice.name}`, {
+      cause: (error as SubprocessError).stderr,
+    });
   }
 
-  return logger.success('Installed the app on the device.');
+  loader.stop(`Installed the app on the ${selectedDevice.name}.`);
+  return;
 }
