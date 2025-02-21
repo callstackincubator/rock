@@ -1,5 +1,6 @@
 import fs from 'node:fs';
 import path from 'node:path';
+import type { SupportedRemoteCacheProviders } from '@rnef/tools';
 import {
   cancelPromptAndExit,
   resolveAbsolutePath,
@@ -27,6 +28,7 @@ import {
   promptPlatforms,
   promptPlugins,
   promptProjectName,
+  promptRemoteCacheProvider,
   promptTemplate,
 } from './utils/prompts.js';
 import {
@@ -84,6 +86,11 @@ export async function run() {
     ? options.plugins.map((p) => resolveTemplate(PLUGINS, p))
     : await promptPlugins(PLUGINS);
 
+  const remoteCacheProvider =
+    options.remoteCacheProvider != null
+      ? options.remoteCacheProvider
+      : await promptRemoteCacheProvider();
+
   const loader = spinner();
 
   loader.start('Applying template, platforms and plugins');
@@ -98,7 +105,7 @@ export async function run() {
   renameCommonFiles(absoluteTargetDir);
   replacePlaceholder(absoluteTargetDir, projectName);
   rewritePackageJson(absoluteTargetDir, projectName);
-  createConfig(absoluteTargetDir, platforms, plugins);
+  createConfig(absoluteTargetDir, platforms, plugins, remoteCacheProvider);
   loader.stop('Applied template, platforms and plugins.');
 
   await gitInitStep(absoluteTargetDir, version);
@@ -160,15 +167,20 @@ async function extractPackage(absoluteTargetDir: string, pkg: TemplateInfo) {
 function createConfig(
   absoluteTargetDir: string,
   platforms: TemplateInfo[],
-  plugins: TemplateInfo[]
+  plugins: TemplateInfo[],
+  remoteCacheProvider: SupportedRemoteCacheProviders | null
 ) {
   const rnefConfig = path.join(absoluteTargetDir, 'rnef.config.mjs');
-  fs.writeFileSync(rnefConfig, formatConfig(platforms, plugins));
+  fs.writeFileSync(
+    rnefConfig,
+    formatConfig(platforms, plugins, remoteCacheProvider)
+  );
 }
 
 export function formatConfig(
   platforms: TemplateInfo[],
-  plugins: TemplateInfo[]
+  plugins: TemplateInfo[],
+  remoteCacheProvider: SupportedRemoteCacheProviders | null
 ) {
   const platformsWithImports = platforms.filter(
     (template) => template.importName
@@ -192,6 +204,9 @@ export default {
     ${platformsWithImports
       .map((template) => `${template.name}: ${template.importName}(),`)
       .join('\n    ')}
+  },
+  remoteCacheProvider: ${
+    remoteCacheProvider === null ? null : `'${remoteCacheProvider}'`
   },
 };
 `;

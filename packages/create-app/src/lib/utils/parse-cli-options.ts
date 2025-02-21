@@ -1,3 +1,4 @@
+import type { SupportedRemoteCacheProviders } from '@rnef/tools';
 import minimist from 'minimist';
 
 export type CliOptions = {
@@ -9,6 +10,7 @@ export type CliOptions = {
   version?: boolean;
   dir?: string;
   override?: boolean;
+  remoteCacheProvider?: SupportedRemoteCacheProviders;
 };
 
 type MinimistOptions = {
@@ -19,6 +21,7 @@ type MinimistOptions = {
   template?: string;
   platform?: string | string[];
   plugin?: string | string[];
+  remoteCacheProvider?: string;
 };
 
 export function parseCliOptions(argv: string[]): CliOptions {

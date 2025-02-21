@@ -7,6 +7,7 @@ import {
   promptSelect,
   promptText,
   RnefError,
+  type SupportedRemoteCacheProviders,
 } from '@rnef/tools';
 import path from 'path';
 import type { TemplateInfo } from '../templates.js';
@@ -123,6 +124,17 @@ export function promptPlugins(
       label: plugin.name,
     })),
   });
+}
+
+export function promptRemoteCacheProvider(): Promise<SupportedRemoteCacheProviders | null> {
+  return promptSelect({
+    message: 'Select remote cache provider:',
+    initialValue: 'github-actions',
+    options: [
+      { value: 'github-actions', label: 'GitHub Actions', hint: 'Sets up workflows for building apps in your GitHub cloud' },
+      { value: null, label: 'None', hint: 'Choose if you only want to build locally' },
+    ],
+  }) as Promise<SupportedRemoteCacheProviders | null>;
 }
 
 export function confirmOverrideFiles(targetDir: string) {

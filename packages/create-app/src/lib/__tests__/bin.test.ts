@@ -2,7 +2,7 @@ import { formatConfig } from '../bin.js';
 import { PLATFORMS, PLUGINS } from '../templates.js';
 
 test('formatConfig', () => {
-  expect(formatConfig(PLATFORMS, PLUGINS)).toMatchInlineSnapshot(`
+  expect(formatConfig(PLATFORMS, PLUGINS, null)).toMatchInlineSnapshot(`
     "import { platformIOS } from '@rnef/platform-ios';
     import { platformAndroid } from '@rnef/platform-android';
     import { pluginMetro } from '@rnef/plugin-metro';
@@ -17,11 +17,12 @@ test('formatConfig', () => {
         ios: platformIOS(),
         android: platformAndroid(),
       },
+      remoteCacheProvider: null,
     };
     "
   `);
 
-  expect(formatConfig([PLATFORMS[0]], [PLUGINS[0]])).toMatchInlineSnapshot(`
+  expect(formatConfig([PLATFORMS[0]], [PLUGINS[0]], 'github-actions')).toMatchInlineSnapshot(`
     "import { platformIOS } from '@rnef/platform-ios';
     import { pluginMetro } from '@rnef/plugin-metro';
 
@@ -32,6 +33,7 @@ test('formatConfig', () => {
       platforms: {
         ios: platformIOS(),
       },
+      remoteCacheProvider: 'github-actions',
     };
     "
   `);
