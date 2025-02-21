@@ -26,9 +26,9 @@ type PluginType = (args: PluginApi) => PluginOutput;
 type ArgValue = string | string[] | number | boolean;
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
-type ActionType<T = any> = (...args: T[]) => void;
+type ActionType<T = any> = (...args: T[]) => void | Promise<void>;
 
-type CommandType = {
+export type CommandType = {
   name: string;
   description: string;
   action: ActionType;
@@ -45,6 +45,8 @@ type CommandType = {
     default?: ArgValue | undefined;
     parse?: (value: string, previous: ArgValue) => ArgValue;
   }>;
+  /** Internal property to assign plugin name to particualr commands  */
+  __origin?: string;
 };
 
 type ConfigType = {
@@ -136,7 +138,7 @@ export async function getConfig(
   if (config.plugins) {
     // plugins register commands
     for (const plugin of config.plugins) {
-      plugin(api);
+      assignOriginToCommand(plugin, api, config);
     }
   }
 
@@ -148,7 +150,7 @@ export async function getConfig(
   }
 
   if (config.bundler) {
-    config.bundler(api);
+    assignOriginToCommand(config.bundler, api, config);
   }
 
   const outputConfig: ConfigOutput = {
@@ -179,4 +181,23 @@ function getReactNativeVersion(root: string) {
 function resolveReactNativePath(root: string) {
   const require = createRequire(import.meta.url);
   return path.join(require.resolve('react-native', { paths: [root] }), '..');
+}
+
+/**
+ *
+ * Assigns __origin property to each command in the config for later use in error handling.
+ */
+function assignOriginToCommand(
+  plugin: PluginType,
+  api: PluginApi,
+  config: ConfigType
+) {
+  const len = config.commands?.length ?? 0;
+  const { name } = plugin(api);
+  const newlen = config.commands?.length ?? 0;
+  for (let i = len; i < newlen; i++) {
+    if (config.commands?.[i]) {
+      config.commands[i].__origin = name;
+    }
+  }
 }

@@ -132,7 +132,7 @@ export const pluginMetro =
     });
 
     return {
-      name: 'plugin-metro',
+      name: '@rnef/plugin-metro',
       description: 'RNEF plugin for Metro bundler.',
     };
   };

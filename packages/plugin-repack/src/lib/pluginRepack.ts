@@ -64,7 +64,7 @@ export const pluginRepack =
     });
 
     return {
-      name: 'plugin-repack',
+      name: '@rnef/plugin-repack',
       description: 'RNEF plugin for Re.Pack toolkit with Rspack.',
     };
   };
