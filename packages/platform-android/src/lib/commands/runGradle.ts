@@ -156,7 +156,8 @@ export async function runGradleAar({
       hints ||
         `Failed to ${
           isPublishTask ? 'publish' : 'build'
-        } the AAR. See the error above for details from Gradle.`
+        } the AAR. See the error above for details from Gradle.`,
+      { cause: (error as SubprocessError).stderr }
     );
   }
 }
