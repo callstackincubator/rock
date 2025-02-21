@@ -1,4 +1,3 @@
-import { describe, it, expect, beforeEach } from 'vitest';
 import { existsSync, mkdirSync, readFileSync, rmSync } from 'node:fs';
 import path from 'node:path';
 import {
@@ -6,6 +5,7 @@ import {
   getRandomString,
   getTempDirectory,
 } from '@rnef/test-helpers';
+import { beforeEach,describe, expect, it } from 'vitest';
 
 /**
  * Perform following commands to test e2e locally (on macOS):
@@ -44,7 +44,7 @@ describe('create-app command', { timeout: 30_000 }, () => {
       }
 
       await execAsync(
-        `${CREATE_APP_COMMAND} ${projectName} --template=default --platform=ios --platform=android --plugin=metro`,
+        `${CREATE_APP_COMMAND} ${projectName} --template=default --platform=ios --platform=android --plugin=metro --remote-cache-provider=github-actions`,
         execArgs
       );
 
@@ -77,7 +77,7 @@ describe('create-app command', { timeout: 30_000 }, () => {
     }
 
     await execAsync(
-      `${CREATE_APP_COMMAND} ${projectName} --template=@rnef/template-default --platform=ios --platform=android --plugin=metro`,
+      `${CREATE_APP_COMMAND} ${projectName} --template=@rnef/template-default --platform=ios --platform=android --plugin=metro --remote-cache-provider=github-actions`,
       execArgs
     );
 
@@ -113,7 +113,7 @@ describe('create-app command', { timeout: 30_000 }, () => {
 
       const templatePath = `${ROOT_DIR}/templates/rnef-template-default`;
       await execAsync(
-        `${CREATE_APP_COMMAND} ${projectName} --template="${templatePath}" --platform=ios --platform=android --plugin=metro`,
+        `${CREATE_APP_COMMAND} ${projectName} --template="${templatePath}" --platform=ios --platform=android --plugin=metro --remote-cache-provider=github-actions`,
         execArgs
       );
 

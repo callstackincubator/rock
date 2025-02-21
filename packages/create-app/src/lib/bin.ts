@@ -39,7 +39,6 @@ import { getRnefVersion } from './utils/version.js';
 
 export async function run() {
   const options = parseCliOptions(process.argv.slice(2));
-
   const version = getRnefVersion();
 
   if (options.help) {
@@ -87,8 +86,9 @@ export async function run() {
     : await promptPlugins(PLUGINS);
 
   const remoteCacheProvider =
-    options.remoteCacheProvider != null
-      ? options.remoteCacheProvider
+    options.remoteCacheProvider !== undefined ||
+    options.remoteCacheProvider === false
+      ? null
       : await promptRemoteCacheProvider();
 
   const loader = spinner();
