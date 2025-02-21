@@ -155,7 +155,6 @@ export const createRun = async (
         scheme,
         xcodeProject,
         sourceDir,
-        remoteCacheProvider,
         args
       );
     }

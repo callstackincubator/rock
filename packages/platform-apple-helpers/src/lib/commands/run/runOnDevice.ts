@@ -1,7 +1,4 @@
-import type {
-  SubprocessError,
-  SupportedRemoteCacheProviders,
-} from '@rnef/tools';
+import type { SubprocessError } from '@rnef/tools';
 import { spawn, spinner } from '@rnef/tools';
 import type {
   ApplePlatform,
@@ -9,7 +6,6 @@ import type {
   XcodeProjectInfo,
 } from '../../types/index.js';
 import { buildProject } from '../build/buildProject.js';
-import { fetchCachedBuild } from './fetchCachedBuild.js';
 import { getBuildPath } from './getBuildPath.js';
 import { getBuildSettings } from './getBuildSettings.js';
 import type { RunFlags } from './runOptions.js';
@@ -21,21 +17,8 @@ export async function runOnDevice(
   scheme: string,
   xcodeProject: XcodeProjectInfo,
   sourceDir: string,
-  remoteCacheProvider: SupportedRemoteCacheProviders | undefined,
   args: RunFlags
 ) {
-  if (!args.binaryPath && args.remoteCache) {
-    const cachedBuild = await fetchCachedBuild({
-      distribution: 'device',
-      configuration: 'Release', // Remote debug builds make no sense, do they?
-      remoteCacheProvider,
-    });
-    if (cachedBuild) {
-      // @todo replace with a more generic way to pass binary path
-      args.binaryPath = cachedBuild.binaryPath;
-    }
-  }
-
   let buildOutput, appPath;
   if (!args.binaryPath) {
     buildOutput = await buildProject(
