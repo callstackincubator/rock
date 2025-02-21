@@ -21,7 +21,7 @@ export type Distribution = 'simulator' | 'device';
 type FetchCachedBuildOptions = {
   distribution: Distribution;
   configuration: string;
-  remoteCacheProvider: SupportedRemoteCacheProviders | undefined;
+  remoteCacheProvider: SupportedRemoteCacheProviders | undefined | null;
 };
 
 export async function fetchCachedBuild({
@@ -29,6 +29,18 @@ export async function fetchCachedBuild({
   configuration,
   remoteCacheProvider,
 }: FetchCachedBuildOptions): Promise<LocalBuild | null> {
+  if (remoteCacheProvider === undefined) {
+    logger.warn(`No remote cache provider set. You won't be able to access reusable builds from e.g. GitHub Actions. 
+To configure it, set the "remoteCacheProvider" key in ${color.cyan(
+      'rnef.config.js'
+    )} file:
+{
+  remoteCacheProvider: 'github-actions'
+}
+To disable this warning, set "remoteCacheProvider" to null.
+Proceeding with local build.`);
+    return null;
+  }
   const loader = spinner();
   loader.start('Looking for a local cached build');
 
@@ -44,16 +56,6 @@ export async function fetchCachedBuild({
   if (localBuild != null) {
     loader.stop(`Found local cached build: ${color.cyan(localBuild.name)}`);
     return localBuild;
-  }
-
-  if (!remoteCacheProvider) {
-    loader.stop(`No remote cache provider set, skipping.`);
-    logger.info(`Hint: You can set it through the rnef.config.js file:
-{
-  remoteCacheProvider: 'github-actions'
-}
-      `);
-    return null;
   }
 
   const remoteBuildCache = await createRemoteBuildCache(remoteCacheProvider);
