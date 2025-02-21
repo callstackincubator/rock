@@ -29,6 +29,9 @@ export async function fetchCachedBuild({
   configuration,
   remoteCacheProvider,
 }: FetchCachedBuildOptions): Promise<LocalBuild | null> {
+  if (remoteCacheProvider === null) {
+    return null;
+  }
   if (remoteCacheProvider === undefined) {
     logger.warn(`No remote cache provider set. You won't be able to access reusable builds from e.g. GitHub Actions. 
 To configure it, set the "remoteCacheProvider" key in ${color.cyan(
@@ -61,10 +64,6 @@ Proceeding with local build.`);
   const remoteBuildCache = await createRemoteBuildCache(remoteCacheProvider);
   if (!remoteBuildCache) {
     loader.stop(`No remote cache provider found, skipping.`);
-    // @todo revisit after config validation
-    logger.info(
-      `Your provider set is "${remoteCacheProvider}". Available providers are: "github-actions"`
-    );
     return null;
   }
 
