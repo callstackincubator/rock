@@ -1,38 +1,53 @@
 import { formatConfig } from '../bin.js';
-import { PLATFORMS, PLUGINS } from '../templates.js';
+import type { TemplateInfo } from '../templates.js';
+import { BUNDLERS, PLATFORMS } from '../templates.js';
 
-test('formatConfig', () => {
-  expect(formatConfig(PLATFORMS, PLUGINS)).toMatchInlineSnapshot(`
-    "import { platformIOS } from '@rnef/platform-ios';
-    import { platformAndroid } from '@rnef/platform-android';
-    import { pluginMetro } from '@rnef/plugin-metro';
-    import { pluginRepack } from '@rnef/plugin-repack';
+describe('formatConfig', () => {
+  test('should format config without plugins', () => {
+    expect(formatConfig(PLATFORMS, null, BUNDLERS[0])).toMatchInlineSnapshot(`
+      "import { platformIOS } from '@rnef/platform-ios';
+      import { platformAndroid } from '@rnef/platform-android';
+      import { pluginMetro } from '@rnef/plugin-metro';
 
-    export default {
-      plugins: [
-        pluginMetro(),
-        pluginRepack(),
-      ],
-      platforms: {
-        ios: platformIOS(),
-        android: platformAndroid(),
+      export default {
+        bundler: pluginMetro(),
+        platforms: {
+          ios: platformIOS(),
+          android: platformAndroid(),
+        },
+      };
+      "
+    `);
+  });
+
+  test('should format config with plugins', () => {
+    const plugins: TemplateInfo[] = [
+      {
+        type: 'npm',
+        name: 'test',
+        packageName: '@rnef/plugin-test',
+        version: 'latest',
+        directory: 'template',
+        importName: 'pluginTest',
       },
-    };
-    "
-  `);
+    ];
 
-  expect(formatConfig([PLATFORMS[0]], [PLUGINS[0]])).toMatchInlineSnapshot(`
-    "import { platformIOS } from '@rnef/platform-ios';
-    import { pluginMetro } from '@rnef/plugin-metro';
+    expect(formatConfig([PLATFORMS[0]], plugins, BUNDLERS[1]))
+      .toMatchInlineSnapshot(`
+      "import { platformIOS } from '@rnef/platform-ios';
+      import { pluginTest } from '@rnef/plugin-test';
+      import { pluginRepack } from '@rnef/plugin-repack';
 
-    export default {
-      plugins: [
-        pluginMetro(),
-      ],
-      platforms: {
-        ios: platformIOS(),
-      },
-    };
-    "
-  `);
+      export default {
+        plugins: [
+          pluginTest(),
+        ],
+        bundler: pluginRepack(),
+        platforms: {
+          ios: platformIOS(),
+        },
+      };
+      "
+    `);
+  });
 });

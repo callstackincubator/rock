@@ -189,25 +189,24 @@ export function formatConfig(
   );
   const pluginsWithImports = plugins
     ? plugins.filter((template) => template.importName)
-    : [];
-  return `${[...platformsWithImports, ...pluginsWithImports, bundler]
+    : null;
+  return `${[...platformsWithImports, ...(pluginsWithImports ?? []), bundler]
     .map(
       (template) =>
         `import { ${template.importName} } from '${template.packageName}';`
     )
     .join('\n')}
 
-export default {
-  ${
-    pluginsWithImports
-      ? `plugins: [
+export default {${pluginsWithImports
+      ? `
+  plugins: [
     ${pluginsWithImports
       .map((template) => `${template.importName}(),`)
       .join('\n    ')}
   ],`
       : ''
   }
-  bundler: ${bundler.name}: ${bundler.importName}(),
+  bundler: ${bundler.importName}(),
   platforms: {
     ${platformsWithImports
       .map((template) => `${template.name}: ${template.importName}(),`)
