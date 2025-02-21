@@ -135,7 +135,6 @@ export async function runGradleAar({
     logger.debug(`Running ${gradleWrapper} ${gradleArgs.join(' ')}.`);
     await spawn(gradleWrapper, gradleArgs, {
       cwd: aarProject.sourceDir,
-      stdio: logger.isVerbose() ? 'inherit' : 'pipe',
     });
     loader.stop(
       isPublishTask
