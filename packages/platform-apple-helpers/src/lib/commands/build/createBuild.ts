@@ -124,4 +124,6 @@ function validateArgs(args: BuildFlags) {
     );
     args.interactive = false;
   }
+  // No need to install pods if binary path is provided
+  args.installPods = false;
 }
