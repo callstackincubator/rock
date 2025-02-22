@@ -19,7 +19,7 @@ export const buildProject = async (
   const simulatorDest = simulatorDestinationMap[platformName];
 
   if (!simulatorDest) {
-    throw new Error(
+    throw new RnefError(
       `Unknown platform: ${platformName}. Please, use one of: ${Object.values(
         supportedPlatforms
       ).join(', ')}.`
@@ -31,7 +31,7 @@ export const buildProject = async (
       return args.destinations;
     }
 
-    if (args.device && typeof args.device === 'string') {
+    if (args.device) {
       // Check if the device argument looks like a UDID (assuming UDIDs are alphanumeric and have specific length)
       const isUDID = /^[A-Fa-f0-9-]{25,}$/.test(args.device);
       if (isUDID) {
@@ -50,7 +50,7 @@ export const buildProject = async (
       return [`id=${udid}`];
     }
 
-    if (configuration === 'Debug' || args.device) {
+    if (configuration === 'Debug') {
       return [`generic/platform=${simulatorDest}`];
     }
 
