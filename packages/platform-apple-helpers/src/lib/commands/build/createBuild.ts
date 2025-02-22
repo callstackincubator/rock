@@ -72,7 +72,7 @@ export const createBuild = async (
     args.interactive
   );
 
-  if (args.archive && configuration !== 'Release') {
+  if (args.archive && !args.configuration && configuration !== 'Release') {
     logger.debug(
       'Setting build configuration to Release, because --archive flag was used'
     );
