@@ -1,5 +1,6 @@
 import fs from 'node:fs';
 import path from 'node:path';
+import type { SupportedRemoteCacheProviders } from '@rnef/tools';
 import {
   cancelPromptAndExit,
   resolveAbsolutePath,
@@ -34,6 +35,7 @@ import {
   promptPlatforms,
   promptPlugins,
   promptProjectName,
+  promptRemoteCacheProvider,
   promptTemplate,
 } from './utils/prompts.js';
 import {
@@ -44,7 +46,6 @@ import { getRnefVersion } from './utils/version.js';
 
 export async function run() {
   const options = parseCliOptions(process.argv.slice(2));
-
   const version = getRnefVersion();
 
   if (options.help) {
@@ -95,6 +96,12 @@ export async function run() {
     ? options.plugins.map((p) => resolveTemplate(PLUGINS, p))
     : await promptPlugins(PLUGINS);
 
+  const remoteCacheProvider =
+    options.remoteCacheProvider !== undefined ||
+    options.remoteCacheProvider === false
+      ? null
+      : await promptRemoteCacheProvider();
+
   const loader = spinner();
 
   loader.start('Applying template, platforms and plugins');
@@ -110,7 +117,7 @@ export async function run() {
   renameCommonFiles(absoluteTargetDir);
   replacePlaceholder(absoluteTargetDir, projectName);
   rewritePackageJson(absoluteTargetDir, projectName);
-  createConfig(absoluteTargetDir, platforms, plugins, bundler);
+  createConfig(absoluteTargetDir, platforms, plugins, bundler, remoteCacheProvider);
   loader.stop('Applied template, platforms and plugins.');
 
   await gitInitStep(absoluteTargetDir, version);
@@ -173,16 +180,21 @@ function createConfig(
   absoluteTargetDir: string,
   platforms: TemplateInfo[],
   plugins: TemplateInfo[] | null,
-  bundler: TemplateInfo
+  bundler: TemplateInfo,
+  remoteCacheProvider: SupportedRemoteCacheProviders | null
 ) {
   const rnefConfig = path.join(absoluteTargetDir, 'rnef.config.mjs');
-  fs.writeFileSync(rnefConfig, formatConfig(platforms, plugins, bundler));
+  fs.writeFileSync(
+    rnefConfig,
+    formatConfig(platforms, plugins, bundler, remoteCacheProvider)
+  );
 }
 
 export function formatConfig(
   platforms: TemplateInfo[],
   plugins: TemplateInfo[] | null,
-  bundler: TemplateInfo
+  bundler: TemplateInfo,
+  remoteCacheProvider: SupportedRemoteCacheProviders | null
 ) {
   const platformsWithImports = platforms.filter(
     (template) => template.importName
@@ -211,6 +223,9 @@ export default {${pluginsWithImports
     ${platformsWithImports
       .map((template) => `${template.name}: ${template.importName}(),`)
       .join('\n    ')}
+  },
+  remoteCacheProvider: ${
+    remoteCacheProvider === null ? null : `'${remoteCacheProvider}'`
   },
 };
 `;

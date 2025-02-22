@@ -44,7 +44,7 @@ describe('create-app command', { timeout: 30_000 }, () => {
       }
 
       await execAsync(
-        `${CREATE_APP_COMMAND} ${projectName} --template=default --platform=ios --platform=android --bundler=metro`,
+        `${CREATE_APP_COMMAND} ${projectName} --template=default --platform=ios --platform=android --bundler=metro --remote-cache-provider=github-actions`,
         execArgs
       );
 
@@ -77,7 +77,7 @@ describe('create-app command', { timeout: 30_000 }, () => {
     }
 
     await execAsync(
-      `${CREATE_APP_COMMAND} ${projectName} --template=@rnef/template-default --platform=ios --platform=android --bundler=metro`,
+      `${CREATE_APP_COMMAND} ${projectName} --template=@rnef/template-default --platform=ios --platform=android --bundler=metro --remote-cache-provider=github-actions`,
       execArgs
     );
 
@@ -113,7 +113,7 @@ describe('create-app command', { timeout: 30_000 }, () => {
 
       const templatePath = `${ROOT_DIR}/templates/rnef-template-default`;
       await execAsync(
-        `${CREATE_APP_COMMAND} ${projectName} --template="${templatePath}" --platform=ios --platform=android --bundler=metro`,
+        `${CREATE_APP_COMMAND} ${projectName} --template="${templatePath}" --platform=ios --platform=android --bundler=metro --remote-cache-provider=github-actions`,
         execArgs
       );
 
