@@ -155,7 +155,6 @@ export const createRun = async (
         scheme,
         xcodeProject,
         sourceDir,
-        remoteCacheProvider,
         args
       );
     }
@@ -236,6 +235,8 @@ function validateArgs(args: RunFlags, projectRoot: string) {
         `"--binary-path" was specified, but the file was not found at "${args.binaryPath}".`
       );
     }
+    // No need to install pods if binary path is provided
+    args.installPods = false;
   }
 
   if (args.interactive && !isInteractive()) {
