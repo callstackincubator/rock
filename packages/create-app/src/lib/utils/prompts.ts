@@ -131,8 +131,12 @@ export function promptRemoteCacheProvider(): Promise<SupportedRemoteCacheProvide
     message: 'Select remote cache provider:',
     initialValue: 'github-actions',
     options: [
-      { value: 'github-actions', label: 'GitHub Actions', hint: 'Sets up workflows for building apps in your GitHub cloud' },
-      { value: null, label: 'None', hint: 'Choose if you only want to build locally' },
+      {
+        value: 'github-actions',
+        label: 'GitHub Actions',
+        hint: 'Enable builds on your CI',
+      },
+      { value: null, label: 'None', hint: 'Local builds only' },
     ],
   }) as Promise<SupportedRemoteCacheProviders | null>;
 }
