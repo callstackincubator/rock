@@ -142,6 +142,7 @@ runs:
           ${{ inputs.destination == 'device' && '--archive' || '' }} \
           --configuration ${{ inputs.configuration }} \
           --build-folder "build" \
+          --destination ${{ inputs.destination }} \
           ${{ inputs.rnef-build-extra-params }}
       shell: bash
 
