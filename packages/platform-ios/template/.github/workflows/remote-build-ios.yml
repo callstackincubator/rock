@@ -41,7 +41,7 @@ jobs:
           certificate-base64: ${{ secrets.APPLE_BUILD_CERTIFICATE_BASE64 }}
           certificate-password: ${{ secrets.APPLE_BUILD_CERTIFICATE_PASSWORD }}
           provisioning-profile-base64: ${{ secrets.APPLE_BUILD_PROVISIONING_PROFILE_BASE64 }}
-          provisioning-profile-name: 'Distribution AdHoc RnefRemoteBuildTest'
+          provisioning-profile-name: 'PROVISIONING_PROFILE_NAME' # replace with actual profile name
           keychain-password: ${{ secrets.APPLE_KEYCHAIN_PASSWORD }}
 
   build-simulator:
