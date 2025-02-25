@@ -94,16 +94,10 @@ export const createRun = async (
   if (!info) {
     throw new RnefError('Failed to get Xcode project information');
   }
-  const scheme = await getScheme(
-    info.schemes,
-    args.scheme,
-    args.interactive,
-    xcodeProject.name
-  );
+  const scheme = await getScheme(info.schemes, args.scheme, xcodeProject.name);
   const configuration = await getConfiguration(
     info.configurations,
-    args.configuration,
-    args.interactive
+    args.configuration
   );
 
   if (platformName === 'macos') {
@@ -133,7 +127,7 @@ export const createRun = async (
     );
   }
   loader.stop('Found available devices and simulators.');
-  const device = await selectDevice(devices, args, platformName);
+  const device = await selectDevice(devices, args);
 
   if (device) {
     cacheRecentDevice(device, platformName);
@@ -202,16 +196,9 @@ export const createRun = async (
   outro('Success 🎉.');
 };
 
-async function selectDevice(
-  devices: Device[],
-  args: RunFlags,
-  platform: ApplePlatform
-) {
-  const { interactive } = args;
+async function selectDevice(devices: Device[], args: RunFlags) {
   let device;
-  if (interactive) {
-    device = await promptForDeviceSelection(devices, platform);
-  } else if (args.device) {
+  if (args.device) {
     device = matchingDevice(devices, args.device);
   }
   if (!device && args.device) {
@@ -237,13 +224,6 @@ function validateArgs(args: RunFlags, projectRoot: string) {
     }
     // No need to install pods if binary path is provided
     args.installPods = false;
-  }
-
-  if (args.interactive && !isInteractive()) {
-    logger.warn(
-      'Interactive mode is not supported in non-interactive environments.'
-    );
-    args.interactive = false;
   }
 }
 

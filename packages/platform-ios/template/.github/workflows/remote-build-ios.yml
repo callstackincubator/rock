@@ -36,11 +36,12 @@ jobs:
         uses: ./.github/actions/rnef-remote-build-ios
         with:
           destination: device
-          configuration: Release
+          scheme: SCHEME_FOR_DEVICES # replace with preferred scheme
+          configuration: Release # replace with preferred configuration
           certificate-base64: ${{ secrets.APPLE_BUILD_CERTIFICATE_BASE64 }}
           certificate-password: ${{ secrets.APPLE_BUILD_CERTIFICATE_PASSWORD }}
           provisioning-profile-base64: ${{ secrets.APPLE_BUILD_PROVISIONING_PROFILE_BASE64 }}
-          provisioning-profile-name: "Distribution AdHoc RnefRemoteBuildTest"
+          provisioning-profile-name: 'Distribution AdHoc RnefRemoteBuildTest'
           keychain-password: ${{ secrets.APPLE_KEYCHAIN_PASSWORD }}
 
   build-simulator:
@@ -66,4 +67,5 @@ jobs:
         uses: ./.github/actions/rnef-remote-build-ios
         with:
           destination: simulator
-          configuration: Debug
+          scheme: SCHEME_FOR_SIMULATORS # replace with preferred scheme
+          configuration: Debug # replace with preferred configuration

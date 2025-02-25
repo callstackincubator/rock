@@ -8,12 +8,14 @@ inputs:
     default: ${{ github.token }}
   destination:
     description: 'Destination to build to: "simulator" or "device". Using "device" runs "rnef build:ios --archive" and code signing settings (certificate, provisioning profile, keychain password) are required.'
-    required: false
+    required: true
     default: 'simulator' # 'simulator' or 'device'
+  scheme:
+    description: Xcode scheme
+    required: true
   configuration:
-    description: Xcode scheme configuration
-    required: false
-    default: 'Debug'
+    description: Xcode configuration
+    required: true
   certificate-base64:
     description: '[Device Builds] Base64 encoded P12 file containing Apple certificate (incl. private key)'
     required: false
@@ -140,6 +142,7 @@ runs:
       run: |
         npx rnef build:ios \
           ${{ inputs.destination == 'device' && '--archive' || '' }} \
+          --scheme ${{ inputs.scheme }}
           --configuration ${{ inputs.configuration }} \
           --build-folder "build" \
           --destination ${{ inputs.destination }} \

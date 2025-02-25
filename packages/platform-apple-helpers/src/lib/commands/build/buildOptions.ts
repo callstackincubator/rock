@@ -4,7 +4,6 @@ import { getPlatformInfo } from '../../utils/getPlatformInfo.js';
 
 export type BuildFlags = {
   verbose?: boolean;
-  interactive?: boolean;
   configuration?: string;
   scheme?: string;
   target?: string;
@@ -27,11 +26,6 @@ export const getBuildOptions = ({ platformName }: BuilderCommand) => {
     {
       name: '--verbose',
       description: '',
-    },
-    {
-      name: '-i --interactive',
-      description:
-        'Explicitly select which scheme and configuration to use before running a build',
     },
     {
       name: '--configuration <string>',

@@ -1,19 +1,21 @@
-import { logger, promptSelect, RnefError } from '@rnef/tools';
+import { isInteractive, logger, promptSelect, RnefError } from '@rnef/tools';
 import type { Info } from '../types/index.js';
 
 export async function getConfiguration(
   configurations: Info['configurations'],
-  preselectedConfiguration: string | undefined,
-  interactive: boolean | undefined
+  preselectedConfiguration: string | undefined
 ) {
   let configuration = preselectedConfiguration;
-  if (interactive) {
-    if (
-      configurations &&
-      configurations.length > 1 &&
-      !preselectedConfiguration
-    ) {
+  if (
+    configurations &&
+    configurations.length > 1 &&
+    !preselectedConfiguration
+  ) {
+    if (isInteractive()) {
       configuration = await promptForConfigurationSelection(configurations);
+      logger.info(
+        `You can set configuration manually next time using "--configuration ${configuration}" flag.`
+      );
     }
   }
   if (!configuration) {
