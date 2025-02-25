@@ -16,12 +16,7 @@ describe('getScheme', () => {
   });
 
   it('should return unchanged scheme when info is undefined', async () => {
-    const result = await getScheme(
-      undefined,
-      'TestScheme',
-      true,
-      'ProjectName'
-    );
+    const result = await getScheme(undefined, 'TestScheme', 'ProjectName');
 
     expect(result).toBe('TestScheme');
     expect(promptSelect).not.toHaveBeenCalled();
@@ -33,7 +28,6 @@ describe('getScheme', () => {
     const result = await getScheme(
       ['StageScheme', 'TestScheme'],
       undefined,
-      true,
       'ProjectName'
     );
 
@@ -48,12 +42,7 @@ describe('getScheme', () => {
   });
 
   it('should automatically select single scheme', async () => {
-    const result = await getScheme(
-      ['ProjectName'],
-      undefined,
-      true,
-      'ProjectName'
-    );
+    const result = await getScheme(['ProjectName'], undefined, 'ProjectName');
 
     expect(result).toBe('ProjectName');
     expect(promptSelect).not.toHaveBeenCalled();
