@@ -124,4 +124,9 @@ npx create-rnef-app enterprise
    - `--appId` to `--app-id` for Android commands
    - `--appIdSuffix` to `--app-id-suffix` for Android commands
 
+   And remove unsupported flags:
+
+   - `--interactive`/`-i` – the CLI will prompt you for input where necessary
+   - `--list-devices` - when no devices are connected, you'll be prompt with a full device selection
+
 1. Configure GitHub Actions for remote builds as per [CI Docs](CI.md)
