@@ -18,7 +18,7 @@ export async function findOutputFile(
   if (!selectedTask) {
     return false;
   }
-  // handle if selected task from interactive mode includes build flavour as well, eg. installProductionDebug should create ['production','debug'] array
+  // handle if selected task includes build flavour as well, eg. installProductionDebug should create ['production','debug'] array
   const variantFromSelectedTask = selectedTask
     ?.replace('install', '')
     ?.replace('assemble', '')

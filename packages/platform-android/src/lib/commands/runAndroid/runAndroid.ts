@@ -118,13 +118,7 @@ async function selectAndLaunchDevice() {
 }
 
 async function selectDevice(devices: DeviceData[], args: Flags) {
-  const { interactive } = args;
-  let device;
-  if (interactive) {
-    device = await selectAndLaunchDevice();
-  } else if (args.device) {
-    device = matchingDevice(devices, args.device);
-  }
+  const device = args.device ? matchingDevice(devices, args.device) : undefined;
   if (!device && args.device) {
     logger.warn(
       `No devices or emulators found matching "${args.device}". Using available one instead.`

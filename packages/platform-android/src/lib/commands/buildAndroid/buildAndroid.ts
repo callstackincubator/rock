@@ -10,7 +10,6 @@ export interface BuildFlags {
   activeArchOnly?: boolean;
   tasks?: Array<string>;
   extraParams?: Array<string>;
-  interactive?: boolean;
 }
 
 export async function buildAndroid(

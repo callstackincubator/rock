@@ -14,7 +14,6 @@ const args: BuildFlags = {
   variant: 'debug',
   activeArchOnly: false,
   extraParams: undefined,
-  interactive: undefined,
 };
 const androidProject: AndroidProjectConfig = {
   appName: 'app',

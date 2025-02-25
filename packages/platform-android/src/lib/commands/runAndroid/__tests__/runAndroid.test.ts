@@ -14,7 +14,6 @@ const args: Flags = {
   variant: 'debug',
   activeArchOnly: true,
   extraParams: undefined,
-  interactive: undefined,
   appId: '',
   appIdSuffix: '',
   mainActivity: undefined,
