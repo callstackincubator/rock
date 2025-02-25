@@ -124,6 +124,18 @@ function validateArgs(args: BuildFlags) {
     );
     args.interactive = false;
   }
-  // No need to install pods if binary path is provided
-  args.installPods = false;
+  if (args.destination && args.destinations) {
+    logger.error(
+      `Both "--destination" and "--destinations" flags are set. Please pick one.`
+    );
+    process.exit(1);
+  }
+  if (!args.destination && !isInteractive()) {
+    logger.error(
+      `The "--destination" flag is required in non-interactive environments. Available flag values:
+- simulator – suitable for unsigned simulator builds for developers
+- device – suitable for signed device builds for testers`
+    );
+    process.exit(1);
+  }
 }

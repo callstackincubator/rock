@@ -27,8 +27,17 @@ export const buildProject = async (
   }
 
   function determineDestinations(): string[] {
-    if (args.destinations != undefined) {
+    if (args.destinations) {
       return args.destinations;
+    }
+
+    if (args.destination) {
+      if (args.destination === 'simulator') {
+        return [`generic/platform=${simulatorDest}`];
+      }
+      if (args.destination === 'device') {
+        return [`generic/platform=${platformName}`];
+      }
     }
 
     if (args.device) {
@@ -48,10 +57,6 @@ export const buildProject = async (
 
     if (udid) {
       return [`id=${udid}`];
-    }
-
-    if (configuration === 'Debug') {
-      return [`generic/platform=${simulatorDest}`];
     }
 
     return [`generic/platform=${platformName}`];

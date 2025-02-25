@@ -13,6 +13,7 @@ export type BuildFlags = {
   device?: string;
   catalyst?: boolean;
   buildFolder?: string;
+  destination?: string;
   destinations?: string[];
   archive?: boolean;
   installPods: boolean;
@@ -73,6 +74,11 @@ export const getBuildOptions = ({ platformName }: BuilderCommand) => {
       value: 'build',
     },
     {
+      name: '--destination <string>',
+      description:
+        'Define whether to build for a generic device or generic simulator. Available values: "simulator", "device"',
+    },
+    {
       name: '--destinations <list>',
       description:
         'Explicitly defined destinations e.g. "arch=x86_64". You can also pass a comma separated array e.g. "generic/platform=iphoneos,generic/platform=iphonesimulator"',
@@ -89,8 +95,7 @@ export const getBuildOptions = ({ platformName }: BuilderCommand) => {
     },
     {
       name: '--no-new-arch',
-      description:
-        'Run React Native in legacy async architecture.',
+      description: 'Run React Native in legacy async architecture.',
     },
   ];
 };
