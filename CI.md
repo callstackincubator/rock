@@ -1,3 +1,16 @@
+# General
+## Secrets
+To use the RNEF GitHub Actions, you need to set up the secrets on your GitHub repository:
+`NPM_TOKEN` and 
+platforms specific secrets described below in the iOS and Android sections.
+
+## Change workflow permissions 
+Settings -> Actions -> General -> Workflow Permissions -> Read and write permissions
+
+## Generate GitHub Personal Access Token for downloading cached builds 
+Generate GitHub Personal Access Token for downloading cached builds at: https://github.com/settings/tokens. Include "repo", "workflow", and "read:org" permissions.
+You'll be asked about this token when cached build is available while running the `npx rnef run:` command.
+
 # iOS CI Builds
 
 ## Development Builds For Simulators

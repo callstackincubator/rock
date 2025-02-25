@@ -124,4 +124,4 @@ npx create-rnef-app enterprise
    - `--appId` to `--app-id` for Android commands
    - `--appIdSuffix` to `--app-id-suffix` for Android commands
 
-1. Configure GitHub Actions for remote builds.
+1. Configure GitHub Actions for remote builds as per [CI Docs](CI.md)
