@@ -45,9 +45,7 @@ export async function tryInstallAppOnDevice(
   }
 
   const adbArgs = ['-s', deviceId, 'install', '-r', '-d'];
-  const user = args.interactive
-    ? (await promptForUser(deviceId))?.id
-    : args.user;
+  const user = args.user ?? (await promptForUser(deviceId))?.id;
 
   if (user !== undefined) {
     adbArgs.push('--user', `${user}`);

@@ -3,28 +3,11 @@ import fs from 'node:fs';
 import type { AndroidProjectConfig } from '@react-native-community/cli-types';
 import * as tools from '@rnef/tools';
 import { color, spawn } from '@rnef/tools';
-import type { Mock, MockedFunction } from 'vitest';
+import type { Mock } from 'vitest';
 import { test, vi } from 'vitest';
 import { buildAndroid, type BuildFlags } from '../buildAndroid.js';
 
 const actualFs = await vi.importMock('node:fs');
-
-const gradleTaskOutput = `
-> Task :tasks
-
-------------------------------------------------------------
-Tasks runnable from root project 'com.bananas'
-------------------------------------------------------------
-
-Android tasks
--------------
-androidDependencies - Displays the Android dependencies of the project.
-
-Build tasks
------------
-assemble - Assemble main outputs for all the variants.
-assembleAndroidTest - Assembles all the Test applications.
-bundleRelease - Bundles main outputs for all Release variants.`;
 
 const args: BuildFlags = {
   tasks: undefined,
@@ -112,45 +95,4 @@ test('buildAndroid fails gracefully when gradle errors', async () => {
       cwd: '/android',
     }
   );
-});
-
-test('buildAndroid runs selected "bundleRelease" task in interactive variant', async () => {
-  (spawn as Mock).mockImplementation((file, args) => {
-    if (file === './gradlew' && args[0] === 'tasks') {
-      return { output: gradleTaskOutput };
-    }
-    if (mockCallAdbGetCpu(file, args)) {
-      return { output: 'arm64-v8a' };
-    }
-    return { output: 'output' };
-  });
-  (
-    tools.promptSelect as MockedFunction<typeof tools.promptSelect>
-  ).mockResolvedValueOnce(Promise.resolve('bundleRelease'));
-  vi.mocked(fs.existsSync).mockImplementation((file: PathLike) => {
-    if (file === '/android/app/build/outputs/bundle/release/app-release.aab') {
-      return true;
-    }
-    return (actualFs as typeof fs).existsSync(file);
-  });
-
-  await buildAndroid(androidProject, { ...args, interactive: true });
-
-  expect(spawn).toHaveBeenNthCalledWith(
-    1,
-    './gradlew',
-    ['tasks', '--group', 'build'],
-    { cwd: '/android' }
-  );
-  expect(spawn).toHaveBeenNthCalledWith(
-    2,
-    './gradlew',
-    ['app:bundleRelease', '-x', 'lint'],
-    { stdio: !tools.isInteractive() ? 'inherit' : 'pipe', cwd: '/android' }
-  );
-  expect(spinnerMock.start).toBeCalledWith(
-    'Searching for available Gradle tasks...'
-  );
-  expect(spinnerMock.stop).toBeCalledWith('Found 2 Gradle tasks.');
-  expect(tools.outro).toBeCalledWith('Success 🎉.');
 });

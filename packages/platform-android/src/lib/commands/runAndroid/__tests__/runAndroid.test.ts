@@ -304,7 +304,12 @@ test.each([['release'], ['debug'], ['staging']])(
       }
       return Promise.resolve(undefined);
     });
-    await runAndroid({ ...androidProject }, { ...args, variant }, '/');
+    await runAndroid(
+      { ...androidProject },
+      { ...args, variant },
+      '/',
+      undefined
+    );
 
     expect(tools.outro).toBeCalledWith('Success 🎉.');
     expect(tools.logger.error).not.toBeCalled();
@@ -351,7 +356,8 @@ test('runAndroid runs gradle build with custom --appId, --appIdSuffix and --main
       appIdSuffix: 'suffix',
       mainActivity: 'OtherActivity',
     },
-    '/'
+    '/',
+    undefined
   );
 
   expect(tools.outro).toBeCalledWith('Success 🎉.');
@@ -377,21 +383,17 @@ test('runAndroid fails to launch an app on not-connected device when specified w
   await runAndroid(
     { ...androidProject },
     { ...args, device: 'emulator-5554' },
-    '/'
+    '/',
+    undefined
   );
   expect(logWarnSpy).toBeCalledWith(
     'No devices or emulators found matching "emulator-5554". Using available one instead.'
   );
 });
 
-test.each([
-  ['release', true],
-  ['release', false],
-  ['debug', true],
-  ['debug', false],
-])(
-  `runAndroid launches an app on a selected device emulator-5554 when connected in --variant %s and --interactive %b`,
-  async (variant, interactive) => {
+test.each([['release'], ['debug']])(
+  `runAndroid launches an app on a selected device emulator-5554 when connected in --variant %s`,
+  async (variant) => {
     (spawn as Mock).mockImplementation((file, args) => {
       if (mockCallEmulatorAvdName(file, args, 'emulator-5554')) {
         return { output: emulatorAvdNameOutputPixel8 };
@@ -448,8 +450,9 @@ test.each([
 
     await runAndroid(
       { ...androidProject },
-      { ...args, device: 'emulator-5554', variant, interactive },
-      '/'
+      { ...args, device: 'emulator-5554', variant },
+      '/',
+      undefined
     );
 
     // we don't want to run installDebug when a device is selected, because gradle will install the app on all connected devices
@@ -507,7 +510,7 @@ test('runAndroid launches an app on all connected devices', async () => {
     });
   });
 
-  await runAndroid({ ...androidProject }, { ...args }, '/');
+  await runAndroid({ ...androidProject }, { ...args }, '/', undefined);
 
   // Runs assemble debug task with active architectures arm64-v8a, armeabi-v7a
   expect(spawn).toBeCalledWith(
@@ -573,7 +576,8 @@ test('runAndroid skips building when --binary-path is passed', async () => {
       ...args,
       binaryPath: 'android/app/build/outputs/apk/debug/app-debug.apk',
     },
-    '/root'
+    '/root',
+    undefined
   );
 
   // Skips gradle

@@ -4,19 +4,17 @@ import type {
   AndroidProjectConfig,
   Config,
 } from '@react-native-community/cli-types';
-import type {
-  SupportedRemoteCacheProviders} from '@rnef/tools';
+import type { SupportedRemoteCacheProviders } from '@rnef/tools';
 import {
   intro,
   isInteractive,
   logger,
   outro,
   promptSelect,
-  RnefError
+  RnefError,
 } from '@rnef/tools';
 import type { BuildFlags } from '../buildAndroid/buildAndroid.js';
 import { options } from '../buildAndroid/buildAndroid.js';
-import { promptForTaskSelection } from '../listAndroidTasks.js';
 import { runGradle } from '../runGradle.js';
 import { toPascalCase } from '../toPascalCase.js';
 import { getDevices } from './adb.js';
@@ -57,9 +55,7 @@ export async function runAndroid(
   const device = await selectDevice(devices, args);
 
   const mainTaskType = device ? 'assemble' : 'install';
-  const tasks = args.interactive
-    ? [await promptForTaskSelection(mainTaskType, androidProject.sourceDir)]
-    : args.tasks ?? [`${mainTaskType}${toPascalCase(args.variant)}`];
+  const tasks = args.tasks ?? [`${mainTaskType}${toPascalCase(args.variant)}`];
 
   if (!args.binaryPath && args.remoteCache) {
     const cachedBuild = await fetchCachedBuild({
@@ -109,12 +105,6 @@ export async function runAndroid(
 async function selectAndLaunchDevice() {
   const allDevices = await listAndroidDevices();
   const device = await promptForDeviceSelection(allDevices);
-
-  if (!device) {
-    throw new RnefError(
-      `Failed to select device, please try to run app without "--interactive" flag.`
-    );
-  }
 
   if (!device.connected) {
     await tryLaunchEmulator(device.readableName);

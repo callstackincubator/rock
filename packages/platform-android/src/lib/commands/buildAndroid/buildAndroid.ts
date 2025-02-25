@@ -1,6 +1,5 @@
 import type { AndroidProjectConfig } from '@react-native-community/cli-types';
 import { color, logger, outro, parseArgs, spinner } from '@rnef/tools';
-import { promptForTaskSelection } from '../listAndroidTasks.js';
 import { findOutputFile } from '../runAndroid/findOutputFile.js';
 import { runGradle } from '../runGradle.js';
 import { toPascalCase } from '../toPascalCase.js';
@@ -21,9 +20,7 @@ export async function buildAndroid(
   normalizeArgs(args);
   // Use assemble task by default, but bundle if the flag is set
   const buildTaskBase = args.aab ? 'bundle' : 'assemble';
-  const tasks = args.interactive
-    ? [await promptForTaskSelection('bundle', androidProject.sourceDir)]
-    : args.tasks ?? [`${buildTaskBase}${toPascalCase(args.variant)}`];
+  const tasks = args.tasks ?? [`${buildTaskBase}${toPascalCase(args.variant)}`];
 
   await runGradle({ tasks, androidProject, args });
 
@@ -73,10 +70,5 @@ export const options = [
     name: '--extra-params <string>',
     description: 'Custom params passed to gradle build command',
     parse: parseArgs,
-  },
-  {
-    name: '-i --interactive',
-    description:
-      'Explicitly select build variant to use before running a build',
   },
 ];
