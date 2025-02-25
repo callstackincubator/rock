@@ -1,4 +1,4 @@
-import { promptSelect } from '@rnef/tools';
+import { isInteractive, promptSelect } from '@rnef/tools';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { getConfiguration } from '../getConfiguration.js';
 
@@ -16,6 +16,7 @@ describe('getConfiguration', () => {
   });
 
   it('should return unchanged configuration when info is undefined', async () => {
+    vi.mocked(isInteractive).mockReturnValue(true);
     const result = await getConfiguration(undefined, 'Debug');
 
     expect(result).toBe('Debug');
@@ -23,6 +24,7 @@ describe('getConfiguration', () => {
   });
 
   it('should prompt for configuration selection when multiple configurations exist', async () => {
+    vi.mocked(isInteractive).mockReturnValue(true);
     vi.mocked(promptSelect).mockResolvedValueOnce('Release');
 
     const result = await getConfiguration(['Debug', 'Release'], undefined);
@@ -38,6 +40,7 @@ describe('getConfiguration', () => {
   });
 
   it('should automatically select single configuration', async () => {
+    vi.mocked(isInteractive).mockReturnValue(true);
     const result = await getConfiguration(['Debug'], undefined);
 
     expect(result).toBe('Debug');
