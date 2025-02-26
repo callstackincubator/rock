@@ -1,5 +1,5 @@
 import { existsSync } from 'node:fs';
-import { logger, RnefError, spawn } from '@rnef/tools';
+import { logger, spawn } from '@rnef/tools';
 import { getAdbPath } from './adb.js';
 import type { AndroidProject } from './runAndroid.js';
 
@@ -38,7 +38,7 @@ export async function findOutputFile(
     apkOrBundle === 'apk' ? 'apk' : 'aab',
     device
   );
-  return `${buildDirectory}/${outputFile}`;
+  return outputFile ? `${buildDirectory}/${outputFile}` : undefined;
 }
 
 async function getInstallOutputFileName(
@@ -64,11 +64,15 @@ async function getInstallOutputFileName(
     return outputFile;
   }
 
-  logger.debug({ buildDirectory, outputFile, appName, variant, apkOrAab });
+  logger.debug('Could not find the output file:', {
+    buildDirectory,
+    outputFile,
+    appName,
+    variant,
+    apkOrAab,
+  });
 
-  throw new RnefError(
-    `Could not find the correct .${apkOrAab} file at: ${outputFile}`
-  );
+  return undefined;
 }
 
 /**
