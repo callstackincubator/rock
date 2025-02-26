@@ -1,7 +1,7 @@
-import { existsSync } from "node:fs";
-import { RnefError, spawn } from "@rnef/tools";
-import { getAdbPath } from "./adb.js";
-import type { AndroidProject } from "./runAndroid.js";
+import { existsSync } from 'node:fs';
+import { logger, RnefError, spawn } from '@rnef/tools';
+import { getAdbPath } from './adb.js';
+import type { AndroidProject } from './runAndroid.js';
 
 export async function findOutputFile(
   androidProject: AndroidProject,
@@ -64,8 +64,10 @@ async function getInstallOutputFileName(
     return outputFile;
   }
 
+  logger.debug({ buildDirectory, outputFile, appName, variant, apkOrAab });
+
   throw new RnefError(
-    `Could not find the correct .${apkOrAab} file to install.`
+    `Could not find the correct .${apkOrAab} file at: ${outputFile}`
   );
 }
 
