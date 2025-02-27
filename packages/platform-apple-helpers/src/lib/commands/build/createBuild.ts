@@ -66,18 +66,11 @@ export const createBuild = async (
     args.interactive,
     xcodeProject.name
   );
-  let configuration = await getConfiguration(
+  const configuration = await getConfiguration(
     info.configurations,
     args.configuration,
     args.interactive
   );
-
-  if (args.archive && !args.configuration && configuration !== 'Release') {
-    logger.debug(
-      'Setting build configuration to Release, because --archive flag was used'
-    );
-    configuration = 'Release';
-  }
 
   try {
     await buildProject(
