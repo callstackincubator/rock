@@ -32,6 +32,10 @@ inputs:
   rnef-build-extra-params:
     description: 'Extra parameters to pass to "rnef build:ios"'
     required: false
+  comment-bot:
+    description: 'Whether to send a comment under PR with the link to the generated build'
+    required: false
+    default: true
 
 outputs:
   artifact-url:
@@ -187,7 +191,7 @@ runs:
       shell: bash
 
     - name: Post Build
-      if: ${{ !steps.cached-url.outputs.artifact-url && github.event_name == 'pull_request' }}
+      if: ${{ !steps.cached-url.outputs.artifact-url && github.event_name == 'pull_request' && inputs.comment-bot == 'true' }}
       uses: ./.github/actions/rnef-post-build
       with:
         title: iOS ${{ inputs.configuration }} ${{ inputs.destination == 'simulator' && 'APP for simulators' || 'IPA for physical devices' }}
