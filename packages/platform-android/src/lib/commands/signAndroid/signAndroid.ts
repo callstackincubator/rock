@@ -152,6 +152,13 @@ async function replaceJsBundle({
   }
 }
 
+function isSdkGTE35(versionString: string) {
+  const match = versionString.match(/build-tools\/([\d.]+)/);
+  if (!match) return false;
+
+  return match[1].localeCompare('35.0.0', undefined, { numeric: true }) >= 0;
+}
+
 async function alignApkFile(inputApkPath: string, outputApkPath: string) {
   const zipAlignPath = findAndroidBuildTool('zipalign');
   if (!zipAlignPath) {
@@ -165,8 +172,8 @@ Please follow instructions at: https://reactnative.dev/docs/set-up-your-environm
 
   // See: https://developer.android.com/tools/zipalign#usage
   const zipalignArgs = [
-    '-P', // aligns uncompressed .so files to the specified page size in KiB.
-    '16',
+    // aligns uncompressed .so files to the specified page size in KiB. Available since SDK 35
+    ...(isSdkGTE35(zipAlignPath) ? ['-P', '16'] : []),
     '-f', // Overwrites existing output file.
     '-v', // Overwrites existing output file.
     '4', // alignment in bytes, e.g. '4' provides 32-bit alignment
