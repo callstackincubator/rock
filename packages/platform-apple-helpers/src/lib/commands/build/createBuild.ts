@@ -100,6 +100,7 @@ export const createBuild = async (
         configuration,
         platformName,
         exportExtraParams: args.exportExtraParams ?? [],
+        exportOptionsPlist: args.exportOptionsPlist
       });
     } catch (error) {
       throw new RnefError('Failed to export archive', { cause: error });

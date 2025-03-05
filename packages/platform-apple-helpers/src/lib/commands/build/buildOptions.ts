@@ -9,6 +9,7 @@ export type BuildFlags = {
   target?: string;
   extraParams?: string[];
   exportExtraParams?: string[];
+  exportOptionsPlist?: string;
   device?: string;
   catalyst?: boolean;
   buildFolder?: string;
@@ -52,6 +53,10 @@ export const getBuildOptions = ({ platformName }: BuilderCommand) => {
         'Example:\n' +
         '  --export-extra-params "-allowProvisioningUpdates"',
       parse: parseArgs,
+    },
+    {
+      name: '--export-options-plist <string>',
+      description: 'Name of the export options file for archiving. Defaults to: ExportOptions.plist',
     },
     {
       name: '--device <string>',

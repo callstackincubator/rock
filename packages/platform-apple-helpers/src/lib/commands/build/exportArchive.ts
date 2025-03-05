@@ -10,6 +10,7 @@ export const exportArchive = async ({
   configuration,
   platformName,
   exportExtraParams,
+  exportOptionsPlist
 }: {
   sourceDir: string;
   archivePath: string;
@@ -17,11 +18,12 @@ export const exportArchive = async ({
   configuration: string;
   platformName: string;
   exportExtraParams: string[];
+  exportOptionsPlist?: string;
 }) => {
   const loader = spinner();
 
   loader.start('Exporting the archive...');
-  const exportOptionsPlistPath = path.join(sourceDir, 'ExportOptions.plist');
+  const exportOptionsPlistPath = path.join(sourceDir, exportOptionsPlist ?? 'ExportOptions.plist');
 
   if (!existsSync(exportOptionsPlistPath)) {
     loader.stop('Failed to export the archive.', 1);
