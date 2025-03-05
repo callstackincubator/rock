@@ -24,7 +24,7 @@
 For new projects you can run:
 
 ```
-npx create-rnef-app enterprise
+npx @rnef/create-app enterprise
 ```
 
 ## Adding to existing projects
