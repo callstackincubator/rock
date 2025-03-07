@@ -25,6 +25,7 @@ Use in the GitHub Workflow file like this:
 
 ```yaml
 - name: RNEF Remote Build - iOS simulator
+  id: rnef-remote-build-ios
   uses: ./.github/actions/rnef-remote-build-ios
   with:
     destination: simulator
@@ -131,6 +132,7 @@ Use in the GitHub Workflow file like this:
 
 ```yaml
 - name: RNEF Remote Build - iOS device
+  id: rnef-remote-build-ios
   uses: ./.github/actions/rnef-remote-build-ios
   with:
     destination: device
@@ -154,6 +156,7 @@ Pass extra parameters to the `rnef build:ios` command, in order to apply custom 
 
 ```yaml
 - name: RNEF Remote Build - iOS device
+  id: rnef-remote-build-ios
   uses: ./.github/actions/rnef-remote-build-ios
   with:
     destination: device
@@ -164,15 +167,52 @@ Pass extra parameters to the `rnef build:ios` command, in order to apply custom 
 
 Default: `false`
 
-Re-sign the signed IPA with latest JS bytecode bundle. Necessary for tester device builds.
+Re-sign the IPA with latest JS bytecode bundle with `rnef sign:android`. Necessary for tester device builds.
+When `true`, it will produce new artifact for every commit in a Pull Request, with a PR number appended to the original artifact name associated with native state of the app, e.g. `rnef-ios-device-Release-94a82df39e12-1337`, where `1337` is the unique PR number.
+To avoid polluting artifact storage it will also handle removal of old artifacts associated with older commits.
 
 ```yaml
 - name: RNEF Remote Build - iOS device
+  id: rnef-remote-build-ios
   uses: ./.github/actions/rnef-remote-build-ios
   with:
     destination: device
     re-sign: true
     # ...rest of code signing inputs
+```
+
+### Action Outputs
+
+#### `artifact-url`
+
+URL of the relevant iOS build artifact.
+
+#### `artifact-id`
+
+ID of the relevant iOS build artifact. Suitable for retrieving artifacts for reuse in other jobs.
+
+```yaml
+build-release:
+  outputs:
+    artifact-id: ${{ steps.rnef-remote-build-ios.outputs.artifact-id }}
+  # ...steps running action with `rnef-remote-build-ios` id
+
+run-e2e-tests:
+  runs-on: ubuntu-latest
+  needs: build-release
+
+  steps:
+    - name: Download and Unpack IPA artifact
+      run: |
+        curl -L -H "Authorization: token ${{ github.token }}" -o artifact.zip "https://api.github.com/repos/${{ github.repository }}/actions/artifacts/${{ needs.build-release.outputs.artifact-id }}/zip"
+        unzip artifact.zip -d downloaded-artifacts
+        ls -l downloaded-artifacts
+        IPA_PATH=$(find downloaded-artifacts -name "*.ipa" -print -quit)
+        echo "ARTIFACT_PATH_FOR_E2E=$IPA_PATH" >> $GITHUB_ENV
+      shell: bash
+
+    - name: Run E2E test
+      run: # ...install $ARTIFACT_PATH_FOR_E2E on device and run tests
 ```
 
 # Android CI Builds
@@ -187,6 +227,7 @@ Use in the GitHub Workflow file like this:
 
 ```yaml
 - name: RNEF Remote Build - Android
+  id: rnef-remote-build-android
   uses: ./.github/actions/rnef-remote-build-android
   with:
     variant: debug
@@ -218,6 +259,7 @@ Use in the GitHub Workflow file like this:
 
 ```yaml
 - name: RNEF Remote Build - Android device
+  id: rnef-remote-build-android
   uses: ./.github/actions/rnef-remote-build-android
   with:
     variant: release
@@ -240,6 +282,7 @@ Pass extra parameters to the `rnef build:android` command, in order to apply cus
 
 ```yaml
 - name: RNEF Remote Build - Android
+  id: rnef-remote-build-android
   uses: ./.github/actions/rnef-remote-build-android
   with:
     variant: release
@@ -250,10 +293,13 @@ Pass extra parameters to the `rnef build:android` command, in order to apply cus
 
 Default: `false`
 
-Re-sign the APK with latest JS bytecode bundle. Necessary for tester device builds.
+Re-sign the APK with latest JS bytecode bundle with `rnef sign:android`. Necessary for tester device builds.
+When `true`, it will produce new artifact for every commit in a Pull Request, with a PR number appended to the original artifact name associated with native state of the app, e.g. `rnef-android-release-9482df3912-1337`, where `1337` is the unique PR number.
+To avoid polluting artifact storage it will also handle removal of old artifacts associated with older commits.
 
 ```yaml
 - name: RNEF Remote Build - Android
+  id: rnef-remote-build-android
   uses: ./.github/actions/rnef-remote-build-android
   with:
     variant: release
@@ -268,8 +314,43 @@ For security reasons we add Gradle Wrapper validation step to Android build acti
 
 ```yaml
 - name: RNEF Remote Build - Android
+  id: rnef-remote-build-android
   uses: ./.github/actions/rnef-remote-build-android
   with:
     variant: debug
     validate-gradle-wrapper: false
+```
+
+### Action Outputs
+
+#### `artifact-url`
+
+URL of the relevant Android build artifact.
+
+#### `artifact-id`
+
+ID of the relevant Android build artifact. Suitable for retrieving artifacts for reuse in other jobs.
+
+```yaml
+build-release:
+  outputs:
+    artifact-id: ${{ steps.rnef-remote-build-android.outputs.artifact-id }}
+  # ...steps running action with `rnef-remote-build-android` id
+
+run-e2e-tests:
+  runs-on: ubuntu-latest
+  needs: build-release
+
+  steps:
+    - name: Download and Unpack APK artifact
+      run: |
+        curl -L -H "Authorization: token ${{ github.token }}" -o artifact.zip "https://api.github.com/repos/${{ github.repository }}/actions/artifacts/${{ needs.build-release.outputs.artifact-id }}/zip"
+        unzip artifact.zip -d downloaded-artifacts
+        ls -l downloaded-artifacts
+        APK_PATH=$(find downloaded-artifacts -name "*.apk" -print -quit)
+        echo "ARTIFACT_PATH_FOR_E2E=$APK_PATH" >> $GITHUB_ENV
+      shell: bash
+
+    - name: Run E2E test
+      run: # ...install $ARTIFACT_PATH_FOR_E2E on device and run tests
 ```
