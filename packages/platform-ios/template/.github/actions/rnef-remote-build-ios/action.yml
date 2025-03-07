@@ -45,10 +45,10 @@ inputs:
 outputs:
   artifact-url:
     description: 'URL of the relevant iOS build artifact (could be cached)'
-    value: ${{ steps.upload-artifact.outputs.artifact-url || (steps.cached-url.outcome == 'success' && steps.cached-url.outputs.artifact-url) }}
+    value: ${{ steps.upload-artifact.outputs.artifact-url || (steps.find-artifact.outcome == 'success' && steps.find-artifact.outputs.artifact-url) }}
   artifact-id:
     description: 'ID of the relevant iOS build artifact (could be cached)'
-    value: ${{ steps.upload-artifact.outputs.artifact-id || (steps.cached-url.outcome == 'success' && steps.cached-url.outputs.artifact-id) }}
+    value: ${{ steps.upload-artifact.outputs.artifact-id || (steps.find-artifact.outcome == 'success' && steps.find-artifact.outputs.artifact-id) }}
 
 runs:
   using: 'composite'
@@ -100,7 +100,7 @@ runs:
       shell: bash
 
     - name: Find artifact URL
-      id: cached-url
+      id: find-artifact
       uses: ./.github/actions/find-artifact
       with:
         name: ${{ env.ARTIFACT_NAME }}
@@ -112,7 +112,7 @@ runs:
       shell: bash
 
     - name: Setup Code Signing (device builds only)
-      if: ${{ inputs.re-sign == 'true' || (!steps.cached-url.outputs.artifact-url && inputs.destination == 'device') }}
+      if: ${{ inputs.re-sign == 'true' || (!steps.find-artifact.outputs.artifact-url && inputs.destination == 'device') }}
       run: |
         # Create temporary keychain
         KEYCHAIN_PATH=$RUNNER_TEMP/app-signing.keychain-db
@@ -143,7 +143,7 @@ runs:
       shell: bash
 
     - name: Determine iOS sourceDir
-      if: ${{ !steps.cached-url.outputs.artifact-url }}
+      if: ${{ !steps.find-artifact.outputs.artifact-url }}
       run: |
         JSON_OUTPUT=$(npx rnef config -p ios)
         IOS_SOURCE_DIR=$(echo "$JSON_OUTPUT" | jq -r '.project.ios.sourceDir')
@@ -151,7 +151,7 @@ runs:
       shell: bash
 
     - name: Build iOS
-      if: ${{ !steps.cached-url.outputs.artifact-url }}
+      if: ${{ !steps.find-artifact.outputs.artifact-url }}
       run: |
         npx rnef build:ios \
           ${{ inputs.destination == 'device' && '--archive' || '' }} \
@@ -163,7 +163,7 @@ runs:
       shell: bash
 
     - name: Find Build Artifact
-      if: ${{ !steps.cached-url.outputs.artifact-url }}
+      if: ${{ !steps.find-artifact.outputs.artifact-url }}
       run: |
         if [ "${{ inputs.destination }}" == "device" ]; then
           IPA_PATH=$(find .rnef/cache/ios/export -maxdepth 1 -name '*.ipa' -type f | head -1)
@@ -183,11 +183,11 @@ runs:
       shell: bash
 
     - name: Download and Unpack IPA
-      if: ${{ steps.cached-url.outputs.artifact-url && inputs.destination == 'device' && inputs.re-sign == 'true' && github.event_name == 'pull_request' }}
+      if: ${{ steps.find-artifact.outputs.artifact-url && inputs.destination == 'device' && inputs.re-sign == 'true' && github.event_name == 'pull_request' }}
       run: |
         curl -L -H "Authorization: token ${{ inputs.github-token }}" \
           -o artifact.zip \
-          "https://api.github.com/repos/${{ github.repository }}/actions/artifacts/${{ steps.cached-url.outputs.artifact-id }}/zip"
+          "https://api.github.com/repos/${{ github.repository }}/actions/artifacts/${{ steps.find-artifact.outputs.artifact-id }}/zip"
 
         unzip artifact.zip -d downloaded-artifacts
         ls -l downloaded-artifacts
@@ -198,11 +198,10 @@ runs:
           exit 1
         fi
         echo "ARTIFACT_PATH=$IPA_PATH" >> $GITHUB_ENV
-        echo "ABSOLUTE_ARTIFACT_PATH=$PWD/$IPA_PATH" >> $GITHUB_ENV
       shell: bash
 
     - name: Re-sign IPA
-      if: ${{ steps.cached-url.outputs.artifact-url && inputs.destination == 'device' && inputs.re-sign == 'true' }}
+      if: ${{ steps.find-artifact.outputs.artifact-url && inputs.destination == 'device' && inputs.re-sign == 'true' }}
       run: |
         npx rnef sign:ios ${{ env.ARTIFACT_PATH }} \
           --build-jsbundle \
@@ -211,17 +210,17 @@ runs:
 
     - name: Upload Artifact
       id: upload-artifact
-      if: ${{ !steps.cached-url.outputs.artifact-url || (inputs.re-sign == 'true' && github.event_name == 'pull_request') }}
+      if: ${{ !steps.find-artifact.outputs.artifact-url || (inputs.re-sign == 'true' && github.event_name == 'pull_request') }}
       uses: actions/upload-artifact@v4
       with:
-        name: ${{ steps.cached-url.outputs.artifact-name || env.ARTIFACT_NAME }}
+        name: ${{ steps.find-artifact.outputs.artifact-name || env.ARTIFACT_NAME }}
         path: ${{ env.ARTIFACT_PATH }}
         if-no-files-found: error
 
     - name: Delete Old Re-Signed Artifacts
-      if: ${{ steps.cached-url.outputs.artifact-url && inputs.destination == 'device' && inputs.re-sign == 'true' && github.event_name == 'pull_request' }}
+      if: ${{ steps.find-artifact.outputs.artifact-url && inputs.destination == 'device' && inputs.re-sign == 'true' && github.event_name == 'pull_request' }}
       run: |
-        for ID in ${{ steps.cached-url.outputs.artifact-ids }}; do
+        for ID in ${{ steps.find-artifact.outputs.artifact-ids }}; do
           echo "Deleting artifact with ID: $ID"
           curl -X DELETE -H "Authorization: token ${{ inputs.github-token }}" \
             "https://api.github.com/repos/${{ github.repository }}/actions/artifacts/$ID"
@@ -229,7 +228,7 @@ runs:
       shell: bash
 
     - name: Clean Up Code Signing (device builds only)
-      if: ${{ !steps.cached-url.outputs.artifact-url && inputs.destination == 'device' }}
+      if: ${{ !steps.find-artifact.outputs.artifact-url && inputs.destination == 'device' }}
       run: |
         KEYCHAIN_PATH=$RUNNER_TEMP/app-signing.keychain-db
         security delete-keychain "$KEYCHAIN_PATH"
@@ -244,4 +243,4 @@ runs:
       uses: ./.github/actions/rnef-post-build
       with:
         title: iOS ${{ inputs.configuration }} ${{ inputs.destination == 'simulator' && 'APP for simulators' || 'IPA for physical devices' }}
-        artifact-url: ${{ steps.upload-artifact.outputs.artifact-url || steps.cached-url.outputs.artifact-url}}
+        artifact-url: ${{ steps.upload-artifact.outputs.artifact-url || steps.find-artifact.outputs.artifact-url}}

@@ -49,10 +49,10 @@ inputs:
 outputs:
   artifact-url:
     description: 'URL of the relevant Android build artifact (could be cached)'
-    value: ${{ steps.upload-artifact.outputs.artifact-url || (steps.cached-url.outcome == 'success' && steps.cached-url.outputs.artifact-url) }}
+    value: ${{ steps.upload-artifact.outputs.artifact-url || (steps.find-artifact.outcome == 'success' && steps.find-artifact.outputs.artifact-url) }}
   artifact-id:
     description: 'ID of the relevant Android build artifact (could be cached)'
-    value: ${{ steps.upload-artifact.outputs.artifact-id || (steps.cached-url.outcome == 'success' && steps.cached-url.outputs.artifact-id) }}
+    value: ${{ steps.upload-artifact.outputs.artifact-id || (steps.find-artifact.outcome == 'success' && steps.find-artifact.outputs.artifact-id) }}
 
 runs:
   using: 'composite'
@@ -99,14 +99,14 @@ runs:
       shell: bash
 
     - name: Find artifact URL
-      id: cached-url
+      id: find-artifact
       uses: ./.github/actions/find-artifact
       with:
         name: ${{ env.ARTIFACT_NAME }}
         re-sign: ${{ inputs.re-sign }}
 
     - name: Install Java
-      if: ${{ !steps.cached-url.outputs.artifact-url }}
+      if: ${{ !steps.find-artifact.outputs.artifact-url }}
       uses: actions/setup-java@v4
       with:
         java-version: 17
@@ -114,11 +114,11 @@ runs:
         cache: gradle
 
     - name: Validate Gradle wrapper
-      if: ${{ inputs.validate-gradle-wrapper == 'true' && !steps.cached-url.outputs.artifact-url }}
+      if: ${{ inputs.validate-gradle-wrapper == 'true' && !steps.find-artifact.outputs.artifact-url }}
       uses: gradle/actions/wrapper-validation@v4
 
     - name: Create local gradle.properties
-      if: ${{ !steps.cached-url.outputs.artifact-url && inputs.sign }}
+      if: ${{ !steps.find-artifact.outputs.artifact-url && inputs.sign }}
       run: |
         mkdir -p $HOME/.gradle
         touch $HOME/.gradle/gradle.properties
@@ -129,7 +129,7 @@ runs:
       shell: bash
 
     - name: Determine Android sourceDir and appName
-      if: ${{ !steps.cached-url.outputs.artifact-url }}
+      if: ${{ !steps.find-artifact.outputs.artifact-url }}
       run: |
         JSON_OUTPUT=$(npx rnef config -p android)
         ANDROID_SOURCE_DIR=$(echo "$JSON_OUTPUT" | jq -r '.project.android.sourceDir')
@@ -139,13 +139,13 @@ runs:
       shell: bash
 
     - name: Decode and store keystore file
-      if: ${{ !steps.cached-url.outputs.artifact-url && inputs.sign }}
+      if: ${{ !steps.find-artifact.outputs.artifact-url && inputs.sign }}
       run: |
         echo "${{ inputs.keystore-base64 }}" | base64 --decode > $ANDROID_SOURCE_DIR/$APP_NAME/release.keystore
       shell: bash
 
     - name: Build Android
-      if: ${{ !steps.cached-url.outputs.artifact-url }}
+      if: ${{ !steps.find-artifact.outputs.artifact-url }}
       run: |
         npx rnef build:android \
           --variant "${{ inputs.variant }}" \
@@ -153,7 +153,7 @@ runs:
       shell: bash
 
     - name: Find Build Artifact
-      if: ${{ !steps.cached-url.outputs.artifact-url }}
+      if: ${{ !steps.find-artifact.outputs.artifact-url }}
       run: |
         APK_PATH=$(find $ANDROID_SOURCE_DIR/$APP_NAME/build/outputs -name '*.apk' | head -1 )
         echo APK_PATH $APK_PATH
@@ -161,11 +161,11 @@ runs:
       shell: bash
 
     - name: Download and Unpack APK
-      if: ${{ steps.cached-url.outputs.artifact-url && inputs.re-sign == 'true' && github.event_name == 'pull_request' }}
+      if: ${{ steps.find-artifact.outputs.artifact-url && inputs.re-sign == 'true' && github.event_name == 'pull_request' }}
       run: |
         curl -L -H "Authorization: token ${{ inputs.github-token }}" \
           -o artifact.zip \
-          "https://api.github.com/repos/${{ github.repository }}/actions/artifacts/${{ steps.cached-url.outputs.artifact-id }}/zip"
+          "https://api.github.com/repos/${{ github.repository }}/actions/artifacts/${{ steps.find-artifact.outputs.artifact-id }}/zip"
         unzip artifact.zip -d downloaded-artifacts
         ls -l downloaded-artifacts
         APK_PATH=$(find downloaded-artifacts -name "*.apk" -print -quit)
@@ -174,11 +174,10 @@ runs:
           exit 1
         fi
         echo "ARTIFACT_PATH=$APK_PATH" >> $GITHUB_ENV
-        echo "ABSOLUTE_ARTIFACT_PATH=$PWD/$APK_PATH" >> $GITHUB_ENV
       shell: bash
 
     - name: Re-sign APK
-      if: ${{ steps.cached-url.outputs.artifact-url && inputs.re-sign == 'true' && github.event_name == 'pull_request' }}
+      if: ${{ steps.find-artifact.outputs.artifact-url && inputs.re-sign == 'true' && github.event_name == 'pull_request' }}
       run: |
         npx rnef sign:android ${{ env.ARTIFACT_PATH }} \
           --build-jsbundle
@@ -186,17 +185,17 @@ runs:
 
     - name: Upload Artifact
       id: upload-artifact
-      if: ${{ !steps.cached-url.outputs.artifact-url || (inputs.re-sign == 'true' && github.event_name == 'pull_request') }}
+      if: ${{ !steps.find-artifact.outputs.artifact-url || (inputs.re-sign == 'true' && github.event_name == 'pull_request') }}
       uses: actions/upload-artifact@v4
       with:
-        name: ${{ steps.cached-url.outputs.artifact-name || env.ARTIFACT_NAME }}
+        name: ${{ steps.find-artifact.outputs.artifact-name || env.ARTIFACT_NAME }}
         path: ${{ env.ARTIFACT_PATH }}
         if-no-files-found: error
 
     - name: Delete Old Re-Signed Artifacts
-      if: ${{ steps.cached-url.outputs.artifact-url && inputs.re-sign == 'true' && github.event_name == 'pull_request' }}
+      if: ${{ steps.find-artifact.outputs.artifact-url && inputs.re-sign == 'true' && github.event_name == 'pull_request' }}
       run: |
-        for ID in ${{ steps.cached-url.outputs.artifact-ids }}; do
+        for ID in ${{ steps.find-artifact.outputs.artifact-ids }}; do
           echo "Deleting artifact with ID: $ID"
           curl -X DELETE -H "Authorization: token ${{ inputs.github-token }}" \
             "https://api.github.com/repos/${{ github.repository }}/actions/artifacts/$ID"
@@ -204,7 +203,7 @@ runs:
       shell: bash
 
     - name: Clean Up Keystore and gradle properties (signed builds only)
-      if: ${{ !steps.cached-url.outputs.artifact-url && inputs.sign }}
+      if: ${{ !steps.find-artifact.outputs.artifact-url && inputs.sign }}
       run: |
         rm $HOME/.gradle/gradle.properties
         rm $ANDROID_SOURCE_DIR/$APP_NAME/release.keystore
@@ -215,4 +214,4 @@ runs:
       uses: ./.github/actions/rnef-post-build
       with:
         title: Android ${{ inputs.variant }} APK for all devices
-        artifact-url: ${{ steps.upload-artifact.outputs.artifact-url || steps.cached-url.outputs.artifact-url }}
+        artifact-url: ${{ steps.upload-artifact.outputs.artifact-url || steps.find-artifact.outputs.artifact-url }}
