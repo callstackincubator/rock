@@ -9,6 +9,10 @@ inputs:
     description: 'GitHub Token'
     required: false
     default: ${{ github.token }}
+  validate-gradle-wrapper:
+    description: 'Whether to validate the Gradle wrapper'
+    required: false
+    default: true
   variant:
     description: 'Build variant'
     required: false
@@ -18,6 +22,9 @@ inputs:
     required: false
   sign:
     description: 'Whether to sign the build with release keystore'
+    required: false
+  re-sign:
+    description: Re-sign the app bundle with new JS bundle
     required: false
   keystore-base64:
     description: 'Base64 version of the release keystore'
@@ -42,7 +49,10 @@ inputs:
 outputs:
   artifact-url:
     description: 'URL of the relevant Android build artifact (could be cached)'
-    value: ${{ steps.cached-url.outcome == 'success' && steps.cached-url.outputs.artifact-url || steps.upload-artifact.outputs.artifact-url }}
+    value: ${{ steps.upload-artifact.outputs.artifact-url || (steps.cached-url.outcome == 'success' && steps.cached-url.outputs.artifact-url) }}
+  artifact-id:
+    description: 'ID of the relevant Android build artifact (could be cached)'
+    value: ${{ steps.upload-artifact.outputs.artifact-id || (steps.cached-url.outcome == 'success' && steps.cached-url.outputs.artifact-id) }}
 
 runs:
   using: 'composite'
@@ -83,7 +93,7 @@ runs:
       with:
         platform: android
 
-    - name: Set artifact name
+    - name: Set Artifact Name
       run: |
         echo "ARTIFACT_NAME=rnef-android-${{ inputs.variant }}-${{ steps.fingerprint.outputs.hash}}" >> $GITHUB_ENV
       shell: bash
@@ -93,13 +103,7 @@ runs:
       uses: ./.github/actions/find-artifact
       with:
         name: ${{ env.ARTIFACT_NAME }}
-
-    - name: Post Cached Build (if found)
-      if: ${{ steps.cached-url.outputs.artifact-url && github.event_name == 'pull_request' && inputs.comment-bot == 'true' }}
-      uses: ./.github/actions/rnef-post-build
-      with:
-        title: Android ${{ inputs.variant }} APK for all devices
-        artifact-url: ${{ steps.cached-url.outputs.artifact-url }}
+        re-sign: ${{ inputs.re-sign }}
 
     - name: Install Java
       if: ${{ !steps.cached-url.outputs.artifact-url }}
@@ -110,7 +114,7 @@ runs:
         cache: gradle
 
     - name: Validate Gradle wrapper
-      if: ${{ !steps.cached-url.outputs.artifact-url }}
+      if: ${{ inputs.validate-gradle-wrapper == 'true' && !steps.cached-url.outputs.artifact-url }}
       uses: gradle/actions/wrapper-validation@v4
 
     - name: Create local gradle.properties
@@ -156,14 +160,48 @@ runs:
         echo "ARTIFACT_PATH=$APK_PATH" >> $GITHUB_ENV
       shell: bash
 
+    - name: Download and Unpack APK
+      if: ${{ steps.cached-url.outputs.artifact-url && inputs.re-sign == 'true' && github.event_name == 'pull_request' }}
+      run: |
+        curl -L -H "Authorization: token ${{ inputs.github-token }}" \
+          -o artifact.zip \
+          "https://api.github.com/repos/${{ github.repository }}/actions/artifacts/${{ steps.cached-url.outputs.artifact-id }}/zip"
+        unzip artifact.zip -d downloaded-artifacts
+        ls -l downloaded-artifacts
+        APK_PATH=$(find downloaded-artifacts -name "*.apk" -print -quit)
+        if [ -z "$APK_PATH" ]; then
+          echo "No APK file found in the extracted contents."
+          exit 1
+        fi
+        echo "ARTIFACT_PATH=$APK_PATH" >> $GITHUB_ENV
+        echo "ABSOLUTE_ARTIFACT_PATH=$PWD/$APK_PATH" >> $GITHUB_ENV
+      shell: bash
+
+    - name: Re-sign APK
+      if: ${{ steps.cached-url.outputs.artifact-url && inputs.re-sign == 'true' && github.event_name == 'pull_request' }}
+      run: |
+        npx rnef sign:android ${{ env.ARTIFACT_PATH }} \
+          --build-jsbundle
+      shell: bash
+
     - name: Upload Artifact
       id: upload-artifact
-      if: ${{ !steps.cached-url.outputs.artifact-url }}
+      if: ${{ !steps.cached-url.outputs.artifact-url || (inputs.re-sign == 'true' && github.event_name == 'pull_request') }}
       uses: actions/upload-artifact@v4
       with:
-        name: ${{ env.ARTIFACT_NAME }}
+        name: ${{ steps.cached-url.outputs.artifact-name || env.ARTIFACT_NAME }}
         path: ${{ env.ARTIFACT_PATH }}
         if-no-files-found: error
+
+    - name: Delete Old Re-Signed Artifacts
+      if: ${{ steps.cached-url.outputs.artifact-url && inputs.re-sign == 'true' && github.event_name == 'pull_request' }}
+      run: |
+        for ID in ${{ steps.cached-url.outputs.artifact-ids }}; do
+          echo "Deleting artifact with ID: $ID"
+          curl -X DELETE -H "Authorization: token ${{ inputs.github-token }}" \
+            "https://api.github.com/repos/${{ github.repository }}/actions/artifacts/$ID"
+        done
+      shell: bash
 
     - name: Clean Up Keystore and gradle properties (signed builds only)
       if: ${{ !steps.cached-url.outputs.artifact-url && inputs.sign }}
@@ -173,8 +211,8 @@ runs:
       shell: bash
 
     - name: Post Build
-      if: ${{ !steps.cached-url.outputs.artifact-url && github.event_name == 'pull_request' && inputs.comment-bot == 'true' }}
+      if: ${{ github.event_name == 'pull_request' && inputs.comment-bot == 'true' }}
       uses: ./.github/actions/rnef-post-build
       with:
         title: Android ${{ inputs.variant }} APK for all devices
-        artifact-url: ${{ steps.upload-artifact.outputs.artifact-url }}
+        artifact-url: ${{ steps.upload-artifact.outputs.artifact-url || steps.cached-url.outputs.artifact-url }}

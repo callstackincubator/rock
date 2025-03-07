@@ -7,6 +7,9 @@ inputs:
   name:
     description: 'Artifact name'
     required: false
+  re-sign:
+    description: Re-sign the app bundle with new JS bundle
+    required: false
   github-token:
     description: A GitHub Personal Access Token with write access to the project
     required: false
@@ -21,6 +24,8 @@ outputs:
     description: 'The ID of the artifact'
   artifact-url:
     description: 'The URL of the artifact'
+  artifact-ids:
+    description: 'All IDs of the artifacts matching the name'
 runs:
   using: 'node20'
   main: 'index.js'

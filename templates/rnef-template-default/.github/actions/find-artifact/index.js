@@ -30,20 +30,34 @@ async function fetchArtifacts(octokit, repository, name) {
   return result;
 }
 
+function getPrNumber() {
+  if (github.context.eventName === 'pull_request') {
+    return github.context.payload.pull_request.number;
+  }
+  return undefined;
+}
+
 async function run() {
   try {
     const token = core.getInput('github-token');
     const repository = core.getInput('repository');
     const name = core.getInput('name');
+    const reSign = core.getInput('re-sign');
+    const prNumber = getPrNumber();
 
     const octokit = github.getOctokit(token);
-    const artifacts = await fetchArtifacts(octokit, repository, name);
+    const artifactsByName = await fetchArtifacts(octokit, repository, name);
+    const artifactsByPrNumber =
+      prNumber && reSign
+        ? await fetchArtifacts(octokit, repository, `${name}-${prNumber}`)
+        : [];
+    const artifacts = [...artifactsByPrNumber, ...artifactsByName];
 
     if (artifacts.length === 0) {
       return;
     }
 
-    console.log(`Found ${artifacts.length} artifacts with name "${name}":`);
+    console.log(`Found ${artifacts.length} related artifacts:`);
     for (const artifact of artifacts) {
       console.log(
         `- ID: ${artifact.id}, Name: ${artifact.name}, Size: ${formatSize(
@@ -62,8 +76,21 @@ async function run() {
     );
     console.log('Stable download URL:', url);
 
+    let artifactName = name;
+    // There are artifacts from PR but the base artifact is gone, recreate with the original name
+    if (artifactsByName.length === 0) {
+      artifactName = name;
+      // First time an artifact is re-signed, it's not yet in artifact storage, setting the name explicitly.
+    } else if (prNumber && reSign) {
+      artifactName = `${name}-${prNumber}`;
+    }
+    core.setOutput('artifact-name', artifactName);
     core.setOutput('artifact-id', firstArtifact.id);
     core.setOutput('artifact-url', url);
+    core.setOutput(
+      'artifact-ids',
+      artifactsByPrNumber.map(artifact => artifact.id).join(' '),
+    );
   } catch (error) {
     core.setFailed(`Action failed with error: ${error.message}`);
   }

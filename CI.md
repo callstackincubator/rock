@@ -1,13 +1,17 @@
 # General
+
 ## Secrets
+
 To use the RNEF GitHub Actions, you need to set up the secrets on your GitHub repository:
-`NPM_TOKEN` and 
+`NPM_TOKEN` and
 platforms specific secrets described below in the iOS and Android sections.
 
-## Change workflow permissions 
+## Change workflow permissions
+
 Settings -> Actions -> General -> Workflow Permissions -> Read and write permissions
 
-## Generate GitHub Personal Access Token for downloading cached builds 
+## Generate GitHub Personal Access Token for downloading cached builds
+
 Generate GitHub Personal Access Token for downloading cached builds at: https://github.com/settings/tokens. Include "repo", "workflow", and "read:org" permissions.
 You'll be asked about this token when cached build is available while running the `npx rnef run:` command.
 
@@ -140,9 +144,13 @@ Use in the GitHub Workflow file like this:
 
 Make sure that the `provisioning-profile-name` is the same as the one in your provisioning profile set in the Xcode project (see above).
 
-### Alternative Settings
+### Other Action Inputs
 
-You can use the `rnef-build-extra-params` input parameter to pass extra parameters to the `rnef build:ios` command, in order to apply custom code signing settings to the `xcodebuild archive` and `xcodebuild -exportArchive` commands.
+#### `rnef-build-extra-params`
+
+Default: ""
+
+Pass extra parameters to the `rnef build:ios` command, in order to apply custom code signing settings to the `xcodebuild archive` and `xcodebuild -exportArchive` commands.
 
 ```yaml
 - name: RNEF Remote Build - iOS device
@@ -150,6 +158,21 @@ You can use the `rnef-build-extra-params` input parameter to pass extra paramete
   with:
     destination: device
     rnef-build-extra-params: 'CUSTOM FLAGS AND ENVIRONMENT VARIABLES'
+```
+
+#### `re-sign`
+
+Default: `false`
+
+Re-sign the signed IPA with latest JS bytecode bundle. Necessary for tester device builds.
+
+```yaml
+- name: RNEF Remote Build - iOS device
+  uses: ./.github/actions/rnef-remote-build-ios
+  with:
+    destination: device
+    re-sign: true
+    # ...rest of code signing inputs
 ```
 
 # Android CI Builds
@@ -197,8 +220,9 @@ Use in the GitHub Workflow file like this:
 - name: RNEF Remote Build - Android device
   uses: ./.github/actions/rnef-remote-build-android
   with:
-    sign: true
     variant: release
+    # if you need to sign with non-debug keystore
+    sign: true
     keystore-base64: ${{ secrets.KEYSTORE_BASE64 }}
     keystore-store-file: ${{ secrets.RNEF_UPLOAD_STORE_FILE }}
     keystore-store-password: ${{ secrets.RNEF_UPLOAD_STORE_PASSWORD }}
@@ -206,9 +230,13 @@ Use in the GitHub Workflow file like this:
     keystore-key-password: ${{ secrets.RNEF_UPLOAD_KEY_PASSWORD }}
 ```
 
-### Alternative Settings
+### Other Action Inputs
 
-You can use the `rnef-build-extra-params` input parameter to pass extra parameters to the `rnef build:android` command, in order to apply custom params for gradlew command.
+#### `rnef-build-extra-params`
+
+Default: ""
+
+Pass extra parameters to the `rnef build:android` command, in order to apply custom params for gradlew command.
 
 ```yaml
 - name: RNEF Remote Build - Android
@@ -216,4 +244,32 @@ You can use the `rnef-build-extra-params` input parameter to pass extra paramete
   with:
     variant: release
     rnef-build-extra-params: '--aab' # build an Android App Bundle for the Play Store
+```
+
+#### `re-sign`
+
+Default: `false`
+
+Re-sign the APK with latest JS bytecode bundle. Necessary for tester device builds.
+
+```yaml
+- name: RNEF Remote Build - Android
+  uses: ./.github/actions/rnef-remote-build-android
+  with:
+    variant: release
+    re-sign: true
+```
+
+#### `validate-gradle-wrapper`
+
+Default: `true`
+
+For security reasons we add Gradle Wrapper validation step to Android build action. Pass `false` to disable validation.
+
+```yaml
+- name: RNEF Remote Build - Android
+  uses: ./.github/actions/rnef-remote-build-android
+  with:
+    variant: debug
+    validate-gradle-wrapper: false
 ```

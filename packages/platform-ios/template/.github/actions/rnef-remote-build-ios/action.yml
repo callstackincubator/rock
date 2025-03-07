@@ -16,6 +16,9 @@ inputs:
   configuration:
     description: Xcode configuration
     required: true
+  re-sign:
+    description: Re-sign the app bundle with new JS bundle
+    required: false
   certificate-base64:
     description: '[Device Builds] Base64 encoded P12 file containing Apple certificate (incl. private key)'
     required: false
@@ -42,7 +45,10 @@ inputs:
 outputs:
   artifact-url:
     description: 'URL of the relevant iOS build artifact (could be cached)'
-    value: ${{ steps.cached-url.outcome == 'success' && steps.cached-url.outputs.artifact-url || steps.upload-artifact.outputs.artifact-url }}
+    value: ${{ steps.upload-artifact.outputs.artifact-url || (steps.cached-url.outcome == 'success' && steps.cached-url.outputs.artifact-url) }}
+  artifact-id:
+    description: 'ID of the relevant iOS build artifact (could be cached)'
+    value: ${{ steps.upload-artifact.outputs.artifact-id || (steps.cached-url.outcome == 'success' && steps.cached-url.outputs.artifact-id) }}
 
 runs:
   using: 'composite'
@@ -88,10 +94,9 @@ runs:
       with:
         platform: ios
 
-    - name: Set environment variables
+    - name: Set Artifact Name
       run: |
         echo "ARTIFACT_NAME=rnef-ios-${{ inputs.destination }}-${{ inputs.configuration }}-${{ steps.fingerprint.outputs.hash}}" >> $GITHUB_ENV
-        echo "PROFILE_DIR=$HOME/Library/MobileDevice/Provisioning Profiles" >> $GITHUB_ENV
       shell: bash
 
     - name: Find artifact URL
@@ -99,16 +104,15 @@ runs:
       uses: ./.github/actions/find-artifact
       with:
         name: ${{ env.ARTIFACT_NAME }}
+        re-sign: ${{ inputs.re-sign }}
 
-    - name: Post Cached Build (if found)
-      if: ${{ steps.cached-url.outputs.artifact-url && github.event_name == 'pull_request' && inputs.comment-bot == 'true' }}
-      uses: ./.github/actions/rnef-post-build
-      with:
-        title: iOS ${{ inputs.configuration }} ${{ inputs.destination == 'simulator' && 'APP for simulators' || 'IPA for physical devices' }}
-        artifact-url: ${{ steps.cached-url.outputs.artifact-url }}
+    - name: Set Provisioning Profile Path
+      run: |
+        echo "PROFILE_DIR=$HOME/Library/MobileDevice/Provisioning Profiles" >> $GITHUB_ENV
+      shell: bash
 
     - name: Setup Code Signing (device builds only)
-      if: ${{ !steps.cached-url.outputs.artifact-url && inputs.destination == 'device' }}
+      if: ${{ inputs.re-sign == 'true' || (!steps.cached-url.outputs.artifact-url && inputs.destination == 'device') }}
       run: |
         # Create temporary keychain
         KEYCHAIN_PATH=$RUNNER_TEMP/app-signing.keychain-db
@@ -124,6 +128,11 @@ runs:
         security import $CERTIFICATE_PATH -P "${{ inputs.certificate-password }}" -A -t cert -f pkcs12 -k $KEYCHAIN_PATH
         security set-key-partition-list -S apple-tool:,apple: -k "${{ inputs.keychain-password }}" $KEYCHAIN_PATH
         security list-keychain -d user -s $KEYCHAIN_PATH
+
+        # Infer certificate identity
+        IDENTITY=$(security find-identity -v -p codesigning $KEYCHAIN_PATH | grep -oE '([0-9A-F]{40})' | head -n 1)
+        echo "Certificate identity: $IDENTITY"
+        echo "IDENTITY=$IDENTITY" >> $GITHUB_ENV
 
         # Unpack provisioning profile
         PROFILE_DIR="$HOME/Library/MobileDevice/Provisioning Profiles"
@@ -146,9 +155,9 @@ runs:
       run: |
         npx rnef build:ios \
           ${{ inputs.destination == 'device' && '--archive' || '' }} \
-          --scheme ${{ inputs.scheme }}
+          --scheme ${{ inputs.scheme }} \
           --configuration ${{ inputs.configuration }} \
-          --build-folder "build" \
+          --build-folder build \
           --destination ${{ inputs.destination }} \
           ${{ inputs.rnef-build-extra-params }}
       shell: bash
@@ -173,14 +182,51 @@ runs:
         fi
       shell: bash
 
+    - name: Download and Unpack IPA
+      if: ${{ steps.cached-url.outputs.artifact-url && inputs.destination == 'device' && inputs.re-sign == 'true' && github.event_name == 'pull_request' }}
+      run: |
+        curl -L -H "Authorization: token ${{ inputs.github-token }}" \
+          -o artifact.zip \
+          "https://api.github.com/repos/${{ github.repository }}/actions/artifacts/${{ steps.cached-url.outputs.artifact-id }}/zip"
+
+        unzip artifact.zip -d downloaded-artifacts
+        ls -l downloaded-artifacts
+
+        IPA_PATH=$(find downloaded-artifacts -name "*.ipa" -print -quit)
+        if [ -z "$IPA_PATH" ]; then
+          echo "No IPA file found in the extracted contents."
+          exit 1
+        fi
+        echo "ARTIFACT_PATH=$IPA_PATH" >> $GITHUB_ENV
+        echo "ABSOLUTE_ARTIFACT_PATH=$PWD/$IPA_PATH" >> $GITHUB_ENV
+      shell: bash
+
+    - name: Re-sign IPA
+      if: ${{ steps.cached-url.outputs.artifact-url && inputs.destination == 'device' && inputs.re-sign == 'true' }}
+      run: |
+        npx rnef sign:ios ${{ env.ARTIFACT_PATH }} \
+          --build-jsbundle \
+          --identity ${{ env.IDENTITY }}
+      shell: bash
+
     - name: Upload Artifact
       id: upload-artifact
-      if: ${{ !steps.cached-url.outputs.artifact-url }}
+      if: ${{ !steps.cached-url.outputs.artifact-url || (inputs.re-sign == 'true' && github.event_name == 'pull_request') }}
       uses: actions/upload-artifact@v4
       with:
-        name: ${{ env.ARTIFACT_NAME }}
+        name: ${{ steps.cached-url.outputs.artifact-name || env.ARTIFACT_NAME }}
         path: ${{ env.ARTIFACT_PATH }}
         if-no-files-found: error
+
+    - name: Delete Old Re-Signed Artifacts
+      if: ${{ steps.cached-url.outputs.artifact-url && inputs.destination == 'device' && inputs.re-sign == 'true' && github.event_name == 'pull_request' }}
+      run: |
+        for ID in ${{ steps.cached-url.outputs.artifact-ids }}; do
+          echo "Deleting artifact with ID: $ID"
+          curl -X DELETE -H "Authorization: token ${{ inputs.github-token }}" \
+            "https://api.github.com/repos/${{ github.repository }}/actions/artifacts/$ID"
+        done
+      shell: bash
 
     - name: Clean Up Code Signing (device builds only)
       if: ${{ !steps.cached-url.outputs.artifact-url && inputs.destination == 'device' }}
@@ -194,8 +240,8 @@ runs:
       shell: bash
 
     - name: Post Build
-      if: ${{ !steps.cached-url.outputs.artifact-url && github.event_name == 'pull_request' && inputs.comment-bot == 'true' }}
+      if: ${{ github.event_name == 'pull_request' && inputs.comment-bot == 'true' }}
       uses: ./.github/actions/rnef-post-build
       with:
         title: iOS ${{ inputs.configuration }} ${{ inputs.destination == 'simulator' && 'APP for simulators' || 'IPA for physical devices' }}
-        artifact-url: ${{ steps.upload-artifact.outputs.artifact-url }}
+        artifact-url: ${{ steps.upload-artifact.outputs.artifact-url || steps.cached-url.outputs.artifact-url}}
