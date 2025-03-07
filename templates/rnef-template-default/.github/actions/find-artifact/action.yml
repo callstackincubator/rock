@@ -15,7 +15,8 @@ inputs:
     required: false
     default: ${{ github.token }}
   repository:
-    description: 'The repository owner and the repository name joined together by "/".
+    description:
+      'The repository owner and the repository name joined together by "/".
       If github-token is specified, this is the repository that artifacts will be downloaded from.'
     required: false
     default: ${{ github.repository }}
