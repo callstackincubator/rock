@@ -36,13 +36,16 @@ export const cli = async ({ cwd, argv }: CliOptions = {}) => {
     .option('-p, --platform <string>', 'Select platform, e.g. ios or android')
     .action(logConfig);
 
+  // Register commands from the config
+  const config = await getConfig(cwd);
+
   program
     .command('fingerprint [path]')
     .option('-p, --platform <string>', 'Select platform, e.g. ios or android')
-    .action(nativeFingerprintCommand);
-
-  // Register commands from the config
-  const config = await getConfig(cwd);
+    .action(async (path, options) => {
+      const fingerprintOptions = config.getFingerprintOptions();
+      await nativeFingerprintCommand(path, fingerprintOptions, options);
+    });
 
   ensureUniqueCommands(config.commands);
 

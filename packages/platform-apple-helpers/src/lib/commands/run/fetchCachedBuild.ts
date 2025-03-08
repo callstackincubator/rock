@@ -1,5 +1,6 @@
 import fs from 'node:fs';
 import path from 'node:path';
+import { getConfig } from '@rnef/config';
 import type { SupportedRemoteCacheProviders } from '@rnef/tools';
 import {
   color,
@@ -7,7 +8,6 @@ import {
   findDirectoriesWithPattern,
   findFilesWithPattern,
   formatArtifactName,
-  getProjectRoot,
   type LocalBuild,
   logger,
   nativeFingerprint,
@@ -47,7 +47,9 @@ Proceeding with local build.`);
   const loader = spinner();
   loader.start('Looking for a local cached build');
 
+  const { getProjectRoot } = await getConfig();
   const root = getProjectRoot();
+
   const artifactName = await calculateArtifactName({
     distribution,
     configuration,
@@ -104,8 +106,17 @@ async function calculateArtifactName({
   distribution,
   configuration,
 }: Omit<FetchCachedBuildOptions, 'remoteCacheProvider'>) {
+  const { getProjectRoot, getFingerprintOptions } = await getConfig();
+
   const root = getProjectRoot();
-  const fingerprint = await nativeFingerprint(root, { platform: 'ios' });
+  const { extraSources, ignorePaths } = getFingerprintOptions();
+
+  const fingerprint = await nativeFingerprint(root, {
+    platform: 'ios',
+    extraSources,
+    ignorePaths,
+  });
+
   return formatArtifactName({
     platform: 'ios',
     distribution,

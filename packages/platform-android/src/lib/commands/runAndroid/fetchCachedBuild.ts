@@ -1,11 +1,11 @@
 import path from 'node:path';
+import { getConfig } from '@rnef/config';
 import type { LocalBuild, SupportedRemoteCacheProviders } from '@rnef/tools';
 import {
   color,
   createRemoteBuildCache,
   findFilesWithPattern,
   formatArtifactName,
-  getProjectRoot,
   logger,
   nativeFingerprint,
   queryLocalBuildCache,
@@ -39,7 +39,9 @@ Proceeding with local build.`);
   const loader = spinner();
   loader.start('Looking for a local cached build');
 
+  const { getProjectRoot } = await getConfig();
   const root = getProjectRoot();
+
   const artifactName = await calculateArtifactName(variant);
 
   const localBuild = queryLocalBuildCache(artifactName, { findBinary });
@@ -87,8 +89,17 @@ Proceeding with local build.`);
 }
 
 async function calculateArtifactName(variant: string) {
+  const { getProjectRoot, getFingerprintOptions } = await getConfig();
+
   const root = getProjectRoot();
-  const fingerprint = await nativeFingerprint(root, { platform: 'android' });
+  const { extraSources, ignorePaths } = getFingerprintOptions();
+  
+  const fingerprint = await nativeFingerprint(root, {
+    platform: 'android',
+    extraSources,
+    ignorePaths,
+  });
+
   return formatArtifactName({
     platform: 'android',
     build: variant,
