@@ -95,7 +95,7 @@ async function runPodInstall(options: {
   const shouldHandleRepoUpdate = options?.shouldHandleRepoUpdate || true;
   const loader = spinner({ indicator: 'timer' });
   loader.start('Installing CocoaPods dependencies');
-  
+
   const command = options.useBundler ? 'bundle' : 'pod';
   const args = options.useBundler ? ['exec', 'pod', 'install'] : ['install'];
   
@@ -127,7 +127,7 @@ async function runPodInstall(options: {
       });
     } else {
       if (args[0] === 'bundle') {
-        // try with pod install
+        // If for any reason the installing with bundler failed, try with pure `pod install`
         await runPodInstall({
           shouldHandleRepoUpdate: false,
           sourceDir: options.sourceDir,
