@@ -94,10 +94,12 @@ async function runPodInstall(options: {
 
   const shouldHandleRepoUpdate = options?.shouldHandleRepoUpdate || true;
   const loader = spinner({ indicator: 'timer' });
+  loader.start('Installing CocoaPods dependencies');
+  
+  const command = options.useBundler ? 'bundle' : 'pod';
+  const args = options.useBundler ? ['exec', 'pod', 'install'] : ['install'];
+  
   try {
-    loader.start('Installing CocoaPods dependencies');
-    const command = options.useBundler ? 'bundle' : 'pod';
-    const args = options.useBundler ? ['exec', 'pod', 'install'] : ['install'];
     await spawn(command, args, {
       env: {
         RCT_NEW_ARCH_ENABLED: options.newArch ? '1' : '0',
@@ -124,6 +126,15 @@ async function runPodInstall(options: {
         useBundler: options.useBundler,
       });
     } else {
+      if (args[0] === 'bundle') {
+        // try with pod install
+        await runPodInstall({
+          shouldHandleRepoUpdate: false,
+          sourceDir: options.sourceDir,
+          newArch: options.newArch,
+          useBundler: false,
+        });
+      } else {
       loader.stop('CocoaPods installation failed. ', 1);
 
       throw new RnefError(
@@ -131,6 +142,7 @@ async function runPodInstall(options: {
 Learn more at: ${color.dim('https://cocoapods.org/')}`,
         { cause: stderr }
       );
+      }
     }
   }
 
