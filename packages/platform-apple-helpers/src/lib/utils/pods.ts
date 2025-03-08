@@ -197,16 +197,34 @@ async function validatePodCommand(sourceDir: string) {
   }
 }
 
+function checkGemfileForCocoaPods(gemfilePath: string): boolean {
+  try {
+    const gemfileContent = fs.readFileSync(gemfilePath, 'utf-8');
+    // Check for common CocoaPods gem declarations, because some projects might have Gemfile but for other purposes
+    return /^\s*gem\s+['"]cocoapods['"]/.test(gemfileContent);
+  } catch (error) {
+    logger.debug(`Failed to read Gemfile at: ${gemfilePath}`);
+    logger.debug(error);
+    return false;
+  }
+}
+
 async function runBundleInstall(sourceDir: string, projectRoot: string) {
   const gemfilePath = path.join(projectRoot, 'Gemfile');
   if (!fs.existsSync(gemfilePath)) {
     logger.debug(
       `Could not find the Gemfile at: ${color.cyan(gemfilePath)}
 The default React Native Template uses Gemfile to leverage Ruby Bundler and we advice the same.
-If you use Gemfile, make sure it's ${color.bold(
-        'in the project root directory'
-      )}.
+If you use Gemfile, make sure it's ${color.bold('in the project root directory')}.
 Falling back to installing CocoaPods using globally installed "pod".`
+    );
+    return false;
+  }
+
+  if (!checkGemfileForCocoaPods(gemfilePath)) {
+    logger.debug(
+      `CocoaPods not found in Gemfile at: ${color.cyan(gemfilePath)}
+skipping Ruby Gems installation.`
     );
     return false;
   }
