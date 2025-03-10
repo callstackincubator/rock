@@ -1,5 +1,6 @@
 import { color, logger, spawn } from '@rnef/tools';
 import type { XcodeProjectInfo } from '../../types/index.js';
+import type { PlatformSDK } from '../../utils/getPlatformInfo.js';
 
 export type BuildSettings = {
   TARGET_BUILD_DIR: string;
@@ -12,7 +13,7 @@ export async function getBuildSettings(
   xcodeProject: XcodeProjectInfo,
   sourceDir: string,
   configuration: string,
-  buildOutput: string,
+  platformSDK: PlatformSDK,
   scheme: string,
   target?: string
 ): Promise<BuildSettings | null> {
@@ -24,7 +25,7 @@ export async function getBuildSettings(
       '-scheme',
       scheme,
       '-sdk',
-      getPlatformName(buildOutput),
+      platformSDK,
       '-configuration',
       configuration,
       '-showBuildSettings',
@@ -66,17 +67,4 @@ export async function getBuildSettings(
   }
 
   return null;
-}
-
-function getPlatformName(buildOutput: string) {
-  // Xcode can sometimes escape `=` with a backslash or put the value in quotes
-  const platformNameMatch = /export PLATFORM_NAME\\?="?(\w+)"?$/m.exec(
-    buildOutput
-  );
-  if (!platformNameMatch) {
-    throw new Error(
-      'Couldn\'t find "PLATFORM_NAME" variable in xcodebuild output. Please report this issue and run your project with Xcode instead.'
-    );
-  }
-  return platformNameMatch[1];
 }

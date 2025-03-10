@@ -5,6 +5,7 @@ import type {
   Device,
   XcodeProjectInfo,
 } from '../../types/index.js';
+import { getDevicePlatformSDK } from '../../utils/getPlatformInfo.js';
 import { buildProject } from '../build/buildProject.js';
 import { getBuildPath } from './getBuildPath.js';
 import { getBuildSettings } from './getBuildSettings.js';
@@ -19,9 +20,9 @@ export async function runOnDevice(
   sourceDir: string,
   args: RunFlags
 ) {
-  let buildOutput, appPath;
+  let appPath;
   if (!args.binaryPath) {
-    buildOutput = await buildProject(
+    await buildProject(
       xcodeProject,
       sourceDir,
       platform,
@@ -35,7 +36,7 @@ export async function runOnDevice(
       xcodeProject,
       sourceDir,
       configuration,
-      buildOutput,
+      getDevicePlatformSDK(platform),
       scheme
     );
 

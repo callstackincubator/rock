@@ -1,5 +1,6 @@
 import { spawn } from '@rnef/tools';
 import type { ApplePlatform, XcodeProjectInfo } from '../../types/index.js';
+import { getSimulatorPlatformSDK } from '../../utils/getPlatformInfo.js';
 import { buildProject } from '../build/buildProject.js';
 import { getBuildPath } from './getBuildPath.js';
 import { getBuildSettings } from './getBuildSettings.js';
@@ -18,7 +19,7 @@ export async function runOnMacCatalyst(
       'The "--binary-path" flag is not supported for Mac Catalyst device.'
     );
   }
-  const buildOutput = await buildProject(
+  await buildProject(
     xcodeProject,
     sourceDir,
     platform,
@@ -32,7 +33,7 @@ export async function runOnMacCatalyst(
     xcodeProject,
     sourceDir,
     configuration,
-    buildOutput,
+    getSimulatorPlatformSDK(platform),
     scheme
   );
 

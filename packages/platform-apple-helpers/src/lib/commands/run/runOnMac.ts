@@ -1,5 +1,6 @@
 import { color, logger, RnefError, spawn } from '@rnef/tools';
 import type { XcodeProjectInfo } from '../../types/index.js';
+import { getSimulatorPlatformSDK } from '../../utils/getPlatformInfo.js';
 import { buildProject } from '../build/buildProject.js';
 import { getBuildPath } from './getBuildPath.js';
 import { getBuildSettings } from './getBuildSettings.js';
@@ -12,7 +13,7 @@ export async function runOnMac(
   scheme: string,
   args: RunFlags
 ) {
-  const buildOutput = await buildProject(
+  await buildProject(
     xcodeProject,
     sourceDir,
     'macos',
@@ -23,7 +24,6 @@ export async function runOnMac(
   );
 
   await openApp({
-    buildOutput,
     xcodeProject,
     sourceDir,
     configuration,
@@ -34,7 +34,6 @@ export async function runOnMac(
 }
 
 type Options = {
-  buildOutput: string;
   xcodeProject: XcodeProjectInfo;
   sourceDir: string;
   configuration: string;
@@ -44,7 +43,6 @@ type Options = {
 };
 
 async function openApp({
-  buildOutput,
   xcodeProject,
   sourceDir,
   configuration,
@@ -58,7 +56,7 @@ async function openApp({
     xcodeProject,
     sourceDir,
     configuration,
-    buildOutput,
+    getSimulatorPlatformSDK('macos'),
     scheme,
     target
   );

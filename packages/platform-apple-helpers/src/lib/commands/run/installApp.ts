@@ -1,6 +1,7 @@
 import path from 'node:path';
 import { logger, RnefError, spawn, type SubprocessError } from '@rnef/tools';
 import type { ApplePlatform, XcodeProjectInfo } from '../../types/index.js';
+import { getSimulatorPlatformSDK } from '../../utils/getPlatformInfo.js';
 import { readKeyFromPlist } from '../../utils/plist.js';
 import { getBuildPath } from './getBuildPath.js';
 import { getBuildSettings } from './getBuildSettings.js';
@@ -35,7 +36,7 @@ export default async function installApp({
       xcodeProject,
       sourceDir,
       configuration,
-      `export PLATFORM_NAME=${getPlatformSDK(platform)}`, // simulate build output
+      getSimulatorPlatformSDK(platform),
       scheme,
       target
     );
@@ -84,15 +85,4 @@ export default async function installApp({
   }
 }
 
-export function getPlatformSDK(platform: ApplePlatform) {
-  switch (platform) {
-    case 'ios':
-      return 'iphonesimulator';
-    case 'macos':
-      return 'macosx';
-    case 'tvos':
-      return 'appletvsimulator';
-    case 'visionos':
-      return 'xrsimulator';
-  }
-}
+
