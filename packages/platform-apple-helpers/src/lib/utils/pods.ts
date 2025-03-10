@@ -98,7 +98,7 @@ async function runPodInstall(options: {
 
   const command = options.useBundler ? 'bundle' : 'pod';
   const args = options.useBundler ? ['exec', 'pod', 'install'] : ['install'];
-  
+
   try {
     await spawn(command, args, {
       env: {
@@ -126,7 +126,7 @@ async function runPodInstall(options: {
         useBundler: options.useBundler,
       });
     } else {
-      if (args[0] === 'bundle') {
+      if (options.useBundler) {
         // If for any reason the installing with bundler failed, try with pure `pod install`
         await runPodInstall({
           shouldHandleRepoUpdate: false,
@@ -135,13 +135,13 @@ async function runPodInstall(options: {
           useBundler: false,
         });
       } else {
-      loader.stop('CocoaPods installation failed. ', 1);
+        loader.stop('CocoaPods installation failed. ', 1);
 
-      throw new RnefError(
-        `CocoaPods installation failed. Please make sure your environment is correctly set up. 
+        throw new RnefError(
+          `CocoaPods installation failed. Please make sure your environment is correctly set up. 
 Learn more at: ${color.dim('https://cocoapods.org/')}`,
-        { cause: stderr }
-      );
+          { cause: stderr }
+        );
       }
     }
   }
