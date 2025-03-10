@@ -7,6 +7,60 @@ import { supportedPlatforms } from '../../utils/supportedPlatforms.js';
 import type { BuildFlags } from './buildOptions.js';
 import { simulatorDestinationMap } from './simulatorDestinationMap.js';
 
+/**
+ * Creates an ASCII progress bar
+ * @param percent - Percentage of completion (0-100)
+ * @param length - Length of the progress bar in characters
+ * @returns ASCII progress bar string
+ */
+function createProgressBar(percent: number, length = 20): string {
+  const filledLength = Math.round(length * (percent / 100));
+  const emptyLength = length - filledLength;
+
+  const filled = '█'.repeat(filledLength);
+  const empty = '░'.repeat(emptyLength);
+
+  return `[${filled}${empty}]`;
+}
+
+function reportProgress(
+  chunk: string,
+  loader: ReturnType<typeof spinner>,
+  message: string
+) {
+  if (chunk.includes('PhaseScriptExecution')) {
+    if (chunk.includes('[CP-User]\\ [Hermes]\\ Replace\\ Hermes\\')) {
+      const progressBar = createProgressBar(10);
+      loader.message(`${message} ${progressBar}`);
+    }
+    if (
+      chunk.includes('[CP-User]\\ [RN]Check\\ rncore') &&
+      chunk.includes('React-Fabric')
+    ) {
+      const progressBar = createProgressBar(35);
+      loader.message(`${message} ${progressBar}`);
+    }
+    if (chunk.includes('[CP-User]\\ [RN]Check\\ FBReactNativeSpec')) {
+      const progressBar = createProgressBar(53);
+      loader.message(`${message} ${progressBar}`);
+    }
+    if (
+      chunk.includes('[CP-User]\\ [RN]Check\\ rncore') &&
+      chunk.includes('React-FabricComponents')
+    ) {
+      const progressBar = createProgressBar(66);
+      loader.message(`${message} ${progressBar}`);
+    }
+    if (chunk.includes('[CP]\\ Check\\ Pods\\ Manifest.lock')) {
+      const progressBar = createProgressBar(90);
+      loader.message(`${message} ${progressBar}`);
+    }
+  } else if (chunk.includes('BUILD SUCCEEDED')) {
+    const progressBar = createProgressBar(100);
+    loader.message(`${message} ${progressBar}`);
+  }
+}
+
 export const buildProject = async (
   xcodeProject: XcodeProjectInfo,
   sourceDir: string,
@@ -103,10 +157,17 @@ export const buildProject = async (
 
   loader.start(message);
   try {
-    const { output } = await spawn('xcodebuild', xcodebuildArgs, {
+    const process = spawn('xcodebuild', xcodebuildArgs, {
       cwd: sourceDir,
       stdio: logger.isVerbose() ? 'inherit' : ['ignore', 'pipe', 'pipe'],
     });
+
+    // Process the output from the AsyncIterable
+    for await (const chunk of process) {
+      reportProgress(chunk, loader, message);
+    }
+
+    const { output } = await process;
     loader.stop(
       `${
         args.archive ? 'Archived' : 'Built'
