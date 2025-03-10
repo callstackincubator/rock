@@ -12,6 +12,7 @@ import logger from '../logger.js';
  */
 export async function processExtraSources(
   extraSources: string[],
+  ignorePaths: string[],
   projectRoot: string
 ) {
   const processedSources: Array<HashSourceDir | HashSourceContents> = [];
@@ -20,7 +21,10 @@ export async function processExtraSources(
     try {
       const isGlobPattern = glob.isDynamicPattern(source);
       if (isGlobPattern) {
-        const matches = await glob(source, { cwd: projectRoot });
+        const matches = await glob(source, {
+          cwd: projectRoot,
+          ignore: ignorePaths,
+        });
         for (const match of matches) {
           const absolutePath = path.join(projectRoot, match);
           if (fs.existsSync(absolutePath)) {

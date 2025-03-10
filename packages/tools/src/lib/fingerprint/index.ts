@@ -43,7 +43,11 @@ export async function nativeFingerprint(
       'android/.idea',
       'android/.gradle',
     ],
-    extraSources: await processExtraSources(options.extraSources, path),
+    extraSources: await processExtraSources(
+      options.extraSources,
+      options.ignorePaths,
+      path
+    ),
     ignorePaths: options.ignorePaths,
   });
 
