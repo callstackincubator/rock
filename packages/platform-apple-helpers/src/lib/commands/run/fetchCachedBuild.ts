@@ -22,12 +22,14 @@ type FetchCachedBuildOptions = {
   distribution: Distribution;
   configuration: string;
   remoteCacheProvider: SupportedRemoteCacheProviders | undefined | null;
+  root: string;
 };
 
 export async function fetchCachedBuild({
   distribution,
   configuration,
   remoteCacheProvider,
+  root,
 }: FetchCachedBuildOptions): Promise<LocalBuild | null> {
   if (remoteCacheProvider === null) {
     return null;
@@ -47,12 +49,10 @@ Proceeding with local build.`);
   const loader = spinner();
   loader.start('Looking for a local cached build');
 
-  const { getProjectRoot } = await getConfig();
-  const root = getProjectRoot();
-
   const artifactName = await calculateArtifactName({
     distribution,
     configuration,
+    root,
   });
 
   const localBuild = queryLocalBuildCache(artifactName, {
@@ -105,10 +105,9 @@ Proceeding with local build.`);
 async function calculateArtifactName({
   distribution,
   configuration,
+  root,
 }: Omit<FetchCachedBuildOptions, 'remoteCacheProvider'>) {
-  const { getProjectRoot, getFingerprintOptions } = await getConfig();
-
-  const root = getProjectRoot();
+  const { getFingerprintOptions } = await getConfig();
   const { extraSources, ignorePaths } = getFingerprintOptions();
 
   const fingerprint = await nativeFingerprint(root, {

@@ -46,6 +46,7 @@ export const createRun = async (
       configuration: args.configuration ?? 'Debug',
       distribution: args.device ? 'device' : 'simulator', // TODO: replace with better logic
       remoteCacheProvider,
+      root: projectRoot,
     });
     if (cachedBuild) {
       // @todo replace with a more generic way to pass binary path

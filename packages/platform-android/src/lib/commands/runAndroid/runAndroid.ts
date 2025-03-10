@@ -61,6 +61,7 @@ export async function runAndroid(
     const cachedBuild = await fetchCachedBuild({
       variant: args.variant,
       remoteCacheProvider,
+      root: projectRoot,
     });
     if (cachedBuild) {
       // @todo replace with a more generic way to pass binary path

@@ -15,11 +15,13 @@ import {
 type FetchCachedBuildOptions = {
   variant: string;
   remoteCacheProvider: SupportedRemoteCacheProviders | undefined;
+  root: string;
 };
 
 export async function fetchCachedBuild({
   variant,
   remoteCacheProvider,
+  root,
 }: FetchCachedBuildOptions): Promise<LocalBuild | null> {
   if (remoteCacheProvider === null) {
     return null;
@@ -38,9 +40,6 @@ Proceeding with local build.`);
   }
   const loader = spinner();
   loader.start('Looking for a local cached build');
-
-  const { getProjectRoot } = await getConfig();
-  const root = getProjectRoot();
 
   const artifactName = await calculateArtifactName(variant);
 
@@ -93,7 +92,7 @@ async function calculateArtifactName(variant: string) {
 
   const root = getProjectRoot();
   const { extraSources, ignorePaths } = getFingerprintOptions();
-  
+
   const fingerprint = await nativeFingerprint(root, {
     platform: 'android',
     extraSources,
