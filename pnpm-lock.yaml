@@ -332,6 +332,9 @@ importers:
       appdirsjs:
         specifier: ^1.2.7
         version: 1.2.7
+      fast-glob:
+        specifier: ^3.3.2
+        version: 3.3.3
       is-unicode-supported:
         specifier: ^2.1.0
         version: 2.1.0
