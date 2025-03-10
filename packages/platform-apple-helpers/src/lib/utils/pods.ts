@@ -102,6 +102,9 @@ async function runPodInstall(options: {
       env: {
         RCT_NEW_ARCH_ENABLED: options.newArch ? '1' : '0',
         RCT_IGNORE_PODS_DEPRECATION: '1',
+        ...(process.env['USE_THIRD_PARTY_JSC'] && {
+          USE_THIRD_PARTY_JSC: process.env['USE_THIRD_PARTY_JSC'],
+        }),
       },
       cwd: options.sourceDir,
     });
@@ -215,7 +218,9 @@ async function runBundleInstall(sourceDir: string, projectRoot: string) {
     logger.debug(
       `Could not find the Gemfile at: ${color.cyan(gemfilePath)}
 The default React Native Template uses Gemfile to leverage Ruby Bundler and we advice the same.
-If you use Gemfile, make sure it's ${color.bold('in the project root directory')}.
+If you use Gemfile, make sure it's ${color.bold(
+        'in the project root directory'
+      )}.
 Falling back to installing CocoaPods using globally installed "pod".`
     );
     return false;
