@@ -46,7 +46,8 @@ export const platformIOS =
             iosConfig,
             args as RunFlags,
             projectRoot,
-            api.getRemoteCacheProvider()
+            api.getRemoteCacheProvider(),
+            api.getFingerprintOptions()
           );
         } else {
           throw new RnefError('iOS project not found.');

@@ -45,7 +45,8 @@ export async function runAndroid(
   androidProject: AndroidProjectConfig,
   args: Flags,
   projectRoot: string,
-  remoteCacheProvider: SupportedRemoteCacheProviders | undefined
+  remoteCacheProvider: SupportedRemoteCacheProviders | undefined,
+  fingerprintOptions: { extraSources: string[]; ignorePaths: string[] }
 ) {
   intro('Running Android app');
 
@@ -62,6 +63,7 @@ export async function runAndroid(
       variant: args.variant,
       remoteCacheProvider,
       root: projectRoot,
+      fingerprintOptions,
     });
     if (cachedBuild) {
       // @todo replace with a more generic way to pass binary path

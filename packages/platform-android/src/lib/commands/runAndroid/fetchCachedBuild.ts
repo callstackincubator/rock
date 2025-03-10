@@ -1,5 +1,4 @@
 import path from 'node:path';
-import { getConfig } from '@rnef/config';
 import type { LocalBuild, SupportedRemoteCacheProviders } from '@rnef/tools';
 import {
   color,
@@ -16,12 +15,17 @@ type FetchCachedBuildOptions = {
   variant: string;
   remoteCacheProvider: SupportedRemoteCacheProviders | undefined;
   root: string;
+  fingerprintOptions: {
+    extraSources: string[];
+    ignorePaths: string[];
+  };
 };
 
 export async function fetchCachedBuild({
   variant,
   remoteCacheProvider,
   root,
+  fingerprintOptions,
 }: FetchCachedBuildOptions): Promise<LocalBuild | null> {
   if (remoteCacheProvider === null) {
     return null;
@@ -41,7 +45,11 @@ Proceeding with local build.`);
   const loader = spinner();
   loader.start('Looking for a local cached build');
 
-  const artifactName = await calculateArtifactName(variant);
+  const artifactName = await calculateArtifactName(
+    variant,
+    root,
+    fingerprintOptions
+  );
 
   const localBuild = queryLocalBuildCache(artifactName, { findBinary });
   if (localBuild != null) {
@@ -87,16 +95,14 @@ Proceeding with local build.`);
   };
 }
 
-async function calculateArtifactName(variant: string) {
-  const { getProjectRoot, getFingerprintOptions } = await getConfig();
-
-  const root = getProjectRoot();
-  const { extraSources, ignorePaths } = getFingerprintOptions();
-
+async function calculateArtifactName(
+  variant: string,
+  root: string,
+  fingerprintOptions: { extraSources: string[]; ignorePaths: string[] }
+) {
   const fingerprint = await nativeFingerprint(root, {
     platform: 'android',
-    extraSources,
-    ignorePaths,
+    ...fingerprintOptions,
   });
 
   return formatArtifactName({

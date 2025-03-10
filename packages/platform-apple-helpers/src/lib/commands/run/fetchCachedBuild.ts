@@ -1,6 +1,5 @@
 import fs from 'node:fs';
 import path from 'node:path';
-import { getConfig } from '@rnef/config';
 import type { SupportedRemoteCacheProviders } from '@rnef/tools';
 import {
   color,
@@ -23,6 +22,10 @@ type FetchCachedBuildOptions = {
   configuration: string;
   remoteCacheProvider: SupportedRemoteCacheProviders | undefined | null;
   root: string;
+  fingerprintOptions: {
+    extraSources: string[];
+    ignorePaths: string[];
+  };
 };
 
 export async function fetchCachedBuild({
@@ -30,6 +33,7 @@ export async function fetchCachedBuild({
   configuration,
   remoteCacheProvider,
   root,
+  fingerprintOptions,
 }: FetchCachedBuildOptions): Promise<LocalBuild | null> {
   if (remoteCacheProvider === null) {
     return null;
@@ -53,6 +57,7 @@ Proceeding with local build.`);
     distribution,
     configuration,
     root,
+    fingerprintOptions,
   });
 
   const localBuild = queryLocalBuildCache(artifactName, {
@@ -106,14 +111,11 @@ async function calculateArtifactName({
   distribution,
   configuration,
   root,
+  fingerprintOptions,
 }: Omit<FetchCachedBuildOptions, 'remoteCacheProvider'>) {
-  const { getFingerprintOptions } = await getConfig();
-  const { extraSources, ignorePaths } = getFingerprintOptions();
-
   const fingerprint = await nativeFingerprint(root, {
     platform: 'ios',
-    extraSources,
-    ignorePaths,
+    ...fingerprintOptions,
   });
 
   return formatArtifactName({
