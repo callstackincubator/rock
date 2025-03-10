@@ -2,6 +2,7 @@ import * as fs from 'node:fs';
 import { createRequire } from 'node:module';
 import * as path from 'node:path';
 import { color, logger } from '@rnef/tools';
+import type { ValidationError } from 'joi';
 import { ConfigTypeSchema } from './schema.js';
 import { formatValidationError } from './utils.js';
 
@@ -102,7 +103,12 @@ export async function getConfig(
   // eslint-disable-next-line prefer-const
   let { config, filePathWithExt } = await importUp(dir, 'rnef.config');
 
-  const { error } = ConfigTypeSchema.validate(config);
+  const { error, value: validatedConfig } = ConfigTypeSchema.validate(
+    config
+  ) as {
+    error: ValidationError | null;
+    value: ConfigType;
+  };
 
   if (error) {
     logger.error(
@@ -121,7 +127,7 @@ export async function getConfig(
     get reactNativeVersion() {
       return getReactNativeVersion(config.root || dir);
     },
-    ...config,
+    ...validatedConfig,
   };
 
   const api = {
