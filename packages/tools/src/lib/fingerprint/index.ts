@@ -45,8 +45,8 @@ export async function nativeFingerprint(
     ],
     extraSources: await processExtraSources(
       options.extraSources,
-      options.ignorePaths,
-      path
+      path,
+      options.ignorePaths
     ),
     ignorePaths: options.ignorePaths,
   });

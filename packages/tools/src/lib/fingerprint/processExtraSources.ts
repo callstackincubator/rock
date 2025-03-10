@@ -8,12 +8,13 @@ import logger from '../logger.js';
  * Processes extra source files and directories for fingerprinting.
  * @param extraSources Array of file paths, directory paths, or glob patterns
  * @param projectRoot Root directory of the project
+ * @param ignorePaths Optional array of paths to ignore
  * @returns Array of processed sources with their contents or directory information
  */
 export async function processExtraSources(
   extraSources: string[],
-  ignorePaths: string[],
-  projectRoot: string
+  projectRoot: string,
+  ignorePaths?: string[]
 ) {
   const processedSources: Array<HashSourceDir | HashSourceContents> = [];
 
@@ -23,7 +24,7 @@ export async function processExtraSources(
       if (isGlobPattern) {
         const matches = await glob(source, {
           cwd: projectRoot,
-          ignore: ignorePaths,
+          ignore: ignorePaths ?? [],
         });
         for (const match of matches) {
           const absolutePath = path.join(projectRoot, match);
