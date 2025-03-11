@@ -255,7 +255,8 @@ async function buildApp({
       sourceDir,
       configuration,
       platformSDK,
-      scheme
+      scheme,
+      args.target
     );
     appPath = buildSettings.appPath;
     infoPlistPath = buildSettings.infoPlistPath;

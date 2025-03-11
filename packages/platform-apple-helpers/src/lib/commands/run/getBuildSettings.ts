@@ -1,5 +1,5 @@
 import path from 'node:path';
-import { logger, RnefError, spawn } from '@rnef/tools';
+import { color, logger, RnefError, spawn } from '@rnef/tools';
 import type { XcodeProjectInfo } from '../../types/index.js';
 import type { PlatformSDK } from '../../utils/getPlatformInfo.js';
 
@@ -15,7 +15,8 @@ export async function getBuildSettings(
   sourceDir: string,
   configuration: string,
   platformSDK: PlatformSDK,
-  scheme: string
+  scheme: string,
+  target?: string
 ): Promise<{ appPath: string; infoPlistPath: string }> {
   const { stdout: buildSettings } = await spawn(
     'xcodebuild',
@@ -41,7 +42,19 @@ export async function getBuildSettings(
     .filter(({ target }: { target: string }) => target !== 'React')
     .map(({ target: settingsTarget }: { target: string }) => settingsTarget);
 
-  const selectedTarget = targets[0];
+  let selectedTarget = targets[0];
+
+  if (target) {
+    if (!targets.includes(target)) {
+      logger.info(
+        `Target ${color.bold(target)} not found for scheme ${color.bold(
+          scheme
+        )}, automatically selected target ${color.bold(selectedTarget)}`
+      );
+    } else {
+      selectedTarget = target;
+    }
+  }
 
   logger.debug(`Selected target: ${selectedTarget}`);
 
