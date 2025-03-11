@@ -16,9 +16,11 @@ import type {
   ApplePlatform,
   Device,
   ProjectConfig,
+  XcodeProjectInfo,
 } from '../../types/index.js';
 import { getConfiguration } from '../../utils/getConfiguration.js';
 import { getInfo } from '../../utils/getInfo.js';
+import type { PlatformSDK } from '../../utils/getPlatformInfo.js';
 import {
   getDevicePlatformSDK,
   getPlatformInfo,
@@ -96,39 +98,13 @@ export const createRun = async (
   }
 
   if (platformName === 'macos') {
-    let appPath = args.binaryPath;
-    const info = await getInfo(xcodeProject, sourceDir);
-    if (!info) {
-      throw new RnefError('Failed to get Xcode project information');
-    }
-    if (!appPath) {
-      const scheme = await getScheme(
-        info.schemes,
-        args.scheme,
-        xcodeProject.name
-      );
-      const configuration = await getConfiguration(
-        info.configurations,
-        args.configuration
-      );
-      await buildProject({
-        xcodeProject,
-        sourceDir,
-        platformName,
-        udid: undefined,
-        scheme,
-        configuration,
-        args,
-      });
-      const buildSettings = await getBuildSettings(
-        xcodeProject,
-        sourceDir,
-        configuration,
-        getSimulatorPlatformSDK(platformName),
-        scheme
-      );
-      appPath = buildSettings.appPath;
-    }
+    const { appPath } = await buildApp({
+      args,
+      xcodeProject,
+      sourceDir,
+      platformName,
+      platformSDK: getSimulatorPlatformSDK(platformName),
+    });
     await runOnMac(appPath);
     outro('Success 🎉.');
     return;
@@ -142,30 +118,14 @@ export const createRun = async (
       args.scheme,
       xcodeProject.name
     );
-    let appPath = args.binaryPath;
-    if (!appPath) {
-      const configuration = await getConfiguration(
-        info.configurations,
-        args.configuration
-      );
-      await buildProject({
-        xcodeProject,
-        sourceDir,
-        platformName,
-        udid: undefined,
-        scheme,
-        configuration,
-        args,
-      });
-      const buildSettings = await getBuildSettings(
-        xcodeProject,
-        sourceDir,
-        configuration,
-        getSimulatorPlatformSDK(platformName),
-        scheme
-      );
-      appPath = buildSettings.appPath;
-    }
+    const { appPath } = await buildApp({
+      args,
+      xcodeProject,
+      sourceDir,
+      platformName,
+      platformSDK: getSimulatorPlatformSDK(platformName),
+      selectedScheme: scheme,
+    });
     await runOnMacCatalyst(appPath, scheme);
     outro('Success 🎉.');
     return;
@@ -186,74 +146,24 @@ export const createRun = async (
   if (device) {
     cacheRecentDevice(device, platformName);
     if (device.type === 'simulator') {
-      const info = await getInfo(xcodeProject, sourceDir);
-      if (!info) {
-        throw new RnefError('Failed to get Xcode project information');
-      }
-      const scheme = await getScheme(
-        info.schemes,
-        args.scheme,
-        xcodeProject.name
-      );
-      const configuration = await getConfiguration(
-        info.configurations,
-        args.configuration
-      );
-      if (!args.binaryPath) {
-        await buildProject({
-          xcodeProject,
-          sourceDir,
-          platformName,
-          udid: device.udid,
-          scheme,
-          configuration,
-          args,
-        });
-      }
-      const buildSettings = await getBuildSettings(
+      const { appPath, infoPlistPath } = await buildApp({
+        args,
         xcodeProject,
         sourceDir,
-        configuration,
-        getSimulatorPlatformSDK(platformName),
-        scheme
-      );
-      const appPath = args.binaryPath ?? buildSettings.appPath;
-      const infoPlistPath = buildSettings.infoPlistPath;
+        platformName,
+        platformSDK: getSimulatorPlatformSDK(platformName),
+        udid: device.udid,
+      });
       await runOnSimulator(device, appPath, infoPlistPath);
     } else if (device.type === 'device') {
-      let appPath = args.binaryPath;
-      if (!appPath) {
-        const info = await getInfo(xcodeProject, sourceDir);
-        if (!info) {
-          throw new RnefError('Failed to get Xcode project information');
-        }
-        const scheme = await getScheme(
-          info.schemes,
-          args.scheme,
-          xcodeProject.name
-        );
-        const configuration = await getConfiguration(
-          info.configurations,
-          args.configuration
-        );
-        await buildProject({
-          xcodeProject,
-          sourceDir,
-          platformName,
-          udid: device.udid,
-          scheme,
-          configuration,
-          args,
-        });
-        const buildSettings = await getBuildSettings(
-          xcodeProject,
-          sourceDir,
-          configuration,
-          getDevicePlatformSDK(platformName),
-          scheme
-        );
-        appPath = buildSettings.appPath;
-      }
+      const { appPath } = await buildApp({
+        args,
+        xcodeProject,
+        sourceDir,
+        platformName,
+        platformSDK: getDevicePlatformSDK(platformName),
+        udid: device.udid,
+      });
       await runOnDevice(device, appPath, sourceDir);
     }
     outro('Success 🎉.');
@@ -285,45 +195,76 @@ export const createRun = async (
       }
     }
     for (const simulator of bootedSimulators) {
-      const info = await getInfo(xcodeProject, sourceDir);
-      if (!info) {
-        throw new RnefError('Failed to get Xcode project information');
-      }
-      const scheme = await getScheme(
-        info.schemes,
-        args.scheme,
-        xcodeProject.name
-      );
-      const configuration = await getConfiguration(
-        info.configurations,
-        args.configuration
-      );
-      if (!args.binaryPath) {
-        await buildProject({
-          xcodeProject,
-          sourceDir,
-          platformName,
-          udid: simulator.udid,
-          scheme,
-          configuration,
-          args,
-        });
-      }
-      const buildSettings = await getBuildSettings(
+      const { appPath, infoPlistPath } = await buildApp({
+        args,
         xcodeProject,
         sourceDir,
-        configuration,
-        getSimulatorPlatformSDK(platformName),
-        scheme
-      );
-      const appPath = args.binaryPath ?? buildSettings.appPath;
-      const infoPlistPath = buildSettings.infoPlistPath;
+        platformName,
+        platformSDK: getSimulatorPlatformSDK(platformName),
+        udid: simulator.udid,
+      });
       await runOnSimulator(simulator, appPath, infoPlistPath);
     }
   }
 
   outro('Success 🎉.');
 };
+
+async function buildApp({
+  args,
+  xcodeProject,
+  sourceDir,
+  platformName,
+  platformSDK,
+  udid,
+  selectedScheme,
+}: {
+  args: RunFlags;
+  xcodeProject: XcodeProjectInfo;
+  sourceDir: string;
+  platformName: ApplePlatform;
+  platformSDK: PlatformSDK;
+  udid?: string;
+  selectedScheme?: string;
+}) {
+  let appPath = args.binaryPath;
+  let infoPlistPath;
+  if (!appPath) {
+    const info = await getInfo(xcodeProject, sourceDir);
+    if (!info) {
+      throw new RnefError('Failed to get Xcode project information');
+    }
+    const scheme =
+      selectedScheme ??
+      (await getScheme(info.schemes, args.scheme, xcodeProject.name));
+    const configuration = await getConfiguration(
+      info.configurations,
+      args.configuration
+    );
+    await buildProject({
+      xcodeProject,
+      sourceDir,
+      platformName,
+      udid,
+      scheme,
+      configuration,
+      args,
+    });
+    const buildSettings = await getBuildSettings(
+      xcodeProject,
+      sourceDir,
+      configuration,
+      platformSDK,
+      scheme
+    );
+    appPath = buildSettings.appPath;
+    infoPlistPath = buildSettings.infoPlistPath;
+  } else {
+    // @todo Info.plist is hardcoded when reading from binaryPath
+    infoPlistPath = path.join(appPath, 'Info.plist');
+  }
+  return { appPath, infoPlistPath };
+}
 
 async function selectDevice(devices: Device[], args: RunFlags) {
   let device;
