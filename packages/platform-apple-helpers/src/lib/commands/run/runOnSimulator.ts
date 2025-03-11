@@ -41,7 +41,7 @@ export async function runOnSimulator(
   loader.stop(`Installed the app on "${device.name}".`);
 
   loader.start(`Launching the app on "${device.name}"`);
-  await launchAppOnSimulator(device.udid, binaryPath, infoPlistPath);
+  await launchAppOnSimulator(device.udid, infoPlistPath);
   loader.stop(`Launched the app on "${device.name}".`);
 }
 
@@ -65,7 +65,6 @@ export default async function installAppOnSimulator(
 
 export async function launchAppOnSimulator(
   udid: string,
-  binaryPath: string,
   infoPlistPath: string
 ) {
   const bundleID = await readKeyFromPlist(infoPlistPath, 'CFBundleIdentifier');
