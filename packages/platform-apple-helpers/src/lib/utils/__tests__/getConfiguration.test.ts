@@ -27,16 +27,27 @@ describe('getConfiguration', () => {
     vi.mocked(isInteractive).mockReturnValue(true);
     vi.mocked(promptSelect).mockResolvedValueOnce('Release');
 
-    const result = await getConfiguration(['Debug', 'Release'], undefined);
+    const result = await getConfiguration(['Debug', 'Release', 'Internal'], undefined);
 
     expect(promptSelect).toHaveBeenCalledWith({
       message: 'Select the configuration you want to use',
       options: [
         { label: 'Debug', value: 'Debug' },
         { label: 'Release', value: 'Release' },
+        { label: 'Internal', value: 'Internal' },
       ],
     });
     expect(result).toBe('Release');
+  });
+
+  it('should not prompt for configuration selection when only Debug and Release configurations exist', async () => {
+    vi.mocked(isInteractive).mockReturnValue(true);
+    vi.mocked(promptSelect).mockResolvedValueOnce('Release');
+
+    const result = await getConfiguration(['Debug', 'Release'], undefined);
+
+    expect(promptSelect).not.toHaveBeenCalled();
+    expect(result).toBe('Debug');
   });
 
   it('should automatically select single configuration', async () => {
