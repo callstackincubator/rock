@@ -107,7 +107,8 @@ export const createRun = async (
   );
 
   if (platformName === 'macos') {
-    if (!args.binaryPath) {
+    let appPath = args.binaryPath;
+    if (!appPath) {
       await buildProject({
         xcodeProject,
         sourceDir,
@@ -117,20 +118,21 @@ export const createRun = async (
         configuration,
         args,
       });
+      const buildSettings = await getBuildSettings(
+        xcodeProject,
+        sourceDir,
+        configuration,
+        getSimulatorPlatformSDK(platformName),
+        scheme
+      );
+      appPath = buildSettings.appPath;
     }
-    const buildSettings = await getBuildSettings(
-      xcodeProject,
-      sourceDir,
-      configuration,
-      getSimulatorPlatformSDK(platformName),
-      scheme
-    );
-    const appPath = args.binaryPath ?? buildSettings.appPath;
     await runOnMac(appPath);
     outro('Success 🎉.');
     return;
   } else if (args.catalyst) {
-    if (!args.binaryPath) {
+    let appPath = args.binaryPath;
+    if (!appPath) {
       await buildProject({
         xcodeProject,
         sourceDir,
@@ -140,15 +142,15 @@ export const createRun = async (
         configuration,
         args,
       });
+      const buildSettings = await getBuildSettings(
+        xcodeProject,
+        sourceDir,
+        configuration,
+        getSimulatorPlatformSDK(platformName),
+        scheme
+      );
+      appPath = buildSettings.appPath;
     }
-    const buildSettings = await getBuildSettings(
-      xcodeProject,
-      sourceDir,
-      configuration,
-      getSimulatorPlatformSDK(platformName),
-      scheme
-    );
-    const appPath = args.binaryPath ?? buildSettings.appPath;
     await runOnMacCatalyst(appPath, scheme);
     outro('Success 🎉.');
     return;
@@ -191,7 +193,8 @@ export const createRun = async (
       const infoPlistPath = buildSettings.infoPlistPath;
       await runOnSimulator(device, appPath, infoPlistPath);
     } else if (device.type === 'device') {
-      if (!args.binaryPath) {
+      let appPath = args.binaryPath;
+      if (!appPath) {
         await buildProject({
           xcodeProject,
           sourceDir,
@@ -201,15 +204,15 @@ export const createRun = async (
           configuration,
           args,
         });
+        const buildSettings = await getBuildSettings(
+          xcodeProject,
+          sourceDir,
+          configuration,
+          getDevicePlatformSDK(platformName),
+          scheme
+        );
+        appPath = buildSettings.appPath;
       }
-      const buildSettings = await getBuildSettings(
-        xcodeProject,
-        sourceDir,
-        configuration,
-        getDevicePlatformSDK(platformName),
-        scheme
-      );
-      const appPath = args.binaryPath ?? buildSettings.appPath;
       await runOnDevice(device, appPath, sourceDir);
     }
     outro('Success 🎉.');
