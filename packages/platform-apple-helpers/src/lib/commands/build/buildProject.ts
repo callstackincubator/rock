@@ -4,6 +4,7 @@ import { logger, RnefError, spawn, spinner } from '@rnef/tools';
 import type { ApplePlatform, XcodeProjectInfo } from '../../types/index.js';
 import { getBuildPaths } from '../../utils/buildPaths.js';
 import { supportedPlatforms } from '../../utils/supportedPlatforms.js';
+import type { RunFlags } from '../run/runOptions.js';
 import type { BuildFlags } from './buildOptions.js';
 import { simulatorDestinationMap } from './simulatorDestinationMap.js';
 
@@ -64,15 +65,23 @@ function reportProgress(
   }
 }
 
-export const buildProject = async (
-  xcodeProject: XcodeProjectInfo,
-  sourceDir: string,
-  platformName: ApplePlatform,
-  udid: string | undefined,
-  scheme: string,
-  configuration: string,
-  args: BuildFlags
-) => {
+export const buildProject = async ({
+  xcodeProject,
+  sourceDir,
+  platformName,
+  udid,
+  scheme,
+  configuration,
+  args,
+}: {
+  xcodeProject: XcodeProjectInfo;
+  sourceDir: string;
+  platformName: ApplePlatform;
+  udid: string | undefined;
+  scheme: string;
+  configuration: string;
+  args: RunFlags | BuildFlags;
+}) => {
   const simulatorDest = simulatorDestinationMap[platformName];
 
   if (!simulatorDest) {

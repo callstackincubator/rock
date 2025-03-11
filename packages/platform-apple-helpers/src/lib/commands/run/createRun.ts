@@ -19,11 +19,17 @@ import type {
 } from '../../types/index.js';
 import { getConfiguration } from '../../utils/getConfiguration.js';
 import { getInfo } from '../../utils/getInfo.js';
-import { getPlatformInfo } from '../../utils/getPlatformInfo.js';
+import {
+  getDevicePlatformSDK,
+  getPlatformInfo,
+  getSimulatorPlatformSDK,
+} from '../../utils/getPlatformInfo.js';
 import { getScheme } from '../../utils/getScheme.js';
 import { listDevicesAndSimulators } from '../../utils/listDevices.js';
 import { installPodsIfNeeded } from '../../utils/pods.js';
+import { buildProject } from '../build/buildProject.js';
 import { fetchCachedBuild } from './fetchCachedBuild.js';
+import { getBuildSettings } from './getBuildSettings.js';
 import { matchingDevice } from './matchingDevice.js';
 import { cacheRecentDevice, sortByRecentDevices } from './recentDevices.js';
 import { runOnDevice } from './runOnDevice.js';
@@ -101,18 +107,49 @@ export const createRun = async (
   );
 
   if (platformName === 'macos') {
-    await runOnMac(xcodeProject, sourceDir, configuration, scheme, args);
+    if (!args.binaryPath) {
+      await buildProject({
+        xcodeProject,
+        sourceDir,
+        platformName,
+        udid: undefined,
+        scheme,
+        configuration,
+        args,
+      });
+    }
+    const buildSettings = await getBuildSettings(
+      xcodeProject,
+      sourceDir,
+      configuration,
+      getSimulatorPlatformSDK(platformName),
+      scheme
+    );
+    const appPath = args.binaryPath ?? buildSettings.appPath;
+    await runOnMac(appPath);
     outro('Success 🎉.');
     return;
   } else if (args.catalyst) {
-    await runOnMacCatalyst(
-      platformName,
-      configuration,
-      scheme,
+    if (!args.binaryPath) {
+      await buildProject({
+        xcodeProject,
+        sourceDir,
+        platformName,
+        udid: undefined,
+        scheme,
+        configuration,
+        args,
+      });
+    }
+    const buildSettings = await getBuildSettings(
       xcodeProject,
       sourceDir,
-      args
+      configuration,
+      getSimulatorPlatformSDK(platformName),
+      scheme
     );
+    const appPath = args.binaryPath ?? buildSettings.appPath;
+    await runOnMacCatalyst(appPath, scheme);
     outro('Success 🎉.');
     return;
   }
@@ -132,25 +169,48 @@ export const createRun = async (
   if (device) {
     cacheRecentDevice(device, platformName);
     if (device.type === 'simulator') {
-      await runOnSimulator(
-        device,
+      if (!args.binaryPath) {
+        await buildProject({
+          xcodeProject,
+          sourceDir,
+          platformName,
+          udid: device.udid,
+          scheme,
+          configuration,
+          args,
+        });
+      }
+      const buildSettings = await getBuildSettings(
         xcodeProject,
         sourceDir,
-        platformName,
         configuration,
-        scheme,
-        args
+        getSimulatorPlatformSDK(platformName),
+        scheme
       );
+      const appPath = args.binaryPath ?? buildSettings.appPath;
+      const infoPlistPath = buildSettings.infoPlistPath;
+      await runOnSimulator(device, appPath, infoPlistPath);
     } else if (device.type === 'device') {
-      await runOnDevice(
-        device,
-        platformName,
-        configuration,
-        scheme,
+      if (!args.binaryPath) {
+        await buildProject({
+          xcodeProject,
+          sourceDir,
+          platformName,
+          udid: device.udid,
+          scheme,
+          configuration,
+          args,
+        });
+      }
+      const buildSettings = await getBuildSettings(
         xcodeProject,
         sourceDir,
-        args
+        configuration,
+        getDevicePlatformSDK(platformName),
+        scheme
       );
+      const appPath = args.binaryPath ?? buildSettings.appPath;
+      await runOnDevice(device, appPath, sourceDir);
     }
     outro('Success 🎉.');
     return;
@@ -181,15 +241,27 @@ export const createRun = async (
       }
     }
     for (const simulator of bootedSimulators) {
-      await runOnSimulator(
-        simulator,
+      if (!args.binaryPath) {
+        await buildProject({
+          xcodeProject,
+          sourceDir,
+          platformName,
+          udid: simulator.udid,
+          scheme,
+          configuration,
+          args,
+        });
+      }
+      const buildSettings = await getBuildSettings(
         xcodeProject,
         sourceDir,
-        platformName,
         configuration,
-        scheme,
-        args
+        getSimulatorPlatformSDK(platformName),
+        scheme
       );
+      const appPath = args.binaryPath ?? buildSettings.appPath;
+      const infoPlistPath = buildSettings.infoPlistPath;
+      await runOnSimulator(simulator, appPath, infoPlistPath);
     }
   }
 

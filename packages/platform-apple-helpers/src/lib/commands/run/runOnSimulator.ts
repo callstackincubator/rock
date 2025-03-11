@@ -1,21 +1,13 @@
-import { spawn, spinner } from '@rnef/tools';
-import type {
-  ApplePlatform,
-  Device,
-  XcodeProjectInfo,
-} from '../../types/index.js';
-import { buildProject } from '../build/buildProject.js';
-import installApp from './installApp.js';
-import type { RunFlags } from './runOptions.js';
+import path from 'node:path';
+import type { SubprocessError } from '@rnef/tools';
+import { logger, RnefError, spawn, spinner } from '@rnef/tools';
+import type { Device } from '../../types/index.js';
+import { readKeyFromPlist } from '../../utils/plist.js';
 
 export async function runOnSimulator(
-  simulator: Device,
-  xcodeProject: XcodeProjectInfo,
-  sourceDir: string,
-  platform: ApplePlatform,
-  configuration: string,
-  scheme: string,
-  args: RunFlags
+  device: Device,
+  binaryPath: string,
+  infoPlistPath: string
 ) {
   /**
    * Booting simulator through `xcrun simctl boot` will boot it in the `headless` mode
@@ -31,45 +23,58 @@ export async function runOnSimulator(
   const { output: activeDeveloperDir } = await spawn('xcode-select', ['-p']);
 
   const loader = spinner();
-  loader.start(`Launching Simulator "${simulator.name}"`);
+  loader.start(`Launching Simulator "${device.name}"`);
   await spawn('open', [
     `${activeDeveloperDir}/Applications/Simulator.app`,
     '--args',
     '-CurrentDeviceUDID',
-    simulator.udid,
+    device.udid,
   ]);
 
-  if (simulator.state !== 'Booted') {
-    await bootSimulator(simulator);
+  if (device.state !== 'Booted') {
+    await bootSimulator(device);
   }
-  loader.stop(`Launched Simulator "${simulator.name}".`);
+  loader.stop(`Launched Simulator "${device.name}".`);
 
-  if (!args.binaryPath) {
-    await buildProject(
-      xcodeProject,
-      sourceDir,
-      platform,
-      simulator.udid,
-      scheme,
-      configuration,
-      args
-    );
-  }
+  loader.start(`Installing the app on "${device.name}"`);
+  await installAppOnSimulator(device.udid, binaryPath);
+  loader.stop(`Installed the app on "${device.name}".`);
 
-  loader.start(`Installing the app on "${simulator.name}"`);
-  await installApp({
-    xcodeProject,
-    sourceDir,
-    configuration,
-    scheme,
-    target: args.target,
-    udid: simulator.udid,
-    binaryPath: args.binaryPath,
-    platform,
-  });
-  loader.stop(`Installed the app on "${simulator.name}".`);
+  loader.start(`Launching the app on "${device.name}"`);
+  await launchAppOnSimulator(device.udid, binaryPath, infoPlistPath);
+  loader.stop(`Launched the app on "${device.name}".`);
 }
 
 async function bootSimulator(selectedSimulator: Device) {
   await spawn('xcrun', ['simctl', 'boot', selectedSimulator.udid]);
+}
+
+export default async function installAppOnSimulator(
+  udid: string,
+  binaryPath: string
+) {
+  logger.debug(`Installing "${path.basename(binaryPath)}"`);
+  try {
+    await spawn('xcrun', ['simctl', 'install', udid, binaryPath]);
+  } catch (error) {
+    throw new RnefError('Failed to install the app on Simulator', {
+      cause: (error as SubprocessError).stderr,
+    });
+  }
+}
+
+export async function launchAppOnSimulator(
+  udid: string,
+  binaryPath: string,
+  infoPlistPath: string
+) {
+  const bundleID = await readKeyFromPlist(infoPlistPath, 'CFBundleIdentifier');
+  logger.debug(`Launching "${bundleID}"`);
+  try {
+    await spawn('xcrun', ['simctl', 'launch', udid, bundleID]);
+  } catch (error) {
+    throw new RnefError(`Failed to launch the app on Simulator`, {
+      cause: (error as SubprocessError).stderr,
+    });
+  }
 }

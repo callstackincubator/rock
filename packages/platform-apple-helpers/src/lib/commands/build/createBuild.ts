@@ -60,26 +60,22 @@ export const createBuild = async (
     throw new RnefError('Failed to get Xcode project information');
   }
 
-  const scheme = await getScheme(
-    info.schemes,
-    args.scheme,
-    xcodeProject.name
-  );
+  const scheme = await getScheme(info.schemes, args.scheme, xcodeProject.name);
   const configuration = await getConfiguration(
     info.configurations,
-    args.configuration,
+    args.configuration
   );
 
   try {
-    await buildProject(
+    await buildProject({
       xcodeProject,
       sourceDir,
       platformName,
-      undefined,
+      udid: undefined,
       scheme,
       configuration,
-      args
-    );
+      args,
+    });
   } catch (error) {
     const message = `Failed to create ${args.archive ? 'archive' : 'build'}`;
     throw new RnefError(message, { cause: error });
@@ -100,7 +96,7 @@ export const createBuild = async (
         configuration,
         platformName,
         exportExtraParams: args.exportExtraParams ?? [],
-        exportOptionsPlist: args.exportOptionsPlist
+        exportOptionsPlist: args.exportOptionsPlist,
       });
     } catch (error) {
       throw new RnefError('Failed to export archive', { cause: error });
