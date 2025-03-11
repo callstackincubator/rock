@@ -1,5 +1,5 @@
-import core from '@actions/core';
-import {nativeFingerprint} from '@rnef/tools';
+const core = require('@actions/core');
+const { nativeFingerprint } = require('@rnef/tools');
 
 const ALLOWED_PLATFORMS = ['android', 'ios'];
 
@@ -19,4 +19,8 @@ async function run() {
   core.setOutput('hash', fingerprint.hash);
 }
 
-await run();
+// Execute the run function and handle any errors
+run().catch(error => {
+  core.setFailed(error.message);
+  process.exit(1);
+});
