@@ -11,7 +11,16 @@ export async function getConfiguration(
     configurations.length > 1 &&
     !preselectedConfiguration
   ) {
-    if (isInteractive()) {
+    // This is default and common configuration for React Native projects.
+    // In such cases we 90% want a Debug configuration.
+    // For the rest 10% user can pass the --configuration flag.
+    if (
+      configurations.length === 2 &&
+      configurations.includes('Debug') &&
+      configurations.includes('Release')
+    ) {
+      configuration = 'Debug';
+    } else if (isInteractive()) {
       configuration = await promptForConfigurationSelection(configurations);
       logger.info(
         `You can set configuration manually next time using "--configuration ${configuration}" flag.`
