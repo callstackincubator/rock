@@ -7,6 +7,7 @@ import { supportedPlatforms } from '../../utils/supportedPlatforms.js';
 import type { BuildFlags } from './buildOptions.js';
 import { simulatorDestinationMap } from './simulatorDestinationMap.js';
 
+let lastProgress = 0;
 /**
  * Creates an ASCII progress bar
  * @param percent - Percentage of completion (0-100)
@@ -14,7 +15,9 @@ import { simulatorDestinationMap } from './simulatorDestinationMap.js';
  * @returns ASCII progress bar string
  */
 function createProgressBar(percent: number, length = 20): string {
-  const filledLength = Math.round(length * (percent / 100));
+  const latestPercent = percent > lastProgress ? percent : lastProgress;
+  lastProgress = latestPercent;
+  const filledLength = Math.round(length * (latestPercent / 100));
   const emptyLength = length - filledLength;
 
   const filled = '█'.repeat(filledLength);
