@@ -186,11 +186,14 @@ export const buildProject = async ({
       } the app with xcodebuild for ${scheme} scheme in ${configuration} configuration.`
     );
   } catch (error) {
-    logger.error((error as SubprocessError).stderr);
-    loader.stop(
-      'Running xcodebuild failed. Check the error message above for details.',
-      1
-    );
+    if ((error as SubprocessError).stderr.trim() === '') {
+      loader.stop(
+        'Running xcodebuild failed. Use --verbose flag to see the full output.'
+      );
+    } else {
+      logger.error((error as SubprocessError).stderr);
+      loader.stop('Running xcodebuild failed. See error details above.', 1);
+    }
 
     if (!xcodeProject.isWorkspace) {
       throw new RnefError(
