@@ -16,11 +16,9 @@ import type {
   ApplePlatform,
   Device,
   ProjectConfig,
-  XcodeProjectInfo,
 } from '../../types/index.js';
-import { getConfiguration } from '../../utils/getConfiguration.js';
+import { buildApp } from '../../utils/buildApp.js';
 import { getInfo } from '../../utils/getInfo.js';
-import type { PlatformSDK } from '../../utils/getPlatformInfo.js';
 import {
   getDevicePlatformSDK,
   getPlatformInfo,
@@ -29,9 +27,7 @@ import {
 import { getScheme } from '../../utils/getScheme.js';
 import { listDevicesAndSimulators } from '../../utils/listDevices.js';
 import { installPodsIfNeeded } from '../../utils/pods.js';
-import { buildProject } from '../build/buildProject.js';
 import { fetchCachedBuild } from './fetchCachedBuild.js';
-import { getBuildSettings } from './getBuildSettings.js';
 import { matchingDevice } from './matchingDevice.js';
 import { cacheRecentDevice, sortByRecentDevices } from './recentDevices.js';
 import { runOnDevice } from './runOnDevice.js';
@@ -210,62 +206,6 @@ export const createRun = async (
   outro('Success 🎉.');
 };
 
-async function buildApp({
-  args,
-  xcodeProject,
-  sourceDir,
-  platformName,
-  platformSDK,
-  udid,
-  selectedScheme,
-}: {
-  args: RunFlags;
-  xcodeProject: XcodeProjectInfo;
-  sourceDir: string;
-  platformName: ApplePlatform;
-  platformSDK: PlatformSDK;
-  udid?: string;
-  selectedScheme?: string;
-}) {
-  let appPath = args.binaryPath;
-  let infoPlistPath;
-  if (!appPath) {
-    const info = await getInfo(xcodeProject, sourceDir);
-    if (!info) {
-      throw new RnefError('Failed to get Xcode project information');
-    }
-    const scheme =
-      selectedScheme ??
-      (await getScheme(info.schemes, args.scheme, xcodeProject.name));
-    const configuration = await getConfiguration(
-      info.configurations,
-      args.configuration
-    );
-    await buildProject({
-      xcodeProject,
-      sourceDir,
-      platformName,
-      udid,
-      scheme,
-      configuration,
-      args,
-    });
-    const buildSettings = await getBuildSettings(
-      xcodeProject,
-      sourceDir,
-      configuration,
-      platformSDK,
-      scheme,
-      args.target
-    );
-    appPath = buildSettings.appPath;
-    infoPlistPath = buildSettings.infoPlistPath;
-  } else {
-    // @todo Info.plist is hardcoded when reading from binaryPath
-    infoPlistPath = path.join(appPath, 'Info.plist');
-  }
-  return { appPath, infoPlistPath };
-}
 
 async function selectDevice(devices: Device[], args: RunFlags) {
   let device;

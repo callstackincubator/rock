@@ -28,7 +28,7 @@ export async function buildAndroid(
   if (outputFilePath) {
     const loader = spinner();
     loader.start('');
-    loader.stop(`Build output: ${color.cyan(outputFilePath)}`);
+    loader.stop(`Build available at: ${color.cyan(outputFilePath)}`);
   }
   outro('Success 🎉.');
 }

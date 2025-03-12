@@ -1,15 +1,16 @@
 import path from 'node:path';
 import { outro } from '@clack/prompts';
 import { getProjectConfig } from '@react-native-community/cli-config-apple';
-import { isInteractive, logger, RnefError } from '@rnef/tools';
+import { color, isInteractive, logger, RnefError, spinner } from '@rnef/tools';
 import type { BuilderCommand, ProjectConfig } from '../../types/index.js';
+import { buildApp } from '../../utils/buildApp.js';
 import { getBuildPaths } from '../../utils/buildPaths.js';
-import { getConfiguration } from '../../utils/getConfiguration.js';
-import { getInfo } from '../../utils/getInfo.js';
-import { getScheme } from '../../utils/getScheme.js';
+import {
+  getDevicePlatformSDK,
+  getSimulatorPlatformSDK,
+} from '../../utils/getPlatformInfo.js';
 import { installPodsIfNeeded } from '../../utils/pods.js';
 import type { BuildFlags } from './buildOptions.js';
-import { buildProject } from './buildProject.js';
 import { exportArchive } from './exportArchive.js';
 
 export const createBuild = async (
@@ -54,28 +55,21 @@ export const createBuild = async (
     throw new RnefError('Failed to get Xcode project information');
   }
 
-  const info = await getInfo(xcodeProject, sourceDir);
-
-  if (!info) {
-    throw new RnefError('Failed to get Xcode project information');
-  }
-
-  const scheme = await getScheme(info.schemes, args.scheme, xcodeProject.name);
-  const configuration = await getConfiguration(
-    info.configurations,
-    args.configuration
-  );
-
   try {
-    await buildProject({
+    const { appPath } = await buildApp({
       xcodeProject,
       sourceDir,
       platformName,
+      platformSDK:
+        args.destination === 'simulator'
+          ? getSimulatorPlatformSDK(platformName)
+          : getDevicePlatformSDK(platformName),
       udid: undefined,
-      scheme,
-      configuration,
       args,
     });
+    const loader = spinner();
+    loader.start('');
+    loader.stop(`Build available at: ${color.cyan(appPath)}`);
   } catch (error) {
     const message = `Failed to create ${args.archive ? 'archive' : 'build'}`;
     throw new RnefError(message, { cause: error });
@@ -92,8 +86,6 @@ export const createBuild = async (
       await exportArchive({
         sourceDir,
         archivePath,
-        scheme,
-        configuration,
         platformName,
         exportExtraParams: args.exportExtraParams ?? [],
         exportOptionsPlist: args.exportOptionsPlist,

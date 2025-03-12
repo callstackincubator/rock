@@ -6,16 +6,12 @@ import { getBuildPaths } from '../../utils/buildPaths.js';
 export const exportArchive = async ({
   sourceDir,
   archivePath,
-  scheme,
-  configuration,
   platformName,
   exportExtraParams,
-  exportOptionsPlist
+  exportOptionsPlist,
 }: {
   sourceDir: string;
   archivePath: string;
-  scheme: string;
-  configuration: string;
   platformName: string;
   exportExtraParams: string[];
   exportOptionsPlist?: string;
@@ -23,7 +19,10 @@ export const exportArchive = async ({
   const loader = spinner();
 
   loader.start('Exporting the archive...');
-  const exportOptionsPlistPath = path.join(sourceDir, exportOptionsPlist ?? 'ExportOptions.plist');
+  const exportOptionsPlistPath = path.join(
+    sourceDir,
+    exportOptionsPlist ?? 'ExportOptions.plist'
+  );
 
   if (!existsSync(exportOptionsPlistPath)) {
     loader.stop('Failed to export the archive.', 1);
@@ -60,16 +59,13 @@ export const exportArchive = async ({
     }
 
     loader.stop(
-      `Exported the archive for ${scheme} scheme in ${configuration} configuration to ${
+      `Exported the archive to ${
         path.join(exportDir, ipaFiles[0]) ?? exportDir
       }`
     );
     return output;
   } catch (error) {
-    loader.stop(
-      'Running xcodebuild failed. Check the error message above for details.',
-      1
-    );
+    loader.stop('Running xcodebuild failed.', 1);
     throw new Error('Running xcodebuild failed', { cause: error });
   }
 };
