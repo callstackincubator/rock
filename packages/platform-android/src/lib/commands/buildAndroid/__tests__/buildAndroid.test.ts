@@ -71,7 +71,7 @@ test('buildAndroid runs gradle build with correct configuration for debug and ou
     cwd: '/android',
   });
   expect(spinnerMock.stop).toBeCalledWith(
-    `Build output: ${color.cyan(
+    `Build available at: ${color.cyan(
       '/android/app/build/outputs/bundle/debug/app-debug.aab'
     )}`
   );
