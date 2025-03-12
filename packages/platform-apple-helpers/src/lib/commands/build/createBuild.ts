@@ -64,7 +64,6 @@ export const createBuild = async (
         args.destination === 'simulator'
           ? getSimulatorPlatformSDK(platformName)
           : getDevicePlatformSDK(platformName),
-      udid: undefined,
       args,
     });
     const loader = spinner();
