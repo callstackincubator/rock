@@ -1,16 +1,6 @@
-# Getting started
+# Migrating from Community CLI
 
-## Installation
-
-For new projects you can run:
-
-```
-npx @rnef/create-app enterprise
-```
-
-## Adding to existing projects
-
-1. Install deps:
+1. Install dev dependencies:
 
    ```sh
    npm install -D @rnef/cli @rnef/plugin-metro @rnef/platform-android @rnef/platform-ios
@@ -20,7 +10,7 @@ npx @rnef/create-app enterprise
 
 1. Add `.rnef/` folder with caches to `.gitignore`:
 
-   ```
+   ```txt title=".gitignore"
    .rnef/
    ```
 
@@ -112,7 +102,7 @@ npx @rnef/create-app enterprise
 
    iOS:
 
-   ```yaml
+   ```yaml title=".github/workflows/build-ios"
    - name: RNEF Remote Build - iOS simulator
      id: rnef-remote-build-ios
      uses: ./.github/actions/rnef-remote-build-ios
@@ -123,12 +113,12 @@ npx @rnef/create-app enterprise
 
    Android:
 
-   ```yaml
+   ```yaml title=".github/workflows/build-android"
    - name: RNEF Remote Build - Android
      id: rnef-remote-build-android
      uses: ./.github/actions/rnef-remote-build-android
      with:
        variant: debug
    ```
-   
+
    For more setup options see [GitHub Actions configuration](../remote-cache/github-actions/configuration.md)
