@@ -179,13 +179,12 @@ export const buildProject = async ({
       reportProgress(chunk, loader, message);
     }
 
-    const { output } = await process;
+    await process;
     loader.stop(
       `${
         args.archive ? 'Archived' : 'Built'
       } the app with xcodebuild for ${scheme} scheme in ${configuration} configuration.`
     );
-    return output;
   } catch (error) {
     logger.error((error as SubprocessError).stderr);
     loader.stop(
