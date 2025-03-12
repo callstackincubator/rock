@@ -1,7 +1,14 @@
 import path from 'node:path';
 import { outro } from '@clack/prompts';
 import { getProjectConfig } from '@react-native-community/cli-config-apple';
-import { color, isInteractive, logger, RnefError, spinner } from '@rnef/tools';
+import {
+  color,
+  isInteractive,
+  logger,
+  promptSelect,
+  RnefError,
+  spinner,
+} from '@rnef/tools';
 import type { BuilderCommand, ProjectConfig } from '../../types/index.js';
 import { buildApp } from '../../utils/buildApp.js';
 import { getBuildPaths } from '../../utils/buildPaths.js';
@@ -27,7 +34,7 @@ export const createBuild = async (
     );
   }
 
-  validateArgs(args);
+  await validateArgs(args);
 
   if (args.installPods) {
     await installPodsIfNeeded(
@@ -96,19 +103,41 @@ export const createBuild = async (
   outro('Success 🎉.');
 };
 
-function validateArgs(args: BuildFlags) {
+async function validateArgs(args: BuildFlags) {
   if (args.destination && args.destinations) {
     logger.error(
       `Both "--destination" and "--destinations" flags are set. Please pick one.`
     );
     process.exit(1);
   }
-  if (!args.destination && !isInteractive()) {
-    logger.error(
-      `The "--destination" flag is required in non-interactive environments. Available flag values:
+
+  if (!args.destination) {
+    if (isInteractive()) {
+      const destination = await promptSelect({
+        message: 'Select destination for a generic build',
+        options: [
+          {
+            label: 'Simulator',
+            value: 'simulator',
+          },
+          {
+            label: 'Device',
+            value: 'device',
+          },
+        ],
+      });
+
+      args.destination = destination;
+
+      logger.info(
+        `You can set configuration manually next time using "--destination ${destination}" flag.`
+      );
+    } else {
+      logger.error(
+        `The "--destination" flag is required in non-interactive environments. Available flag values:
 - simulator – suitable for unsigned simulator builds for developers
 - device – suitable for signed device builds for testers`
-    );
-    process.exit(1);
+      );
+    }
   }
 }
