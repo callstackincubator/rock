@@ -1,4 +1,4 @@
-# Android CI Builds
+# Android
 
 ## Development Builds For All Devices
 

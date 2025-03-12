@@ -1,7 +1,22 @@
 [
   {
     "type": "dir",
-    "name": "github-actions",
-    "label": "GitHub Actions"
+    "name": "getting-started",
+    "label": "Getting Started"
+  },
+  {
+    "type": "dir",
+    "name": "cli",
+    "label": "CLI"
+  },
+  {
+    "type": "dir",
+    "name": "configuration",
+    "label": "Configuration"
+  },
+  {
+    "type": "dir",
+    "name": "remote-cache",
+    "label": "Remote Cache"
   }
 ]
