@@ -1,0 +1,73 @@
+import { PackageManagerTabs, Steps, Tabs, Tab } from 'rspress/theme';
+
+# Quick start
+
+## Pre-requisites
+
+If you're already familiar with JavaScript, React and React Native, then you'll be able to get moving quickly! Otherwise, it's highly recommended to get yourself familiar with these topic and then come back here:
+
+- [React Native documentation](https://reactnative.dev/)
+
+## Installation
+
+To create a new React Native project with RNEF run:
+
+<PackageManagerTabs
+  command={{
+    npm: 'npx @rnef/create-app enterprise',
+    yarn: 'yarn dlx @rnef/create-app enterprise',
+    pnpm: 'pnpm dlx @rnef/create-app enterprise',
+    bun: 'bunx @rnef/create-app enterprise',
+  }}
+/>
+
+The command will ask you to pick your preferred bundler and platforms.
+
+In case you want to adopt RNEF in existing project (which is a typical scenario), please check the [Migrating from Community CLI](/docs/getting-started/migrating-from-community-cli) page.
+
+## Usage
+
+Now that you have RNEF configured, you should be able to use Metro's or Re.Pack's development server and bundle your application.
+
+### Running development server
+
+When developing your application, you'll need to run a dev server that will use a bundler like Metro or Re.Pack to bundle your JS and later serve it to an app running on a device or simulator.
+
+To start the development server, run:
+
+<PackageManagerTabs
+  command={{
+    npm: 'npm run rnef start',
+    yarn: 'yarn rnef start',
+    pnpm: 'pnpm rnef start',
+    bun: 'bun rnef start',
+  }}
+/>
+
+### Running the iOS app
+
+To build and run your app on an iOS simulator or device, run the `run:ios` command:
+
+<PackageManagerTabs
+  command={{
+    npm: 'npm run rnef run:ios',
+    yarn: 'yarn rnef run:ios',
+    pnpm: 'pnpm rnef run:ios',
+    bun: 'bun rnef run:ios',
+  }}
+/>
+
+### Running the Android app
+
+To build and run your app on an Android emulator or device, run the `run:android` command:
+
+<PackageManagerTabs
+  command={{
+    npm: 'npm run rnef run:android',
+    yarn: 'yarn rnef run:android',
+    pnpm: 'pnpm rnef run:android',
+    bun: 'bun rnef run:android',
+  }}
+/>
+
+:::
