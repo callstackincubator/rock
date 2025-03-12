@@ -114,4 +114,95 @@ describe('processExtraSources', () => {
 
     expect(result).toEqual([]);
   });
+
+  it('should process glob patterns', async () => {
+    const fixturesDir = path.join(__dirname, '__fixtures__', 'glob-test');
+    const result = await processExtraSources(['**/*.txt'], fixturesDir);
+
+    expect(result).toEqual([
+      {
+        type: 'contents',
+        id: path.join(fixturesDir, 'test1.txt'),
+        contents: 'mock content',
+        reasons: ['custom-user-config'],
+      },
+      {
+        type: 'contents',
+        id: path.join(fixturesDir, 'test2.txt'),
+        contents: 'mock content',
+        reasons: ['custom-user-config'],
+      },
+      {
+        type: 'contents',
+        id: path.join(fixturesDir, 'subdir', 'test3.txt'),
+        contents: 'mock content',
+        reasons: ['custom-user-config'],
+      },
+    ]);
+  });
+
+  it('should handle glob patterns with ignore paths', async () => {
+    const fixturesDir = path.join(__dirname, '__fixtures__', 'glob-test');
+    const result = await processExtraSources(['**/*.txt'], fixturesDir, [
+      'test2.txt',
+    ]);
+
+    expect(result).toEqual([
+      {
+        type: 'contents',
+        id: path.join(fixturesDir, 'test1.txt'),
+        contents: 'mock content',
+        reasons: ['custom-user-config'],
+      },
+      {
+        type: 'contents',
+        id: path.join(fixturesDir, 'subdir', 'test3.txt'),
+        contents: 'mock content',
+        reasons: ['custom-user-config'],
+      },
+    ]);
+  });
+
+  it('should handle glob patterns with ignore paths and ignore subdirectories', async () => {
+    const fixturesDir = path.join(__dirname, '__fixtures__', 'glob-test');
+    const result = await processExtraSources(['**/*.txt'], fixturesDir, [
+      'subdir/**',
+    ]);
+
+    expect(result).toEqual([
+      {
+        type: 'contents',
+        id: path.join(fixturesDir, 'test1.txt'),
+        contents: 'mock content',
+        reasons: ['custom-user-config'],
+      },
+      {
+        type: 'contents',
+        id: path.join(fixturesDir, 'test2.txt'),
+        contents: 'mock content',
+        reasons: ['custom-user-config'],
+      },
+    ]);
+  });
+
+  it('should continue processing even if some sources fail', async () => {
+    const existsSyncMock = vi.spyOn(fs, 'existsSync');
+    existsSyncMock
+      .mockImplementationOnce(() => true) // for file.txt
+      .mockImplementationOnce(() => false); // for non-existent.txt
+
+    const result = await processExtraSources(
+      ['file.txt', 'non-existent.txt'],
+      mockProjectRoot
+    );
+
+    expect(result).toEqual([
+      {
+        type: 'contents',
+        id: path.join(mockProjectRoot, 'file.txt'),
+        contents: 'mock content',
+        reasons: ['custom-user-config'],
+      },
+    ]);
+  });
 });
