@@ -138,6 +138,7 @@ async function validateArgs(args: BuildFlags) {
 - simulator – suitable for unsigned simulator builds for developers
 - device – suitable for signed device builds for testers`
       );
+      process.exit(1);
     }
   }
 }
