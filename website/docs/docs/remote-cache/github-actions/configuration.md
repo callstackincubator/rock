@@ -1,4 +1,4 @@
-# GitHub Actions
+# Configuration
 
 React Native Enterprise Framework ships with a ready-to-use GitHub Action whch you can include in your GHA workflows to build your iOS and Android apps and store native artifacts to reuse across CI jobs and local dev environment through RNEF CLI.
 
