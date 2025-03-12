@@ -22,7 +22,7 @@ describe('processExtraSources', () => {
   });
 
   it('should process a single file', async () => {
-    const result = await processExtraSources(['file.txt'], mockProjectRoot);
+    const result = processExtraSources(['file.txt'], mockProjectRoot);
 
     expect(result).toEqual([
       {
@@ -42,7 +42,7 @@ describe('processExtraSources', () => {
         } as any)
     );
 
-    const result = await processExtraSources(['dir'], mockProjectRoot);
+    const result = processExtraSources(['dir'], mockProjectRoot);
 
     expect(result).toEqual([
       {
@@ -56,10 +56,7 @@ describe('processExtraSources', () => {
   it('should handle non-existent paths', async () => {
     vi.spyOn(fs, 'existsSync').mockImplementation(() => false);
 
-    const result = await processExtraSources(
-      ['non-existent.txt'],
-      mockProjectRoot
-    );
+    const result = processExtraSources(['non-existent.txt'], mockProjectRoot);
 
     expect(result).toEqual([]);
   });
@@ -70,10 +67,7 @@ describe('processExtraSources', () => {
       .mockImplementationOnce(() => ({ isDirectory: () => false } as any))
       .mockImplementationOnce(() => ({ isDirectory: () => true } as any));
 
-    const result = await processExtraSources(
-      ['file.txt', 'dir'],
-      mockProjectRoot
-    );
+    const result = processExtraSources(['file.txt', 'dir'], mockProjectRoot);
 
     expect(result).toEqual([
       {
@@ -93,7 +87,7 @@ describe('processExtraSources', () => {
   it('should handle absolute paths', async () => {
     const absolutePath = '/absolute/path/file.txt';
 
-    const result = await processExtraSources([absolutePath], mockProjectRoot);
+    const result = processExtraSources([absolutePath], mockProjectRoot);
 
     expect(result).toEqual([
       {
@@ -110,14 +104,14 @@ describe('processExtraSources', () => {
       throw new Error('Failed to read file');
     });
 
-    const result = await processExtraSources(['file.txt'], mockProjectRoot);
+    const result = processExtraSources(['file.txt'], mockProjectRoot);
 
     expect(result).toEqual([]);
   });
 
   it('should process glob patterns', async () => {
     const fixturesDir = path.join(__dirname, '__fixtures__', 'glob-test');
-    const result = await processExtraSources(['**/*.txt'], fixturesDir);
+    const result = processExtraSources(['**/*.txt'], fixturesDir);
 
     expect(result).toEqual([
       {
@@ -143,7 +137,7 @@ describe('processExtraSources', () => {
 
   it('should handle glob patterns with ignore paths', async () => {
     const fixturesDir = path.join(__dirname, '__fixtures__', 'glob-test');
-    const result = await processExtraSources(['**/*.txt'], fixturesDir, [
+    const result = processExtraSources(['**/*.txt'], fixturesDir, [
       'test2.txt',
     ]);
 
@@ -165,7 +159,7 @@ describe('processExtraSources', () => {
 
   it('should handle glob patterns with ignore paths and ignore subdirectories', async () => {
     const fixturesDir = path.join(__dirname, '__fixtures__', 'glob-test');
-    const result = await processExtraSources(['**/*.txt'], fixturesDir, [
+    const result = processExtraSources(['**/*.txt'], fixturesDir, [
       'subdir/**',
     ]);
 
@@ -191,7 +185,7 @@ describe('processExtraSources', () => {
       .mockImplementationOnce(() => true) // for file.txt
       .mockImplementationOnce(() => false); // for non-existent.txt
 
-    const result = await processExtraSources(
+    const result = processExtraSources(
       ['file.txt', 'non-existent.txt'],
       mockProjectRoot
     );

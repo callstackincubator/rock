@@ -11,7 +11,7 @@ import logger from '../logger.js';
  * @param ignorePaths Optional array of paths to ignore
  * @returns Array of processed sources with their contents or directory information
  */
-export async function processExtraSources(
+export function processExtraSources(
   extraSources: string[],
   projectRoot: string,
   ignorePaths?: string[]
@@ -22,7 +22,7 @@ export async function processExtraSources(
     try {
       const isGlobPattern = glob.isDynamicPattern(source);
       if (isGlobPattern) {
-        const matches = await glob(source, {
+        const matches = glob.sync(source, {
           cwd: projectRoot,
           ignore: ignorePaths ?? [],
         });
