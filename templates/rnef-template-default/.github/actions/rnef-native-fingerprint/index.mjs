@@ -1,3 +1,4 @@
+import path from 'node:path';
 import core from '@actions/core';
 import {getConfig} from '@rnef/config';
 import {nativeFingerprint} from '@rnef/tools';
@@ -10,11 +11,13 @@ async function run() {
   if (!ALLOWED_PLATFORMS.includes(platform)) {
     throw new Error(`Invalid platform: ${platform}`);
   }
-
-  const config = await getConfig(workingDirectory);
+  const dir = path.isAbsolute(workingDirectory)
+    ? workingDirectory
+    : path.join(process.cwd(), workingDirectory);
+  const config = await getConfig(dir);
   const fingerprintOptions = config.getFingerprintOptions();
 
-  const fingerprint = await nativeFingerprint(workingDirectory, {
+  const fingerprint = await nativeFingerprint(dir, {
     platform,
     ...fingerprintOptions,
   });
