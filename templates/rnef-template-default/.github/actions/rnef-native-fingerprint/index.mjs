@@ -1,4 +1,5 @@
 import core from '@actions/core';
+import {getConfig} from '@rnef/config';
 import {nativeFingerprint} from '@rnef/tools';
 
 const ALLOWED_PLATFORMS = ['android', 'ios'];
@@ -9,8 +10,12 @@ async function run() {
     throw new Error(`Invalid platform: ${platform}`);
   }
 
+  const config = await getConfig('.');
+  const fingerprintOptions = config.getFingerprintOptions();
+
   const fingerprint = await nativeFingerprint('.', {
     platform,
+    ...fingerprintOptions,
   });
 
   console.log('Hash:', fingerprint.hash);
