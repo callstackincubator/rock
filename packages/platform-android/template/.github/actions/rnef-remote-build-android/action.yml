@@ -96,6 +96,7 @@ runs:
       uses: ./.github/actions/rnef-native-fingerprint
       with:
         platform: android
+        working-directory: ${{ inputs.working-directory }}
 
     - name: Set Artifact Name
       run: |

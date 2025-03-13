@@ -7,6 +7,10 @@ inputs:
   platform:
     description: 'The platform to fingerprint: android or ios'
     required: true
+  working-directory:
+    description: 'The working directory to fingerprint, where the rnef.config.mjs is located'
+    required: true
+    default: '.'
 outputs:
   hash:
     description: 'The fingerprint hash'
