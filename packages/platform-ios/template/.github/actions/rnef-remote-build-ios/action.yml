@@ -6,6 +6,10 @@ inputs:
     description: GitHub Token
     required: false
     default: ${{ github.token }}
+  working-directory:
+    description: 'Working directory for the build command'
+    required: false
+    default: '.'
   destination:
     description: 'Destination to build to: "simulator" or "device". Using "device" runs "rnef build:ios --archive" and code signing settings (certificate, provisioning profile, keychain password) are required.'
     required: true
@@ -121,7 +125,7 @@ runs:
         security set-keychain-settings -lut 21600 $KEYCHAIN_PATH
         security unlock-keychain -p "${{ inputs.keychain-password }}" $KEYCHAIN_PATH
 
-        # Import certificate to keychain                
+        # Import certificate to keychain
         CERTIFICATE_PATH=$RUNNER_TEMP/certificate.p12
 
         echo -n "${{ inputs.certificate-base64 }}" | base64 --decode -o $CERTIFICATE_PATH
@@ -149,6 +153,7 @@ runs:
         IOS_SOURCE_DIR=$(echo "$JSON_OUTPUT" | jq -r '.project.ios.sourceDir')
         echo "IOS_SOURCE_DIR=$IOS_SOURCE_DIR" >> $GITHUB_ENV
       shell: bash
+      working-directory: ${{ inputs.working-directory }}
 
     - name: Build iOS
       if: ${{ !steps.find-artifact.outputs.artifact-url }}
@@ -161,6 +166,7 @@ runs:
           --destination ${{ inputs.destination }} \
           ${{ inputs.rnef-build-extra-params }}
       shell: bash
+      working-directory: ${{ inputs.working-directory }}
 
     - name: Find Build Artifact
       if: ${{ !steps.find-artifact.outputs.artifact-url }}
@@ -169,7 +175,7 @@ runs:
           IPA_PATH=$(find .rnef/cache/ios/export -maxdepth 1 -name '*.ipa' -type f | head -1)
           echo IPA_PATH $IPA_PATH
           echo "ARTIFACT_PATH=$IPA_PATH" >> $GITHUB_ENV
-        else 
+        else
           # Simulator build: needs to compress with tar, as GH actions drop execute file permission during packing to zip
           APP_PATH=$(find $IOS_SOURCE_DIR/build -name '*.app' -type d | head -1 )
           APP_DIR=$(dirname "$APP_PATH")
@@ -207,6 +213,7 @@ runs:
           --build-jsbundle \
           --identity ${{ env.IDENTITY }}
       shell: bash
+      working-directory: ${{ inputs.working-directory }}
 
     - name: Upload Artifact
       id: upload-artifact

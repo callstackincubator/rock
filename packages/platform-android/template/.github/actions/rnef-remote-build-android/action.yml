@@ -9,6 +9,10 @@ inputs:
     description: 'GitHub Token'
     required: false
     default: ${{ github.token }}
+  working-directory:
+    description: 'Working directory for the build command'
+    required: false
+    default: '.'
   validate-gradle-wrapper:
     description: 'Whether to validate the Gradle wrapper'
     required: false
@@ -137,6 +141,7 @@ runs:
         echo "ANDROID_SOURCE_DIR=$ANDROID_SOURCE_DIR" >> $GITHUB_ENV
         echo "APP_NAME=$APP_NAME" >> $GITHUB_ENV
       shell: bash
+      working-directory: ${{ inputs.working-directory }}
 
     - name: Decode and store keystore file
       if: ${{ !steps.find-artifact.outputs.artifact-url && inputs.sign }}
@@ -151,6 +156,7 @@ runs:
           --variant "${{ inputs.variant }}" \
           ${{ inputs.rnef-build-extra-params }}
       shell: bash
+      working-directory: ${{ inputs.working-directory }}
 
     - name: Find Build Artifact
       if: ${{ !steps.find-artifact.outputs.artifact-url }}
@@ -182,6 +188,7 @@ runs:
         npx rnef sign:android ${{ env.ARTIFACT_PATH }} \
           --build-jsbundle
       shell: bash
+      working-directory: ${{ inputs.working-directory }}
 
     - name: Upload Artifact
       id: upload-artifact

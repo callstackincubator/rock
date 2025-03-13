@@ -181,6 +181,34 @@ To avoid polluting artifact storage it will also handle removal of old artifacts
     # ...rest of code signing inputs
 ```
 
+
+#### `working-directory`
+
+Default: `.`
+
+When in monorepo, you may need to set the working directory something else than root of the repository.
+
+For example in the following setup:
+
+```
+packages/
+  mobile/
+    ios/
+    android/
+    rnef.config.mjs
+```
+
+You'll need to set `working-directory: ./packages/mobile`:
+
+```yaml
+- name: RNEF Remote Build - iOS device
+  id: rnef-remote-build-ios
+  uses: ./.github/actions/rnef-remote-build-ios
+  with:
+    destination: device
+    working-directory: ./packages/mobile
+```
+
 ### Action Outputs
 
 #### `artifact-url`
@@ -319,6 +347,33 @@ For security reasons we add Gradle Wrapper validation step to Android build acti
   with:
     variant: debug
     validate-gradle-wrapper: false
+```
+
+#### `working-directory`
+
+Default: `.`
+
+When in monorepo, you may need to set the working directory something else than root of the repository.
+
+For example in the following setup:
+
+```
+packages/
+  mobile/
+    ios/
+    android/
+    rnef.config.mjs
+```
+
+You'll need to set `working-directory: ./packages/mobile`:
+
+```yaml
+- name: RNEF Remote Build - Android
+  id: rnef-remote-build-android
+  uses: ./.github/actions/rnef-remote-build-android
+  with:
+    variant: debug
+    working-directory: ./packages/mobile
 ```
 
 ### Action Outputs
