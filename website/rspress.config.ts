@@ -7,10 +7,10 @@ export default defineConfig({
   root: path.join(__dirname, 'docs'),
   title: 'React Native Enterprise Framework',
   icon: '/rspress-icon.png',
-  logo: {
-    light: '/rspress-light-logo.png',
-    dark: '/rspress-dark-logo.png',
-  },
+  // logo: {
+  //   light: '/rspress-light-logo.png',
+  //   dark: '/rspress-dark-logo.png',
+  // },
   themeConfig: {
     socialLinks: [
       {
