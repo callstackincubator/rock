@@ -12,14 +12,7 @@ If you're already familiar with JavaScript, React and React Native, then you'll 
 
 To create a new React Native project with RNEF run:
 
-<PackageManagerTabs
-  command={{
-    npm: 'npx @rnef/create-app enterprise',
-    yarn: 'yarn dlx @rnef/create-app enterprise',
-    pnpm: 'pnpm dlx @rnef/create-app enterprise',
-    bun: 'bunx @rnef/create-app enterprise',
-  }}
-/>
+<PackageManagerTabs command="create @rnef/app enterprise" />
 
 The command will ask you to pick your preferred bundler and platforms.
 
@@ -35,39 +28,18 @@ When developing your application, you'll need to run a dev server that will use 
 
 To start the development server, run:
 
-<PackageManagerTabs
-  command={{
-    npm: 'npm run rnef start',
-    yarn: 'yarn rnef start',
-    pnpm: 'pnpm rnef start',
-    bun: 'bun rnef start',
-  }}
-/>
+<PackageManagerTabs command="rnef start" />
 
 ### Running the iOS app
 
 To build and run your app on an iOS simulator or device, run the `run:ios` command:
 
-<PackageManagerTabs
-  command={{
-    npm: 'npm run rnef run:ios',
-    yarn: 'yarn rnef run:ios',
-    pnpm: 'pnpm rnef run:ios',
-    bun: 'bun rnef run:ios',
-  }}
-/>
+<PackageManagerTabs command="rnef run:ios" />
 
 ### Running the Android app
 
 To build and run your app on an Android emulator or device, run the `run:android` command:
 
-<PackageManagerTabs
-  command={{
-    npm: 'npm run rnef run:android',
-    yarn: 'yarn rnef run:android',
-    pnpm: 'pnpm rnef run:android',
-    bun: 'bun rnef run:android',
-  }}
-/>
+<PackageManagerTabs command="rnef run:android" />
 
 :::
