@@ -21,9 +21,9 @@ echo "NPM: Publishing template"
 cd templates/rnef-template-default
 # If NPM_TOKEN is set (CI environment), use it
 if [ -n "$NPM_TOKEN" ]; then
-  npm publish --access restricted
+  npm publish
 else
-  npm publish --access restricted --otp="$OTP"
+  npm publish --otp="$OTP"
 fi
 
 echo "Done"

@@ -13,7 +13,7 @@
     "react-native.config.ts"
   ],
   "scripts": {
-    "publish:npm": "npm publish --access restricted",
+    "publish:npm": "npm publish",
     "publish:verdaccio": "npm publish --registry http://localhost:4873 --userconfig ../../.npmrc"
   },
   "dependencies": {
