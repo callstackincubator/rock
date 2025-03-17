@@ -77,9 +77,7 @@ type PluginApi = {
 };
 ```
 
-The following configuration options accept plugins: `plugins`, `platforms`, `bundler`.
-
-### A simple plugin example
+The following configuration options accept plugins: [`plugins`](#plugins), [`platforms`](#platforms), [`bundler`](#bundlers).
 
 A plugin that registers `my-command` command outputing a hello world would look like this:
 
@@ -101,11 +99,41 @@ export default {
 };
 ```
 
+## Bundler
+
+Bundler is a plugin that registers commands for running a dev server and bundling final JavaScript or Hermes bytecode.
+
+By default, RNEF ships with two bundler: Metro (`@rnef/plugin-metro`) and Re.Pack (`@rnef/plugin-repack`).
+
+You can configure the bundler like this:
+
+```js title="rnef.config.mjs"
+import { pluginMetro } from '@rnef/plugin-metro';
+
+export default {
+  // ...
+  bundler: pluginMetro(),
+};
+```
+
 ## Platforms
 
 Platform is a plugin that registers platform-specific functionality such as commands to build the project and run it on a device or simulator.
 
 By default, RNEF ships with two platforms: iOS (`@rnef/platform-ios`) and Android (`@rnef/platform-android`).
+
+You can configure the platform like this:
+
+```js title="rnef.config.mjs"
+import { platformIOS } from '@rnef/platform-ios';
+
+export default {
+  // ...
+  platforms: {
+    ios: platformIOS(),
+  },
+};
+```
 
 ## Remote Cache Configuration
 
@@ -118,7 +146,7 @@ One of the key features of RNEF is remote build caching to speed up your develop
 Currently it's only available as a GitHub Action, for which you can configure it as:
 
 ```ts
-module.exports = {
+export default {
   // ...
   remoteCacheProvider: 'github-actions',
 };
@@ -127,7 +155,7 @@ module.exports = {
 If you only want to use the CLI without the remote cache, and skip the steps `1.` and `2.` and a warning that you're not using a remote provider, you can disable this functionality by setting it to `null`:
 
 ```ts
-module.exports = {
+export default {
   // ...
   remoteCacheProvider: null,
 };
@@ -140,7 +168,7 @@ A fingerprint is a representation of your native project in a form of a hash (e.
 The fingerprint configuration helps determine when builds should be cached and invalidated in non-standard settings, e.g. when you have git submodules in your project:
 
 ```ts
-module.exports = {
+export default {
   // ...
   fingerprint: {
     extraSources: ['./git-submodule'],
