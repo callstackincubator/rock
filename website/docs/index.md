@@ -10,7 +10,7 @@ hero:
       link: /docs/
     - theme: alt
       text: GitHub
-      link: https://github.com/web-infra-dev/rspress
+      link: https://github.com/callstack/rnef
 features:
   - title: MODULAR DESIGN
     details: Add your supported platforms and plugins, and integrate existing tools
