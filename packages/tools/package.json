@@ -7,8 +7,7 @@
     "import": "./dist/src/index.js"
   },
   "files": [
-    "dist",
-    "src"
+    "dist"
   ],
   "scripts": {
     "publish:npm": "npm publish --access restricted",

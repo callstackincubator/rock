@@ -8,7 +8,6 @@
   },
   "files": [
     "dist",
-    "src",
     "template",
     "react-native.config.ts"
   ],
