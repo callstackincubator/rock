@@ -26,6 +26,6 @@
     "@react-native-community/cli-types": "^16.0.2"
   },
   "publishConfig": {
-    "access": "restricted"
+    "access": "public"
   }
 }

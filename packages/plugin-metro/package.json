@@ -27,6 +27,6 @@
     "@react-native/community-cli-plugin": "*"
   },
   "publishConfig": {
-    "access": "restricted"
+    "access": "public"
   }
 }

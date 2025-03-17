@@ -27,6 +27,6 @@
     "@types/adm-zip": "^0.5.7"
   },
   "publishConfig": {
-    "access": "restricted"
+    "access": "public"
   }
 }

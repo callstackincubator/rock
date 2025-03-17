@@ -25,6 +25,6 @@
     "@rnef/config": "^0.4.1"
   },
   "publishConfig": {
-    "access": "restricted"
+    "access": "public"
   }
 }

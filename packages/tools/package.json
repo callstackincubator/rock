@@ -28,6 +28,6 @@
     "tslib": "^2.3.0"
   },
   "publishConfig": {
-    "access": "restricted"
+    "access": "public"
   }
 }
