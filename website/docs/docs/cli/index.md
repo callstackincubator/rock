@@ -1,16 +1,18 @@
 # RNEF CLI
 
-The RNEF CLI allows you to start, develop and build your React Native apps.
+The RNEF CLI is a command-line tool that helps you develop, build, and run React Native applications.
 
-Basic usage
+Basic usage:
 
 ```shell title="Terminal"
 npx rnef [command] [options]
 ```
 
-## Reference
+![](/cli.png)
 
-The following options are generally available:
+## Global Options
+
+The following options are available for all commands:
 
 | Options             | Description                     |
 | ------------------- | ------------------------------- |
@@ -18,44 +20,49 @@ The following options are generally available:
 | `-V` or `--version` | Outputs the RNEF version number |
 | `--verbose`         | Sets verbose logging            |
 
-## Commands
+## Available Commands
 
-Due to the modular design of RNEF CLI, available commands will depend on your configuration. By default following commands are available for all configurations, and are considered internal (you likely won't need to run them yourself):
+RNEF CLI uses a modular design where available commands depend on your configuration. The following commands are available by default for all configurations (these are internal commands that you typically won't need to run):
 
 | Command       | Description                                     |
 | :------------ | :---------------------------------------------- |
 | `config`      | Outputs autolinking config (from Community CLI) |
 | `fingerprint` | Calculates fingerprint for project or platform  |
+| `help`        | Displays help menu for a command                |
 
-More commands, such as for starting a dev server, running or building for a platform are available from the specialized plugins.
+Additional commands for development, building, and running apps are provided by specialized plugins.
 
-Bundler plugins, configured through [`bundler`](/docs/configuration/index#bundlers) property in configuration:
+### Bundler Plugins
 
-- `@rnef/plugin-metro` – a plugin for Metro bundler which comes with following commands:
+Bundler plugins are configured through the [`bundler`](/docs/configuration/index#bundler) property in your configuration. Available bundlers include:
+
+- `@rnef/plugin-metro` – Metro bundler plugin with the following commands:
 
   | Command  | Description                   |
   | :------- | :---------------------------- |
   | `start`  | Starts Metro dev server       |
   | `bundle` | Bundles JavaScript with Metro |
 
-- `@rnef/plugin-repack` – a plugin for Re.Pack bundler which comes with following commands:
+- `@rnef/plugin-repack` – Re.Pack bundler plugin with the following commands:
 
   | Command  | Description                     |
   | :------- | :------------------------------ |
   | `start`  | Starts Re.Pack dev server       |
   | `bundle` | Bundles JavaScript with Re.Pack |
 
-Platform plugins, configured through [`platform`](/docs/configuration/index#platforms) property in configuration:
+### Platform Plugins
 
-- `@rnef/platform-android` – a plugin for Android platform which comes with following commands:
+Platform plugins are configured through the [`platform`](/docs/configuration/index#platforms) property in your configuration. Available platforms include:
 
-  | Command       | Description                                                     |
-  | :------------ | :-------------------------------------------------------------- |
-  | run:android   | Runs Android app on emulator or device                          |
-  | build:android | Builds Android app for generic emulator, device or distribution |
-  | sign:android  | Signs Android app with keystore                                 |
+- `@rnef/platform-android` – Android platform plugin with the following commands:
 
-- `@rnef/platform-ios` – a plugin for iOS platform which comes with following commands:
+  | Command         | Description                                                     |
+  | :-------------- | :-------------------------------------------------------------- |
+  | `run:android`   | Runs Android app on emulator or device                          |
+  | `build:android` | Builds Android app for generic emulator, device or distribution |
+  | `sign:android`  | Signs Android app with keystore                                 |
+
+- `@rnef/platform-ios` – iOS platform plugin with the following commands:
 
   | Command     | Description                                                  |
   | :---------- | :----------------------------------------------------------- |
@@ -63,9 +70,11 @@ Platform plugins, configured through [`platform`](/docs/configuration/index#plat
   | `run:ios`   | Runs iOS app on simulator or device                          |
   | `sign:ios`  | Signs iOS app with certificate and provisioning profile      |
 
-### `rnef start` options
+## Command Options
 
-`rnef start` starts Re.Pack or Metro (depending on `bundler` plugin) dev server whch connects to your apps through a port (by default `8081`) and serve JavaScript in development mode with Hot Module Reloading (HMR), error reporting and more. The following options are available for the `rnef start` command:
+### `rnef start` Options
+
+The `start` command launches a development server (either Re.Pack or Metro, depending on your bundler plugin) that connects to your apps through port 8081 by default. It provides features like Hot Module Reloading (HMR) and error reporting.
 
 | Option                                | Description                                                                                 |
 | :------------------------------------ | :------------------------------------------------------------------------------------------ |
@@ -86,9 +95,9 @@ Platform plugins, configured through [`platform`](/docs/configuration/index#plat
 | `--no-interactive`                    | Disables interactive mode                                                                   |
 | `--client-logs`                       | [Deprecated] Enable plain text JavaScript log streaming for all connected apps              |
 
-### `rnef bundle` options
+### `rnef bundle` Options
 
-`rnef bundle` creates an optimized Hermes bytecode (or JavaScript if configured so) bundle for your application. The following options are available for the `rnef bundle` command:
+The `bundle` command creates an optimized JavaScript bundle for your application, optionally using Hermes bytecode.
 
 | Option                                  | Description                                                                                          |
 | :-------------------------------------- | :--------------------------------------------------------------------------------------------------- |
@@ -113,9 +122,9 @@ Platform plugins, configured through [`platform`](/docs/configuration/index#plat
 | `--config-cmd [string]`                 | [Internal] A hack for Xcode build script pointing to wrong bundle command                            |
 | `--hermes`                              | Passes the output JS bundle to Hermes compiler and outputs a bytecode file                           |
 
-### `rnef build:ios` options
+### `rnef build:ios` Options
 
-`rnef build:ios` builds iOS app for generic simulator, device or distribution, producing APP directory for simulators or IPA files for devices and distribution. The following options are available for the `rnef build:ios` command:
+The `build:ios` command builds your iOS app for simulators, devices, or distribution, producing either an APP directory (for simulators) or an IPA file (for devices and distribution).
 
 | Option                            | Description                                                                                |
 | :-------------------------------- | :----------------------------------------------------------------------------------------- |
@@ -132,9 +141,9 @@ Platform plugins, configured through [`platform`](/docs/configuration/index#plat
 | `--no-install-pods`               | Skip CocoaPods installation                                                                |
 | `--no-new-arch`                   | Build in legacy async architecture                                                         |
 
-### `rnef run:ios` options
+### `rnef run:ios` Options
 
-`rnef run:ios` runs iOS app on simulator or device. It's an extension of `build:ios`. The following options are available for the `rnef run:ios` command:
+The `run:ios` command runs your iOS app on a simulator or device. It extends the functionality of `build:ios` with additional runtime options.
 
 | Option                   | Description                               |
 | :----------------------- | :---------------------------------------- |
@@ -144,9 +153,9 @@ Platform plugins, configured through [`platform`](/docs/configuration/index#plat
 | `--device <string>`      | Device/simulator to use (by name or UDID) |
 | `--catalyst`             | Run on Mac Catalyst                       |
 
-### `rnef sign:ios` options
+### `rnef sign:ios` Options
 
-`rnef sign:ios` signs iOS app with certificate and provisioning profile, producing a signed IPA file ready for distribution. The following options are available for the `rnef sign:ios` command:
+The `sign:ios` command signs your iOS app with certificates and provisioning profiles, producing a signed IPA file ready for distribution.
 
 | Option                | Description                                |
 | :-------------------- | :----------------------------------------- |
@@ -156,9 +165,9 @@ Platform plugins, configured through [`platform`](/docs/configuration/index#plat
 | `--jsbundle <string>` | Path to JS bundle to apply before signing  |
 | `--no-hermes`         | Don't use Hermes for JS bundle             |
 
-### `rnef build:android` options
+### `rnef build:android` Options
 
-`rnef build:android` builds Android app for generic emulator, device or distribution, producing APK or AAB files. The following options are available for the `rnef build:android` command:
+The `build:android` command builds your Android app for emulators, devices, or distribution, producing either APK or AAB files.
 
 | Option                   | Description                             |
 | :----------------------- | :-------------------------------------- |
@@ -168,9 +177,9 @@ Platform plugins, configured through [`platform`](/docs/configuration/index#plat
 | `--tasks <array>`        | Custom Gradle tasks                     |
 | `--extra-params <array>` | Extra parameters for Gradle             |
 
-### `rnef run:android` options
+### `rnef run:android` Options
 
-`rnef run:android` runs Android app on emulator or device. It's an extension of `build:android`. The following options are available for the `rnef run:android` command:
+The `run:android` command runs your Android app on an emulator or device. It extends the functionality of `build:android` with additional runtime options.
 
 Same as for `build:android` and:
 
@@ -181,9 +190,9 @@ Same as for `build:android` and:
 | `--no-remote-cache`        | Disable remote build caching |
 | `--binary-path <string>`   | Path to pre-built APK        |
 
-### `rnef sign:android` options
+### `rnef sign:android` Options
 
-`rnef sign:android` signs Android app with keystore, producing a signed APK file ready for distribution. The following options are available for the `rnef sign:android` command:
+The `sign:android` command signs your Android app with a keystore, producing a signed APK file ready for distribution.
 
 | Option                         | Description                               |
 | :----------------------------- | :---------------------------------------- |
