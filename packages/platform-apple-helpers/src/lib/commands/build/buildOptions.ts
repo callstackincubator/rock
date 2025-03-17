@@ -10,8 +10,6 @@ export type BuildFlags = {
   extraParams?: string[];
   exportExtraParams?: string[];
   exportOptionsPlist?: string;
-  device?: string;
-  catalyst?: boolean;
   buildFolder?: string;
   destination?: string;
   destinations?: string[];
@@ -57,15 +55,6 @@ export const getBuildOptions = ({ platformName }: BuilderCommand) => {
     {
       name: '--export-options-plist <string>',
       description: 'Name of the export options file for archiving. Defaults to: ExportOptions.plist',
-    },
-    {
-      name: '--device <string>',
-      description:
-        'Explicitly set the device or simulator to use by name or by UDID.',
-    },
-    {
-      name: '--catalyst',
-      description: 'Run on Mac Catalyst.',
     },
     {
       name: '--build-folder <string>',
