@@ -29,8 +29,6 @@ npx @rnef/create-app enterprise
 
 ## Adding to existing projects
 
-1. Copy `.github/` files from [`@rnef/template-default`](https://github.com/callstack/rnef/tree/main/templates/rnef-template-default/), [`@rnef/platform-android`](https://github.com/callstack/rnef/tree/main/packages/platform-android/template), and [`@rnef/platform-ios`](https://github.com/callstack/rnef/tree/main/packages/platform-ios/template). They contain necessary actions with remote builds for iOS and Android and sample workflows for running those actions. In the upcoming future we'll release reusable actions so you will only need to integrate them into your workflows.
-
 1. Install deps:
 
    ```sh
