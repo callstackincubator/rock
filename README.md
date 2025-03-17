@@ -34,7 +34,7 @@ npx @rnef/create-app enterprise
 1. Install deps:
 
    ```sh
-   npm install -D @rnef/cli @rnef/plugin-metro @rnef/platform-android @rnef/platform-ios @actions/core @actions/github
+   npm install -D @rnef/cli @rnef/plugin-metro @rnef/platform-android @rnef/platform-ios
    ```
 
 1. Remove `@react-native-community/cli` and related packages.
