@@ -106,7 +106,7 @@ export const buildProject = async ({
       }
     }
 
-    if (args.device) {
+    if ('device' in args && args.device) {
       // Check if the device argument looks like a UDID (assuming UDIDs are alphanumeric and have specific length)
       const isUDID = /^[A-Fa-f0-9-]{25,}$/.test(args.device);
       if (isUDID) {
@@ -117,7 +117,7 @@ export const buildProject = async ({
       }
     }
 
-    if (args.catalyst) {
+    if ('catalyst' in args && args.catalyst) {
       return ['platform=macOS,variant=Mac Catalyst'];
     }
 
