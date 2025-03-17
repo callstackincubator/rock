@@ -6,6 +6,10 @@
     "types": "./dist/src/index.d.ts",
     "import": "./dist/src/index.js"
   },
+  "files": [
+    "dist",
+    "src"
+  ],
   "scripts": {
     "publish:npm": "npm publish --access restricted",
     "publish:verdaccio": "npm publish --registry http://localhost:4873 --userconfig ../../.npmrc"
