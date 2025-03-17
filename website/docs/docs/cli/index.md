@@ -1,4 +1,4 @@
-# RNEF CLI
+# `rnef` CLI
 
 The RNEF CLI is a command-line tool that helps you develop, build, and run React Native applications.
 

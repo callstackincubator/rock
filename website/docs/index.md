@@ -6,11 +6,11 @@ hero:
   tagline: Build once, reuse everywhere
   actions:
     - theme: brand
-      text: Quick Start
-      link: /docs/
-    - theme: alt
-      text: GitHub
-      link: https://github.com/callstack/rnef
+      text: Learn more
+      link: /docs/getting-started/introduction
+    # - theme: alt
+    #   text: GitHub
+    #   link: https://github.com/callstack/rnef
 features:
   - title: MODULAR DESIGN
     details: Add your supported platforms and plugins, and integrate existing tools

@@ -1,10 +1,14 @@
 # Introduction
 
-RNEF stands for React Native Enterprise Framework. It's a set of tools to help you ship React Native apps faster on your own infra. Currently these tools are CLI and Remote Cache (implemented together with GitHub Actions currently).
+RNEF (React Native Enterprise Framework) is a toolkit designed to accelerate React Native app development for enterprise teams. It provides a CLI and Remote Cache system (currently integrated with GitHub Actions) to make your team's development workflow more efficient.
+
+:::info OK I want to try it!
+If you feel like skipping this intro section and try it out in existing Community CLI project, feel free to head over to [Migrating from Community CLI](/docs/getting-started/migrating-from-community-cli) page. Or go to [Quick start](/docs/getting-started/index) to initialize a new project.
+:::
 
 ## Why We Exist
 
-On a daily basis at [Callstack](https://callstack.com/), we’re serving clients that usually have large teams, building complex apps for years, accumulating tech debt, becoming slower and slower to iterate, where time is wasted on waiting for builds and onboarding web engineers into intricacies of mobile platforms. According to the [React Native Framework RFC](https://github.com/react-native-community/discussions-and-proposals/pull/759), almost all of these companies are building their own frameworks based on the Community CLI—they just don’t open source them to make them available for everyone, and for good reasons.
+On a daily basis at [Callstack](https://callstack.com/), we're serving clients that usually have large teams, building complex apps for years, accumulating tech debt, becoming slower and slower to iterate, where time is wasted on waiting for builds and onboarding web engineers into intricacies of mobile platforms. According to the [React Native Framework RFC](https://github.com/react-native-community/discussions-and-proposals/pull/759), almost all of these companies are building their own frameworks based on the Community CLI—they just don't open source them to make them available for everyone, and for good reasons.
 
 As maintainers of the Community CLI, we have quite the exposure to how this tool is used (and misused) in various projects. When we evaluated how our clients use it and what our developers are challenged with, we noticed that these companies encounter similar challenges that they address uniquely:
 
@@ -23,15 +27,15 @@ Using anything other than the Community CLI is not an option for them currently.
 
 ## Our Principles
 
-We build the framework with a clear focus: to serve large teams and complex apps. These projects require flexibility, the ability to host everything on their own, deploy to as many platforms as possible, and decrease onboarding time. That’s why our engineering design choices focus on:
+We build the framework with a clear focus: to serve large teams and complex apps. These projects require flexibility, the ability to host everything on their own, deploy to as many platforms as possible, and decrease onboarding time. That's why our engineering design choices focus on:
 
 - **Modular design**—add your supported platforms and plugins, and integrate existing tools; you can build around our framework
-- **Self-hosting**—use your own infrastructure without relying on third-party cloud vendors; whether you’re using GitHub Actions or soon Amazon S3 and BitBucket, we got you covered.
+- **Self-hosting**—use your own infrastructure without relying on third-party cloud vendors; whether you're using GitHub Actions or soon Amazon S3 and BitBucket, we got you covered.
 - **Incremental adoption**—easily migrate from Community CLI or an existing native app.
 
 ## The CLI
 
-We created a new CLI from scratch with a goal in mind to be as easy to migrate from the Community CLI as possible. For most of the projects we try, replacing local build and run experience with our CLI takes up to 10 minutes.
+We've created a new CLI from scratch with a focus on seamless migration from the Community CLI. Most projects can replace their local build and run experience with our CLI in under 10 minutes.
 
 Its core part is modular configuration mechanism allowing for customizing the capabilities (and soon also DX) to your needs through a system of plugins and replaceable parts of the build chain, such as: bundler, platforms, remote cache provider, or helpers exposed through variety of npm packages.
 
@@ -39,66 +43,91 @@ Its core part is modular configuration mechanism allowing for customizing the ca
 For the best DX we focus on our CLI to be entrypoint to that system. In the future we imagine you can interact with it through other tools, like Shopify's Tophat, AI agent, or a custom CLI you already have and control.
 :::
 
-The CLI takes care of:
+### Key Features
 
-- building and running APK and APP files on devices, or simulators
-- build APK and APP for different variants and configuration
-- creating signed IPA and AAB archives for app stores distribution
-- re-signing archives with fresh JS bundles
-- providing tools to create a hash of the native projects
+The CLI handles all essential build and deployment tasks:
 
-### Changes compared to Community CLI
+- Building and running APK/APP files on devices and simulators
+- Creating builds for different variants and configurations
+- Generating signed IPA and AAB archives for app stores
+- Re-signing archives with fresh JS bundles
+- Generating native project hashes for caching
 
-Changed command names:
+### Command Changes from Community CLI
+
+We've updated command names:
 
 - `run-android` → `run:android`
 - `build-android` → `build:android`
 - `run-ios` → `run:ios`
 - `build-ios` → `build:ios`
 
-On top of that we added some new commands which you can read about on the [CLI page](/docs/cli/index)
+For a complete list of new commands, visit the [CLI page](/docs/cli/index).
 
-Changed flags:
+### Flag Changes
 
-- `--mode` to `--variant` for Android commands
-- `--mode` to `--configuration` for iOS commands
-- `--buildFolder` to `--build-folder` for iOS commands
-- `--destination` to `--destinations` for iOS commands
-- `--appId` to `--app-id` for Android commands
-- `--appIdSuffix` to `--app-id-suffix` for Android commands
+We've standardized flag naming across platforms:
 
-Removed flags:
+Android:
 
-- `--interactive`/`-i` – the CLI will prompt you for input where necessary
-- `--list-devices` - when no devices are connected, you'll be prompt with a full device selection
+- `--mode` → `--variant`
+- `--appId` → `--app-id`
+- `--appIdSuffix` → `--app-id-suffix`
+
+iOS:
+
+- `--mode` → `--configuration`
+- `--buildFolder` → `--build-folder`
+- `--destination` → `--destinations`
+
+### Removed Flags
+
+We've simplified the interface by removing redundant flags:
+
+- `--interactive`/`-i` – CLI now prompts for input when needed
+- `--list-devices` – Device selection is now automatic when no devices are connected
 
 ## The Remote Cache
 
-Another core part of the framework, although optional, is Remote Cache. You can think about it as a storage for you native app builds that you can retrieve either manually or through our CLI. This storage can be anything: Amazon S3, Cloudflare R2, Artifacts on your own CI or your custom provider.
+The Remote Cache is an optional but powerful feature that speeds up your development workflow. It acts as a centralized storage for native app builds that can be retrieved either manually or through our CLI. The cache can be hosted on various platforms:
+
+- GitHub Actions (currently supported)
+- Amazon S3 (coming soon)
+- Cloudflare R2 (coming soon)
+- Your own CI artifacts
+- Custom providers
 
 :::note
 Out of the box we support storing artifacts on GitHub Actions and we're working on more providers.
 :::
 
-For every build we calculate a hash (or fingerprint) which represents native state of your project. This hash is stable across builds, unless you make changes to your native files or change dependencies or scripts in package.json. This means that whenever you change the JavaScript part of you app, the hash will stay the same. Effectively allowing you to skip _a lot of builds_ on your local and CI environment.
+### How It Works
+
+1. For each build, we calculate a unique hash (fingerprint) that represents your project's native state
+2. This hash remains stable across builds unless you:
+   - Modify native files
+   - Change native dependencies
+   - Update scripts in package.json
+3. When you make JavaScript-only changes, the hash stays the same
+4. The CLI checks for matching builds in:
+   - Local cache (`.rnef/` directory)
+   - Remote storage
+   - Falls back to local build if no match is found
 
 ![How CLI works with remote cache](/cli-remote-cache.png)
 
-We calculate the same hash on your local project. If there's a match between your local project and the build stored remotely, the CLI will download the build for you, so you won't need to build the native project locally.
+### GitHub Actions Integration
 
-### The GitHub Actions
+We provide a set of reusable GitHub Actions that handle:
 
-Conceptually you can pick your own remote cache provider. Currently we only support GitHub Actions Artifacts. For that very reason we also prepared a set of reusable actions that you can use in your GitHub Workflows.
+- Build hash calculation
+- iOS/Android builds for:
+  - Developers (simulator/emulator builds – APK, APP)
+  - Testers (device builds – APK, IPA)
+- Artifact management (upload/download)
+- Code signing:
+  - iOS: certificates and provisioning profiles (IPA)
+  - Android: keystore (AAB)
+- Automatic re-signing of builds with fresh JS bundles on PR updates
 
-These actions handle:
-
-- calculating hashes
-- building iOS / Android for developers (simulator/emulator builds – APK, APP)
-- building iOS / Android for testers (device builds – APK, IPA)
-- downloading native artifacts
-- uploading native artifacts
-- signing iOS with certificates and provisioning profiles (producing IPA)
-- signing Android with keystore (producing AAB)
-- re-signing the native builds with fresh JS bundles on every PR update
-
-Learn more [here](/docs/remote-cache/github-actions/configuration).
+Learn more about [GitHub Actions configuration](/docs/remote-cache/github-actions/configuration).

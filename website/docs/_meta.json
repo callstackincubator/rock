@@ -3,10 +3,5 @@
     "text": "Docs",
     "link": "/docs/getting-started/index",
     "activeMatch": "^/docs/"
-  },
-  {
-    "text": "API",
-    "link": "/api/",
-    "activeMatch": "/api/"
   }
 ]
