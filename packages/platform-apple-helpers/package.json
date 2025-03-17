@@ -1,6 +1,6 @@
 {
   "name": "@rnef/platform-apple-helpers",
-  "version": "0.4.0",
+  "version": "0.4.1",
   "type": "module",
   "exports": {
     "types": "./dist/src/index.d.ts",
@@ -16,7 +16,7 @@
   "dependencies": {
     "@react-native-community/cli-config": "^16.0.2",
     "@react-native-community/cli-config-apple": "^16.0.2",
-    "@rnef/tools": "^0.4.0",
+    "@rnef/tools": "^0.4.1",
     "@types/adm-zip": "^0.5.7",
     "adm-zip": "^0.5.16",
     "fast-glob": "^3.3.2",
@@ -26,7 +26,7 @@
   },
   "devDependencies": {
     "@react-native-community/cli-types": "^16.0.2",
-    "@rnef/config": "^0.4.0"
+    "@rnef/config": "^0.4.1"
   },
   "publishConfig": {
     "access": "restricted"

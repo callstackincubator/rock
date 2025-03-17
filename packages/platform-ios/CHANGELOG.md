@@ -1,5 +1,14 @@
 # @rnef/platform-ios
 
+## 0.4.1
+
+### Patch Changes
+
+- b3cbcab: chore: public release setup
+- Updated dependencies [b3cbcab]
+  - @rnef/platform-apple-helpers@0.4.1
+  - @rnef/tools@0.4.1
+
 ## 0.4.0
 
 ### Patch Changes

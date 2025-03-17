@@ -1,5 +1,11 @@
 # @rnef/tools
 
+## 0.4.1
+
+### Patch Changes
+
+- b3cbcab: chore: public release setup
+
 ## 0.4.0
 
 ### Patch Changes

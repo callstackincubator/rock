@@ -1,5 +1,14 @@
 # @rnef/cli
 
+## 0.4.1
+
+### Patch Changes
+
+- b3cbcab: chore: public release setup
+- Updated dependencies [b3cbcab]
+  - @rnef/config@0.4.1
+  - @rnef/tools@0.4.1
+
 ## 0.4.0
 
 ### Patch Changes
