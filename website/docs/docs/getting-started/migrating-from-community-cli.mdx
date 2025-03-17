@@ -1,12 +1,14 @@
+import { PackageManagerTabs } from 'rspress/theme';
+
 # Migrating from Community CLI
 
 1. Install dev dependencies:
 
-   ```sh
-   npm install -D @rnef/cli @rnef/plugin-metro @rnef/platform-android @rnef/platform-ios
-   ```
+   <PackageManagerTabs command="install @rnef/cli @rnef/plugin-metro @rnef/platform-android @rnef/platform-ios" />
 
 1. Remove `@react-native-community/cli` and related packages.
+
+   <PackageManagerTabs command="remove @react-native-community/cli @react-native-community/cli-platform-ios @react-native-community/cli-platform-android" />
 
 1. Add `.rnef/` folder with caches to `.gitignore`:
 
