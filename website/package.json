@@ -9,7 +9,8 @@
   },
   "dependencies": {
     "@callstack/rspress-theme": "^0.0.2",
-    "rspress": "^1.40.2"
+    "rspress": "^1.40.2",
+    "rspress-plugin-vercel-analytics": "^0.3.0"
   },
   "devDependencies": {
     "@types/node": "^18.11.17"
