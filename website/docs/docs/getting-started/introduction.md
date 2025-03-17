@@ -51,10 +51,10 @@ The CLI takes care of:
 
 Changed command names:
 
-- `run-android` -> `run:android`
-- `build-android` -> `build:android`
-- `run-ios` -> `run:ios`
-- `build-ios` -> `build:ios`
+- `run-android` → `run:android`
+- `build-android` → `build:android`
+- `run-ios` → `run:ios`
+- `build-ios` → `build:ios`
 
 On top of that we added some new commands which you can read about on the [CLI page](/docs/cli/index)
 
