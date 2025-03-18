@@ -24,7 +24,9 @@ jobs:
         id: changesets
         uses: changesets/action@v1
         with:
-          version: pnpm run version
+          version: |
+            pnpm run version
+            ./scripts/update-template-dependencies.sh
           commit: 'chore: version packages'
           title: 'chore: version packages'
           publish: pnpm publish:npm
