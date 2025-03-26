@@ -41,6 +41,7 @@ type StartCommandArgs = {
   watchFolders?: string[];
   config?: string;
   projectRoot?: string;
+  clientLogs?: boolean;
   interactive: boolean;
 };
 
