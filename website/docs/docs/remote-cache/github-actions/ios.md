@@ -9,9 +9,10 @@ Use in the GitHub Workflow file like this:
 ```yaml
 - name: RNEF Remote Build - iOS simulator
   id: rnef-remote-build-ios
-  uses: ./.github/actions/rnef-remote-build-ios
+  uses: callstackincubator/ios@v1
   with:
     destination: simulator
+    github-token: ${{ secrets.GITHUB_TOKEN }}
     configuration: Debug
 ```
 
@@ -116,9 +117,10 @@ Use in the GitHub Workflow file like this:
 ```yaml
 - name: RNEF Remote Build - iOS device
   id: rnef-remote-build-ios
-  uses: ./.github/actions/rnef-remote-build-ios
+  uses: callstackincubator/ios@v1
   with:
     destination: device
+    github-token: ${{ secrets.GITHUB_TOKEN }}
     configuration: Release
     certificate-base64: ${{ secrets.APPLE_BUILD_CERTIFICATE_BASE64 }}
     certificate-password: ${{ secrets.APPLE_BUILD_CERTIFICATE_PASSWORD }}
@@ -140,9 +142,10 @@ Pass extra parameters to the `rnef build:ios` command, in order to apply custom 
 ```yaml
 - name: RNEF Remote Build - iOS device
   id: rnef-remote-build-ios
-  uses: ./.github/actions/rnef-remote-build-ios
+  uses: callstackincubator/ios@v1
   with:
     destination: device
+    github-token: ${{ secrets.GITHUB_TOKEN }}
     rnef-build-extra-params: 'CUSTOM FLAGS AND ENVIRONMENT VARIABLES'
 ```
 
@@ -157,13 +160,13 @@ To avoid polluting artifact storage it will also handle removal of old artifacts
 ```yaml
 - name: RNEF Remote Build - iOS device
   id: rnef-remote-build-ios
-  uses: ./.github/actions/rnef-remote-build-ios
+  uses: callstackincubator/ios@v1
   with:
     destination: device
+    github-token: ${{ secrets.GITHUB_TOKEN }}
     re-sign: true
     # ...rest of code signing inputs
 ```
-
 
 #### `working-directory`
 
@@ -186,9 +189,10 @@ You'll need to set `working-directory: ./packages/mobile`:
 ```yaml
 - name: RNEF Remote Build - iOS device
   id: rnef-remote-build-ios
-  uses: ./.github/actions/rnef-remote-build-ios
+  uses: callstackincubator/ios@v1
   with:
     destination: device
+    github-token: ${{ secrets.GITHUB_TOKEN }}
     working-directory: ./packages/mobile
 ```
 

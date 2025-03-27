@@ -11,9 +11,10 @@ Use in the GitHub Workflow file like this:
 ```yaml
 - name: RNEF Remote Build - Android
   id: rnef-remote-build-android
-  uses: ./.github/actions/rnef-remote-build-android
+  uses: callstackincubator/android@v1
   with:
     variant: debug
+    github-token: ${{ secrets.GITHUB_TOKEN }}
 ```
 
 ## Tester Builds For All Devices
@@ -43,9 +44,10 @@ Use in the GitHub Workflow file like this:
 ```yaml
 - name: RNEF Remote Build - Android device
   id: rnef-remote-build-android
-  uses: ./.github/actions/rnef-remote-build-android
+  uses: callstackincubator/android@v1
   with:
     variant: release
+    github-token: ${{ secrets.GITHUB_TOKEN }}
     # if you need to sign with non-debug keystore
     sign: true
     keystore-base64: ${{ secrets.KEYSTORE_BASE64 }}
@@ -66,9 +68,10 @@ Pass extra parameters to the `rnef build:android` command, in order to apply cus
 ```yaml
 - name: RNEF Remote Build - Android
   id: rnef-remote-build-android
-  uses: ./.github/actions/rnef-remote-build-android
+  uses: callstackincubator/android@v1
   with:
     variant: release
+    github-token: ${{ secrets.GITHUB_TOKEN }}
     rnef-build-extra-params: '--aab' # build an Android App Bundle for the Play Store
 ```
 
@@ -83,9 +86,10 @@ To avoid polluting artifact storage it will also handle removal of old artifacts
 ```yaml
 - name: RNEF Remote Build - Android
   id: rnef-remote-build-android
-  uses: ./.github/actions/rnef-remote-build-android
+  uses: callstackincubator/android@v1
   with:
     variant: release
+    github-token: ${{ secrets.GITHUB_TOKEN }}
     re-sign: true
 ```
 
@@ -98,9 +102,10 @@ For security reasons we add Gradle Wrapper validation step to Android build acti
 ```yaml
 - name: RNEF Remote Build - Android
   id: rnef-remote-build-android
-  uses: ./.github/actions/rnef-remote-build-android
+  uses: callstackincubator/android@v1
   with:
     variant: debug
+    github-token: ${{ secrets.GITHUB_TOKEN }}
     validate-gradle-wrapper: false
 ```
 
@@ -125,9 +130,10 @@ You'll need to set `working-directory: ./packages/mobile`:
 ```yaml
 - name: RNEF Remote Build - Android
   id: rnef-remote-build-android
-  uses: ./.github/actions/rnef-remote-build-android
+  uses: callstackincubator/android@v1
   with:
     variant: debug
+    github-token: ${{ secrets.GITHUB_TOKEN }}
     working-directory: ./packages/mobile
 ```
 
