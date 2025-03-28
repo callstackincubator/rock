@@ -127,6 +127,6 @@ npx @rnef/create-app enterprise
    - `--interactive`/`-i` – the CLI will prompt you for input where necessary
    - `--list-devices` - when no devices are connected, you'll be prompt with a full device selection
 
-1. Configure GitHub Actions for remote builds as per [CI Docs](CI.md)
+1. Configure GitHub Actions for remote builds as per [CI Docs](https://rnef.vercel.app/docs/remote-cache/github-actions/configuration.html)
 
-1. (Optional) Configure [Brownfield](./BROWNFIELD.md) – add React Native to existing native app.
+1. (Optional) Add React Native to existing native app with a [brownfield plugin](https://rnef.vercel.app/docs/brownfield.html).
