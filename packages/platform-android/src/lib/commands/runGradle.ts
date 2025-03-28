@@ -6,20 +6,16 @@ import {
   spinner,
   type SubprocessError,
 } from '@rnef/tools';
+import type { AarProject, PackageAarFlags } from './aar/packageAar.js';
+import type { PublishLocalAarFlags } from './aar/publishLocalAar.js';
 import type { BuildFlags } from './buildAndroid/buildAndroid.js';
 import { getAdbPath, getDevices } from './runAndroid/adb.js';
 import type { AndroidProject, Flags } from './runAndroid/runAndroid.js';
 
-interface AARConfig {
-  sourceDir: string;
-  moduleName: string;
-  packageName: string;
-}
-
 type RunGradleAarArgs = {
   tasks: string[];
-  aarProject: AARConfig;
-  args: BuildFlags | Flags;
+  aarProject: AarProject;
+  args: PackageAarFlags | PublishLocalAarFlags;
   isPublishTask?: boolean;
 };
 
@@ -118,16 +114,13 @@ export async function runGradleAar({
   const loader = spinner({ indicator: 'timer' });
   const message = isPublishTask
     ? 'Publishing the AAR'
-    : `Building the AAR with Gradle in ${args.variant} build variant`;
+    : // @ts-expect-error args.variant is not set for publish task
+      `Building the AAR with Gradle in ${args.variant} build variant`;
 
   loader.start(message);
   const gradleArgs = getTaskNames(aarProject.moduleName, tasks);
 
   gradleArgs.push('-x', 'lint');
-
-  if (args.extraParams) {
-    gradleArgs.push(...args.extraParams);
-  }
 
   const gradleWrapper = getGradleWrapper();
 
@@ -135,11 +128,13 @@ export async function runGradleAar({
     logger.debug(`Running ${gradleWrapper} ${gradleArgs.join(' ')}.`);
     await spawn(gradleWrapper, gradleArgs, {
       cwd: aarProject.sourceDir,
+      stdio: logger.isVerbose() ? 'inherit' : 'pipe',
     });
     loader.stop(
       isPublishTask
         ? 'Published the AAR to local maven (~/.m2/repository)'
-        : `Built the AAR in ${args.variant} build variant.`
+        : // @ts-expect-error args.variant is not set for publish task
+          `Built the AAR in ${args.variant} build variant.`
     );
   } catch (error) {
     loader.stop(`Failed to ${isPublishTask ? 'publish' : 'build'} the AAR`);
