@@ -262,6 +262,28 @@ importers:
         specifier: ^0.4.1
         version: link:../config
 
+  packages/plugin-brownfield-android:
+    dependencies:
+      '@react-native-community/cli-config-android':
+        specifier: ^16.0.2
+        version: 16.0.2
+      '@rnef/platform-android':
+        specifier: ^0.4.1
+        version: link:../platform-android
+      '@rnef/tools':
+        specifier: ^0.4.1
+        version: link:../tools
+      tslib:
+        specifier: ^2.3.0
+        version: 2.8.1
+    devDependencies:
+      '@react-native-community/cli-types':
+        specifier: ^16.0.2
+        version: 16.0.2
+      '@rnef/config':
+        specifier: ^0.4.1
+        version: link:../config
+
   packages/plugin-brownfield-ios:
     dependencies:
       '@react-native-community/cli-config-apple':
@@ -279,28 +301,6 @@ importers:
     devDependencies:
       '@rnef/config':
         specifier: ^0.4.1
-        version: link:../config
-
-  packages/plugin-brownfield-android:
-    dependencies:
-      '@react-native-community/cli-config-android':
-        specifier: ^16.0.2
-        version: 16.0.2
-      '@rnef/platform-android':
-        specifier: ^0.2.0
-        version: link:../platform-android
-      '@rnef/tools':
-        specifier: ^0.2.0
-        version: link:../tools
-      tslib:
-        specifier: ^2.3.0
-        version: 2.8.1
-    devDependencies:
-      '@react-native-community/cli-types':
-        specifier: ^16.0.2
-        version: 16.0.2
-      '@rnef/config':
-        specifier: ^0.2.0
         version: link:../config
 
   packages/plugin-metro:
