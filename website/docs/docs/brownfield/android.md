@@ -231,10 +231,57 @@ object RNViewFactory {
 }
 ```
 
-## 7. Set up RNEF for AAR generation
+## 7. Configure Maven Publishing
+
+Add the Maven publish plugin to your `rnbrownfield/build.gradle.kts`:
+
+```gradle title="rnbrownfield/build.gradle.kts" {5}
+plugins {
+    id("com.android.library")
+    id("org.jetbrains.kotlin.android")
+    id("org.bigfataar.plugin")
+    `maven-publish`
+}
+```
+
+Configure the publishing settings:
+
+```gradle title="rnbrownfield/build.gradle.kts"
+publishing {
+    publications {
+        create<MavenPublication>("mavenAar") {
+            groupId = "com.callstack"
+            artifactId = "rnbrownfield"
+            version = "0.0.1-local"
+            artifact("$moduleBuildDir/outputs/aar/rnbrownfield-release.aar")
+
+            pom {
+                withXml {
+                    asNode().appendNode("dependencies").apply {
+                        configurations.getByName("api").allDependencies.forEach { dependency ->
+                            appendNode("dependency").apply {
+                                appendNode("groupId", dependency.group)
+                                appendNode("artifactId", dependency.name)
+                                appendNode("version", dependency.version)
+                                appendNode("scope", "compile")
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    repositories {
+        mavenLocal() // Publishes to the local Maven repository (~/.m2/repository by default)
+    }
+}
+```
+
+## 8. Set up RNEF for AAR generation
 
 1. Add `@rnef/plugin-brownfield-android` to your dependencies
-2. Update your `rnef.config.mjs`:
+1. Update your `rnef.config.mjs`:
 
    ```js title="rnef.config.mjs"
    import { pluginBrownfieldAndroid } from '@rnef/plugin-brownfield-android';
@@ -244,13 +291,19 @@ object RNViewFactory {
    };
    ```
 
-3. Run this command to generate the final AAR:
+1. Run this command to generate the final AAR:
 
    ```sh title="Terminal"
    rnef package:aar --variant Release --module-name rnbrownfield
    ```
 
-## 8. Add the AAR to Your Android App
+1. Once the AAR is created, publish it to local Maven registry to be consumable by the native app:
+
+   ```sh title="Terminal"
+   rnef publish-local:aar --module-name rnbrownfield
+   ```
+
+## 9. Add the AAR to Your Android App
 
 > Note: You'll need an existing Android app or create a new one in Android Studio.
 
@@ -274,7 +327,7 @@ object RNViewFactory {
    }
    ```
 
-## 9. Show the React Native UI
+## 10. Show the React Native UI
 
 Create a new `RNAppFragment.kt`:
 
