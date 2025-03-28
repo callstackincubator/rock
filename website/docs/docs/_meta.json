@@ -18,5 +18,10 @@
     "type": "dir",
     "name": "remote-cache",
     "label": "Remote Cache"
+  },
+  {
+    "type": "dir",
+    "name": "brownfield",
+    "label": "Adding to existing native apps"
   }
 ]
