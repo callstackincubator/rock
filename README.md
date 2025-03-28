@@ -24,17 +24,15 @@
 For new projects you can run:
 
 ```
-npx create-rnef-app enterprise
+npx @rnef/create-app enterprise
 ```
 
 ## Adding to existing projects
 
-1. Copy `.github/` files from [`@rnef/template-default`](https://github.com/callstack/rnef/tree/main/templates/rnef-template-default/), [`@rnef/platform-android`](https://github.com/callstack/rnef/tree/main/packages/platform-android/template), and [`@rnef/platform-ios`](https://github.com/callstack/rnef/tree/main/packages/platform-ios/template). They contain necessary actions with remote builds for iOS and Android and sample workflows for running those actions. In the upcoming future we'll release reusable actions so you will only need to integrate them into your workflows.
-
 1. Install deps:
 
    ```sh
-   npm install --dev @rnef/cli @rnef/plugin-metro @rnef/platform-android @rnef/platform-ios @actions/core @actions/github
+   npm install -D @rnef/cli @rnef/plugin-metro @rnef/platform-android @rnef/platform-ios
    ```
 
 1. Remove `@react-native-community/cli` and related packages.
@@ -53,7 +51,7 @@ npx create-rnef-app enterprise
    import { pluginMetro } from '@rnef/plugin-metro';
 
    export default {
-     plugins: [pluginMetro()],
+     bundler: pluginMetro(),
      platforms: {
        ios: platformIOS(),
        android: platformAndroid(),
@@ -124,6 +122,11 @@ npx create-rnef-app enterprise
    - `--appId` to `--app-id` for Android commands
    - `--appIdSuffix` to `--app-id-suffix` for Android commands
 
-1. Configure GitHub Actions for remote builds.
+   And remove unsupported flags:
 
-1. Configure [Brownfield](./BROWNFIELD.md).
+   - `--interactive`/`-i` – the CLI will prompt you for input where necessary
+   - `--list-devices` - when no devices are connected, you'll be prompt with a full device selection
+
+1. Configure GitHub Actions for remote builds as per [CI Docs](CI.md)
+
+1. (Optional) Configure [Brownfield](./BROWNFIELD.md) – add React Native to existing native app.

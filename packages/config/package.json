@@ -1,19 +1,28 @@
 {
   "name": "@rnef/config",
-  "version": "0.2.0",
+  "version": "0.4.1",
   "type": "module",
   "exports": {
     "types": "./dist/src/index.d.ts",
     "import": "./dist/src/index.js"
   },
+  "files": [
+    "dist"
+  ],
   "scripts": {
-    "publish:npm": "npm publish --access restricted",
+    "publish:npm": "npm publish --access public",
     "publish:verdaccio": "npm publish --registry http://localhost:4873 --userconfig ../../.npmrc"
   },
   "dependencies": {
+    "@babel/code-frame": "^7.26.2",
+    "@rnef/tools": "^0.4.1",
+    "joi": "^17.13.3",
     "tslib": "^2.3.0"
   },
   "publishConfig": {
-    "access": "restricted"
+    "access": "public"
+  },
+  "devDependencies": {
+    "@types/babel__code-frame": "^7.0.6"
   }
 }

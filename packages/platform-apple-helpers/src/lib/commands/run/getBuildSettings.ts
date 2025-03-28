@@ -1,7 +1,9 @@
-import { color, logger, spawn } from '@rnef/tools';
+import path from 'node:path';
+import { color, logger, RnefError, spawn } from '@rnef/tools';
 import type { XcodeProjectInfo } from '../../types/index.js';
+import type { PlatformSDK } from '../../utils/getPlatformInfo.js';
 
-export type BuildSettings = {
+type BuildSettings = {
   TARGET_BUILD_DIR: string;
   INFOPLIST_PATH: string;
   EXECUTABLE_FOLDER_PATH: string;
@@ -12,10 +14,10 @@ export async function getBuildSettings(
   xcodeProject: XcodeProjectInfo,
   sourceDir: string,
   configuration: string,
-  buildOutput: string,
+  platformSDK: PlatformSDK,
   scheme: string,
   target?: string
-): Promise<BuildSettings | null> {
+): Promise<{ appPath: string; infoPlistPath: string }> {
   const { stdout: buildSettings } = await spawn(
     'xcodebuild',
     [
@@ -24,7 +26,7 @@ export async function getBuildSettings(
       '-scheme',
       scheme,
       '-sdk',
-      getPlatformName(buildOutput),
+      platformSDK,
       '-configuration',
       configuration,
       '-showBuildSettings',
@@ -53,6 +55,7 @@ export async function getBuildSettings(
       selectedTarget = target;
     }
   }
+
   logger.debug(`Selected target: ${selectedTarget}`);
 
   // Find app in all building settings - look for WRAPPER_EXTENSION: 'app',
@@ -62,21 +65,47 @@ export async function getBuildSettings(
   const wrapperExtension = targetSettings.WRAPPER_EXTENSION;
 
   if (wrapperExtension === 'app') {
-    return settings[targetIndex].buildSettings;
+    const buildSettings = settings[targetIndex].buildSettings as BuildSettings;
+
+    if (!buildSettings) {
+      throw new RnefError('Failed to get build settings for your project');
+    }
+
+    const appPath = getBuildPath(buildSettings, platformSDK);
+    const infoPlistPath = buildSettings.INFOPLIST_PATH;
+    const targetBuildDir = buildSettings.TARGET_BUILD_DIR;
+
+    return {
+      appPath,
+      infoPlistPath: path.join(targetBuildDir, infoPlistPath),
+    };
   }
 
-  return null;
+  throw new RnefError(
+    `Failed to get build settings for your project. Looking for "app" wrapper extension but found: ${wrapperExtension}`
+  );
 }
 
-function getPlatformName(buildOutput: string) {
-  // Xcode can sometimes escape `=` with a backslash or put the value in quotes
-  const platformNameMatch = /export PLATFORM_NAME\\?="?(\w+)"?$/m.exec(
-    buildOutput
-  );
-  if (!platformNameMatch) {
-    throw new Error(
-      'Couldn\'t find "PLATFORM_NAME" variable in xcodebuild output. Please report this issue and run your project with Xcode instead.'
-    );
+function getBuildPath(buildSettings: BuildSettings, platformSDK: PlatformSDK) {
+  const targetBuildDir = buildSettings.TARGET_BUILD_DIR;
+  const executableFolderPath = buildSettings.EXECUTABLE_FOLDER_PATH;
+  const fullProductName = buildSettings.FULL_PRODUCT_NAME;
+
+  if (!targetBuildDir) {
+    throw new Error('Failed to get the target build directory.');
   }
-  return platformNameMatch[1];
+
+  if (!executableFolderPath) {
+    throw new Error('Failed to get the app name.');
+  }
+
+  if (!fullProductName) {
+    throw new Error('Failed to get product name.');
+  }
+
+  if (platformSDK === 'macosx') {
+    return path.join(targetBuildDir, fullProductName);
+  } else {
+    return path.join(targetBuildDir, executableFolderPath);
+  }
 }

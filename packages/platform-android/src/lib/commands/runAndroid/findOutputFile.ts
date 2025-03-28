@@ -1,7 +1,7 @@
-import { existsSync } from "node:fs";
-import { RnefError, spawn } from "@rnef/tools";
-import { getAdbPath } from "./adb.js";
-import type { AndroidProject } from "./runAndroid.js";
+import { existsSync } from 'node:fs';
+import { logger, spawn } from '@rnef/tools';
+import { getAdbPath } from './adb.js';
+import type { AndroidProject } from './runAndroid.js';
 
 export async function findOutputFile(
   androidProject: AndroidProject,
@@ -18,7 +18,7 @@ export async function findOutputFile(
   if (!selectedTask) {
     return false;
   }
-  // handle if selected task from interactive mode includes build flavour as well, eg. installProductionDebug should create ['production','debug'] array
+  // handle if selected task includes build flavour as well, eg. installProductionDebug should create ['production','debug'] array
   const variantFromSelectedTask = selectedTask
     ?.replace('install', '')
     ?.replace('assemble', '')
@@ -38,7 +38,7 @@ export async function findOutputFile(
     apkOrBundle === 'apk' ? 'apk' : 'aab',
     device
   );
-  return `${buildDirectory}/${outputFile}`;
+  return outputFile ? `${buildDirectory}/${outputFile}` : undefined;
 }
 
 async function getInstallOutputFileName(
@@ -64,9 +64,15 @@ async function getInstallOutputFileName(
     return outputFile;
   }
 
-  throw new RnefError(
-    `Could not find the correct .${apkOrAab} file to install.`
-  );
+  logger.debug('Could not find the output file:', {
+    buildDirectory,
+    outputFile,
+    appName,
+    variant,
+    apkOrAab,
+  });
+
+  return undefined;
 }
 
 /**

@@ -3,23 +3,9 @@ import path from 'node:path';
 import {
   findDirectoriesWithPattern,
   getDotRnefPath,
-  getProjectRoot,
   RnefError,
 } from '@rnef/tools';
 import AdmZip from 'adm-zip';
-
-export function getHermescPath() {
-  const hermesPath = path.join(
-    getProjectRoot(),
-    'ios/Pods/hermes-engine/destroot/bin/hermesc'
-  );
-
-  if (!existsSync(hermesPath)) {
-    throw new RnefError(`Hermesc binary not found at ${hermesPath}`);
-  }
-
-  return hermesPath;
-}
 
 /**
  * Temporary paths for sign operation.

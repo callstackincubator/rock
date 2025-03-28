@@ -1,8 +1,8 @@
 import { createRequire } from 'node:module';
 import { dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
-import { getConfig } from '@rnef/config';
-import { logger, resolveFilenameUp, RnefError } from '@rnef/tools';
+import { type CommandType, getConfig } from '@rnef/config';
+import { color, logger, resolveFilenameUp, RnefError } from '@rnef/tools';
 import { Command } from 'commander';
 import { logConfig } from '../config.js';
 import { checkDeprecatedOptions } from './checkDeprecatedOptions.js';
@@ -36,13 +36,19 @@ export const cli = async ({ cwd, argv }: CliOptions = {}) => {
     .option('-p, --platform <string>', 'Select platform, e.g. ios or android')
     .action(logConfig);
 
+  // Register commands from the config
+  const config = await getConfig(cwd);
+
   program
     .command('fingerprint [path]')
     .option('-p, --platform <string>', 'Select platform, e.g. ios or android')
-    .action(nativeFingerprintCommand);
+    .action(async (path, options) => {
+      const fingerprintOptions = config.getFingerprintOptions();
+      await nativeFingerprintCommand(path, fingerprintOptions, options);
+    });
 
-  // Register commands from the config
-  const config = await getConfig(cwd);
+  ensureUniqueCommands(config.commands);
+
   config.commands?.forEach((command) => {
     const cmd = program
       .command(command.name)
@@ -51,10 +57,14 @@ export const cli = async ({ cwd, argv }: CliOptions = {}) => {
         try {
           await command.action(...args);
         } catch (error) {
-          if (!logger.isVerbose() && error instanceof RnefError) {
-            logger.error(error.message);
-            if (error.cause) {
-              logger.error(`Cause: ${error.cause}`);
+          if (error instanceof RnefError) {
+            if (logger.isVerbose()) {
+              logger.error(error);
+            } else {
+              logger.error(error.message);
+              if (error.cause) {
+                logger.error(`Cause: ${error.cause}`);
+              }
             }
           } else {
             logger.error(
@@ -84,3 +94,33 @@ export const cli = async ({ cwd, argv }: CliOptions = {}) => {
 
   await program.parseAsync(argv);
 };
+
+function ensureUniqueCommands(commands: CommandType[] | undefined) {
+  if (!commands) return;
+
+  const commandNames = new Map();
+
+  for (const command of commands) {
+    if (commandNames.has(command.name)) {
+      const duplicate = commandNames.get(command.name);
+      const samePluginTwice = command.__origin === duplicate.__origin;
+      if (samePluginTwice) {
+        logger.error(`Found duplicated command "${
+          command.name
+        }" registered twice by the same "${
+          command.__origin
+        }" plugin in ${color.cyan('rnef.config.js')} file.
+Please declare the plugin only once.`);
+      } else {
+        logger.error(`Found duplicated command "${
+          command.name
+        }" registered by 2 plugins in ${color.cyan('rnef.config.js')} file:
+1. Added by "${command.__origin}" plugin
+2. Added by "${duplicate.__origin}" plugin
+Command names must be unique. Please check if you import a plugin multiple times or use incompatible plugins.`);
+      }
+      process.exit(1);
+    }
+    commandNames.set(command.name, command);
+  }
+}

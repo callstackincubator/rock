@@ -7,13 +7,14 @@ const pluginApi = {
   getReactNativePath: vi.fn(),
   getReactNativeVersion: vi.fn(),
   getPlatforms: vi.fn(),
+  getRemoteCacheProvider: vi.fn(),
 };
 
 test('plugin is called with correct arguments and returns its name and description', () => {
   const plugin = pluginMetro()(pluginApi);
 
   expect(plugin).toMatchObject({
-    name: 'plugin-metro',
+    name: '@rnef/plugin-metro',
     description: 'RNEF plugin for Metro bundler.',
   });
 });

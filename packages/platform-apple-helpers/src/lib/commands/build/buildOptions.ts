@@ -4,17 +4,18 @@ import { getPlatformInfo } from '../../utils/getPlatformInfo.js';
 
 export type BuildFlags = {
   verbose?: boolean;
-  interactive?: boolean;
   configuration?: string;
   scheme?: string;
   target?: string;
   extraParams?: string[];
   exportExtraParams?: string[];
-  device?: string;
-  catalyst?: boolean;
+  exportOptionsPlist?: string;
   buildFolder?: string;
+  destination?: string;
   destinations?: string[];
   archive?: boolean;
+  installPods: boolean;
+  newArch: boolean;
 };
 
 export const getBuildOptions = ({ platformName }: BuilderCommand) => {
@@ -24,11 +25,6 @@ export const getBuildOptions = ({ platformName }: BuilderCommand) => {
     {
       name: '--verbose',
       description: '',
-    },
-    {
-      name: '-i --interactive',
-      description:
-        'Explicitly select which scheme and configuration to use before running a build',
     },
     {
       name: '--configuration <string>',
@@ -57,18 +53,18 @@ export const getBuildOptions = ({ platformName }: BuilderCommand) => {
       parse: parseArgs,
     },
     {
-      name: '--device <string>',
-      description:
-        'Explicitly set the device or simulator to use by name or by UDID.',
-    },
-    {
-      name: '--catalyst',
-      description: 'Run on Mac Catalyst.',
+      name: '--export-options-plist <string>',
+      description: 'Name of the export options file for archiving. Defaults to: ExportOptions.plist',
     },
     {
       name: '--build-folder <string>',
       description: `Location for ${readableName} build artifacts. Corresponds to Xcode's "-derivedDataPath".`,
       value: 'build',
+    },
+    {
+      name: '--destination <string>',
+      description:
+        'Define whether to build for a generic device or generic simulator. Available values: "simulator", "device"',
     },
     {
       name: '--destinations <list>',
@@ -80,6 +76,14 @@ export const getBuildOptions = ({ platformName }: BuilderCommand) => {
       name: '--archive',
       description:
         'Create an Xcode archive (IPA) of the build, required for uploading to App Store Connect or distributing to TestFlight',
+    },
+    {
+      name: '--no-install-pods',
+      description: 'Skip automatic CocoaPods installation',
+    },
+    {
+      name: '--no-new-arch',
+      description: 'Run React Native in legacy async architecture.',
     },
   ];
 };

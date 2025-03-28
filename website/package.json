@@ -1,0 +1,19 @@
+{
+  "name": "rnef-docs",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "build": "rspress build",
+    "dev": "rspress dev",
+    "preview": "rspress preview"
+  },
+  "dependencies": {
+    "@callstack/rspress-theme": "^0.0.2",
+    "rspress": "^1.40.2",
+    "rspress-plugin-vercel-analytics": "^0.3.0"
+  },
+  "devDependencies": {
+    "@types/node": "^18.11.17"
+  },
+  "packageManager": "pnpm@10.2.1"
+}

@@ -1,19 +1,17 @@
 import fs from 'node:fs';
 import path from 'node:path';
-import type {
-  SupportedRemoteCacheProviders} from '@rnef/tools';
+import type { SupportedRemoteCacheProviders } from '@rnef/tools';
 import {
   color,
   createRemoteBuildCache,
   findDirectoriesWithPattern,
   findFilesWithPattern,
   formatArtifactName,
-  getProjectRoot,
   type LocalBuild,
   logger,
   nativeFingerprint,
   queryLocalBuildCache,
-  spinner
+  spinner,
 } from '@rnef/tools';
 import * as tar from 'tar';
 
@@ -22,21 +20,44 @@ export type Distribution = 'simulator' | 'device';
 type FetchCachedBuildOptions = {
   distribution: Distribution;
   configuration: string;
-  remoteCacheProvider: SupportedRemoteCacheProviders | undefined;
+  remoteCacheProvider: SupportedRemoteCacheProviders | undefined | null;
+  root: string;
+  fingerprintOptions: {
+    extraSources: string[];
+    ignorePaths: string[];
+  };
 };
 
 export async function fetchCachedBuild({
   distribution,
   configuration,
   remoteCacheProvider,
+  root,
+  fingerprintOptions,
 }: FetchCachedBuildOptions): Promise<LocalBuild | null> {
+  if (remoteCacheProvider === null) {
+    return null;
+  }
+  if (remoteCacheProvider === undefined) {
+    logger.warn(`No remote cache provider set. You won't be able to access reusable builds from e.g. GitHub Actions. 
+To configure it, set the "remoteCacheProvider" key in ${color.cyan(
+      'rnef.config.js'
+    )} file:
+{
+  remoteCacheProvider: 'github-actions'
+}
+To disable this warning, set "remoteCacheProvider" to null.
+Proceeding with local build.`);
+    return null;
+  }
   const loader = spinner();
   loader.start('Looking for a local cached build');
 
-  const root = getProjectRoot();
   const artifactName = await calculateArtifactName({
     distribution,
     configuration,
+    root,
+    fingerprintOptions,
   });
 
   const localBuild = queryLocalBuildCache(artifactName, {
@@ -47,13 +68,9 @@ export async function fetchCachedBuild({
     return localBuild;
   }
 
-  if (!remoteCacheProvider) {
-    return null;
-  }
-
   const remoteBuildCache = await createRemoteBuildCache(remoteCacheProvider);
   if (!remoteBuildCache) {
-    loader.stop(`No remote cache provider set, skipping.`);
+    loader.stop(`No remote cache provider found, skipping.`);
     return null;
   }
 
@@ -93,9 +110,14 @@ export async function fetchCachedBuild({
 async function calculateArtifactName({
   distribution,
   configuration,
+  root,
+  fingerprintOptions,
 }: Omit<FetchCachedBuildOptions, 'remoteCacheProvider'>) {
-  const root = getProjectRoot();
-  const fingerprint = await nativeFingerprint(root, { platform: 'ios' });
+  const fingerprint = await nativeFingerprint(root, {
+    platform: 'ios',
+    ...fingerprintOptions,
+  });
+
   return formatArtifactName({
     platform: 'ios',
     distribution,

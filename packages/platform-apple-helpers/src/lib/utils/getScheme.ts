@@ -1,17 +1,19 @@
-import { logger, promptSelect, RnefError } from '@rnef/tools';
+import { isInteractive, logger, promptSelect, RnefError } from '@rnef/tools';
 import path from 'path';
 import type { Info } from '../types/index.js';
 
 export async function getScheme(
   schemes: Info['schemes'],
   preselectedScheme: string | undefined,
-  interactive: boolean | undefined,
   projectName: string
 ) {
   let scheme = preselectedScheme;
-  if (interactive) {
-    if (schemes && schemes.length > 1 && !preselectedScheme) {
+  if (schemes && schemes.length > 1 && !preselectedScheme) {
+    if (isInteractive()) {
       scheme = await promptForSchemeSelection(schemes);
+      logger.info(
+        `You can set scheme manually next time using "--scheme ${scheme}" flag.`
+      );
     }
   }
   if (!scheme) {

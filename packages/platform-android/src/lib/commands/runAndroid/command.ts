@@ -21,7 +21,8 @@ export function registerRunCommand(
           androidConfig,
           { ...pluginConfig, ...(args as Flags) },
           projectRoot,
-          api.getRemoteCacheProvider()
+          api.getRemoteCacheProvider(),
+          api.getFingerprintOptions()
         );
       } else {
         throw new RnefError('Android project not found.');

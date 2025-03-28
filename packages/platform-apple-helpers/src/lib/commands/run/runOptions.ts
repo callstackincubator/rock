@@ -6,6 +6,8 @@ export interface RunFlags extends BuildFlags {
   binaryPath?: string;
   port: string;
   remoteCache?: boolean;
+  device?: string;
+  catalyst?: boolean;
 }
 
 export const getRunOptions = ({ platformName }: BuilderCommand) => {
@@ -22,6 +24,15 @@ export const getRunOptions = ({ platformName }: BuilderCommand) => {
     {
       name: '--no-remote-cache',
       description: 'Do not use remote build caching.',
+    },
+    {
+      name: '--device <string>',
+      description:
+        'Explicitly set the device or simulator to use by name or by UDID.',
+    },
+    {
+      name: '--catalyst',
+      description: 'Run on Mac Catalyst.',
     },
     ...getBuildOptions({ platformName }),
   ];

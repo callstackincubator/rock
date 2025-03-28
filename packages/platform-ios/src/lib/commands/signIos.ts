@@ -25,7 +25,7 @@ const OPTIONS = [
   },
   {
     name: '--identity <string>',
-    description: 'Identity to use for code signing.',
+    description: 'Certificate Identity name to use for code signing, e.g. "Apple Distribution: Your Team (HFJASKHDDS)".',
   },
   {
     name: '--output <string>',

@@ -1,6 +1,11 @@
 import fs from 'node:fs';
-import { logger, RnefError, spawn, SubprocessError } from '@rnef/tools';
-import { getHermescPath } from './utils.js';
+import {
+  logger,
+  RnefError,
+  runHermes,
+  spawn,
+  SubprocessError,
+} from '@rnef/tools';
 
 type BuildJsBundleOptions = {
   bundleOutputPath: string;
@@ -51,27 +56,5 @@ export async function buildJsBundle(options: BuildJsBundleOptions) {
     return;
   }
 
-  const hermesPath = getHermescPath();
-  const hermescArgs = [
-    '-emit-binary',
-    '-max-diagnostic-width=80',
-    '-O',
-    '-w',
-    '-out',
-    options.bundleOutputPath,
-    options.bundleOutputPath,
-  ];
-
-  try {
-    await spawn(hermesPath, hermescArgs, {
-      stdio: logger.isVerbose() ? 'inherit' : ['ignore', 'pipe', 'pipe'],
-    });
-  } catch (error) {
-    throw new RnefError(
-      'Compiling JS bundle with Hermes failed. Use `--no-hermes` flag to disable Hermes.',
-      {
-        cause: error,
-      }
-    );
-  }
+  await runHermes({ bundleOutputPath: options.bundleOutputPath });
 }

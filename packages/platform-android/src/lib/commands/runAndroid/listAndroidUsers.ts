@@ -49,9 +49,9 @@ export async function checkUsers(device: string): Promise<User[]> {
 
 export async function promptForUser(deviceId: string) {
   const users = await checkUsers(deviceId);
-  if (users && users.length > 1) {
+  if (users.length > 1) {
     const selectedUser = await promptSelect({
-      message: 'Which profile would you like to launch your app into?',
+      message: 'Which user profile would you like to launch your app into?',
       options: users.map((user) => ({
         label: user.name,
         value: user,

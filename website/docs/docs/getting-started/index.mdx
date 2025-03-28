@@ -1,0 +1,45 @@
+import { PackageManagerTabs } from 'rspress/theme';
+
+# Quick start
+
+:::warning I have existing Community CLI project
+In case you want to adopt RNEF in existing project (which is a typical scenario), please check the [Migrating from Community CLI](/docs/getting-started/migrating-from-community-cli) page.
+:::
+
+## Pre-requisites
+
+If you're already familiar with JavaScript, React and React Native, then you'll be able to get moving quickly! Otherwise, it's highly recommended to get yourself familiar with these topic and then come back here:
+
+- [React Native documentation](https://reactnative.dev/)
+
+## Installation
+
+To create a new React Native project with RNEF run:
+
+<PackageManagerTabs command="create @rnef/app enterprise" />
+
+The command will ask you to pick your preferred bundler and platforms.
+
+## Usage
+
+Now that you have RNEF configured, you should be able to use Metro's or Re.Pack's development server and bundle your application.
+
+### Running development server
+
+When developing your application, you'll need to run a dev server that will use a bundler like Metro or Re.Pack to bundle your JS and later serve it to an app running on a device or simulator.
+
+To start the development server, run:
+
+<PackageManagerTabs command="rnef start" />
+
+### Running the iOS app
+
+To build and run your app on an iOS simulator or device, run the `run:ios` command:
+
+<PackageManagerTabs command="rnef run:ios" />
+
+### Running the Android app
+
+To build and run your app on an Android emulator or device, run the `run:android` command:
+
+<PackageManagerTabs command="rnef run:android" />

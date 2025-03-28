@@ -40,5 +40,4 @@ export interface Params {
 export interface ProjectConfig {
   sourceDir: string;
   xcodeProject: XcodeProjectInfo | null;
-  // assets: string[]; TODO: what's our approach for assets?
 }

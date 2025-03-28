@@ -34,11 +34,12 @@ export const pluginBrownfieldIos =
         const configuration = args.configuration ?? 'Debug';
 
         if (iosConfig) {
-          await createBuild('ios', iosConfig, {
-            ...args,
-            destinations,
-            buildFolder,
-          });
+          await createBuild(
+            'ios',
+            iosConfig,
+            { ...args, destinations, buildFolder },
+            projectRoot
+          );
         } else {
           throw new RnefError('iOS project not found.');
         }

@@ -35,6 +35,17 @@ export const TEMPLATES: TemplateInfo[] = [
 export const PLUGINS: TemplateInfo[] = [
   {
     type: 'npm',
+    name: 'brownfieldIos',
+    packageName: '@rnef/plugin-brownfield-ios',
+    version: 'latest',
+    directory: 'template',
+    importName: 'pluginBrownfieldIos',
+  },
+];
+
+export const BUNDLERS: TemplateInfo[] = [
+  {
+    type: 'npm',
     name: 'metro',
     packageName: '@rnef/plugin-metro',
     version: 'latest',
@@ -48,14 +59,6 @@ export const PLUGINS: TemplateInfo[] = [
     version: 'latest',
     directory: 'template',
     importName: 'pluginRepack',
-  },
-  {
-    type: 'npm',
-    name: 'brownfieldIos',
-    packageName: '@rnef/plugin-brownfield-ios',
-    version: 'latest',
-    directory: 'template',
-    importName: 'pluginBrownfieldIos',
   },
 ];
 

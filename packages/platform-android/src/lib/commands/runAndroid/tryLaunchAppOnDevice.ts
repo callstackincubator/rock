@@ -61,7 +61,7 @@ export async function tryLaunchAppOnDevice(
   logger.debug(`Running ${adbPath} ${adbArgs.join(' ')}.`);
   const loader = spinner();
   loader.start(
-    `Installing the app on ${device.readableName} (id: ${deviceId})`
+    `Launching the app on ${device.readableName} (id: ${deviceId})`
   );
   try {
     await spawn(adbPath, adbArgs, { stdio: ['ignore', 'ignore', 'pipe'] });

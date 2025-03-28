@@ -16,7 +16,7 @@ export const platformAndroid =
     registerSignCommand(api);
 
     return {
-      name: 'platform-android',
+      name: '@rnef/platform-android',
       description: 'RNEF plugin for everything Android.',
     };
   };

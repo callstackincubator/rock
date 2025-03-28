@@ -5,8 +5,14 @@ type NativeFingerprintCommandOptions = {
   platform: 'ios' | 'android';
 };
 
+type ConfigFingerprintOptions = {
+  extraSources: string[];
+  ignorePaths: string[];
+};
+
 export async function nativeFingerprintCommand(
   path = '.',
+  { extraSources, ignorePaths }: ConfigFingerprintOptions,
   options?: NativeFingerprintCommandOptions
 ) {
   path = path ?? '.';
@@ -18,7 +24,11 @@ export async function nativeFingerprintCommand(
   loader.start("Calculating fingerprint for the project's native parts");
 
   const start = performance.now();
-  const fingerprint = await nativeFingerprint(path, { platform });
+  const fingerprint = await nativeFingerprint(path, {
+    platform,
+    extraSources,
+    ignorePaths,
+  });
   const duration = performance.now() - start;
 
   loader.stop(`Fingerprint calculated: ${fingerprint.hash}`);

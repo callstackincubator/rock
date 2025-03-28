@@ -1,25 +1,31 @@
 import path from 'node:path';
-import { isInteractive, logger, RnefError } from '@rnef/tools';
-import type {
-  BuilderCommand,
-  ProjectConfig,
-} from '../../types/index.js';
+import { getProjectConfig } from '@react-native-community/cli-config-apple';
+import {
+  color,
+  isInteractive,
+  logger,
+  promptSelect,
+  RnefError,
+  spinner,
+} from '@rnef/tools';
+import type { BuilderCommand, ProjectConfig } from '../../types/index.js';
+import { buildApp } from '../../utils/buildApp.js';
 import { getBuildPaths } from '../../utils/getBuildPaths.js';
-import { getConfiguration } from '../../utils/getConfiguration.js';
-import { getInfo } from '../../utils/getInfo.js';
-import { getScheme } from '../../utils/getScheme.js';
+import {
+  getDevicePlatformSDK,
+  getSimulatorPlatformSDK,
+} from '../../utils/getPlatformInfo.js';
+import { installPodsIfNeeded } from '../../utils/pods.js';
 import type { BuildFlags } from './buildOptions.js';
-import { buildProject } from './buildProject.js';
 import { exportArchive } from './exportArchive.js';
 
 export const createBuild = async (
   platformName: BuilderCommand['platformName'],
   projectConfig: ProjectConfig,
-  args: BuildFlags
+  args: BuildFlags,
+  projectRoot: string
 ) => {
-  // TODO: add logic for installing Cocoapods based on @expo/fingerprint & pod-install package.
-
-  const { xcodeProject, sourceDir } = projectConfig;
+  let { xcodeProject, sourceDir } = projectConfig;
 
   if (!xcodeProject) {
     throw new RnefError(
@@ -27,43 +33,48 @@ export const createBuild = async (
     );
   }
 
-  validateArgs(args);
+  await validateArgs(args);
 
-  const info = await getInfo(xcodeProject, sourceDir);
+  if (args.installPods) {
+    await installPodsIfNeeded(
+      projectRoot,
+      platformName,
+      sourceDir,
+      args.newArch
+    );
+    // When the project is not a workspace, we need to get the project config again,
+    // because running pods install might have generated .xcworkspace project.
+    // This should be only case in new project.
+    if (xcodeProject?.isWorkspace === false) {
+      const newProjectConfig = getProjectConfig({ platformName })(
+        projectRoot,
+        {}
+      );
+      if (newProjectConfig) {
+        xcodeProject = newProjectConfig.xcodeProject;
+        sourceDir = newProjectConfig.sourceDir;
+      }
+    }
+  }
 
-  if (!info) {
+  if (!xcodeProject) {
     throw new RnefError('Failed to get Xcode project information');
   }
 
-  const scheme = await getScheme(
-    info.schemes,
-    args.scheme,
-    args.interactive,
-    xcodeProject.name
-  );
-  let configuration = await getConfiguration(
-    info.configurations,
-    args.configuration,
-    args.interactive
-  );
-
-  if (args.archive && configuration !== 'Release') {
-    logger.debug(
-      'Setting build configuration to Release, because --archive flag was used'
-    );
-    configuration = 'Release';
-  }
-
   try {
-    await buildProject(
+    const { appPath } = await buildApp({
       xcodeProject,
       sourceDir,
       platformName,
-      undefined,
-      scheme,
-      configuration,
-      args
-    );
+      platformSDK:
+        args.destination === 'simulator'
+          ? getSimulatorPlatformSDK(platformName)
+          : getDevicePlatformSDK(platformName),
+      args,
+    });
+    const loader = spinner();
+    loader.start('');
+    loader.stop(`Build available at: ${color.cyan(appPath)}`);
   } catch (error) {
     const message = `Failed to create ${args.archive ? 'archive' : 'build'}`;
     throw new RnefError(message, { cause: error });
@@ -80,10 +91,9 @@ export const createBuild = async (
       await exportArchive({
         sourceDir,
         archivePath,
-        scheme,
-        configuration,
         platformName,
         exportExtraParams: args.exportExtraParams ?? [],
+        exportOptionsPlist: args.exportOptionsPlist,
       });
     } catch (error) {
       throw new RnefError('Failed to export archive', { cause: error });
@@ -91,11 +101,42 @@ export const createBuild = async (
   }
 };
 
-function validateArgs(args: BuildFlags) {
-  if (args.interactive && !isInteractive()) {
-    logger.warn(
-      'Interactive mode is not supported in non-interactive environments.'
+async function validateArgs(args: BuildFlags) {
+  if (args.destination && args.destinations) {
+    logger.error(
+      `Both "--destination" and "--destinations" flags are set. Please pick one.`
     );
-    args.interactive = false;
+    process.exit(1);
+  }
+
+  if (!args.destination) {
+    if (isInteractive()) {
+      const destination = await promptSelect({
+        message: 'Select destination for a generic build',
+        options: [
+          {
+            label: 'Simulator',
+            value: 'simulator',
+          },
+          {
+            label: 'Device',
+            value: 'device',
+          },
+        ],
+      });
+
+      args.destination = destination;
+
+      logger.info(
+        `You can set configuration manually next time using "--destination ${destination}" flag.`
+      );
+    } else {
+      logger.error(
+        `The "--destination" flag is required in non-interactive environments. Available flag values:
+- simulator – suitable for unsigned simulator builds for developers
+- device – suitable for signed device builds for testers`
+      );
+      process.exit(1);
+    }
   }
 }

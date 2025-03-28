@@ -7,6 +7,7 @@ import {
   promptSelect,
   promptText,
   RnefError,
+  type SupportedRemoteCacheProviders,
 } from '@rnef/tools';
 import path from 'path';
 import type { TemplateInfo } from '../templates.js';
@@ -109,9 +110,9 @@ export function promptPlatforms(
 
 export function promptPlugins(
   plugins: TemplateInfo[]
-): Promise<TemplateInfo[]> {
+): Promise<TemplateInfo[] | null> {
   if (plugins.length === 0) {
-    throw new RnefError('No plugins found');
+    return Promise.resolve(null);
   }
 
   return promptMultiselect({
@@ -123,6 +124,39 @@ export function promptPlugins(
       label: plugin.name,
     })),
   });
+}
+
+export function promptBundlers(
+  bundlers: TemplateInfo[]
+): Promise<TemplateInfo> {
+  if (bundlers.length === 0) {
+    throw new RnefError('No bundlers found');
+  }
+
+  return promptSelect({
+    message: 'Select bundler:',
+    initialValues: [bundlers[0]],
+    // @ts-expect-error todo fixup type
+    options: bundlers.map((bundler) => ({
+      value: bundler,
+      label: bundler.name,
+    })),
+  });
+}
+
+export function promptRemoteCacheProvider(): Promise<SupportedRemoteCacheProviders | null> {
+  return promptSelect({
+    message: 'Select remote cache provider:',
+    initialValue: 'github-actions',
+    options: [
+      {
+        value: 'github-actions',
+        label: 'GitHub Actions',
+        hint: 'Enable builds on your CI',
+      },
+      { value: null, label: 'None', hint: 'Local builds only' },
+    ],
+  }) as Promise<SupportedRemoteCacheProviders | null>;
 }
 
 export function confirmOverrideFiles(targetDir: string) {

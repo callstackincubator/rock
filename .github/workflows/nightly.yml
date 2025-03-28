@@ -71,7 +71,8 @@ jobs:
             NightlyDeploy \
             --template=default \
             --platform=ios --platform=android \
-            --plugin=metro
+            --bundler=metro \
+            --remote-cache-provider=github-actions
 
           cd NightlyDeploy
           NPM_CONFIG_REGISTRY=http://localhost:4873 \
@@ -108,21 +109,16 @@ jobs:
             NightlyDeploy \
             --template=default \
             --platform=ios --platform=android \
-            --plugin=metro
+            --bundler=metro \
+            --remote-cache-provider=github-actions
 
           cd NightlyDeploy
           NPM_CONFIG_REGISTRY=http://localhost:4873 \
             NPM_CONFIG_NODE_LINKER=hoisted \
             pnpm install
 
-      - name: Install CocoaPods
-        run: |
-          cd ../NightlyDeploy
-          bundle install
-          cd ios
-          bundle exec pod install
-
       - name: Build iOS template
         run: |
           cd ../NightlyDeploy
-          pnpm rnef build:ios --verbose
+          pnpm rnef build:ios --verbose \
+            --destination=simulator

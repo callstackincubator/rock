@@ -25,7 +25,7 @@ export const platformIOS =
         const iosConfig = projectConfig(projectRoot, {});
 
         if (iosConfig) {
-          await createBuild('ios', iosConfig, args as BuildFlags);
+          await createBuild('ios', iosConfig, args as BuildFlags, projectRoot);
         } else {
           throw new RnefError('iOS project not found.');
         }
@@ -48,7 +48,8 @@ export const platformIOS =
             iosConfig,
             args as RunFlags,
             projectRoot,
-            api.getRemoteCacheProvider()
+            api.getRemoteCacheProvider(),
+            api.getFingerprintOptions()
           );
         } else {
           throw new RnefError('iOS project not found.');
@@ -61,7 +62,7 @@ export const platformIOS =
     registerSignCommand(api);
 
     return {
-      name: 'platform-ios',
+      name: '@rnef/platform-ios',
       description: 'RNEF plugin for everything iOS.',
     };
   };

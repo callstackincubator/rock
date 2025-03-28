@@ -7,6 +7,7 @@ vi.mock('@rnef/tools', async (importOriginal) => {
   const actual = await importOriginal<typeof import('@rnef/tools')>();
   return {
     ...actual,
+    isInteractive: vi.fn(),
     // Logger
     logger: {
       ...actual.logger,

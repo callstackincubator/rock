@@ -1,7 +1,7 @@
 import fs from 'node:fs';
 import path from 'node:path';
-import type {
-  SupportedRemoteCacheProviders} from '@rnef/tools';
+import { getProjectConfig } from '@react-native-community/cli-config-apple';
+import type { SupportedRemoteCacheProviders } from '@rnef/tools';
 import {
   color,
   intro,
@@ -10,18 +10,23 @@ import {
   outro,
   promptSelect,
   RnefError,
-  spinner
+  spinner,
 } from '@rnef/tools';
 import type {
   ApplePlatform,
   Device,
   ProjectConfig,
 } from '../../types/index.js';
-import { getConfiguration } from '../../utils/getConfiguration.js';
+import { buildApp } from '../../utils/buildApp.js';
 import { getInfo } from '../../utils/getInfo.js';
-import { getPlatformInfo } from '../../utils/getPlatformInfo.js';
+import {
+  getDevicePlatformSDK,
+  getPlatformInfo,
+  getSimulatorPlatformSDK,
+} from '../../utils/getPlatformInfo.js';
 import { getScheme } from '../../utils/getScheme.js';
 import { listDevicesAndSimulators } from '../../utils/listDevices.js';
+import { installPodsIfNeeded } from '../../utils/pods.js';
 import { fetchCachedBuild } from './fetchCachedBuild.js';
 import { matchingDevice } from './matchingDevice.js';
 import { cacheRecentDevice, sortByRecentDevices } from './recentDevices.js';
@@ -36,7 +41,8 @@ export const createRun = async (
   projectConfig: ProjectConfig,
   args: RunFlags,
   projectRoot: string,
-  remoteCacheProvider: SupportedRemoteCacheProviders | undefined
+  remoteCacheProvider: SupportedRemoteCacheProviders | undefined,
+  fingerprintOptions: { extraSources: string[]; ignorePaths: string[] }
 ) => {
   intro('Running on iOS');
 
@@ -44,7 +50,9 @@ export const createRun = async (
     const cachedBuild = await fetchCachedBuild({
       configuration: args.configuration ?? 'Debug',
       distribution: args.device ? 'device' : 'simulator', // TODO: replace with better logic
-      remoteCacheProvider
+      remoteCacheProvider,
+      root: projectRoot,
+      fingerprintOptions,
     });
     if (cachedBuild) {
       // @todo replace with a more generic way to pass binary path
@@ -52,8 +60,7 @@ export const createRun = async (
     }
   }
 
-  const { readableName: platformReadableName } = getPlatformInfo(platformName);
-  const { xcodeProject, sourceDir } = projectConfig;
+  let { xcodeProject, sourceDir } = projectConfig;
 
   if (!xcodeProject) {
     throw new RnefError(
@@ -63,36 +70,62 @@ export const createRun = async (
 
   validateArgs(args, projectRoot);
 
-  const info = await getInfo(xcodeProject, sourceDir);
+  if (args.installPods) {
+    await installPodsIfNeeded(
+      projectRoot,
+      platformName,
+      sourceDir,
+      args.newArch
+    );
+    // When the project is not a workspace, we need to get the project config again,
+    // because running pods install might have generated .xcworkspace project.
+    // This should be only case in new project.
+    if (xcodeProject?.isWorkspace === false) {
+      const newProjectConfig = getProjectConfig({ platformName })(
+        projectRoot,
+        {}
+      );
+      if (newProjectConfig) {
+        xcodeProject = newProjectConfig.xcodeProject;
+        sourceDir = newProjectConfig.sourceDir;
+      }
+    }
+  }
 
-  if (!info) {
+  if (!xcodeProject) {
     throw new RnefError('Failed to get Xcode project information');
   }
-  const scheme = await getScheme(
-    info.schemes,
-    args.scheme,
-    args.interactive,
-    xcodeProject.name
-  );
-  const configuration = await getConfiguration(
-    info.configurations,
-    args.configuration,
-    args.interactive
-  );
 
   if (platformName === 'macos') {
-    await runOnMac(xcodeProject, sourceDir, configuration, scheme, args);
+    const { appPath } = await buildApp({
+      args,
+      xcodeProject,
+      sourceDir,
+      platformName,
+      platformSDK: getSimulatorPlatformSDK(platformName),
+    });
+    await runOnMac(appPath);
     outro('Success 🎉.');
     return;
   } else if (args.catalyst) {
-    await runOnMacCatalyst(
-      platformName,
-      configuration,
-      scheme,
+    const info = await getInfo(xcodeProject, sourceDir);
+    if (!info) {
+      throw new RnefError('Failed to get Xcode project information');
+    }
+    const scheme = await getScheme(
+      info.schemes,
+      args.scheme,
+      xcodeProject.name
+    );
+    const { appPath } = await buildApp({
+      args,
       xcodeProject,
       sourceDir,
-      args
-    );
+      platformName,
+      platformSDK: getSimulatorPlatformSDK(platformName),
+      selectedScheme: scheme,
+    });
+    await runOnMacCatalyst(appPath, scheme);
     outro('Success 🎉.');
     return;
   }
@@ -101,36 +134,36 @@ export const createRun = async (
   loader.start('Looking for available devices and simulators');
   const devices = await listDevicesAndSimulators(platformName);
   if (devices.length === 0) {
+    const { readableName } = getPlatformInfo(platformName);
     throw new RnefError(
-      `${platformReadableName} devices or simulators not detected. Install simulators via Xcode or connect a physical ${platformReadableName} device`
+      `No devices or simulators detected. Install simulators via Xcode or connect a physical ${readableName} device.`
     );
   }
   loader.stop('Found available devices and simulators.');
-  const device = await selectDevice(devices, args, platformName);
+  const device = await selectDevice(devices, args);
 
   if (device) {
     cacheRecentDevice(device, platformName);
     if (device.type === 'simulator') {
-      await runOnSimulator(
-        device,
+      const { appPath, infoPlistPath } = await buildApp({
+        args,
         xcodeProject,
         sourceDir,
         platformName,
-        configuration,
-        scheme,
-        args
-      );
+        platformSDK: getSimulatorPlatformSDK(platformName),
+        udid: device.udid,
+      });
+      await runOnSimulator(device, appPath, infoPlistPath);
     } else if (device.type === 'device') {
-      await runOnDevice(
-        device,
-        platformName,
-        configuration,
-        scheme,
+      const { appPath } = await buildApp({
+        args,
         xcodeProject,
         sourceDir,
-        remoteCacheProvider,
-        args
-      );
+        platformName,
+        platformSDK: getDevicePlatformSDK(platformName),
+        udid: device.udid,
+      });
+      await runOnDevice(device, appPath, sourceDir);
     }
     outro('Success 🎉.');
     return;
@@ -161,31 +194,25 @@ export const createRun = async (
       }
     }
     for (const simulator of bootedSimulators) {
-      await runOnSimulator(
-        simulator,
+      const { appPath, infoPlistPath } = await buildApp({
+        args,
         xcodeProject,
         sourceDir,
         platformName,
-        configuration,
-        scheme,
-        args
-      );
+        platformSDK: getSimulatorPlatformSDK(platformName),
+        udid: simulator.udid,
+      });
+      await runOnSimulator(simulator, appPath, infoPlistPath);
     }
   }
 
   outro('Success 🎉.');
 };
 
-async function selectDevice(
-  devices: Device[],
-  args: RunFlags,
-  platform: ApplePlatform
-) {
-  const { interactive } = args;
+
+async function selectDevice(devices: Device[], args: RunFlags) {
   let device;
-  if (interactive) {
-    device = await promptForDeviceSelection(devices, platform);
-  } else if (args.device) {
+  if (args.device) {
     device = matchingDevice(devices, args.device);
   }
   if (!device && args.device) {
@@ -209,13 +236,8 @@ function validateArgs(args: RunFlags, projectRoot: string) {
         `"--binary-path" was specified, but the file was not found at "${args.binaryPath}".`
       );
     }
-  }
-
-  if (args.interactive && !isInteractive()) {
-    logger.warn(
-      'Interactive mode is not supported in non-interactive environments.'
-    );
-    args.interactive = false;
+    // No need to install pods if binary path is provided
+    args.installPods = false;
   }
 }
 
