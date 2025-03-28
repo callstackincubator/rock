@@ -51,14 +51,6 @@ export const BUNDLERS: TemplateInfo[] = [
     directory: 'template',
     importName: 'pluginRepack',
   },
-  {
-    type: 'npm',
-    name: 'brownfieldAndroid',
-    packageName: '@rnef/plugin-brownfield-android',
-    version: 'latest',
-    directory: 'template',
-    importName: 'pluginBrownfieldAndroid',
-  },
 ];
 
 export const PLATFORMS: TemplateInfo[] = [
