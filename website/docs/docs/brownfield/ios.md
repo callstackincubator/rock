@@ -1,12 +1,10 @@
-# Adding React Native to a native app
+# iOS
 
 React Native Enterprise Framework helps you package your React Native code into files that your iOS and Android apps can use. For iOS, it creates a `.xcframework` file that you can easily add to your app.
 
-## iOS
-
 To add React Native to your iOS app, we'll package your React Native code into an XCFramework. This way, you don't need to set up Node.js or CocoaPods in your main app. Here's how to do it:
 
-### 1. Create a New Framework in React Native app's Xcode:
+## 1. Create a New Framework in React Native app's Xcode:
 
 1. Open your React Native project's `ios/<project_name>.xcworkspace` in Xcode
 1. Add a new target by clicking File > New > Target
@@ -24,7 +22,7 @@ To add React Native to your iOS app, we'll package your React Native code into a
    | Skip Install                    | NO    | Makes sure Xcode creates the framework files we need.                                             |
    | Enable Module Verifier          | NO    | Skips testing the framework during build, which makes builds faster.                              |
 
-### 2. Set Up CocoaPods:
+## 2. Set Up CocoaPods:
 
 1. Add your new framework to `ios/Podfile`:
 
@@ -38,7 +36,7 @@ To add React Native to your iOS app, we'll package your React Native code into a
    end
    ```
 
-### 3. Add the Bundle Script:
+## 3. Add the Bundle Script:
 
 1. In Xcode, click on your app target
 1. Go to Build Phases
@@ -53,12 +51,12 @@ To add React Native to your iOS app, we'll package your React Native code into a
    - `$(SRCROOT)/.xcode.env.local`
    - `$(SRCROOT)/.xcode.env`
 
-### 4. Create the Framework's Public Interface:
+## 4. Create the Framework's Public Interface:
 
 1. Create a new Swift file in your framework folder
 1. You can use this template from [HelloWorldReact.swift](https://github.com/callstack/rnef/tree/main/packages/plugin-brownfield-ios/template/ios/HelloWorldReact/HelloWorldReact.swift) as a starting point
 
-### 5. Create the XCFramework:
+## 5. Create the XCFramework:
 
 1. Add `@rnef/plugin-brownfield-ios` to your project
 1. Add this to your `rnef.config.mjs`:
@@ -80,7 +78,7 @@ To add React Native to your iOS app, we'll package your React Native code into a
    rnef package:ios --scheme <framework_target_name> --mode Release
    ```
 
-### 6. Add the Framework to Your App:
+## 6. Add the Framework to Your App:
 
 1. Drag the `.xcframework` file into your app's Xcode project
 1. Also drag `ios/Pods/hermes-engine/destroot/Library/Frameworks/universal/hermes.xcframework` into your app
