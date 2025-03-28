@@ -1,4 +1,4 @@
-# iOS
+# Adding React Native to iOS app
 
 React Native Enterprise Framework helps you package your React Native code into files that your iOS and Android apps can use. For iOS, it creates a `.xcframework` file that you can easily add to your app.
 

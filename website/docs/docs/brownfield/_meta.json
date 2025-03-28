@@ -1,1 +1,10 @@
-["ios", "android"]
+[
+  {
+    "name": "ios",
+    "label": "iOS"
+  },
+  {
+    "name": "android",
+    "label": "Android"
+  }
+]
