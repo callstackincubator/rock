@@ -112,7 +112,7 @@ export function resolveTemplate(
     type: 'npm',
     name: getNpmLibraryName(name),
     packageName: getNpmLibraryName(name),
-    directory: 'template',
+    directory: '.',
     version: getNpmLibraryVersion(name) ?? 'latest',
   };
 }
