@@ -76,21 +76,21 @@ test('resolveTemplateName with npm packages', () => {
   expect(resolveTemplate(TEMPLATES, 'package-name')).toEqual({
     type: 'npm',
     name: 'package-name',
-    directory: '.',
+    directory: 'template',
     packageName: 'package-name',
     version: 'latest',
   });
   expect(resolveTemplate(TEMPLATES, 'package-name@1.2.3')).toEqual({
     type: 'npm',
     name: 'package-name',
-    directory: '.',
+    directory: 'template',
     packageName: 'package-name',
     version: '1.2.3',
   });
   expect(resolveTemplate(TEMPLATES, '@scoped/package-name@1.2.3')).toEqual({
     type: 'npm',
     name: '@scoped/package-name',
-    directory: '.',
+    directory: 'template',
     packageName: '@scoped/package-name',
     version: '1.2.3',
   });
