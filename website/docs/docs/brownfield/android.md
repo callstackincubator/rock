@@ -14,9 +14,9 @@ First, we'll create a new Android library module in your React Native project. T
 1. After the sync completes, run your React Native app to make sure everything works
 1. Test the build by running `./gradlew assembleRelease` in the android directory
 
-## 2. Set Up the Fat AAR Gradle Plugin
+## 2. Set Up the AAR Gradle Plugin
 
-We need a special Gradle plugin to create a "fat" AAR that includes all dependencies. We'll use the `brownfield-gradle-plugin` plugin from Callstack.
+We need a special Gradle plugin to create an AAR that includes all dependencies. We'll use the `brownfield-gradle-plugin` plugin from Callstack.
 
 1. Add the gradle plugin dependency to your `android/build.gradle`:
 
@@ -67,6 +67,10 @@ import android.app.Application
 import com.facebook.react.ReactNativeHost
 import com.facebook.react.ReactPackage
 import com.facebook.react.PackageList
+import com.facebook.react.ReactApplication
+import com.facebook.react.ReactHost
+import com.facebook.react.defaults.DefaultNewArchitectureEntryPoint.load
+import com.facebook.react.defaults.DefaultReactHost.getDefaultReactHost
 import com.facebook.react.defaults.DefaultReactNativeHost
 import com.facebook.react.soloader.OpenSourceMergedSoMapping
 import com.facebook.soloader.SoLoader
@@ -75,36 +79,50 @@ class ReactNativeHostManager {
     companion object {
         val shared: ReactNativeHostManager by lazy { ReactNativeHostManager() }
         private var reactNativeHost: ReactNativeHost? = null
+        private var reactHost: ReactHost? = null
     }
 
     fun getReactNativeHost(): ReactNativeHost? {
         return reactNativeHost
     }
 
+    fun getReactHost(): ReactHost? {
+        return reactHost
+    }
+
     fun initialize(application: Application) {
-        if (reactNativeHost == null) {
-            SoLoader.init(application, OpenSourceMergedSoMapping)
-            reactNativeHost = object : DefaultReactNativeHost(application) {
-                override fun getUseDeveloperSupport(): Boolean {
-                    return BuildConfig.DEBUG
-                }
-
-                override fun getPackages(): MutableList<ReactPackage> {
-                    return PackageList(application).packages
-                }
-
-                override fun getJSMainModuleName(): String {
-                    return "index"
-                }
-
-                override fun getBundleAssetName(): String {
-                    return "index.android.bundle"
-                }
-
-                override val isNewArchEnabled: Boolean = BuildConfig.IS_NEW_ARCHITECTURE_ENABLED
-                override val isHermesEnabled: Boolean = BuildConfig.IS_HERMES_ENABLED
-            }
+        if (reactNativeHost != null && reactHost != null) {
+            return
         }
+
+        SoLoader.init(application, OpenSourceMergedSoMapping)
+        if (BuildConfig.IS_NEW_ARCHITECTURE_ENABLED) {
+            // If you opted-in for the New Architecture, we load the native entry point for this app.
+            load()
+        }
+
+        val reactApp = object : ReactApplication {
+            override val reactNativeHost: ReactNativeHost =
+                object : DefaultReactNativeHost(application) {
+                    override fun getPackages(): MutableList<ReactPackage> {
+                        return PackageList(application).packages
+                    }
+
+                    override fun getJSMainModuleName(): String = "index"
+                    override fun getBundleAssetName(): String = "index.android.bundle"
+
+                    override fun getUseDeveloperSupport() = BuildConfig.DEBUG
+
+                    override val isNewArchEnabled: Boolean = BuildConfig.IS_NEW_ARCHITECTURE_ENABLED
+                    override val isHermesEnabled: Boolean = BuildConfig.IS_HERMES_ENABLED
+                }
+
+            override val reactHost: ReactHost
+                get() = getDefaultReactHost(application, reactNativeHost)
+        }
+
+        reactNativeHost = reactApp.reactNativeHost
+        reactHost = reactApp.reactHost
     }
 }
 ```
@@ -127,11 +145,11 @@ Add build configuration fields:
 
 ```gradle title="rnbrownfield/build.gradle.kts" {4-5}
 android {
-    buildTypes {
-        release {
-            buildConfigField("boolean", "IS_NEW_ARCHITECTURE_ENABLED", properties["newArchEnabled"].toString())
-            buildConfigField("boolean", "IS_HERMES_ENABLED", properties["hermesEnabled"].toString())
-        }
+    defaultConfig {
+        minSdk = 24
+
+        buildConfigField("boolean", "IS_NEW_ARCHITECTURE_ENABLED", properties["newArchEnabled"].toString())
+        buildConfigField("boolean", "IS_HERMES_ENABLED", properties["hermesEnabled"].toString())
     }
 }
 ```
@@ -158,8 +176,12 @@ tasks.register<Copy>("copyAutolinkingSources") {
     into("$moduleBuildDir/$autolinkingJavaSources")
 }
 
-tasks.named("preBuild").configure {
-    dependsOn("copyAutolinkingSources")
+androidComponents {
+    onVariants { variant ->
+        tasks.named("preBuild").configure {
+            dependsOn("copyAutolinkingSources")
+        }
+    }
 }
 ```
 
@@ -177,14 +199,16 @@ android {
     }
 }
 
-tasks.named("preBuild").configure {
-    dependsOn("copyAutolinkingSources")
-    val buildType = when {
-        gradle.startParameter.taskNames.any { it.contains("Release", ignoreCase = true) } -> "Release"
-        else -> "Debug"
-    }
-    if (buildType == "Release") {
-        dependsOn(":app:createBundleReleaseJsAndAssets")
+androidComponents {
+    onVariants { variant ->
+        val buildType = variant.buildType?.replaceFirstChar { it.titlecase() }
+
+        tasks.named("preBuild").configure {
+            dependsOn("copyAutolinkingSources")
+            if (buildType == "Release") {
+                dependsOn(":app:createBundleReleaseJsAndAssets")
+            }
+        }
     }
 }
 ```
@@ -197,23 +221,107 @@ Create a new file called `RNViewFactory.kt` to wrap your React Native UI in a `F
 import android.content.Context
 import android.os.Bundle
 import android.widget.FrameLayout
+import androidx.fragment.app.FragmentActivity
+import androidx.lifecycle.DefaultLifecycleObserver
+import androidx.lifecycle.LifecycleOwner
+import com.facebook.react.ReactDelegate
 import com.facebook.react.ReactInstanceManager
 import com.facebook.react.ReactRootView
 
 object RNViewFactory {
     fun createFrameLayout(
         context: Context,
-        params: Bundle? = null,
+        activity: FragmentActivity,
+        initialParams: Bundle? = null,
     ): FrameLayout {
+        val componentName = "BrownFieldTest"
+        val reactHost = ReactNativeHostManager.shared.getReactHost()
+
+        if (BuildConfig.IS_NEW_ARCHITECTURE_ENABLED) {
+            val reactDelegate = ReactDelegate(activity, reactHost!!, componentName, initialParams)
+            val lifecycleObserver = getLifeCycleObserver(reactDelegate)
+
+            activity.lifecycle.addObserver(lifecycleObserver)
+            reactDelegate.loadApp()
+            return reactDelegate.reactRootView as FrameLayout
+        }
+
+        val instanceManager: ReactInstanceManager? = ReactNativeHostManager.shared.getReactNativeHost()?.reactInstanceManager
         val reactView = ReactRootView(context)
-        val reactNativeHost = ReactNativeHostManager.shared.getReactNativeHost()
-        val instanceManager: ReactInstanceManager? = reactNativeHost?.reactInstanceManager
         reactView.startReactApplication(
             instanceManager,
-            "BrownfieldTest",
-            params,
+            componentName,
+            initialParams,
         )
         return reactView
+    }
+
+    private fun getLifeCycleObserver(reactDelegate: ReactDelegate): DefaultLifecycleObserver {
+        return object : DefaultLifecycleObserver {
+            override fun onResume(owner: LifecycleOwner) {
+                reactDelegate.onHostResume()
+            }
+
+            override fun onPause(owner: LifecycleOwner) {
+                reactDelegate.onHostPause()
+            }
+
+            override fun onDestroy(owner: LifecycleOwner) {
+                reactDelegate.onHostDestroy()
+                owner.lifecycle.removeObserver(this)
+            }
+        }
+    }
+}
+```
+
+## 7. Copy JNI libs
+
+Add the following to your `rnbrownfield/build.gradle.kts`:
+
+```gradle
+android {
+    sourceSets {
+        getByName("main") {
+            assets.srcDirs("$appBuildDir/generated/assets/createBundleReleaseJsAndAssets")
+            java.srcDirs("$moduleBuildDir/$autolinkingJavaSources")
+        }
+        getByName("release") {
+            jniLibs.srcDirs("libsRelease")
+        }
+        getByName("debug") {
+            jniLibs.srcDirs("libsDebug")
+        }
+    }
+    publishing {
+        multipleVariants {
+            allVariants()
+        }
+    }
+}
+
+androidComponents {
+    onVariants { variant ->
+        val buildType = variant.buildType?.replaceFirstChar { it.titlecase() }
+
+        tasks.register<Copy>("copy${buildType}LibSources") {
+            dependsOn(":app:generateCodegenSchemaFromJavaScript")
+            dependsOn(":app:strip${buildType}DebugSymbols")
+
+            dependsOn(":rnbrownfield:generateCodegenSchemaFromJavaScript")
+            from("${appBuildDir}/intermediates/stripped_native_libs/${buildType?.lowercase()}/strip${buildType}DebugSymbols/out/lib")
+            into("${rootProject.projectDir}/rnbrownfield/libs${buildType}")
+
+            include("**/libappmodules.so", "**/libreact_codegen_*.so")
+        }
+
+        tasks.named("preBuild").configure {
+            dependsOn("copyAutolinkingSources")
+            dependsOn("copy${buildType}LibSources")
+            if (buildType == "Release") {
+                dependsOn(":app:createBundleReleaseJsAndAssets")
+            }
+        }
     }
 }
 ```
@@ -240,20 +348,19 @@ publishing {
             groupId = "com.callstack"
             artifactId = "rnbrownfield"
             version = "0.0.1-local"
-            artifact("$moduleBuildDir/outputs/aar/rnbrownfield-release.aar")
+            afterEvaluate {
+                from(components.getByName("default"))
+            }
 
             pom {
                 withXml {
-                    asNode().appendNode("dependencies").apply {
-                        configurations.getByName("api").allDependencies.forEach { dependency ->
-                            appendNode("dependency").apply {
-                                appendNode("groupId", dependency.group)
-                                appendNode("artifactId", dependency.name)
-                                appendNode("version", dependency.version)
-                                appendNode("scope", "compile")
-                            }
-                        }
-                    }
+                    //removing RN dependencies like e.g. react-native-svg 
+                    //added by "from(components.getByName("default"))" to pom file
+                    val dependenciesNode = (asNode().get("dependencies") as groovy.util.NodeList).first() as groovy.util.Node
+                    dependenciesNode.children()
+                        .filterIsInstance<groovy.util.Node>()
+                        .filter { (it.get("groupId") as groovy.util.NodeList).text() == rootProject.name }
+                        .forEach { dependenciesNode.remove(it) }
                 }
             }
         }
