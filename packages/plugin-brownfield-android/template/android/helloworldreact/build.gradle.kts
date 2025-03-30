@@ -1,8 +1,16 @@
+import groovy.json.JsonOutput
+import groovy.json.JsonSlurper
+
 plugins {
     id("com.android.library")
     id("org.jetbrains.kotlin.android")
     id("com.callstack.react.brownfield")
     `maven-publish`
+    id("com.facebook.react")
+}
+
+react {
+    autolinkLibrariesWithApp()
 }
 
 repositories {
@@ -20,6 +28,9 @@ android {
 
     defaultConfig {
         minSdk = 24
+
+        buildConfigField("boolean", "IS_NEW_ARCHITECTURE_ENABLED", properties["newArchEnabled"].toString())
+        buildConfigField("boolean", "IS_HERMES_ENABLED", properties["hermesEnabled"].toString())
     }
 
     compileOptions {
@@ -31,18 +42,22 @@ android {
         jvmTarget = "17"
     }
 
-    buildTypes {
-        release {
-            buildConfigField("boolean", "IS_NEW_ARCHITECTURE_ENABLED", properties["newArchEnabled"].toString())
-            buildConfigField("boolean", "IS_HERMES_ENABLED", properties["hermesEnabled"].toString())
-        }
-    }
-
     sourceSets {
         getByName("main") {
             assets.srcDirs("$appBuildDir/generated/assets/createBundleReleaseJsAndAssets")
             res.srcDirs("$appBuildDir/generated/res/createBundleReleaseJsAndAssets")
             java.srcDirs("$moduleBuildDir/$autolinkingJavaSources")
+        }
+        getByName("release") {
+            jniLibs.srcDirs("libsRelease")
+        }
+        getByName("debug") {
+            jniLibs.srcDirs("libsDebug")
+        }
+    }
+    publishing {
+        multipleVariants {
+            allVariants()
         }
     }
 }
@@ -53,20 +68,19 @@ publishing {
             groupId = "com.helloworldreact"
             artifactId = "helloworld"
             version = "0.0.1-local"
-            artifact("$moduleBuildDir/outputs/aar/helloworldreact-release.aar")
+            afterEvaluate {
+                from(components.getByName("default"))
+            }
 
             pom {
                 withXml {
-                    asNode().appendNode("dependencies").apply {
-                        configurations.getByName("api").allDependencies.forEach { dependency ->
-                            appendNode("dependency").apply {
-                                appendNode("groupId", dependency.group)
-                                appendNode("artifactId", dependency.name)
-                                appendNode("version", dependency.version)
-                                appendNode("scope", "compile")
-                            }
-                        }
-                    }
+                    //removing RN dependencies like e.g. react-native-svg 
+                    //added by "from(components.getByName("default"))" to pom file
+                    val dependenciesNode = (asNode().get("dependencies") as groovy.util.NodeList).first() as groovy.util.Node
+                    dependenciesNode.children()
+                        .filterIsInstance<groovy.util.Node>()
+                        .filter { (it.get("groupId") as groovy.util.NodeList).text() == rootProject.name }
+                        .forEach { dependenciesNode.remove(it) }
                 }
             }
         }
@@ -78,8 +92,8 @@ publishing {
 }
 
 dependencies {
-    api("com.facebook.react:react-android:0.77.0-rc.2")
-    api("com.facebook.react:hermes-android:0.77.0-rc.2")
+    api("com.facebook.react:react-android:0.78.0")
+    api("com.facebook.react:hermes-android:0.78.0")
 }
 
 tasks.register<Copy>("copyAutolinkingSources") {
@@ -88,13 +102,45 @@ tasks.register<Copy>("copyAutolinkingSources") {
     into("$moduleBuildDir/$autolinkingJavaSources")
 }
 
-tasks.named("preBuild").configure{
-    dependsOn("copyAutolinkingSources")
-    val buildType = when {
-        gradle.startParameter.taskNames.any { it.contains("Release", ignoreCase = true) } -> "Release"
-        else -> "Debug"
+androidComponents {
+    onVariants { variant ->
+        val buildType = variant.buildType?.replaceFirstChar { it.titlecase() }
+
+        tasks.register<Copy>("copy${buildType}LibSources") {
+            dependsOn(":app:generateCodegenSchemaFromJavaScript")
+            dependsOn(":app:strip${buildType}DebugSymbols")
+
+            dependsOn(":helloworldreact:generateCodegenSchemaFromJavaScript")
+            from("${appBuildDir}/intermediates/stripped_native_libs/${buildType?.lowercase()}/strip${buildType}DebugSymbols/out/lib")
+            into("${rootProject.projectDir}/helloworldreact/libs${buildType}")
+
+            include("**/libappmodules.so", "**/libreact_codegen_*.so")
+        }
+
+        tasks.named("preBuild").configure {
+            dependsOn("copyAutolinkingSources")
+            dependsOn("copy${buildType}LibSources")
+            if (buildType == "Release") {
+                dependsOn(":app:createBundleReleaseJsAndAssets")
+            }
+        }
     }
-    if (buildType == "Release") {
-        dependsOn(":app:createBundleReleaseJsAndAssets")
+}
+
+//removing RN dependencies like e.g. react-native-svg 
+//added by "from(components.getByName("default"))" to "module" file
+tasks.register("removeDependenciesFromModuleFile") {
+    doLast {
+        file("$moduleBuildDir/publications/mavenAar/module.json").run {
+            val json = inputStream().use { JsonSlurper().parse(it) as Map<String, Any> }
+            (json["variants"] as? List<MutableMap<String, Any>>)?.forEach { variant ->
+                (variant["dependencies"] as? MutableList<Map<String, Any>>)?.removeAll { it["group"] == rootProject.name }
+            }
+            writer().use { it.write(JsonOutput.prettyPrint(JsonOutput.toJson(json))) }
+        }
     }
+}
+
+tasks.named("generateMetadataFileForMavenAarPublication") {
+   finalizedBy("removeDependenciesFromModuleFile")
 }
