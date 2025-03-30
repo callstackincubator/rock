@@ -16,26 +16,18 @@ First, we'll create a new Android library module in your React Native project. T
 
 ## 2. Set Up the Fat AAR Gradle Plugin
 
-We need a special Gradle plugin to create a "fat" AAR that includes all dependencies. We'll use the `big-fat-aar` plugin from Callstack.
+We need a special Gradle plugin to create a "fat" AAR that includes all dependencies. We'll use the `brownfield-gradle-plugin` plugin from Callstack.
 
-1. Add the GitHub Packages repository to your `android/build.gradle`:
+1. Add the gradle plugin dependency to your `android/build.gradle`:
 
    ```gradle title="android/build.gradle" {3-10,15}
    buildscript {
        repositories {
-           maven {
-               name = "GitHubPackages"
-               url = uri("https://maven.pkg.github.com/callstack/big-fat-aar")
-               credentials {
-                   username = System.getenv("GITHUB_USERNAME")
-                   password = System.getenv("GITHUB_TOKEN")
-               }
-           }
            google()
            mavenCentral()
        }
        dependencies {
-           classpath("org.bigfataar:plugin:0.0.3")
+           classpath("com.callstack.react:brownfield-gradle-plugin:0.2.0")
        }
    }
    ```
@@ -46,14 +38,9 @@ We need a special Gradle plugin to create a "fat" AAR that includes all dependen
    plugins {
        id("com.android.library")
        id("org.jetbrains.kotlin.android")
-       id("org.bigfataar.plugin")
+       id("com.callstack.react.brownfield")
    }
    ```
-
-1. Set up your GitHub credentials:
-
-   - Either set `GITHUB_USERNAME` and `GITHUB_TOKEN` environment variables
-   - Or add them manually in the repository configuration
 
 1. Run `./gradlew assembleRelease` to verify the setup
    ![Verify AAR plugin setup](/verify_aar_plugin_setup.png)
@@ -239,7 +226,7 @@ Add the Maven publish plugin to your `rnbrownfield/build.gradle.kts`:
 plugins {
     id("com.android.library")
     id("org.jetbrains.kotlin.android")
-    id("org.bigfataar.plugin")
+    id("com.callstack.react.brownfield")
     `maven-publish`
 }
 ```
