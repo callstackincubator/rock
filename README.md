@@ -66,7 +66,7 @@ npx @rnef/create-app enterprise
 
    ```diff
    -// cliFile = file("../../node_modules/react-native/cli.js")
-   +cliFile = file("../../node_modules/@rnef/cli/src/bin.js")
+   +cliFile = file("../../node_modules/@rnef/cli/dist/src/bin.js")
    ```
 
    In `android/settings.gradle` change:

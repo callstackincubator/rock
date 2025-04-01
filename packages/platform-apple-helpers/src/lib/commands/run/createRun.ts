@@ -49,7 +49,7 @@ export const createRun = async (
   if (!args.binaryPath && args.remoteCache) {
     const cachedBuild = await fetchCachedBuild({
       configuration: args.configuration ?? 'Debug',
-      distribution: args.device ? 'device' : 'simulator', // TODO: replace with better logic
+      distribution: args.destination ?? (args.device ? 'device' : 'simulator'),
       remoteCacheProvider,
       root: projectRoot,
       fingerprintOptions,
@@ -208,7 +208,6 @@ export const createRun = async (
 
   outro('Success 🎉.');
 };
-
 
 async function selectDevice(devices: Device[], args: RunFlags) {
   let device;

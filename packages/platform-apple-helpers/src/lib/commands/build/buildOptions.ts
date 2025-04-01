@@ -11,7 +11,7 @@ export type BuildFlags = {
   exportExtraParams?: string[];
   exportOptionsPlist?: string;
   buildFolder?: string;
-  destination?: string;
+  destination?: 'device' | 'simulator';
   destinations?: string[];
   archive?: boolean;
   installPods: boolean;

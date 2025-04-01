@@ -39,7 +39,7 @@ import { PackageManagerTabs } from 'rspress/theme';
 
    ```groovy title="android/app/build.gradle" {2}
    // cliFile = file("../../node_modules/react-native/cli.js")
-   cliFile = file("../../node_modules/@rnef/cli/src/bin.js")
+   cliFile = file("../../node_modules/@rnef/cli/dist/src/bin.js")
    ```
 
    In `android/settings.gradle` change:
@@ -110,6 +110,7 @@ import { PackageManagerTabs } from 'rspress/theme';
      uses: ./.github/actions/rnef-remote-build-ios
      with:
        destination: simulator
+       github-token: ${{ secrets.GITHUB_TOKEN }}
        configuration: Debug
    ```
 
@@ -121,6 +122,7 @@ import { PackageManagerTabs } from 'rspress/theme';
      uses: ./.github/actions/rnef-remote-build-android
      with:
        variant: debug
+       github-token: ${{ secrets.GITHUB_TOKEN }}
    ```
 
    For more setup options see [GitHub Actions configuration](../remote-cache/github-actions/configuration.md)

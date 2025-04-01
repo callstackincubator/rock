@@ -74,7 +74,6 @@ const deprecatedAndroidFlags = [
 const deprecatedIosFlags = [
   { old: '--mode', new: '--configuration' },
   { old: '--buildFolder', new: '--build-folder' },
-  { old: '--destination', new: '--destinations' },
 ];
 
 export const checkDeprecatedOptions = (argv: string[]) => {
