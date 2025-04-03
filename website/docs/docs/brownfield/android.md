@@ -10,7 +10,7 @@ First, we'll create a new Android library module in your React Native project. T
 
 1. Open your React Native project's `android` folder in Android Studio
 1. Go to File → New Module → Android Library
-   ![Create new module in Android Studio](/create_module.png)
+   ![Create new module in Android Studio](./assets/create_module.png)
 1. After the sync completes, run your React Native app to make sure everything works
 1. Test the build by running `./gradlew assembleRelease` in the android directory
 
@@ -43,7 +43,7 @@ We need a special Gradle plugin to create an AAR that includes all dependencies.
    ```
 
 1. Run `./gradlew assembleRelease` to verify the setup
-   ![Verify AAR plugin setup](/verify_aar_plugin_setup.png)
+   ![Verify AAR plugin setup](./assets/verify_aar_plugin_setup.png)
 
 ## 3. Add React Native Dependencies
 
@@ -325,6 +325,8 @@ androidComponents {
     }
 }
 ```
+
+>Note: Add `**/*.so` to your .gitignore file, as to not commit these .so files. The reason is they are auto-generated each time.
 
 ## 7. Configure Maven Publishing
 
