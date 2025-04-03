@@ -56,7 +56,7 @@ async function bootSimulator(selectedSimulator: Device) {
         'Unable to boot device in current state: Booted'
       )
     ) {
-      logger.debug(`Simulator already booted. Skipping.`);
+      logger.debug(`Simulator ${selectedSimulator.udid} already booted. Skipping.`);
       return;
     }
     throw new RnefError('Failed to boot Simulator', {
