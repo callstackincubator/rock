@@ -46,7 +46,23 @@ export async function runOnSimulator(
 }
 
 async function bootSimulator(selectedSimulator: Device) {
-  await spawn('xcrun', ['simctl', 'boot', selectedSimulator.udid]);
+  try {
+    await spawn('xcrun', ['simctl', 'boot', selectedSimulator.udid]);
+  } catch (error) {
+    if (
+      // It may happen on GitHub Actions when the simulator is already booted,
+      // even though the simctl returns its state as Shutdown
+      (error as SubprocessError).stderr.includes(
+        'Unable to boot device in current state: Booted'
+      )
+    ) {
+      logger.debug(`Simulator already booted. Skipping.`);
+      return;
+    }
+    throw new RnefError('Failed to boot Simulator', {
+      cause: (error as SubprocessError).stderr,
+    });
+  }
 }
 
 export default async function installAppOnSimulator(
