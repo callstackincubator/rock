@@ -1,5 +1,12 @@
 # @rnef/plugin-repack
 
+## 0.5.0
+
+### Patch Changes
+
+- 1cbbf15: Use stable version of Re.Pack, removed unused deps
+  - @rnef/tools@0.5.0
+
 ## 0.4.1
 
 ### Patch Changes

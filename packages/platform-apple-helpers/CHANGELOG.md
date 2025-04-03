@@ -1,5 +1,16 @@
 # @rnef/platform-apple-helpers
 
+## 0.5.0
+
+### Minor Changes
+
+- 49e7bc0: feat(ios): brownfield plugin
+
+### Patch Changes
+
+- b0977c8: fix: wrap booting simulator in try catch and add special case for when it says it's booted already
+  - @rnef/tools@0.5.0
+
 ## 0.4.1
 
 ### Patch Changes
