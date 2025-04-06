@@ -9,14 +9,6 @@ buildscript {
     }
     repositories {
         google()
-        maven {
-            name = "GitHubPackages"
-            url = uri("https://maven.pkg.github.com/callstack/big-fat-aar")
-            credentials {
-                username = System.getenv("GITHUB_USERNAME")
-                password = System.getenv("GITHUB_TOKEN")
-            }
-        }
         mavenCentral()
     }
     dependencies {
