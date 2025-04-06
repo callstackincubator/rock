@@ -17,8 +17,6 @@ repositories {
     mavenCentral()
 }
 
-val moduleBuildDir: Directory = layout.buildDirectory.get()
-
 android {
     namespace = "com.helloworldreact"
     compileSdk = 34
@@ -82,6 +80,8 @@ dependencies {
     api("com.facebook.react:react-android:0.78.0")
     api("com.facebook.react:hermes-android:0.78.0")
 }
+
+val moduleBuildDir: Directory = layout.buildDirectory.get()
 
 /**
  * As a result of `from(components.getByName("default")` all of the project

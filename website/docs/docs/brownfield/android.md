@@ -43,6 +43,7 @@ We need a special Gradle plugin to create an AAR that includes all dependencies.
    ```
 
 1. Run `./gradlew assembleRelease` to verify the setup
+
    ![Verify AAR plugin setup](./assets/verify_aar_plugin_setup.png)
 
 ## 3. Add React Native Dependencies
@@ -154,66 +155,7 @@ android {
 }
 ```
 
-Set up autolinking:
-
-```gradle title="rnbrownfield/build.gradle.kts" {1-4,7-11,14-22}
-val appProject = project(":app")
-val appBuildDir: Directory = appProject.layout.buildDirectory.get()
-val moduleBuildDir: Directory = layout.buildDirectory.get()
-val autolinkingJavaSources = "generated/autolinking/src/main/java"
-
-android {
-    sourceSets {
-        getByName("main") {
-            java.srcDirs("$moduleBuildDir/$autolinkingJavaSources")
-        }
-    }
-}
-
-tasks.register<Copy>("copyAutolinkingSources") {
-    dependsOn(":app:generateAutolinkingPackageList")
-    from("$appBuildDir/$autolinkingJavaSources")
-    into("$moduleBuildDir/$autolinkingJavaSources")
-}
-
-androidComponents {
-    onVariants { variant ->
-        tasks.named("preBuild").configure {
-            dependsOn("copyAutolinkingSources")
-        }
-    }
-}
-```
-
-## 5. Include the JavaScript Bundle
-
-Update your `rnbrownfield/build.gradle.kts` to include the JS bundle in the AAR:
-
-```gradle title="rnbrownfield/build.gradle.kts" {4,12-18}
-android {
-    sourceSets {
-        getByName("main") {
-            assets.srcDirs("$appBuildDir/generated/assets/createBundleReleaseJsAndAssets")
-            java.srcDirs("$moduleBuildDir/$autolinkingJavaSources")
-        }
-    }
-}
-
-androidComponents {
-    onVariants { variant ->
-        val buildType = variant.buildType?.replaceFirstChar { it.titlecase() }
-
-        tasks.named("preBuild").configure {
-            dependsOn("copyAutolinkingSources")
-            if (buildType == "Release") {
-                dependsOn(":app:createBundleReleaseJsAndAssets")
-            }
-        }
-    }
-}
-```
-
-## 6. Create the React Native Entry Point
+## 5. Create the React Native Entry Point
 
 Create a new file called `RNViewFactory.kt` to wrap your React Native UI in a `FrameLayout`:
 
@@ -275,60 +217,7 @@ object RNViewFactory {
 }
 ```
 
-## 7. Copy JNI libs
-
-Add the following to your `rnbrownfield/build.gradle.kts`:
-
-```gradle
-android {
-    sourceSets {
-        getByName("main") {
-            assets.srcDirs("$appBuildDir/generated/assets/createBundleReleaseJsAndAssets")
-            java.srcDirs("$moduleBuildDir/$autolinkingJavaSources")
-        }
-        getByName("release") {
-            jniLibs.srcDirs("libsRelease")
-        }
-        getByName("debug") {
-            jniLibs.srcDirs("libsDebug")
-        }
-    }
-    publishing {
-        multipleVariants {
-            allVariants()
-        }
-    }
-}
-
-androidComponents {
-    onVariants { variant ->
-        val buildType = variant.buildType?.replaceFirstChar { it.titlecase() }
-
-        tasks.register<Copy>("copy${buildType}LibSources") {
-            dependsOn(":app:generateCodegenSchemaFromJavaScript")
-            dependsOn(":app:strip${buildType}DebugSymbols")
-
-            dependsOn(":rnbrownfield:generateCodegenSchemaFromJavaScript")
-            from("${appBuildDir}/intermediates/stripped_native_libs/${buildType?.lowercase()}/strip${buildType}DebugSymbols/out/lib")
-            into("${rootProject.projectDir}/rnbrownfield/libs${buildType}")
-
-            include("**/libappmodules.so", "**/libreact_codegen_*.so")
-        }
-
-        tasks.named("preBuild").configure {
-            dependsOn("copyAutolinkingSources")
-            dependsOn("copy${buildType}LibSources")
-            if (buildType == "Release") {
-                dependsOn(":app:createBundleReleaseJsAndAssets")
-            }
-        }
-    }
-}
-```
-
->Note: Add `**/*.so` to your .gitignore file, as to not commit these .so files. The reason is they are auto-generated each time.
-
-## 7. Configure Maven Publishing
+## 6. Configure Maven Publishing
 
 Add the Maven publish plugin to your `rnbrownfield/build.gradle.kts`:
 
@@ -356,8 +245,11 @@ publishing {
 
             pom {
                 withXml {
-                    //removing RN dependencies like e.g. react-native-svg 
-                    //added by "from(components.getByName("default"))" to pom file
+                    /**
+                     * As a result of `from(components.getByName("default")` all of the project
+                     * dependencies are added to `pom.xml` file. We do not need the react-native
+                     * third party dependencies to be a part of it as we embed those dependencies.
+                     */
                     val dependenciesNode = (asNode().get("dependencies") as groovy.util.NodeList).first() as groovy.util.Node
                     dependenciesNode.children()
                         .filterIsInstance<groovy.util.Node>()
@@ -372,9 +264,32 @@ publishing {
         mavenLocal() // Publishes to the local Maven repository (~/.m2/repository by default)
     }
 }
+
+val moduleBuildDir: Directory = layout.buildDirectory.get()
+
+/**
+ * As a result of `from(components.getByName("default")` all of the project
+ * dependencies are added to `module.json` file. We do not need the react-native
+ * third party dependencies to be a part of it as we embed those dependencies.
+ */
+tasks.register("removeDependenciesFromModuleFile") {
+    doLast {
+        file("$moduleBuildDir/publications/mavenAar/module.json").run {
+            val json = inputStream().use { JsonSlurper().parse(it) as Map<String, Any> }
+            (json["variants"] as? List<MutableMap<String, Any>>)?.forEach { variant ->
+                (variant["dependencies"] as? MutableList<Map<String, Any>>)?.removeAll { it["group"] == rootProject.name }
+            }
+            writer().use { it.write(JsonOutput.prettyPrint(JsonOutput.toJson(json))) }
+        }
+    }
+}
+
+tasks.named("generateMetadataFileForMavenAarPublication") {
+   finalizedBy("removeDependenciesFromModuleFile")
+}
 ```
 
-## 8. Set up RNEF for AAR generation
+## 7. Set up RNEF for AAR generation
 
 1. Add `@rnef/plugin-brownfield-android` to your dependencies
 1. Update your `rnef.config.mjs`:
@@ -399,7 +314,7 @@ publishing {
    rnef publish-local:aar --module-name rnbrownfield
    ```
 
-## 9. Add the AAR to Your Android App
+## 8. Add the AAR to Your Android App
 
 > Note: You'll need an existing Android app or create a new one in Android Studio.
 
@@ -423,7 +338,7 @@ publishing {
    }
    ```
 
-## 10. Show the React Native UI
+## 9. Show the React Native UI
 
 Create a new `RNAppFragment.kt`:
 
@@ -492,3 +407,5 @@ class MainActivity : AppCompatActivity() {
 ```
 
 Now you can run your app and test the React Native integration!
+
+>Note: `brownfield-gradle-plugin` copies `.so` files to the `lib` folder. Make sure to add `**/*.so` to your .gitignore file, as to not commit these .so files. The reason is they are auto-generated each time.
