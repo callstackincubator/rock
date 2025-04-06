@@ -17,10 +17,7 @@ repositories {
     mavenCentral()
 }
 
-val appProject = project(":app")
-val appBuildDir: Directory = appProject.layout.buildDirectory.get()
 val moduleBuildDir: Directory = layout.buildDirectory.get()
-val autolinkingJavaSources = "generated/autolinking/src/main/java"
 
 android {
     namespace = "com.helloworldreact"
@@ -42,19 +39,6 @@ android {
         jvmTarget = "17"
     }
 
-    sourceSets {
-        getByName("main") {
-            assets.srcDirs("$appBuildDir/generated/assets/createBundleReleaseJsAndAssets")
-            res.srcDirs("$appBuildDir/generated/res/createBundleReleaseJsAndAssets")
-            java.srcDirs("$moduleBuildDir/$autolinkingJavaSources")
-        }
-        getByName("release") {
-            jniLibs.srcDirs("libsRelease")
-        }
-        getByName("debug") {
-            jniLibs.srcDirs("libsDebug")
-        }
-    }
     publishing {
         multipleVariants {
             allVariants()
@@ -74,8 +58,11 @@ publishing {
 
             pom {
                 withXml {
-                    //removing RN dependencies like e.g. react-native-svg 
-                    //added by "from(components.getByName("default"))" to pom file
+                    /**
+                     * As a result of `from(components.getByName("default")` all of the project
+                     * dependencies are added to `pom.xml` file. We do not need the react-native
+                     * third party dependencies to be a part of it as we embed those dependencies.
+                     */
                     val dependenciesNode = (asNode().get("dependencies") as groovy.util.NodeList).first() as groovy.util.Node
                     dependenciesNode.children()
                         .filterIsInstance<groovy.util.Node>()
@@ -96,39 +83,11 @@ dependencies {
     api("com.facebook.react:hermes-android:0.78.0")
 }
 
-tasks.register<Copy>("copyAutolinkingSources") {
-    dependsOn(":app:generateAutolinkingPackageList")
-    from("$appBuildDir/$autolinkingJavaSources")
-    into("$moduleBuildDir/$autolinkingJavaSources")
-}
-
-androidComponents {
-    onVariants { variant ->
-        val buildType = variant.buildType?.replaceFirstChar { it.titlecase() }
-
-        tasks.register<Copy>("copy${buildType}LibSources") {
-            dependsOn(":app:generateCodegenSchemaFromJavaScript")
-            dependsOn(":app:strip${buildType}DebugSymbols")
-
-            dependsOn(":helloworldreact:generateCodegenSchemaFromJavaScript")
-            from("${appBuildDir}/intermediates/stripped_native_libs/${buildType?.lowercase()}/strip${buildType}DebugSymbols/out/lib")
-            into("${rootProject.projectDir}/helloworldreact/libs${buildType}")
-
-            include("**/libappmodules.so", "**/libreact_codegen_*.so")
-        }
-
-        tasks.named("preBuild").configure {
-            dependsOn("copyAutolinkingSources")
-            dependsOn("copy${buildType}LibSources")
-            if (buildType == "Release") {
-                dependsOn(":app:createBundleReleaseJsAndAssets")
-            }
-        }
-    }
-}
-
-//removing RN dependencies like e.g. react-native-svg 
-//added by "from(components.getByName("default"))" to "module" file
+/**
+ * As a result of `from(components.getByName("default")` all of the project
+ * dependencies are added to `module.json` file. We do not need the react-native
+ * third party dependencies to be a part of it as we embed those dependencies.
+ */
 tasks.register("removeDependenciesFromModuleFile") {
     doLast {
         file("$moduleBuildDir/publications/mavenAar/module.json").run {
