@@ -9,6 +9,9 @@ export default defineConfig({
   title: 'React Native Enterprise Framework',
   icon: '/rspress-icon.png',
   outDir: 'build',
+  route: {
+    cleanUrls: true
+  },
   // logo: {
   //   light: '/rspress-light-logo.png',
   //   dark: '/rspress-dark-logo.png',
