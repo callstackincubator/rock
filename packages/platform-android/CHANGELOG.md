@@ -1,5 +1,12 @@
 # @rnef/platform-android
 
+## 0.5.1
+
+### Patch Changes
+
+- 772ecba: fix: sign android on SDK lower than 35
+  - @rnef/tools@0.5.1
+
 ## 0.5.0
 
 ### Patch Changes
