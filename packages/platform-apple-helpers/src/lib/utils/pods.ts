@@ -216,7 +216,7 @@ function checkGemfileForCocoaPods(gemfilePath: string): boolean {
   try {
     const gemfileContent = fs.readFileSync(gemfilePath, 'utf-8');
     // Check for common CocoaPods gem declarations, because some projects might have Gemfile but for other purposes
-    return /^\s*gem\s+['"]cocoapods['"]/.test(gemfileContent);
+    return /^\s*gem\s+['"]cocoapods['"]/m.test(gemfileContent);
   } catch (error) {
     logger.debug(`Failed to read Gemfile at: ${gemfilePath}`);
     logger.debug(error);
