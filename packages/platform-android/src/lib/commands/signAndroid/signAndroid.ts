@@ -154,12 +154,7 @@ async function replaceJsBundle({
 
 function isSdkGTE35(versionString: string) {
   const match = versionString.match(/build-tools\/([\d.]+)/);
-  console.log({ match });
   if (!match) return false;
-  console.log(
-    'xxx',
-    match[1].localeCompare('35.0.0', undefined, { numeric: true })
-  );
 
   return match[1].localeCompare('35.0.0', undefined, { numeric: true }) >= 0;
 }
