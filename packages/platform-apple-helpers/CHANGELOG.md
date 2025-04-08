@@ -1,5 +1,12 @@
 # @rnef/platform-apple-helpers
 
+## 0.5.2
+
+### Patch Changes
+
+- df957f8: fix: pod install with missing 'm' regex flag
+  - @rnef/tools@0.5.2
+
 ## 0.5.1
 
 ### Patch Changes

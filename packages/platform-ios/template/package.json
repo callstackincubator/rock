@@ -4,6 +4,6 @@
     "ios": "rnef run:ios"
   },
   "devDependencies": {
-    "@rnef/platform-ios": "^0.5.1"
+    "@rnef/platform-ios": "^0.5.2"
   }
 }

@@ -1,5 +1,11 @@
 # @rnef/platform-android
 
+## 0.5.2
+
+### Patch Changes
+
+- @rnef/tools@0.5.2
+
 ## 0.5.1
 
 ### Patch Changes
