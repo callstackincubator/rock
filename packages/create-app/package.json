@@ -15,7 +15,7 @@
     "e2e": "vitest --config vite.e2e.config.js"
   },
   "bin": {
-    "create-rnef-app": "./dist/src/bin.js"
+    "create-app": "./dist/src/bin.js"
   },
   "dependencies": {
     "@rnef/tools": "^0.5.2",
