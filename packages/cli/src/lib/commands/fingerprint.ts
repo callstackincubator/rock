@@ -1,5 +1,5 @@
 import { performance } from 'node:perf_hooks';
-import { intro, logger, nativeFingerprint, outro, spinner } from '@rnef/tools';
+import { intro, isInteractive, logger, nativeFingerprint, outro, spinner } from '@rnef/tools';
 
 type NativeFingerprintCommandOptions = {
   platform: 'ios' | 'android';
@@ -20,7 +20,7 @@ export async function nativeFingerprintCommand(
   const platform = options?.platform ?? 'ios';
   const readablePlatformName = platform === 'ios' ? 'iOS' : 'Android';
 
-  if (options?.raw) {
+  if (options?.raw || !isInteractive()) {
     const fingerprint = await nativeFingerprint(path, {
       platform,
       extraSources,
