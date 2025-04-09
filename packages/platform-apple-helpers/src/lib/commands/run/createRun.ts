@@ -3,10 +3,8 @@ import path from 'node:path';
 import type { SupportedRemoteCacheProviders } from '@rnef/tools';
 import {
   color,
-  intro,
   isInteractive,
   logger,
-  outro,
   promptSelect,
   RnefError,
   spinner,
@@ -40,8 +38,6 @@ export const createRun = async (
   remoteCacheProvider: SupportedRemoteCacheProviders | undefined,
   fingerprintOptions: { extraSources: string[]; ignorePaths: string[] }
 ) => {
-  intro('Running on iOS');
-
   if (!args.binaryPath && args.remoteCache) {
     const cachedBuild = await fetchCachedBuild({
       configuration: args.configuration ?? 'Debug',
@@ -67,7 +63,6 @@ export const createRun = async (
       projectRoot,
     });
     await runOnMac(appPath);
-    outro('Success 🎉.');
     return;
   } else if (args.catalyst) {
     const { appPath, scheme } = await buildApp({
@@ -79,7 +74,6 @@ export const createRun = async (
     });
     if (scheme) {
       await runOnMacCatalyst(appPath, scheme);
-      outro('Success 🎉.');
       return;
     } else {
       throw new RnefError('Failed to get project scheme');
@@ -121,7 +115,6 @@ export const createRun = async (
       });
       await runOnDevice(device, appPath, projectConfig.sourceDir);
     }
-    outro('Success 🎉.');
     return;
   } else {
     const bootedSimulators = devices.filter(
@@ -161,8 +154,6 @@ export const createRun = async (
       await runOnSimulator(simulator, appPath, infoPlistPath);
     }
   }
-
-  outro('Success 🎉.');
 };
 
 async function selectDevice(devices: Device[], args: RunFlags) {

@@ -39,5 +39,5 @@ export interface Params {
 
 export interface ProjectConfig {
   sourceDir: string;
-  xcodeProject: XcodeProjectInfo | null;
+  xcodeProject: XcodeProjectInfo;
 }

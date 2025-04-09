@@ -17,7 +17,7 @@ export async function getBuildSettings(
   platformSDK: PlatformSDK,
   scheme: string,
   target?: string
-): Promise<{ appPath: string; infoPlistPath: string; scheme: string }> {
+): Promise<{ appPath: string; infoPlistPath: string }> {
   const { stdout: buildSettings } = await spawn(
     'xcodebuild',
     [
@@ -78,7 +78,6 @@ export async function getBuildSettings(
     return {
       appPath,
       infoPlistPath: path.join(targetBuildDir, infoPlistPath),
-      scheme,
     };
   }
 

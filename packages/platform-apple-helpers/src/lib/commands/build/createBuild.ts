@@ -7,7 +7,11 @@ import {
   RnefError,
   spinner,
 } from '@rnef/tools';
-import type { BuilderCommand, ProjectConfig } from '../../types/index.js';
+import type {
+  BuilderCommand,
+  ProjectConfig,
+  XcodeProjectInfo,
+} from '../../types/index.js';
 import { buildApp } from '../../utils/buildApp.js';
 import { getBuildPaths } from '../../utils/getBuildPaths.js';
 import {
@@ -24,9 +28,10 @@ export const createBuild = async (
   projectRoot: string
 ) => {
   await validateArgs(args);
-
+  let xcodeProject: XcodeProjectInfo;
+  let sourceDir: string;
   try {
-    const { appPath } = await buildApp({
+    const { appPath, ...buildAppResult } = await buildApp({
       projectRoot,
       projectConfig,
       platformName,
@@ -39,6 +44,9 @@ export const createBuild = async (
     const loader = spinner();
     loader.start('');
     loader.stop(`Build available at: ${color.cyan(appPath)}`);
+
+    xcodeProject = buildAppResult.xcodeProject;
+    sourceDir = buildAppResult.sourceDir;
   } catch (error) {
     const message = `Failed to create ${args.archive ? 'archive' : 'build'}`;
     throw new RnefError(message, { cause: error });
@@ -46,11 +54,10 @@ export const createBuild = async (
 
   if (args.archive) {
     const { archiveDir } = getBuildPaths(platformName);
-    const { xcodeProject, sourceDir } = projectConfig;
 
     const archivePath = path.join(
       archiveDir,
-      `${xcodeProject?.name.replace('.xcworkspace', '')}.xcarchive`
+      `${xcodeProject.name.replace('.xcworkspace', '')}.xcarchive`
     );
     try {
       await exportArchive({

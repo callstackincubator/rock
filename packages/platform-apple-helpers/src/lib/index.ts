@@ -8,3 +8,4 @@ export { getRunOptions, RunFlags } from './commands/run/runOptions.js';
 export { getBuildPaths } from './utils/getBuildPaths.js'
 export { modifyIpa, type ModifyIpaOptions } from './commands/sign/modifyIpa.js';
 export { promptSigningIdentity } from './utils/signingIdentities.js';
+export { getValidProjectConfig } from './utils/getValidProjectConfig.js';

@@ -1,15 +1,14 @@
-import { getProjectConfig } from '@react-native-community/cli-config-apple';
 import type { PluginApi, PluginOutput } from '@rnef/config';
 import {
   type BuildFlags,
   createBuild,
   getBuildOptions,
   getBuildPaths,
+  getValidProjectConfig,
 } from '@rnef/platform-apple-helpers';
 import { intro, outro, RnefError } from '@rnef/tools';
 import { mergeFrameworks } from './mergeFrameworks.js';
 
-const projectConfig = getProjectConfig({ platformName: 'ios' });
 const buildOptions = getBuildOptions({ platformName: 'ios' });
 
 export const pluginBrownfieldIos =
@@ -22,7 +21,7 @@ export const pluginBrownfieldIos =
         intro('Packaging iOS project');
 
         const projectRoot = api.getProjectRoot();
-        const iosConfig = projectConfig(projectRoot, {});
+        const iosConfig = getValidProjectConfig('ios', projectRoot, {});
         const { derivedDataDir } = getBuildPaths('ios');
 
         const destinations = args.destinations ?? [
@@ -33,16 +32,12 @@ export const pluginBrownfieldIos =
         const buildFolder = args.buildFolder ?? derivedDataDir;
         const configuration = args.configuration ?? 'Debug';
 
-        if (iosConfig) {
-          await createBuild(
-            'ios',
-            iosConfig,
-            { ...args, destinations, buildFolder },
-            projectRoot
-          );
-        } else {
-          throw new RnefError('iOS project not found.');
-        }
+        await createBuild(
+          'ios',
+          iosConfig,
+          { ...args, destinations, buildFolder },
+          projectRoot
+        );
 
         if (!args.scheme) {
           throw new RnefError(
