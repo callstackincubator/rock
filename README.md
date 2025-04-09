@@ -46,10 +46,12 @@ npx @rnef/create-app enterprise
 1. Add `rnef.config.mjs` file:
 
    ```mjs
+   // @ts-check
    import { platformIOS } from '@rnef/platform-ios';
    import { platformAndroid } from '@rnef/platform-android';
    import { pluginMetro } from '@rnef/plugin-metro';
 
+   /** @type {import('@rnef/config').Config} */
    export default {
      bundler: pluginMetro(),
      platforms: {

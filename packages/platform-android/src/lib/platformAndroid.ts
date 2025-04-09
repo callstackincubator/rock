@@ -8,7 +8,7 @@ import { registerSignCommand } from './commands/signAndroid/command.js';
 type PluginConfig = AndroidProjectConfig;
 
 export const platformAndroid =
-  (pluginConfig: PluginConfig) =>
+  (pluginConfig?: PluginConfig) =>
   (api: PluginApi): PluginOutput => {
     registerBuildCommand(api);
     registerRunCommand(api, pluginConfig);

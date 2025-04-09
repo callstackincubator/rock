@@ -109,12 +109,12 @@ function ensureUniqueCommands(commands: CommandType[] | undefined) {
           command.name
         }" registered twice by the same "${
           command.__origin
-        }" plugin in ${color.cyan('rnef.config.js')} file.
+        }" plugin in ${color.cyan('rnef.config.mjs')} file.
 Please declare the plugin only once.`);
       } else {
         logger.error(`Found duplicated command "${
           command.name
-        }" registered by 2 plugins in ${color.cyan('rnef.config.js')} file:
+        }" registered by 2 plugins in ${color.cyan('rnef.config.mjs')} file:
 1. Added by "${command.__origin}" plugin
 2. Added by "${duplicate.__origin}" plugin
 Command names must be unique. Please check if you import a plugin multiple times or use incompatible plugins.`);

@@ -5,9 +5,11 @@ RNEF can be configured through a configuration object that defines various aspec
 The most basic configuration would, assuming you only support iOS platform and choose Metro as our bundler, would look like this
 
 ```js title="rnef.config.mjs"
+// @ts-check
 import { platformIOS } from '@rnef/platform-ios';
 import { pluginMetro } from '@rnef/plugin-metro';
 
+/** @type {import('@rnef/config').Config} */
 export default {
   bundler: pluginMetro(),
   platforms: {

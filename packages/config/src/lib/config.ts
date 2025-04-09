@@ -54,7 +54,7 @@ export type CommandType = {
   __origin?: string;
 };
 
-type ConfigType = {
+export type ConfigType = {
   root?: string;
   reactNativeVersion?: string;
   reactNativePath?: string;
