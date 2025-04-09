@@ -98,8 +98,13 @@ export function promptPlatforms(
     throw new RnefError('No platforms found');
   }
 
+  const defaultPlatforms = platforms.filter(
+    (platform) => platform.name === 'android' || platform.name === 'ios'
+  );
+
   return promptMultiselect({
     message: 'Select platforms:',
+    initialValues: defaultPlatforms,
     // @ts-expect-error todo
     options: platforms.map((platform) => ({
       value: platform,
