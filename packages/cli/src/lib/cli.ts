@@ -42,6 +42,7 @@ export const cli = async ({ cwd, argv }: CliOptions = {}) => {
   program
     .command('fingerprint [path]')
     .option('-p, --platform <string>', 'Select platform, e.g. ios or android')
+    .option('--raw', 'Output the raw fingerprint hash for piping')
     .action(async (path, options) => {
       const fingerprintOptions = config.getFingerprintOptions();
       await nativeFingerprintCommand(path, fingerprintOptions, options);

@@ -3,6 +3,7 @@ import { intro, logger, nativeFingerprint, outro, spinner } from '@rnef/tools';
 
 type NativeFingerprintCommandOptions = {
   platform: 'ios' | 'android';
+  raw?: boolean;
 };
 
 type ConfigFingerprintOptions = {
@@ -17,8 +18,19 @@ export async function nativeFingerprintCommand(
 ) {
   path = path ?? '.';
   const platform = options?.platform ?? 'ios';
+  const readablePlatformName = platform === 'ios' ? 'iOS' : 'Android';
 
-  intro('Native Fingerprint');
+  if (options?.raw) {
+    const fingerprint = await nativeFingerprint(path, {
+      platform,
+      extraSources,
+      ignorePaths,
+    });
+    console.log(fingerprint.hash);
+    return;
+  }
+
+  intro(`${readablePlatformName} Fingerprint`);
 
   const loader = spinner();
   loader.start("Calculating fingerprint for the project's native parts");
