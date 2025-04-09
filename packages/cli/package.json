@@ -1,6 +1,6 @@
 {
   "name": "@rnef/cli",
-  "version": "0.5.2",
+  "version": "0.5.3",
   "type": "module",
   "exports": {
     "./package.json": "./package.json"
@@ -17,8 +17,8 @@
   },
   "dependencies": {
     "@react-native-community/cli-config": "^16.0.2",
-    "@rnef/config": "^0.5.2",
-    "@rnef/tools": "^0.5.2",
+    "@rnef/config": "^0.5.3",
+    "@rnef/tools": "^0.5.3",
     "commander": "^12.1.0",
     "tslib": "^2.3.0"
   },

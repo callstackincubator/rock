@@ -1,5 +1,12 @@
 # @rnef/create-app
 
+## 0.5.3
+
+### Patch Changes
+
+- 52fc186: fix: yarn create bugging on create-rnef-app bin
+  - @rnef/tools@0.5.3
+
 ## 0.5.2
 
 ### Patch Changes

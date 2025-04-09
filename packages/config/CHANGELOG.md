@@ -1,5 +1,12 @@
 # @rnef/config
 
+## 0.5.3
+
+### Patch Changes
+
+- 22233c5: feat: export config type; support typed config; point to mjs
+  - @rnef/tools@0.5.3
+
 ## 0.5.2
 
 ### Patch Changes
