@@ -1,48 +1,80 @@
 import path from 'node:path';
+import { getProjectConfig } from '@react-native-community/cli-config-apple';
 import { RnefError } from '@rnef/tools';
 import type { BuildFlags } from '../commands/build/buildOptions.js';
 import { buildProject } from '../commands/build/buildProject.js';
 import { getBuildSettings } from '../commands/run/getBuildSettings.js';
 import type { RunFlags } from '../commands/run/runOptions.js';
-import type { ApplePlatform } from '../types/index.js';
-import type { XcodeProjectInfo } from '../types/index.js';
+import type { ApplePlatform, ProjectConfig } from '../types/index.js';
 import { getConfiguration } from './getConfiguration.js';
 import { getInfo } from './getInfo.js';
 import type { PlatformSDK } from './getPlatformInfo.js';
 import { getScheme } from './getScheme.js';
+import { installPodsIfNeeded } from './pods.js';
 
 export async function buildApp({
   args,
-  xcodeProject,
-  sourceDir,
+  projectConfig,
   platformName,
   platformSDK,
   udid,
-  selectedScheme,
+  projectRoot,
 }: {
   args: RunFlags | BuildFlags;
-  xcodeProject: XcodeProjectInfo;
-  sourceDir: string;
+  projectConfig: ProjectConfig;
   platformName: ApplePlatform;
   platformSDK: PlatformSDK;
   udid?: string;
-  selectedScheme?: string;
+  projectRoot: string;
 }) {
   if ('binaryPath' in args && args.binaryPath) {
     return {
       appPath: args.binaryPath,
       // @todo Info.plist is hardcoded when reading from binaryPath
       infoPlistPath: path.join(args.binaryPath, 'Info.plist'),
+      scheme: args.scheme,
     };
+  }
+
+  let { xcodeProject, sourceDir } = projectConfig;
+
+  if (!xcodeProject) {
+    throw new RnefError(
+      `Could not find Xcode project files in "${sourceDir}" folder. Please make sure that you have installed Cocoapods and "${sourceDir}" is a valid path`
+    );
+  }
+
+  if (args.installPods) {
+    await installPodsIfNeeded(
+      projectRoot,
+      platformName,
+      sourceDir,
+      args.newArch
+    );
+    // When the project is not a workspace, we need to get the project config again,
+    // because running pods install might have generated .xcworkspace project.
+    // This should be only case in new project.
+    if (xcodeProject?.isWorkspace === false) {
+      const newProjectConfig = getProjectConfig({ platformName })(
+        projectRoot,
+        {}
+      );
+      if (newProjectConfig) {
+        if (newProjectConfig.xcodeProject) {
+          xcodeProject = newProjectConfig.xcodeProject;
+          sourceDir = newProjectConfig.sourceDir;
+        } else {
+          throw new RnefError('Failed to get Xcode project information');
+        }
+      }
+    }
   }
 
   const info = await getInfo(xcodeProject, sourceDir);
   if (!info) {
     throw new RnefError('Failed to get Xcode project information');
   }
-  const scheme =
-    selectedScheme ??
-    (await getScheme(info.schemes, args.scheme, xcodeProject.name));
+  const scheme = await getScheme(info.schemes, args.scheme, xcodeProject.name);
   const configuration = await getConfiguration(
     info.configurations,
     args.configuration

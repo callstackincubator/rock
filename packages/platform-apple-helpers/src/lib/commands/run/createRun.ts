@@ -1,6 +1,5 @@
 import fs from 'node:fs';
 import path from 'node:path';
-import { getProjectConfig } from '@react-native-community/cli-config-apple';
 import type { SupportedRemoteCacheProviders } from '@rnef/tools';
 import {
   color,
@@ -18,15 +17,12 @@ import type {
   ProjectConfig,
 } from '../../types/index.js';
 import { buildApp } from '../../utils/buildApp.js';
-import { getInfo } from '../../utils/getInfo.js';
 import {
   getDevicePlatformSDK,
   getPlatformInfo,
   getSimulatorPlatformSDK,
 } from '../../utils/getPlatformInfo.js';
-import { getScheme } from '../../utils/getScheme.js';
 import { listDevicesAndSimulators } from '../../utils/listDevices.js';
-import { installPodsIfNeeded } from '../../utils/pods.js';
 import { fetchCachedBuild } from './fetchCachedBuild.js';
 import { matchingDevice } from './matchingDevice.js';
 import { cacheRecentDevice, sortByRecentDevices } from './recentDevices.js';
@@ -60,74 +56,34 @@ export const createRun = async (
     }
   }
 
-  let { xcodeProject, sourceDir } = projectConfig;
-
-  if (!xcodeProject) {
-    throw new RnefError(
-      `Could not find Xcode project files in "${sourceDir}" folder. Please make sure that you have installed Cocoapods and "${sourceDir}" is a valid path`
-    );
-  }
-
   validateArgs(args, projectRoot);
-
-  if (args.installPods) {
-    await installPodsIfNeeded(
-      projectRoot,
-      platformName,
-      sourceDir,
-      args.newArch
-    );
-    // When the project is not a workspace, we need to get the project config again,
-    // because running pods install might have generated .xcworkspace project.
-    // This should be only case in new project.
-    if (xcodeProject?.isWorkspace === false) {
-      const newProjectConfig = getProjectConfig({ platformName })(
-        projectRoot,
-        {}
-      );
-      if (newProjectConfig) {
-        xcodeProject = newProjectConfig.xcodeProject;
-        sourceDir = newProjectConfig.sourceDir;
-      }
-    }
-  }
-
-  if (!xcodeProject) {
-    throw new RnefError('Failed to get Xcode project information');
-  }
 
   if (platformName === 'macos') {
     const { appPath } = await buildApp({
       args,
-      xcodeProject,
-      sourceDir,
+      projectConfig,
       platformName,
       platformSDK: getSimulatorPlatformSDK(platformName),
+      projectRoot,
     });
     await runOnMac(appPath);
     outro('Success 🎉.');
     return;
   } else if (args.catalyst) {
-    const info = await getInfo(xcodeProject, sourceDir);
-    if (!info) {
-      throw new RnefError('Failed to get Xcode project information');
-    }
-    const scheme = await getScheme(
-      info.schemes,
-      args.scheme,
-      xcodeProject.name
-    );
-    const { appPath } = await buildApp({
+    const { appPath, scheme } = await buildApp({
       args,
-      xcodeProject,
-      sourceDir,
+      projectConfig,
       platformName,
       platformSDK: getSimulatorPlatformSDK(platformName),
-      selectedScheme: scheme,
+      projectRoot,
     });
-    await runOnMacCatalyst(appPath, scheme);
-    outro('Success 🎉.');
-    return;
+    if (scheme) {
+      await runOnMacCatalyst(appPath, scheme);
+      outro('Success 🎉.');
+      return;
+    } else {
+      throw new RnefError('Failed to get project scheme');
+    }
   }
 
   const loader = spinner();
@@ -147,23 +103,23 @@ export const createRun = async (
     if (device.type === 'simulator') {
       const { appPath, infoPlistPath } = await buildApp({
         args,
-        xcodeProject,
-        sourceDir,
+        projectConfig,
         platformName,
         platformSDK: getSimulatorPlatformSDK(platformName),
         udid: device.udid,
+        projectRoot,
       });
       await runOnSimulator(device, appPath, infoPlistPath);
     } else if (device.type === 'device') {
       const { appPath } = await buildApp({
         args,
-        xcodeProject,
-        sourceDir,
+        projectConfig,
         platformName,
         platformSDK: getDevicePlatformSDK(platformName),
         udid: device.udid,
+        projectRoot,
       });
-      await runOnDevice(device, appPath, sourceDir);
+      await runOnDevice(device, appPath, projectConfig.sourceDir);
     }
     outro('Success 🎉.');
     return;
@@ -196,11 +152,11 @@ export const createRun = async (
     for (const simulator of bootedSimulators) {
       const { appPath, infoPlistPath } = await buildApp({
         args,
-        xcodeProject,
-        sourceDir,
+        projectConfig,
         platformName,
         platformSDK: getSimulatorPlatformSDK(platformName),
         udid: simulator.udid,
+        projectRoot,
       });
       await runOnSimulator(simulator, appPath, infoPlistPath);
     }
