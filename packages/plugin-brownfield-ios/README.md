@@ -1,11 +1,7 @@
-# plugin-brownfield-ios
+# @rnef/plugin-brownfield-ios
 
-This library was generated with [Nx](https://nx.dev).
+iOS brownfield integration plugin for React Native Enterprise Framework (RNEF). This package is part of the RNEF ecosystem and provides tools for integrating React Native into existing iOS applications.
 
-## Building
+## Documentation
 
-Run `nx build plugin-brownfield-ios` to build the library.
-
-## Running unit tests
-
-Run `nx test plugin-brownfield-ios` to execute the unit tests via [Vitest](https://vitest.dev/).
+For detailed documentation about RNEF and its tools, visit [RNEF Documentation](https://rnef.vercel.app)

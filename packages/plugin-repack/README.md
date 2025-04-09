@@ -1,11 +1,7 @@
-# plugin-repack
+# @rnef/plugin-repack
 
-This library was generated with [Nx](https://nx.dev).
+Re.Pack integration plugin for React Native Enterprise Framework (RNEF). This package is part of the RNEF ecosystem and provides integration with [Re.Pack](https://re-pack.dev), a toolkit for building React Native apps with webpack or Rspack.
 
-## Building
+## Documentation
 
-Run `nx build plugin-repack` to build the library.
-
-## Running unit tests
-
-Run `nx test plugin-repack` to execute the unit tests via [Vitest](https://vitest.dev/).
+For detailed documentation about RNEF and its tools, visit [RNEF Documentation](https://rnef.vercel.app)

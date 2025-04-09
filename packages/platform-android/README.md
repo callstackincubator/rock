@@ -1,11 +1,7 @@
-# platform-android
+# @rnef/platform-android
 
-This library was generated with [Nx](https://nx.dev).
+Android platform integration for React Native Enterprise Framework (RNEF). This package is part of the RNEF ecosystem and provides Android-specific build and development tools.
 
-## Building
+## Documentation
 
-Run `nx build platform-android` to build the library.
-
-## Running unit tests
-
-Run `nx test platform-android` to execute the unit tests via [Vitest](https://vitest.dev/).
+For detailed documentation about RNEF and its tools, visit [RNEF Documentation](https://rnef.vercel.app)

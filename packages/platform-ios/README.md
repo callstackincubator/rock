@@ -1,11 +1,7 @@
-# platform-ios
+# @rnef/platform-ios
 
-This library was generated with [Nx](https://nx.dev).
+iOS platform integration for React Native Enterprise Framework (RNEF). This package is part of the RNEF ecosystem and provides iOS-specific build and development tools.
 
-## Building
+## Documentation
 
-Run `nx build platform-ios` to build the library.
-
-## Running unit tests
-
-Run `nx test platform-ios` to execute the unit tests via [Vitest](https://vitest.dev/).
+For detailed documentation about RNEF and its tools, visit [RNEF Documentation](https://rnef.vercel.app)

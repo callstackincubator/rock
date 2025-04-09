@@ -1,11 +1,7 @@
-# config
+# @rnef/config
 
-This library was generated with [Nx](https://nx.dev).
+Configuration utilities for React Native Enterprise Framework (RNEF), including autolinking for packages with native code. This package is part of the RNEF ecosystem.
 
-## Building
+## Documentation
 
-Run `nx build config` to build the library.
-
-## Running unit tests
-
-Run `nx test config` to execute the unit tests via [Vitest](https://vitest.dev/).
+For detailed documentation about RNEF and its tools, visit [RNEF Documentation](https://rnef.vercel.app)

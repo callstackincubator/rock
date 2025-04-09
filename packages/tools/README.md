@@ -1,11 +1,8 @@
-# tools
+# @rnef/tools
 
-This library was generated with [Nx](https://nx.dev).
+Development tools and utilities for React Native Enterprise Framework (RNEF). This package is part of the RNEF ecosystem.
 
-## Building
 
-Run `nx build tools` to build the library.
+## Documentation
 
-## Running unit tests
-
-Run `nx test tools` to execute the unit tests via [Vitest](https://vitest.dev/).
+For detailed documentation about RNEF and its tools, visit [RNEF Documentation](https://rnef.vercel.app)

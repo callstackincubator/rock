@@ -1,11 +1,8 @@
-# plugin-metro
+# @rnef/plugin-metro
 
-This library was generated with [Nx](https://nx.dev).
+Metro bundler integration plugin for React Native Enterprise Framework (RNEF). This package is part of the RNEF ecosystem and provides integration with Metro, the default JavaScript bundler for React Native.
 
-## Building
+## Documentation
 
-Run `nx build plugin-metro` to build the library.
+For detailed documentation about RNEF and its tools, visit [RNEF Documentation](https://rnef.vercel.app)
 
-## Running unit tests
-
-Run `nx test plugin-metro` to execute the unit tests via [Vitest](https://vitest.dev/).

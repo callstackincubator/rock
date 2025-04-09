@@ -1,11 +1,15 @@
-# cli
+# @rnef/cli
 
-This library was generated with [Nx](https://nx.dev).
+Command-line interface for React Native Enterprise Framework (RNEF). This package is part of the RNEF ecosystem.
 
-## Building
+## Quick Start
 
-Run `nx build cli` to build the library.
+Create a new RNEF project:
 
-## Running unit tests
+```sh
+npx @rnef/create-app enterprise
+```
 
-Run `nx test cli` to execute the unit tests via [Jest](https://jestjs.io).
+## Documentation
+
+For detailed documentation about RNEF and its tools, visit [RNEF Documentation](https://rnef.vercel.app)
