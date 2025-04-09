@@ -4,11 +4,7 @@ import { logger, RnefError, spawn, spinner } from '@rnef/tools';
 import type { Device } from '../../types/index.js';
 import { readKeyFromPlist } from '../../utils/plist.js';
 
-export async function runOnSimulator(
-  device: Device,
-  binaryPath: string,
-  infoPlistPath: string
-) {
+export async function launchSimulator(device: Device) {
   /**
    * Booting simulator through `xcrun simctl boot` will boot it in the `headless` mode
    * (running in the background).
@@ -22,8 +18,6 @@ export async function runOnSimulator(
    */
   const { output: activeDeveloperDir } = await spawn('xcode-select', ['-p']);
 
-  const loader = spinner();
-  loader.start(`Launching Simulator "${device.name}"`);
   await spawn('open', [
     `${activeDeveloperDir}/Applications/Simulator.app`,
     '--args',
@@ -34,7 +28,14 @@ export async function runOnSimulator(
   if (device.state !== 'Booted') {
     await bootSimulator(device);
   }
-  loader.stop(`Launched Simulator "${device.name}".`);
+}
+
+export async function runOnSimulator(
+  device: Device,
+  binaryPath: string,
+  infoPlistPath: string
+) {
+  const loader = spinner();
 
   loader.start(`Installing the app on "${device.name}"`);
   await installAppOnSimulator(device.udid, binaryPath);
@@ -56,7 +57,9 @@ async function bootSimulator(selectedSimulator: Device) {
         'Unable to boot device in current state: Booted'
       )
     ) {
-      logger.debug(`Simulator ${selectedSimulator.udid} already booted. Skipping.`);
+      logger.debug(
+        `Simulator ${selectedSimulator.udid} already booted. Skipping.`
+      );
       return;
     }
     throw new RnefError('Failed to boot Simulator', {

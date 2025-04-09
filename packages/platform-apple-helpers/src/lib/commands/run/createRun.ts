@@ -27,7 +27,7 @@ import { cacheRecentDevice, sortByRecentDevices } from './recentDevices.js';
 import { runOnDevice } from './runOnDevice.js';
 import { runOnMac } from './runOnMac.js';
 import { runOnMacCatalyst } from './runOnMacCatalyst.js';
-import { runOnSimulator } from './runOnSimulator.js';
+import { launchSimulator, runOnSimulator } from './runOnSimulator.js';
 import type { RunFlags } from './runOptions.js';
 
 export const createRun = async (
@@ -95,14 +95,18 @@ export const createRun = async (
   if (device) {
     cacheRecentDevice(device, platformName);
     if (device.type === 'simulator') {
-      const { appPath, infoPlistPath } = await buildApp({
-        args,
-        projectConfig,
-        platformName,
-        platformSDK: getSimulatorPlatformSDK(platformName),
-        udid: device.udid,
-        projectRoot,
-      });
+      const [, { appPath, infoPlistPath }] = await Promise.all([
+        launchSimulator(device),
+        buildApp({
+          args,
+          projectConfig,
+          platformName,
+          platformSDK: getSimulatorPlatformSDK(platformName),
+          udid: device.udid,
+          projectRoot,
+        }),
+      ]);
+
       await runOnSimulator(device, appPath, infoPlistPath);
     } else if (device.type === 'device') {
       const { appPath } = await buildApp({
@@ -143,14 +147,17 @@ export const createRun = async (
       }
     }
     for (const simulator of bootedSimulators) {
-      const { appPath, infoPlistPath } = await buildApp({
-        args,
-        projectConfig,
-        platformName,
-        platformSDK: getSimulatorPlatformSDK(platformName),
-        udid: simulator.udid,
-        projectRoot,
-      });
+      const [, { appPath, infoPlistPath }] = await Promise.all([
+        launchSimulator(simulator),
+        buildApp({
+          args,
+          projectConfig,
+          platformName,
+          platformSDK: getSimulatorPlatformSDK(platformName),
+          udid: simulator.udid,
+          projectRoot,
+        }),
+      ]);
       await runOnSimulator(simulator, appPath, infoPlistPath);
     }
   }
