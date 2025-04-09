@@ -13,6 +13,10 @@ import {
 } from '@rnef/tools';
 import type { ApplePlatform } from '../types/index.js';
 
+const podErrorHelpMessage = `Please make sure your environment is correctly set up. 
+Learn more at: ${color.dim('https://cocoapods.org/')}
+To skip automatic CocoaPods installation run with "--no-install-pods" flag after installing CocoaPods manually.`;
+
 export async function installPodsIfNeeded(
   projectRoot: string,
   platformName: ApplePlatform,
@@ -59,7 +63,9 @@ const calculateCurrentHash = ({
   try {
     podfile = fs.readFileSync(podfilePath, 'utf-8');
   } catch {
-    throw new RnefError(`No Podfile found at: ${podfilePath}`);
+    throw new RnefError(
+      `No Podfile found at: ${podfilePath}. ${podErrorHelpMessage}`
+    );
   }
 
   let podfileLock: string | undefined;
@@ -141,8 +147,7 @@ async function runPodInstall(options: {
         loader.stop('CocoaPods installation failed. ', 1);
 
         throw new RnefError(
-          `CocoaPods installation failed. Please make sure your environment is correctly set up. 
-Learn more at: ${color.dim('https://cocoapods.org/')}`,
+          `CocoaPods installation failed. ${podErrorHelpMessage}`,
           { cause: stderr }
         );
       }
@@ -167,8 +172,7 @@ async function runPodUpdate(cwd: string, useBundler: boolean) {
     loader.stop();
 
     throw new RnefError(
-      `Failed to update CocoaPods repositories for iOS project. Please try again manually: 
-cd ${cwd} && bundle exec pod repo update.`,
+      `Failed to update CocoaPods repositories for iOS project. ${podErrorHelpMessage}`,
       { cause: stderr }
     );
   }
@@ -208,7 +212,10 @@ async function validatePodCommand(sourceDir: string) {
   } catch (error) {
     const stderr =
       (error as SubprocessError).stderr || (error as SubprocessError).stdout;
-    throw new RnefError(`CocoaPods "pod" command failed.`, { cause: stderr });
+    throw new RnefError(
+      `CocoaPods "pod" command failed. ${podErrorHelpMessage}`,
+      { cause: stderr }
+    );
   }
 }
 
@@ -254,9 +261,10 @@ skipping Ruby Gems installation.`
     const stderr =
       (error as SubprocessError).stderr || (error as SubprocessError).stdout;
     loader.stop('Ruby Gems installation failed.', 1);
-    throw new RnefError(`Failed to install Ruby Gems with "bundle install".`, {
-      cause: stderr,
-    });
+    throw new RnefError(
+      `Failed to install Ruby Gems with "bundle install". ${podErrorHelpMessage}`,
+      { cause: stderr }
+    );
   }
 
   loader.stop('Installed Ruby Gems.');
