@@ -1,6 +1,7 @@
 import { existsSync, rmSync } from 'node:fs';
 import path from 'node:path';
 import { getBuildPaths } from '@rnef/platform-apple-helpers';
+import type { SubprocessError } from '@rnef/tools';
 import { spawn, spinner } from '@rnef/tools';
 
 /**
@@ -61,15 +62,18 @@ export async function mergeFrameworks({
     await spawn('xcodebuild', xcodebuildArgs, { cwd: sourceDir });
 
     loader.stop(
-      `Exported the xcframework for ${scheme} scheme in ${configuration} configuration to ${
-        path.join(packageDir, xcframeworkPath)
-      }`
+      `Exported the xcframework for ${scheme} scheme in ${configuration} configuration to ${path.join(
+        packageDir,
+        xcframeworkPath
+      )}`
     );
   } catch (error) {
     loader.stop(
       'Running xcodebuild failed. Check the error message above for details.',
       1
     );
-    throw new Error('Running xcodebuild failed', { cause: error });
+    throw new Error('Running xcodebuild failed', {
+      cause: (error as SubprocessError).stderr,
+    });
   }
 }

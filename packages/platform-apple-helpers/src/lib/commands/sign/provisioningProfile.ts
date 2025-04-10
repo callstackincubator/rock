@@ -1,5 +1,6 @@
 import crypto from 'node:crypto';
 import fs from 'node:fs';
+import type { SubprocessError } from '@rnef/tools';
 import { logger, relativeToCwd, RnefError, spawn } from '@rnef/tools';
 import { readBufferFromPlist, readKeyFromPlist } from '../../utils/plist.js';
 
@@ -20,9 +21,7 @@ export async function decodeProvisioningProfileToPlist(
   } catch (error) {
     throw new RnefError(
       `Failed to decode provisioning profile: ${profilePath}`,
-      {
-        cause: error,
-      }
+      { cause: (error as SubprocessError).stderr }
     );
   }
 }

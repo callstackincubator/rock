@@ -32,7 +32,7 @@ export async function getBuildSettings(
       '-showBuildSettings',
       '-json',
     ],
-    { cwd: sourceDir }
+    { cwd: sourceDir, stdio: 'pipe' }
   );
 
   const settings = JSON.parse(buildSettings);

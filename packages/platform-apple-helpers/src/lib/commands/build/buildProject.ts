@@ -171,7 +171,6 @@ export const buildProject = async ({
   try {
     const process = spawn('xcodebuild', xcodebuildArgs, {
       cwd: sourceDir,
-      stdio: logger.isVerbose() ? 'inherit' : ['ignore', 'pipe', 'pipe'],
     });
 
     // Process the output from the AsyncIterable

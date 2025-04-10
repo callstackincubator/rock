@@ -34,7 +34,7 @@ function parseDevicesResult(result: string): Array<string> {
 export async function getDevices() {
   const adbPath = getAdbPath();
   try {
-    const { output } = await spawn(adbPath, ['devices']);
+    const { output } = await spawn(adbPath, ['devices'], { stdio: 'pipe' });
     return parseDevicesResult(output);
   } catch {
     return [];

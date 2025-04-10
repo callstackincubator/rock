@@ -59,7 +59,7 @@ export async function tryInstallAppOnDevice(
     `Installing the app on ${device.readableName} (id: ${deviceId})`
   );
   try {
-    await spawn(adbPath, adbArgs, { stdio: ['ignore', 'ignore', 'pipe'] });
+    await spawn(adbPath, adbArgs);
     loader.stop(
       `Installed the app on ${device.readableName} (id: ${deviceId}).`
     );

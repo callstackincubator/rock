@@ -17,7 +17,7 @@ export async function checkUsers(device: string): Promise<User[]> {
   loader.start(`Checking users on "${device}"`);
 
   try {
-    const { stdout, stderr } = await spawn(adbPath, adbArgs);
+    const { stdout, stderr } = await spawn(adbPath, adbArgs, { stdio: 'pipe' });
 
     if (stderr) {
       loader.stop(`Failed to check users of "${device}". ${stderr}`, 1);

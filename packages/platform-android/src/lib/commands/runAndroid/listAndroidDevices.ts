@@ -17,13 +17,11 @@ export type DeviceData = {
  */
 async function getEmulatorName(deviceId: string) {
   const adbPath = getAdbPath();
-  const { output } = await spawn(adbPath, [
-    '-s',
-    deviceId,
-    'emu',
-    'avd',
-    'name',
-  ]);
+  const { output } = await spawn(
+    adbPath,
+    ['-s', deviceId, 'emu', 'avd', 'name'],
+    { stdio: 'pipe' }
+  );
 
   // 1st line should get us emu name
   return output
@@ -39,13 +37,11 @@ async function getEmulatorName(deviceId: string) {
  */
 async function getPhoneName(deviceId: string) {
   const adbPath = getAdbPath();
-  const { output } = await spawn(adbPath, [
-    '-s',
-    deviceId,
-    'shell',
-    'getprop',
-    'ro.product.model',
-  ]);
+  const { output } = await spawn(
+    adbPath,
+    ['-s', deviceId, 'shell', 'getprop', 'ro.product.model'],
+    { stdio: 'pipe' }
+  );
   return output.replace(/\[ro\.product\.model\]:\s*\[(.*)\]/, '$1').trim();
 }
 

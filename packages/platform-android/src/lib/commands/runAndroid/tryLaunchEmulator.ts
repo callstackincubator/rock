@@ -9,7 +9,9 @@ const emulatorCommand = process.env['ANDROID_HOME']
 
 export const getEmulators = async () => {
   try {
-    const { output } = await spawn(emulatorCommand, ['-list-avds']);
+    const { output } = await spawn(emulatorCommand, ['-list-avds'], {
+      stdio: 'pipe',
+    });
     // The `name` is AVD ID which is expected to not contain whitespace.
     // The `emulator` command, however, can occasionally return verbose
     // information about crashes or similar. Hence filtering out anything
@@ -129,7 +131,7 @@ async function isEmulatorBooted(device: string) {
   const adbPath = getAdbPath();
   const adbArgs = ['-s', device, 'shell', 'getprop', 'sys.boot_completed'];
   try {
-    const { output } = await spawn(adbPath, adbArgs);
+    const { output } = await spawn(adbPath, adbArgs, { stdio: 'pipe' });
     return output.trim() === '1';
   } catch {
     return false;

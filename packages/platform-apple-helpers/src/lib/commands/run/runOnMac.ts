@@ -1,3 +1,4 @@
+import type { SubprocessError } from '@rnef/tools';
 import { color, logger, RnefError, spawn } from '@rnef/tools';
 
 export async function runOnMac(binaryPath: string) {
@@ -6,6 +7,8 @@ export async function runOnMac(binaryPath: string) {
   try {
     await spawn('open', [binaryPath]);
   } catch (error) {
-    throw new RnefError('Failed to launch the app', { cause: error });
+    throw new RnefError('Failed to launch the app', {
+      cause: (error as SubprocessError).stderr,
+    });
   }
 }

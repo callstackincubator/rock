@@ -87,7 +87,7 @@ async function getAvailableCPUs(device?: string) {
       adbArgs.unshift('-s', device);
     }
 
-    const { output } = await spawn(adbPath, adbArgs);
+    const { output } = await spawn(adbPath, adbArgs, { stdio: 'pipe' });
 
     return output.trim().split(',');
   } catch {

@@ -34,14 +34,13 @@ export function parseSigningIdentities(output: string): SigningIdentity[] {
 
 export async function getValidSigningIdentities(): Promise<SigningIdentity[]> {
   try {
-    const cmd = await spawn('security', [
-      'find-identity',
-      '-v',
-      '-p',
-      'codesigning',
-    ]);
+    const { output } = await spawn(
+      'security',
+      ['find-identity', '-v', '-p', 'codesigning'],
+      { stdio: 'pipe' }
+    );
 
-    return parseSigningIdentities(cmd.stdout);
+    return parseSigningIdentities(output);
   } catch (error) {
     throw new RnefError('Failed to load signing identities', {
       cause: error,

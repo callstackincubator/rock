@@ -1,7 +1,8 @@
 import fs from 'node:fs';
 import os from 'node:os';
 import path from 'node:path';
-import { spawn } from '@rnef/tools';
+import type { SubprocessError } from '@rnef/tools';
+import { RnefError, spawn } from '@rnef/tools';
 import type { ApplePlatform, Device } from '../types/index.js';
 
 type DevicectlOutput = {
@@ -57,19 +58,23 @@ function parseDevicectlList(devicectlOutput: DevicectlOutput[]): Device[] {
 
 async function getDevices() {
   const tmpPath = path.resolve(os.tmpdir(), 'iosPhysicalDevices.json'); // same as Minisim.app
-  await spawn('xcrun', ['devicectl', 'list', 'devices', '-j', tmpPath]);
-  const output = JSON.parse(fs.readFileSync(tmpPath, 'utf8'));
-
-  return parseDevicectlList(output.result.devices);
+  try {
+    await spawn('xcrun', ['devicectl', 'list', 'devices', '-j', tmpPath]);
+    const output = JSON.parse(fs.readFileSync(tmpPath, 'utf8'));
+    return parseDevicectlList(output.result.devices);
+  } catch (error) {
+    throw new RnefError('Failed to get devices', {
+      cause: (error as SubprocessError).stderr,
+    });
+  }
 }
 
 async function getSimulators() {
-  const { output } = await spawn('xcrun', [
-    'simctl',
-    'list',
-    'devices',
-    'available',
-  ]);
+  const { output } = await spawn(
+    'xcrun',
+    ['simctl', 'list', 'devices', 'available'],
+    { stdio: 'pipe' }
+  );
   return parseSimctlOutput(output);
 }
 

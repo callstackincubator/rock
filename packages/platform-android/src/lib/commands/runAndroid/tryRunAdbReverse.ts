@@ -1,3 +1,4 @@
+import type { SubprocessError } from '@rnef/tools';
 import { logger, RnefError, spawn } from '@rnef/tools';
 import { getAdbPath } from './adb.js';
 
@@ -17,11 +18,11 @@ export async function tryRunAdbReverse(
     ];
 
     logger.debug(`Connecting "${device}" to the development server`);
-    await spawn(adbPath, adbArgs, { stdio: ['ignore', 'ignore', 'inherit'] });
+    await spawn(adbPath, adbArgs);
   } catch (error) {
     throw new RnefError(
       `Failed to connect "${device}" to development server using "adb reverse"`,
-      { cause: error }
+      { cause: (error as SubprocessError).stderr }
     );
   }
 }

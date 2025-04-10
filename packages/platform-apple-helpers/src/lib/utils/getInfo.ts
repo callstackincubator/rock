@@ -36,6 +36,7 @@ export async function getInfo(
     try {
       const { stdout } = await spawn('xcodebuild', ['-list', '-json'], {
         cwd: sourceDir,
+        stdio: 'pipe',
       });
       const info = parseTargetList(stdout);
 
@@ -78,7 +79,7 @@ export async function getInfo(
       const buildOutput = await spawn(
         'xcodebuild',
         ['-list', '-json', '-project', location.replace('group:', '')],
-        { cwd: sourceDir }
+        { cwd: sourceDir, stdio: 'pipe' }
       );
       stdout = buildOutput.stdout;
       logger.debug(stdout);

@@ -58,10 +58,7 @@ export async function buildJsBundle(options: BuildJsBundleOptions) {
     'false',
     '--verbose',
   ];
-  await spawn('rnef', rnefBundleArgs, {
-    stdio: logger.isVerbose() ? 'inherit' : ['ignore', 'pipe', 'pipe'],
-    preferLocal: true,
-  });
+  await spawn('rnef', rnefBundleArgs, { preferLocal: true });
 
   if (!options.useHermes) {
     return;

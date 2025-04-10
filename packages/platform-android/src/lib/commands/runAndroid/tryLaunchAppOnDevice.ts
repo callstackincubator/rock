@@ -60,11 +60,9 @@ export async function tryLaunchAppOnDevice(
   const adbPath = getAdbPath();
   logger.debug(`Running ${adbPath} ${adbArgs.join(' ')}.`);
   const loader = spinner();
-  loader.start(
-    `Launching the app on ${device.readableName} (id: ${deviceId})`
-  );
+  loader.start(`Launching the app on ${device.readableName} (id: ${deviceId})`);
   try {
-    await spawn(adbPath, adbArgs, { stdio: ['ignore', 'ignore', 'pipe'] });
+    await spawn(adbPath, adbArgs);
     loader.stop(
       `Launched the app on ${device.readableName} (id: ${deviceId}) and listening on port ${args.port}.`
     );

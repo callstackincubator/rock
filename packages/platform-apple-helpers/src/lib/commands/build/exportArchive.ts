@@ -51,6 +51,7 @@ export const exportArchive = async ({
 
     const { output } = await spawn('xcodebuild', xcodebuildArgs, {
       cwd: sourceDir,
+      stdio: 'pipe',
     });
     try {
       ipaFiles = readdirSync(exportDir).filter((file) => file.endsWith('.ipa'));

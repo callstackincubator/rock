@@ -9,7 +9,9 @@ export async function getGitRemote() {
     return gitRemote;
   }
 
-  const { output: remoteOutput } = await spawn('git', ['remote']);
+  const { output: remoteOutput } = await spawn('git', ['remote'], {
+    stdio: 'pipe',
+  });
   const remotes = remoteOutput.split('\n').filter(Boolean);
   if (remotes.length > 1) {
     gitRemote = await promptSelect({

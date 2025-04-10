@@ -96,7 +96,7 @@ async function runKeytool(androidProject: AndroidProjectConfig, args: Flags) {
       `Failed to generate keystore. Please try manually by following instructions at: ${color.cyan(
         'https://reactnative.dev/docs/signed-apk-android'
       )}`,
-      { cause: (error as SubprocessError).cause }
+      { cause: (error as SubprocessError).stderr }
     );
   }
 }

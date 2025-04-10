@@ -16,7 +16,9 @@ export async function launchSimulator(device: Device) {
    * it will not boot the "default" device, but the one we set. If the app is already running,
    * this flag has no effect.
    */
-  const { output: activeDeveloperDir } = await spawn('xcode-select', ['-p']);
+  const { output: activeDeveloperDir } = await spawn('xcode-select', ['-p'], {
+    stdio: 'pipe',
+  });
 
   await spawn('open', [
     `${activeDeveloperDir}/Applications/Simulator.app`,

@@ -4,6 +4,7 @@ import path from 'node:path';
 import { getLocalOS } from './env.js';
 import { RnefError } from './error.js';
 import { getProjectRoot } from './project.js';
+import type { SubprocessError } from './spawn.js';
 import { spawn } from './spawn.js';
 
 function getReactNativePackagePath() {
@@ -39,7 +40,7 @@ export async function runHermes({
   } catch (error) {
     throw new RnefError(
       'Compiling JS bundle with Hermes failed. Use `--no-hermes` flag to disable Hermes.',
-      { cause: error }
+      { cause: (error as SubprocessError).stderr }
     );
   }
 }

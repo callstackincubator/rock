@@ -27,11 +27,11 @@ export async function detectGitHubRepoDetails(
   gitRemote: string
 ): Promise<GitHubRepoDetails | null> {
   try {
-    const { output: url } = await spawn('git', [
-      'config',
-      '--get',
-      `remote.${gitRemote}.url`,
-    ]);
+    const { output: url } = await spawn(
+      'git',
+      ['config', '--get', `remote.${gitRemote}.url`],
+      { stdio: 'pipe' }
+    );
 
     const match = url.match(GITHUB_REPO_REGEX);
     if (!match) {

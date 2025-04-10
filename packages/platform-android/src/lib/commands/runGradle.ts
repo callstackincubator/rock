@@ -75,10 +75,7 @@ export async function runGradle({
   const gradleWrapper = getGradleWrapper();
 
   try {
-    await spawn(gradleWrapper, gradleArgs, {
-      cwd: androidProject.sourceDir,
-      stdio: logger.isVerbose() ? 'inherit' : 'pipe',
-    });
+    await spawn(gradleWrapper, gradleArgs, { cwd: androidProject.sourceDir });
     loader.stop(
       `Built the app with Gradle using ${humanReadableTasks} ${
         tasks.length > 1 ? 'tasks' : 'task'
@@ -126,10 +123,7 @@ export async function runGradleAar({
 
   try {
     logger.debug(`Running ${gradleWrapper} ${gradleArgs.join(' ')}.`);
-    await spawn(gradleWrapper, gradleArgs, {
-      cwd: aarProject.sourceDir,
-      stdio: logger.isVerbose() ? 'inherit' : 'pipe',
-    });
+    await spawn(gradleWrapper, gradleArgs, { cwd: aarProject.sourceDir });
     loader.stop(
       isPublishTask
         ? 'Published the AAR to local maven (~/.m2/repository)'
@@ -191,13 +185,11 @@ function getTaskNames(appName: string, tasks: string[]): Array<string> {
 async function getCPU(device: string) {
   const adbPath = getAdbPath();
   try {
-    const { output } = await spawn(adbPath, [
-      '-s',
-      device,
-      'shell',
-      'getprop',
-      'ro.product.cpu.abi',
-    ]);
+    const { output } = await spawn(
+      adbPath,
+      ['-s', device, 'shell', 'getprop', 'ro.product.cpu.abi'],
+      { stdio: 'pipe' }
+    );
     const cpus = output.trim();
     return cpus.length > 0 ? cpus : null;
   } catch {

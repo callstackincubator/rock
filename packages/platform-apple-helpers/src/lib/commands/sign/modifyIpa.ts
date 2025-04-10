@@ -1,4 +1,6 @@
 import fs from 'node:fs';
+import type {
+  SubprocessError} from '@rnef/tools';
 import {
   color,
   intro,
@@ -8,7 +10,7 @@ import {
   relativeToCwd,
   RnefError,
   spawn,
-  spinner,
+  spinner
 } from '@rnef/tools';
 import { promptSigningIdentity } from '../../utils/signingIdentities.js';
 import { buildJsBundle } from './bundle.js';
@@ -98,13 +100,10 @@ export const modifyIpa = async (options: ModifyIpaOptions) => {
     appPath,
   ];
   try {
-    await spawn('codesign', codeSignArgs, {
-      cwd: tempPaths.content,
-      stdio: logger.isVerbose() ? 'inherit' : ['ignore', 'pipe', 'pipe'],
-    });
+    await spawn('codesign', codeSignArgs, { cwd: tempPaths.content });
   } catch (error) {
     throw new RnefError('Codesign failed', {
-      cause: error,
+      cause: (error as SubprocessError).stderr,
     });
   }
 

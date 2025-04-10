@@ -34,7 +34,7 @@ async function plistBuddy(
   }
 
   const result = await spawn('/usr/libexec/PlistBuddy', args, {
-    stdio: ['ignore', 'pipe', 'pipe'],
+    stdio: 'pipe',
   });
 
   return result;

@@ -1,10 +1,11 @@
 import fs from 'node:fs';
+import type {
+  SubprocessError} from '@rnef/tools';
 import {
   logger,
   RnefError,
   runHermes,
-  spawn,
-  SubprocessError,
+  spawn
 } from '@rnef/tools';
 
 type BuildJsBundleOptions = {
@@ -42,13 +43,10 @@ export async function buildJsBundle(options: BuildJsBundleOptions) {
     options.assetsDestPath,
   ];
   try {
-    await spawn('rnef', rnefBundleArgs, {
-      stdio: logger.isVerbose() ? 'inherit' : ['ignore', 'pipe', 'pipe'],
-      preferLocal: true,
-    });
+    await spawn('rnef', rnefBundleArgs, { preferLocal: true });
   } catch (error) {
     throw new RnefError('Failed to build JS bundle', {
-      cause: error instanceof SubprocessError ? error.stderr : error,
+      cause: (error as SubprocessError).stderr,
     });
   }
 
