@@ -27,7 +27,7 @@ We need a special Gradle plugin to create an AAR that includes all dependencies.
            mavenCentral()
        }
        dependencies {
-           classpath("com.callstack.react:brownfield-gradle-plugin:0.2.0")
+           classpath("com.callstack.react:brownfield-gradle-plugin:0.3.0")
        }
    }
    ```
