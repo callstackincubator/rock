@@ -1,5 +1,11 @@
 # @rnef/tools
 
+## 0.6.0
+
+### Patch Changes
+
+- cd34f4f: chore: add more error messages to pod install
+
 ## 0.5.3
 
 ## 0.5.2

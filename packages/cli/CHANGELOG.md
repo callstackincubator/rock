@@ -1,5 +1,14 @@
 # @rnef/cli
 
+## 0.6.0
+
+### Patch Changes
+
+- e4be1de: feat: add --raw flag to fingerprint
+- Updated dependencies [cd34f4f]
+  - @rnef/tools@0.6.0
+  - @rnef/config@0.6.0
+
 ## 0.5.3
 
 ### Patch Changes

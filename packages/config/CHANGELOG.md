@@ -1,5 +1,12 @@
 # @rnef/config
 
+## 0.6.0
+
+### Patch Changes
+
+- Updated dependencies [cd34f4f]
+  - @rnef/tools@0.6.0
+
 ## 0.5.3
 
 ### Patch Changes

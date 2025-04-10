@@ -1,5 +1,14 @@
 # @rnef/platform-apple-helpers
 
+## 0.6.0
+
+### Patch Changes
+
+- cd34f4f: chore: add more error messages to pod install
+- 92bb57e: refactor: move project config validation to command registration
+- Updated dependencies [cd34f4f]
+  - @rnef/tools@0.6.0
+
 ## 0.5.3
 
 ### Patch Changes

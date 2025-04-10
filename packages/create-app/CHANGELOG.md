@@ -1,5 +1,13 @@
 # @rnef/create-app
 
+## 0.6.0
+
+### Patch Changes
+
+- 68cf0ee: Set Android and iOS as default selected platform
+- Updated dependencies [cd34f4f]
+  - @rnef/tools@0.6.0
+
 ## 0.5.3
 
 ### Patch Changes

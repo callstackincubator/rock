@@ -1,5 +1,17 @@
 # @rnef/plugin-brownfield-android
 
+## 0.6.0
+
+### Minor Changes
+
+- 82be26c: correctly load and present RNViews for the respective RN arch
+
+### Patch Changes
+
+- Updated dependencies [cd34f4f]
+  - @rnef/tools@0.6.0
+  - @rnef/platform-android@0.6.0
+
 ## 0.5.3
 
 ### Patch Changes

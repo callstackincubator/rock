@@ -1,5 +1,11 @@
 # rnef-docs
 
+## 1.0.2
+
+### Patch Changes
+
+- 82be26c: correctly load and present RNViews for the respective RN arch
+
 ## 1.0.1
 
 ### Patch Changes
