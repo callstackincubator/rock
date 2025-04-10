@@ -1,6 +1,11 @@
 import type { Options, Subprocess } from 'nano-spawn';
 import nanoSpawn, { SubprocessError } from 'nano-spawn';
+import { isInteractive } from './isInteractive.js';
 import logger from './logger.js';
+
+const defaultOptions: Options = {
+  stdio: isInteractive() ? 'pipe' : 'inherit',
+};
 
 export function spawn(
   file: string,
@@ -8,7 +13,7 @@ export function spawn(
   options?: Options
 ): Subprocess {
   logger.debug(`Running: ${file}`, ...(args ?? []));
-  const childProcess = nanoSpawn(file, args, options);
+  const childProcess = nanoSpawn(file, args, { ...defaultOptions, ...options });
   setupChildProcessCleanup(childProcess);
   return childProcess;
 }
