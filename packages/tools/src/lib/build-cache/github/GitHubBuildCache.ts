@@ -1,3 +1,6 @@
+import path from 'node:path';
+import fs from 'node:fs';
+import * as tar from 'tar';
 import { color } from '../../color.js';
 import { getGitRemote } from '../../git.js';
 import logger from '../../logger.js';
@@ -85,10 +88,29 @@ Include "repo", "workflow", and "read:org" permissions.`
       this.name,
       loader
     );
-
+    await extractArtifactTarballIfNeeded(artifactPath);
     return {
       name: artifact.name,
       path: artifactPath,
     };
   }
+}
+
+async function extractArtifactTarballIfNeeded(artifactPath: string) {
+  const tarPath = path.join(artifactPath, 'app.tar.gz');
+
+  // If the tarball is not found, it means the artifact is already unpacked.
+  if (!fs.existsSync(tarPath)) {
+    return;
+  }
+
+  // iOS simulator build artifact (*.app directory) is packed in .tar.gz file to
+  // preserve execute file permission.
+  // See: https://github.com/actions/upload-artifact?tab=readme-ov-file#permission-loss
+  await tar.extract({
+    file: tarPath,
+    cwd: artifactPath,
+    gzip: true,
+  });
+  fs.unlinkSync(tarPath);
 }

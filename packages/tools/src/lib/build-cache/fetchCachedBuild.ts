@@ -43,6 +43,7 @@ Proceeding with local build.`);
   const root = getProjectRoot();
 
   const localBuild = queryLocalBuildCache(artifactName, { findBinary });
+  console.log('localBuild', localBuild);
   if (localBuild != null) {
     loader.stop(`Found local cached build: ${color.cyan(localBuild.name)}`);
     return localBuild;
@@ -68,10 +69,10 @@ Proceeding with local build.`);
     artifact: remoteBuild,
     loader,
   });
-  await extractArtifactTarballIfNeeded(fetchedBuild.path);
+
   const binaryPath = findBinary(fetchedBuild.path);
   if (!binaryPath) {
-    loader.stop(`No binary found in "${artifactName}".`);
+    loader.stop(`No binary found for "${artifactName}".`);
     return null;
   }
 
@@ -84,23 +85,4 @@ Proceeding with local build.`);
     artifactPath: fetchedBuild.path,
     binaryPath,
   };
-}
-
-async function extractArtifactTarballIfNeeded(artifactPath: string) {
-  const tarPath = path.join(artifactPath, 'app.tar.gz');
-
-  // If the tarball is not found, it means the artifact is already unpacked.
-  if (!fs.existsSync(tarPath)) {
-    return;
-  }
-
-  // iOS simulator build artifact (*.app directory) is packed in .tar.gz file to
-  // preserve execute file permission.
-  // See: https://github.com/actions/upload-artifact?tab=readme-ov-file#permission-loss
-  await tar.extract({
-    file: tarPath,
-    cwd: artifactPath,
-    gzip: true,
-  });
-  fs.unlinkSync(tarPath);
 }

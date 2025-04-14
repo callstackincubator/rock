@@ -229,9 +229,6 @@ importers:
       fast-xml-parser:
         specifier: ^4.5.0
         version: 4.5.1
-      tar:
-        specifier: ^7.4.3
-        version: 7.4.3
       tslib:
         specifier: ^2.3.0
         version: 2.8.1
@@ -403,6 +400,9 @@ importers:
       string-argv:
         specifier: ^0.3.2
         version: 0.3.2
+      tar:
+        specifier: ^7.4.3
+        version: 7.4.3
       ts-regex-builder:
         specifier: ^1.8.2
         version: 1.8.2
