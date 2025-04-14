@@ -43,18 +43,18 @@ export const createRun = async (
   fingerprintOptions: { extraSources: string[]; ignorePaths: string[] }
 ) => {
   if (!args.binaryPath && args.remoteCache) {
-    const distribution =
+    const destination =
       args.destination ?? (args.device ? 'device' : 'simulator');
     const artifactName = await formatArtifactName({
       platform: 'ios',
-      traits: [distribution, args.configuration ?? 'Debug'],
+      traits: [destination, args.configuration ?? 'Debug'],
       root: projectRoot,
       fingerprintOptions,
     });
     const cachedBuild = await fetchCachedBuild({
       artifactName,
       remoteCacheProvider,
-      findBinary: (path: string) => findBinary(distribution, path),
+      findBinary: (path: string) => findBinary(destination, path),
     });
     if (cachedBuild) {
       // @todo replace with a more generic way to pass binary path
