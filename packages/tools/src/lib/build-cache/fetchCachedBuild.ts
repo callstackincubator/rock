@@ -43,7 +43,6 @@ Proceeding with local build.`);
   const root = getProjectRoot();
 
   const localBuild = queryLocalBuildCache(artifactName, { findBinary });
-  console.log('localBuild', localBuild);
   if (localBuild != null) {
     loader.stop(`Found local cached build: ${color.cyan(localBuild.name)}`);
     return localBuild;
