@@ -54,9 +54,9 @@ Proceeding with local build.`);
 
   loader.stop(`No local build cached. Checking ${remoteBuildCache.name}.`);
 
-  loader.start(`Looking for a cached build on ${remoteBuildCache.name}`);
   const remoteBuild = await remoteBuildCache.query({ artifactName });
   if (!remoteBuild) {
+    loader.start('');
     loader.stop(`No cached build found for "${artifactName}".`);
     return null;
   }
