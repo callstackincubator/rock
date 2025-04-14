@@ -1,6 +1,4 @@
-import fs from 'node:fs';
 import path from 'node:path';
-import * as tar from 'tar';
 import logger from '../logger.js';
 import { LocalBuild, queryLocalBuildCache } from './localBuildCache.js';
 import { color } from '../color.js';
