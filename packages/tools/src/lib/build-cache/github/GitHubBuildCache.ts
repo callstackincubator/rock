@@ -50,12 +50,12 @@ Include "repo", "workflow", and "read:org" permissions.`
   }: {
     artifactName: string;
   }): Promise<RemoteArtifact | null> {
+    const repoDetails = await this.detectRepoDetails();
     if (!getGitHubToken()) {
       logger.warn(`No GitHub Personal Access Token found.`);
       return null;
     }
 
-    const repoDetails = await this.detectRepoDetails();
     if (!repoDetails) {
       return null;
     }
