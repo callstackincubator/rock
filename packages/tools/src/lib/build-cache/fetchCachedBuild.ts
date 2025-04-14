@@ -1,39 +1,26 @@
 import fs from 'node:fs';
 import path from 'node:path';
-import type { SupportedRemoteCacheProviders } from '@rnef/tools';
-import {
-  color,
-  createRemoteBuildCache,
-  findDirectoriesWithPattern,
-  findFilesWithPattern,
-  formatArtifactName,
-  type LocalBuild,
-  logger,
-  nativeFingerprint,
-  queryLocalBuildCache,
-  spinner,
-} from '@rnef/tools';
 import * as tar from 'tar';
+import logger from '../logger.js';
+import { LocalBuild, queryLocalBuildCache } from './localBuildCache.js';
+import { color } from '../color.js';
+import { spinner } from '../prompts.js';
+import { getProjectRoot } from '../project.js';
+import { createRemoteBuildCache } from './remoteBuildCache.js';
+import { SupportedRemoteCacheProviders } from './common.js';
 
 export type Distribution = 'simulator' | 'device';
 
 type FetchCachedBuildOptions = {
-  distribution: Distribution;
-  configuration: string;
+  artifactName: string;
   remoteCacheProvider: SupportedRemoteCacheProviders | undefined | null;
-  root: string;
-  fingerprintOptions: {
-    extraSources: string[];
-    ignorePaths: string[];
-  };
+  findBinary: (path: string) => string | null;
 };
 
 export async function fetchCachedBuild({
-  distribution,
-  configuration,
+  artifactName,
   remoteCacheProvider,
-  root,
-  fingerprintOptions,
+  findBinary,
 }: FetchCachedBuildOptions): Promise<LocalBuild | null> {
   if (remoteCacheProvider === null) {
     return null;
@@ -53,16 +40,9 @@ Proceeding with local build.`);
   const loader = spinner();
   loader.start('Looking for a local cached build');
 
-  const artifactName = await calculateArtifactName({
-    distribution,
-    configuration,
-    root,
-    fingerprintOptions,
-  });
+  const root = getProjectRoot();
 
-  const localBuild = queryLocalBuildCache(artifactName, {
-    findBinary: (path) => findBinary(distribution, path),
-  });
+  const localBuild = queryLocalBuildCache(artifactName, { findBinary });
   if (localBuild != null) {
     loader.stop(`Found local cached build: ${color.cyan(localBuild.name)}`);
     return localBuild;
@@ -75,22 +55,21 @@ Proceeding with local build.`);
   }
 
   loader.stop(`No local build cached. Checking ${remoteBuildCache.name}.`);
-  const repoDetails = await remoteBuildCache.detectRepoDetails();
-  if (!repoDetails) {
-    return null;
-  }
 
   loader.start(`Looking for a cached build on ${remoteBuildCache.name}`);
-  const remoteBuild = await remoteBuildCache.query(artifactName);
+  const remoteBuild = await remoteBuildCache.query({ artifactName });
   if (!remoteBuild) {
     loader.stop(`No cached build found for "${artifactName}".`);
     return null;
   }
 
   loader.message(`Downloading cached build from ${remoteBuildCache.name}`);
-  const fetchedBuild = await remoteBuildCache.download(remoteBuild, loader);
+  const fetchedBuild = await remoteBuildCache.download({
+    artifact: remoteBuild,
+    loader,
+  });
   await extractArtifactTarballIfNeeded(fetchedBuild.path);
-  const binaryPath = findBinary(distribution, fetchedBuild.path);
+  const binaryPath = findBinary(fetchedBuild.path);
   if (!binaryPath) {
     loader.stop(`No binary found in "${artifactName}".`);
     return null;
@@ -105,59 +84,6 @@ Proceeding with local build.`);
     artifactPath: fetchedBuild.path,
     binaryPath,
   };
-}
-
-async function calculateArtifactName({
-  distribution,
-  configuration,
-  root,
-  fingerprintOptions,
-}: Omit<FetchCachedBuildOptions, 'remoteCacheProvider'>) {
-  const fingerprint = await nativeFingerprint(root, {
-    platform: 'ios',
-    ...fingerprintOptions,
-  });
-
-  return formatArtifactName({
-    platform: 'ios',
-    distribution,
-    build: configuration,
-    hash: fingerprint.hash,
-  });
-}
-
-function findBinary(distribution: Distribution, path: string): string | null {
-  return distribution === 'device'
-    ? findDeviceBinary(path)
-    : findSimulatorBinary(path);
-}
-
-function findSimulatorBinary(path: string): string | null {
-  const apps = findDirectoriesWithPattern(path, /\.app$/);
-  if (apps.length === 0) {
-    return null;
-  }
-
-  logger.debug(
-    `Found simulator binaries (*.app): ${apps.join(
-      ', '
-    )}. Picking the first one: ${apps[0]}.`
-  );
-  return apps[0];
-}
-
-function findDeviceBinary(path: string): string | null {
-  const ipas = findFilesWithPattern(path, /\.ipa$/);
-  if (ipas.length === 0) {
-    return null;
-  }
-
-  logger.debug(
-    `Found device binaries (*.ipa): ${ipas.join(
-      ', '
-    )}. Picking the first one: ${ipas[0]}.`
-  );
-  return ipas[0];
 }
 
 async function extractArtifactTarballIfNeeded(artifactPath: string) {

@@ -1,6 +1,7 @@
 import path from 'node:path';
 import { getCacheRootPath } from '../project.js';
 import type { spinner } from '../prompts.js';
+import { nativeFingerprint } from '../fingerprint/index.js';
 
 export const BUILD_CACHE_DIR = 'remote-build';
 
@@ -16,29 +17,21 @@ export type LocalArtifact = {
   path: string;
 };
 
-type RepoDetails = {
-  url: string;
-  owner: string;
-  repository: string;
-};
-
-export type RemoteBuildCache = {
+export interface RemoteBuildCache {
   name: string;
-  repoDetails: RepoDetails | null;
-  detectRepoDetails(): Promise<RepoDetails | null>;
-  query(artifactName: string): Promise<RemoteArtifact | null>;
-  download(
-    artifact: RemoteArtifact,
-    loader: ReturnType<typeof spinner>
-  ): Promise<LocalArtifact>;
-};
-
-type FormatArtifactNameParams = {
-  platform: string;
-  distribution?: string;
-  build: string;
-  hash: string;
-};
+  query({
+    artifactName,
+  }: {
+    artifactName: string;
+  }): Promise<RemoteArtifact | null>;
+  download({
+    artifact,
+    loader,
+  }: {
+    artifact: RemoteArtifact;
+    loader: ReturnType<typeof spinner>;
+  }): Promise<LocalArtifact>;
+}
 
 /**
  * Used formats:
@@ -46,15 +39,22 @@ type FormatArtifactNameParams = {
  * - rnef-ios-simulator-debug-1234567890
  * - rnef-ios-device-debug-1234567890
  */
-export function formatArtifactName({
+export async function formatArtifactName({
   platform,
-  distribution,
-  build,
-  hash,
-}: FormatArtifactNameParams): string {
-  return `rnef-${platform}${
-    distribution ? `-${distribution}` : ''
-  }-${build}-${hash}`;
+  traits,
+  root,
+  fingerprintOptions,
+}: {
+  platform: 'ios' | 'android';
+  traits: string[];
+  root: string;
+  fingerprintOptions: { extraSources: string[]; ignorePaths: string[] };
+}): Promise<string> {
+  const { hash } = await nativeFingerprint(root, {
+    platform,
+    ...fingerprintOptions,
+  });
+  return `rnef-${platform}-${traits.join('-')}-${hash}`;
 }
 
 export function getLocalArtifactPath(artifactName: string) {

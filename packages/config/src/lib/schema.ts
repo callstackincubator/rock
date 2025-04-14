@@ -40,14 +40,18 @@ const ConfigTypeSchema = Joi.object({
   plugins: Joi.array().items(Joi.function()).optional(),
   platforms: Joi.object().pattern(Joi.string(), Joi.function()).optional(),
   commands: Joi.array().items(CommandTypeSchema).optional(),
-  remoteCacheProvider: Joi.string().valid('github-actions', null).optional(),
+  remoteCacheProvider: Joi.string()
+    .valid('github-actions', null, Joi.function())
+    .optional(),
   fingerprint: Joi.object({
     extraSources: Joi.array().items(Joi.string()).default([]),
     ignorePaths: Joi.array().items(Joi.string()).default([]),
-  }).default({
-    extraSources: [],
-    ignorePaths: [],
-  }).optional(),
+  })
+    .default({
+      extraSources: [],
+      ignorePaths: [],
+    })
+    .optional(),
 }).unknown(false);
 
 export { ConfigTypeSchema };
