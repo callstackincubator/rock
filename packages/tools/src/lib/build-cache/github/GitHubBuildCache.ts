@@ -42,15 +42,24 @@ Include "repo", "workflow", and "read:org" permissions.`
     return this.repoDetails;
   }
 
-  async query(artifactName: string): Promise<RemoteArtifact | null> {
+  async query({
+    artifactName,
+  }: {
+    artifactName: string;
+  }): Promise<RemoteArtifact | null> {
     if (!getGitHubToken()) {
       logger.warn(`No GitHub Personal Access Token found.`);
       return null;
     }
 
+    const repoDetails = await this.detectRepoDetails();
+    if (!repoDetails) {
+      return null;
+    }
+
     const artifacts = await fetchGitHubArtifactsByName(
       artifactName,
-      this.repoDetails
+      repoDetails
     );
     if (artifacts.length === 0) {
       return null;
@@ -62,10 +71,13 @@ Include "repo", "workflow", and "read:org" permissions.`
     };
   }
 
-  async download(
-    artifact: RemoteArtifact,
-    loader: ReturnType<typeof spinner>
-  ): Promise<LocalArtifact> {
+  async download({
+    artifact,
+    loader,
+  }: {
+    artifact: RemoteArtifact;
+    loader: ReturnType<typeof spinner>;
+  }): Promise<LocalArtifact> {
     const artifactPath = getLocalArtifactPath(artifact.name);
     await downloadGitHubArtifact(
       artifact.downloadUrl,
