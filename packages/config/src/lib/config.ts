@@ -113,7 +113,8 @@ const importUp = async (
 };
 
 export async function getConfig(
-  dir: string = process.cwd()
+  dir: string = process.cwd(),
+  internalPlugins: PluginType[]
 ): Promise<ConfigOutput> {
   // eslint-disable-next-line prefer-const
   let { config, filePathWithExt } = await importUp(dir, 'rnef.config');
@@ -160,6 +161,10 @@ export async function getConfig(
         ignorePaths: string[];
       },
   };
+
+  for (const internalPlugin of internalPlugins) {
+    assignOriginToCommand(internalPlugin, api, config);
+  }
 
   if (config.plugins) {
     // plugins register commands

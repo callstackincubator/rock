@@ -4,9 +4,10 @@ import { fileURLToPath } from 'node:url';
 import { type CommandType, getConfig } from '@rnef/config';
 import { color, logger, resolveFilenameUp, RnefError } from '@rnef/tools';
 import { Command } from 'commander';
-import { logConfig } from '../config.js';
 import { checkDeprecatedOptions } from './checkDeprecatedOptions.js';
+import { logConfig } from './commands/config.js';
 import { nativeFingerprintCommand } from './commands/fingerprint.js';
+import { remoteCachePlugin } from './commands/remoteCache.js';
 
 const require = createRequire(import.meta.url);
 const __dirname = dirname(fileURLToPath(import.meta.url));
@@ -31,13 +32,15 @@ export const cli = async ({ cwd, argv }: CliOptions = {}) => {
     .option('--verbose', 'enable verbose logging')
     .version(version);
 
-  // Register commands from the config
-  const config = await getConfig(cwd);
-
   program
     .command('config')
     .option('-p, --platform <string>', 'Select platform, e.g. ios or android')
     .action((args) => logConfig(args, config));
+
+  const internalPlugins = [remoteCachePlugin()];
+
+  // Register commands from the config
+  const config = await getConfig(cwd, internalPlugins);
 
   program
     .command('fingerprint [path]')
