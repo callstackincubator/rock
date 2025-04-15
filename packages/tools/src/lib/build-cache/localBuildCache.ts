@@ -1,9 +1,5 @@
 import * as fs from 'node:fs';
-import { getLocalArtifactPath } from './common.js';
-
-export type LocalBuildCacheConfig = {
-  findBinary: (path: string) => string | null;
-};
+import { getLocalArtifactPath, getLocalBinaryPath } from './common.js';
 
 export type LocalBuild = {
   name: string;
@@ -11,20 +7,15 @@ export type LocalBuild = {
   binaryPath: string;
 };
 
-export function queryLocalBuildCache(
-  artifactName: string,
-  { findBinary }: LocalBuildCacheConfig
-): LocalBuild | null {
+export function queryLocalBuildCache(artifactName: string): LocalBuild | null {
   const artifactPath = getLocalArtifactPath(artifactName);
   if (!fs.statSync(artifactPath, { throwIfNoEntry: false })?.isDirectory()) {
     return null;
   }
-
-  const binaryPath = findBinary(artifactPath);
+  const binaryPath = getLocalBinaryPath(artifactPath);
   if (binaryPath == null || !fs.existsSync(binaryPath)) {
     return null;
   }
-
   return {
     name: artifactName,
     artifactPath,

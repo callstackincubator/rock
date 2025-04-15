@@ -1,24 +1,31 @@
 import path from 'node:path';
-import logger from '../logger.js';
-import { LocalBuild, queryLocalBuildCache } from './localBuildCache.js';
 import { color } from '../color.js';
-import { spinner } from '../prompts.js';
+import logger from '../logger.js';
 import { getProjectRoot } from '../project.js';
+import { spinner } from '../prompts.js';
+import {
+  getLocalBinaryPath,
+  type RemoteBuildCache,
+  type SupportedRemoteCacheProviders,
+} from './common.js';
+import type { LocalBuild } from './localBuildCache.js';
+import { queryLocalBuildCache } from './localBuildCache.js';
 import { createRemoteBuildCache } from './remoteBuildCache.js';
-import { SupportedRemoteCacheProviders } from './common.js';
 
 export type Distribution = 'simulator' | 'device';
 
 type FetchCachedBuildOptions = {
   artifactName: string;
-  remoteCacheProvider: SupportedRemoteCacheProviders | undefined | null;
-  findBinary: (path: string) => string | null;
+  remoteCacheProvider:
+    | SupportedRemoteCacheProviders
+    | undefined
+    | null
+    | { new (): RemoteBuildCache };
 };
 
 export async function fetchCachedBuild({
   artifactName,
   remoteCacheProvider,
-  findBinary,
 }: FetchCachedBuildOptions): Promise<LocalBuild | null> {
   if (remoteCacheProvider === null) {
     return null;
@@ -40,7 +47,7 @@ Proceeding with local build.`);
 
   const root = getProjectRoot();
 
-  const localBuild = queryLocalBuildCache(artifactName, { findBinary });
+  const localBuild = queryLocalBuildCache(artifactName);
   if (localBuild != null) {
     loader.stop(`Found local cached build: ${color.cyan(localBuild.name)}`);
     return localBuild;
@@ -61,13 +68,13 @@ Proceeding with local build.`);
     return null;
   }
 
-  loader.message(`Downloading cached build from ${remoteBuildCache.name}`);
+  loader.start(`Downloading cached build from ${remoteBuildCache.name}`);
   const fetchedBuild = await remoteBuildCache.download({
     artifact: remoteBuild,
     loader,
   });
 
-  const binaryPath = findBinary(fetchedBuild.path);
+  const binaryPath = getLocalBinaryPath(fetchedBuild.path);
   if (!binaryPath) {
     loader.stop(`No binary found for "${artifactName}".`);
     return null;
