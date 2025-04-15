@@ -6,10 +6,7 @@ import type {
 import {
   createRemoteBuildCache,
   fetchCachedBuild,
-  findDirectoriesWithPattern,
-  findFilesWithPattern,
   formatArtifactName,
-  logger,
 } from '@rnef/tools';
 
 type Flags = {
@@ -54,11 +51,6 @@ async function remoteCache({
       const cachedBuild = await fetchCachedBuild({
         artifactName,
         remoteCacheProvider,
-        findBinary:
-          args.platform === 'ios'
-            ? (path) =>
-                findBinaryIos(args.traits[0] as 'simulator' | 'device', path)
-            : findBinaryAndroid,
       });
       console.log({ cachedBuild });
       break;
@@ -72,55 +64,6 @@ async function remoteCache({
   }
 
   return null;
-}
-
-function findBinaryAndroid(path: string): string | null {
-  const apks = findFilesWithPattern(path, /\.apk$/);
-  if (apks.length > 0) {
-    return apks[0];
-  }
-  const aabs = findFilesWithPattern(path, /\.aab$/);
-  if (aabs.length > 0) {
-    return aabs[0];
-  }
-  return null;
-}
-
-function findBinaryIos(
-  distribution: 'simulator' | 'device',
-  path: string
-): string | null {
-  return distribution === 'device'
-    ? findDeviceBinary(path)
-    : findSimulatorBinary(path);
-}
-
-function findSimulatorBinary(path: string): string | null {
-  const apps = findDirectoriesWithPattern(path, /\.app$/);
-  if (apps.length === 0) {
-    return null;
-  }
-
-  logger.debug(
-    `Found simulator binaries (*.app): ${apps.join(
-      ', '
-    )}. Picking the first one: ${apps[0]}.`
-  );
-  return apps[0];
-}
-
-function findDeviceBinary(path: string): string | null {
-  const ipas = findFilesWithPattern(path, /\.ipa$/);
-  if (ipas.length === 0) {
-    return null;
-  }
-
-  logger.debug(
-    `Found device binaries (*.ipa): ${ipas.join(
-      ', '
-    )}. Picking the first one: ${ipas[0]}.`
-  );
-  return ipas[0];
 }
 
 export const remoteCachePlugin =
