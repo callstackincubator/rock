@@ -4,10 +4,7 @@ import type { SupportedRemoteCacheProviders } from '@rnef/tools';
 import {
   color,
   fetchCachedBuild,
-  findDirectoriesWithPattern,
-  findFilesWithPattern,
   formatArtifactName,
-  intro,
   isInteractive,
   logger,
   promptSelect,
@@ -54,7 +51,6 @@ export const createRun = async (
     const cachedBuild = await fetchCachedBuild({
       artifactName,
       remoteCacheProvider,
-      findBinary: (path: string) => findBinary(destination, path),
     });
     if (cachedBuild) {
       // @todo replace with a more generic way to pass binary path
@@ -230,41 +226,4 @@ function promptForDeviceSelection(
       };
     }),
   });
-}
-
-function findBinary(
-  distribution: 'simulator' | 'device',
-  path: string
-): string | null {
-  return distribution === 'device'
-    ? findDeviceBinary(path)
-    : findSimulatorBinary(path);
-}
-
-function findSimulatorBinary(path: string): string | null {
-  const apps = findDirectoriesWithPattern(path, /\.app$/);
-  if (apps.length === 0) {
-    return null;
-  }
-
-  logger.debug(
-    `Found simulator binaries (*.app): ${apps.join(
-      ', '
-    )}. Picking the first one: ${apps[0]}.`
-  );
-  return apps[0];
-}
-
-function findDeviceBinary(path: string): string | null {
-  const ipas = findFilesWithPattern(path, /\.ipa$/);
-  if (ipas.length === 0) {
-    return null;
-  }
-
-  logger.debug(
-    `Found device binaries (*.ipa): ${ipas.join(
-      ', '
-    )}. Picking the first one: ${ipas[0]}.`
-  );
-  return ipas[0];
 }

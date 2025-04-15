@@ -1,7 +1,8 @@
+import fs from 'node:fs';
 import path from 'node:path';
+import { nativeFingerprint } from '../fingerprint/index.js';
 import { getCacheRootPath } from '../project.js';
 import type { spinner } from '../prompts.js';
-import { nativeFingerprint } from '../fingerprint/index.js';
 
 export const BUILD_CACHE_DIR = 'remote-build';
 
@@ -59,4 +60,19 @@ export async function formatArtifactName({
 
 export function getLocalArtifactPath(artifactName: string) {
   return path.join(getCacheRootPath(), BUILD_CACHE_DIR, artifactName);
+}
+
+export function getLocalBinaryPath(artifactPath: string) {
+  let binaryPath: string | null = null;
+  const files = fs.readdirSync(artifactPath);
+
+  // assume there is only one binary in the artifact
+  for (const file of files) {
+    if (file) {
+      binaryPath = path.join(artifactPath, file);
+    }
+    break;
+  }
+
+  return binaryPath;
 }

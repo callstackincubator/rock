@@ -1,5 +1,5 @@
-import path from 'node:path';
 import fs from 'node:fs';
+import path from 'node:path';
 import * as tar from 'tar';
 import { color } from '../../color.js';
 import { getGitRemote } from '../../git.js';

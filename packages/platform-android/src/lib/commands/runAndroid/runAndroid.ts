@@ -7,7 +7,6 @@ import type {
 import type { SupportedRemoteCacheProviders } from '@rnef/tools';
 import {
   fetchCachedBuild,
-  findFilesWithPattern,
   formatArtifactName,
   intro,
   isInteractive,
@@ -70,7 +69,6 @@ export async function runAndroid(
     const cachedBuild = await fetchCachedBuild({
       artifactName,
       remoteCacheProvider,
-      findBinary,
     });
     if (cachedBuild) {
       // @todo replace with a more generic way to pass binary path
@@ -204,18 +202,6 @@ async function promptForDeviceSelection(
   });
 
   return selected;
-}
-
-function findBinary(path: string): string | null {
-  const apks = findFilesWithPattern(path, /\.apk$/);
-  if (apks.length > 0) {
-    return apks[0];
-  }
-  const aabs = findFilesWithPattern(path, /\.aab$/);
-  if (aabs.length > 0) {
-    return aabs[0];
-  }
-  return null;
 }
 
 export const runOptions = [
