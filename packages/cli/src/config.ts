@@ -44,7 +44,7 @@ export const logConfig = async (
         projectEntry in ownConfig.platforms[platform].autolinkingConfig
       ) {
         config.project[platform][projectEntry] =
-          // @ts-expect-error tbd
+          // @ts-expect-error todo: type it better
           ownConfig.platforms[platform].autolinkingConfig[projectEntry];
       }
     }
