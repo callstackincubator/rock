@@ -35,9 +35,10 @@ import { PackageManagerTabs } from 'rspress/theme';
    };
    ```
 
-   Move any `project` config from `react-native.config.js` to platform arguments in `rnef.config.mjs`:
+   Move any `project` config from `react-native.config.js` to platform arguments in `rnef.config.mjs`, for example:
 
    ```js title="react-native.config.js
+   module.exports = {
      project: {
        ios: {
          sourceDir: 'custom-source',
@@ -46,14 +47,16 @@ import { PackageManagerTabs } from 'rspress/theme';
          appName: 'custom',
        },
      },
+   };
    ```
 
-   to
+   translates to:
 
    ```js title="rnef.config.mjs"
+   export default {
      platforms: {
-       ios: platformIOS({sourceDir: 'custom-source'}),
-       android: platformAndroid({appName: 'custom'}),
+       ios: platformIOS({ sourceDir: 'custom-source' }),
+       android: platformAndroid({ appName: 'custom' }),
      },
    };
    ```

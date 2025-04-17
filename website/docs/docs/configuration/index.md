@@ -36,13 +36,13 @@ It's intentional design decision to explicitly define platforms, bundlers etc, s
   reactNativePath?: string;
 
   // Optional: Custom bundler plugin
-  bundler?: () => void;
+  bundler?: PluginType;
 
   // Optional: Array of plugins
-  plugins?: Array<() => void>;
+  plugins?: Array<PluginType>;
 
   // Optional: Platform-specific configurations
-  platforms?: Record<string, () => void>;
+  platforms?: Record<string, PlatformType>;
 
   // Optional: Additional commands
   commands?: Array<Command>;
@@ -132,7 +132,8 @@ import { platformIOS } from '@rnef/platform-ios';
 export default {
   // ...
   platforms: {
-    ios: platformIOS(),
+    // config is optional; it translates to `project` config from react-native.config.js file
+    ios: platformIOS(config),
   },
 };
 ```
