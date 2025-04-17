@@ -1,16 +1,17 @@
 import { projectConfig } from '@react-native-community/cli-config-android';
+import type { AndroidProjectConfig } from '@react-native-community/cli-types';
 import type { PluginApi } from '@rnef/config';
 import { RnefError } from '@rnef/tools';
 import type { BuildFlags } from './buildAndroid.js';
 import { buildAndroid, options } from './buildAndroid.js';
 
-export function registerBuildCommand(api: PluginApi) {
+export function registerBuildCommand(api: PluginApi, pluginConfig?: AndroidProjectConfig) {
   api.registerCommand({
     name: 'build:android',
     description: 'Builds your app for Android platform.',
     action: async (args) => {
       const projectRoot = api.getProjectRoot();
-      const androidConfig = projectConfig(projectRoot);
+      const androidConfig = projectConfig(projectRoot, pluginConfig);
       if (androidConfig) {
         await buildAndroid(androidConfig, args as BuildFlags);
       } else {

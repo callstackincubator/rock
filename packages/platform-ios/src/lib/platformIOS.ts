@@ -1,4 +1,6 @@
-import type { PluginApi, PluginOutput } from '@rnef/config';
+import path from 'node:path';
+import type { IOSProjectConfig } from '@react-native-community/cli-types';
+import type { PlatformOutput, PluginApi } from '@rnef/config';
 import type { BuildFlags, RunFlags } from '@rnef/platform-apple-helpers';
 import {
   createBuild,
@@ -14,15 +16,19 @@ const buildOptions = getBuildOptions({ platformName: 'ios' });
 const runOptions = getRunOptions({ platformName: 'ios' });
 
 export const platformIOS =
-  () =>
-  (api: PluginApi): PluginOutput => {
+  (pluginConfig?: IOSProjectConfig) =>
+  (api: PluginApi): PlatformOutput => {
     api.registerCommand({
       name: 'build:ios',
       description: 'Build iOS app.',
       action: async (args) => {
         intro('Building iOS app');
         const projectRoot = api.getProjectRoot();
-        const iosConfig = getValidProjectConfig('ios', projectRoot, {});
+        const iosConfig = getValidProjectConfig(
+          'ios',
+          projectRoot,
+          pluginConfig
+        );
         await createBuild('ios', iosConfig, args as BuildFlags, projectRoot);
         outro('Success 🎉.');
       },
@@ -35,7 +41,11 @@ export const platformIOS =
       action: async (args) => {
         intro('Running iOS app');
         const projectRoot = api.getProjectRoot();
-        const iosConfig = getValidProjectConfig('ios', projectRoot, {});
+        const iosConfig = getValidProjectConfig(
+          'ios',
+          projectRoot,
+          pluginConfig
+        );
         await createRun(
           'ios',
           iosConfig,
@@ -55,6 +65,12 @@ export const platformIOS =
     return {
       name: '@rnef/platform-ios',
       description: 'RNEF plugin for everything iOS.',
+      autolinkingConfig: {
+        ...pluginConfig,
+        sourceDir: pluginConfig?.sourceDir
+          ? path.join(api.getProjectRoot(), pluginConfig.sourceDir)
+          : undefined,
+      },
     };
   };
 

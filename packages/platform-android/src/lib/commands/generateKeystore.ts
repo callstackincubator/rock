@@ -14,13 +14,13 @@ import {
   spawn,
 } from '@rnef/tools';
 
-export function registerCreateKeystoreCommand(api: PluginApi) {
+export function registerCreateKeystoreCommand(api: PluginApi, pluginConfig?: AndroidProjectConfig) {
   api.registerCommand({
     name: 'create-keystore:android',
     description: 'Creates a keystore file for signing Android release builds.',
     action: async (args) => {
       const projectRoot = api.getProjectRoot();
-      const androidConfig = projectConfig(projectRoot);
+      const androidConfig = projectConfig(projectRoot, pluginConfig);
       if (androidConfig) {
         await generateKeystore(androidConfig, args);
       } else {

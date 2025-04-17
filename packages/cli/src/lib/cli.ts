@@ -31,13 +31,13 @@ export const cli = async ({ cwd, argv }: CliOptions = {}) => {
     .option('--verbose', 'enable verbose logging')
     .version(version);
 
+  // Register commands from the config
+  const config = await getConfig(cwd);
+
   program
     .command('config')
     .option('-p, --platform <string>', 'Select platform, e.g. ios or android')
-    .action(logConfig);
-
-  // Register commands from the config
-  const config = await getConfig(cwd);
+    .action((args) => logConfig(args, config));
 
   program
     .command('fingerprint [path]')

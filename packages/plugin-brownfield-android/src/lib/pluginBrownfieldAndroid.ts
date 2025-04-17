@@ -13,7 +13,7 @@ import { intro, RnefError } from '@rnef/tools';
 
 const getAarConfig = (
   args: PackageAarFlags | PublishLocalAarFlags,
-  androidConfig: AndroidProjectConfig
+  androidConfig: AndroidProjectConfig,
 ) => {
   const config = {
     sourceDir: androidConfig.sourceDir,
@@ -22,7 +22,7 @@ const getAarConfig = (
   return config;
 };
 export const pluginBrownfieldAndroid =
-  () =>
+  (pluginConfig?: AndroidProjectConfig) =>
   (api: PluginApi): PluginOutput => {
     const projectRoot = api.getProjectRoot();
 
@@ -33,7 +33,7 @@ export const pluginBrownfieldAndroid =
       action: async (args: PackageAarFlags) => {
         intro('Creating an AAR file');
 
-        const androidConfig = projectConfig(projectRoot);
+        const androidConfig = projectConfig(projectRoot, pluginConfig);
 
         if (androidConfig) {
           const config = getAarConfig(args, androidConfig);
@@ -51,7 +51,7 @@ export const pluginBrownfieldAndroid =
       action: async (args: PublishLocalAarFlags) => {
         intro('Publishing AAR');
 
-        const androidConfig = projectConfig(projectRoot);
+        const androidConfig = projectConfig(projectRoot, pluginConfig);
 
         if (androidConfig) {
           const config = getAarConfig(args, androidConfig);

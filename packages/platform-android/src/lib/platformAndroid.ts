@@ -1,5 +1,6 @@
+import path from 'node:path';
 import type { AndroidProjectConfig } from '@react-native-community/cli-types';
-import type { PluginApi, PluginOutput } from '@rnef/config';
+import type { PlatformOutput, PluginApi } from '@rnef/config';
 import { registerBuildCommand } from './commands/buildAndroid/command.js';
 import { registerCreateKeystoreCommand } from './commands/generateKeystore.js';
 import { registerRunCommand } from './commands/runAndroid/command.js';
@@ -9,15 +10,21 @@ type PluginConfig = AndroidProjectConfig;
 
 export const platformAndroid =
   (pluginConfig?: PluginConfig) =>
-  (api: PluginApi): PluginOutput => {
-    registerBuildCommand(api);
+  (api: PluginApi): PlatformOutput => {
+    registerBuildCommand(api, pluginConfig);
     registerRunCommand(api, pluginConfig);
-    registerCreateKeystoreCommand(api);
+    registerCreateKeystoreCommand(api, pluginConfig);
     registerSignCommand(api);
 
     return {
       name: '@rnef/platform-android',
       description: 'RNEF plugin for everything Android.',
+      autolinkingConfig: {
+        ...pluginConfig,
+        sourceDir: pluginConfig?.sourceDir
+          ? path.join(api.getProjectRoot(), pluginConfig.sourceDir)
+          : undefined,
+      },
     };
   };
 

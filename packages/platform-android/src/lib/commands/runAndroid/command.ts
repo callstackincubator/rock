@@ -15,11 +15,11 @@ export function registerRunCommand(
       'Builds your app and starts it on a connected Android emulator or a device.',
     action: async (args) => {
       const projectRoot = api.getProjectRoot();
-      const androidConfig = projectConfig(projectRoot);
+      const androidConfig = projectConfig(projectRoot, pluginConfig);
       if (androidConfig) {
         await runAndroid(
           androidConfig,
-          { ...pluginConfig, ...(args as Flags) },
+          args as Flags,
           projectRoot,
           api.getRemoteCacheProvider(),
           api.getFingerprintOptions()

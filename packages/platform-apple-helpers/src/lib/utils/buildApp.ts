@@ -1,4 +1,5 @@
 import path from 'node:path';
+import type { IOSProjectConfig } from '@react-native-community/cli-types';
 import { RnefError } from '@rnef/tools';
 import type { BuildFlags } from '../commands/build/buildOptions.js';
 import { buildProject } from '../commands/build/buildProject.js';
@@ -15,6 +16,7 @@ import { installPodsIfNeeded } from './pods.js';
 export async function buildApp({
   args,
   projectConfig,
+  pluginConfig,
   platformName,
   platformSDK,
   udid,
@@ -22,6 +24,7 @@ export async function buildApp({
 }: {
   args: RunFlags | BuildFlags;
   projectConfig: ProjectConfig;
+  pluginConfig?: IOSProjectConfig;
   platformName: ApplePlatform;
   platformSDK: PlatformSDK;
   udid?: string;
@@ -51,7 +54,7 @@ export async function buildApp({
     // because running pods install might have generated .xcworkspace project.
     // This should be only case in new project.
     if (xcodeProject.isWorkspace === false) {
-      const newProjectConfig = getValidProjectConfig(platformName, projectRoot);
+      const newProjectConfig = getValidProjectConfig(platformName, projectRoot, pluginConfig);
       xcodeProject = newProjectConfig.xcodeProject;
       sourceDir = newProjectConfig.sourceDir;
     }

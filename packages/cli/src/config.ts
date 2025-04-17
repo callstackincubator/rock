@@ -2,6 +2,7 @@ import type {
   Config,
   DependencyConfig,
 } from '@react-native-community/cli-types';
+import type { ConfigOutput } from '@rnef/config';
 
 function isValidRNDependency(config: DependencyConfig) {
   return (
@@ -25,13 +26,29 @@ function filterConfig(config: Config) {
   return filtered;
 }
 
-export const logConfig = async (options: { platform?: string }) => {
+export const logConfig = async (
+  args: { platform?: string },
+  ownConfig: ConfigOutput
+) => {
   const { loadConfigAsync } = await import(
     '@react-native-community/cli-config'
   );
   const config = await loadConfigAsync({
-    selectedPlatform: options.platform,
+    selectedPlatform: args.platform,
   });
+
+  for (const platform in ownConfig.platforms) {
+    for (const projectEntry in config.project[platform]) {
+      if (
+        ownConfig.platforms[platform].autolinkingConfig &&
+        projectEntry in ownConfig.platforms[platform].autolinkingConfig
+      ) {
+        config.project[platform][projectEntry] =
+          // @ts-expect-error tbd
+          ownConfig.platforms[platform].autolinkingConfig[projectEntry];
+      }
+    }
+  }
 
   console.log(JSON.stringify(filterConfig(config), null, 2));
 };

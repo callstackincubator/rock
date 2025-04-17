@@ -1,3 +1,4 @@
+import type { IOSProjectConfig } from '@react-native-community/cli-types';
 import type { PluginApi, PluginOutput } from '@rnef/config';
 import {
   type BuildFlags,
@@ -8,11 +9,10 @@ import {
 } from '@rnef/platform-apple-helpers';
 import { intro, outro, RnefError } from '@rnef/tools';
 import { mergeFrameworks } from './mergeFrameworks.js';
-
 const buildOptions = getBuildOptions({ platformName: 'ios' });
 
 export const pluginBrownfieldIos =
-  () =>
+  (pluginConfig?: IOSProjectConfig) =>
   (api: PluginApi): PluginOutput => {
     api.registerCommand({
       name: 'package:ios',
@@ -21,7 +21,7 @@ export const pluginBrownfieldIos =
         intro('Packaging iOS project');
 
         const projectRoot = api.getProjectRoot();
-        const iosConfig = getValidProjectConfig('ios', projectRoot, {});
+        const iosConfig = getValidProjectConfig('ios', projectRoot, pluginConfig);
         const { derivedDataDir } = getBuildPaths('ios');
 
         const destinations = args.destinations ?? [

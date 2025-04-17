@@ -11,6 +11,10 @@ export type PluginOutput = {
   description: string;
 };
 
+export type PlatformOutput = PluginOutput & {
+  autolinkingConfig: object | undefined;
+};
+
 export type PluginApi = {
   registerCommand: (command: CommandType) => void;
   getProjectRoot: () => string;
@@ -27,6 +31,8 @@ export type PluginApi = {
 type SupportedRemoteCacheProviders = 'github-actions';
 
 type PluginType = (args: PluginApi) => PluginOutput;
+
+type PlatformType = (args: PluginApi) => PlatformOutput;
 
 type ArgValue = string | string[] | number | boolean;
 
@@ -60,7 +66,7 @@ export type ConfigType = {
   reactNativePath?: string;
   bundler?: PluginType;
   plugins?: PluginType[];
-  platforms?: Record<string, PluginType>;
+  platforms?: Record<string, PlatformType>;
   commands?: Array<CommandType>;
   remoteCacheProvider?: SupportedRemoteCacheProviders;
   fingerprint?: {
@@ -69,8 +75,9 @@ export type ConfigType = {
   };
 };
 
-type ConfigOutput = {
+export type ConfigOutput = {
   commands?: Array<CommandType>;
+  platforms?: Record<string, PlatformOutput>;
 } & PluginApi;
 
 const extensions = ['.js', '.ts', '.mjs'];
@@ -147,10 +154,11 @@ export async function getConfig(
     getReactNativePath: () => config.reactNativePath as string,
     getPlatforms: () => config.platforms as { [platform: string]: object },
     getRemoteCacheProvider: () => config.remoteCacheProvider,
-    getFingerprintOptions: () => config.fingerprint as {
-      extraSources: string[];
-      ignorePaths: string[];
-    },
+    getFingerprintOptions: () =>
+      config.fingerprint as {
+        extraSources: string[];
+        ignorePaths: string[];
+      },
   };
 
   if (config.plugins) {
@@ -160,10 +168,12 @@ export async function getConfig(
     }
   }
 
+  const platforms: Record<string, PlatformOutput> = {};
   if (config.platforms) {
     // platforms register commands and custom platform functionality (TBD)
     for (const platform in config.platforms) {
-      config.platforms[platform](api);
+      const platformOutput = config.platforms[platform](api);
+      platforms[platform] = platformOutput;
     }
   }
 
@@ -173,6 +183,7 @@ export async function getConfig(
 
   const outputConfig: ConfigOutput = {
     commands: config.commands ?? [],
+    platforms: platforms ?? {},
     ...api,
   };
 

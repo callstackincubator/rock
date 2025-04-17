@@ -248,6 +248,9 @@ importers:
       '@react-native-community/cli-config-apple':
         specifier: ^16.0.2
         version: 16.0.2
+      '@react-native-community/cli-types':
+        specifier: ^16.0.2
+        version: 16.0.2
       '@rnef/platform-apple-helpers':
         specifier: ^0.6.0
         version: link:../platform-apple-helpers
@@ -287,6 +290,9 @@ importers:
   packages/plugin-brownfield-ios:
     dependencies:
       '@react-native-community/cli-config-apple':
+        specifier: ^16.0.2
+        version: 16.0.2
+      '@react-native-community/cli-types':
         specifier: ^16.0.2
         version: 16.0.2
       '@rnef/platform-apple-helpers':
