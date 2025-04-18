@@ -1,5 +1,14 @@
 # @rnef/cli
 
+## 0.6.2
+
+### Patch Changes
+
+- Updated dependencies [3ec7e00]
+- Updated dependencies [3b12651]
+  - @rnef/tools@0.6.2
+  - @rnef/config@0.6.2
+
 ## 0.6.1
 
 ### Patch Changes

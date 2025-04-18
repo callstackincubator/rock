@@ -1,5 +1,13 @@
 # @rnef/config
 
+## 0.6.2
+
+### Patch Changes
+
+- 3b12651: fix: resolve project root to absolute path
+- Updated dependencies [3ec7e00]
+  - @rnef/tools@0.6.2
+
 ## 0.6.1
 
 ### Patch Changes

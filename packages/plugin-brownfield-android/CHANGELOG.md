@@ -1,5 +1,14 @@
 # @rnef/plugin-brownfield-android
 
+## 0.6.2
+
+### Patch Changes
+
+- Updated dependencies [3ec7e00]
+- Updated dependencies [9c37e12]
+  - @rnef/platform-android@0.6.2
+  - @rnef/tools@0.6.2
+
 ## 0.6.1
 
 ### Patch Changes

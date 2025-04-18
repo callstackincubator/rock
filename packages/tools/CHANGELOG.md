@@ -1,5 +1,11 @@
 # @rnef/tools
 
+## 0.6.2
+
+### Patch Changes
+
+- 3ec7e00: refactor: unify spawn verbose output
+
 ## 0.6.1
 
 ## 0.6.0

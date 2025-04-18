@@ -1,6 +1,6 @@
 {
   "name": "@rnef/tools",
-  "version": "0.6.1",
+  "version": "0.6.2",
   "type": "module",
   "exports": {
     "types": "./dist/src/index.d.ts",

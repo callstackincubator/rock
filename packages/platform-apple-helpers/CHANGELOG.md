@@ -1,5 +1,14 @@
 # @rnef/platform-apple-helpers
 
+## 0.6.2
+
+### Patch Changes
+
+- 3ec7e00: refactor: unify spawn verbose output
+- de24926: feat: launch sim and build app in parallel
+- Updated dependencies [3ec7e00]
+  - @rnef/tools@0.6.2
+
 ## 0.6.1
 
 ### Patch Changes
