@@ -149,7 +149,7 @@ export async function getConfig(
     registerCommand: (command: CommandType) => {
       config.commands = [...(config.commands || []), command];
     },
-    getProjectRoot: () => config.root as string,
+    getProjectRoot: () => path.resolve(config.root as string),
     getReactNativeVersion: () => config.reactNativeVersion as string,
     getReactNativePath: () => config.reactNativePath as string,
     getPlatforms: () => config.platforms as { [platform: string]: object },
