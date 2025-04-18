@@ -2,7 +2,7 @@
 
 RNEF can be configured through a configuration object that defines various aspects of your project setup.
 
-The most basic configuration would, assuming you only support iOS platform and choose Metro as our bundler, would look like this
+The most basic configuration would, assuming you only support iOS platform and choose Metro as our bundler, would look like this:
 
 ```js title="rnef.config.mjs"
 // @ts-check
@@ -85,7 +85,7 @@ A plugin that registers `my-command` command outputing a hello world would look 
 
 ```ts title="rnef.config.mjs"
 const simplePlugin =
-  (pluginConfig = {}) =>
+  (pluginConfig: SamplePluginConfig) =>
   (api: PluginApi): PluginOutput => {
     api.registerCommand({
       name: 'my-command',
