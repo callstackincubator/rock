@@ -1,5 +1,6 @@
 import fs from 'node:fs';
 import path from 'node:path';
+import type { SubprocessError } from '@rnef/tools';
 import {
   color,
   getDotRnefPath,
@@ -18,6 +19,8 @@ export type SignAndroidOptions = {
   apkPath: string;
   keystorePath?: string;
   keystorePassword?: string;
+  keyAlias?: string;
+  keyPassword?: string;
   outputPath?: string;
   buildJsBundle?: boolean;
   jsBundlePath?: string;
@@ -63,14 +66,13 @@ export async function signAndroid(options: SignAndroidOptions) {
   loader.start('Initializing output APK...');
   try {
     const zip = new AdmZip(options.apkPath);
+    // Remove old signature files
     zip.deleteFile('META-INF/*');
     zip.writeZip(tempApkPath);
   } catch (error) {
     throw new RnefError(
       `Failed to initialize output APK file: ${options.outputPath}`,
-      {
-        cause: error,
-      }
+      { cause: (error as SubprocessError).stderr }
     );
   }
   loader.stop(`Initialized output APK.`);
@@ -104,6 +106,8 @@ export async function signAndroid(options: SignAndroidOptions) {
     apkPath: outputApkPath,
     keystorePath,
     keystorePassword: options.keystorePassword ?? 'pass:android',
+    keyAlias: options.keyAlias,
+    keyPassword: options.keyPassword,
   });
   loader.stop(
     `Signed the APK file with keystore: ${color.cyan(keystorePath)}.`
@@ -145,9 +149,7 @@ async function replaceJsBundle({
   } catch (error) {
     throw new RnefError(
       `Failed to replace JS bundle in destination file: ${apkPath}}`,
-      {
-        cause: error,
-      }
+      { cause: (error as SubprocessError).stderr }
     );
   }
 }
@@ -185,9 +187,7 @@ Please follow instructions at: https://reactnative.dev/docs/set-up-your-environm
   } catch (error) {
     throw new RnefError(
       `Failed to align APK file: ${zipAlignPath} ${zipalignArgs.join(' ')}`,
-      {
-        cause: error,
-      }
+      { cause: (error as SubprocessError).stderr }
     );
   }
 }
@@ -196,12 +196,16 @@ type SignApkOptions = {
   apkPath: string;
   keystorePath: string;
   keystorePassword: string;
+  keyAlias?: string;
+  keyPassword?: string;
 };
 
 async function signApkFile({
   apkPath,
   keystorePath,
   keystorePassword,
+  keyAlias,
+  keyPassword,
 }: SignApkOptions) {
   if (!fs.existsSync(keystorePath)) {
     throw new RnefError(
@@ -219,23 +223,24 @@ Please follow instructions at: https://reactnative.dev/docs/set-up-your-environm
     );
   }
 
-  // apksigner sign --ks-pass "pass:android" --ks "android/app/debug.keystore" "$OUTPUT2_APK"
+  // apksigner sign --ks-pass "pass:android" --ks "android/app/debug.keystore" --ks-key-alias "androiddebugkey" --key-pass "pass:android" "$OUTPUT2_APK"
   const apksignerArgs = [
     'sign',
     '--ks',
     keystorePath,
     '--ks-pass',
     formatPassword(keystorePassword),
+    ...(keyAlias ? ['--ks-key-alias', keyAlias] : []),
+    ...(keyPassword ? ['--key-pass', formatPassword(keyPassword)] : []),
     apkPath,
   ];
+
   try {
     await spawn(apksignerPath, apksignerArgs);
   } catch (error) {
     throw new RnefError(
       `Failed to sign APK file: ${apksignerPath} ${apksignerArgs.join(' ')}`,
-      {
-        cause: error,
-      }
+      { cause: (error as SubprocessError).stderr }
     );
   }
 }

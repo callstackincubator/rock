@@ -7,6 +7,8 @@ export type SignFlags = {
   output?: string;
   keystore?: string;
   keystorePassword?: string;
+  keyAlias?: string;
+  keyPassword?: string;
   buildJsbundle?: boolean;
   jsbundle?: string;
   noHermes?: boolean;
@@ -31,6 +33,14 @@ const OPTIONS = [
   {
     name: '--keystore-password <string>',
     description: 'Password for keystore file',
+  },
+  {
+    name: '--key-alias <string>',
+    description: 'Alias for key in keystore file',
+  },
+  {
+    name: '--key-password <string>',
+    description: 'Password for key in keystore file',
   },
   {
     name: '--output <string>',
@@ -61,6 +71,8 @@ export const registerSignCommand = (api: PluginApi) => {
         apkPath,
         keystorePath: flags.keystore,
         keystorePassword: flags.keystorePassword,
+        keyAlias: flags.keyAlias,
+        keyPassword: flags.keyPassword,
         outputPath: flags.output,
         buildJsBundle: flags.buildJsbundle,
         jsBundlePath: flags.jsbundle,
