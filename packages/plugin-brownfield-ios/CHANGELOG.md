@@ -1,5 +1,14 @@
 # @rnef/plugin-brownfield-ios
 
+## 0.6.1
+
+### Patch Changes
+
+- 4a3ca21: fix: pass user config to commands and config from rnccli
+- Updated dependencies [4a3ca21]
+  - @rnef/platform-apple-helpers@0.6.1
+  - @rnef/tools@0.6.1
+
 ## 0.6.0
 
 ### Patch Changes

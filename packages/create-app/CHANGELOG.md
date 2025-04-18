@@ -1,5 +1,11 @@
 # @rnef/create-app
 
+## 0.6.1
+
+### Patch Changes
+
+- @rnef/tools@0.6.1
+
 ## 0.6.0
 
 ### Patch Changes
