@@ -59,17 +59,14 @@ export const createBuild = async (
       archiveDir,
       `${xcodeProject.name.replace('.xcworkspace', '')}.xcarchive`
     );
-    try {
-      await exportArchive({
-        sourceDir,
-        archivePath,
-        platformName,
-        exportExtraParams: args.exportExtraParams ?? [],
-        exportOptionsPlist: args.exportOptionsPlist,
-      });
-    } catch (error) {
-      throw new RnefError('Failed to export archive', { cause: error });
-    }
+
+    await exportArchive({
+      sourceDir,
+      archivePath,
+      platformName,
+      exportExtraParams: args.exportExtraParams ?? [],
+      exportOptionsPlist: args.exportOptionsPlist,
+    });
   }
 };
 

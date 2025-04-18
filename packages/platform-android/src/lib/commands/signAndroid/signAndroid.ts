@@ -149,7 +149,7 @@ async function replaceJsBundle({
   } catch (error) {
     throw new RnefError(
       `Failed to replace JS bundle in destination file: ${apkPath}}`,
-      { cause: (error as SubprocessError).stderr }
+      { cause: error }
     );
   }
 }

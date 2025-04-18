@@ -62,16 +62,12 @@ const actionCategoryFlags = [
 test('launches adb shell with intent to launch com.myapp.MainActivity with different appId than packageName on a simulator', async () => {
   await tryLaunchAppOnDevice(device, androidProject, args);
 
-  expect(spawn).toHaveBeenCalledWith(
-    '/mock/android/home/platform-tools/adb',
-    [
-      ...shellStartCommand,
-      '-n',
-      'com.myapp.custom/com.myapp.MainActivity',
-      ...actionCategoryFlags,
-    ],
-    { stdio: ['ignore', 'ignore', 'pipe'] }
-  );
+  expect(spawn).toHaveBeenCalledWith('/mock/android/home/platform-tools/adb', [
+    ...shellStartCommand,
+    '-n',
+    'com.myapp.custom/com.myapp.MainActivity',
+    ...actionCategoryFlags,
+  ]);
 });
 
 test('launches adb shell with intent to launch com.myapp.MainActivity with different appId than packageName on a simulator when mainActivity is fully qualified name', async () => {
@@ -81,16 +77,12 @@ test('launches adb shell with intent to launch com.myapp.MainActivity with diffe
     args
   );
 
-  expect(spawn).toHaveBeenCalledWith(
-    '/mock/android/home/platform-tools/adb',
-    [
-      ...shellStartCommand,
-      '-n',
-      'com.myapp.custom/com.myapp.MainActivity',
-      ...actionCategoryFlags,
-    ],
-    { stdio: ['ignore', 'ignore', 'pipe'] }
-  );
+  expect(spawn).toHaveBeenCalledWith('/mock/android/home/platform-tools/adb', [
+    ...shellStartCommand,
+    '-n',
+    'com.myapp.custom/com.myapp.MainActivity',
+    ...actionCategoryFlags,
+  ]);
 });
 
 test('launches adb shell with intent to launch com.myapp.MainActivity with same appId as packageName on a simulator', async () => {
@@ -107,8 +99,7 @@ test('launches adb shell with intent to launch com.myapp.MainActivity with same 
       '-n',
       'com.myapp/com.myapp.MainActivity',
       ...actionCategoryFlags,
-    ],
-    { stdio: ['ignore', 'ignore', 'pipe'] }
+    ]
   );
 });
 
@@ -122,8 +113,7 @@ test('launches adb shell with intent to launch com.myapp.MainActivity with diffe
       '-n',
       'com.myapp.custom/com.myapp.MainActivity',
       ...actionCategoryFlags,
-    ],
-    { stdio: ['ignore', 'ignore', 'pipe'] }
+    ]
   );
 });
 
@@ -147,8 +137,7 @@ test('launches adb shell with intent to launch fully specified activity with dif
       '-n',
       'com.myapp.custom.dev/com.zoontek.rnbootsplash.RNBootSplashActivity',
       ...actionCategoryFlags,
-    ],
-    { stdio: ['ignore', 'ignore', 'pipe'] }
+    ]
   );
 });
 
@@ -165,8 +154,7 @@ test('--appId flag overwrites applicationId setting in androidProject', async ()
       '-n',
       'my.app.id/com.myapp.MainActivity',
       ...actionCategoryFlags,
-    ],
-    { stdio: ['ignore', 'ignore', 'pipe'] }
+    ]
   );
 });
 
@@ -183,7 +171,6 @@ test('appIdSuffix Staging is appended to applicationId', async () => {
       '-n',
       'com.myapp.custom.Staging/com.myapp.MainActivity',
       ...actionCategoryFlags,
-    ],
-    { stdio: ['ignore', 'ignore', 'pipe'] }
+    ]
   );
 });

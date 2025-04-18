@@ -67,7 +67,6 @@ test('buildAndroid runs gradle build with correct configuration for debug and ou
   await buildAndroid(androidProject, { ...args, aab: true });
 
   expect(spawn).toBeCalledWith('./gradlew', ['app:bundleDebug', '-x', 'lint'], {
-    stdio: !tools.isInteractive() ? 'inherit' : 'pipe',
     cwd: '/android',
   });
   expect(spinnerMock.stop).toBeCalledWith(
@@ -89,9 +88,6 @@ test('buildAndroid fails gracefully when gradle errors', async () => {
   expect(spawn).toBeCalledWith(
     './gradlew',
     ['app:assembleDebug', '-x', 'lint'],
-    {
-      stdio: !tools.isInteractive() ? 'inherit' : 'pipe',
-      cwd: '/android',
-    }
+    { cwd: '/android' }
   );
 });

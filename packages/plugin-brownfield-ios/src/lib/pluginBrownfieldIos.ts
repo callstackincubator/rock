@@ -45,17 +45,13 @@ export const pluginBrownfieldIos =
           );
         }
 
-        try {
-          await mergeFrameworks({
-            scheme: args.scheme,
-            configuration,
-            sourceDir: iosConfig.sourceDir,
-            platformName: 'ios',
-            buildFolder,
-          });
-        } catch (error) {
-          throw new RnefError('Failed to create package', { cause: error });
-        }
+        await mergeFrameworks({
+          scheme: args.scheme,
+          configuration,
+          sourceDir: iosConfig.sourceDir,
+          platformName: 'ios',
+          buildFolder,
+        });
 
         outro('Success 🎉.');
       },

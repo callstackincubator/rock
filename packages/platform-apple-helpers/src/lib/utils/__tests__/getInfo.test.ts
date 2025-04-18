@@ -60,7 +60,7 @@ describe('getInfo', () => {
     expect(spawn).toHaveBeenCalledWith(
       'xcodebuild',
       ['-list', '-json', '-project', `YourProjectName.xcodeproj`],
-      { cwd: 'some/path' }
+      expect.objectContaining({ cwd: 'some/path' })
     );
     expect(spawn).toHaveBeenCalledTimes(1);
 

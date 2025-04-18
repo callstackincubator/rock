@@ -307,7 +307,8 @@ test.each([['release'], ['debug'], ['staging']])(
       { ...androidProject },
       { ...args, variant },
       '/',
-      undefined
+      undefined,
+      { extraSources: [], ignorePaths: [] }
     );
 
     expect(tools.outro).toBeCalledWith('Success 🎉.');
@@ -327,7 +328,7 @@ test.each([['release'], ['debug'], ['staging']])(
         '-PreactNativeDevServerPort=8081',
         '-PreactNativeArchitectures=arm64-v8a,armeabi-v7a',
       ],
-      { stdio: !tools.isInteractive() ? 'inherit' : 'pipe', cwd: '/android' }
+      { cwd: '/android' }
     );
 
     // launches com.test app with MainActivity on emulator-5552
@@ -336,8 +337,7 @@ test.each([['release'], ['debug'], ['staging']])(
       expect.arrayContaining([
         'emulator-5554',
         'com.test/com.test.MainActivity',
-      ]),
-      { stdio: ['ignore', 'ignore', 'pipe'] }
+      ])
     );
   }
 );
@@ -356,7 +356,8 @@ test('runAndroid runs gradle build with custom --appId, --appIdSuffix and --main
       mainActivity: 'OtherActivity',
     },
     '/',
-    undefined
+    undefined,
+    { extraSources: [], ignorePaths: [] }
   );
 
   expect(tools.outro).toBeCalledWith('Success 🎉.');
@@ -368,8 +369,7 @@ test('runAndroid runs gradle build with custom --appId, --appIdSuffix and --main
     expect.arrayContaining([
       'emulator-5552',
       'com.custom.suffix/com.test.OtherActivity',
-    ]),
-    { stdio: ['ignore', 'ignore', 'pipe'] }
+    ])
   );
 });
 
@@ -383,7 +383,8 @@ test('runAndroid fails to launch an app on not-connected device when specified w
     { ...androidProject },
     { ...args, device: 'emulator-5554' },
     '/',
-    undefined
+    undefined,
+    { extraSources: [], ignorePaths: [] }
   );
   expect(logWarnSpy).toBeCalledWith(
     'No devices or emulators found matching "emulator-5554". Using available one instead.'
@@ -451,7 +452,8 @@ test.each([['release'], ['debug']])(
       { ...androidProject },
       { ...args, device: 'emulator-5554', variant },
       '/',
-      undefined
+      undefined,
+      { extraSources: [], ignorePaths: [] }
     );
 
     // we don't want to run installDebug when a device is selected, because gradle will install the app on all connected devices
@@ -472,7 +474,7 @@ test.each([['release'], ['debug']])(
         '-PreactNativeDevServerPort=8081',
         '-PreactNativeArchitectures=arm64-v8a,armeabi-v7a',
       ],
-      { stdio: !tools.isInteractive() ? 'inherit' : 'pipe', cwd: '/android' }
+      { cwd: '/android' }
     );
 
     // launches com.test app with MainActivity on emulator-5554
@@ -481,8 +483,7 @@ test.each([['release'], ['debug']])(
       expect.arrayContaining([
         'emulator-5554',
         'com.test/com.test.MainActivity',
-      ]),
-      { stdio: ['ignore', 'ignore', 'pipe'] }
+      ])
     );
   }
 );
@@ -509,7 +510,10 @@ test('runAndroid launches an app on all connected devices', async () => {
     });
   });
 
-  await runAndroid({ ...androidProject }, { ...args }, '/', undefined);
+  await runAndroid({ ...androidProject }, { ...args }, '/', undefined, {
+    extraSources: [],
+    ignorePaths: [],
+  });
 
   // Runs assemble debug task with active architectures arm64-v8a, armeabi-v7a
   expect(spawn).toBeCalledWith(
@@ -521,21 +525,19 @@ test('runAndroid launches an app on all connected devices', async () => {
       '-PreactNativeDevServerPort=8081',
       '-PreactNativeArchitectures=arm64-v8a,armeabi-v7a',
     ],
-    { stdio: !tools.isInteractive() ? 'inherit' : 'pipe', cwd: '/android' }
+    { cwd: '/android' }
   );
 
   // launches com.test app with MainActivity on emulator-5552
   expect(spawn).toBeCalledWith(
     '/mock/android/home/platform-tools/adb',
-    expect.arrayContaining(['emulator-5552', 'com.test/com.test.MainActivity']),
-    { stdio: ['ignore', 'ignore', 'pipe'] }
+    expect.arrayContaining(['emulator-5552', 'com.test/com.test.MainActivity'])
   );
 
   // launches com.test app with MainActivity on emulator-5554
   expect(spawn).toBeCalledWith(
     '/mock/android/home/platform-tools/adb',
-    expect.arrayContaining(['emulator-5554', 'com.test/com.test.MainActivity']),
-    { stdio: ['ignore', 'ignore', 'pipe'] }
+    expect.arrayContaining(['emulator-5554', 'com.test/com.test.MainActivity'])
   );
 });
 
@@ -576,7 +578,8 @@ test('runAndroid skips building when --binary-path is passed', async () => {
       binaryPath: 'android/app/build/outputs/apk/debug/app-debug.apk',
     },
     '/root',
-    undefined
+    undefined,
+    { extraSources: [], ignorePaths: [] }
   );
 
   // Skips gradle
@@ -585,14 +588,12 @@ test('runAndroid skips building when --binary-path is passed', async () => {
   // launches com.test app with MainActivity on emulator-5554
   expect(spawn).toBeCalledWith(
     '/mock/android/home/platform-tools/adb',
-    expect.arrayContaining(['emulator-5552', 'com.test/com.test.MainActivity']),
-    { stdio: ['ignore', 'ignore', 'pipe'] }
+    expect.arrayContaining(['emulator-5552', 'com.test/com.test.MainActivity'])
   );
 
   // launches com.test app with MainActivity on emulator-5554
   expect(spawn).toBeCalledWith(
     '/mock/android/home/platform-tools/adb',
-    expect.arrayContaining(['emulator-5554', 'com.test/com.test.MainActivity']),
-    { stdio: ['ignore', 'ignore', 'pipe'] }
+    expect.arrayContaining(['emulator-5554', 'com.test/com.test.MainActivity'])
   );
 });
