@@ -1,4 +1,5 @@
 import {
+  color,
   intro,
   note,
   outro,
@@ -9,6 +10,7 @@ import {
   RnefError,
   type SupportedRemoteCacheProviders,
 } from '@rnef/tools';
+import { vice } from 'gradient-string';
 import path from 'path';
 import type { TemplateInfo } from '../templates.js';
 import { validateProjectName } from '../validate-project-name.js';
@@ -45,7 +47,7 @@ export function printVersionMessage() {
 
 export function printWelcomeMessage() {
   console.log('');
-  intro(`Hello There!`);
+  intro(`Welcome to ${color.bold(vice('React Native Enterprise Framework'))}!`);
 }
 
 export function printByeMessage(targetDir: string) {
@@ -103,7 +105,7 @@ export function promptPlatforms(
   );
 
   return promptMultiselect({
-    message: 'Select platforms:',
+    message: 'What platforms do you want to start with?',
     initialValues: defaultPlatforms,
     // @ts-expect-error todo
     options: platforms.map((platform) => ({
@@ -139,7 +141,7 @@ export function promptBundlers(
   }
 
   return promptSelect({
-    message: 'Select bundler:',
+    message: 'Which bundler do you want to use?',
     initialValues: [bundlers[0]],
     // @ts-expect-error todo fixup type
     options: bundlers.map((bundler) => ({
@@ -151,7 +153,7 @@ export function promptBundlers(
 
 export function promptRemoteCacheProvider(): Promise<SupportedRemoteCacheProviders | null> {
   return promptSelect({
-    message: 'Select remote cache provider:',
+    message: 'Which remote cache provider do you want to use?',
     initialValue: 'github-actions',
     options: [
       {

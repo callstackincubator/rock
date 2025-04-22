@@ -21,7 +21,6 @@ import {
   replacePlaceholder,
 } from './utils/edit-template.js';
 import { copyDirSync, isEmptyDirSync, removeDirSync } from './utils/fs.js';
-import { printLogo } from './utils/logo.js';
 import { rewritePackageJson } from './utils/package-json.js';
 import { parseCliOptions } from './utils/parse-cli-options.js';
 import { parsePackageInfo } from './utils/parsers.js';
@@ -58,7 +57,6 @@ export async function run() {
     return;
   }
 
-  printLogo(version);
   printWelcomeMessage();
 
   const projectName =
@@ -117,7 +115,13 @@ export async function run() {
   renameCommonFiles(absoluteTargetDir);
   replacePlaceholder(absoluteTargetDir, projectName);
   rewritePackageJson(absoluteTargetDir, projectName);
-  createConfig(absoluteTargetDir, platforms, plugins, bundler, remoteCacheProvider);
+  createConfig(
+    absoluteTargetDir,
+    platforms,
+    plugins,
+    bundler,
+    remoteCacheProvider
+  );
   loader.stop('Applied template, platforms and plugins.');
 
   await gitInitStep(absoluteTargetDir, version);
@@ -209,7 +213,8 @@ export function formatConfig(
     )
     .join('\n')}
 
-export default {${pluginsWithImports
+export default {${
+    pluginsWithImports
       ? `
   plugins: [
     ${pluginsWithImports
