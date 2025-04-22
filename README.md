@@ -1,7 +1,7 @@
 <p align="center">
   <picture>
-    <source media="(prefers-color-scheme: dark)" srcset="./docs/assets/rnef.png">
-    <img alt="RNEF" src="./docs/assets/rnef.png" height="200">
+    <source media="(prefers-color-scheme: dark)" srcset="./website/docs/public/logo.svg">
+    <img alt="RNEF" src="./website/docs/public/logo.svg" height="100">
   </picture>
 </p>
 <h1 align="center" style="border-bottom: 0px">
