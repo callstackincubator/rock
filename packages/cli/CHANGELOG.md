@@ -1,5 +1,18 @@
 # @rnef/cli
 
+## 0.7.0
+
+### Minor Changes
+
+- ea7abde: feat: upgrade templates to 0.79
+
+### Patch Changes
+
+- a004ed5: fix: incorrectly resolving root
+- Updated dependencies [a004ed5]
+  - @rnef/config@0.7.0
+  - @rnef/tools@0.7.0
+
 ## 0.6.2
 
 ### Patch Changes

@@ -1,5 +1,17 @@
 # @rnef/platform-ios
 
+## 0.7.0
+
+### Minor Changes
+
+- ea7abde: feat: upgrade templates to 0.79
+
+### Patch Changes
+
+- Updated dependencies [ea7abde]
+  - @rnef/platform-apple-helpers@0.7.0
+  - @rnef/tools@0.7.0
+
 ## 0.6.2
 
 ### Patch Changes

@@ -1,5 +1,11 @@
 # @rnef/plugin-repack
 
+## 0.7.0
+
+### Patch Changes
+
+- @rnef/tools@0.7.0
+
 ## 0.6.2
 
 ### Patch Changes

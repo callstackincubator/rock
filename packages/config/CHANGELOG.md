@@ -1,5 +1,12 @@
 # @rnef/config
 
+## 0.7.0
+
+### Patch Changes
+
+- a004ed5: fix: incorrectly resolving root
+  - @rnef/tools@0.7.0
+
 ## 0.6.2
 
 ### Patch Changes
