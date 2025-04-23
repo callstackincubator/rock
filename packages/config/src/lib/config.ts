@@ -12,7 +12,7 @@ export type PluginOutput = {
 };
 
 export type PlatformOutput = PluginOutput & {
-  autolinkingConfig: object | undefined;
+  autolinkingConfig: Record<string, unknown> | undefined;
 };
 
 export type PluginApi = {
@@ -76,6 +76,7 @@ export type ConfigType = {
 };
 
 export type ConfigOutput = {
+  root: string;
   commands?: Array<CommandType>;
   platforms?: Record<string, PlatformOutput>;
 } & PluginApi;
@@ -85,7 +86,11 @@ const extensions = ['.js', '.ts', '.mjs'];
 const importUp = async (
   dir: string,
   name: string
-): Promise<{ config: ConfigType; filePathWithExt: string }> => {
+): Promise<{
+  config: ConfigType;
+  filePathWithExt: string;
+  configDir: string;
+}> => {
   const filePath = path.join(dir, name);
 
   for (const ext of extensions) {
@@ -100,7 +105,7 @@ const importUp = async (
         config = require(filePathWithExt);
       }
 
-      return { config, filePathWithExt };
+      return { config, filePathWithExt, configDir: dir };
     }
   }
 
@@ -112,11 +117,11 @@ const importUp = async (
   return importUp(parentDir, name);
 };
 
-export async function getConfig(
-  dir: string = process.cwd()
-): Promise<ConfigOutput> {
-  // eslint-disable-next-line prefer-const
-  let { config, filePathWithExt } = await importUp(dir, 'rnef.config');
+export async function getConfig(dir: string): Promise<ConfigOutput> {
+  const { config, filePathWithExt, configDir } = await importUp(
+    dir,
+    'rnef.config'
+  );
 
   const { error, value: validatedConfig } = ConfigTypeSchema.validate(
     config
@@ -128,61 +133,63 @@ export async function getConfig(
   if (error) {
     logger.error(
       `Invalid ${color.cyan(
-        path.relative(process.cwd(), filePathWithExt)
+        path.relative(configDir, filePathWithExt)
       )} file:\n` + formatValidationError(config, error)
     );
     process.exit(1);
   }
 
-  config = {
-    root: dir,
-    get reactNativePath() {
-      return resolveReactNativePath(config.root || dir);
-    },
-    get reactNativeVersion() {
-      return getReactNativeVersion(config.root || dir);
-    },
-    ...validatedConfig,
-  };
+  const projectRoot = validatedConfig.root
+    ? path.resolve(validatedConfig.root)
+    : configDir;
+
+  if (!fs.existsSync(projectRoot)) {
+    logger.error(
+      `Project root ${projectRoot} does not exist. Please check your config file.`
+    );
+    process.exit(1);
+  }
 
   const api = {
     registerCommand: (command: CommandType) => {
-      config.commands = [...(config.commands || []), command];
+      validatedConfig.commands = [...(validatedConfig.commands || []), command];
     },
-    getProjectRoot: () => path.resolve(config.root as string),
-    getReactNativeVersion: () => config.reactNativeVersion as string,
-    getReactNativePath: () => config.reactNativePath as string,
-    getPlatforms: () => config.platforms as { [platform: string]: object },
-    getRemoteCacheProvider: () => config.remoteCacheProvider,
+    getProjectRoot: () => projectRoot,
+    getReactNativeVersion: () => getReactNativeVersion(projectRoot),
+    getReactNativePath: () => resolveReactNativePath(projectRoot),
+    getPlatforms: () =>
+      validatedConfig.platforms as { [platform: string]: object },
+    getRemoteCacheProvider: () => validatedConfig.remoteCacheProvider,
     getFingerprintOptions: () =>
-      config.fingerprint as {
+      validatedConfig.fingerprint as {
         extraSources: string[];
         ignorePaths: string[];
       },
   };
 
-  if (config.plugins) {
+  if (validatedConfig.plugins) {
     // plugins register commands
-    for (const plugin of config.plugins) {
-      assignOriginToCommand(plugin, api, config);
+    for (const plugin of validatedConfig.plugins) {
+      assignOriginToCommand(plugin, api, validatedConfig);
     }
   }
 
   const platforms: Record<string, PlatformOutput> = {};
-  if (config.platforms) {
+  if (validatedConfig.platforms) {
     // platforms register commands and custom platform functionality (TBD)
-    for (const platform in config.platforms) {
-      const platformOutput = config.platforms[platform](api);
+    for (const platform in validatedConfig.platforms) {
+      const platformOutput = validatedConfig.platforms[platform](api);
       platforms[platform] = platformOutput;
     }
   }
 
-  if (config.bundler) {
-    assignOriginToCommand(config.bundler, api, config);
+  if (validatedConfig.bundler) {
+    assignOriginToCommand(validatedConfig.bundler, api, validatedConfig);
   }
 
   const outputConfig: ConfigOutput = {
-    commands: config.commands ?? [],
+    root: projectRoot,
+    commands: validatedConfig.commands ?? [],
     platforms: platforms ?? {},
     ...api,
   };

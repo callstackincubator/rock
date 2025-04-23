@@ -34,6 +34,7 @@ export const logConfig = async (
     '@react-native-community/cli-config'
   );
   const config = await loadConfigAsync({
+    projectRoot: ownConfig.root,
     selectedPlatform: args.platform,
   });
 
@@ -41,10 +42,11 @@ export const logConfig = async (
     for (const projectEntry in config.project[platform]) {
       if (
         ownConfig.platforms[platform].autolinkingConfig &&
-        projectEntry in ownConfig.platforms[platform].autolinkingConfig
+        projectEntry in ownConfig.platforms[platform].autolinkingConfig &&
+        ownConfig.platforms[platform].autolinkingConfig[projectEntry] !==
+          undefined
       ) {
         config.project[platform][projectEntry] =
-          // @ts-expect-error todo: type it better
           ownConfig.platforms[platform].autolinkingConfig[projectEntry];
       }
     }
