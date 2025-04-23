@@ -38,14 +38,13 @@ export const logConfig = async (
     selectedPlatform: args.platform,
   });
 
-  if (args.platform && ownConfig.platforms) {
-    config.project[args.platform] =
-      ownConfig.platforms[args.platform].autolinkingConfig;
-  } else {
-    for (const platform in ownConfig.platforms) {
-      config.project[platform] =
-        ownConfig.platforms[platform].autolinkingConfig;
-    }
+  const platforms =
+    ownConfig.platforms && args.platform
+      ? { [args.platform]: ownConfig.platforms[args.platform] }
+      : ownConfig.platforms;
+
+  for (const platform in platforms) {
+    config.project[platform] = platforms[platform].autolinkingConfig;
   }
 
   console.log(JSON.stringify(filterConfig(config), null, 2));
