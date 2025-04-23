@@ -1,5 +1,4 @@
 import path from 'node:path';
-import { projectConfig } from '@react-native-community/cli-config-android';
 import type { AndroidProjectConfig } from '@react-native-community/cli-types';
 import type { PluginApi } from '@rnef/config';
 import type { SubprocessError } from '@rnef/tools';
@@ -14,18 +13,15 @@ import {
   spawn,
 } from '@rnef/tools';
 
-export function registerCreateKeystoreCommand(api: PluginApi, pluginConfig?: AndroidProjectConfig) {
+export function registerCreateKeystoreCommand(
+  api: PluginApi,
+  androidConfig: AndroidProjectConfig
+) {
   api.registerCommand({
     name: 'create-keystore:android',
     description: 'Creates a keystore file for signing Android release builds.',
     action: async (args) => {
-      const projectRoot = api.getProjectRoot();
-      const androidConfig = projectConfig(projectRoot, pluginConfig);
-      if (androidConfig) {
-        await generateKeystore(androidConfig, args);
-      } else {
-        throw new RnefError('Android project not found.');
-      }
+      await generateKeystore(androidConfig, args);
     },
     options: generateKeystoreOptions,
   });

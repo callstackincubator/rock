@@ -140,7 +140,7 @@ export async function getConfig(dir: string): Promise<ConfigOutput> {
   }
 
   const projectRoot = validatedConfig.root
-    ? path.resolve(validatedConfig.root)
+    ? path.resolve(configDir, validatedConfig.root)
     : configDir;
 
   if (!fs.existsSync(projectRoot)) {

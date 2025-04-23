@@ -19,7 +19,6 @@ export function getValidProjectConfig(
   if (!newProjectConfig || newProjectConfig.xcodeProject === null) {
     throw new RnefError('Failed to get Xcode project information');
   }
-
   return {
     sourceDir: newProjectConfig.sourceDir,
     xcodeProject: newProjectConfig.xcodeProject,

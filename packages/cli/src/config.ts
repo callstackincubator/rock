@@ -38,17 +38,13 @@ export const logConfig = async (
     selectedPlatform: args.platform,
   });
 
-  for (const platform in ownConfig.platforms) {
-    for (const projectEntry in config.project[platform]) {
-      if (
-        ownConfig.platforms[platform].autolinkingConfig &&
-        projectEntry in ownConfig.platforms[platform].autolinkingConfig &&
-        ownConfig.platforms[platform].autolinkingConfig[projectEntry] !==
-          undefined
-      ) {
-        config.project[platform][projectEntry] =
-          ownConfig.platforms[platform].autolinkingConfig[projectEntry];
-      }
+  if (args.platform && ownConfig.platforms) {
+    config.project[args.platform] =
+      ownConfig.platforms[args.platform].autolinkingConfig;
+  } else {
+    for (const platform in ownConfig.platforms) {
+      config.project[platform] =
+        ownConfig.platforms[platform].autolinkingConfig;
     }
   }
 
