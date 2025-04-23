@@ -16,8 +16,8 @@
     "publish:verdaccio": "npm publish --registry http://localhost:4873 --userconfig ../../.npmrc"
   },
   "dependencies": {
-    "@react-native-community/cli-config-apple": "^16.0.2",
-    "@react-native-community/cli-types": "^16.0.2",
+    "@react-native-community/cli-config-apple": "^18.0.0",
+    "@react-native-community/cli-types": "^18.0.0",
     "@rnef/tools": "^0.6.2",
     "@rnef/platform-apple-helpers": "^0.6.2",
     "tslib": "^2.3.0"
