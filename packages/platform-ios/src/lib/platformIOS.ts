@@ -54,7 +54,7 @@ export const platformIOS =
     return {
       name: '@rnef/platform-ios',
       description: 'RNEF plugin for everything iOS.',
-      autolinkingConfig: { ...iosConfig },
+      autolinkingConfig: { project: { ...iosConfig } },
     };
   };
 

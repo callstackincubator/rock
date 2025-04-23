@@ -23,7 +23,7 @@ export const platformAndroid =
     return {
       name: '@rnef/platform-android',
       description: 'RNEF plugin for everything Android.',
-      autolinkingConfig: { ...androidConfig },
+      autolinkingConfig: { project: { ...androidConfig } },
     };
   };
 

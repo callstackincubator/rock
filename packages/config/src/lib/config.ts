@@ -12,7 +12,7 @@ export type PluginOutput = {
 };
 
 export type PlatformOutput = PluginOutput & {
-  autolinkingConfig: Record<string, unknown> | undefined;
+  autolinkingConfig: { project: Record<string, unknown> | undefined };
 };
 
 export type PluginApi = {
