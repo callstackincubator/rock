@@ -1,5 +1,13 @@
 # @rnef/cli
 
+## 0.7.1
+
+### Patch Changes
+
+- c9bf48e: fix: autolinking config missing project
+  - @rnef/config@0.7.1
+  - @rnef/tools@0.7.1
+
 ## 0.7.0
 
 ### Minor Changes
