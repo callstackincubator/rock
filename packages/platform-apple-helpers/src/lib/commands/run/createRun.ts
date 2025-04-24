@@ -91,6 +91,7 @@ export const createRun = async (
   }
   loader.stop('Found available devices and simulators.');
   const device = await selectDevice(devices, args);
+  args.device = device?.udid
 
   if (device) {
     cacheRecentDevice(device, platformName);
