@@ -91,7 +91,10 @@ export const createRun = async (
   }
   loader.stop('Found available devices and simulators.');
   const device = await selectDevice(devices, args);
-  args.device = device?.udid
+
+  // we need to override the device arg because that's what is used to build the app
+  // and we need also to include udid because that's what works in all the cases
+  args.device = device?.udid;
 
   if (device) {
     cacheRecentDevice(device, platformName);
