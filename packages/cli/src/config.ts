@@ -44,7 +44,7 @@ export const logConfig = async (
       : ownConfig.platforms;
 
   for (const platform in platforms) {
-    config.project[platform] = platforms[platform].autolinkingConfig;
+    config.project[platform] = platforms[platform].autolinkingConfig.project;
   }
 
   console.log(JSON.stringify(filterConfig(config), null, 2));
