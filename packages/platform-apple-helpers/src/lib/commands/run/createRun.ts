@@ -41,7 +41,7 @@ export const createRun = async (
   if (!args.binaryPath && args.remoteCache) {
     const cachedBuild = await fetchCachedBuild({
       configuration: args.configuration ?? 'Debug',
-      distribution: args.destination ?? (args.device ? 'device' : 'simulator'),
+      distribution: args.destination ?? 'simulator',
       remoteCacheProvider,
       root: projectRoot,
       fingerprintOptions,
@@ -54,6 +54,15 @@ export const createRun = async (
 
   validateArgs(args, projectRoot);
 
+  // Check if the device argument looks like a UDID
+  // (assuming UDIDs are alphanumeric and have specific length)
+  const udid =
+    args.device && /^[A-Fa-f0-9-]{25,}$/.test(args.device)
+      ? args.device
+      : undefined;
+
+  const deviceName = udid ? undefined : args.device;
+
   if (platformName === 'macos') {
     const { appPath } = await buildApp({
       args,
@@ -61,6 +70,8 @@ export const createRun = async (
       platformName,
       platformSDK: getSimulatorPlatformSDK(platformName),
       projectRoot,
+      udid,
+      deviceName,
     });
     await runOnMac(appPath);
     return;
@@ -71,6 +82,8 @@ export const createRun = async (
       platformName,
       platformSDK: getSimulatorPlatformSDK(platformName),
       projectRoot,
+      udid,
+      deviceName,
     });
     if (scheme) {
       await runOnMacCatalyst(appPath, scheme);
@@ -91,10 +104,6 @@ export const createRun = async (
   }
   loader.stop('Found available devices and simulators.');
   const device = await selectDevice(devices, args);
-
-  // we need to override the device arg because that's what is used to build the app
-  // and we need also to include udid because that's what works in all the cases
-  args.device = device?.udid;
 
   if (device) {
     cacheRecentDevice(device, platformName);
@@ -176,8 +185,6 @@ async function selectDevice(devices: Device[], args: RunFlags) {
     logger.warn(
       `No devices or simulators found matching "${args.device}". Falling back to default simulator.`
     );
-    // setting device to undefined to avoid buildProject to use it
-    args.device = undefined;
   }
   return device;
 }

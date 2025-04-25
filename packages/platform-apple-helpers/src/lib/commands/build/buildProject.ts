@@ -73,6 +73,7 @@ export const buildProject = async ({
   scheme,
   configuration,
   args,
+  deviceName,
 }: {
   xcodeProject: XcodeProjectInfo;
   sourceDir: string;
@@ -81,6 +82,7 @@ export const buildProject = async ({
   scheme: string;
   configuration: string;
   args: RunFlags | BuildFlags;
+  deviceName?: string;
 }) => {
   const simulatorDest = simulatorDestinationMap[platformName];
 
@@ -106,23 +108,16 @@ export const buildProject = async ({
       }
     }
 
-    if ('device' in args && args.device) {
-      // Check if the device argument looks like a UDID (assuming UDIDs are alphanumeric and have specific length)
-      const isUDID = /^[A-Fa-f0-9-]{25,}$/.test(args.device);
-      if (isUDID) {
-        return [`id=${args.device}`];
-      } else {
-        // If it's a device name
-        return [`name=${args.device}`];
-      }
-    }
-
     if ('catalyst' in args && args.catalyst) {
       return ['platform=macOS,variant=Mac Catalyst'];
     }
 
     if (udid) {
       return [`id=${udid}`];
+    }
+
+    if (deviceName) {
+      return [`name=${deviceName}`];
     }
 
     return [`generic/platform=${platformName}`];

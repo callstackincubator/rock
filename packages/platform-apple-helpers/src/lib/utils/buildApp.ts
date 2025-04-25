@@ -21,6 +21,7 @@ export async function buildApp({
   platformSDK,
   udid,
   projectRoot,
+  deviceName,
 }: {
   args: RunFlags | BuildFlags;
   projectConfig: ProjectConfig;
@@ -28,6 +29,7 @@ export async function buildApp({
   platformName: ApplePlatform;
   platformSDK: PlatformSDK;
   udid?: string;
+  deviceName?: string;
   projectRoot: string;
 }) {
   if ('binaryPath' in args && args.binaryPath) {
@@ -54,7 +56,11 @@ export async function buildApp({
     // because running pods install might have generated .xcworkspace project.
     // This should be only case in new project.
     if (xcodeProject.isWorkspace === false) {
-      const newProjectConfig = getValidProjectConfig(platformName, projectRoot, pluginConfig);
+      const newProjectConfig = getValidProjectConfig(
+        platformName,
+        projectRoot,
+        pluginConfig
+      );
       xcodeProject = newProjectConfig.xcodeProject;
       sourceDir = newProjectConfig.sourceDir;
     }
@@ -77,6 +83,7 @@ export async function buildApp({
     scheme,
     configuration,
     args,
+    deviceName,
   });
   const buildSettings = await getBuildSettings(
     xcodeProject,
