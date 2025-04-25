@@ -1,5 +1,12 @@
 # @rnef/create-app
 
+## 0.7.2
+
+### Patch Changes
+
+- 2172407: fix: support plugin in create-app
+  - @rnef/tools@0.7.2
+
 ## 0.7.1
 
 ### Patch Changes
