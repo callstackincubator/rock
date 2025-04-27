@@ -3,15 +3,11 @@
  *
  * This source code is licensed under the MIT license found in the
  * LICENSE file in the root directory of this source tree.
- *
- * @flow strict-local
- * @format
- * @oncall react_native
  */
 
 import path from 'node:path';
 import type { PluginApi } from '@rnef/config';
-import { findDevServerPort } from '@rnef/tools';
+import { findDevServerPort, intro } from '@rnef/tools';
 import type { StartCommandArgs } from './runServer.js';
 import runServer from './runServer.js';
 
@@ -19,6 +15,7 @@ export const registerStartCommand = (api: PluginApi) => {
   api.registerCommand({
     name: 'start',
     action: async (args: StartCommandArgs) => {
+      intro('Starting Metro dev server');
       const root = api.getProjectRoot();
       const { port, startDevServer } = await findDevServerPort(
         args.port ?? 8081,

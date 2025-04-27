@@ -3,10 +3,6 @@
  *
  * This source code is licensed under the MIT license found in the
  * LICENSE file in the root directory of this source tree.
- *
- * @flow strict-local
- * @format
- * @oncall react_native
  */
 
 import { createRequire } from 'node:module';
@@ -22,7 +18,6 @@ import type { TerminalReporter } from 'metro/src/lib/TerminalReporter';
 import { Terminal } from 'metro-core';
 import attachKeyHandlers from './attachKeyHandlers.js';
 import createDevMiddlewareLogger from './createDevMiddlewareLogger.js';
-import isDevServerRunning from './isDevServerRunning.js';
 import loadMetroConfig from './loadMetroConfig.js';
 
 export type StartCommandArgs = {
@@ -79,22 +74,6 @@ async function runServer(
   } = metroConfig;
   const protocol = args.https === true ? 'https' : 'http';
   const devServerUrl = url.format({ protocol, hostname, port });
-  const serverStatus = await isDevServerRunning(devServerUrl, projectRoot);
-
-  if (serverStatus === 'matched_server_running') {
-    console.info(
-      `A dev server is already running for this project on port ${port}. Exiting.`
-    );
-    return;
-  } else if (serverStatus === 'port_taken') {
-    console.error(
-      `${color.red(
-        'error'
-      )}: Another process is running on port ${port}. Please terminate this ` +
-        'process and try again, or use another port with "--port".'
-    );
-    return;
-  }
 
   console.info(`Starting dev server on ${devServerUrl}\n`);
 

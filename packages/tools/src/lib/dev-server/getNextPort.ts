@@ -16,13 +16,12 @@ const getNextPort = async (port: number, root: string): Promise<Result> => {
   let start = true;
 
   const result = await isDevServerRunning(nextPort);
-
-  const isRunning = typeof result === 'object' && result.status === 'running';
+  const isRunning = result.status === 'running';
 
   if (isRunning && result.root === root) {
     // Found running bundler for this project, so we do not need to start dev server!
     start = false;
-  } else if (isRunning || result === 'unrecognized') {
+  } else if (isRunning || result.status === 'unrecognized') {
     return getNextPort(nextPort, root);
   }
 
