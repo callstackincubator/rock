@@ -2,7 +2,7 @@ import fs from 'node:fs';
 import path from 'node:path';
 import {
   bundleCommand,
-  // @ts-expect-error missing typings
+  // @ts-expect-error missing typings - TODO drop dependency on community plugin
 } from '@react-native/community-cli-plugin';
 import type { PluginApi } from '@rnef/config';
 import { color, intro, logger, outro, RnefError, runHermes, spinner } from '@rnef/tools';
