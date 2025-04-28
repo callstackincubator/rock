@@ -20,11 +20,13 @@ export type LocalArtifact = {
 
 export interface RemoteBuildCache {
   name: string;
-  query({
+  list({
     artifactName,
+    limit,
   }: {
-    artifactName: string;
-  }): Promise<RemoteArtifact | null>;
+    artifactName: string | undefined;
+    limit?: number;
+  }): Promise<RemoteArtifact[] | null>;
   download({
     artifact,
     loader,

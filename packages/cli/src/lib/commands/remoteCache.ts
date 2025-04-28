@@ -10,11 +10,16 @@ import {
   spinner,
 } from '@rnef/tools';
 
-type Flags = {
-  platform: 'ios' | 'android';
-  traits: string[];
-  source?: string;
-};
+type Flags =
+  | {
+      source?: string;
+      name: string;
+    }
+  | {
+      platform: 'ios' | 'android';
+      traits: string[];
+      source?: string;
+    };
 
 async function remoteCache({
   action,
@@ -37,33 +42,59 @@ async function remoteCache({
     return null;
   }
 
-  const artifactName = await formatArtifactName({
-    platform: args.platform,
-    traits: args.traits,
-    root: projectRoot,
-    fingerprintOptions,
-  });
+  const artifactName =
+    'name' in args
+      ? args.name
+      : await formatArtifactName({
+          platform: args.platform,
+          traits: args.traits,
+          root: projectRoot,
+          fingerprintOptions,
+        });
 
   switch (action) {
-    case 'query': {
-      const artifact = await remoteBuildCache.query({ artifactName });
-      if (artifact) {
-        logger.log(`Available artifact: ${artifact.name}`);
+    case 'list': {
+      const loader = spinner();
+      loader.start(`Listing artifacts for "${artifactName}"`);
+      const artifacts = await remoteBuildCache.list({ artifactName });
+      if (artifacts) {
+        loader.stop(
+          `Available artifacts: 
+${artifacts
+  .map((artifact) => `◾︎ ${artifact.name}: ${artifact.downloadUrl}`)
+  .join('\n')}`
+        );
       } else {
-        logger.log(`No artifact found for "${artifactName}".`);
+        loader.stop(`No artifact found for "${artifactName}".`);
+      }
+      break;
+    }
+    case 'list-all': {
+      const loader = spinner();
+      loader.start(`Listing all artifacts`);
+      const artifacts = await remoteBuildCache.list({
+        artifactName: undefined,
+      });
+      if (artifacts) {
+        loader.stop(
+          `Available artifacts: 
+${artifacts.map((artifact) => `◾︎  ${artifact.name}`).join('\n')}`
+        );
+      } else {
+        loader.stop(`No artifact found for "${artifactName}".`);
       }
       break;
     }
     case 'download': {
       const loader = spinner();
       loader.start(`Downloading artifact "${artifactName}"`);
-      const artifact = await remoteBuildCache.query({ artifactName });
-      if (!artifact) {
+      const artifacts = await remoteBuildCache.list({ artifactName, limit: 1 });
+      if (!artifacts) {
         loader.stop(`No artifact found for "${artifactName}".`);
         return null;
       }
       const fetchedBuild = await remoteBuildCache.download({
-        artifact,
+        artifact: artifacts[0],
         loader,
       });
       loader.stop(`Downloaded artifact "${artifactName}"`);
@@ -126,6 +157,10 @@ export const remoteCachePlugin =
         },
       ],
       options: [
+        {
+          name: '--name <string>',
+          description: 'Full artifact name',
+        },
         {
           name: '-p, --platform <string>',
           description: 'Select platform, e.g. ios or android',

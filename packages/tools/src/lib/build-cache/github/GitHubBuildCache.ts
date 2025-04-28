@@ -45,11 +45,13 @@ Include "repo", "workflow", and "read:org" permissions.`
     return this.repoDetails;
   }
 
-  async query({
+  async list({
     artifactName,
+    limit,
   }: {
-    artifactName: string;
-  }): Promise<RemoteArtifact | null> {
+    artifactName?: string;
+    limit?: number;
+  }): Promise<RemoteArtifact[] | null> {
     const repoDetails = await this.detectRepoDetails();
     if (!getGitHubToken()) {
       logger.warn(`No GitHub Personal Access Token found.`);
@@ -62,16 +64,17 @@ Include "repo", "workflow", and "read:org" permissions.`
 
     const artifacts = await fetchGitHubArtifactsByName(
       artifactName,
-      repoDetails
+      repoDetails,
+      limit
     );
     if (artifacts.length === 0) {
       return null;
     }
 
-    return {
-      name: artifacts[0].name,
-      downloadUrl: artifacts[0].downloadUrl,
-    };
+    return artifacts.map((artifact) => ({
+      name: artifact.name,
+      downloadUrl: artifact.downloadUrl,
+    }));
   }
 
   async download({
@@ -116,7 +119,7 @@ Include "repo", "workflow", and "read:org" permissions.`
       artifactName,
       repoDetails
     );
-    console.log({ artifacts });
+
     if (artifacts.length === 0) {
       loader.stop(`No artifact found with name "${artifactName}" to delete.`);
       return false;

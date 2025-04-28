@@ -31,8 +31,9 @@ type GitHubArtifactResponse = {
 };
 
 export async function fetchGitHubArtifactsByName(
-  name: string,
-  repoDetails: GitHubRepoDetails | null
+  name: string | undefined,
+  repoDetails: GitHubRepoDetails | null,
+  limit?: number
 ): Promise<GitHubArtifact[] | []> {
   if (!repoDetails) {
     return [];
@@ -41,7 +42,9 @@ export async function fetchGitHubArtifactsByName(
   const result: GitHubArtifact[] = [];
   const owner = repoDetails.owner;
   const repo = repoDetails.repository;
-  const url = `https://api.github.com/repos/${owner}/${repo}/actions/artifacts?per_page=${PAGE_SIZE}&page=${page}`;
+  const url = `https://api.github.com/repos/${owner}/${repo}/actions/artifacts?per_page=${
+    limit ?? PAGE_SIZE
+  }&page=${page}${name ? `&name=${name}` : ''}`;
 
   try {
     while (true) {
@@ -61,12 +64,7 @@ export async function fetchGitHubArtifactsByName(
       }
 
       const artifacts = data.artifacts
-        .filter(
-          (artifact) =>
-            !artifact.expired &&
-            artifact.workflow_run?.id &&
-            artifact.name === name
-        )
+        .filter((artifact) => !artifact.expired && artifact.workflow_run?.id)
         .map((artifact) => ({
           id: artifact.id,
           name: artifact.name,
