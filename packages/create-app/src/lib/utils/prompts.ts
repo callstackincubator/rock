@@ -31,8 +31,10 @@ export function printHelpMessage(
        -t, --template             Specify template to use
        -p, --platform             Specify platform(s) to use
        --plugin                   Specify plugin(s) to use
+       --bundler                  Specify bundler to use
        --remote-cache-provider    Specify remote cache provider
        --override                 Override files in target directory
+       --install                  Install Node.js dependencies
      
      Available templates:
        ${templates.map((t) => t.name).join(', ')}

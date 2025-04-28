@@ -7,32 +7,32 @@ export type CliOptions = {
   platforms?: string[];
   plugins?: string[];
   bundler?: string;
-  help?: boolean;
-  version?: boolean;
+  help: boolean;
+  version: boolean;
   dir?: string;
-  override?: boolean;
+  override: boolean;
   remoteCacheProvider?: SupportedRemoteCacheProviders | undefined | false;
   install: boolean;
 };
 
 type MinimistOptions = {
-  help?: boolean;
-  version?: boolean;
-  override?: boolean;
+  help: boolean;
+  version: boolean;
+  override: boolean;
   dir?: string;
   template?: string;
   platform?: string | string[];
   plugin?: string | string[];
   bundler?: string;
   'remote-cache-provider'?: string | boolean;
-  install?: boolean;
+  install: boolean;
 };
 
 export function parseCliOptions(argv: string[]): CliOptions {
   const options = minimist<MinimistOptions>(argv, {
     alias: { h: 'help', v: 'version', p: 'platform', t: 'template', d: 'dir' },
     boolean: ['help', 'version', 'override', 'install'],
-    string: ['template', 'platform', 'dir', 'plugin'],
+    string: ['template', 'platform', 'dir', 'plugin', 'bundler'],
   });
 
   return {
@@ -49,7 +49,7 @@ export function parseCliOptions(argv: string[]): CliOptions {
       | SupportedRemoteCacheProviders
       | undefined
       | false,
-    install: options.install ?? false,
+    install: options.install,
   };
 }
 

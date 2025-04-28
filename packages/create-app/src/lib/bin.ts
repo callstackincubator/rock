@@ -3,6 +3,7 @@ import path from 'node:path';
 import type { SupportedRemoteCacheProviders } from '@rnef/tools';
 import {
   cancelPromptAndExit,
+  isInteractive,
   resolveAbsolutePath,
   RnefError,
   spawn,
@@ -106,7 +107,9 @@ export async function run() {
       : await promptRemoteCacheProvider();
 
   const shouldInstallDependencies =
-    options.install || (await promptInstallDependencies());
+    options.install || isInteractive()
+      ? await promptInstallDependencies()
+      : false;
 
   const loader = spinner();
 
