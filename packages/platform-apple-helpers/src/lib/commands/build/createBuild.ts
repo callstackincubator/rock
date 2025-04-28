@@ -21,12 +21,19 @@ import {
 import type { BuildFlags } from './buildOptions.js';
 import { exportArchive } from './exportArchive.js';
 
-export const createBuild = async (
-  platformName: BuilderCommand['platformName'],
-  projectConfig: ProjectConfig,
-  args: BuildFlags,
-  projectRoot: string
-) => {
+export const createBuild = async ({
+  platformName,
+  projectConfig,
+  args,
+  projectRoot,
+  reactNativePath,
+}: {
+  platformName: BuilderCommand['platformName'];
+  projectConfig: ProjectConfig;
+  args: BuildFlags;
+  projectRoot: string;
+  reactNativePath: string;
+}) => {
   await validateArgs(args);
   let xcodeProject: XcodeProjectInfo;
   let sourceDir: string;
@@ -40,6 +47,7 @@ export const createBuild = async (
           ? getSimulatorPlatformSDK(platformName)
           : getDevicePlatformSDK(platformName),
       args,
+      reactNativePath,
     });
     const loader = spinner();
     loader.start('');

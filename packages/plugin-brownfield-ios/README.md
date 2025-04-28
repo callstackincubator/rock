@@ -4,4 +4,4 @@ iOS brownfield integration plugin for React Native Enterprise Framework (RNEF). 
 
 ## Documentation
 
-For detailed documentation about RNEF and its tools, visit [RNEF Documentation](https://rnef.vercel.app)
+For detailed documentation about RNEF and its tools, visit [RNEF Documentation](https://rnef.dev)

@@ -41,9 +41,25 @@ update_package_json() {
     mv "$temp_file" "$file"
 }
 
+update_package_json_version() {
+    local file=$1
+    echo "Updating version in $file..."
+
+    # Get the version from packages/cli/package.json
+    CLI_VERSION=$(jq -r '.version' packages/cli/package.json)
+    echo "Using CLI version: $CLI_VERSION"
+
+    # Update the version in the package.json file
+    jq --arg version "$CLI_VERSION" '.version = $version' "$file" > "$temp_file"
+
+    # Replace the original file with the updated one
+    mv "$temp_file" "$file"
+}
+
 # Find all package.json files in templates directory and update them
 find ./templates -name "package.json" -not -path "*/node_modules/*" | while read -r file; do
     update_package_json "$file"
+    update_package_json_version "$file"
 done
 
 # Find all package.json files in packages/*/template directories and update them

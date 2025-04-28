@@ -24,7 +24,13 @@ export const platformIOS =
       description: 'Build iOS app.',
       action: async (args) => {
         intro('Building iOS app');
-        await createBuild('ios', iosConfig, args as BuildFlags, projectRoot);
+        await createBuild({
+          platformName: 'ios',
+          projectConfig: iosConfig,
+          args: args as BuildFlags,
+          projectRoot,
+          reactNativePath: api.getReactNativePath(),
+        });
         outro('Success 🎉.');
       },
       options: buildOptions,
@@ -35,14 +41,15 @@ export const platformIOS =
       description: 'Run iOS app.',
       action: async (args) => {
         intro('Running iOS app');
-        await createRun(
-          'ios',
-          iosConfig,
-          args as RunFlags,
+        await createRun({
+          platformName: 'ios',
+          projectConfig: iosConfig,
+          args: args as RunFlags,
           projectRoot,
-          api.getRemoteCacheProvider(),
-          api.getFingerprintOptions()
-        );
+          remoteCacheProvider: api.getRemoteCacheProvider(),
+          fingerprintOptions: api.getFingerprintOptions(),
+          reactNativePath: api.getReactNativePath(),
+        });
         outro('Success 🎉.');
       },
       // @ts-expect-error: fix `simulator` is not defined in `RunFlags`

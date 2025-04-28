@@ -12,7 +12,7 @@
     "watch": "nx watch --all -- nx run \\$NX_PROJECT_NAME:build",
     "validate": "pnpm typecheck && pnpm lint && pnpm test",
     "link-packages": "node ./scripts/linkPackages.mjs",
-    "version": "changeset version && ./scripts/update-template-dependencies.sh",
+    "version": "changeset version && ./scripts/update-template-dependencies.sh && pnpm install --no-frozen-lockfile",
     "publish:npm": "./scripts/npm-publish.sh",
     "verdaccio:init": "node ./scripts/verdaccio-init.mjs",
     "verdaccio:publish": "node ./scripts/verdaccio-publish.mjs",

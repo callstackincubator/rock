@@ -32,12 +32,13 @@ export const pluginBrownfieldIos =
         const buildFolder = args.buildFolder ?? derivedDataDir;
         const configuration = args.configuration ?? 'Debug';
 
-        await createBuild(
-          'ios',
-          iosConfig,
-          { ...args, destinations, buildFolder },
-          projectRoot
-        );
+        await createBuild({
+          platformName: 'ios',
+          projectConfig: iosConfig,
+          args: { ...args, destinations, buildFolder },
+          projectRoot,
+          reactNativePath: api.getReactNativePath(),
+        });
 
         if (!args.scheme) {
           throw new RnefError(

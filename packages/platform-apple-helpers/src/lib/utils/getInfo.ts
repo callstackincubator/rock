@@ -41,6 +41,7 @@ export async function getInfo(
       const info = parseTargetList(stdout);
 
       if (!info) {
+        loader.stop('Failed: Gathering Xcode project information', 1);
         throw new RnefError('Failed to get Xcode project information');
       }
 

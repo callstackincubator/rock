@@ -1,6 +1,6 @@
 {
   "name": "@rnef/test-helpers",
-  "version": "0.7.2",
+  "version": "0.7.4",
   "type": "module",
   "private": true,
   "exports": {

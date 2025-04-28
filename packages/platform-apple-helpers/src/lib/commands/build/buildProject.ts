@@ -1,6 +1,6 @@
 import path from 'node:path';
 import type { SubprocessError } from '@rnef/tools';
-import { logger, RnefError, spawn, spinner } from '@rnef/tools';
+import { color, logger, RnefError, spawn, spinner } from '@rnef/tools';
 import type { ApplePlatform, XcodeProjectInfo } from '../../types/index.js';
 import { getBuildPaths } from '../../utils/getBuildPaths.js';
 import { supportedPlatforms } from '../../utils/supportedPlatforms.js';
@@ -157,10 +157,13 @@ export const buildProject = async ({
     xcodebuildArgs.push(...args.extraParams);
   }
 
+  logger.log(`Build Settings:
+Scheme          ${color.bold(scheme)}
+Configuration   ${color.bold(configuration)}`);
+
   const loader = spinner({ indicator: 'timer' });
-  const message = `${
-    args.archive ? 'Archiving' : 'Building'
-  } the app with xcodebuild for ${scheme} scheme in ${configuration} configuration`;
+
+  const message = `${args.archive ? 'Archiving' : 'Building'} the app`;
 
   loader.start(message);
   try {
@@ -174,11 +177,7 @@ export const buildProject = async ({
     }
 
     await process;
-    loader.stop(
-      `${
-        args.archive ? 'Archived' : 'Built'
-      } the app with xcodebuild for ${scheme} scheme in ${configuration} configuration.`
-    );
+    loader.stop(`${args.archive ? 'Archived' : 'Built'} the app.`);
   } catch (error) {
     if ((error as SubprocessError).stderr.trim() === '') {
       loader.stop(

@@ -14,7 +14,6 @@ import { vice } from 'gradient-string';
 import path from 'path';
 import type { TemplateInfo } from '../templates.js';
 import { validateProjectName } from '../validate-project-name.js';
-import { parsePackageManagerFromUserAgent } from './parsers.js';
 import { getRnefVersion } from './version.js';
 
 export function printHelpMessage(
@@ -32,8 +31,10 @@ export function printHelpMessage(
        -t, --template             Specify template to use
        -p, --platform             Specify platform(s) to use
        --plugin                   Specify plugin(s) to use
+       --bundler                  Specify bundler to use
        --remote-cache-provider    Specify remote cache provider
        --override                 Override files in target directory
+       --install                  Install Node.js dependencies
      
      Available templates:
        ${templates.map((t) => t.name).join(', ')}
@@ -52,23 +53,25 @@ export function printWelcomeMessage() {
   intro(`Welcome to ${color.bold(vice('React Native Enterprise Framework'))}!`);
 }
 
-export function printByeMessage(targetDir: string) {
-  const pkgManager = parsePackageManagerFromUserAgent(
-    process.env['npm_config_user_agent']
-  );
-
-  const pkgManagerCommand = pkgManager?.name ?? 'npm';
-
+export function printByeMessage(
+  targetDir: string,
+  pkgManager: string,
+  installDeps: boolean
+) {
   const relativeDir = path.relative(process.cwd(), targetDir);
 
   const nextSteps = [
     `cd ${relativeDir}`,
-    `${pkgManagerCommand} install`,
-    `${pkgManagerCommand} run start`,
-  ].join('\n');
+    installDeps ? undefined : `${pkgManager} install`,
+    `${pkgManager} run start      starts dev server`,
+    `${pkgManager} run ios        builds and runs iOS app`,
+    `${pkgManager} run android    builds and runs Android app`,
+  ]
+    .filter(Boolean)
+    .join('\n');
 
   note(nextSteps, 'Next steps');
-  outro('Done.');
+  outro('Success 🎉.');
 }
 
 export function promptProjectName(): Promise<string> {
@@ -173,5 +176,13 @@ export function confirmOverrideFiles(targetDir: string) {
     message: `"${targetDir}" is not empty, please choose:`,
     confirmLabel: 'Continue and override files',
     cancelLabel: 'Cancel operation',
+  });
+}
+
+export function promptInstallDependencies(): Promise<boolean> {
+  return promptConfirm({
+    message: 'Do you want to install dependencies?',
+    confirmLabel: 'Yes',
+    cancelLabel: 'No',
   });
 }

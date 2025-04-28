@@ -29,4 +29,4 @@ npx @rnef/create-app enterprise
 
 ## Adding to existing projects
 
-To migrate your existing project, please follow steps described [here](https://rnef.vercel.app/docs/getting-started/migrating-from-community-cli).
+To migrate your existing project, please follow steps described [here](https://rnef.dev/docs/getting-started/migrating-from-community-cli).

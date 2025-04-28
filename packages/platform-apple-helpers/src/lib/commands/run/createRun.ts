@@ -31,14 +31,23 @@ import { runOnMacCatalyst } from './runOnMacCatalyst.js';
 import { launchSimulator, runOnSimulator } from './runOnSimulator.js';
 import type { RunFlags } from './runOptions.js';
 
-export const createRun = async (
-  platformName: ApplePlatform,
-  projectConfig: ProjectConfig,
-  args: RunFlags,
-  projectRoot: string,
-  remoteCacheProvider: SupportedRemoteCacheProviders | undefined,
-  fingerprintOptions: { extraSources: string[]; ignorePaths: string[] }
-) => {
+export const createRun = async ({
+  platformName,
+  projectConfig,
+  args,
+  projectRoot,
+  remoteCacheProvider,
+  fingerprintOptions,
+  reactNativePath,
+}: {
+  platformName: ApplePlatform;
+  projectConfig: ProjectConfig;
+  args: RunFlags;
+  projectRoot: string;
+  remoteCacheProvider: SupportedRemoteCacheProviders | undefined;
+  fingerprintOptions: { extraSources: string[]; ignorePaths: string[] };
+  reactNativePath: string;
+}) => {
   if (!args.binaryPath && args.remoteCache) {
     const artifactName = await formatArtifactName({
       platform: 'ios',
@@ -76,6 +85,7 @@ export const createRun = async (
       projectRoot,
       udid,
       deviceName,
+      reactNativePath,
     });
     await runOnMac(appPath);
     return;
@@ -88,6 +98,7 @@ export const createRun = async (
       projectRoot,
       udid,
       deviceName,
+      reactNativePath,
     });
     if (scheme) {
       await runOnMacCatalyst(appPath, scheme);
@@ -121,6 +132,7 @@ export const createRun = async (
           platformSDK: getSimulatorPlatformSDK(platformName),
           udid: device.udid,
           projectRoot,
+          reactNativePath,
         }),
       ]);
 
@@ -133,6 +145,7 @@ export const createRun = async (
         platformSDK: getDevicePlatformSDK(platformName),
         udid: device.udid,
         projectRoot,
+        reactNativePath,
       });
       await runOnDevice(device, appPath, projectConfig.sourceDir);
     }
@@ -173,6 +186,7 @@ export const createRun = async (
           platformSDK: getSimulatorPlatformSDK(platformName),
           udid: simulator.udid,
           projectRoot,
+          reactNativePath,
         }),
       ]);
       await runOnSimulator(simulator, appPath, infoPlistPath);

@@ -12,6 +12,7 @@ import {
   spinner,
 } from '@rnef/tools';
 import type { ApplePlatform } from '../types/index.js';
+import runCodegen from './codegen.js';
 
 const podErrorHelpMessage = `Please make sure your environment is correctly set up. 
 Learn more at: ${color.dim('https://cocoapods.org/')}
@@ -21,7 +22,8 @@ export async function installPodsIfNeeded(
   projectRoot: string,
   platformName: ApplePlatform,
   sourceDir: string,
-  newArch: boolean
+  newArch: boolean,
+  reactNativePath: string
 ) {
   const podsPath = path.join(sourceDir, 'Pods');
   const podfilePath = path.join(sourceDir, 'Podfile');
@@ -40,6 +42,7 @@ export async function installPodsIfNeeded(
     : true;
 
   if (!podsDirExists || hashChanged) {
+    await runCodegen({ projectRoot, platformName, reactNativePath, sourceDir });
     await installPods({ projectRoot, sourceDir, podfilePath, newArch });
     cacheManager.set(
       cacheKey,
@@ -64,7 +67,8 @@ const calculateCurrentHash = ({
     podfile = fs.readFileSync(podfilePath, 'utf-8');
   } catch {
     throw new RnefError(
-      `No Podfile found at: ${podfilePath}. ${podErrorHelpMessage}`
+      `No Podfile found at: ${podfilePath}.
+${podErrorHelpMessage}`
     );
   }
 
@@ -104,7 +108,6 @@ async function runPodInstall(options: {
 
   const command = options.useBundler ? 'bundle' : 'pod';
   const args = options.useBundler ? ['exec', 'pod', 'install'] : ['install'];
-
   try {
     await spawn(command, args, {
       env: {
@@ -117,8 +120,9 @@ async function runPodInstall(options: {
       cwd: options.sourceDir,
     });
   } catch (error) {
-    const stderr = (error as SubprocessError).stderr;
-
+    loader.stop('Failed: Installing CocoaPods dependencies', 1);
+    const stderr =
+      (error as SubprocessError).stderr || (error as SubprocessError).output;
     /**
      * If CocoaPods failed due to repo being out of date, it will
      * include the update command in the error message.
@@ -135,26 +139,15 @@ async function runPodInstall(options: {
         useBundler: options.useBundler,
       });
     } else {
-      if (options.useBundler) {
-        // If for any reason the installing with bundler failed, try with pure `pod install`
-        await runPodInstall({
-          shouldHandleRepoUpdate: false,
-          sourceDir: options.sourceDir,
-          newArch: options.newArch,
-          useBundler: false,
-        });
-      } else {
-        loader.stop('CocoaPods installation failed. ', 1);
-
-        throw new RnefError(
-          `CocoaPods installation failed. ${podErrorHelpMessage}`,
-          { cause: stderr }
-        );
-      }
+      throw new RnefError(
+        `CocoaPods installation failed. 
+${podErrorHelpMessage}`,
+        { cause: stderr }
+      );
     }
   }
 
-  loader.stop('CocoaPods installed successfully.');
+  loader.stop('Installed CocoaPods dependencies successfully');
 }
 
 async function runPodUpdate(cwd: string, useBundler: boolean) {
@@ -169,10 +162,11 @@ async function runPodUpdate(cwd: string, useBundler: boolean) {
   } catch (error) {
     const stderr =
       (error as SubprocessError).stderr || (error as SubprocessError).stdout;
-    loader.stop();
+    loader.stop('Failed: Updating CocoaPods repositories', 1);
 
     throw new RnefError(
-      `Failed to update CocoaPods repositories for iOS project. ${podErrorHelpMessage}`,
+      `Failed to update CocoaPods repositories for iOS project.
+${podErrorHelpMessage}`,
       { cause: stderr }
     );
   }
@@ -194,6 +188,9 @@ async function installPods(options: {
     options.sourceDir,
     options.projectRoot
   );
+  if (!useBundler) {
+    logger.info('Unable to use Ruby bundler, falling back to "pod install"');
+  }
   await runPodInstall({
     sourceDir: options.sourceDir,
     newArch: options.newArch,
@@ -210,10 +207,18 @@ async function validatePodCommand(sourceDir: string) {
   try {
     await spawn('pod', ['--version'], { cwd: sourceDir });
   } catch (error) {
+    const cause = (error as SubprocessError).cause;
+    if (cause instanceof Error && cause.message.includes('ENOENT')) {
+      throw new RnefError(
+        `The "pod" command is not available.
+${podErrorHelpMessage}`
+      );
+    }
     const stderr =
       (error as SubprocessError).stderr || (error as SubprocessError).stdout;
     throw new RnefError(
-      `CocoaPods "pod" command failed. ${podErrorHelpMessage}`,
+      `CocoaPods "pod" command failed.
+${podErrorHelpMessage}`,
       { cause: stderr }
     );
   }
@@ -260,14 +265,15 @@ skipping Ruby Gems installation.`
   } catch (error) {
     const stderr =
       (error as SubprocessError).stderr || (error as SubprocessError).stdout;
-    loader.stop('Ruby Gems installation failed.', 1);
+    loader.stop('Failed: Installing Ruby Gems', 1);
     throw new RnefError(
-      `Failed to install Ruby Gems with "bundle install". ${podErrorHelpMessage}`,
+      `Failed to install Ruby Gems with "bundle install".
+${podErrorHelpMessage}`,
       { cause: stderr }
     );
   }
 
-  loader.stop('Installed Ruby Gems.');
+  loader.stop('Installed Ruby Gems');
   return true;
 }
 
