@@ -71,9 +71,6 @@ async function remoteCache({
       break;
     }
     case 'upload': {
-      if (!remoteBuildCache.upload) {
-        return;
-      }
       const loader = spinner();
       if (!args.source) {
         loader.stop(`Missing required "--source" parameter for upload action.`);

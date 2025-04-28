@@ -145,7 +145,6 @@ Include "repo", "workflow", and "read:org" permissions.`
         });
 
         if (!response.ok) {
-          console.log({response})
           logger.warn(
             `Failed to delete artifact ID ${artifactId}: ${response.status} ${response.statusText}`
           );
@@ -155,10 +154,7 @@ Include "repo", "workflow", and "read:org" permissions.`
         deletedCount++;
       }
 
-      if (deletedCount === 0) {
-        loader.stop(`Failed to delete any artifacts named "${artifactName}".`);
-        return false;
-      } else if (deletedCount < artifacts.length) {
+      if (deletedCount < artifacts.length) {
         loader.stop(
           `Partially succeeded: deleted ${deletedCount}/${artifacts.length} artifacts named "${artifactName}".`
         );
@@ -175,6 +171,11 @@ Include "repo", "workflow", and "read:org" permissions.`
       );
       return false;
     }
+  }
+
+  async upload() {
+    logger.warn('Uploading artifacts to GitHub is not supported.');
+    return null;
   }
 }
 

@@ -39,7 +39,7 @@ export interface RemoteBuildCache {
     artifactName: string;
     loader: ReturnType<typeof spinner>;
   }): Promise<boolean>;
-  upload?({
+  upload({
     artifactPath,
     artifactName,
     loader,
