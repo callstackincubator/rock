@@ -40,8 +40,7 @@ export const createRun = async (
   fingerprintOptions: { extraSources: string[]; ignorePaths: string[] }
 ) => {
   if (!args.binaryPath && args.remoteCache) {
-    const destination =
-      args.destination ?? (args.device ? 'device' : 'simulator');
+    const destination = args.destination ?? 'simulator';
     const artifactName = await formatArtifactName({
       platform: 'ios',
       traits: [destination, args.configuration ?? 'Debug'],
