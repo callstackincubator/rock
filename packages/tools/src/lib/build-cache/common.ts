@@ -32,6 +32,22 @@ export interface RemoteBuildCache {
     artifact: RemoteArtifact;
     loader: ReturnType<typeof spinner>;
   }): Promise<LocalArtifact>;
+  delete({
+    artifactName,
+    loader,
+  }: {
+    artifactName: string;
+    loader: ReturnType<typeof spinner>;
+  }): Promise<boolean>;
+  upload?({
+    artifactPath,
+    artifactName,
+    loader,
+  }: {
+    artifactPath: string;
+    artifactName: string;
+    loader: ReturnType<typeof spinner>;
+  }): Promise<RemoteArtifact | null>;
 }
 
 /**

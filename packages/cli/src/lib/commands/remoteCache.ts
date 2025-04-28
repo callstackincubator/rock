@@ -5,13 +5,15 @@ import type {
 } from '@rnef/tools';
 import {
   createRemoteBuildCache,
-  fetchCachedBuild,
   formatArtifactName,
+  logger,
+  spinner,
 } from '@rnef/tools';
 
 type Flags = {
   platform: 'ios' | 'android';
   traits: string[];
+  source?: string;
 };
 
 async function remoteCache({
@@ -41,26 +43,65 @@ async function remoteCache({
     root: projectRoot,
     fingerprintOptions,
   });
+
   switch (action) {
     case 'query': {
       const artifact = await remoteBuildCache.query({ artifactName });
-      console.log({ artifact });
+      if (artifact) {
+        logger.log(`Available artifact: ${artifact.name}`);
+      } else {
+        logger.log(`No artifact found for "${artifactName}".`);
+      }
       break;
     }
     case 'download': {
-      const cachedBuild = await fetchCachedBuild({
-        artifactName,
-        remoteCacheProvider,
+      const loader = spinner();
+      loader.start(`Downloading artifact "${artifactName}"`);
+      const artifact = await remoteBuildCache.query({ artifactName });
+      if (!artifact) {
+        loader.stop(`No artifact found for "${artifactName}".`);
+        return null;
+      }
+      const fetchedBuild = await remoteBuildCache.download({
+        artifact,
+        loader,
       });
-      console.log({ cachedBuild });
+      loader.stop(`Downloaded artifact "${artifactName}"`);
+      logger.log(`Artifact path: ${fetchedBuild.path}`);
       break;
     }
-    case 'upload':
-      console.log('upload');
+    case 'upload': {
+      if (!remoteBuildCache.upload) {
+        return;
+      }
+      const loader = spinner();
+      if (!args.source) {
+        loader.stop(`Missing required "--source" parameter for upload action.`);
+        return null;
+      }
+      loader.start(`Uploading artifact "${artifactName}"`);
+      const uploadedArtifact = await remoteBuildCache.upload({
+        artifactPath: args.source,
+        artifactName,
+        loader,
+      });
+      loader.stop(
+        `Uploaded artifact "${artifactName}" to ${uploadedArtifact?.downloadUrl}`
+      );
       break;
-    case 'delete':
-      console.log('delete');
+    }
+    case 'delete': {
+      const loader = spinner();
+      const success = await remoteBuildCache.delete({
+        artifactName,
+        loader,
+      });
+
+      if (!success) {
+        loader.stop(`Failed to delete artifact "${artifactName}".`);
+      }
       break;
+    }
   }
 
   return null;
@@ -98,6 +139,11 @@ export const remoteCachePlugin =
 Example iOS: --traits simulator,Release
 Example Android: --traits debug`,
           parse: (val: string) => val.split(','),
+        },
+        {
+          name: '--source <path>',
+          description:
+            'Path to a single binary file to upload as an artifact (not a directory)',
         },
       ],
     });
