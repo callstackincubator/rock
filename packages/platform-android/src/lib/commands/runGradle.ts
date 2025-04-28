@@ -42,10 +42,13 @@ export async function runGradle({
     return;
   }
   const humanReadableTasks = tasks.join(', ');
+
+  logger.log(`Build Settings:
+Variant   ${color.bold(args.variant)}
+Tasks     ${color.bold(humanReadableTasks)}`);
+
   const loader = spinner({ indicator: 'timer' });
-  const message = `Building the app with Gradle using ${humanReadableTasks} ${
-    tasks.length > 1 ? 'tasks' : 'task'
-  }.`;
+  const message = `Building the app`;
 
   loader.start(message);
   const gradleArgs = getTaskNames(androidProject.appName, tasks);
@@ -76,11 +79,7 @@ export async function runGradle({
 
   try {
     await spawn(gradleWrapper, gradleArgs, { cwd: androidProject.sourceDir });
-    loader.stop(
-      `Built the app with Gradle using ${humanReadableTasks} ${
-        tasks.length > 1 ? 'tasks' : 'task'
-      }.`
-    );
+    loader.stop(`Built the app`);
   } catch (error) {
     loader.stop('Failed to build the app');
     const cleanedErrorMessage = getCleanedErrorMessage(
