@@ -5,6 +5,7 @@ import {
   cancelPromptAndExit,
   resolveAbsolutePath,
   RnefError,
+  spawn,
   spinner,
 } from '@rnef/tools';
 import { gitInitStep } from './steps/git-init.js';
@@ -23,7 +24,10 @@ import {
 import { copyDirSync, isEmptyDirSync, removeDirSync } from './utils/fs.js';
 import { rewritePackageJson } from './utils/package-json.js';
 import { parseCliOptions } from './utils/parse-cli-options.js';
-import { parsePackageInfo } from './utils/parsers.js';
+import {
+  parsePackageInfo,
+  parsePackageManagerFromUserAgent,
+} from './utils/parsers.js';
 import {
   confirmOverrideFiles,
   printByeMessage,
@@ -31,6 +35,7 @@ import {
   printVersionMessage,
   printWelcomeMessage,
   promptBundlers,
+  promptInstallDependencies,
   promptPlatforms,
   promptPlugins,
   promptProjectName,
@@ -100,6 +105,9 @@ export async function run() {
       ? null
       : await promptRemoteCacheProvider();
 
+  const shouldInstallDependencies =
+    options.install || (await promptInstallDependencies());
+
   const loader = spinner();
 
   loader.start('Applying template, platforms and plugins');
@@ -124,9 +132,32 @@ export async function run() {
   );
   loader.stop('Applied template, platforms and plugins.');
 
+  const pkgManager = getPkgManager();
+
+  if (shouldInstallDependencies) {
+    await installDependencies(absoluteTargetDir, pkgManager);
+  }
+
   await gitInitStep(absoluteTargetDir, version);
 
-  printByeMessage(absoluteTargetDir);
+  printByeMessage(absoluteTargetDir, pkgManager, shouldInstallDependencies);
+}
+
+function getPkgManager() {
+  return (
+    parsePackageManagerFromUserAgent(process.env['npm_config_user_agent'])
+      ?.name ?? 'npm'
+  );
+}
+
+async function installDependencies(
+  absoluteTargetDir: string,
+  pkgManager: string
+) {
+  const loader = spinner();
+  loader.start(`Installing dependencies with ${pkgManager}`);
+  await spawn(pkgManager, ['install'], { cwd: absoluteTargetDir });
+  loader.stop(`Installed dependencies with ${pkgManager}`);
 }
 
 async function extractPackage(absoluteTargetDir: string, pkg: TemplateInfo) {
