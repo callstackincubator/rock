@@ -12,6 +12,7 @@ import {
   spinner,
 } from '@rnef/tools';
 import type { ApplePlatform } from '../types/index.js';
+import runCodegen from './codegen.js';
 
 const podErrorHelpMessage = `Please make sure your environment is correctly set up. 
 Learn more at: ${color.dim('https://cocoapods.org/')}
@@ -21,7 +22,8 @@ export async function installPodsIfNeeded(
   projectRoot: string,
   platformName: ApplePlatform,
   sourceDir: string,
-  newArch: boolean
+  newArch: boolean,
+  reactNativePath: string
 ) {
   const podsPath = path.join(sourceDir, 'Pods');
   const podfilePath = path.join(sourceDir, 'Podfile');
@@ -40,6 +42,7 @@ export async function installPodsIfNeeded(
     : true;
 
   if (!podsDirExists || hashChanged) {
+    await runCodegen({ projectRoot, platformName, reactNativePath });
     await installPods({ projectRoot, sourceDir, podfilePath, newArch });
     cacheManager.set(
       cacheKey,
@@ -105,13 +108,6 @@ async function runPodInstall(options: {
 
   const command = options.useBundler ? 'bundle' : 'pod';
   const args = options.useBundler ? ['exec', 'pod', 'install'] : ['install'];
-  console.log({
-    RCT_NEW_ARCH_ENABLED: options.newArch ? '1' : '0',
-    RCT_IGNORE_PODS_DEPRECATION: '1',
-    ...(process.env['USE_THIRD_PARTY_JSC'] && {
-      USE_THIRD_PARTY_JSC: process.env['USE_THIRD_PARTY_JSC'],
-    }),
-  });
   try {
     await spawn(command, args, {
       env: {
