@@ -14,11 +14,11 @@ const __dirname = dirname(fileURLToPath(import.meta.url));
 const { version } = require(resolveFilenameUp(__dirname, 'package.json'));
 
 type CliOptions = {
-  cwd?: string;
-  argv?: string[];
+  cwd: string;
+  argv: string[];
 };
 
-export const cli = async ({ cwd, argv }: CliOptions = {}) => {
+export const cli = async ({ cwd, argv }: CliOptions) => {
   if (argv) {
     logger.setVerbose(argv.includes('--verbose'));
     checkDeprecatedOptions(argv);

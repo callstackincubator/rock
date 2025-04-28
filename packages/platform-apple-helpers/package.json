@@ -1,6 +1,6 @@
 {
   "name": "@rnef/platform-apple-helpers",
-  "version": "0.6.1",
+  "version": "0.7.2",
   "type": "module",
   "exports": {
     "types": "./dist/src/index.d.ts",
@@ -14,9 +14,9 @@
     "publish:verdaccio": "npm publish --registry http://localhost:4873 --userconfig ../../.npmrc"
   },
   "dependencies": {
-    "@react-native-community/cli-config": "^16.0.2",
-    "@react-native-community/cli-config-apple": "^16.0.2",
-    "@rnef/tools": "^0.6.1",
+    "@react-native-community/cli-config": "^18.0.0",
+    "@react-native-community/cli-config-apple": "^18.0.0",
+    "@rnef/tools": "^0.7.2",
     "@types/adm-zip": "^0.5.7",
     "adm-zip": "^0.5.16",
     "fast-glob": "^3.3.2",
@@ -24,8 +24,8 @@
     "tslib": "^2.3.0"
   },
   "devDependencies": {
-    "@react-native-community/cli-types": "^16.0.2",
-    "@rnef/config": "^0.6.1"
+    "@react-native-community/cli-types": "^18.0.0",
+    "@rnef/config": "^0.7.2"
   },
   "publishConfig": {
     "access": "public"

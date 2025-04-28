@@ -1,14 +1,15 @@
 /**
  * Indicates whether or not the dev server is running. It returns a promise that
  * returns one of these possible values:
- *   - `running`: the dev server is running
- *   - `not_running`: the dev server nor any process is running on the expected port.
- *   - `unrecognized`: one other process is running on the port we expect the dev server to be running.
+ *   - `{status: 'running', root: string}`: the dev server is running
+ *   - `{status: 'not_running'}`: the dev server nor any process is running on the expected port.
+ *   - `{status: 'unrecognized'}`: one other process is running on the port we expect the dev server to be running.
  */
 export async function isDevServerRunning(
   port: string | number = process.env['RCT_METRO_PORT'] || '8081'
 ): Promise<
-  { status: 'running'; root: string } | 'not_running' | 'unrecognized'
+  | { status: 'running'; root: string }
+  | { status: 'not_running' | 'unrecognized' }
 > {
   try {
     const response = await fetch(`http://localhost:${port}/status`);
@@ -23,11 +24,11 @@ export async function isDevServerRunning(
         };
       }
     } catch (_error) {
-      return 'unrecognized';
+      return { status: 'unrecognized' };
     }
 
-    return 'unrecognized';
+    return { status: 'unrecognized' };
   } catch (_error) {
-    return 'not_running';
+    return { status: 'not_running' };
   }
 }

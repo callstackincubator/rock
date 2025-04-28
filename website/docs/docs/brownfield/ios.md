@@ -141,7 +141,3 @@ To add React Native to your iOS app, we'll package your React Native code into a
        }
    }
    ```
-
-## Android
-
-**Coming soon**

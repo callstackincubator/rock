@@ -1,6 +1,6 @@
 {
   "name": "@rnef/plugin-metro",
-  "version": "0.6.1",
+  "version": "0.7.2",
   "type": "module",
   "exports": {
     "types": "./dist/src/index.d.ts",
@@ -15,13 +15,18 @@
     "publish:verdaccio": "npm publish --registry http://localhost:4873 --userconfig ../../.npmrc"
   },
   "dependencies": {
-    "@rnef/tools": "^0.6.1",
-    "@react-native-community/cli-server-api": "^16.0.2",
+    "@react-native-community/cli-server-api": "^18.0.0",
+    "@react-native/dev-middleware": "^0.79.1",
+    "@rnef/tools": "^0.7.2",
+    "metro": "^0.82.1",
+    "metro-config": "^0.82.1",
+    "metro-core": "^0.82.1",
+    "metro-resolver": "^0.82.1",
     "tslib": "^2.3.0"
   },
   "devDependencies": {
-    "@react-native/community-cli-plugin": "0.78.0",
-    "@rnef/config": "^0.6.1"
+    "@react-native/community-cli-plugin": "0.79.1",
+    "@rnef/config": "^0.7.2"
   },
   "peerDependencies": {
     "@react-native/community-cli-plugin": "*"

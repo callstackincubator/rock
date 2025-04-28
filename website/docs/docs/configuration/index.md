@@ -179,3 +179,5 @@ export default {
   },
 };
 ```
+
+The fingerprint calculation uses [`@expo/fingerprint`](https://docs.expo.dev/versions/latest/sdk/fingerprint/) under the hood.

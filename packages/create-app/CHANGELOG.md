@@ -1,5 +1,32 @@
 # @rnef/create-app
 
+## 0.7.2
+
+### Patch Changes
+
+- 2172407: fix: support plugin in create-app
+  - @rnef/tools@0.7.2
+
+## 0.7.1
+
+### Patch Changes
+
+- @rnef/tools@0.7.1
+
+## 0.7.0
+
+### Patch Changes
+
+- 5e2a0e7: chore: simplify welcome message and improve prompts
+  - @rnef/tools@0.7.0
+
+## 0.6.2
+
+### Patch Changes
+
+- Updated dependencies [3ec7e00]
+  - @rnef/tools@0.6.2
+
 ## 0.6.1
 
 ### Patch Changes

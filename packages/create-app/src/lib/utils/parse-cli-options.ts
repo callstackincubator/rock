@@ -30,7 +30,7 @@ export function parseCliOptions(argv: string[]): CliOptions {
   const options = minimist<MinimistOptions>(argv, {
     alias: { h: 'help', v: 'version', p: 'platform', t: 'template', d: 'dir' },
     boolean: ['help', 'version', 'override'],
-    string: ['template', 'platform', 'dir'],
+    string: ['template', 'platform', 'dir', 'plugin' ],
   });
 
   return {

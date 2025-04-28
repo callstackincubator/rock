@@ -1,5 +1,41 @@
 # @rnef/plugin-brownfield-ios
 
+## 0.7.2
+
+### Patch Changes
+
+- @rnef/platform-apple-helpers@0.7.2
+- @rnef/tools@0.7.2
+
+## 0.7.1
+
+### Patch Changes
+
+- @rnef/platform-apple-helpers@0.7.1
+- @rnef/tools@0.7.1
+
+## 0.7.0
+
+### Minor Changes
+
+- ea7abde: feat: upgrade templates to 0.79
+
+### Patch Changes
+
+- Updated dependencies [ea7abde]
+  - @rnef/platform-apple-helpers@0.7.0
+  - @rnef/tools@0.7.0
+
+## 0.6.2
+
+### Patch Changes
+
+- 3ec7e00: refactor: unify spawn verbose output
+- Updated dependencies [3ec7e00]
+- Updated dependencies [de24926]
+  - @rnef/platform-apple-helpers@0.6.2
+  - @rnef/tools@0.6.2
+
 ## 0.6.1
 
 ### Patch Changes

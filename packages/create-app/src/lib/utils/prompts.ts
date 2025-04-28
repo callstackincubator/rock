@@ -1,4 +1,5 @@
 import {
+  color,
   intro,
   note,
   outro,
@@ -9,6 +10,7 @@ import {
   RnefError,
   type SupportedRemoteCacheProviders,
 } from '@rnef/tools';
+import { vice } from 'gradient-string';
 import path from 'path';
 import type { TemplateInfo } from '../templates.js';
 import { validateProjectName } from '../validate-project-name.js';
@@ -24,17 +26,19 @@ export function printHelpMessage(
   
      Options:
      
-       -h, --help       Display help for command
-       -v, --version    Output the version number
-       -d, --dir        Create project in specified directory
-       -t, --template       Specify template to use
-       -p, --platform       Specify platform(s) to use
-       --override       Override files in target directory
+       -h, --help                 Display help for command
+       -v, --version              Output the version number
+       -d, --dir                  Create project in specified directory
+       -t, --template             Specify template to use
+       -p, --platform             Specify platform(s) to use
+       --plugin                   Specify plugin(s) to use
+       --remote-cache-provider    Specify remote cache provider
+       --override                 Override files in target directory
      
-     Templates:
+     Available templates:
        ${templates.map((t) => t.name).join(', ')}
 
-     Platforms:
+     Available platforms:
        ${platforms.map((p) => p.name).join(', ')}
   `);
 }
@@ -45,7 +49,7 @@ export function printVersionMessage() {
 
 export function printWelcomeMessage() {
   console.log('');
-  intro(`Hello There!`);
+  intro(`Welcome to ${color.bold(vice('React Native Enterprise Framework'))}!`);
 }
 
 export function printByeMessage(targetDir: string) {
@@ -103,7 +107,7 @@ export function promptPlatforms(
   );
 
   return promptMultiselect({
-    message: 'Select platforms:',
+    message: 'What platforms do you want to start with?',
     initialValues: defaultPlatforms,
     // @ts-expect-error todo
     options: platforms.map((platform) => ({
@@ -139,7 +143,7 @@ export function promptBundlers(
   }
 
   return promptSelect({
-    message: 'Select bundler:',
+    message: 'Which bundler do you want to use?',
     initialValues: [bundlers[0]],
     // @ts-expect-error todo fixup type
     options: bundlers.map((bundler) => ({
@@ -151,7 +155,7 @@ export function promptBundlers(
 
 export function promptRemoteCacheProvider(): Promise<SupportedRemoteCacheProviders | null> {
   return promptSelect({
-    message: 'Select remote cache provider:',
+    message: 'Which remote cache provider do you want to use?',
     initialValue: 'github-actions',
     options: [
       {

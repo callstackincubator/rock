@@ -1,9 +1,7 @@
+import logger from '../logger.js';
+import { promptConfirm } from '../prompts.js';
 import getNextPort from './getNextPort.js';
-import {
-  askForPortChange,
-  logAlreadyRunningBundler,
-  logChangePortInstructions,
-} from './port.js';
+import { logAlreadyRunningBundler } from './logAlreadyRunningBundler.js';
 
 export const handlePortUnavailable = async (
   initialPort: number,
@@ -26,9 +24,21 @@ export const handlePortUnavailable = async (
       port = nextPort;
     } else {
       startDevServer = false;
-      logChangePortInstructions();
+      logger.info(
+        'Exiting. You can try again with a different port using "--port" flag'
+      );
     }
   }
 
   return { port, startDevServer };
+};
+
+const askForPortChange = (port: number, nextPort: number) => {
+  logger.info(`Another process is running on port ${port}.`);
+
+  return promptConfirm({
+    message: `Use port ${nextPort} instead?`,
+    confirmLabel: 'Yes',
+    cancelLabel: 'No',
+  });
 };

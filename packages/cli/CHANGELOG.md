@@ -1,5 +1,42 @@
 # @rnef/cli
 
+## 0.7.2
+
+### Patch Changes
+
+- @rnef/config@0.7.2
+- @rnef/tools@0.7.2
+
+## 0.7.1
+
+### Patch Changes
+
+- c9bf48e: fix: autolinking config missing project
+  - @rnef/config@0.7.1
+  - @rnef/tools@0.7.1
+
+## 0.7.0
+
+### Minor Changes
+
+- ea7abde: feat: upgrade templates to 0.79
+
+### Patch Changes
+
+- a004ed5: fix: incorrectly resolving root
+- Updated dependencies [a004ed5]
+  - @rnef/config@0.7.0
+  - @rnef/tools@0.7.0
+
+## 0.6.2
+
+### Patch Changes
+
+- Updated dependencies [3ec7e00]
+- Updated dependencies [3b12651]
+  - @rnef/tools@0.6.2
+  - @rnef/config@0.6.2
+
 ## 0.6.1
 
 ### Patch Changes

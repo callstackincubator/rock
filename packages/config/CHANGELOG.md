@@ -1,5 +1,32 @@
 # @rnef/config
 
+## 0.7.2
+
+### Patch Changes
+
+- @rnef/tools@0.7.2
+
+## 0.7.1
+
+### Patch Changes
+
+- @rnef/tools@0.7.1
+
+## 0.7.0
+
+### Patch Changes
+
+- a004ed5: fix: incorrectly resolving root
+  - @rnef/tools@0.7.0
+
+## 0.6.2
+
+### Patch Changes
+
+- 3b12651: fix: resolve project root to absolute path
+- Updated dependencies [3ec7e00]
+  - @rnef/tools@0.6.2
+
 ## 0.6.1
 
 ### Patch Changes

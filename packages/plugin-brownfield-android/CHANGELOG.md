@@ -1,5 +1,40 @@
 # @rnef/plugin-brownfield-android
 
+## 0.7.2
+
+### Patch Changes
+
+- @rnef/platform-android@0.7.2
+- @rnef/tools@0.7.2
+
+## 0.7.1
+
+### Patch Changes
+
+- @rnef/platform-android@0.7.1
+- @rnef/tools@0.7.1
+
+## 0.7.0
+
+### Minor Changes
+
+- ea7abde: feat: upgrade templates to 0.79
+
+### Patch Changes
+
+- Updated dependencies [ea7abde]
+  - @rnef/platform-android@0.7.0
+  - @rnef/tools@0.7.0
+
+## 0.6.2
+
+### Patch Changes
+
+- Updated dependencies [3ec7e00]
+- Updated dependencies [9c37e12]
+  - @rnef/platform-android@0.6.2
+  - @rnef/tools@0.6.2
+
 ## 0.6.1
 
 ### Patch Changes

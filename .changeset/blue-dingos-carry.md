@@ -2,4 +2,4 @@
 '@rnef/platform-apple-helpers': patch
 ---
 
-feat: launch sim and build app in parallel
+fix: always use udid from matched device
