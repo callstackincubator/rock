@@ -1,5 +1,13 @@
 # @rnef/plugin-metro
 
+## 0.7.3
+
+### Patch Changes
+
+- 86522ec: feat: move start from @react-native/community-cli-plugin
+- Updated dependencies [0be7484]
+  - @rnef/tools@0.7.3
+
 ## 0.7.2
 
 ### Patch Changes

@@ -1,5 +1,17 @@
 # @rnef/plugin-brownfield-ios
 
+## 0.7.3
+
+### Patch Changes
+
+- ab730d9: chore: improve error messages around installing pods; run codegen
+- Updated dependencies [f11fd91]
+- Updated dependencies [0be7484]
+- Updated dependencies [b410121]
+- Updated dependencies [ab730d9]
+  - @rnef/platform-apple-helpers@0.7.3
+  - @rnef/tools@0.7.3
+
 ## 0.7.2
 
 ### Patch Changes

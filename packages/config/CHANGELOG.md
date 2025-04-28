@@ -1,5 +1,13 @@
 # @rnef/config
 
+## 0.7.3
+
+### Patch Changes
+
+- 0be7484: feat: refactor and expose remote cache provider
+- Updated dependencies [0be7484]
+  - @rnef/tools@0.7.3
+
 ## 0.7.2
 
 ### Patch Changes
