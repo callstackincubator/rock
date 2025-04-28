@@ -42,7 +42,7 @@ export async function installPodsIfNeeded(
     : true;
 
   if (!podsDirExists || hashChanged) {
-    await runCodegen({ projectRoot, platformName, reactNativePath });
+    await runCodegen({ projectRoot, platformName, reactNativePath, sourceDir });
     await installPods({ projectRoot, sourceDir, podfilePath, newArch });
     cacheManager.set(
       cacheKey,

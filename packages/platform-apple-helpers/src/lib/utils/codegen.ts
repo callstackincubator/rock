@@ -9,11 +9,13 @@ interface CodegenOptions {
   projectRoot: string;
   platformName: ApplePlatform;
   reactNativePath: string;
+  sourceDir: string;
 }
 
 async function runCodegen(options: CodegenOptions) {
-  if (fs.existsSync('build')) {
-    fs.rmSync('build', { recursive: true });
+  const buildDir = path.join(options.sourceDir, 'build');
+  if (fs.existsSync(buildDir)) {
+    fs.rmSync(buildDir, { recursive: true });
   }
 
   const codegenScript = path.join(
@@ -27,7 +29,7 @@ async function runCodegen(options: CodegenOptions) {
       '-p',
       options.projectRoot,
       '-o',
-      process.cwd(),
+      options.sourceDir,
       '-t',
       options.platformName,
     ]);
