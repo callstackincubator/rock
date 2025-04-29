@@ -10,7 +10,7 @@ import type {
   RemoteArtifact,
   RemoteBuildCache,
 } from '../common.js';
-import { getLocalArtifactPath } from '../common.js';
+import { getLocalArtifactPath, getLocalBinaryPath } from '../common.js';
 import {
   downloadGitHubArtifact,
   fetchGitHubArtifactsByName,
@@ -21,6 +21,7 @@ import {
   getGitHubToken,
   promptForGitHubToken,
 } from './config.js';
+import { RnefError } from '../../error.js';
 
 export class GitHubBuildCache implements RemoteBuildCache {
   name = 'GitHub';
@@ -73,7 +74,8 @@ Include "repo", "workflow", and "read:org" permissions.`
 
     return artifacts.map((artifact) => ({
       name: artifact.name,
-      downloadUrl: artifact.downloadUrl,
+      url: artifact.downloadUrl,
+      id: String(artifact.id),
     }));
   }
 
@@ -82,19 +84,18 @@ Include "repo", "workflow", and "read:org" permissions.`
     loader,
   }: {
     artifact: RemoteArtifact;
-    loader: ReturnType<typeof spinner>;
+    loader?: ReturnType<typeof spinner>;
   }): Promise<LocalArtifact> {
     const artifactPath = getLocalArtifactPath(artifact.name);
-    await downloadGitHubArtifact(
-      artifact.downloadUrl,
-      artifactPath,
-      this.name,
-      loader
-    );
+    await downloadGitHubArtifact(artifact.url, artifactPath, this.name, loader);
     await extractArtifactTarballIfNeeded(artifactPath);
+    const binaryPath = getLocalBinaryPath(artifactPath);
+    if (!binaryPath) {
+      throw new RnefError(`No binary found in artifact "${artifact.name}".`);
+    }
     return {
       name: artifact.name,
-      path: artifactPath,
+      path: binaryPath,
     };
   }
 
@@ -103,7 +104,7 @@ Include "repo", "workflow", and "read:org" permissions.`
     loader,
   }: {
     artifactName: string;
-    loader: ReturnType<typeof spinner>;
+    loader?: ReturnType<typeof spinner>;
   }): Promise<boolean> {
     const repoDetails = await this.detectRepoDetails();
     if (!getGitHubToken()) {
@@ -121,11 +122,11 @@ Include "repo", "workflow", and "read:org" permissions.`
     );
 
     if (artifacts.length === 0) {
-      loader.stop(`No artifact found with name "${artifactName}" to delete.`);
+      loader?.stop(`No artifact found with name "${artifactName}" to delete.`);
       return false;
     }
 
-    loader.start(
+    loader?.start(
       `Found ${artifacts.length} artifacts named "${artifactName}". Deleting...`
     );
 
@@ -158,18 +159,18 @@ Include "repo", "workflow", and "read:org" permissions.`
       }
 
       if (deletedCount < artifacts.length) {
-        loader.stop(
+        loader?.stop(
           `Partially succeeded: deleted ${deletedCount}/${artifacts.length} artifacts named "${artifactName}".`
         );
         return true;
       } else {
-        loader.stop(
+        loader?.stop(
           `Successfully deleted all ${deletedCount} artifacts named "${artifactName}".`
         );
         return true;
       }
     } catch (error) {
-      loader.stop(
+      loader?.stop(
         `Failed to delete artifacts named "${artifactName}": ${error}`
       );
       return false;

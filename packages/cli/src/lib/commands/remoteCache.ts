@@ -6,8 +6,7 @@ import type {
 import {
   createRemoteBuildCache,
   formatArtifactName,
-  logger,
-  spinner,
+  RnefError,
 } from '@rnef/tools';
 
 type Flags =
@@ -54,79 +53,53 @@ async function remoteCache({
 
   switch (action) {
     case 'list': {
-      const loader = spinner();
-      loader.start(`Listing artifacts for "${artifactName}"`);
       const artifacts = await remoteBuildCache.list({ artifactName });
       if (artifacts) {
-        loader.stop(
-          `Available artifacts: 
-${artifacts
-  .map((artifact) => `◾︎ ${artifact.name}: ${artifact.downloadUrl}`)
-  .join('\n')}`
-        );
+        console.log(artifacts[0]);
       } else {
-        loader.stop(`No artifact found for "${artifactName}".`);
+        throw new RnefError(`No artifacts found for "${artifactName}".`);
       }
       break;
     }
     case 'list-all': {
-      const loader = spinner();
-      loader.start(`Listing all artifacts`);
       const artifacts = await remoteBuildCache.list({
         artifactName: undefined,
       });
       if (artifacts) {
-        loader.stop(
-          `Available artifacts: 
-${artifacts.map((artifact) => `◾︎  ${artifact.name}`).join('\n')}`
-        );
+        console.log(artifacts);
       } else {
-        loader.stop(`No artifact found for "${artifactName}".`);
+        throw new RnefError(`No artifacts found.`);
       }
       break;
     }
     case 'download': {
-      const loader = spinner();
-      loader.start(`Downloading artifact "${artifactName}"`);
       const artifacts = await remoteBuildCache.list({ artifactName, limit: 1 });
       if (!artifacts) {
-        loader.stop(`No artifact found for "${artifactName}".`);
-        return null;
+        throw new RnefError(`No artifacts found for "${artifactName}".`);
       }
       const fetchedBuild = await remoteBuildCache.download({
         artifact: artifacts[0],
-        loader,
       });
-      loader.stop(`Downloaded artifact "${artifactName}"`);
-      logger.log(`Artifact path: ${fetchedBuild.path}`);
+      console.log(fetchedBuild);
       break;
     }
     case 'upload': {
-      const loader = spinner();
       if (!args.source) {
-        loader.stop(`Missing required "--source" parameter for upload action.`);
-        return null;
+        throw new RnefError(
+          `Missing required "--source" parameter for upload action.`
+        );
       }
-      loader.start(`Uploading artifact "${artifactName}"`);
       const uploadedArtifact = await remoteBuildCache.upload({
         artifactPath: args.source,
         artifactName,
-        loader,
       });
-      loader.stop(
-        `Uploaded artifact "${artifactName}" to ${uploadedArtifact?.downloadUrl}`
-      );
+      console.log(uploadedArtifact);
       break;
     }
     case 'delete': {
-      const loader = spinner();
-      const success = await remoteBuildCache.delete({
-        artifactName,
-        loader,
-      });
-
+      const success = await remoteBuildCache.delete({ artifactName });
       if (!success) {
-        loader.stop(`Failed to delete artifact "${artifactName}".`);
+        throw new RnefError(`Failed to delete artifact "${artifactName}".`);
       }
       break;
     }

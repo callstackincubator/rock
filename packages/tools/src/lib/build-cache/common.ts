@@ -10,7 +10,8 @@ export type SupportedRemoteCacheProviders = 'github-actions';
 
 export type RemoteArtifact = {
   name: string;
-  downloadUrl: string;
+  url: string;
+  id: string;
 };
 
 export type LocalArtifact = {
@@ -32,14 +33,14 @@ export interface RemoteBuildCache {
     loader,
   }: {
     artifact: RemoteArtifact;
-    loader: ReturnType<typeof spinner>;
+    loader?: ReturnType<typeof spinner>;
   }): Promise<LocalArtifact>;
   delete({
     artifactName,
     loader,
   }: {
     artifactName: string;
-    loader: ReturnType<typeof spinner>;
+    loader?: ReturnType<typeof spinner>;
   }): Promise<boolean>;
   upload({
     artifactPath,
@@ -48,7 +49,7 @@ export interface RemoteBuildCache {
   }: {
     artifactPath: string;
     artifactName: string;
-    loader: ReturnType<typeof spinner>;
+    loader?: ReturnType<typeof spinner>;
   }): Promise<RemoteArtifact | null>;
 }
 

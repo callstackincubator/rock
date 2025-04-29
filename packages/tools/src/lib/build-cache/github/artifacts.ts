@@ -113,7 +113,7 @@ export async function downloadGitHubArtifact(
   downloadUrl: string,
   targetPath: string,
   name: string,
-  loader: ReturnType<typeof spinner>
+  loader?: ReturnType<typeof spinner>
 ): Promise<void> {
   try {
     fs.mkdirSync(targetPath, { recursive: true });
@@ -146,7 +146,7 @@ export async function downloadGitHubArtifact(
             }
             downloadedBytes += value.length;
             const progress = ((downloadedBytes / totalBytes) * 100).toFixed(0);
-            loader.message(
+            loader?.message(
               `Downloading cached build from ${name} (${progress}% of ${totalMB} MB)`
             );
             controller.enqueue(value);
