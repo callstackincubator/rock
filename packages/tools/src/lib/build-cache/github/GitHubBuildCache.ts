@@ -10,7 +10,7 @@ import type {
   RemoteArtifact,
   RemoteBuildCache,
 } from '../common.js';
-import { getLocalArtifactPath, getLocalBinaryPath } from '../common.js';
+import { getLocalArtifactPath } from '../common.js';
 import {
   downloadGitHubArtifact,
   fetchGitHubArtifactsByName,
@@ -21,7 +21,6 @@ import {
   getGitHubToken,
   promptForGitHubToken,
 } from './config.js';
-import { RnefError } from '../../error.js';
 
 export class GitHubBuildCache implements RemoteBuildCache {
   name = 'GitHub';
@@ -89,13 +88,9 @@ Include "repo", "workflow", and "read:org" permissions.`
     const artifactPath = getLocalArtifactPath(artifact.name);
     await downloadGitHubArtifact(artifact.url, artifactPath, this.name, loader);
     await extractArtifactTarballIfNeeded(artifactPath);
-    const binaryPath = getLocalBinaryPath(artifactPath);
-    if (!binaryPath) {
-      throw new RnefError(`No binary found in artifact "${artifact.name}".`);
-    }
     return {
       name: artifact.name,
-      path: binaryPath,
+      path: artifactPath,
     };
   }
 

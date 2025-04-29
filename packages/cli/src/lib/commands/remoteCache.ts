@@ -6,6 +6,7 @@ import type {
 import {
   createRemoteBuildCache,
   formatArtifactName,
+  getLocalBinaryPath,
   RnefError,
 } from '@rnef/tools';
 
@@ -80,7 +81,11 @@ async function remoteCache({
       const fetchedBuild = await remoteBuildCache.download({
         artifact: artifacts[0],
       });
-      console.log(fetchedBuild);
+      const binaryPath = getLocalBinaryPath(fetchedBuild.path);
+      if (!binaryPath) {
+        throw new RnefError(`No binary found for "${artifactName}".`);
+      }
+      console.log(binaryPath);
       break;
     }
     case 'upload': {
