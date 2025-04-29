@@ -153,7 +153,7 @@ Pass extra parameters to the `rnef build:ios` command, in order to apply custom 
 
 Default: `false`
 
-Re-sign the IPA with latest JS bytecode bundle with `rnef sign:android`. Necessary for tester device builds.
+Re-sign the IPA with latest JS bytecode bundle with `rnef sign:ios`. Necessary for tester device builds.
 When `true`, it will produce new artifact for every commit in a Pull Request, with a PR number appended to the original artifact name associated with native state of the app, e.g. `rnef-ios-device-Release-94a82df39e12-1337`, where `1337` is the unique PR number.
 To avoid polluting artifact storage it will also handle removal of old artifacts associated with older commits.
 
