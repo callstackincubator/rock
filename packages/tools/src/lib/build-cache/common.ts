@@ -87,10 +87,14 @@ export function getLocalBinaryPath(artifactPath: string) {
 
   // assume there is only one binary in the artifact
   for (const file of files) {
+    // skip hidden files such as .DS_Store
+    if (file.startsWith('.')) {
+      continue;
+    }
     if (file) {
       binaryPath = path.join(artifactPath, file);
+      break;
     }
-    break;
   }
 
   return binaryPath;
