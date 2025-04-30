@@ -119,7 +119,12 @@ const importUp = async (
 
 export async function getConfig(
   dir: string,
-  internalPlugins: PluginType[]
+  internalPlugins: Array<
+    (ownConfig: {
+      platforms: ConfigOutput['platforms'];
+      root: ConfigOutput['root'];
+    }) => PluginType
+  >
 ): Promise<ConfigOutput> {
   const { config, filePathWithExt, configDir } = await importUp(
     dir,
@@ -170,10 +175,6 @@ export async function getConfig(
       },
   };
 
-  for (const internalPlugin of internalPlugins) {
-    assignOriginToCommand(internalPlugin, api, config);
-  }
-
   if (validatedConfig.plugins) {
     // plugins register commands
     for (const plugin of validatedConfig.plugins) {
@@ -192,6 +193,14 @@ export async function getConfig(
 
   if (validatedConfig.bundler) {
     assignOriginToCommand(validatedConfig.bundler, api, validatedConfig);
+  }
+
+  for (const internalPlugin of internalPlugins) {
+    assignOriginToCommand(
+      internalPlugin({ root: projectRoot, platforms }),
+      api,
+      validatedConfig
+    );
   }
 
   const outputConfig: ConfigOutput = {

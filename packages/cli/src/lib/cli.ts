@@ -5,9 +5,9 @@ import { type CommandType, getConfig } from '@rnef/config';
 import { color, logger, resolveFilenameUp, RnefError } from '@rnef/tools';
 import { Command } from 'commander';
 import { checkDeprecatedOptions } from './checkDeprecatedOptions.js';
-import { logConfig } from './commands/config.js';
-import { nativeFingerprintCommand } from './commands/fingerprint.js';
-import { remoteCachePlugin } from './commands/remoteCache.js';
+import { fingerprintPlugin } from './plugins/fingerprint.js';
+import { logConfigPlugin } from './plugins/logConfig.js';
+import { remoteCachePlugin } from './plugins/remoteCache.js';
 
 const require = createRequire(import.meta.url);
 const __dirname = dirname(fileURLToPath(import.meta.url));
@@ -32,24 +32,13 @@ export const cli = async ({ cwd, argv }: CliOptions) => {
     .option('--verbose', 'enable verbose logging')
     .version(version);
 
-  program
-    .command('config')
-    .option('-p, --platform <string>', 'Select platform, e.g. ios or android')
-    .action((args) => logConfig(args, config));
-
-  const internalPlugins = [remoteCachePlugin()];
-
+  const internalPlugins = [
+    remoteCachePlugin,
+    logConfigPlugin,
+    fingerprintPlugin,
+  ];
   // Register commands from the config
   const config = await getConfig(cwd, internalPlugins);
-
-  program
-    .command('fingerprint [path]')
-    .option('-p, --platform <string>', 'Select platform, e.g. ios or android')
-    .option('--raw', 'Output the raw fingerprint hash for piping')
-    .action(async (path, options) => {
-      const fingerprintOptions = config.getFingerprintOptions();
-      await nativeFingerprintCommand(path, fingerprintOptions, options);
-    });
 
   ensureUniqueCommands(config.commands);
 
