@@ -13,7 +13,7 @@ import {
   type RemoteBuildCache,
 } from './common.js';
 import type { LocalBuild } from './localBuildCache.js';
-import { queryLocalBuildCache } from './localBuildCache.js';
+import { queryLocalRemoteBuildCache } from './localBuildCache.js';
 
 export type Distribution = 'simulator' | 'device';
 
@@ -52,7 +52,7 @@ To disable this warning, set the provider to null:
 
   const root = getProjectRoot();
 
-  const localBuild = queryLocalBuildCache(artifactName);
+  const localBuild = queryLocalRemoteBuildCache(artifactName);
   if (localBuild != null) {
     loader.stop(`Found local cached build: ${color.cyan(localBuild.name)}`);
     return localBuild;
