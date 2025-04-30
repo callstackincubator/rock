@@ -13,6 +13,21 @@ export type PluginOutput = {
   description: string;
 };
 
+type StartDevServerFunction = (options: {
+  root: string;
+  // TODO fix type
+  args: any;
+  reactNativeVersion: string;
+  reactNativePath: string;
+  platforms: Record<string, object>;
+}) => Promise<void>;
+
+export type BundlerPluginOutput = {
+  name: string;
+  description: string;
+  start: StartDevServerFunction;
+};
+
 export type PlatformOutput = PluginOutput & {
   autolinkingConfig: { project: Record<string, unknown> | undefined };
 };
@@ -27,10 +42,11 @@ export type PluginApi = {
     null | undefined | (() => RemoteBuildCache)
   >;
   getFingerprintOptions: () => FingerprintSources;
+  getBundlerStart: () => ({ args }: { args: any }) => void;
 };
 
 type PluginType = (args: PluginApi) => PluginOutput;
-
+type BundlerPluginType = (args: PluginApi) => BundlerPluginOutput;
 type PlatformType = (args: PluginApi) => PlatformOutput;
 
 type ArgValue = string | string[] | boolean;
@@ -63,7 +79,7 @@ export type ConfigType = {
   root?: string;
   reactNativeVersion?: string;
   reactNativePath?: string;
-  bundler?: PluginType;
+  bundler?: BundlerPluginType;
   plugins?: PluginType[];
   platforms?: Record<string, PlatformType>;
   commands?: Array<CommandType>;
@@ -186,12 +202,23 @@ Read more: ${colorLink('https://rockjs.dev/docs/configuration#github-actions-pro
     },
     getFingerprintOptions: () =>
       validatedConfig.fingerprint as FingerprintSources,
+      getBundlerStart:
+        () =>
+        ({ args: any }) =>
+          bundler?.start({
+            root: api.getProjectRoot(),
+            args,
+            reactNativeVersion: api.getReactNativeVersion(),
+            reactNativePath: api.getReactNativePath(),
+            platforms: api.getPlatforms(),
+          }),
   };
 
   const platforms: Record<string, PlatformOutput> = {};
   if (validatedConfig.platforms) {
     // platforms register commands and custom platform functionality (TBD)
     for (const platform in validatedConfig.platforms) {
+      // @ts-expect-error tbd
       const platformOutput = validatedConfig.platforms[platform](api);
       platforms[platform] = platformOutput;
     }
@@ -205,7 +232,13 @@ Read more: ${colorLink('https://rockjs.dev/docs/configuration#github-actions-pro
   }
 
   if (validatedConfig.bundler) {
-    assignOriginToCommand(validatedConfig.bundler, api, validatedConfig);
+    // @ts-expect-error tbd
+    bundler = assignOriginToCommand(
+      validatedConfig.bundler,
+      // @ts-expect-error tbd
+      api,
+      validatedConfig
+    );
   }
 
   for (const internalPlugin of internalPlugins) {
@@ -236,16 +269,17 @@ function resolveReactNativePath(root: string) {
  * Assigns __origin property to each command in the config for later use in error handling.
  */
 function assignOriginToCommand(
-  plugin: PluginType,
+  plugin: PluginType | BundlerPluginType,
   api: PluginApi,
   config: ConfigType,
 ) {
   const len = config.commands?.length ?? 0;
-  const { name } = plugin(api);
+  const { name, ...rest } = plugin(api);
   const newlen = config.commands?.length ?? 0;
   for (let i = len; i < newlen; i++) {
     if (config.commands?.[i]) {
       config.commands[i].__origin = name;
     }
   }
+  return { name, ...rest };
 }

@@ -21,6 +21,7 @@ export function registerRunCommand(
         projectRoot,
         await api.getRemoteCacheProvider(),
         api.getFingerprintOptions(),
+        api.getBundlerStart()
       );
     },
     options: runOptions,

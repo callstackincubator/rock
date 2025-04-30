@@ -1,0 +1,70 @@
+
+> rnef-docs@1.0.4 build /Users/olimpia/Documents/OpenSource/rock/website
+> rspress build
+
+[1m[36m🔥 Rspress v2.0.0-beta.6
+[39m[22m
+[1m[36minfo   [39m[22m Rendering pages...
+[1m[32msuccess[39m[22m Pages rendered in [33m110[39m ms.
+[1m[32mready  [39m[22m built in [1m1.33[22m s[90m (web)[39m
+[1m[32mready  [39m[22m built in [1m1.33[22m s[90m (node)[39m
+
+[34mFile (node)                                                    Size       Gzip   [39m
+[2mbuild/[22m[35mindex.md[39m                                                 0.00 kB 
+[2mbuild/api/[22m[35mindex.md[39m                                             0.02 kB 
+[2mbuild/[22m[35mllms.txt[39m                                                 0.65 kB    [32m0.27 kB[39m
+[2mbuild/docs/remote-cache/github-actions/[22m[35mconfiguration.md[39m        1.3 kB  
+[2mbuild/docs/getting-started/[22m[35mindex.md[39m                            1.3 kB  
+[2mbuild/docs/getting-started/[22m[35mmigrating-from-community-cli.md[39m     4.2 kB  
+[2mbuild/docs/remote-cache/github-actions/[22m[35mandroid.md[39m              5.0 kB  
+[2mbuild/docs/brownfield/[22m[35mios.md[39m                                   5.5 kB  
+[2mbuild/docs/getting-started/[22m[35mintroduction.md[39m                     6.3 kB  
+[2mbuild/docs/[22m[35mconfiguration.md[39m                                    8.2 kB  
+[2mbuild/docs/remote-cache/github-actions/[22m[35mios.md[39m                  9.5 kB  
+[2mbuild/[22m[32m404.html[39m                                                 9.6 kB     [32m2.8 kB[39m
+[2mbuild/api/[22m[32mindex.html[39m                                           11.1 kB    [32m3.2 kB[39m
+[2mbuild/[22m[32mindex.html[39m                                               12.8 kB    [32m3.6 kB[39m
+[2mbuild/docs/brownfield/[22m[35mandroid.md[39m                               13.6 kB 
+[2mbuild/docs/[22m[35mcli.md[39m                                              14.9 kB 
+[2mbuild/docs/remote-cache/github-actions/[22m[32mconfiguration.html[39m      22.1 kB    [32m4.6 kB[39m
+[2mbuild/docs/getting-started/[22m[32mintroduction.html[39m                   32.6 kB    [32m7.2 kB[39m
+[2mbuild/docs/brownfield/[22m[32mios.html[39m                                 51.8 kB    [32m7.5 kB[39m
+[2mbuild/docs/remote-cache/github-actions/[22m[32mandroid.html[39m            52.2 kB    [32m6.8 kB[39m
+[2mbuild/docs/getting-started/[22m[32mindex.html[39m                          56.6 kB    [32m8.4 kB[39m
+[2mbuild/docs/remote-cache/github-actions/[22m[32mios.html[39m                60.5 kB    [32m8.6 kB[39m
+[2mbuild/[22m[35mllms-full.txt[39m                                            70.5 kB    [32m19.6 kB[39m
+[2mbuild/docs/[22m[32mconfiguration.html[39m                                  71.3 kB    [32m8.8 kB[39m
+[2mbuild/docs/getting-started/[22m[32mmigrating-from-community-cli.html[39m   72.8 kB    [32m9.8 kB[39m
+[2mbuild/docs/[22m[32mcli.html[39m                                            79.7 kB    [32m8.6 kB[39m
+[2mbuild/docs/brownfield/[22m[32mandroid.html[39m                             110.5 kB   [32m10.6 kB[39m
+
+                                                      [35mTotal:[39m   784.7 kB   [32m180.4 kB[39m
+
+
+[34mFile (web)                                                Size       Gzip   [39m
+[2mbuild/static/js/[22m[36mstyles.02206198.js[39m                        0.19 kB    [32m0.13 kB[39m
+[2mbuild/[22m[35mlogo.svg[39m                                            0.34 kB    [32m0.24 kB[39m
+[2mbuild/static/js/async/[22m[36m784.17d41754.js[39m                     0.52 kB    [32m0.36 kB[39m
+[2mbuild/static/js/async/[22m[36m674.619fb899.js[39m                     0.76 kB    [32m0.46 kB[39m
+[2mbuild/static/js/async/[22m[36m46.7099e44a.js[39m                      1.2 kB     [32m0.75 kB[39m
+[2mbuild/static/js/[22m[36mindex.a79cd7a1.js[39m                         3.4 kB     [32m1.8 kB[39m
+[2mbuild/static/js/async/[22m[36m225.eae0def6.js[39m                     4.4 kB     [32m1.4 kB[39m
+[2mbuild/static/js/async/[22m[36m528.5d08239f.js[39m                     4.4 kB     [32m1.4 kB[39m
+[2mbuild/static/image/[22m[35mverify_aar_plugin_setup.7909a375.png[39m   12.0 kB 
+[2mbuild/static/js/async/[22m[36m317.f6e72b9c.js[39m                     14.1 kB    [32m4.1 kB[39m
+[2mbuild/static/js/[22m[36mlib-router.5914130c.js[39m                    14.5 kB    [32m5.7 kB[39m
+[2mbuild/static/js/async/[22m[36m601.de49eeeb.js[39m                     29.1 kB    [32m3.7 kB[39m
+[2mbuild/static/js/async/[22m[36m985.04508ff1.js[39m                     30.7 kB    [32m3.0 kB[39m
+[2mbuild/static/js/async/[22m[36m611.ad70fa81.js[39m                     30.7 kB    [32m3.2 kB[39m
+[2mbuild/static/js/async/[22m[36m802.2ebb29f5.js[39m                     33.2 kB    [32m4.5 kB[39m
+[2mbuild/static/js/async/[22m[36m768.bf3b602d.js[39m                     37.0 kB    [32m5.0 kB[39m
+[2mbuild/static/js/async/[22m[36m932.72682805.js[39m                     52.9 kB    [32m5.1 kB[39m
+[2mbuild/static/css/[22m[33mstyles.1136de39.css[39m                      59.3 kB    [32m12.8 kB[39m
+[2mbuild/static/js/async/[22m[36m180.3d14b7f5.js[39m                     94.8 kB    [32m7.0 kB[39m
+[2mbuild/static/image/[22m[35mcreate_module.8cf039aa.png[39m             95.5 kB 
+[2mbuild/static/js/[22m[36m666.63f8519f.js[39m                           175.9 kB   [32m59.9 kB[39m
+[2mbuild/static/js/[22m[36mlib-react.0b4a1468.js[39m                     182.3 kB   [32m57.8 kB[39m
+
+                                                 [35mTotal:[39m   877.0 kB   [32m285.8 kB[39m
+
+Generate sitemap.xml for 13 pages.

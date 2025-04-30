@@ -1,0 +1,2442 @@
+{
+  "version": "6.0",
+  "nxVersion": "20.3.0",
+  "pathMappings": {
+    "@rnef/cli": [
+      "packages/cli/src/index.ts"
+    ],
+    "@rnef/config": [
+      "packages/config/src/index.ts"
+    ],
+    "@rnef/create-app": [
+      "packages/create-app/src/index.ts"
+    ],
+    "@rnef/plugin-metro": [
+      "packages/plugin-metro/src/index.ts"
+    ],
+    "@rnef/plugin-repack": [
+      "packages/plugin-repack/src/index.ts"
+    ],
+    "@rnef/platform-android": [
+      "packages/platform-android/src/index.ts"
+    ],
+    "@rnef/platform-ios": [
+      "packages/platform-ios/src/index.ts"
+    ],
+    "@rnef/test-helpers": [
+      "packages/test-helpers/src/index.ts"
+    ],
+    "@rnef/tools": [
+      "packages/tools/src/index.ts"
+    ],
+    "@rnef/platform-apple-helpers": [
+      "packages/platform-apple-helpers/src/index.ts"
+    ],
+    "@rnef/plugin-brownfield-android": [
+      "packages/plugin-brownfield-android/src/index.ts"
+    ]
+  },
+  "nxJsonPlugins": [
+    {
+      "name": "@nx/eslint/plugin",
+      "options": {
+        "targetName": "lint"
+      }
+    },
+    {
+      "name": "@nx/vite/plugin",
+      "options": {
+        "targetName": "test"
+      }
+    }
+  ],
+  "pluginsConfig": {
+    "@nx/js": {
+      "analyzeSourceFiles": true
+    }
+  },
+  "fileMap": {
+    "nonProjectFiles": [],
+    "projectFileMap": {
+      "plugin-brownfield-android": [
+        {
+          "file": "packages/plugin-brownfield-android/CHANGELOG.md",
+          "hash": "12962361777668789516"
+        },
+        {
+          "file": "packages/plugin-brownfield-android/README.md",
+          "hash": "11458322690548122328"
+        },
+        {
+          "file": "packages/plugin-brownfield-android/eslint.config.js",
+          "hash": "12977957751135200527"
+        },
+        {
+          "file": "packages/plugin-brownfield-android/package.json",
+          "hash": "799909922753817397",
+          "deps": [
+            "npm:@react-native-community/cli-types",
+            "npm:@react-native-community/cli-config-android",
+            "npm:tslib@2.8.1"
+          ]
+        },
+        {
+          "file": "packages/plugin-brownfield-android/project.json",
+          "hash": "3933302721195173125"
+        },
+        {
+          "file": "packages/plugin-brownfield-android/src/__tests__/pluginBrownfieldAndroid.test.ts",
+          "hash": "8642095413461998243",
+          "deps": [
+            "npm:vitest"
+          ]
+        },
+        {
+          "file": "packages/plugin-brownfield-android/src/index.ts",
+          "hash": "2675231690787633202"
+        },
+        {
+          "file": "packages/plugin-brownfield-android/src/lib/pluginBrownfieldAndroid.ts",
+          "hash": "13375397670275739706",
+          "deps": [
+            "npm:@react-native-community/cli-config-android",
+            "npm:@react-native-community/cli-types",
+            "config",
+            "platform-android",
+            "tools"
+          ]
+        },
+        {
+          "file": "packages/plugin-brownfield-android/template/android/build.gradle",
+          "hash": "12860614023147823826"
+        },
+        {
+          "file": "packages/plugin-brownfield-android/template/android/helloworldreact/build.gradle.kts",
+          "hash": "16876726539138584583"
+        },
+        {
+          "file": "packages/plugin-brownfield-android/template/android/helloworldreact/src/main/java/com/helloworldreact/RNViewFactory.kt",
+          "hash": "16389133531050383515"
+        },
+        {
+          "file": "packages/plugin-brownfield-android/template/android/helloworldreact/src/main/java/com/helloworldreact/ReactNativeHostManager.kt",
+          "hash": "4480587293743978395"
+        },
+        {
+          "file": "packages/plugin-brownfield-android/template/android/settings.gradle",
+          "hash": "1322479651742005397"
+        },
+        {
+          "file": "packages/plugin-brownfield-android/template/package.json",
+          "hash": "8212426073099072207"
+        },
+        {
+          "file": "packages/plugin-brownfield-android/tsconfig.json",
+          "hash": "12648671090516240583"
+        },
+        {
+          "file": "packages/plugin-brownfield-android/tsconfig.lib.json",
+          "hash": "17833041087370483432"
+        },
+        {
+          "file": "packages/plugin-brownfield-android/tsconfig.spec.json",
+          "hash": "15943385144407153049"
+        },
+        {
+          "file": "packages/plugin-brownfield-android/vite.config.ts",
+          "hash": "16562544306413954251",
+          "deps": [
+            "npm:@nx/vite",
+            "npm:vite"
+          ]
+        }
+      ],
+      "plugin-repack": [
+        {
+          "file": "packages/plugin-repack/CHANGELOG.md",
+          "hash": "4858775268367525154"
+        },
+        {
+          "file": "packages/plugin-repack/README.md",
+          "hash": "4361495518300521603"
+        },
+        {
+          "file": "packages/plugin-repack/eslint.config.js",
+          "hash": "12977957751135200527"
+        },
+        {
+          "file": "packages/plugin-repack/package.json",
+          "hash": "5742982446123195125",
+          "deps": [
+            "npm:@callstack/repack",
+            "npm:@rspack/core@1.2.8",
+            "npm:@swc/helpers@0.5.15",
+            "npm:tslib"
+          ]
+        },
+        {
+          "file": "packages/plugin-repack/project.json",
+          "hash": "4154593325772617162"
+        },
+        {
+          "file": "packages/plugin-repack/src/__tests__/pluginRepack.test.ts",
+          "hash": "4169203633027753849",
+          "deps": [
+            "npm:vitest"
+          ]
+        },
+        {
+          "file": "packages/plugin-repack/src/index.ts",
+          "hash": "2640943887544357790"
+        },
+        {
+          "file": "packages/plugin-repack/src/lib/pluginRepack.ts",
+          "hash": "2057951850195019352",
+          "deps": [
+            "npm:@callstack/repack",
+            "config",
+            "tools"
+          ]
+        },
+        {
+          "file": "packages/plugin-repack/template/package.json",
+          "hash": "15182798581967128080"
+        },
+        {
+          "file": "packages/plugin-repack/template/rspack.config.mjs",
+          "hash": "7731154965770655598",
+          "deps": [
+            "npm:@callstack/repack"
+          ]
+        },
+        {
+          "file": "packages/plugin-repack/tsconfig.json",
+          "hash": "12648671090516240583"
+        },
+        {
+          "file": "packages/plugin-repack/tsconfig.lib.json",
+          "hash": "17833041087370483432"
+        },
+        {
+          "file": "packages/plugin-repack/tsconfig.spec.json",
+          "hash": "15943385144407153049"
+        },
+        {
+          "file": "packages/plugin-repack/vite.config.ts",
+          "hash": "15971088871912403044",
+          "deps": [
+            "npm:@nx/vite",
+            "npm:vite"
+          ]
+        }
+      ],
+      ".vercel": [
+        {
+          "file": "website/.vercel/README.txt",
+          "hash": "14131471887446248118"
+        },
+        {
+          "file": "website/.vercel/project.json",
+          "hash": "5990686996936734797"
+        }
+      ],
+      "rnef": [
+        {
+          "file": ".changeset/README.md",
+          "hash": "4888845876018830777"
+        },
+        {
+          "file": ".changeset/config.json",
+          "hash": "14696225312791210071"
+        },
+        {
+          "file": ".github/actions/setup-node/action.yml",
+          "hash": "10890998463306900551"
+        },
+        {
+          "file": ".github/workflows/ci.yml",
+          "hash": "13089847240777433434"
+        },
+        {
+          "file": ".github/workflows/nightly.yml",
+          "hash": "13123866753720841914"
+        },
+        {
+          "file": ".github/workflows/release.yml",
+          "hash": "13031580680880550315"
+        },
+        {
+          "file": ".gitignore",
+          "hash": "2068666933705229936"
+        },
+        {
+          "file": ".npmrc",
+          "hash": "5531656757255176760"
+        },
+        {
+          "file": ".nxignore",
+          "hash": "820938327173438966"
+        },
+        {
+          "file": ".prettierignore",
+          "hash": "14688272390704683536"
+        },
+        {
+          "file": ".prettierrc",
+          "hash": "16267754514737964994"
+        },
+        {
+          "file": ".verdaccio/config.yml",
+          "hash": "15940125432883258391"
+        },
+        {
+          "file": ".vscode/extensions.json",
+          "hash": "4134969992917317260"
+        },
+        {
+          "file": "CONTRIBUTING.md",
+          "hash": "15253388080604458324"
+        },
+        {
+          "file": "README.md",
+          "hash": "8251162621819203553"
+        },
+        {
+          "file": "eslint.config.js",
+          "hash": "8516646043772686262",
+          "deps": [
+            "npm:@nx/eslint-plugin",
+            "npm:eslint-plugin-simple-import-sort",
+            "npm:jsonc-eslint-parser"
+          ]
+        },
+        {
+          "file": "nx.json",
+          "hash": "2292631927741187688"
+        },
+        {
+          "file": "package.json",
+          "hash": "6581527694309052611",
+          "deps": [
+            "npm:@changesets/cli",
+            "npm:@clack/prompts",
+            "npm:@eslint/js",
+            "npm:@nx/eslint",
+            "npm:@nx/eslint-plugin",
+            "npm:@nx/js",
+            "npm:@nx/vite",
+            "npm:@nx/web",
+            "npm:@swc-node/register",
+            "npm:@swc/core",
+            "npm:@swc/helpers",
+            "npm:@types/node",
+            "npm:@typescript-eslint/eslint-plugin",
+            "npm:@typescript-eslint/parser",
+            "npm:@typescript-eslint/utils",
+            "npm:@vitest/coverage-v8",
+            "npm:@vitest/ui",
+            "npm:eslint",
+            "npm:eslint-config-prettier",
+            "npm:eslint-plugin-simple-import-sort",
+            "npm:fast-glob",
+            "npm:jsonc-eslint-parser",
+            "npm:nano-spawn",
+            "npm:nx",
+            "npm:prettier",
+            "npm:ts-node",
+            "npm:typescript",
+            "npm:typescript-eslint",
+            "npm:verdaccio",
+            "npm:vite",
+            "npm:vitest",
+            "npm:tslib",
+            "npm:vite-tsconfig-paths"
+          ]
+        },
+        {
+          "file": "pnpm-lock.yaml",
+          "hash": "10097780419988739011"
+        },
+        {
+          "file": "pnpm-workspace.yaml",
+          "hash": "14201448216678774149"
+        },
+        {
+          "file": "project.json",
+          "hash": "4994848235308912377"
+        },
+        {
+          "file": "scripts/linkPackages.mjs",
+          "hash": "3030918379993025160",
+          "deps": [
+            "npm:fast-glob",
+            "npm:nano-spawn"
+          ]
+        },
+        {
+          "file": "scripts/npm-publish.sh",
+          "hash": "5076538802861595793"
+        },
+        {
+          "file": "scripts/update-template-dependencies.sh",
+          "hash": "17181673864396428492"
+        },
+        {
+          "file": "scripts/verdaccio-init.mjs",
+          "hash": "14076364259373420474",
+          "deps": [
+            "npm:@clack/prompts",
+            "npm:nano-spawn",
+            "npm:verdaccio"
+          ]
+        },
+        {
+          "file": "scripts/verdaccio-publish.mjs",
+          "hash": "6510678959437714850",
+          "deps": [
+            "npm:@clack/prompts",
+            "npm:nano-spawn"
+          ]
+        },
+        {
+          "file": "scripts/verdaccio-reset.sh",
+          "hash": "6588808106223569910"
+        },
+        {
+          "file": "tsconfig.base.json",
+          "hash": "2468995184891836079"
+        },
+        {
+          "file": "vitest.workspace.ts",
+          "hash": "7870362608836821141"
+        }
+      ],
+      "plugin-metro": [
+        {
+          "file": "packages/plugin-metro/CHANGELOG.md",
+          "hash": "14541608141587729586"
+        },
+        {
+          "file": "packages/plugin-metro/README.md",
+          "hash": "17592702614317500297"
+        },
+        {
+          "file": "packages/plugin-metro/eslint.config.js",
+          "hash": "12977957751135200527"
+        },
+        {
+          "file": "packages/plugin-metro/package.json",
+          "hash": "9987258371084683723",
+          "deps": [
+            "npm:@react-native/community-cli-plugin@0.79.1",
+            "npm:@react-native-community/cli-server-api",
+            "npm:@react-native/dev-middleware@0.79.1",
+            "npm:metro@0.82.1",
+            "npm:metro-config@0.82.1",
+            "npm:metro-core@0.82.1",
+            "npm:metro-resolver@0.82.1",
+            "npm:tslib@2.8.1"
+          ]
+        },
+        {
+          "file": "packages/plugin-metro/project.json",
+          "hash": "14951031389581476572"
+        },
+        {
+          "file": "packages/plugin-metro/src/__tests__/pluginMetro.test.ts",
+          "hash": "10661186750552793144",
+          "deps": [
+            "npm:vitest"
+          ]
+        },
+        {
+          "file": "packages/plugin-metro/src/index.ts",
+          "hash": "785626399537849969"
+        },
+        {
+          "file": "packages/plugin-metro/src/lib/bundle/command.ts",
+          "hash": "4724750290821458353",
+          "deps": [
+            "npm:@react-native/community-cli-plugin@0.79.1",
+            "config",
+            "tools"
+          ]
+        },
+        {
+          "file": "packages/plugin-metro/src/lib/pluginMetro.ts",
+          "hash": "5353866173904597919",
+          "deps": [
+            "config"
+          ]
+        },
+        {
+          "file": "packages/plugin-metro/src/lib/start/OpenDebuggerKeyboardHandler.ts",
+          "hash": "13005667093338579669",
+          "deps": [
+            "tools",
+            "npm:metro@0.82.1"
+          ]
+        },
+        {
+          "file": "packages/plugin-metro/src/lib/start/attachKeyHandlers.ts",
+          "hash": "10192426761936106213",
+          "deps": [
+            "tools",
+            "npm:metro@0.82.1"
+          ]
+        },
+        {
+          "file": "packages/plugin-metro/src/lib/start/command.ts",
+          "hash": "4103031251743576492",
+          "deps": [
+            "config",
+            "tools"
+          ]
+        },
+        {
+          "file": "packages/plugin-metro/src/lib/start/createDevMiddlewareLogger.ts",
+          "hash": "11810275314090128361",
+          "deps": [
+            "npm:metro@0.82.1"
+          ]
+        },
+        {
+          "file": "packages/plugin-metro/src/lib/start/loadMetroConfig.ts",
+          "hash": "9690614213275930546",
+          "deps": [
+            "tools",
+            "npm:metro-config@0.82.1"
+          ]
+        },
+        {
+          "file": "packages/plugin-metro/src/lib/start/metroPlatformResolver.ts",
+          "hash": "6936875777746561100",
+          "deps": [
+            "npm:metro-resolver@0.82.1"
+          ]
+        },
+        {
+          "file": "packages/plugin-metro/src/lib/start/runServer.ts",
+          "hash": "13186301603815142788",
+          "deps": [
+            "npm:@react-native/dev-middleware@0.79.1",
+            "npm:@react-native-community/cli-server-api",
+            "tools",
+            "npm:metro@0.82.1",
+            "npm:metro-core@0.82.1",
+            [
+              "npm:metro@0.82.1",
+              "dynamic"
+            ]
+          ]
+        },
+        {
+          "file": "packages/plugin-metro/tsconfig.json",
+          "hash": "12648671090516240583"
+        },
+        {
+          "file": "packages/plugin-metro/tsconfig.lib.json",
+          "hash": "17833041087370483432"
+        },
+        {
+          "file": "packages/plugin-metro/tsconfig.spec.json",
+          "hash": "15943385144407153049"
+        },
+        {
+          "file": "packages/plugin-metro/vite.config.ts",
+          "hash": "12968918252064185710",
+          "deps": [
+            "npm:@nx/vite",
+            "npm:vite"
+          ]
+        }
+      ],
+      "platform-apple-helpers": [
+        {
+          "file": "packages/platform-apple-helpers/CHANGELOG.md",
+          "hash": "9208067330736692072"
+        },
+        {
+          "file": "packages/platform-apple-helpers/README.md",
+          "hash": "15036525049014584129"
+        },
+        {
+          "file": "packages/platform-apple-helpers/eslint.config.js",
+          "hash": "12977957751135200527"
+        },
+        {
+          "file": "packages/platform-apple-helpers/package.json",
+          "hash": "7763208455640292512",
+          "deps": [
+            "npm:@react-native-community/cli-types",
+            "npm:@react-native-community/cli-config",
+            "npm:@react-native-community/cli-config-apple",
+            "npm:@types/adm-zip",
+            "npm:adm-zip",
+            "npm:fast-glob@3.3.3",
+            "npm:fast-xml-parser",
+            "npm:tslib@2.8.1"
+          ]
+        },
+        {
+          "file": "packages/platform-apple-helpers/project.json",
+          "hash": "13833778860417061231"
+        },
+        {
+          "file": "packages/platform-apple-helpers/src/index.ts",
+          "hash": "12681928432052583039"
+        },
+        {
+          "file": "packages/platform-apple-helpers/src/lib/commands/build/buildOptions.ts",
+          "hash": "4785567056186366804",
+          "deps": [
+            "tools"
+          ]
+        },
+        {
+          "file": "packages/platform-apple-helpers/src/lib/commands/build/buildProject.ts",
+          "hash": "10036733250621505334",
+          "deps": [
+            "tools"
+          ]
+        },
+        {
+          "file": "packages/platform-apple-helpers/src/lib/commands/build/createBuild.ts",
+          "hash": "15801365536885672784",
+          "deps": [
+            "tools"
+          ]
+        },
+        {
+          "file": "packages/platform-apple-helpers/src/lib/commands/build/exportArchive.ts",
+          "hash": "1892161566908977281",
+          "deps": [
+            "tools"
+          ]
+        },
+        {
+          "file": "packages/platform-apple-helpers/src/lib/commands/build/simulatorDestinationMap.ts",
+          "hash": "11048158200568978861"
+        },
+        {
+          "file": "packages/platform-apple-helpers/src/lib/commands/run/createRun.ts",
+          "hash": "10142420065467325058",
+          "deps": [
+            "tools"
+          ]
+        },
+        {
+          "file": "packages/platform-apple-helpers/src/lib/commands/run/getBuildSettings.ts",
+          "hash": "530697685451230517",
+          "deps": [
+            "tools"
+          ]
+        },
+        {
+          "file": "packages/platform-apple-helpers/src/lib/commands/run/matchingDevice.ts",
+          "hash": "17706927732380059327"
+        },
+        {
+          "file": "packages/platform-apple-helpers/src/lib/commands/run/recentDevices.ts",
+          "hash": "2908515880956511124",
+          "deps": [
+            "tools"
+          ]
+        },
+        {
+          "file": "packages/platform-apple-helpers/src/lib/commands/run/runOnDevice.ts",
+          "hash": "1405240137551985319",
+          "deps": [
+            "tools"
+          ]
+        },
+        {
+          "file": "packages/platform-apple-helpers/src/lib/commands/run/runOnMac.ts",
+          "hash": "6319473732726601972",
+          "deps": [
+            "tools"
+          ]
+        },
+        {
+          "file": "packages/platform-apple-helpers/src/lib/commands/run/runOnMacCatalyst.ts",
+          "hash": "8056929333123156689",
+          "deps": [
+            "tools"
+          ]
+        },
+        {
+          "file": "packages/platform-apple-helpers/src/lib/commands/run/runOnSimulator.ts",
+          "hash": "2675235290631803134",
+          "deps": [
+            "tools"
+          ]
+        },
+        {
+          "file": "packages/platform-apple-helpers/src/lib/commands/run/runOptions.ts",
+          "hash": "8980832860495270094"
+        },
+        {
+          "file": "packages/platform-apple-helpers/src/lib/commands/sign/__tests__/provisioningProfile.test.ts",
+          "hash": "3750149208519059794"
+        },
+        {
+          "file": "packages/platform-apple-helpers/src/lib/commands/sign/bundle.ts",
+          "hash": "3817930058246171793",
+          "deps": [
+            "tools"
+          ]
+        },
+        {
+          "file": "packages/platform-apple-helpers/src/lib/commands/sign/modifyIpa.ts",
+          "hash": "15677039542304931264",
+          "deps": [
+            "tools"
+          ]
+        },
+        {
+          "file": "packages/platform-apple-helpers/src/lib/commands/sign/provisioningProfile.ts",
+          "hash": "8303181032159179789",
+          "deps": [
+            "tools"
+          ]
+        },
+        {
+          "file": "packages/platform-apple-helpers/src/lib/commands/sign/utils.ts",
+          "hash": "5210423826378582298",
+          "deps": [
+            "tools",
+            "npm:adm-zip"
+          ]
+        },
+        {
+          "file": "packages/platform-apple-helpers/src/lib/index.ts",
+          "hash": "16694990184493993485"
+        },
+        {
+          "file": "packages/platform-apple-helpers/src/lib/types/index.ts",
+          "hash": "4049726683925588259"
+        },
+        {
+          "file": "packages/platform-apple-helpers/src/lib/utils/__tests__/getConfiguration.test.ts",
+          "hash": "2303175426995034703",
+          "deps": [
+            "tools",
+            "npm:vitest"
+          ]
+        },
+        {
+          "file": "packages/platform-apple-helpers/src/lib/utils/__tests__/getInfo.test.ts",
+          "hash": "2677660973103801207",
+          "deps": [
+            "tools",
+            "npm:vitest"
+          ]
+        },
+        {
+          "file": "packages/platform-apple-helpers/src/lib/utils/__tests__/getScheme.test.ts",
+          "hash": "16559930900176923689",
+          "deps": [
+            "tools",
+            "npm:vitest"
+          ]
+        },
+        {
+          "file": "packages/platform-apple-helpers/src/lib/utils/__tests__/listDevices.test.ts",
+          "hash": "9069467030690026365",
+          "deps": [
+            "tools",
+            "npm:vitest"
+          ]
+        },
+        {
+          "file": "packages/platform-apple-helpers/src/lib/utils/__tests__/signgningIdentity.ts",
+          "hash": "5821081693307928908",
+          "deps": [
+            "npm:vitest"
+          ]
+        },
+        {
+          "file": "packages/platform-apple-helpers/src/lib/utils/buildApp.ts",
+          "hash": "3619180359553869404",
+          "deps": [
+            "npm:@react-native-community/cli-types",
+            "tools"
+          ]
+        },
+        {
+          "file": "packages/platform-apple-helpers/src/lib/utils/codegen.ts",
+          "hash": "5944739148873991876",
+          "deps": [
+            "tools"
+          ]
+        },
+        {
+          "file": "packages/platform-apple-helpers/src/lib/utils/getBuildPaths.ts",
+          "hash": "9262081361634843877",
+          "deps": [
+            "tools"
+          ]
+        },
+        {
+          "file": "packages/platform-apple-helpers/src/lib/utils/getConfiguration.ts",
+          "hash": "8864945711588467475",
+          "deps": [
+            "tools"
+          ]
+        },
+        {
+          "file": "packages/platform-apple-helpers/src/lib/utils/getInfo.ts",
+          "hash": "15246546414924857790",
+          "deps": [
+            "tools",
+            "npm:fast-xml-parser"
+          ]
+        },
+        {
+          "file": "packages/platform-apple-helpers/src/lib/utils/getPlatformInfo.ts",
+          "hash": "15745680124549619931"
+        },
+        {
+          "file": "packages/platform-apple-helpers/src/lib/utils/getScheme.ts",
+          "hash": "10878113166786133402",
+          "deps": [
+            "tools"
+          ]
+        },
+        {
+          "file": "packages/platform-apple-helpers/src/lib/utils/getValidProjectConfig.ts",
+          "hash": "12914479857767611114",
+          "deps": [
+            "npm:@react-native-community/cli-config-apple",
+            "npm:@react-native-community/cli-types",
+            "tools"
+          ]
+        },
+        {
+          "file": "packages/platform-apple-helpers/src/lib/utils/listDevices.ts",
+          "hash": "14585289791618685966",
+          "deps": [
+            "tools"
+          ]
+        },
+        {
+          "file": "packages/platform-apple-helpers/src/lib/utils/plist.ts",
+          "hash": "5901335415346860484",
+          "deps": [
+            "tools"
+          ]
+        },
+        {
+          "file": "packages/platform-apple-helpers/src/lib/utils/pods.ts",
+          "hash": "3315224027965314064",
+          "deps": [
+            "npm:@react-native-community/cli-types",
+            "tools",
+            [
+              "npm:@react-native-community/cli-config",
+              "dynamic"
+            ]
+          ]
+        },
+        {
+          "file": "packages/platform-apple-helpers/src/lib/utils/signingIdentities.ts",
+          "hash": "17912346471083779234",
+          "deps": [
+            "tools"
+          ]
+        },
+        {
+          "file": "packages/platform-apple-helpers/src/lib/utils/supportedPlatforms.ts",
+          "hash": "9575254991526888353"
+        },
+        {
+          "file": "packages/platform-apple-helpers/tsconfig.json",
+          "hash": "12648671090516240583"
+        },
+        {
+          "file": "packages/platform-apple-helpers/tsconfig.lib.json",
+          "hash": "17833041087370483432"
+        },
+        {
+          "file": "packages/platform-apple-helpers/tsconfig.spec.json",
+          "hash": "15943385144407153049"
+        },
+        {
+          "file": "packages/platform-apple-helpers/vite.config.ts",
+          "hash": "2600627568223732390",
+          "deps": [
+            "npm:@nx/vite",
+            "npm:vite"
+          ]
+        },
+        {
+          "file": "packages/platform-apple-helpers/vitest-setup.ts",
+          "hash": "4084934105012356557",
+          "deps": [
+            "npm:vitest",
+            "tools"
+          ]
+        }
+      ],
+      "platform-ios": [
+        {
+          "file": "packages/platform-ios/CHANGELOG.md",
+          "hash": "3441595156692699046"
+        },
+        {
+          "file": "packages/platform-ios/README.md",
+          "hash": "5959761278325649147"
+        },
+        {
+          "file": "packages/platform-ios/eslint.config.js",
+          "hash": "12977957751135200527"
+        },
+        {
+          "file": "packages/platform-ios/package.json",
+          "hash": "15201872510773401511",
+          "deps": [
+            "npm:@react-native-community/cli-config-apple",
+            "npm:@react-native-community/cli-types",
+            "npm:tslib@2.8.1"
+          ]
+        },
+        {
+          "file": "packages/platform-ios/project.json",
+          "hash": "3268418902710330974"
+        },
+        {
+          "file": "packages/platform-ios/react-native.config.ts",
+          "hash": "12133484904524220981",
+          "deps": [
+            "npm:@react-native-community/cli-config-apple"
+          ]
+        },
+        {
+          "file": "packages/platform-ios/src/index.ts",
+          "hash": "5735926959913919110"
+        },
+        {
+          "file": "packages/platform-ios/src/lib/__tests__/dummy.test.ts",
+          "hash": "521532725830028443",
+          "deps": [
+            "npm:vitest"
+          ]
+        },
+        {
+          "file": "packages/platform-ios/src/lib/commands/signIos.ts",
+          "hash": "798906586950791275",
+          "deps": [
+            "config",
+            "platform-apple-helpers"
+          ]
+        },
+        {
+          "file": "packages/platform-ios/src/lib/platformIOS.ts",
+          "hash": "16268278697299433461",
+          "deps": [
+            "npm:@react-native-community/cli-types",
+            "config",
+            "platform-apple-helpers",
+            "tools"
+          ]
+        },
+        {
+          "file": "packages/platform-ios/template/.github/workflows/remote-build-ios.yml",
+          "hash": "14177894799740672476"
+        },
+        {
+          "file": "packages/platform-ios/template/ios/.xcode.env",
+          "hash": "2240437479405059044"
+        },
+        {
+          "file": "packages/platform-ios/template/ios/HelloWorld.xcodeproj/project.pbxproj",
+          "hash": "4202302965668374459"
+        },
+        {
+          "file": "packages/platform-ios/template/ios/HelloWorld.xcodeproj/xcshareddata/xcschemes/HelloWorld.xcscheme",
+          "hash": "10789294477399856826"
+        },
+        {
+          "file": "packages/platform-ios/template/ios/HelloWorld/AppDelegate.swift",
+          "hash": "12051489505732682665"
+        },
+        {
+          "file": "packages/platform-ios/template/ios/HelloWorld/Images.xcassets/AppIcon.appiconset/Contents.json",
+          "hash": "13651775502586994303"
+        },
+        {
+          "file": "packages/platform-ios/template/ios/HelloWorld/Images.xcassets/Contents.json",
+          "hash": "10114040536141029740"
+        },
+        {
+          "file": "packages/platform-ios/template/ios/HelloWorld/Info.plist",
+          "hash": "3526664304013027980"
+        },
+        {
+          "file": "packages/platform-ios/template/ios/HelloWorld/LaunchScreen.storyboard",
+          "hash": "18388717712512079485"
+        },
+        {
+          "file": "packages/platform-ios/template/ios/HelloWorld/PrivacyInfo.xcprivacy",
+          "hash": "16670914145149810597"
+        },
+        {
+          "file": "packages/platform-ios/template/ios/Podfile",
+          "hash": "9779672547326080147"
+        },
+        {
+          "file": "packages/platform-ios/template/package.json",
+          "hash": "11885561994066983427"
+        },
+        {
+          "file": "packages/platform-ios/tsconfig.json",
+          "hash": "12648671090516240583"
+        },
+        {
+          "file": "packages/platform-ios/tsconfig.lib.json",
+          "hash": "17833041087370483432"
+        },
+        {
+          "file": "packages/platform-ios/tsconfig.spec.json",
+          "hash": "15943385144407153049"
+        },
+        {
+          "file": "packages/platform-ios/vite.config.ts",
+          "hash": "11390697265438627761",
+          "deps": [
+            "npm:@nx/vite",
+            "npm:vite"
+          ]
+        }
+      ],
+      "platform-android": [
+        {
+          "file": "packages/platform-android/CHANGELOG.md",
+          "hash": "15852420629381904898"
+        },
+        {
+          "file": "packages/platform-android/README.md",
+          "hash": "15259200632022536675"
+        },
+        {
+          "file": "packages/platform-android/eslint.config.js",
+          "hash": "12977957751135200527"
+        },
+        {
+          "file": "packages/platform-android/package.json",
+          "hash": "16726640106637902340",
+          "deps": [
+            "npm:@react-native-community/cli-types",
+            "npm:@types/adm-zip",
+            "npm:@react-native-community/cli-config-android",
+            "npm:adm-zip",
+            "npm:tslib@2.8.1"
+          ]
+        },
+        {
+          "file": "packages/platform-android/project.json",
+          "hash": "15771133960921268526"
+        },
+        {
+          "file": "packages/platform-android/react-native.config.ts",
+          "hash": "8213309765198593300",
+          "deps": [
+            "npm:@react-native-community/cli-config-android"
+          ]
+        },
+        {
+          "file": "packages/platform-android/src/index.ts",
+          "hash": "8081984797535430449"
+        },
+        {
+          "file": "packages/platform-android/src/lib/commands/aar/packageAar.ts",
+          "hash": "15932079160086858031",
+          "deps": [
+            "tools"
+          ]
+        },
+        {
+          "file": "packages/platform-android/src/lib/commands/aar/publishLocalAar.ts",
+          "hash": "5871143249326413330",
+          "deps": [
+            "tools"
+          ]
+        },
+        {
+          "file": "packages/platform-android/src/lib/commands/buildAndroid/__tests__/buildAndroid.test.ts",
+          "hash": "10235335980345020564",
+          "deps": [
+            "npm:@react-native-community/cli-types",
+            "tools",
+            "npm:vitest"
+          ]
+        },
+        {
+          "file": "packages/platform-android/src/lib/commands/buildAndroid/buildAndroid.ts",
+          "hash": "7749554722308018457",
+          "deps": [
+            "npm:@react-native-community/cli-types",
+            "tools"
+          ]
+        },
+        {
+          "file": "packages/platform-android/src/lib/commands/buildAndroid/command.ts",
+          "hash": "13535145533684273187",
+          "deps": [
+            "npm:@react-native-community/cli-types",
+            "config"
+          ]
+        },
+        {
+          "file": "packages/platform-android/src/lib/commands/generateKeystore.ts",
+          "hash": "10254027376337980426",
+          "deps": [
+            "npm:@react-native-community/cli-types",
+            "config",
+            "tools"
+          ]
+        },
+        {
+          "file": "packages/platform-android/src/lib/commands/getValidProjectConfig.ts",
+          "hash": "3178535267961167884",
+          "deps": [
+            "npm:@react-native-community/cli-config-android",
+            "npm:@react-native-community/cli-types",
+            "tools"
+          ]
+        },
+        {
+          "file": "packages/platform-android/src/lib/commands/runAndroid/__tests__/checkUsers.test.ts",
+          "hash": "5965305056107261693",
+          "deps": [
+            "tools",
+            "npm:vitest"
+          ]
+        },
+        {
+          "file": "packages/platform-android/src/lib/commands/runAndroid/__tests__/runAndroid.test.ts",
+          "hash": "15844384195593601219",
+          "deps": [
+            "npm:@react-native-community/cli-types",
+            "tools",
+            "npm:vitest"
+          ]
+        },
+        {
+          "file": "packages/platform-android/src/lib/commands/runAndroid/__tests__/runOnAllDevices.test.ts",
+          "hash": "3658161135398441107",
+          "deps": [
+            "npm:@react-native-community/cli-types",
+            "tools",
+            "npm:vitest"
+          ]
+        },
+        {
+          "file": "packages/platform-android/src/lib/commands/runAndroid/__tests__/tryLaunchAppOnDevice.test.ts",
+          "hash": "13789362056260213033",
+          "deps": [
+            "npm:@react-native-community/cli-types",
+            "tools",
+            "npm:vitest"
+          ]
+        },
+        {
+          "file": "packages/platform-android/src/lib/commands/runAndroid/adb.ts",
+          "hash": "11242641924510268134",
+          "deps": [
+            "tools"
+          ]
+        },
+        {
+          "file": "packages/platform-android/src/lib/commands/runAndroid/command.ts",
+          "hash": "13342048764606319021",
+          "deps": [
+            "npm:@react-native-community/cli-types",
+            "config"
+          ]
+        },
+        {
+          "file": "packages/platform-android/src/lib/commands/runAndroid/findOutputFile.ts",
+          "hash": "10109519841401663676",
+          "deps": [
+            "tools"
+          ]
+        },
+        {
+          "file": "packages/platform-android/src/lib/commands/runAndroid/listAndroidDevices.ts",
+          "hash": "17062835054993751377",
+          "deps": [
+            "tools"
+          ]
+        },
+        {
+          "file": "packages/platform-android/src/lib/commands/runAndroid/listAndroidUsers.ts",
+          "hash": "11106583634694991833",
+          "deps": [
+            "tools"
+          ]
+        },
+        {
+          "file": "packages/platform-android/src/lib/commands/runAndroid/runAndroid.ts",
+          "hash": "7134108500730308708",
+          "deps": [
+            "npm:@react-native-community/cli-types",
+            "tools"
+          ]
+        },
+        {
+          "file": "packages/platform-android/src/lib/commands/runAndroid/tryInstallAppOnDevice.ts",
+          "hash": "10967780732920798920",
+          "deps": [
+            "tools"
+          ]
+        },
+        {
+          "file": "packages/platform-android/src/lib/commands/runAndroid/tryLaunchAppOnDevice.ts",
+          "hash": "7252335771359856364",
+          "deps": [
+            "tools"
+          ]
+        },
+        {
+          "file": "packages/platform-android/src/lib/commands/runAndroid/tryLaunchEmulator.ts",
+          "hash": "5659764993061834358",
+          "deps": [
+            "tools"
+          ]
+        },
+        {
+          "file": "packages/platform-android/src/lib/commands/runAndroid/tryRunAdbReverse.ts",
+          "hash": "6324478818101913241",
+          "deps": [
+            "tools"
+          ]
+        },
+        {
+          "file": "packages/platform-android/src/lib/commands/runGradle.ts",
+          "hash": "10120115564990607921",
+          "deps": [
+            "tools"
+          ]
+        },
+        {
+          "file": "packages/platform-android/src/lib/commands/signAndroid/bundle.ts",
+          "hash": "10406689582522239594",
+          "deps": [
+            "tools"
+          ]
+        },
+        {
+          "file": "packages/platform-android/src/lib/commands/signAndroid/command.ts",
+          "hash": "9867250709767700100",
+          "deps": [
+            "config"
+          ]
+        },
+        {
+          "file": "packages/platform-android/src/lib/commands/signAndroid/signAndroid.ts",
+          "hash": "14534431119267790159",
+          "deps": [
+            "tools",
+            "npm:adm-zip"
+          ]
+        },
+        {
+          "file": "packages/platform-android/src/lib/commands/toPascalCase.ts",
+          "hash": "15043485660607169601"
+        },
+        {
+          "file": "packages/platform-android/src/lib/paths.ts",
+          "hash": "6196703170637628366"
+        },
+        {
+          "file": "packages/platform-android/src/lib/platformAndroid.ts",
+          "hash": "1563370777552050633",
+          "deps": [
+            "npm:@react-native-community/cli-types",
+            "config"
+          ]
+        },
+        {
+          "file": "packages/platform-android/template/.github/workflows/remote-build-android.yml",
+          "hash": "11416500948594335401"
+        },
+        {
+          "file": "packages/platform-android/template/android/app/build.gradle",
+          "hash": "13403569741131016426"
+        },
+        {
+          "file": "packages/platform-android/template/android/app/debug.keystore",
+          "hash": "5037686243849261810"
+        },
+        {
+          "file": "packages/platform-android/template/android/app/proguard-rules.pro",
+          "hash": "13814197385154279786"
+        },
+        {
+          "file": "packages/platform-android/template/android/app/src/debug/AndroidManifest.xml",
+          "hash": "9217300540490017338"
+        },
+        {
+          "file": "packages/platform-android/template/android/app/src/main/AndroidManifest.xml",
+          "hash": "8439592262627536205"
+        },
+        {
+          "file": "packages/platform-android/template/android/app/src/main/java/com/helloworld/MainActivity.kt",
+          "hash": "11885818500845267380"
+        },
+        {
+          "file": "packages/platform-android/template/android/app/src/main/java/com/helloworld/MainApplication.kt",
+          "hash": "11817270543759065991"
+        },
+        {
+          "file": "packages/platform-android/template/android/app/src/main/res/drawable/rn_edit_text_material.xml",
+          "hash": "4466596183044014152"
+        },
+        {
+          "file": "packages/platform-android/template/android/app/src/main/res/mipmap-hdpi/ic_launcher.png",
+          "hash": "10788509195642110029"
+        },
+        {
+          "file": "packages/platform-android/template/android/app/src/main/res/mipmap-hdpi/ic_launcher_round.png",
+          "hash": "14348562046770238248"
+        },
+        {
+          "file": "packages/platform-android/template/android/app/src/main/res/mipmap-mdpi/ic_launcher.png",
+          "hash": "328692529308011025"
+        },
+        {
+          "file": "packages/platform-android/template/android/app/src/main/res/mipmap-mdpi/ic_launcher_round.png",
+          "hash": "11802043336826859502"
+        },
+        {
+          "file": "packages/platform-android/template/android/app/src/main/res/mipmap-xhdpi/ic_launcher.png",
+          "hash": "13006206334539413900"
+        },
+        {
+          "file": "packages/platform-android/template/android/app/src/main/res/mipmap-xhdpi/ic_launcher_round.png",
+          "hash": "1812825738055967771"
+        },
+        {
+          "file": "packages/platform-android/template/android/app/src/main/res/mipmap-xxhdpi/ic_launcher.png",
+          "hash": "6104457872863500683"
+        },
+        {
+          "file": "packages/platform-android/template/android/app/src/main/res/mipmap-xxhdpi/ic_launcher_round.png",
+          "hash": "2478168592410677995"
+        },
+        {
+          "file": "packages/platform-android/template/android/app/src/main/res/mipmap-xxxhdpi/ic_launcher.png",
+          "hash": "12283149652938275290"
+        },
+        {
+          "file": "packages/platform-android/template/android/app/src/main/res/mipmap-xxxhdpi/ic_launcher_round.png",
+          "hash": "7126668675123994836"
+        },
+        {
+          "file": "packages/platform-android/template/android/app/src/main/res/values/strings.xml",
+          "hash": "9135274714527600954"
+        },
+        {
+          "file": "packages/platform-android/template/android/app/src/main/res/values/styles.xml",
+          "hash": "14052910750539201041"
+        },
+        {
+          "file": "packages/platform-android/template/android/build.gradle",
+          "hash": "14061614575239421399"
+        },
+        {
+          "file": "packages/platform-android/template/android/gradle.properties",
+          "hash": "11952185146629952710"
+        },
+        {
+          "file": "packages/platform-android/template/android/gradle/wrapper/gradle-wrapper.jar",
+          "hash": "9604422019378236896"
+        },
+        {
+          "file": "packages/platform-android/template/android/gradle/wrapper/gradle-wrapper.properties",
+          "hash": "5511192720181303110"
+        },
+        {
+          "file": "packages/platform-android/template/android/gradlew",
+          "hash": "670712297527443547"
+        },
+        {
+          "file": "packages/platform-android/template/android/gradlew.bat",
+          "hash": "3049992198610835351"
+        },
+        {
+          "file": "packages/platform-android/template/android/settings.gradle",
+          "hash": "5151995165013682386"
+        },
+        {
+          "file": "packages/platform-android/template/package.json",
+          "hash": "13568243289875496406"
+        },
+        {
+          "file": "packages/platform-android/tsconfig.json",
+          "hash": "12648671090516240583"
+        },
+        {
+          "file": "packages/platform-android/tsconfig.lib.json",
+          "hash": "17833041087370483432"
+        },
+        {
+          "file": "packages/platform-android/tsconfig.spec.json",
+          "hash": "15943385144407153049"
+        },
+        {
+          "file": "packages/platform-android/vite.config.ts",
+          "hash": "2836387520780085277",
+          "deps": [
+            "npm:@nx/vite",
+            "npm:vite"
+          ]
+        },
+        {
+          "file": "packages/platform-android/vitest-setup.ts",
+          "hash": "6825789347459210506",
+          "deps": [
+            "npm:vitest",
+            "tools"
+          ]
+        }
+      ],
+      "cli": [
+        {
+          "file": "packages/cli/CHANGELOG.md",
+          "hash": "7290801537193074766"
+        },
+        {
+          "file": "packages/cli/README.md",
+          "hash": "11220664959651122747"
+        },
+        {
+          "file": "packages/cli/eslint.config.js",
+          "hash": "12977957751135200527"
+        },
+        {
+          "file": "packages/cli/package.json",
+          "hash": "11028028305263242843",
+          "deps": [
+            "npm:@react-native-community/cli-types",
+            "npm:@react-native-community/cli-config",
+            "npm:commander@12.1.0",
+            "npm:tslib"
+          ]
+        },
+        {
+          "file": "packages/cli/project.json",
+          "hash": "7684023619225010795"
+        },
+        {
+          "file": "packages/cli/src/bin.ts",
+          "hash": "8846006954691796946"
+        },
+        {
+          "file": "packages/cli/src/index.ts",
+          "hash": "1474456129693725669"
+        },
+        {
+          "file": "packages/cli/src/lib/__tests__/__fixtures__/simple-config/rnef.config.mjs",
+          "hash": "12456552146263915400"
+        },
+        {
+          "file": "packages/cli/src/lib/__tests__/cli.test.ts",
+          "hash": "5224979962741140134",
+          "deps": [
+            "npm:vitest"
+          ]
+        },
+        {
+          "file": "packages/cli/src/lib/checkDeprecatedOptions.ts",
+          "hash": "16669050868907334614",
+          "deps": [
+            "tools"
+          ]
+        },
+        {
+          "file": "packages/cli/src/lib/cli.ts",
+          "hash": "14378012733722328321",
+          "deps": [
+            "config",
+            "tools",
+            "npm:commander@12.1.0"
+          ]
+        },
+        {
+          "file": "packages/cli/src/lib/plugins/fingerprint.ts",
+          "hash": "5149874447116370025",
+          "deps": [
+            "config",
+            "tools"
+          ]
+        },
+        {
+          "file": "packages/cli/src/lib/plugins/logConfig.ts",
+          "hash": "4373350645713026667",
+          "deps": [
+            "npm:@react-native-community/cli-types",
+            "config",
+            [
+              "npm:@react-native-community/cli-config",
+              "dynamic"
+            ]
+          ]
+        },
+        {
+          "file": "packages/cli/src/lib/plugins/remoteCache.ts",
+          "hash": "13116840065884052300",
+          "deps": [
+            "config",
+            "tools"
+          ]
+        },
+        {
+          "file": "packages/cli/tsconfig.json",
+          "hash": "17633285202623666160"
+        },
+        {
+          "file": "packages/cli/tsconfig.lib.json",
+          "hash": "17833041087370483432"
+        },
+        {
+          "file": "packages/cli/tsconfig.spec.json",
+          "hash": "9887873333854299856"
+        },
+        {
+          "file": "packages/cli/vite.config.ts",
+          "hash": "10236482588742211815",
+          "deps": [
+            "npm:@nx/vite",
+            "npm:vite"
+          ]
+        }
+      ],
+      "rnef-docs": [
+        {
+          "file": "website/.gitignore",
+          "hash": "993513709708028774"
+        },
+        {
+          "file": "website/CHANGELOG.md",
+          "hash": "10216931062519739934"
+        },
+        {
+          "file": "website/README.md",
+          "hash": "6545544144342147246"
+        },
+        {
+          "file": "website/docs/404.mdx",
+          "hash": "15803109279539628182"
+        },
+        {
+          "file": "website/docs/_meta.json",
+          "hash": "15533298528025173503"
+        },
+        {
+          "file": "website/docs/api/_meta.json",
+          "hash": "10803414462350870949"
+        },
+        {
+          "file": "website/docs/api/index.md",
+          "hash": "2683869882160316585"
+        },
+        {
+          "file": "website/docs/docs/_meta.json",
+          "hash": "13827690878431776789"
+        },
+        {
+          "file": "website/docs/docs/brownfield/_meta.json",
+          "hash": "17280707218870510259"
+        },
+        {
+          "file": "website/docs/docs/brownfield/android.md",
+          "hash": "6883341249942644916"
+        },
+        {
+          "file": "website/docs/docs/brownfield/assets/create_module.png",
+          "hash": "13582359181697685018"
+        },
+        {
+          "file": "website/docs/docs/brownfield/assets/verify_aar_plugin_setup.png",
+          "hash": "15089085310055020016"
+        },
+        {
+          "file": "website/docs/docs/brownfield/ios.md",
+          "hash": "8840311698770081203"
+        },
+        {
+          "file": "website/docs/docs/cli.md",
+          "hash": "5527895487521963544"
+        },
+        {
+          "file": "website/docs/docs/configuration.md",
+          "hash": "6110205374575216716"
+        },
+        {
+          "file": "website/docs/docs/getting-started/_meta.json",
+          "hash": "9233416257528017115"
+        },
+        {
+          "file": "website/docs/docs/getting-started/index.mdx",
+          "hash": "13552866193735008543"
+        },
+        {
+          "file": "website/docs/docs/getting-started/introduction.md",
+          "hash": "10673371512622358399"
+        },
+        {
+          "file": "website/docs/docs/getting-started/migrating-from-community-cli.mdx",
+          "hash": "6265626934511741800"
+        },
+        {
+          "file": "website/docs/docs/remote-cache/_meta.json",
+          "hash": "224714949347850326"
+        },
+        {
+          "file": "website/docs/docs/remote-cache/github-actions/_meta.json",
+          "hash": "11163358971242151039"
+        },
+        {
+          "file": "website/docs/docs/remote-cache/github-actions/android.md",
+          "hash": "12720277273563174346"
+        },
+        {
+          "file": "website/docs/docs/remote-cache/github-actions/configuration.md",
+          "hash": "16683142798834061998"
+        },
+        {
+          "file": "website/docs/docs/remote-cache/github-actions/ios.md",
+          "hash": "6089496803987313284"
+        },
+        {
+          "file": "website/docs/index.md",
+          "hash": "194209955788438991"
+        },
+        {
+          "file": "website/docs/public/brownfield_convert_to_group.png",
+          "hash": "11664359421077540914"
+        },
+        {
+          "file": "website/docs/public/brownfield_framework_target.png",
+          "hash": "9933045607244245698"
+        },
+        {
+          "file": "website/docs/public/cli-remote-cache.png",
+          "hash": "16008330879625945898"
+        },
+        {
+          "file": "website/docs/public/cli.png",
+          "hash": "4236467980697402145"
+        },
+        {
+          "file": "website/docs/public/create_module.png",
+          "hash": "13582359181697685018"
+        },
+        {
+          "file": "website/docs/public/logo.svg",
+          "hash": "18077379758827881254"
+        },
+        {
+          "file": "website/docs/public/verify_aar_plugin_setup.png",
+          "hash": "15089085310055020016"
+        },
+        {
+          "file": "website/package.json",
+          "hash": "8766784281686927729",
+          "deps": [
+            "npm:@types/node",
+            "npm:@callstack/rspress-theme",
+            "npm:@rspress/plugin-llms",
+            "npm:rspress",
+            "npm:rspress-plugin-sitemap",
+            "npm:rspress-plugin-vercel-analytics"
+          ]
+        },
+        {
+          "file": "website/rspress.config.ts",
+          "hash": "4171740723311454228",
+          "deps": [
+            "npm:@callstack/rspress-theme",
+            "npm:@rspress/plugin-llms",
+            "npm:rspress",
+            "npm:rspress-plugin-sitemap",
+            "npm:rspress-plugin-vercel-analytics"
+          ]
+        },
+        {
+          "file": "website/tsconfig.json",
+          "hash": "17371419218264128780"
+        },
+        {
+          "file": "website/vercel.json",
+          "hash": "11892534384508934880"
+        }
+      ],
+      "config": [
+        {
+          "file": "packages/config/CHANGELOG.md",
+          "hash": "15761068705163718504"
+        },
+        {
+          "file": "packages/config/README.md",
+          "hash": "5437183223382061855"
+        },
+        {
+          "file": "packages/config/eslint.config.js",
+          "hash": "12977957751135200527"
+        },
+        {
+          "file": "packages/config/package.json",
+          "hash": "6902943647761490048",
+          "deps": [
+            "npm:@types/babel__code-frame",
+            "npm:@babel/code-frame",
+            "npm:joi",
+            "npm:tslib"
+          ]
+        },
+        {
+          "file": "packages/config/project.json",
+          "hash": "1289555151067569549"
+        },
+        {
+          "file": "packages/config/src/index.ts",
+          "hash": "4698492349574370877"
+        },
+        {
+          "file": "packages/config/src/lib/__tests__/__fixtures__/config-with-sample-plugin/PlatformAndroid.mjs",
+          "hash": "5202125570844029827"
+        },
+        {
+          "file": "packages/config/src/lib/__tests__/__fixtures__/config-with-sample-plugin/SamplePlugin.mjs",
+          "hash": "18185836941484282070"
+        },
+        {
+          "file": "packages/config/src/lib/__tests__/__fixtures__/config-with-sample-plugin/rnef.config.mjs",
+          "hash": "2305050570420249316"
+        },
+        {
+          "file": "packages/config/src/lib/__tests__/config.test.ts",
+          "hash": "3656395137433959178",
+          "deps": [
+            "test-helpers",
+            "npm:vitest"
+          ]
+        },
+        {
+          "file": "packages/config/src/lib/config.ts",
+          "hash": "11078310181398856786",
+          "deps": [
+            "tools",
+            "npm:joi",
+            [
+              "npm:react-native",
+              "dynamic"
+            ]
+          ]
+        },
+        {
+          "file": "packages/config/src/lib/schema.ts",
+          "hash": "5544433996513317828",
+          "deps": [
+            "npm:joi"
+          ]
+        },
+        {
+          "file": "packages/config/src/lib/utils.ts",
+          "hash": "14119308648937220859",
+          "deps": [
+            "npm:@babel/code-frame"
+          ]
+        },
+        {
+          "file": "packages/config/tsconfig.json",
+          "hash": "12648671090516240583"
+        },
+        {
+          "file": "packages/config/tsconfig.lib.json",
+          "hash": "18155349116525859334"
+        },
+        {
+          "file": "packages/config/tsconfig.spec.json",
+          "hash": "15943385144407153049"
+        },
+        {
+          "file": "packages/config/vite.config.ts",
+          "hash": "3927276645399911739",
+          "deps": [
+            "npm:@nx/vite",
+            "npm:vite"
+          ]
+        }
+      ],
+      "create-app": [
+        {
+          "file": "packages/create-app/CHANGELOG.md",
+          "hash": "11037673711034686436"
+        },
+        {
+          "file": "packages/create-app/README.md",
+          "hash": "14707984653817693711"
+        },
+        {
+          "file": "packages/create-app/e2e/e2e.test.ts",
+          "hash": "6681258863635819",
+          "deps": [
+            "test-helpers",
+            "npm:vitest"
+          ]
+        },
+        {
+          "file": "packages/create-app/eslint.config.js",
+          "hash": "12977957751135200527"
+        },
+        {
+          "file": "packages/create-app/package.json",
+          "hash": "7416940167601060247",
+          "deps": [
+            "npm:@types/gradient-string",
+            "npm:@types/minimist",
+            "npm:gradient-string@3.0.0",
+            "npm:minimist",
+            "npm:package-json",
+            "npm:tar",
+            "npm:tslib"
+          ]
+        },
+        {
+          "file": "packages/create-app/project.json",
+          "hash": "8896033512009457829"
+        },
+        {
+          "file": "packages/create-app/src/bin.ts",
+          "hash": "5785138303655549757"
+        },
+        {
+          "file": "packages/create-app/src/index.ts",
+          "hash": "5169974015302567371"
+        },
+        {
+          "file": "packages/create-app/src/lib/__tests__/bin.test.ts",
+          "hash": "1755367002214393684"
+        },
+        {
+          "file": "packages/create-app/src/lib/__tests__/templates.test.ts",
+          "hash": "6815839322301845103",
+          "deps": [
+            "npm:vitest"
+          ]
+        },
+        {
+          "file": "packages/create-app/src/lib/bin.ts",
+          "hash": "12889151323039364136",
+          "deps": [
+            "tools"
+          ]
+        },
+        {
+          "file": "packages/create-app/src/lib/steps/git-init.ts",
+          "hash": "8356986947029312978",
+          "deps": [
+            "tools"
+          ]
+        },
+        {
+          "file": "packages/create-app/src/lib/templates.ts",
+          "hash": "10419599838202176741",
+          "deps": [
+            "tools"
+          ]
+        },
+        {
+          "file": "packages/create-app/src/lib/utils/__tests__/parsers.test.ts",
+          "hash": "12828334742210994922",
+          "deps": [
+            "npm:vitest"
+          ]
+        },
+        {
+          "file": "packages/create-app/src/lib/utils/__tests__/project-name.test.ts",
+          "hash": "11086568712824442256",
+          "deps": [
+            "npm:vitest"
+          ]
+        },
+        {
+          "file": "packages/create-app/src/lib/utils/edit-template.ts",
+          "hash": "12100700693570359977"
+        },
+        {
+          "file": "packages/create-app/src/lib/utils/fs.ts",
+          "hash": "17992748137716950515"
+        },
+        {
+          "file": "packages/create-app/src/lib/utils/package-json.ts",
+          "hash": "9416441092920119437"
+        },
+        {
+          "file": "packages/create-app/src/lib/utils/parse-cli-options.ts",
+          "hash": "11064026577088342650",
+          "deps": [
+            "npm:minimist"
+          ]
+        },
+        {
+          "file": "packages/create-app/src/lib/utils/parsers.ts",
+          "hash": "1795054589842108286"
+        },
+        {
+          "file": "packages/create-app/src/lib/utils/project-name.ts",
+          "hash": "9120959841927084855"
+        },
+        {
+          "file": "packages/create-app/src/lib/utils/prompts.ts",
+          "hash": "16563369062640034195",
+          "deps": [
+            "tools",
+            "npm:gradient-string@3.0.0"
+          ]
+        },
+        {
+          "file": "packages/create-app/src/lib/utils/tarball.ts",
+          "hash": "10021689032543805394",
+          "deps": [
+            "tools",
+            "npm:package-json",
+            "npm:tar"
+          ]
+        },
+        {
+          "file": "packages/create-app/src/lib/utils/version.ts",
+          "hash": "14652795547708837144",
+          "deps": [
+            "tools"
+          ]
+        },
+        {
+          "file": "packages/create-app/tsconfig.json",
+          "hash": "12648671090516240583"
+        },
+        {
+          "file": "packages/create-app/tsconfig.lib.json",
+          "hash": "12008139212925607516"
+        },
+        {
+          "file": "packages/create-app/tsconfig.spec.json",
+          "hash": "7703993833055554790"
+        },
+        {
+          "file": "packages/create-app/vite.config.ts",
+          "hash": "14037393135547841827",
+          "deps": [
+            "npm:vite",
+            "npm:@nx/vite"
+          ]
+        },
+        {
+          "file": "packages/create-app/vite.e2e.config.js",
+          "hash": "4322309971590085671",
+          "deps": [
+            "npm:vite",
+            "npm:@nx/vite"
+          ]
+        }
+      ],
+      "rnef-plugin-metro-template": [
+        {
+          "file": "packages/plugin-metro/template/metro.config.js",
+          "hash": "2535319034288447076"
+        },
+        {
+          "file": "packages/plugin-metro/template/package.json",
+          "hash": "290911949093852870"
+        }
+      ],
+      "test-helpers": [
+        {
+          "file": "packages/test-helpers/CHANGELOG.md",
+          "hash": "10898476755426770511"
+        },
+        {
+          "file": "packages/test-helpers/README.md",
+          "hash": "12084371048417742199"
+        },
+        {
+          "file": "packages/test-helpers/eslint.config.js",
+          "hash": "1521183267764232361",
+          "deps": [
+            "npm:jsonc-eslint-parser"
+          ]
+        },
+        {
+          "file": "packages/test-helpers/package.json",
+          "hash": "11430412596479260373",
+          "deps": [
+            "npm:tslib"
+          ]
+        },
+        {
+          "file": "packages/test-helpers/project.json",
+          "hash": "3798349684832927256"
+        },
+        {
+          "file": "packages/test-helpers/src/index.ts",
+          "hash": "8823289293376203350"
+        },
+        {
+          "file": "packages/test-helpers/src/lib/exec.ts",
+          "hash": "12662778848169990968"
+        },
+        {
+          "file": "packages/test-helpers/src/lib/random.ts",
+          "hash": "4513951580165033233"
+        },
+        {
+          "file": "packages/test-helpers/src/lib/test-helpers.spec.ts",
+          "hash": "14643413535583037767",
+          "deps": [
+            "npm:vitest"
+          ]
+        },
+        {
+          "file": "packages/test-helpers/src/lib/test-helpers.ts",
+          "hash": "12302236367728860056"
+        },
+        {
+          "file": "packages/test-helpers/tsconfig.json",
+          "hash": "12648671090516240583"
+        },
+        {
+          "file": "packages/test-helpers/tsconfig.lib.json",
+          "hash": "18155349116525859334"
+        },
+        {
+          "file": "packages/test-helpers/tsconfig.spec.json",
+          "hash": "15943385144407153049"
+        },
+        {
+          "file": "packages/test-helpers/vite.config.ts",
+          "hash": "4652856610826442690",
+          "deps": [
+            "npm:@nx/vite",
+            "npm:vite"
+          ]
+        }
+      ],
+      "tools": [
+        {
+          "file": "packages/tools/CHANGELOG.md",
+          "hash": "6135579539045063668"
+        },
+        {
+          "file": "packages/tools/README.md",
+          "hash": "4485443306519616053"
+        },
+        {
+          "file": "packages/tools/eslint.config.js",
+          "hash": "12977957751135200527"
+        },
+        {
+          "file": "packages/tools/package.json",
+          "hash": "15748309971109174138",
+          "deps": [
+            "npm:@clack/prompts",
+            "npm:@expo/fingerprint",
+            "npm:@types/adm-zip",
+            "npm:adm-zip",
+            "npm:appdirsjs",
+            "npm:fast-glob@3.3.3",
+            "npm:is-unicode-supported@2.1.0",
+            "npm:nano-spawn",
+            "npm:picocolors",
+            "npm:string-argv",
+            "npm:tar",
+            "npm:tslib"
+          ]
+        },
+        {
+          "file": "packages/tools/project.json",
+          "hash": "15223402372734142940"
+        },
+        {
+          "file": "packages/tools/src/index.ts",
+          "hash": "13431002356922027611"
+        },
+        {
+          "file": "packages/tools/src/lib/__tests__/__fixtures__/glob-test/subdir/test3.txt",
+          "hash": "3244421341483603138"
+        },
+        {
+          "file": "packages/tools/src/lib/__tests__/__fixtures__/glob-test/test1.txt",
+          "hash": "3244421341483603138"
+        },
+        {
+          "file": "packages/tools/src/lib/__tests__/__fixtures__/glob-test/test2.txt",
+          "hash": "3244421341483603138"
+        },
+        {
+          "file": "packages/tools/src/lib/__tests__/cacheManager.test.ts",
+          "hash": "16138611578435464548",
+          "deps": [
+            "test-helpers",
+            "npm:vitest"
+          ]
+        },
+        {
+          "file": "packages/tools/src/lib/__tests__/error.test.ts",
+          "hash": "15484525824924796820"
+        },
+        {
+          "file": "packages/tools/src/lib/__tests__/parse-args.test.ts",
+          "hash": "5198957406290534713",
+          "deps": [
+            "npm:vitest"
+          ]
+        },
+        {
+          "file": "packages/tools/src/lib/__tests__/processExtraSources.test.ts",
+          "hash": "6467327083126756170",
+          "deps": [
+            "npm:vitest"
+          ]
+        },
+        {
+          "file": "packages/tools/src/lib/__tests__/remoteBuildCache.test.ts",
+          "hash": "13937052472026735952",
+          "deps": [
+            "npm:vitest"
+          ]
+        },
+        {
+          "file": "packages/tools/src/lib/__tests__/tools.test.ts",
+          "hash": "13550905546279786636",
+          "deps": [
+            "npm:vitest"
+          ]
+        },
+        {
+          "file": "packages/tools/src/lib/build-cache/common.ts",
+          "hash": "14676447083438422523"
+        },
+        {
+          "file": "packages/tools/src/lib/build-cache/fetchCachedBuild.ts",
+          "hash": "11911130312662897683",
+          "deps": [
+            "npm:adm-zip",
+            "npm:tar"
+          ]
+        },
+        {
+          "file": "packages/tools/src/lib/build-cache/localBuildCache.ts",
+          "hash": "14527001577947110536"
+        },
+        {
+          "file": "packages/tools/src/lib/cacheManager.ts",
+          "hash": "16356932939861982427"
+        },
+        {
+          "file": "packages/tools/src/lib/color.ts",
+          "hash": "17634998384096719447",
+          "deps": [
+            "npm:picocolors"
+          ]
+        },
+        {
+          "file": "packages/tools/src/lib/dev-server/findDevServerPort.ts",
+          "hash": "17898627141292087537"
+        },
+        {
+          "file": "packages/tools/src/lib/dev-server/getNextPort.ts",
+          "hash": "178288315588527128"
+        },
+        {
+          "file": "packages/tools/src/lib/dev-server/handlePortUnavailable.ts",
+          "hash": "11848348049742962439"
+        },
+        {
+          "file": "packages/tools/src/lib/dev-server/isDevServerRunning.ts",
+          "hash": "14131106774519251719"
+        },
+        {
+          "file": "packages/tools/src/lib/dev-server/logAlreadyRunningBundler.ts",
+          "hash": "5559735526093367153"
+        },
+        {
+          "file": "packages/tools/src/lib/env.ts",
+          "hash": "299644482588631877"
+        },
+        {
+          "file": "packages/tools/src/lib/error.ts",
+          "hash": "13036242966406638586"
+        },
+        {
+          "file": "packages/tools/src/lib/fingerprint/index.ts",
+          "hash": "18081878130434080953",
+          "deps": [
+            "npm:@expo/fingerprint"
+          ]
+        },
+        {
+          "file": "packages/tools/src/lib/fingerprint/processExtraSources.ts",
+          "hash": "6638460768121329902",
+          "deps": [
+            "npm:@expo/fingerprint",
+            "npm:fast-glob@3.3.3"
+          ]
+        },
+        {
+          "file": "packages/tools/src/lib/hermes.ts",
+          "hash": "10726516109901518948",
+          "deps": [
+            "npm:react-native"
+          ]
+        },
+        {
+          "file": "packages/tools/src/lib/isInteractive.ts",
+          "hash": "5609775852707283675"
+        },
+        {
+          "file": "packages/tools/src/lib/logger.ts",
+          "hash": "4441722506246613858",
+          "deps": [
+            "npm:@clack/prompts",
+            "npm:is-unicode-supported@2.1.0"
+          ]
+        },
+        {
+          "file": "packages/tools/src/lib/parse-args.ts",
+          "hash": "1254544417752550503",
+          "deps": [
+            "npm:string-argv"
+          ]
+        },
+        {
+          "file": "packages/tools/src/lib/path.ts",
+          "hash": "15642600658590593537"
+        },
+        {
+          "file": "packages/tools/src/lib/project.ts",
+          "hash": "7545786661358909087"
+        },
+        {
+          "file": "packages/tools/src/lib/prompts.ts",
+          "hash": "15566217529143744558",
+          "deps": [
+            "npm:@clack/prompts"
+          ]
+        },
+        {
+          "file": "packages/tools/src/lib/spawn.ts",
+          "hash": "12755261594314005244",
+          "deps": [
+            "npm:nano-spawn"
+          ]
+        },
+        {
+          "file": "packages/tools/tsconfig.json",
+          "hash": "12648671090516240583"
+        },
+        {
+          "file": "packages/tools/tsconfig.lib.json",
+          "hash": "18155349116525859334"
+        },
+        {
+          "file": "packages/tools/tsconfig.spec.json",
+          "hash": "15943385144407153049"
+        },
+        {
+          "file": "packages/tools/vite.config.ts",
+          "hash": "17901833524061736727",
+          "deps": [
+            "npm:@nx/vite",
+            "npm:vite"
+          ]
+        }
+      ],
+      "plugin-brownfield-ios": [
+        {
+          "file": "packages/plugin-brownfield-ios/CHANGELOG.md",
+          "hash": "14801646636060943955"
+        },
+        {
+          "file": "packages/plugin-brownfield-ios/README.md",
+          "hash": "5261999200528302302"
+        },
+        {
+          "file": "packages/plugin-brownfield-ios/eslint.config.js",
+          "hash": "12977957751135200527"
+        },
+        {
+          "file": "packages/plugin-brownfield-ios/package.json",
+          "hash": "4657236701324545733",
+          "deps": [
+            "npm:@react-native-community/cli-config-apple",
+            "npm:@react-native-community/cli-types",
+            "npm:tslib@2.8.1"
+          ]
+        },
+        {
+          "file": "packages/plugin-brownfield-ios/project.json",
+          "hash": "11512995594737834450"
+        },
+        {
+          "file": "packages/plugin-brownfield-ios/src/__tests__/pluginBrownfieldIos.test.ts",
+          "hash": "6472381429474833600",
+          "deps": [
+            "npm:vitest"
+          ]
+        },
+        {
+          "file": "packages/plugin-brownfield-ios/src/index.ts",
+          "hash": "13559616647825341318"
+        },
+        {
+          "file": "packages/plugin-brownfield-ios/src/lib/mergeFrameworks.ts",
+          "hash": "15454893720022952327",
+          "deps": [
+            "platform-apple-helpers",
+            "tools"
+          ]
+        },
+        {
+          "file": "packages/plugin-brownfield-ios/src/lib/pluginBrownfieldIos.ts",
+          "hash": "4758193229273882135",
+          "deps": [
+            "npm:@react-native-community/cli-types",
+            "config",
+            "platform-apple-helpers",
+            "tools"
+          ]
+        },
+        {
+          "file": "packages/plugin-brownfield-ios/template/ios/HelloWorld.xcodeproj/project.pbxproj",
+          "hash": "484186751275772347"
+        },
+        {
+          "file": "packages/plugin-brownfield-ios/template/ios/HelloWorldReact/HelloWorldReact.h",
+          "hash": "2702646829333370932"
+        },
+        {
+          "file": "packages/plugin-brownfield-ios/template/ios/HelloWorldReact/HelloWorldReact.swift",
+          "hash": "15066078863244535344"
+        },
+        {
+          "file": "packages/plugin-brownfield-ios/template/ios/Podfile",
+          "hash": "16627764459917225581"
+        },
+        {
+          "file": "packages/plugin-brownfield-ios/template/package.json",
+          "hash": "6487038992508544544"
+        },
+        {
+          "file": "packages/plugin-brownfield-ios/tsconfig.json",
+          "hash": "12648671090516240583"
+        },
+        {
+          "file": "packages/plugin-brownfield-ios/tsconfig.lib.json",
+          "hash": "17833041087370483432"
+        },
+        {
+          "file": "packages/plugin-brownfield-ios/tsconfig.spec.json",
+          "hash": "15943385144407153049"
+        },
+        {
+          "file": "packages/plugin-brownfield-ios/vite.config.ts",
+          "hash": "15218345942517727262",
+          "deps": [
+            "npm:@nx/vite",
+            "npm:vite"
+          ]
+        }
+      ],
+      "provider-github": [
+        {
+          "file": "packages/provider-github/CHANGELOG.md",
+          "hash": "9916985813544990608"
+        },
+        {
+          "file": "packages/provider-github/README.md",
+          "hash": "9335623124218156722"
+        },
+        {
+          "file": "packages/provider-github/eslint.config.js",
+          "hash": "12977957751135200527"
+        },
+        {
+          "file": "packages/provider-github/package.json",
+          "hash": "2917951895227279259",
+          "deps": [
+            "npm:ts-regex-builder",
+            "npm:tslib@2.8.1"
+          ]
+        },
+        {
+          "file": "packages/provider-github/project.json",
+          "hash": "5865367863875109093"
+        },
+        {
+          "file": "packages/provider-github/src/__tests__/providerGitHub.test.ts",
+          "hash": "15046661417825451246",
+          "deps": [
+            "npm:vitest"
+          ]
+        },
+        {
+          "file": "packages/provider-github/src/index.ts",
+          "hash": "3658698659294252418"
+        },
+        {
+          "file": "packages/provider-github/src/lib/artifacts.ts",
+          "hash": "17554464047306933826",
+          "deps": [
+            "tools"
+          ]
+        },
+        {
+          "file": "packages/provider-github/src/lib/config.ts",
+          "hash": "6896993155002670090",
+          "deps": [
+            "tools",
+            "npm:ts-regex-builder"
+          ]
+        },
+        {
+          "file": "packages/provider-github/src/lib/getGitRemote.ts",
+          "hash": "1903779052922791559",
+          "deps": [
+            "tools"
+          ]
+        },
+        {
+          "file": "packages/provider-github/src/lib/providerGitHub.ts",
+          "hash": "3871013732871916849",
+          "deps": [
+            "tools"
+          ]
+        },
+        {
+          "file": "packages/provider-github/tsconfig.json",
+          "hash": "12648671090516240583"
+        },
+        {
+          "file": "packages/provider-github/tsconfig.lib.json",
+          "hash": "17833041087370483432"
+        },
+        {
+          "file": "packages/provider-github/tsconfig.spec.json",
+          "hash": "15943385144407153049"
+        },
+        {
+          "file": "packages/provider-github/vite.config.ts",
+          "hash": "13182664220685167370",
+          "deps": [
+            "npm:@nx/vite",
+            "npm:vite"
+          ]
+        }
+      ]
+    }
+  }
+}

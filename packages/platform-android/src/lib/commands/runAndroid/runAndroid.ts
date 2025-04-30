@@ -50,6 +50,14 @@ export async function runAndroid(
   projectRoot: string,
   remoteCacheProvider: null | (() => RemoteBuildCache) | undefined,
   fingerprintOptions: FingerprintSources,
+  startDevServer: (options: {
+    root: string;
+    // TODO fix type
+    args: any;
+    reactNativeVersion: string;
+    reactNativePath: string;
+    platforms: Record<string, object>;
+  }) => Promise<void>
 ) {
   intro('Running Android app');
 
@@ -99,6 +107,14 @@ export async function runAndroid(
         await tryLaunchEmulator();
       }
     }
+    console.log('xd');
+    startDevServer({
+      root: projectRoot,
+      reactNativePath: './node_modules/react-native',
+      reactNativeVersion: '0.79',
+      platforms: { ios: {}, android: {} },
+      args,
+    });
 
     if (!binaryPath) {
       await runGradle({ tasks, androidProject, args, artifactName });
