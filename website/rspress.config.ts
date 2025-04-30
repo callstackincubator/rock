@@ -10,7 +10,7 @@ export default defineConfig({
   icon: '/logo.svg',
   outDir: 'build',
   route: {
-    cleanUrls: true
+    cleanUrls: true,
   },
   logo: {
     light: '/logo.svg',
@@ -24,5 +24,9 @@ export default defineConfig({
         content: 'https://github.com/callstack/rnef',
       },
     ],
+    footer: {
+      message:
+        'Copyright © 2025 <a href="https://callstack.com">Callstack</a>.',
+    },
   },
 });
