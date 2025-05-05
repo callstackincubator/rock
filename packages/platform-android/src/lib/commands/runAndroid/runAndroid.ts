@@ -8,6 +8,7 @@ import type { RemoteBuildCache } from '@rnef/tools';
 import {
   fetchCachedBuild,
   formatArtifactName,
+  getLocalBuildCacheBinaryPath,
   intro,
   isInteractive,
   logger,
@@ -60,21 +61,23 @@ export async function runAndroid(
   const mainTaskType = device ? 'assemble' : 'install';
   const tasks = args.tasks ?? [`${mainTaskType}${toPascalCase(args.variant)}`];
 
-  if (!args.binaryPath && args.remoteCache) {
-    const artifactName = await formatArtifactName({
-      platform: 'android',
-      traits: [args.variant],
-      root: projectRoot,
-      fingerprintOptions,
-    });
+  const artifactName = await formatArtifactName({
+    platform: 'android',
+    traits: [args.variant],
+    root: projectRoot,
+    fingerprintOptions,
+  });
+  let binaryPath =
+    args.binaryPath || getLocalBuildCacheBinaryPath(artifactName);
+
+  if (!binaryPath && args.remoteCache) {
     try {
       const cachedBuild = await fetchCachedBuild({
         artifactName,
         remoteCacheProvider,
       });
       if (cachedBuild) {
-        // @todo replace with a more generic way to pass binary path
-        args.binaryPath = cachedBuild.binaryPath;
+        binaryPath = cachedBuild.binaryPath;
       }
     } catch (error) {
       logger.warn((error as RnefError).message);
@@ -95,8 +98,16 @@ export async function runAndroid(
       device.deviceId = await tryLaunchEmulator(device.readableName);
     }
     if (device.deviceId) {
-      await runGradle({ tasks, androidProject, args });
-      await tryInstallAppOnDevice(device, androidProject, args, tasks);
+      if (!binaryPath) {
+        await runGradle({ tasks, androidProject, args, artifactName });
+      }
+      await tryInstallAppOnDevice(
+        device,
+        androidProject,
+        args,
+        tasks,
+        binaryPath
+      );
       await tryLaunchAppOnDevice(device, androidProject, args);
     }
   } else {
@@ -111,15 +122,22 @@ export async function runAndroid(
       }
     }
 
-    await runGradle({ tasks, androidProject, args });
+    if (!binaryPath) {
+      await runGradle({ tasks, androidProject, args, artifactName });
+    }
 
     for (const device of await listAndroidDevices()) {
-      if (args.binaryPath) {
-        await tryInstallAppOnDevice(device, androidProject, args, tasks);
-      }
+      await tryInstallAppOnDevice(
+        device,
+        androidProject,
+        args,
+        tasks,
+        binaryPath
+      );
       await tryLaunchAppOnDevice(device, androidProject, args);
     }
   }
+
   outro('Success 🎉.');
 }
 

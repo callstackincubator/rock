@@ -1,7 +1,7 @@
 import * as fs from 'node:fs';
 import { createRequire } from 'node:module';
 import * as path from 'node:path';
-import type { RemoteBuildCache } from '@rnef/tools';
+import type { FingerprintSources, RemoteBuildCache } from '@rnef/tools';
 import { color, logger } from '@rnef/tools';
 import type { ValidationError } from 'joi';
 import { ConfigTypeSchema } from './schema.js';
@@ -177,10 +177,7 @@ export async function getConfig(
       return validatedConfig.remoteCacheProvider;
     },
     getFingerprintOptions: () =>
-      validatedConfig.fingerprint as {
-        extraSources: string[];
-        ignorePaths: string[];
-      },
+      validatedConfig.fingerprint as FingerprintSources,
   };
 
   const platforms: Record<string, PlatformOutput> = {};
