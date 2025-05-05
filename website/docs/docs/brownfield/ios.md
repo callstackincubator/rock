@@ -75,7 +75,7 @@ To add React Native to your iOS app, we'll package your React Native code into a
 1. Open Terminal and run:
 
    ```sh title="Terminal"
-   rnef package:ios --scheme <framework_target_name> --mode Release
+   rnef package:ios --scheme <framework_target_name> --configuration Release
    ```
 
 ## 6. Add the Framework to Your App:
