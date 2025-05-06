@@ -1,5 +1,12 @@
 # @rnef/platform-ios
 
+## 0.7.5
+
+### Patch Changes
+
+- @rnef/platform-apple-helpers@0.7.5
+- @rnef/tools@0.7.5
+
 ## 0.7.4
 
 ### Patch Changes

@@ -1,5 +1,13 @@
 # @rnef/plugin-brownfield-ios
 
+## 0.7.5
+
+### Patch Changes
+
+- b119921: fix: mark brownfield plugins as public for publishing
+  - @rnef/platform-apple-helpers@0.7.5
+  - @rnef/tools@0.7.5
+
 ## 0.7.4
 
 ### Patch Changes
