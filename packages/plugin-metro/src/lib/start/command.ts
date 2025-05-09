@@ -52,25 +52,25 @@ export const registerStartCommand = (api: PluginApi) => {
         default: '',
       },
       {
-        name: '--project-root <path>, --projectRoot <path>',
+        name: '--project-root, --projectRoot <path>',
         description: 'Path to a custom project root',
         parse: (val: string): string => path.resolve(val),
       },
       {
-        name: '--watch-folders <list>, --watchFolders <list>',
+        name: '--watch-folders, --watchFolders <list>',
         description:
           'Specify any additional folders to be added to the watch list',
         parse: (val: string): Array<string> =>
           val.split(',').map((folder: string) => path.resolve(folder)),
       },
       {
-        name: '--asset-plugins <list>, --assetPlugins <list>',
+        name: '--asset-plugins, --assetPlugins <list>',
         description:
           'Specify any additional asset plugins to be used by the packager by full filepath',
         parse: (val: string): Array<string> => val.split(','),
       },
       {
-        name: '--source-exts <list>, --sourceExts <list>',
+        name: '--source-exts, --sourceExts <list>',
         description:
           'Specify any additional source extensions to be used by the packager',
         parse: (val: string): Array<string> => val.split(','),
