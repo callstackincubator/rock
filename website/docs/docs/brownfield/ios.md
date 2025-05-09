@@ -15,12 +15,12 @@ To add React Native to your iOS app, we'll package your React Native code into a
    ![The menu that appears when user right clicks on the generated framework folder](/brownfield_convert_to_group.png)
 1. Set these build settings for your framework:
 
-   | Build Setting                   | Value | What it does                                                                                      |
-   | ------------------------------- | ----- | ------------------------------------------------------------------------------------------------- |
-   | Build Libraries for Distibution | YES   | Creates a module interface for Swift. Also checks if the framework works with your Xcode version. |
-   | User Script Sandboxing          | NO    | Lets scripts modify files, which we need to create the JavaScript bundle.                         |
-   | Skip Install                    | NO    | Makes sure Xcode creates the framework files we need.                                             |
-   | Enable Module Verifier          | NO    | Skips testing the framework during build, which makes builds faster.                              |
+   | Build Setting                    | Value | What it does                                                                                      |
+   | -------------------------------- | ----- | ------------------------------------------------------------------------------------------------- |
+   | Build Libraries for Distribution | YES   | Creates a module interface for Swift. Also checks if the framework works with your Xcode version. |
+   | User Script Sandboxing           | NO    | Lets scripts modify files, which we need to create the JavaScript bundle.                         |
+   | Skip Install                     | NO    | Makes sure Xcode creates the framework files we need.                                             |
+   | Enable Module Verifier           | NO    | Skips testing the framework during build, which makes builds faster.                              |
 
 ## 2. Set Up CocoaPods:
 
