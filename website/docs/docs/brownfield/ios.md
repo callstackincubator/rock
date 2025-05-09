@@ -12,7 +12,7 @@ To add React Native to your iOS app, we'll package your React Native code into a
    ![Framework Target](/brownfield_framework_target.png)
 1. Give your framework a unique name. You'll use this name when adding it to your main app
 1. Right-click the framework folder and select `Convert to Group`. CocoaPods doesn't work properly with references.
-   ![The menu that appears when user right clicks on the generated framework folder](/brownfield_convert_to_group.png)
+   ![The menu that appears when user right clicks on the generated framework folder](/brownfield_convert_to_group.png). Perform this step for both `<FrameworkName>` and `<FrameworkName>Tests` folders.
 1. Set these build settings for your framework:
 
    | Build Setting                    | Value | What it does                                                                                      |
@@ -58,7 +58,7 @@ To add React Native to your iOS app, we'll package your React Native code into a
 
 ## 5. Create the XCFramework:
 
-1. Add `@rnef/plugin-brownfield-ios` to your project
+1. Add `@rnef/plugin-brownfield-ios` to your project (`npm install -D @rnef/plugin-brownfield-ios`)
 1. Add this to your `rnef.config.mjs`:
 
    ```js title="rnef.config.mjs"
