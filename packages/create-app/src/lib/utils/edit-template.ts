@@ -3,7 +3,7 @@ import * as path from 'node:path';
 import { renameFile, walkDirectory } from './fs.js';
 
 /**
- * Placeholder name used in template, that should be replaced with cleaned-up project name.
+ * Placeholder name used in template, that should be replaced with normalized project name.
  */
 const PLACEHOLDER_NAME = 'HelloWorld';
 
@@ -28,6 +28,10 @@ export function replacePlaceholder(
   projectPath: string,
   normalizedName: string
 ) {
+  if (normalizedName === PLACEHOLDER_NAME) {
+    return;
+  }
+
   for (const filePath of walkDirectory(projectPath).reverse()) {
     if (!fs.statSync(filePath).isDirectory()) {
       replacePlaceholderInTextFile(filePath, normalizedName);
