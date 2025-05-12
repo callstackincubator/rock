@@ -4,8 +4,10 @@ import { renameFile, walkDirectory } from './fs.js';
 
 /**
  * Placeholder name used in template, that should be replaced with project name.
+ * It can contain capital and small letters, numbers and hyphen.
  */
-const DEFAULT_PLACEHOLDER_NAME = 'HelloWorld';
+const PLACEHOLDER_NAME = 'hello-world';
+const PLACEHOLDER_PASCAL_CASE = 'HelloWorld';
 
 /**
  * Rename common files that cannot be put into template literaly, e.g. .gitignore.
@@ -25,7 +27,7 @@ export function renameCommonFiles(projectPath: string) {
  * - Replace placeholder in text files
  */
 export function replacePlaceholder(projectPath: string, projectName: string) {
-  if (projectName === DEFAULT_PLACEHOLDER_NAME) {
+  if (projectName === PLACEHOLDER_NAME) {
     return;
   }
 
@@ -34,14 +36,16 @@ export function replacePlaceholder(projectPath: string, projectName: string) {
       replacePlaceholderInTextFile(filePath, projectName);
     }
 
-    if (path.basename(filePath).includes(DEFAULT_PLACEHOLDER_NAME)) {
-      renameFile(filePath, DEFAULT_PLACEHOLDER_NAME, projectName);
+    if (path.basename(filePath).includes(PLACEHOLDER_NAME)) {
+      renameFile(filePath, PLACEHOLDER_NAME, projectName);
+    } else if (path.basename(filePath).includes(PLACEHOLDER_PASCAL_CASE)) {
+      renameFile(filePath, PLACEHOLDER_PASCAL_CASE, projectName);
     } else if (
-      path.basename(filePath).includes(DEFAULT_PLACEHOLDER_NAME.toLowerCase())
+      path.basename(filePath).includes(PLACEHOLDER_PASCAL_CASE.toLowerCase())
     ) {
       renameFile(
         filePath,
-        DEFAULT_PLACEHOLDER_NAME.toLowerCase(),
+        PLACEHOLDER_PASCAL_CASE.toLowerCase(),
         projectName.toLowerCase()
       );
     }
@@ -49,15 +53,28 @@ export function replacePlaceholder(projectPath: string, projectName: string) {
 }
 
 function replacePlaceholderInTextFile(filePath: string, projectName: string) {
+  const pascalName = transformKebabCaseToPascalCase(projectName);
+
   const fileContent = fs.readFileSync(filePath, 'utf8');
   const replacedFileContent = fileContent
-    .replaceAll(DEFAULT_PLACEHOLDER_NAME, projectName)
+    .replaceAll(PLACEHOLDER_NAME, projectName)
+    .replaceAll(PLACEHOLDER_PASCAL_CASE, pascalName)
     .replaceAll(
-      DEFAULT_PLACEHOLDER_NAME.toLowerCase(),
-      projectName.toLowerCase()
+      PLACEHOLDER_PASCAL_CASE.toLowerCase(),
+      pascalName.toLowerCase()
     );
 
   if (fileContent !== replacedFileContent) {
     fs.writeFileSync(filePath, replacedFileContent, 'utf8');
   }
+}
+
+export function transformKebabCaseToPascalCase(kebabCase: string) {
+  if (!kebabCase) return '';
+
+  return kebabCase
+    .split('-')
+    .filter(Boolean)
+    .map((part) => part.charAt(0).toUpperCase() + part.slice(1))
+    .join('');
 }
