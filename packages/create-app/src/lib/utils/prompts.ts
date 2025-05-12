@@ -13,7 +13,7 @@ import {
 import { vice } from 'gradient-string';
 import path from 'path';
 import type { TemplateInfo } from '../templates.js';
-import { validateProjectName } from '../validate-project-name.js';
+import { validateProjectName } from './project-name.js';
 import { getRnefVersion } from './version.js';
 
 export function printHelpMessage(
@@ -74,9 +74,10 @@ export function printByeMessage(
   outro('Success 🎉.');
 }
 
-export function promptProjectName(): Promise<string> {
+export function promptProjectName(name?: string): Promise<string> {
   return promptText({
     message: 'What is your app named?',
+    initialValue: name,
     validate: validateProjectName,
   });
 }
