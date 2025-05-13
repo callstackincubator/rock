@@ -58,7 +58,10 @@ To add React Native to your iOS app, we'll package your React Native code into a
 
 ## 5. Create the XCFramework:
 
-1. Add `@rnef/plugin-brownfield-ios` to your project (`npm install -D @rnef/plugin-brownfield-ios`)
+1. Add `@rnef/plugin-brownfield-ios` to your project
+   ```
+   npm install -D @rnef/plugin-brownfield-ios
+   ```
 1. Add this to your `rnef.config.mjs`:
 
    ```js title="rnef.config.mjs"
