@@ -9,5 +9,5 @@ const pm = pmArg.replace('--', '');
 for (const project of projects) {
   const cwd = path.dirname(project);
   console.log(`Running "${pm} link" in ${cwd}`);
-  await spawn(pm, ['link', '--global'], { cwd, stdio: 'inherit' });
+  await spawn(pm, ['link'], { cwd, stdio: 'inherit' });
 }

@@ -24,20 +24,11 @@ cd /path/to/cloned/rnef/
 pnpm link-packages
 ```
 
-And then in your test project:
+And then in your test project link dependencies you're using, e.g.:
 
 ```sh
 cd /my/test/project/
-pnpm link --global "@rnef/cli" "@rnef/config" "@rnef/tools" "@rnef/platform-android" "@rnef/platform-ios" "@rnef/platform-apple-helpers" "@rnef/create-app" "@rnef/plugin-metro" "@rnef/plugin-repack" "@rnef/plugin-brownfield-ios"
-```
-
-Update entries in package.json to look like this:
-
-```json
-{
-  "@rnef/cli": "link:../../rnef/packages/cli",
-  "@rnef/platform-android": "link:../../rnef/packages/platform-android"
-}
+pnpm link @rnef/cli @rnef/platform-android @rnef/platform-ios @rnef/plugin-metro
 ```
 
 #### Hoist pnpm dependencies
