@@ -64,31 +64,30 @@ export async function tryInstallAppOnDevice(
       `Installed the app on ${device.readableName} (id: ${deviceId}).`
     );
   } catch (error) {
-    let stderr = (error as SubprocessError).stderr;
-    if (stderr.includes('INSTALL_FAILED_INSUFFICIENT_STORAGE')) {
+    const errorMessage = (error as SubprocessError).stdout;
+    if (errorMessage.includes('INSTALL_FAILED_INSUFFICIENT_STORAGE')) {
       try {
-        loader.message(
-          'Uninstalling the app and trying again due to insufficient storage'
-        );
-        await spawn(adbPath, [
-          '-s',
-          deviceId,
-          'uninstall',
-          androidProject.packageName,
-        ]);
+        loader.message('Trying to install again due to insufficient storage');
+        const appId = args.appId ?? androidProject.applicationId;
+        await spawn(adbPath, ['-s', deviceId, 'uninstall', appId]);
         await spawn(adbPath, adbArgs);
         loader.stop(
           `Installed the app on ${device.readableName} (id: ${deviceId}).`
         );
         return;
       } catch (error) {
-        stderr = (error as SubprocessError).stderr;
+        loader.stop(
+          `Failed: Uninstalling and installing the app on ${device.readableName} (id: ${deviceId})`,
+          1
+        );
+        const errorMessage = (error as SubprocessError).stdout;
+        throw new RnefError(errorMessage);
       }
     }
     loader.stop(
       `Failed: Installing the app on ${device.readableName} (id: ${deviceId})`,
       1
     );
-    throw new RnefError(stderr);
+    throw new RnefError(errorMessage);
   }
 }
