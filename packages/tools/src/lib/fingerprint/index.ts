@@ -29,19 +29,19 @@ export async function nativeFingerprint(
   options: FingerprintOptions
 ): Promise<FingerprintResult> {
   const platform = options.platform;
-
+  console.log('platform', platform);
   const fingerprint = await createFingerprintAsync(path, {
     platforms: [platform],
     dirExcludes: [
-      'android/build',
-      'android/**/build',
-      'android/**/.cxx',
+      // @expo/fingerprint has hardcoded android/app dir, which we allow to configure with appName
+      // Ref: https://github.com/expo/expo/blob/84079fa454e3498329f127b8e71fb08d2390bbd0/packages/%40expo/fingerprint/src/Options.ts#L20-L22
+      'android/**/build', 
+      'android/**/.cxx', 
+      'android/**/.gradle', 
       'ios/DerivedData',
-      'ios/Pods',
       'node_modules',
       'android/local.properties',
       'android/.idea',
-      'android/.gradle',
     ],
     extraSources: processExtraSources(
       options.extraSources,

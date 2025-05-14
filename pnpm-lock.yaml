@@ -374,8 +374,8 @@ importers:
         specifier: ^0.10.0
         version: 0.10.0
       '@expo/fingerprint':
-        specifier: ^0.11.6
-        version: 0.11.6
+        specifier: ^0.12.4
+        version: 0.12.4
       '@types/adm-zip':
         specifier: ^0.5.7
         version: 0.5.7
@@ -1430,8 +1430,8 @@ packages:
     resolution: {integrity: sha512-vH9PiIMMwvhCx31Af3HiGzsVNULDbyVkHXwlemn/B0TFj/00ho3y55efXrUZTfQipxoHC5u4xq6zblww1zm1Ig==}
     engines: {node: ^18.18.0 || ^20.9.0 || >=21.1.0}
 
-  '@expo/fingerprint@0.11.6':
-    resolution: {integrity: sha512-hlVIfMEJYZIqIFMjeGRN5GhK/h6vJ3M4QVc1ZD8F0Bh7gMeI+jZkEyZdL5XT29jergQrksP638e2qFwgrGTw/w==}
+  '@expo/fingerprint@0.12.4':
+    resolution: {integrity: sha512-HOJVvjiQYVHIouCOfFf4JRrQvBDIV/12GVG2iwbw1iGwmpQVkPgEXa9lN0f2yuS4J3QXHs73wr9jvuCjMmJlfw==}
     hasBin: true
 
   '@expo/spawn-async@1.7.2':
@@ -8461,24 +8461,24 @@ snapshots:
     dependencies:
       levn: 0.4.1
 
-  '@expo/fingerprint@0.11.6':
+  '@expo/fingerprint@0.12.4':
     dependencies:
       '@expo/spawn-async': 1.7.2
       arg: 5.0.2
       chalk: 4.1.2
-      debug: 4.3.7
+      debug: 4.4.0
       find-up: 5.0.0
       getenv: 1.0.0
-      minimatch: 3.1.2
+      minimatch: 9.0.5
       p-limit: 3.1.0
       resolve-from: 5.0.0
-      semver: 7.6.3
+      semver: 7.7.1
     transitivePeerDependencies:
       - supports-color
 
   '@expo/spawn-async@1.7.2':
     dependencies:
-      cross-spawn: 7.0.3
+      cross-spawn: 7.0.6
 
   '@fastify/ajv-compiler@3.6.0':
     dependencies:
@@ -11287,7 +11287,7 @@ snapshots:
 
   execa@5.1.1:
     dependencies:
-      cross-spawn: 7.0.3
+      cross-spawn: 7.0.6
       get-stream: 6.0.1
       human-signals: 2.1.0
       is-stream: 2.0.1
@@ -11555,7 +11555,7 @@ snapshots:
 
   foreground-child@3.3.0:
     dependencies:
-      cross-spawn: 7.0.3
+      cross-spawn: 7.0.6
       signal-exit: 4.1.0
 
   forever-agent@0.6.1: {}
