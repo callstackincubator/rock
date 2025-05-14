@@ -117,7 +117,15 @@ const importUp = async (
   return importUp(parentDir, name);
 };
 
-export async function getConfig(dir: string): Promise<ConfigOutput> {
+export async function getConfig(
+  dir: string,
+  internalPlugins: Array<
+    (ownConfig: {
+      platforms: ConfigOutput['platforms'];
+      root: ConfigOutput['root'];
+    }) => PluginType
+  >
+): Promise<ConfigOutput> {
   const { config, filePathWithExt, configDir } = await importUp(
     dir,
     'rnef.config'
@@ -167,13 +175,6 @@ export async function getConfig(dir: string): Promise<ConfigOutput> {
       },
   };
 
-  if (validatedConfig.plugins) {
-    // plugins register commands
-    for (const plugin of validatedConfig.plugins) {
-      assignOriginToCommand(plugin, api, validatedConfig);
-    }
-  }
-
   const platforms: Record<string, PlatformOutput> = {};
   if (validatedConfig.platforms) {
     // platforms register commands and custom platform functionality (TBD)
@@ -183,8 +184,23 @@ export async function getConfig(dir: string): Promise<ConfigOutput> {
     }
   }
 
+  if (validatedConfig.plugins) {
+    // plugins register commands
+    for (const plugin of validatedConfig.plugins) {
+      assignOriginToCommand(plugin, api, validatedConfig);
+    }
+  }
+
   if (validatedConfig.bundler) {
     assignOriginToCommand(validatedConfig.bundler, api, validatedConfig);
+  }
+
+  for (const internalPlugin of internalPlugins) {
+    assignOriginToCommand(
+      internalPlugin({ root: projectRoot, platforms }),
+      api,
+      validatedConfig
+    );
   }
 
   const outputConfig: ConfigOutput = {
