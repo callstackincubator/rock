@@ -140,13 +140,17 @@ export default {
 
 ## Remote Cache Configuration
 
-One of the key features of RNEF is remote build caching to speed up your development workflow. When set, the CLI will:
+One of the key features of RNEF is remote build caching to speed up your development workflow. By remote cache we mean native build artifacts (e.g. APK, or IPA binaries), which are discoverable by the user and available for download. Remote cache can live on any static storage provider, such as S3, R2, or GitHub Artifacts. For RNEF to know how and where to access this cache, you'll need to define `remoteCacheProvider`, which can be either bundled with the framework (such as the one for GitHub Actions) or a custom one that you can provide.
+
+When `remoteCacheProvider` is set, the CLI will:
 
 1. Look at local cache under `.rnef/` directory for builds downloaded from a remote cache.
 1. If not found, it will look for a remote build matching your local native project state (a fingerprint).
 1. If not found, it will fall back to local build.
 
-Currently it's only available as a GitHub Action, for which you can configure it as:
+### Built-in GitHub Actions provider
+
+RNEF comes with built-in GitHub Actions remote cache provider, which downloads native build artifacts uploaded through [`actions/upload-artifact`](https://github.com/actions/upload-artifact) action from [GitHub Worfklow Artifacts](https://docs.github.com/en/actions/writing-workflows/choosing-what-your-workflow-does/storing-and-sharing-data-from-a-workflow). You can configure it as:
 
 ```ts
 export default {
@@ -154,6 +158,43 @@ export default {
   remoteCacheProvider: 'github-actions',
 };
 ```
+
+### Custom remote cache provider
+
+You can plug in any remote storage by implementing [`RemoteBuildCache`](https://github.com/callstack/rnef/blob/main/packages/tools/src/lib/build-cache/common.ts#L22) interface. A simplest remote cache provider, that loads artifact from a local directory available on your filesystem, would look like this:
+
+```ts
+class DummyRemoteCacheProvider {
+  name = 'dummy';
+  // artifactName is provided by RNEF, and will look like rnef-android-debug-7af554b93cd696ca95308fdebe3a4484001bb7b4
+  async list({ artifactName, limit }) {
+    const url = `/path/to/${artifactName}`;
+    return [{ name: artifactName, url }];
+  }
+  async download({ artifact, loader }) {
+    return { name: artifact.name, path: artifact.url };
+  }
+  async delete({ artifactName, loader }) {
+    return false;
+  }
+  async upload({ artifactPath, artifactName, loader }) {
+    return null;
+  }
+}
+```
+
+Then pass this class as a value of the `remoteCacheProvider` config key:
+
+```ts
+export default {
+  // ...
+  remoteCacheProvider: DummyRemoteCacheProvider,
+};
+```
+
+Once this is set up, when running `run:[platform]` commands, RNEF will calculate the hash of your native project for said platform, and use your `download` method to resolve the path to the binary that will be installed on a device.
+
+### Opt-out of remote cache
 
 If you only want to use the CLI without the remote cache, and skip the steps `1.` and `2.` and a warning that you're not using a remote provider, you can disable this functionality by setting it to `null`:
 
@@ -181,3 +222,7 @@ export default {
 ```
 
 The fingerprint calculation uses [`@expo/fingerprint`](https://docs.expo.dev/versions/latest/sdk/fingerprint/) under the hood.
+
+```
+
+```
