@@ -175,19 +175,19 @@ export async function getConfig(
       },
   };
 
-  if (validatedConfig.plugins) {
-    // plugins register commands
-    for (const plugin of validatedConfig.plugins) {
-      assignOriginToCommand(plugin, api, validatedConfig);
-    }
-  }
-
   const platforms: Record<string, PlatformOutput> = {};
   if (validatedConfig.platforms) {
     // platforms register commands and custom platform functionality (TBD)
     for (const platform in validatedConfig.platforms) {
       const platformOutput = validatedConfig.platforms[platform](api);
       platforms[platform] = platformOutput;
+    }
+  }
+
+  if (validatedConfig.plugins) {
+    // plugins register commands
+    for (const plugin of validatedConfig.plugins) {
+      assignOriginToCommand(plugin, api, validatedConfig);
     }
   }
 

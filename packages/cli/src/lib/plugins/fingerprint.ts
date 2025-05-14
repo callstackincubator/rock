@@ -6,6 +6,7 @@ import {
   logger,
   nativeFingerprint,
   outro,
+  RnefError,
   spinner,
 } from '@rnef/tools';
 
@@ -22,10 +23,10 @@ type ConfigFingerprintOptions = {
 export async function nativeFingerprintCommand(
   path = '.',
   { extraSources, ignorePaths }: ConfigFingerprintOptions,
-  options?: NativeFingerprintCommandOptions
+  options: NativeFingerprintCommandOptions
 ) {
-  path = path ?? '.';
-  const platform = options?.platform ?? 'ios';
+  validateOptions(options);
+  const platform = options.platform;
   const readablePlatformName = platform === 'ios' ? 'iOS' : 'Android';
 
   if (options?.raw || !isInteractive()) {
@@ -59,6 +60,19 @@ export async function nativeFingerprintCommand(
   outro('Success 🎉.');
 }
 
+function validateOptions(options: NativeFingerprintCommandOptions) {
+  if (!options.platform) {
+    throw new RnefError(
+      'The --platform flag is required. Please specify either "ios" or "android".'
+    );
+  }
+  if (options.platform !== 'ios' && options.platform !== 'android') {
+    throw new RnefError(
+      `Unsupported platform "${options.platform}". Please specify either "ios" or "android".`
+    );
+  }
+}
+
 export const fingerprintPlugin = () => (api: PluginApi) => {
   api.registerCommand({
     name: 'fingerprint',
@@ -78,7 +92,7 @@ export const fingerprintPlugin = () => (api: PluginApi) => {
       },
     ],
     args: [
-      { name: 'path', description: 'Directory to calculate fingerprint for' },
+      { name: '[path]', description: 'Directory to calculate fingerprint for' },
     ],
   });
 

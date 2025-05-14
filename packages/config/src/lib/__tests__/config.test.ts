@@ -27,7 +27,7 @@ test.each([['.js'], ['.mjs'], ['.ts']])(
   plugins: [],
 }`,
     });
-    const config = await getConfig(DIR);
+    const config = await getConfig(DIR, []);
     expect(config).toMatchObject({ commands: [] });
   }
 );
@@ -52,7 +52,7 @@ module.exports = {
 };
 `,
   });
-  const config = await getConfig(DIR);
+  const config = await getConfig(DIR, []);
   expect(config).toMatchObject({
     commands: [
       {
@@ -67,15 +67,11 @@ module.exports = {
 test('should load plugin that registers a command', async () => {
   const __dirname = dirname(fileURLToPath(import.meta.url));
   const config = await getConfig(
-    join(__dirname, './__fixtures__/config-with-sample-plugin')
+    join(__dirname, './__fixtures__/config-with-sample-plugin'),
+    []
   );
   expect(config).toMatchObject({
     commands: [
-      {
-        action: expect.any(Function),
-        description: 'Test command',
-        name: 'test-command',
-      },
       {
         action: expect.any(Function),
         description: 'Build android',
@@ -107,6 +103,11 @@ test('should load plugin that registers a command', async () => {
             name: '--remote',
           },
         ],
+      },
+      {
+        action: expect.any(Function),
+        description: 'Test command',
+        name: 'test-command',
       },
     ],
   });
