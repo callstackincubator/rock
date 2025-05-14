@@ -3,14 +3,14 @@ pageType: home
 
 hero:
   name: React Native Enterprise Framework
-  tagline: Build once, reuse everywhere
+  tagline: A successor to Community CLI with focus on modularity, build reuse and incremental adoption
   actions:
     - theme: brand
       text: Learn more
       link: /docs/getting-started/introduction
-    # - theme: alt
-    #   text: GitHub
-    #   link: https://github.com/callstack/rnef
+    - theme: alt
+      text: Quick start
+      link: /docs/getting-started/index
 features:
   - title: MODULAR DESIGN
     details: Add your supported platforms and plugins, and integrate existing tools

@@ -1,5 +1,29 @@
 # @rnef/plugin-brownfield-android
 
+## 0.7.7
+
+### Patch Changes
+
+- Updated dependencies [5944f07]
+- Updated dependencies [07d7668]
+  - @rnef/platform-android@0.7.7
+  - @rnef/tools@0.7.7
+
+## 0.7.6
+
+### Patch Changes
+
+- @rnef/platform-android@0.7.6
+- @rnef/tools@0.7.6
+
+## 0.7.5
+
+### Patch Changes
+
+- b119921: fix: mark brownfield plugins as public for publishing
+  - @rnef/platform-android@0.7.5
+  - @rnef/tools@0.7.5
+
 ## 0.7.4
 
 ### Patch Changes

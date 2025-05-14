@@ -64,7 +64,7 @@ export async function getBuildSettings(
 
   const wrapperExtension = targetSettings.WRAPPER_EXTENSION;
 
-  if (wrapperExtension === 'app') {
+  if (wrapperExtension === 'app' || wrapperExtension === 'framework') {
     const buildSettings = settings[targetIndex].buildSettings as BuildSettings;
 
     if (!buildSettings) {
@@ -82,7 +82,7 @@ export async function getBuildSettings(
   }
 
   throw new RnefError(
-    `Failed to get build settings for your project. Looking for "app" wrapper extension but found: ${wrapperExtension}`
+    `Failed to get build settings for your project. Looking for "app" or "framework" wrapper extension but found: ${wrapperExtension}`
   );
 }
 

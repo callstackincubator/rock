@@ -1,5 +1,28 @@
 # @rnef/platform-ios
 
+## 0.7.7
+
+### Patch Changes
+
+- 07d7668: fix: lazy load autolinking platform config
+  - @rnef/platform-apple-helpers@0.7.7
+  - @rnef/tools@0.7.7
+
+## 0.7.6
+
+### Patch Changes
+
+- Updated dependencies [232e0a6]
+  - @rnef/platform-apple-helpers@0.7.6
+  - @rnef/tools@0.7.6
+
+## 0.7.5
+
+### Patch Changes
+
+- @rnef/platform-apple-helpers@0.7.5
+- @rnef/tools@0.7.5
+
 ## 0.7.4
 
 ### Patch Changes

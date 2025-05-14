@@ -1,5 +1,25 @@
 # @rnef/platform-android
 
+## 0.7.7
+
+### Patch Changes
+
+- 5944f07: feat: retry installing android app when insufficient storage
+- 07d7668: fix: lazy load autolinking platform config
+  - @rnef/tools@0.7.7
+
+## 0.7.6
+
+### Patch Changes
+
+- @rnef/tools@0.7.6
+
+## 0.7.5
+
+### Patch Changes
+
+- @rnef/tools@0.7.5
+
 ## 0.7.4
 
 ### Patch Changes

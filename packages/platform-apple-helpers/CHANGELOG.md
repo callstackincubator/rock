@@ -1,5 +1,24 @@
 # @rnef/platform-apple-helpers
 
+## 0.7.7
+
+### Patch Changes
+
+- @rnef/tools@0.7.7
+
+## 0.7.6
+
+### Patch Changes
+
+- 232e0a6: fix: allow framework as wrapper extension
+  - @rnef/tools@0.7.6
+
+## 0.7.5
+
+### Patch Changes
+
+- @rnef/tools@0.7.5
+
 ## 0.7.4
 
 ### Patch Changes
