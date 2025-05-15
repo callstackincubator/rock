@@ -11,7 +11,6 @@ export type SupportedRemoteCacheProviders = 'github-actions';
 export type RemoteArtifact = {
   name: string;
   url: string;
-  id?: string;
 };
 
 export type LocalArtifact = {
