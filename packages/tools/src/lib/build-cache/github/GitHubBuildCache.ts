@@ -52,14 +52,14 @@ Include "repo", "workflow", and "read:org" permissions.`
   }: {
     artifactName?: string;
     limit?: number;
-  }): Promise<RemoteArtifact[] | null> {
+  }): Promise<RemoteArtifact[]> {
     const repoDetails = await this.detectRepoDetails();
     if (!getGitHubToken()) {
       logger.warn(`No GitHub Personal Access Token found.`);
-      return null;
+      return [];
     }
     if (!repoDetails) {
-      return null;
+      return [];
     }
     const artifacts = await fetchGitHubArtifactsByName(
       artifactName,
@@ -67,7 +67,7 @@ Include "repo", "workflow", and "read:org" permissions.`
       limit
     );
     if (artifacts.length === 0) {
-      return null;
+      return [];
     }
     return artifacts.map((artifact) => ({
       name: artifact.name,

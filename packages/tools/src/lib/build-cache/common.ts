@@ -32,7 +32,7 @@ export interface RemoteBuildCache {
    * List available artifacts matching the given name pattern
    * @param artifactName - Passed after fingerprinting the build, e.g. `rnef-android-debug-1234567890` for android in debug variant
    * @param limit - Optional maximum number of artifacts to return
-   * @returns Array of matching remote artifacts, or null if none found
+   * @returns Array of matching remote artifacts, or empty array if none found
    */
   list({
     artifactName,
@@ -40,7 +40,7 @@ export interface RemoteBuildCache {
   }: {
     artifactName: string | undefined;
     limit?: number;
-  }): Promise<RemoteArtifact[] | null>;
+  }): Promise<RemoteArtifact[]>;
 
   /**
    * Download a remote artifact to local storage
