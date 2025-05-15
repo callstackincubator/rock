@@ -110,9 +110,8 @@ Include "repo", "workflow", and "read:org" permissions.`
     return await deleteGitHubArtifacts(artifact, repoDetails, loader);
   }
 
-  async upload() {
-    logger.warn('Uploading artifacts to GitHub is not supported.');
-    return null;
+  async upload(): Promise<RemoteArtifact> {
+    throw new Error('Uploading artifacts to GitHub is not supported.');
   }
 }
 

@@ -24,7 +24,7 @@ class DummyRemoteCacheProvider implements RemoteBuildCache {
   }
   async upload({ artifact }: { artifact: LocalArtifact }) {
     uploadMock(artifact.path, artifact.name);
-    return null;
+    return { name: artifact.name, url: '/path/to/dummy' };
   }
 }
 

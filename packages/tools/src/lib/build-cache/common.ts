@@ -73,7 +73,7 @@ export interface RemoteBuildCache {
    * Upload a local artifact to remote storage
    * @param artifact - Local artifact to upload, as returned by `download` method
    * @param loader - Optional progress indicator
-   * @returns Remote artifact info if upload successful, null otherwise
+   * @returns Remote artifact info if upload successful, throws otherwise
    */
   upload({
     artifact,
@@ -81,7 +81,7 @@ export interface RemoteBuildCache {
   }: {
     artifact: LocalArtifact;
     loader?: ReturnType<typeof spinner>;
-  }): Promise<RemoteArtifact | null>;
+  }): Promise<RemoteArtifact>;
 }
 
 /**
