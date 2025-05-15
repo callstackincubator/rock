@@ -173,12 +173,7 @@ class DummyRemoteCacheProvider {
   async download({ artifact, loader }) {
     return { name: artifact.name, path: artifact.url };
   }
-  async delete({ artifact, loader }) {
-    return false;
-  }
-  async upload({ artifactPath, artifactName, loader }) {
-    return null;
-  }
+  // optionally implement delete and upload methods
 }
 ```
 
