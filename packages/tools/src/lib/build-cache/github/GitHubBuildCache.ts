@@ -10,7 +10,6 @@ import type {
   RemoteArtifact,
   RemoteBuildCache,
 } from '../common.js';
-import { getLocalArtifactPath } from '../common.js';
 import {
   deleteGitHubArtifacts,
   downloadGitHubArtifact,
@@ -78,17 +77,22 @@ Include "repo", "workflow", and "read:org" permissions.`
 
   async download({
     artifact,
+    targetURL,
     loader,
   }: {
     artifact: RemoteArtifact;
+    targetURL: URL;
     loader?: ReturnType<typeof spinner>;
   }): Promise<LocalArtifact> {
-    const artifactPath = getLocalArtifactPath(artifact.name);
-    await downloadGitHubArtifact(artifact.url, artifactPath, this.name, loader);
-    await extractArtifactTarballIfNeeded(artifactPath);
+    await downloadGitHubArtifact(
+      artifact.url,
+      targetURL.pathname,
+      this.name,
+      loader
+    );
+    await extractArtifactTarballIfNeeded(targetURL.pathname);
     return {
       name: artifact.name,
-      path: artifactPath,
     };
   }
 

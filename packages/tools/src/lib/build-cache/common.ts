@@ -15,7 +15,6 @@ export type RemoteArtifact = {
 
 export type LocalArtifact = {
   name: string;
-  path: string;
 };
 
 /**
@@ -44,14 +43,17 @@ export interface RemoteBuildCache {
   /**
    * Download a remote artifact to local storage
    * @param artifact - Remote artifact to download, as returned by `list` method
+   * @param targetURL - Local file URL to download the artifact to
    * @param loader - Optional progress indicator
    * @returns Local artifact info after download
    */
   download({
     artifact,
+    targetURL,
     loader,
   }: {
     artifact: RemoteArtifact;
+    targetURL: URL;
     loader?: ReturnType<typeof spinner>;
   }): Promise<LocalArtifact>;
 
@@ -70,16 +72,16 @@ export interface RemoteBuildCache {
   }): Promise<boolean>;
 
   /**
-   * Upload a local artifact to remote storage
-   * @param artifact - Local artifact to upload, as returned by `download` method
+   * Upload a local artifact stored in build cache to remote storage
+   * @param artifactName - Name of the artifact to upload, e.g. `rnef-android-debug-1234567890` for android in debug variant
    * @param loader - Optional progress indicator
    * @returns Remote artifact info if upload successful, throws otherwise
    */
   upload({
-    artifact,
+    artifactName,
     loader,
   }: {
-    artifact: LocalArtifact;
+    artifactName: string;
     loader?: ReturnType<typeof spinner>;
   }): Promise<RemoteArtifact>;
 }

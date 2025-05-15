@@ -4,6 +4,7 @@ import logger from '../logger.js';
 import { getProjectRoot } from '../project.js';
 import { spinner } from '../prompts.js';
 import {
+  getLocalArtifactPath,
   getLocalBinaryPath,
   type RemoteBuildCache,
   type SupportedRemoteCacheProviders,
@@ -69,12 +70,14 @@ Proceeding with local build.`);
   }
 
   loader.start(`Downloading cached build from ${remoteBuildCache.name}`);
+  const localArtifactPath = getLocalArtifactPath(artifactName);
   const fetchedBuild = await remoteBuildCache.download({
     artifact: artifacts[0],
+    targetURL: new URL(localArtifactPath, import.meta.url),
     loader,
   });
 
-  const binaryPath = getLocalBinaryPath(fetchedBuild.path);
+  const binaryPath = getLocalBinaryPath(localArtifactPath);
   if (!binaryPath) {
     loader.stop(`No binary found for "${artifactName}".`);
     return null;
@@ -86,7 +89,7 @@ Proceeding with local build.`);
 
   return {
     name: fetchedBuild.name,
-    artifactPath: fetchedBuild.path,
+    artifactPath: localArtifactPath,
     binaryPath,
   };
 }
