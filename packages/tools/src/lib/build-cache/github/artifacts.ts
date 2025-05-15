@@ -4,6 +4,7 @@ import cacheManager from '../../cacheManager.js';
 import { color } from '../../color.js';
 import logger from '../../logger.js';
 import type { spinner } from '../../prompts.js';
+import type { RemoteArtifact } from '../common.js';
 import { getGitHubToken, type GitHubRepoDetails } from './config.js';
 
 const PAGE_SIZE = 100; // Maximum allowed by GitHub API
@@ -166,6 +167,69 @@ export async function downloadGitHubArtifact(
   } catch (error) {
     console.log('Error: ', error);
     throw new Error(`Failed to download cached build ${error}`);
+  }
+}
+
+export async function deleteGitHubArtifacts(
+  artifact: RemoteArtifact,
+  repoDetails: GitHubRepoDetails,
+  loader?: ReturnType<typeof spinner>
+): Promise<boolean> {
+  const artifacts = await fetchGitHubArtifactsByName(
+    artifact.name,
+    repoDetails
+  );
+  if (artifacts.length === 0) {
+    loader?.stop(`No artifact found with name "${artifact.name}" to delete.`);
+    return false;
+  }
+  loader?.start(
+    `Found ${artifacts.length} artifacts named "${artifact.name}". Deleting...`
+  );
+  try {
+    const owner = repoDetails.owner;
+    const repo = repoDetails.repository;
+
+    // Delete all matching artifacts
+    let deletedCount = 0;
+    for (const artifact of artifacts) {
+      const artifactId = artifact.id;
+      const url = `https://api.github.com/repos/${owner}/${repo}/actions/artifacts/${artifactId}`;
+
+      const response = await fetch(url, {
+        method: 'DELETE',
+        headers: {
+          Authorization: `Bearer ${getGitHubToken()}`,
+          Accept: 'application/vnd.github+json',
+        },
+      });
+
+      if (!response.ok) {
+        logger.warn(
+          `Failed to delete artifact ID ${artifactId}: ${response.status} ${response.statusText}`
+        );
+        continue;
+      }
+
+      deletedCount++;
+    }
+
+    if (deletedCount < artifacts.length) {
+      loader?.stop(
+        `Partially succeeded: deleted ${deletedCount}/${artifacts.length} artifacts named "${artifact.name}".`
+      );
+      return true;
+    } else {
+      loader?.stop(
+        `Successfully deleted all ${deletedCount} artifacts named "${artifact.name}".`
+      );
+      return true;
+    }
+  } catch (error) {
+    loader?.stop(
+      `Failed to delete artifacts named "${artifact.name}": ${error}`
+    );
+    return false;
   }
 }
 

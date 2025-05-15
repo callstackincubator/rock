@@ -12,6 +12,7 @@ import type {
 } from '../common.js';
 import { getLocalArtifactPath } from '../common.js';
 import {
+  deleteGitHubArtifacts,
   downloadGitHubArtifact,
   fetchGitHubArtifactsByName,
 } from './artifacts.js';
@@ -57,11 +58,9 @@ Include "repo", "workflow", and "read:org" permissions.`
       logger.warn(`No GitHub Personal Access Token found.`);
       return null;
     }
-
     if (!repoDetails) {
       return null;
     }
-
     const artifacts = await fetchGitHubArtifactsByName(
       artifactName,
       repoDetails,
@@ -70,7 +69,6 @@ Include "repo", "workflow", and "read:org" permissions.`
     if (artifacts.length === 0) {
       return null;
     }
-
     return artifacts.map((artifact) => ({
       name: artifact.name,
       url: artifact.downloadUrl,
@@ -95,10 +93,10 @@ Include "repo", "workflow", and "read:org" permissions.`
   }
 
   async delete({
-    artifactName,
+    artifact,
     loader,
   }: {
-    artifactName: string;
+    artifact: RemoteArtifact;
     loader?: ReturnType<typeof spinner>;
   }): Promise<boolean> {
     const repoDetails = await this.detectRepoDetails();
@@ -106,70 +104,10 @@ Include "repo", "workflow", and "read:org" permissions.`
       logger.warn(`No GitHub Personal Access Token found.`);
       return false;
     }
-
     if (!repoDetails) {
       return false;
     }
-
-    const artifacts = await fetchGitHubArtifactsByName(
-      artifactName,
-      repoDetails
-    );
-
-    if (artifacts.length === 0) {
-      loader?.stop(`No artifact found with name "${artifactName}" to delete.`);
-      return false;
-    }
-
-    loader?.start(
-      `Found ${artifacts.length} artifacts named "${artifactName}". Deleting...`
-    );
-
-    try {
-      const owner = repoDetails.owner;
-      const repo = repoDetails.repository;
-
-      // Delete all matching artifacts
-      let deletedCount = 0;
-      for (const artifact of artifacts) {
-        const artifactId = artifact.id;
-        const url = `https://api.github.com/repos/${owner}/${repo}/actions/artifacts/${artifactId}`;
-
-        const response = await fetch(url, {
-          method: 'DELETE',
-          headers: {
-            Authorization: `Bearer ${getGitHubToken()}`,
-            Accept: 'application/vnd.github+json',
-          },
-        });
-
-        if (!response.ok) {
-          logger.warn(
-            `Failed to delete artifact ID ${artifactId}: ${response.status} ${response.statusText}`
-          );
-          continue;
-        }
-
-        deletedCount++;
-      }
-
-      if (deletedCount < artifacts.length) {
-        loader?.stop(
-          `Partially succeeded: deleted ${deletedCount}/${artifacts.length} artifacts named "${artifactName}".`
-        );
-        return true;
-      } else {
-        loader?.stop(
-          `Successfully deleted all ${deletedCount} artifacts named "${artifactName}".`
-        );
-        return true;
-      }
-    } catch (error) {
-      loader?.stop(
-        `Failed to delete artifacts named "${artifactName}": ${error}`
-      );
-      return false;
-    }
+    return await deleteGitHubArtifacts(artifact, repoDetails, loader);
   }
 
   async upload() {

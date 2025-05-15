@@ -1,5 +1,6 @@
 import { expect, test } from 'vitest';
 import type {
+  LocalArtifact,
   RemoteArtifact,
   RemoteBuildCache,
 } from '../build-cache/common.js';
@@ -15,20 +16,14 @@ class DummyRemoteCacheProvider implements RemoteBuildCache {
   async download({ artifact }: { artifact: RemoteArtifact }) {
     return { name: artifact.name, path: artifact.url };
   }
-  async delete({ artifactName }: { artifactName: string }) {
-    if (artifactName === 'dummy') {
+  async delete({ artifact }: { artifact: RemoteArtifact }) {
+    if (artifact.name === 'dummy') {
       return true;
     }
     return false;
   }
-  async upload({
-    artifactPath,
-    artifactName,
-  }: {
-    artifactPath: string;
-    artifactName: string;
-  }) {
-    uploadMock(artifactPath, artifactName);
+  async upload({ artifact }: { artifact: LocalArtifact }) {
+    uploadMock(artifact.path, artifact.name);
     return null;
   }
 }
@@ -68,9 +63,13 @@ test('dummy remote cache provider deletes artifacts', async () => {
   const remoteBuildCache = await createRemoteBuildCache(
     DummyRemoteCacheProvider
   );
-  const result = await remoteBuildCache?.delete({ artifactName: 'dummy' });
+  const result = await remoteBuildCache?.delete({
+    artifact: { name: 'dummy', url: '/path/to/dummy' },
+  });
   expect(result).toEqual(true);
-  const result2 = await remoteBuildCache?.delete({ artifactName: 'dummy2' });
+  const result2 = await remoteBuildCache?.delete({
+    artifact: { name: 'dummy2', url: '/path/to/dummy2' },
+  });
   expect(result2).toEqual(false);
 });
 
@@ -79,8 +78,7 @@ test('dummy remote cache provider uploads artifacts', async () => {
     DummyRemoteCacheProvider
   );
   await remoteBuildCache?.upload({
-    artifactPath: '/path/to/dummy',
-    artifactName: 'dummy',
+    artifact: { path: '/path/to/dummy', name: 'dummy' },
   });
   expect(uploadMock).toHaveBeenCalledWith('/path/to/dummy', 'dummy');
 });

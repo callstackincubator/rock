@@ -161,20 +161,19 @@ export default {
 
 ### Custom remote cache provider
 
-You can plug in any remote storage by implementing [`RemoteBuildCache`](https://github.com/callstack/rnef/blob/main/packages/tools/src/lib/build-cache/common.ts#L22) interface. A simplest remote cache provider, that loads artifact from a local directory available on your filesystem, would look like this:
+You can plug in any remote storage by implementing [`RemoteBuildCache`](https://github.com/callstack/rnef/blob/main/packages/tools/src/lib/build-cache/common.ts#L27) interface. A simplest remote cache provider, that loads artifact from a local directory available on your filesystem, would look like this:
 
 ```ts
 class DummyRemoteCacheProvider {
   name = 'dummy';
   // artifactName is provided by RNEF, and will look like rnef-android-debug-7af554b93cd696ca95308fdebe3a4484001bb7b4
   async list({ artifactName, limit }) {
-    const url = `/path/to/${artifactName}`;
-    return [{ name: artifactName, url }];
+    return [{ name: artifactName, url: `/path/to/${artifactName}` }];
   }
   async download({ artifact, loader }) {
     return { name: artifact.name, path: artifact.url };
   }
-  async delete({ artifactName, loader }) {
+  async delete({ artifact, loader }) {
     return false;
   }
   async upload({ artifactPath, artifactName, loader }) {
