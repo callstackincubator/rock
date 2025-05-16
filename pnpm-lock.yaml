@@ -415,6 +415,9 @@ importers:
       '@callstack/rspress-theme':
         specifier: ^0.0.3
         version: 0.0.3(react@19.1.0)
+      '@rspress/plugin-llms':
+        specifier: ^2.0.0-beta.6
+        version: 2.0.0-beta.6(@rspress/core@2.0.0-beta.6(@types/react@19.0.12)(acorn@8.14.0)(webpack@5.96.1(@swc/core@1.5.29(@swc/helpers@0.5.13))))
       rspress:
         specifier: ^2.0.0-beta.6
         version: 2.0.0-beta.6(@types/react@19.0.12)(acorn@8.14.0)(webpack@5.96.1(@swc/core@1.5.29(@swc/helpers@0.5.13)))
@@ -2247,6 +2250,12 @@ packages:
   '@rspress/plugin-last-updated@2.0.0-beta.6':
     resolution: {integrity: sha512-KiRjJwh1zw8qY9jtBDL2SdZWpRZkxHGzdATkmaURjHanteT7U5XUGNAa0afd0a5N7tveocV1yuOudjUlG4LcYQ==}
     engines: {node: '>=18.0.0'}
+
+  '@rspress/plugin-llms@2.0.0-beta.6':
+    resolution: {integrity: sha512-mloKORNi1jmVeJKMHAKGCqxDReFGZ3GzofPDbfd0JqI5XKrwzNfx0m3pGDj09RSsmHnzjKdYmdayOTwPldQm1g==}
+    engines: {node: '>=18.0.0'}
+    peerDependencies:
+      '@rspress/core': ^2.0.0-beta.6
 
   '@rspress/plugin-medium-zoom@2.0.0-beta.6':
     resolution: {integrity: sha512-B4NBrZpWpdJOi0FLChIIi/fqBa6OPyM5bPw4HHH1qE16w2jiOM7684aPczVC0e4Jkm05suTP9yWeBxPTctappw==}
@@ -9654,6 +9663,19 @@ snapshots:
   '@rspress/plugin-last-updated@2.0.0-beta.6':
     dependencies:
       '@rspress/shared': 2.0.0-beta.6
+
+  '@rspress/plugin-llms@2.0.0-beta.6(@rspress/core@2.0.0-beta.6(@types/react@19.0.12)(acorn@8.14.0)(webpack@5.96.1(@swc/core@1.5.29(@swc/helpers@0.5.13))))':
+    dependencies:
+      '@rspress/core': 2.0.0-beta.6(@types/react@19.0.12)(acorn@8.14.0)(webpack@5.96.1(@swc/core@1.5.29(@swc/helpers@0.5.13)))
+      '@rspress/shared': 2.0.0-beta.6
+      remark-mdx: 3.1.0
+      remark-parse: 11.0.0
+      remark-stringify: 11.0.0
+      unified: 11.0.5
+      unist-util-visit: 5.0.0
+      unist-util-visit-children: 3.0.0
+    transitivePeerDependencies:
+      - supports-color
 
   '@rspress/plugin-medium-zoom@2.0.0-beta.6(@rspress/runtime@2.0.0-beta.6)':
     dependencies:
