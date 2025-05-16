@@ -2,9 +2,14 @@ import * as path from 'node:path';
 import { pluginCallstackTheme } from '@callstack/rspress-theme/plugin';
 import { defineConfig } from 'rspress/config';
 import vercelPluginAnalytics from 'rspress-plugin-vercel-analytics';
+import pluginSitemap from 'rspress-plugin-sitemap';
 
 export default defineConfig({
-  plugins: [pluginCallstackTheme(), vercelPluginAnalytics()],
+  plugins: [
+    pluginCallstackTheme(),
+    vercelPluginAnalytics(),
+    pluginSitemap({ domain: 'https://rnef.dev' }),
+  ],
   root: path.join(__dirname, 'docs'),
   title: 'React Native Enterprise Framework',
   icon: '/logo.svg',
