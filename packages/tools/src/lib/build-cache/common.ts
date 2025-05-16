@@ -73,11 +73,14 @@ export async function formatArtifactName({
   root,
   fingerprintOptions,
 }: {
-  platform: 'ios' | 'android';
-  traits: string[];
+  platform?: 'ios' | 'android';
+  traits?: string[];
   root: string;
   fingerprintOptions: { extraSources: string[]; ignorePaths: string[] };
 }): Promise<string> {
+  if (!platform || !traits) {
+    return '';
+  }
   const { hash } = await nativeFingerprint(root, {
     platform,
     ...fingerprintOptions,

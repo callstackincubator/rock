@@ -19,4 +19,7 @@ export { isInteractive } from './lib/isInteractive.js';
 export { spawn, SubprocessError } from './lib/spawn.js';
 export { color } from './lib/color.js';
 export { runHermes } from './lib/hermes.js';
-export { fetchCachedBuild } from './lib/build-cache/fetchCachedBuild.js';
+export {
+  fetchCachedBuild,
+  handleDownloadResponse,
+} from './lib/build-cache/fetchCachedBuild.js';

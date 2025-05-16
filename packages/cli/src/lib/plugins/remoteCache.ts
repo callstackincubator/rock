@@ -6,20 +6,18 @@ import type {
 import {
   createRemoteBuildCache,
   formatArtifactName,
+  getLocalArtifactPath,
   getLocalBinaryPath,
+  handleDownloadResponse,
   RnefError,
+  spinner,
 } from '@rnef/tools';
 
-type Flags =
-  | {
-      source?: string;
-      name: string;
-    }
-  | {
-      platform: 'ios' | 'android';
-      traits: string[];
-      source?: string;
-    };
+type Flags = {
+  platform?: 'ios' | 'android';
+  traits?: string[];
+  name?: string;
+};
 
 async function remoteCache({
   action,
@@ -33,7 +31,7 @@ async function remoteCache({
   remoteCacheProvider:
     | SupportedRemoteCacheProviders
     | null
-    | { new (): RemoteBuildCache };
+    | { (): RemoteBuildCache };
   projectRoot: string;
   fingerprintOptions: { extraSources: string[]; ignorePaths: string[] };
 }) {
@@ -43,14 +41,13 @@ async function remoteCache({
   }
 
   const artifactName =
-    'name' in args
-      ? args.name
-      : await formatArtifactName({
-          platform: args.platform,
-          traits: args.traits,
-          root: projectRoot,
-          fingerprintOptions,
-        });
+    args.name ??
+    (await formatArtifactName({
+      platform: args.platform,
+      traits: args.traits,
+      root: projectRoot,
+      fingerprintOptions,
+    }));
 
   switch (action) {
     case 'list': {
@@ -67,21 +64,32 @@ async function remoteCache({
         artifactName: undefined,
       });
       if (artifacts) {
-        console.log(artifacts);
+        const platform = args.platform;
+        if (platform) {
+          console.log(
+            artifacts.filter((artifact) =>
+              artifact.name.startsWith(`rnef-${platform}`)
+            )
+          );
+        } else {
+          console.log(artifacts);
+        }
       } else {
         throw new RnefError(`No artifacts found.`);
       }
       break;
     }
     case 'download': {
-      const artifacts = await remoteBuildCache.list({ artifactName, limit: 1 });
-      if (!artifacts) {
-        throw new RnefError(`No artifacts found for "${artifactName}".`);
-      }
-      const fetchedBuild = await remoteBuildCache.download({
-        artifact: artifacts[0],
-      });
-      const binaryPath = getLocalBinaryPath(fetchedBuild.path);
+      const localArtifactPath = getLocalArtifactPath(artifactName);
+      const response = await remoteBuildCache.download({ artifactName });
+      const loader = spinner();
+      await handleDownloadResponse(
+        response,
+        localArtifactPath,
+        artifactName,
+        loader
+      );
+      const binaryPath = getLocalBinaryPath(localArtifactPath);
       if (!binaryPath) {
         throw new RnefError(`No binary found for "${artifactName}".`);
       }
@@ -89,13 +97,7 @@ async function remoteCache({
       break;
     }
     case 'upload': {
-      if (!args.source) {
-        throw new RnefError(
-          `Missing required "--source" parameter for upload action.`
-        );
-      }
       const uploadedArtifact = await remoteBuildCache.upload({
-        artifactPath: args.source,
         artifactName,
       });
       console.log(uploadedArtifact);
@@ -149,11 +151,6 @@ export const remoteCachePlugin =
 Example iOS: --traits simulator,Release
 Example Android: --traits debug`,
           parse: (val: string) => val.split(','),
-        },
-        {
-          name: '--source <path>',
-          description:
-            'Path to a single binary file to upload as an artifact (not a directory)',
         },
       ],
     });

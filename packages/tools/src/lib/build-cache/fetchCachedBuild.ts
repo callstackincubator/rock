@@ -92,7 +92,7 @@ Proceeding with local build.`);
   };
 }
 
-async function handleDownloadResponse(
+export async function handleDownloadResponse(
   response: Response,
   localArtifactPath: string,
   name: string,
