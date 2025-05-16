@@ -2,7 +2,6 @@ import fs from 'node:fs';
 import path from 'node:path';
 import { nativeFingerprint } from '../fingerprint/index.js';
 import { getCacheRootPath } from '../project.js';
-import type { spinner } from '../prompts.js';
 
 export const BUILD_CACHE_DIR = 'remote-build';
 
@@ -42,48 +41,24 @@ export interface RemoteBuildCache {
 
   /**
    * Download a remote artifact to local storage
-   * @param artifact - Remote artifact to download, as returned by `list` method
-   * @param targetURL - Local file URL to download the artifact to
-   * @param loader - Optional progress indicator
-   * @returns Local artifact info after download
+   * @param artifactName - Name of the artifact to download, e.g. `rnef-android-debug-1234567890` for android in debug variant
+   * @returns Response object from fetch, which will be used to download the artifact
    */
-  download({
-    artifact,
-    targetURL,
-    loader,
-  }: {
-    artifact: RemoteArtifact;
-    targetURL: URL;
-    loader?: ReturnType<typeof spinner>;
-  }): Promise<LocalArtifact>;
+  download({ artifactName }: { artifactName: string }): Promise<Response>;
 
   /**
    * Delete a remote artifact
    * @param artifact - Remote artifact to delete, as returned by `list` method
-   * @param loader - Optional progress indicator
-   * @returns True if deletion was successful
+   * Throws if artifact is not found or deletion fails
    */
-  delete({
-    artifact,
-    loader,
-  }: {
-    artifact: RemoteArtifact;
-    loader?: ReturnType<typeof spinner>;
-  }): Promise<boolean>;
+  delete({ artifactName }: { artifactName: string }): Promise<RemoteArtifact[]>;
 
   /**
    * Upload a local artifact stored in build cache to remote storage
    * @param artifactName - Name of the artifact to upload, e.g. `rnef-android-debug-1234567890` for android in debug variant
-   * @param loader - Optional progress indicator
    * @returns Remote artifact info if upload successful, throws otherwise
    */
-  upload({
-    artifactName,
-    loader,
-  }: {
-    artifactName: string;
-    loader?: ReturnType<typeof spinner>;
-  }): Promise<RemoteArtifact>;
+  upload({ artifactName }: { artifactName: string }): Promise<RemoteArtifact>;
 }
 
 /**

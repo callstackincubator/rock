@@ -1,18 +1,10 @@
-import fs from 'node:fs';
-import path from 'node:path';
-import * as tar from 'tar';
 import { color } from '../../color.js';
+import { RnefError } from '../../error.js';
 import { getGitRemote } from '../../git.js';
 import logger from '../../logger.js';
-import type { spinner } from '../../prompts.js';
-import type {
-  LocalArtifact,
-  RemoteArtifact,
-  RemoteBuildCache,
-} from '../common.js';
+import type { RemoteArtifact, RemoteBuildCache } from '../common.js';
 import {
   deleteGitHubArtifacts,
-  downloadGitHubArtifact,
   fetchGitHubArtifactsByName,
 } from './artifacts.js';
 import type { GitHubRepoDetails } from './config.js';
@@ -54,8 +46,7 @@ Include "repo", "workflow", and "read:org" permissions.`
   }): Promise<RemoteArtifact[]> {
     const repoDetails = await this.detectRepoDetails();
     if (!getGitHubToken()) {
-      logger.warn(`No GitHub Personal Access Token found.`);
-      return [];
+      throw new RnefError(`No GitHub Personal Access Token found.`);
     }
     if (!repoDetails) {
       return [];
@@ -65,75 +56,50 @@ Include "repo", "workflow", and "read:org" permissions.`
       repoDetails,
       limit
     );
-    if (artifacts.length === 0) {
-      return [];
-    }
     return artifacts.map((artifact) => ({
       name: artifact.name,
       url: artifact.downloadUrl,
-      id: String(artifact.id),
     }));
   }
 
   async download({
-    artifact,
-    targetURL,
-    loader,
+    artifactName,
   }: {
-    artifact: RemoteArtifact;
-    targetURL: URL;
-    loader?: ReturnType<typeof spinner>;
-  }): Promise<LocalArtifact> {
-    await downloadGitHubArtifact(
-      artifact.url,
-      targetURL.pathname,
-      this.name,
-      loader
-    );
-    await extractArtifactTarballIfNeeded(targetURL.pathname);
-    return {
-      name: artifact.name,
-    };
+    artifactName: string;
+  }): Promise<Response> {
+    const artifacts = await this.list({ artifactName });
+    if (artifacts.length === 0) {
+      throw new RnefError(`No artifact found with name "${artifactName}"`);
+    }
+    return fetch(artifacts[0].url, {
+      headers: {
+        Authorization: `token ${getGitHubToken()}`,
+        'Accept-Encoding': 'None',
+      },
+    });
   }
 
   async delete({
-    artifact,
-    loader,
+    artifactName,
   }: {
-    artifact: RemoteArtifact;
-    loader?: ReturnType<typeof spinner>;
-  }): Promise<boolean> {
+    artifactName: string;
+  }): Promise<RemoteArtifact[]> {
     const repoDetails = await this.detectRepoDetails();
-    if (!getGitHubToken()) {
-      logger.warn(`No GitHub Personal Access Token found.`);
-      return false;
-    }
     if (!repoDetails) {
-      return false;
+      return [];
     }
-    return await deleteGitHubArtifacts(artifact, repoDetails, loader);
+    const artifacts = await fetchGitHubArtifactsByName(
+      artifactName,
+      repoDetails,
+      undefined
+    );
+    if (artifacts.length === 0) {
+      throw new RnefError(`No artifact found with name "${artifactName}"`);
+    }
+    return await deleteGitHubArtifacts(artifacts, repoDetails, artifactName);
   }
 
   async upload(): Promise<RemoteArtifact> {
-    throw new Error('Uploading artifacts to GitHub is not supported.');
+    throw new RnefError('Uploading artifacts to GitHub is not supported.');
   }
-}
-
-async function extractArtifactTarballIfNeeded(artifactPath: string) {
-  const tarPath = path.join(artifactPath, 'app.tar.gz');
-
-  // If the tarball is not found, it means the artifact is already unpacked.
-  if (!fs.existsSync(tarPath)) {
-    return;
-  }
-
-  // iOS simulator build artifact (*.app directory) is packed in .tar.gz file to
-  // preserve execute file permission.
-  // See: https://github.com/actions/upload-artifact?tab=readme-ov-file#permission-loss
-  await tar.extract({
-    file: tarPath,
-    cwd: artifactPath,
-    gzip: true,
-  });
-  fs.unlinkSync(tarPath);
 }

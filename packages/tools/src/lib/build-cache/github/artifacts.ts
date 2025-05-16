@@ -2,6 +2,7 @@ import * as fs from 'node:fs';
 import AdmZip from 'adm-zip';
 import cacheManager from '../../cacheManager.js';
 import { color } from '../../color.js';
+import { RnefError } from '../../error.js';
 import logger from '../../logger.js';
 import type { spinner } from '../../prompts.js';
 import type { RemoteArtifact } from '../common.js';
@@ -171,27 +172,16 @@ export async function downloadGitHubArtifact(
 }
 
 export async function deleteGitHubArtifacts(
-  artifact: RemoteArtifact,
+  artifacts: GitHubArtifact[],
   repoDetails: GitHubRepoDetails,
-  loader?: ReturnType<typeof spinner>
-): Promise<boolean> {
-  const artifacts = await fetchGitHubArtifactsByName(
-    artifact.name,
-    repoDetails
-  );
-  if (artifacts.length === 0) {
-    loader?.stop(`No artifact found with name "${artifact.name}" to delete.`);
-    return false;
-  }
-  loader?.start(
-    `Found ${artifacts.length} artifacts named "${artifact.name}". Deleting...`
-  );
+  artifactName: string
+): Promise<RemoteArtifact[]> {
+  const deletedArtifacts: RemoteArtifact[] = [];
   try {
     const owner = repoDetails.owner;
     const repo = repoDetails.repository;
 
     // Delete all matching artifacts
-    let deletedCount = 0;
     for (const artifact of artifacts) {
       const artifactId = artifact.id;
       const url = `https://api.github.com/repos/${owner}/${repo}/actions/artifacts/${artifactId}`;
@@ -211,25 +201,13 @@ export async function deleteGitHubArtifacts(
         continue;
       }
 
-      deletedCount++;
+      deletedArtifacts.push({ name: artifact.name, url: artifact.downloadUrl });
     }
-
-    if (deletedCount < artifacts.length) {
-      loader?.stop(
-        `Partially succeeded: deleted ${deletedCount}/${artifacts.length} artifacts named "${artifact.name}".`
-      );
-      return true;
-    } else {
-      loader?.stop(
-        `Successfully deleted all ${deletedCount} artifacts named "${artifact.name}".`
-      );
-      return true;
-    }
+    return deletedArtifacts;
   } catch (error) {
-    loader?.stop(
-      `Failed to delete artifacts named "${artifact.name}": ${error}`
-    );
-    return false;
+    throw new RnefError(`Failed to delete artifacts named "${artifactName}"`, {
+      cause: error,
+    });
   }
 }
 

@@ -1,5 +1,9 @@
+import fs from 'node:fs';
 import path from 'node:path';
+import AdmZip from 'adm-zip';
+import * as tar from 'tar';
 import { color } from '../color.js';
+import { RnefError } from '../error.js';
 import logger from '../logger.js';
 import { getProjectRoot } from '../project.js';
 import { spinner } from '../prompts.js';
@@ -62,21 +66,16 @@ Proceeding with local build.`);
 
   loader.stop(`No local build cached. Checking ${remoteBuildCache.name}.`);
 
-  const artifacts = await remoteBuildCache.list({ artifactName, limit: 1 });
-  if (artifacts.length === 0) {
-    loader.start('');
-    loader.stop(`No cached build found for "${artifactName}".`);
-    return null;
-  }
-
   loader.start(`Downloading cached build from ${remoteBuildCache.name}`);
   const localArtifactPath = getLocalArtifactPath(artifactName);
-  const fetchedBuild = await remoteBuildCache.download({
-    artifact: artifacts[0],
-    targetURL: new URL(localArtifactPath, import.meta.url),
-    loader,
-  });
-
+  const response = await remoteBuildCache.download({ artifactName });
+  await handleDownloadResponse(
+    response,
+    localArtifactPath,
+    remoteBuildCache.name,
+    loader
+  );
+  await extractArtifactTarballIfNeeded(localArtifactPath);
   const binaryPath = getLocalBinaryPath(localArtifactPath);
   if (!binaryPath) {
     loader.stop(`No binary found for "${artifactName}".`);
@@ -88,8 +87,83 @@ Proceeding with local build.`);
   );
 
   return {
-    name: fetchedBuild.name,
+    name: artifactName,
     artifactPath: localArtifactPath,
     binaryPath,
   };
+}
+
+async function handleDownloadResponse(
+  response: Response,
+  localArtifactPath: string,
+  name: string,
+  loader: ReturnType<typeof spinner>
+) {
+  try {
+    fs.mkdirSync(localArtifactPath, { recursive: true });
+    if (!response.ok || !response.body) {
+      throw new Error(`Failed to download artifact: ${response.statusText}`);
+    }
+    let responseData = response;
+    const contentLength = response.headers.get('content-length');
+
+    if (contentLength) {
+      const totalBytes = parseInt(contentLength, 10);
+      const totalMB = (totalBytes / 1024 / 1024).toFixed(2);
+      let downloadedBytes = 0;
+
+      const reader = response.body.getReader();
+      const stream = new ReadableStream({
+        async start(controller) {
+          while (true) {
+            const { done, value } = await reader.read();
+            if (done) {
+              break;
+            }
+            downloadedBytes += value.length;
+            const progress = ((downloadedBytes / totalBytes) * 100).toFixed(0);
+            loader?.message(
+              `Downloading cached build from ${name} (${progress}% of ${totalMB} MB)`
+            );
+            controller.enqueue(value);
+          }
+          controller.close();
+        },
+      });
+      responseData = new Response(stream);
+    }
+
+    const zipPath = localArtifactPath + '.zip';
+    const buffer = await responseData.arrayBuffer();
+    fs.writeFileSync(zipPath, new Uint8Array(buffer));
+    unzipFile(zipPath, localArtifactPath);
+    fs.unlinkSync(zipPath);
+  } catch (error) {
+    loader?.stop(`Failed: Downloading cached build from ${name}`);
+    throw new RnefError(`Unexpected error`, { cause: error });
+  }
+}
+
+function unzipFile(zipPath: string, targetPath: string): void {
+  const zip = new AdmZip(zipPath);
+  zip.extractAllTo(targetPath, true);
+}
+
+async function extractArtifactTarballIfNeeded(artifactPath: string) {
+  const tarPath = path.join(artifactPath, 'app.tar.gz');
+
+  // If the tarball is not found, it means the artifact is already unpacked.
+  if (!fs.existsSync(tarPath)) {
+    return;
+  }
+
+  // iOS simulator build artifact (*.app directory) is packed in .tar.gz file to
+  // preserve execute file permission.
+  // See: https://github.com/actions/upload-artifact?tab=readme-ov-file#permission-loss
+  await tar.extract({
+    file: tarPath,
+    cwd: artifactPath,
+    gzip: true,
+  });
+  fs.unlinkSync(tarPath);
 }
