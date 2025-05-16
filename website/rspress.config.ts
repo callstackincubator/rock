@@ -1,15 +1,11 @@
 import * as path from 'node:path';
 import { pluginCallstackTheme } from '@callstack/rspress-theme/plugin';
+import { pluginLlms } from '@rspress/plugin-llms';
 import { defineConfig } from 'rspress/config';
 import pluginSitemap from 'rspress-plugin-sitemap';
 import vercelPluginAnalytics from 'rspress-plugin-vercel-analytics';
 
 export default defineConfig({
-  plugins: [
-    pluginCallstackTheme(),
-    vercelPluginAnalytics(),
-    pluginSitemap({ domain: 'https://rnef.dev' }),
-  ],
   root: path.join(__dirname, 'docs'),
   title: 'React Native Enterprise Framework',
   icon: '/logo.svg',
@@ -34,4 +30,13 @@ export default defineConfig({
         'Copyright © 2025 <a href="https://callstack.com">Callstack</a>.',
     },
   },
+  plugins: [
+    pluginCallstackTheme(),
+    // @ts-expect-error outdated @rspress/shared declared as dependency
+    vercelPluginAnalytics(),
+    pluginLlms({
+      exclude: ({ page }) => page.routePath.includes('404'),
+    }),
+    pluginSitemap({ domain: 'https://rnef.dev' }),
+  ],
 });
