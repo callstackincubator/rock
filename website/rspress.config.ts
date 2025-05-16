@@ -31,7 +31,7 @@ export default defineConfig({
   },
   plugins: [
     pluginCallstackTheme(),
-    // @ts-ignore
+    // @ts-expect-error outdated @rspress/shared declared as dependency
     vercelPluginAnalytics(),
     pluginLlms({
       exclude: ({ page }) => page.routePath.includes('404'),
