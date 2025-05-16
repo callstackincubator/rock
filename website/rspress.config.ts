@@ -1,8 +1,8 @@
 import * as path from 'node:path';
 import { pluginCallstackTheme } from '@callstack/rspress-theme/plugin';
 import { defineConfig } from 'rspress/config';
-import vercelPluginAnalytics from 'rspress-plugin-vercel-analytics';
 import pluginSitemap from 'rspress-plugin-sitemap';
+import vercelPluginAnalytics from 'rspress-plugin-vercel-analytics';
 
 export default defineConfig({
   plugins: [
