@@ -418,6 +418,9 @@ importers:
       rspress:
         specifier: ^2.0.0-beta.6
         version: 2.0.0-beta.6(@types/react@19.0.12)(acorn@8.14.0)(webpack@5.96.1(@swc/core@1.5.29(@swc/helpers@0.5.13)))
+      rspress-plugin-sitemap:
+        specifier: ^1.1.2
+        version: 1.1.2
       rspress-plugin-vercel-analytics:
         specifier: ^0.3.0
         version: 0.3.0(react@19.1.0)(rspress@2.0.0-beta.6(@types/react@19.0.12)(acorn@8.14.0)(webpack@5.96.1(@swc/core@1.5.29(@swc/helpers@0.5.13))))
@@ -6109,6 +6112,9 @@ packages:
     resolution: {integrity: sha512-5CyqIIleboW32rmhK7V7e9WQY+J3V2HtOv9OgRCYJbGrOt/8RUdgRT+vJz5z/aUvcT5VX0OTTzUtGokUelJH6g==}
     peerDependencies:
       rspress: '*'
+
+  rspress-plugin-sitemap@1.1.2:
+    resolution: {integrity: sha512-dvmEbBUnyU3qkapjBz4WcpP0BIkJdljORFiuJ92wr0Vt/b/ff7cFlaRcAYtKq/g1y7JAdA+qzy3gjnNg0TqNow==}
 
   rspress-plugin-vercel-analytics@0.3.0:
     resolution: {integrity: sha512-e3tt7pJeihgCRVT/8qft5hK6cuU9gYrl60ihAtchz1jMgcLmpyIyEMhP4dcux2MGboRMoknQEUacjFcwi5ZzZg==}
@@ -14643,6 +14649,8 @@ snapshots:
     transitivePeerDependencies:
       - '@rspack/tracing'
       - supports-color
+
+  rspress-plugin-sitemap@1.1.2: {}
 
   rspress-plugin-vercel-analytics@0.3.0(react@19.1.0)(rspress@2.0.0-beta.6(@types/react@19.0.12)(acorn@8.14.0)(webpack@5.96.1(@swc/core@1.5.29(@swc/helpers@0.5.13)))):
     dependencies:
