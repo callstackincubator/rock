@@ -25,7 +25,7 @@ type FetchCachedBuildOptions = {
     | SupportedRemoteCacheProviders
     | undefined
     | null
-    | { new (): RemoteBuildCache };
+    | { (): RemoteBuildCache };
 };
 
 export async function fetchCachedBuild({
@@ -66,9 +66,9 @@ Proceeding with local build.`);
 
   loader.stop(`No local build cached. Checking ${remoteBuildCache.name}.`);
 
-  loader.start(`Downloading cached build from ${remoteBuildCache.name}`);
   const localArtifactPath = getLocalArtifactPath(artifactName);
   const response = await remoteBuildCache.download({ artifactName });
+  loader.start(`Downloading cached build from ${remoteBuildCache.name}`);
   await handleDownloadResponse(
     response,
     localArtifactPath,
@@ -81,7 +81,6 @@ Proceeding with local build.`);
     loader.stop(`No binary found for "${artifactName}".`);
     return null;
   }
-
   loader.stop(
     `Downloaded cached build: ${color.cyan(path.relative(root, binaryPath))}.`
   );

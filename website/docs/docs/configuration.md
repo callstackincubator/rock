@@ -161,32 +161,41 @@ export default {
 
 ### Custom remote cache provider
 
-You can plug in any remote storage by implementing [`RemoteBuildCache`](https://github.com/callstack/rnef/blob/main/packages/tools/src/lib/build-cache/common.ts#L27) interface. A simplest remote cache provider, that loads artifact from a local directory available on your filesystem, would look like this:
+You can plug in any remote storage by implementing [`RemoteBuildCache`](https://github.com/callstack/rnef/blob/main/packages/tools/src/lib/build-cache/common.ts#L24) interface. A simplest remote cache provider, that loads artifact from a local directory available on your filesystem, would look like this:
 
 ```ts
-class DummyRemoteCacheProvider {
+class DummyLocalCacheProvider {
   name = 'dummy';
-  // artifactName is provided by RNEF, and will look like rnef-android-debug-7af554b93cd696ca95308fdebe3a4484001bb7b4
-  async list({ artifactName, limit }) {
-    return [{ name: artifactName, url: `/path/to/${artifactName}` }];
+  // artifactName is provided by RNEF, and will look like this:
+  // - rnef-android-release-7af554b93cd696ca95308fdebe3a4484001bb7b4
+  // - rnef-ios-simulator-Debug-04c166be56d916367462fc3cb1f067f8ac4c34d4
+  // depending on flags passed to the `run:*` commands
+  async list({ artifactName }) {
+    const url = new URL(`${artifactName}.zip`, import.meta.url);
+    return [{ name: artifactName, url }];
   }
-  async download({ artifact, loader }) {
-    return { name: artifact.name, path: artifact.url };
+  async download({ artifactName }) {
+    const artifacts = await this.list({ artifactName });
+    const filePath = artifacts[0].url.pathname;
+    const fileStream = fs.createReadStream(filePath);
+    return new Response(fileStream);
   }
-  // optionally implement delete and upload methods
 }
+
+const pluginDummyLocalCacheProvider = (options) => () =>
+  new DummyLocalCacheProvider(options);
 ```
 
-Then pass this class as a value of the `remoteCacheProvider` config key:
+Then pass the `pluginDummyLocalCacheProvider` function called with optional configuration object (in case you need authentication or anything user-specific, such as repository information) as a value of the `remoteCacheProvider` config key:
 
 ```ts
 export default {
   // ...
-  remoteCacheProvider: DummyRemoteCacheProvider,
+  remoteCacheProvider: pluginDummyLocalCacheProvider(),
 };
 ```
 
-Once this is set up, when running `run:[platform]` commands, RNEF will calculate the hash of your native project for said platform, and use your `download` method to resolve the path to the binary that will be installed on a device.
+Once this is set up, when running `run:*` commands, RNEF will calculate the hash of your native project for said platform, and call the `download` method to resolve the path to the binary that will be installed on a device.
 
 ### Opt-out of remote cache
 

@@ -91,7 +91,7 @@ export function getLocalArtifactPath(artifactName: string) {
 
 export function getLocalBinaryPath(artifactPath: string) {
   const files = fs.readdirSync(artifactPath);
-  // Get the first non-hidden file as the binary
+  // Get the first non-hidden, non-directory file as the binary
   const binaryName = files.find((file) => file && !file.startsWith('.'));
   return binaryName ? path.join(artifactPath, binaryName) : null;
 }
