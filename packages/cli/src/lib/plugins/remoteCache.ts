@@ -57,15 +57,14 @@ async function remoteCache({
   switch (action) {
     case 'list': {
       const artifacts = await remoteBuildCache.list({ artifactName });
-      if (artifacts) {
+      const artifact = artifacts[0];
+      if (artifact) {
         if (isJsonOutput) {
-          console.log(JSON.stringify(artifacts[0], null, 2));
+          console.log(JSON.stringify(artifact, null, 2));
         } else {
-          logger.log(`- name: ${artifacts[0].name}
-- url: ${artifacts[0].url}`);
+          logger.log(`- name: ${artifact.name}
+  - url: ${artifact.url}`);
         }
-      } else {
-        throw new RnefError(`No artifacts found for "${artifactName}".`);
       }
       break;
     }
