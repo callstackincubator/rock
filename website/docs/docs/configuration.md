@@ -164,6 +164,8 @@ export default {
 You can plug in any remote storage by implementing [`RemoteBuildCache`](https://github.com/callstack/rnef/blob/main/packages/tools/src/lib/build-cache/common.ts#L24) interface. A simplest remote cache provider, that loads artifact from a local directory available on your filesystem, would look like this:
 
 ```ts
+import type { RemoteBuildCache } from '@rnef/tools'; // dev dependency of provider
+
 class DummyLocalCacheProvider implements RemoteBuildCache {
   name = 'dummy';
   // artifactName is provided by RNEF, and will look like this:
