@@ -73,11 +73,13 @@ async function remoteCache({
       const artifactName = undefined;
       const artifacts = await remoteBuildCache.list({ artifactName });
       const platform = args.platform;
-      const output = platform
-        ? artifacts.filter((artifact) =>
-            artifact.name.startsWith(`rnef-${platform}`)
-          )
-        : artifacts;
+      const traits = args.traits;
+      const output =
+        platform && traits
+          ? artifacts.filter((artifact) =>
+              artifact.name.startsWith(`rnef-${platform}-${traits.join('-')}`)
+            )
+          : artifacts;
       if (isJsonOutput) {
         console.log(JSON.stringify(output, null, 2));
       } else {
