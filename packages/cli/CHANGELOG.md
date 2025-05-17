@@ -1,5 +1,17 @@
 # @rnef/cli
 
+## 0.7.8
+
+### Patch Changes
+
+- af32d6f: feat: add remote-cache command
+- e8c9da7: refactor: internal plugins
+- Updated dependencies [184cc74]
+- Updated dependencies [af32d6f]
+- Updated dependencies [e8c9da7]
+  - @rnef/config@0.7.8
+  - @rnef/tools@0.7.8
+
 ## 0.7.7
 
 ### Patch Changes

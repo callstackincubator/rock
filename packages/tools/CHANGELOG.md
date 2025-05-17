@@ -1,5 +1,12 @@
 # @rnef/tools
 
+## 0.7.8
+
+### Patch Changes
+
+- 184cc74: feat: official support for custom remote cache providers
+- af32d6f: feat: add remote-cache command
+
 ## 0.7.7
 
 ## 0.7.6

@@ -1,5 +1,15 @@
 # @rnef/config
 
+## 0.7.8
+
+### Patch Changes
+
+- 184cc74: feat: official support for custom remote cache providers
+- e8c9da7: refactor: internal plugins
+- Updated dependencies [184cc74]
+- Updated dependencies [af32d6f]
+  - @rnef/tools@0.7.8
+
 ## 0.7.7
 
 ### Patch Changes
