@@ -83,7 +83,7 @@ export class GitHubBuildCache implements RemoteBuildCache {
   }
 
   async upload(): Promise<RemoteArtifact> {
-    throw new RnefError('Uploading artifacts to GitHub is not supported.');
+    throw new RnefError('Uploading artifacts to GitHub is not supported through GitHub API. See: https://docs.github.com/en/rest/actions/artifacts?apiVersion=2022-11-28');
   }
 }
 
