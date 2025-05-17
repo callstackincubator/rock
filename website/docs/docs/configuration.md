@@ -164,7 +164,7 @@ export default {
 You can plug in any remote storage by implementing [`RemoteBuildCache`](https://github.com/callstack/rnef/blob/main/packages/tools/src/lib/build-cache/common.ts#L24) interface. A simplest remote cache provider, that loads artifact from a local directory available on your filesystem, would look like this:
 
 ```ts
-class DummyLocalCacheProvider {
+class DummyLocalCacheProvider implements RemoteBuildCache {
   name = 'dummy';
   // artifactName is provided by RNEF, and will look like this:
   // - rnef-android-release-7af554b93cd696ca95308fdebe3a4484001bb7b4
@@ -179,6 +179,12 @@ class DummyLocalCacheProvider {
     const filePath = artifacts[0].url.pathname;
     const fileStream = fs.createReadStream(filePath);
     return new Response(fileStream);
+  }
+  async delete({ artifactName }: { artifactName: string }) {
+    // ...
+  }
+  async upload({ artifactName }: { artifactName: string }) {
+    // ...
   }
 }
 
