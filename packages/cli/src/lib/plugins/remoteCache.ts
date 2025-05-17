@@ -204,7 +204,7 @@ export const remoteCachePlugin =
           description: 'Select platform, e.g. ios or android',
         },
         {
-          name: '--traits <list>',
+          name: '-t, --traits <list>',
           description: `Comma-separated traits that construct final artifact name. Traits for Android are: variant; for iOS: destination and configuration. 
 Example iOS: --traits simulator,Release
 Example Android: --traits debug`,
