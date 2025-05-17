@@ -214,7 +214,7 @@ Example Android: --traits debug`,
     });
 
     return {
-      name: 'remote-cache',
+      name: 'internal_remote-cache',
       description: 'Manage remote cache',
     };
   };
