@@ -1,4 +1,3 @@
-import { RnefError } from '../../error.js';
 import type { RemoteArtifact, RemoteBuildCache } from '../common.js';
 import {
   deleteGitHubArtifacts,
@@ -55,7 +54,7 @@ export class GitHubBuildCache implements RemoteBuildCache {
     const repoDetails = await this.getRepoDetails();
     const artifacts = await this.list({ artifactName });
     if (artifacts.length === 0) {
-      throw new RnefError(`No artifact found with name "${artifactName}"`);
+      throw new Error(`No artifact found with name "${artifactName}"`);
     }
     return fetch(artifacts[0].url, {
       headers: {
@@ -77,13 +76,13 @@ export class GitHubBuildCache implements RemoteBuildCache {
       undefined
     );
     if (artifacts.length === 0) {
-      throw new RnefError(`No artifact found with name "${artifactName}"`);
+      throw new Error(`No artifact found with name "${artifactName}"`);
     }
     return await deleteGitHubArtifacts(artifacts, repoDetails, artifactName);
   }
 
   async upload(): Promise<RemoteArtifact> {
-    throw new RnefError('Uploading artifacts to GitHub is not supported.');
+    throw new Error('Uploading artifacts to GitHub is not supported through GitHub API. See: https://docs.github.com/en/rest/actions/artifacts?apiVersion=2022-11-28');
   }
 }
 

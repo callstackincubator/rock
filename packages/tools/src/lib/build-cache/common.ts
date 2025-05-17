@@ -49,14 +49,16 @@ export interface RemoteBuildCache {
   /**
    * Delete a remote artifact
    * @param artifact - Remote artifact to delete, as returned by `list` method
-   * Throws if artifact is not found or deletion fails
+   * @returns Array of deleted artifacts
+   * @throws {Error} Throws if artifact is not found or deletion fails
    */
   delete({ artifactName }: { artifactName: string }): Promise<RemoteArtifact[]>;
 
   /**
    * Upload a local artifact stored in build cache to remote storage
    * @param artifactName - Name of the artifact to upload, e.g. `rnef-android-debug-1234567890` for android in debug variant
-   * @returns Remote artifact info if upload successful, throws otherwise
+   * @returns Remote artifact info if upload successful
+   * @throws {Error} Throws if upload fails
    */
   upload({ artifactName }: { artifactName: string }): Promise<RemoteArtifact>;
 }
