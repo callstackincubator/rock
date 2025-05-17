@@ -9,6 +9,7 @@ import {
   getLocalArtifactPath,
   getLocalBinaryPath,
   handleDownloadResponse,
+  logger,
   RnefError,
   spinner,
 } from '@rnef/tools';
@@ -17,6 +18,7 @@ type Flags = {
   platform?: 'ios' | 'android';
   traits?: string[];
   name?: string;
+  json?: boolean;
 };
 
 async function remoteCache({
@@ -35,10 +37,13 @@ async function remoteCache({
   projectRoot: string;
   fingerprintOptions: { extraSources: string[]; ignorePaths: string[] };
 }) {
+  const isJsonOutput = args.json;
   const remoteBuildCache = await createRemoteBuildCache(remoteCacheProvider);
   if (!remoteBuildCache) {
     return null;
   }
+
+  validateArgs(args, action);
 
   const artifactName =
     args.name ??
@@ -53,29 +58,33 @@ async function remoteCache({
     case 'list': {
       const artifacts = await remoteBuildCache.list({ artifactName });
       if (artifacts) {
-        console.log(artifacts[0]);
+        if (isJsonOutput) {
+          console.log(JSON.stringify(artifacts[0], null, 2));
+        } else {
+          logger.log(`- name: ${artifacts[0].name}
+- url: ${artifacts[0].url}`);
+        }
       } else {
         throw new RnefError(`No artifacts found for "${artifactName}".`);
       }
       break;
     }
     case 'list-all': {
-      const artifacts = await remoteBuildCache.list({
-        artifactName: undefined,
-      });
-      if (artifacts) {
-        const platform = args.platform;
-        if (platform) {
-          console.log(
-            artifacts.filter((artifact) =>
-              artifact.name.startsWith(`rnef-${platform}`)
-            )
-          );
-        } else {
-          console.log(artifacts);
-        }
+      const artifactName = undefined;
+      const artifacts = await remoteBuildCache.list({ artifactName });
+      const platform = args.platform;
+      const output = platform
+        ? artifacts.filter((artifact) =>
+            artifact.name.startsWith(`rnef-${platform}`)
+          )
+        : artifacts;
+      if (isJsonOutput) {
+        console.log(JSON.stringify(output, null, 2));
       } else {
-        throw new RnefError(`No artifacts found.`);
+        output.forEach((artifact) => {
+          logger.log(`- name: ${artifact.name}
+- url: ${artifact.url}`);
+        });
       }
       break;
     }
@@ -93,22 +102,71 @@ async function remoteCache({
       if (!binaryPath) {
         throw new RnefError(`No binary found for "${artifactName}".`);
       }
-      console.log(binaryPath);
+      if (isJsonOutput) {
+        console.log(
+          JSON.stringify({ name: artifactName, path: binaryPath }, null, 2)
+        );
+      } else {
+        logger.log(`- name: ${artifactName}
+- path: ${binaryPath}`);
+      }
       break;
     }
     case 'upload': {
       const uploadedArtifact = await remoteBuildCache.upload({ artifactName });
-      console.log(uploadedArtifact);
+      if (isJsonOutput) {
+        console.log(JSON.stringify(uploadedArtifact, null, 2));
+      } else {
+        logger.log(`- name: ${uploadedArtifact.name}
+- url: ${uploadedArtifact.url}`);
+      }
       break;
     }
     case 'delete': {
       const deletedArtifacts = await remoteBuildCache.delete({ artifactName });
-      console.log(deletedArtifacts);
+      if (isJsonOutput) {
+        console.log(JSON.stringify(deletedArtifacts, null, 2));
+      } else {
+        logger.log(
+          deletedArtifacts
+            .map(
+              (artifact) => `- name: ${artifact.name}
+- url: ${artifact.url}`
+            )
+            .join('\n')
+        );
+      }
       break;
     }
   }
 
   return null;
+}
+
+function validateArgs(args: Flags, action: string) {
+  if (!action) {
+    // @todo make Commander handle this
+    throw new RnefError(
+      'Action is required. Available actions: list, list-all, download, upload, delete'
+    );
+  }
+  if (args.name && (args.platform || args.traits)) {
+    throw new RnefError(
+      'Cannot use "--name" together with "--platform" or "--traits". Use either name or platform with traits'
+    );
+  }
+  if (!args.name) {
+    if ((args.platform && !args.traits) || (!args.platform && args.traits)) {
+      throw new RnefError(
+        'Either "--platform" and "--traits" must be provided together'
+      );
+    }
+    if (!args.platform || !args.traits) {
+      throw new RnefError(
+        'Either "--name" or "--platform" and "--traits" must be provided'
+      );
+    }
+  }
 }
 
 export const remoteCachePlugin =
@@ -128,11 +186,15 @@ export const remoteCachePlugin =
       },
       args: [
         {
-          name: '<action>',
+          name: '[action]',
           description: 'Select action, e.g. query, download, upload, delete',
         },
       ],
       options: [
+        {
+          name: '--json',
+          description: 'Output in JSON format',
+        },
         {
           name: '--name <string>',
           description: 'Full artifact name',
