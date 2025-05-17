@@ -97,17 +97,13 @@ async function remoteCache({
       break;
     }
     case 'upload': {
-      const uploadedArtifact = await remoteBuildCache.upload({
-        artifactName,
-      });
+      const uploadedArtifact = await remoteBuildCache.upload({ artifactName });
       console.log(uploadedArtifact);
       break;
     }
     case 'delete': {
-      const success = await remoteBuildCache.delete({ artifactName });
-      if (!success) {
-        throw new RnefError(`Failed to delete artifact "${artifactName}".`);
-      }
+      const deletedArtifacts = await remoteBuildCache.delete({ artifactName });
+      console.log(deletedArtifacts);
       break;
     }
   }
