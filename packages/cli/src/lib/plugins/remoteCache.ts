@@ -18,6 +18,8 @@ type Flags = {
   traits?: string[];
   name?: string;
   json?: boolean;
+  all?: boolean;
+  allButLatest?: boolean;
 };
 
 async function remoteCache({
@@ -55,14 +57,26 @@ async function remoteCache({
 
   switch (action) {
     case 'list': {
-      const artifacts = await remoteBuildCache.list({ artifactName });
-      const artifact = artifacts[0];
-      if (artifact) {
+      const artifacts = await remoteBuildCache.list({
+        artifactName,
+        limit: args.all ? undefined : 1,
+      });
+      if (artifacts.length > 0 && !args.all) {
+        const artifact = artifacts[0];
         if (isJsonOutput) {
           console.log(JSON.stringify(artifact, null, 2));
         } else {
           logger.log(`- name: ${artifact.name}
-  - url: ${artifact.url}`);
+- url: ${artifact.url}`);
+        }
+      } else if (artifacts.length > 0 && args.all) {
+        if (isJsonOutput) {
+          console.log(JSON.stringify(artifacts, null, 2));
+        } else {
+          artifacts.forEach((artifact) => {
+            logger.log(`- name: ${artifact.name}
+- url: ${artifact.url}`);
+          });
         }
       }
       break;
@@ -117,7 +131,11 @@ async function remoteCache({
       break;
     }
     case 'delete': {
-      const deletedArtifacts = await remoteBuildCache.delete({ artifactName });
+      const deletedArtifacts = await remoteBuildCache.delete({
+        artifactName,
+        limit: args.all || args.allButLatest ? undefined : 1,
+        skipLatest: args.allButLatest,
+      });
       if (isJsonOutput) {
         console.log(JSON.stringify(deletedArtifacts, null, 2));
       } else {
@@ -143,6 +161,10 @@ function validateArgs(args: Flags, action: string) {
     throw new RnefError(
       'Action is required. Available actions: list, list-all, download, upload, delete'
     );
+  }
+  if (action === 'list-all') {
+    // return early as we don't need to validate name or platform to list all artifacts
+    return;
   }
   if (args.name && (args.platform || args.traits)) {
     throw new RnefError(
@@ -192,6 +214,16 @@ export const remoteCachePlugin =
         {
           name: '--name <string>',
           description: 'Full artifact name',
+        },
+        {
+          name: '--all',
+          description:
+            'List or delete all matching artifacts. Affects "list" and "delete" actions only',
+        },
+        {
+          name: '--all-but-latest',
+          description:
+            'Delete all but the latest matching artifact. Affects "delete" action only',
         },
         {
           name: '-p, --platform <string>',

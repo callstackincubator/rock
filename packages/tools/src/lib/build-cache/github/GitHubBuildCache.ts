@@ -67,19 +67,28 @@ export class GitHubBuildCache implements RemoteBuildCache {
 
   async delete({
     artifactName,
+    limit,
+    skipLatest,
   }: {
     artifactName: string;
+    limit?: number;
+    skipLatest?: boolean;
   }): Promise<RemoteArtifact[]> {
     const repoDetails = await this.getRepoDetails();
     const artifacts = await fetchGitHubArtifactsByName(
       artifactName,
       repoDetails,
-      undefined
+      limit
     );
     if (artifacts.length === 0) {
       throw new Error(`No artifact found with name "${artifactName}"`);
     }
-    return await deleteGitHubArtifacts(artifacts, repoDetails, artifactName);
+    const [, ...rest] = artifacts;
+    return await deleteGitHubArtifacts(
+      skipLatest ? rest : artifacts,
+      repoDetails,
+      artifactName
+    );
   }
 
   async upload(): Promise<RemoteArtifact> {

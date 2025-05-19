@@ -49,11 +49,21 @@ export interface RemoteBuildCache {
 
   /**
    * Delete a remote artifact
-   * @param artifact - Remote artifact to delete, as returned by `list` method
+   * @param artifactName - Name of the artifact to delete, e.g. `rnef-android-debug-1234567890` for android in debug variant
+   * @param limit - Optional maximum number of artifacts to delete
+   * @param skipLatest - Optional flag to skip the latest artifact, helpful when deleting all but the latest artifact
    * @returns Array of deleted artifacts
    * @throws {Error} Throws if artifact is not found or deletion fails
    */
-  delete({ artifactName }: { artifactName: string }): Promise<RemoteArtifact[]>;
+  delete({
+    artifactName,
+    limit,
+    skipLatest,
+  }: {
+    artifactName: string;
+    limit?: number;
+    skipLatest?: boolean;
+  }): Promise<RemoteArtifact[]>;
 
   /**
    * Upload a local artifact stored in build cache to remote storage
