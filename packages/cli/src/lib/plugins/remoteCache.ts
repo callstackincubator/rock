@@ -11,7 +11,6 @@ import {
   handleDownloadResponse,
   logger,
   RnefError,
-  spinner,
 } from '@rnef/tools';
 
 type Flags = {
@@ -92,13 +91,7 @@ async function remoteCache({
     case 'download': {
       const localArtifactPath = getLocalArtifactPath(artifactName);
       const response = await remoteBuildCache.download({ artifactName });
-      const loader = spinner();
-      await handleDownloadResponse(
-        response,
-        localArtifactPath,
-        artifactName,
-        loader
-      );
+      await handleDownloadResponse(response, localArtifactPath, artifactName);
       const binaryPath = getLocalBinaryPath(localArtifactPath);
       if (!binaryPath) {
         throw new RnefError(`No binary found for "${artifactName}".`);

@@ -96,7 +96,7 @@ export async function handleDownloadResponse(
   response: Response,
   localArtifactPath: string,
   name: string,
-  loader: ReturnType<typeof spinner>
+  loader?: ReturnType<typeof spinner>
 ) {
   try {
     fs.mkdirSync(localArtifactPath, { recursive: true });
