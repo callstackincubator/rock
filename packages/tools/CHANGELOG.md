@@ -1,5 +1,11 @@
 # @rnef/tools
 
+## 0.7.10
+
+### Patch Changes
+
+- 3a88d7b: feat: add --all flag to list and delete, --all-but-latest to delete
+
 ## 0.7.9
 
 ### Patch Changes
