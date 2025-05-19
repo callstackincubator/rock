@@ -1,5 +1,12 @@
 # @rnef/platform-android
 
+## 0.7.9
+
+### Patch Changes
+
+- Updated dependencies [fc771e7]
+  - @rnef/tools@0.7.9
+
 ## 0.7.8
 
 ### Patch Changes

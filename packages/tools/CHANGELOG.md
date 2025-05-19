@@ -1,5 +1,11 @@
 # @rnef/tools
 
+## 0.7.9
+
+### Patch Changes
+
+- fc771e7: fix: download message in remote-cache --json
+
 ## 0.7.8
 
 ### Patch Changes

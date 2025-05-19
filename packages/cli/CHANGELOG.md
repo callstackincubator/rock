@@ -1,5 +1,15 @@
 # @rnef/cli
 
+## 0.7.9
+
+### Patch Changes
+
+- 51316ba: fix: remote-cache list returninig undefined instead of empty
+- fc771e7: fix: download message in remote-cache --json
+- Updated dependencies [fc771e7]
+  - @rnef/tools@0.7.9
+  - @rnef/config@0.7.9
+
 ## 0.7.8
 
 ### Patch Changes
