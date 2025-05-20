@@ -5,6 +5,8 @@ import {
   createBuild,
   getBuildOptions,
   getBuildPaths,
+  getInfo,
+  getScheme,
   getValidProjectConfig,
 } from '@rnef/platform-apple-helpers';
 import { intro, outro, RnefError } from '@rnef/tools';
@@ -36,22 +38,27 @@ export const pluginBrownfieldIos =
         const buildFolder = args.buildFolder ?? derivedDataDir;
         const configuration = args.configuration ?? 'Debug';
 
-        if (!args.scheme) {
-          throw new RnefError(
-            'Scheme is required. Please provide "--scheme" flag.'
-          );
+        const { xcodeProject, sourceDir } = iosConfig;
+        const info = await getInfo(xcodeProject, sourceDir);
+        if (!info) {
+          throw new RnefError('Failed to get Xcode project information');
         }
 
+        const scheme = await getScheme(
+          info.schemes,
+          args.scheme,
+          xcodeProject.name
+        );
         await createBuild({
           platformName: 'ios',
           projectConfig: iosConfig,
-          args: { ...args, destinations, buildFolder },
+          args: { ...args, scheme, destinations, buildFolder },
           projectRoot,
           reactNativePath: api.getReactNativePath(),
         });
 
         await mergeFrameworks({
-          scheme: args.scheme,
+          scheme,
           configuration,
           sourceDir: iosConfig.sourceDir,
           platformName: 'ios',
