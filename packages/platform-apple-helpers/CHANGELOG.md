@@ -1,5 +1,13 @@
 # @rnef/platform-apple-helpers
 
+## 0.7.11
+
+### Patch Changes
+
+- 34f1c59: Interactive Xcode scheme selector for `package:ios` command
+- Updated dependencies [dc7ba26]
+  - @rnef/tools@0.7.11
+
 ## 0.7.10
 
 ### Patch Changes

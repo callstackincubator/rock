@@ -1,5 +1,11 @@
 # @rnef/tools
 
+## 0.7.11
+
+### Patch Changes
+
+- dc7ba26: feat: extract @rnef/provider-github package
+
 ## 0.7.10
 
 ### Patch Changes
