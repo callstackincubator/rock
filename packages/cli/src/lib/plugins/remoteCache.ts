@@ -1,7 +1,6 @@
 import type { PluginApi, PluginOutput } from '@rnef/config';
 import type { RemoteBuildCache } from '@rnef/tools';
 import {
-  createRemoteBuildCache,
   formatArtifactName,
   getLocalArtifactPath,
   getLocalBinaryPath,
@@ -33,10 +32,10 @@ async function remoteCache({
   fingerprintOptions: { extraSources: string[]; ignorePaths: string[] };
 }) {
   const isJsonOutput = args.json;
-  const remoteBuildCache = await createRemoteBuildCache(remoteCacheProvider);
-  if (!remoteBuildCache) {
+  if (!remoteCacheProvider) {
     return null;
   }
+  const remoteBuildCache = remoteCacheProvider();
 
   validateArgs(args, action);
 

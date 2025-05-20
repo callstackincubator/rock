@@ -1,6 +1,5 @@
 import { expect, test } from 'vitest';
 import type { RemoteBuildCache } from '../build-cache/common.js';
-import { createRemoteBuildCache } from '../build-cache/remoteBuildCache.js';
 
 const uploadMock = vi.fn();
 
@@ -33,10 +32,8 @@ class DummyRemoteCacheProvider implements RemoteBuildCache {
 test('dummy remote cache provider lists artifacts', async () => {
   const pluginDummyRemoteCacheProvider = (options?: { name: string }) => () =>
     new DummyRemoteCacheProvider(options);
-  const remoteBuildCache = await createRemoteBuildCache(
-    pluginDummyRemoteCacheProvider()
-  );
-  const artifacts = await remoteBuildCache?.list({
+  const remoteBuildCache = pluginDummyRemoteCacheProvider()();
+  const artifacts = await remoteBuildCache.list({
     artifactName: 'rnef-android-debug-7af554b93cd696ca95308fdebe3a4484001bb7b4',
   });
   expect(artifacts).toEqual([
@@ -50,9 +47,7 @@ test('dummy remote cache provider lists artifacts', async () => {
 test('dummy remote cache provider downloads artifacts', async () => {
   const pluginDummyRemoteCacheProvider = (options?: { name: string }) => () =>
     new DummyRemoteCacheProvider(options);
-  const remoteBuildCache = await createRemoteBuildCache(
-    pluginDummyRemoteCacheProvider()
-  );
+  const remoteBuildCache = pluginDummyRemoteCacheProvider()();
   const artifact = await remoteBuildCache?.download({
     artifactName: 'rnef-android-debug-7af554b93cd696ca95308fdebe3a4484001bb7b4',
   });
@@ -65,9 +60,7 @@ test('dummy remote cache provider downloads artifacts', async () => {
 test('dummy remote cache provider deletes artifacts', async () => {
   const pluginDummyRemoteCacheProvider = (options?: { name: string }) => () =>
     new DummyRemoteCacheProvider(options);
-  const remoteBuildCache = await createRemoteBuildCache(
-    pluginDummyRemoteCacheProvider()
-  );
+  const remoteBuildCache = pluginDummyRemoteCacheProvider()();
   const result = await remoteBuildCache?.delete({ artifactName: 'dummy' });
   expect(result).toEqual([
     {
@@ -82,9 +75,7 @@ test('dummy remote cache provider deletes artifacts', async () => {
 test('dummy remote cache provider uploads artifacts', async () => {
   const pluginDummyRemoteCacheProvider = (options?: { name: string }) => () =>
     new DummyRemoteCacheProvider(options);
-  const remoteBuildCache = await createRemoteBuildCache(
-    pluginDummyRemoteCacheProvider()
-  );
+  const remoteBuildCache = pluginDummyRemoteCacheProvider()();
   await remoteBuildCache?.upload({ artifactName: 'dummy' });
   expect(uploadMock).toHaveBeenCalledWith('dummy');
 });

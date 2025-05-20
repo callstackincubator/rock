@@ -14,7 +14,6 @@ import {
 } from './common.js';
 import type { LocalBuild } from './localBuildCache.js';
 import { queryLocalBuildCache } from './localBuildCache.js';
-import { createRemoteBuildCache } from './remoteBuildCache.js';
 
 export type Distribution = 'simulator' | 'device';
 
@@ -59,11 +58,11 @@ To disable this warning, set the provider to null:
     return localBuild;
   }
 
-  const remoteBuildCache = await createRemoteBuildCache(remoteCacheProvider);
-  if (!remoteBuildCache) {
+  if (!remoteCacheProvider) {
     loader.stop(`No remote cache provider found, skipping.`);
     return null;
   }
+  const remoteBuildCache = remoteCacheProvider();
 
   loader.stop(`No local build cached. Checking ${remoteBuildCache.name}.`);
 
