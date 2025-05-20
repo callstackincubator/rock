@@ -1,10 +1,9 @@
-import type { RemoteArtifact, RemoteBuildCache } from '../common.js';
+import type { RemoteArtifact, RemoteBuildCache } from '@rnef/tools';
 import {
   deleteGitHubArtifacts,
   fetchGitHubArtifactsByName,
 } from './artifacts.js';
-import type { GitHubRepoDetails } from './config.js';
-import { detectGitHubRepoDetails } from './config.js';
+import { detectGitHubRepoDetails, type GitHubRepoDetails } from './config.js';
 
 export class GitHubBuildCache implements RemoteBuildCache {
   name = 'GitHub';
@@ -98,7 +97,7 @@ export class GitHubBuildCache implements RemoteBuildCache {
   }
 }
 
-export const pluginGitHubBuildCache =
+export const providerGitHub =
   (options?: { owner: string; repository: string; token: string }) =>
   (): RemoteBuildCache =>
     new GitHubBuildCache(options);

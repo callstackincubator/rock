@@ -39,12 +39,18 @@ export async function fetchCachedBuild({
     logger.warn(`No remote cache provider set. You won't be able to access reusable builds from e.g. GitHub Actions. 
 To configure it, set the "remoteCacheProvider" key in ${color.cyan(
       'rnef.config.mjs'
-    )} file:
-{
-  remoteCacheProvider: 'github-actions'
+    )} file. For example:
+
+import { providerGitHub } from '@rnef/provider-github';
+export default {
+  // ...
+  remoteCacheProvider: providerGitHub()
 }
-To disable this warning, set "remoteCacheProvider" to null.
-Proceeding with local build.`);
+
+To disable this warning, set the provider to null:
+{
+  remoteCacheProvider: null
+}`);
     return null;
   }
   const loader = spinner();

@@ -1,11 +1,25 @@
-import cacheManager from '../../cacheManager.js';
-import { color } from '../../color.js';
-import { RnefError } from '../../error.js';
-import { getGitRemote } from '../../git.js';
-import logger from '../../logger.js';
-import { promptPassword } from '../../prompts.js';
-import { spawn } from '../../spawn.js';
-import { GITHUB_REPO_REGEX } from './patterns.js';
+import {
+  cacheManager,
+  color,
+  logger,
+  promptPassword,
+  RnefError,
+  spawn,
+} from '@rnef/tools';
+import * as r from 'ts-regex-builder';
+import { getGitRemote } from './getGitRemote.js';
+
+const GITHUB_REPO_REGEX = r.buildRegExp([
+  r.startOfString,
+  r.choiceOf('git@', 'https://'),
+  r.oneOrMore(/[^:/]/),
+  r.anyOf(':/'),
+  r.capture(r.oneOrMore(/[^/]/)), // organization
+  '/',
+  r.capture(r.oneOrMore(r.any, { greedy: false })), // repository
+  r.optional('.git'),
+  r.endOfString,
+]);
 
 export function getGitHubToken(): string | undefined {
   return cacheManager.get('githubToken');

@@ -362,6 +362,31 @@ importers:
         specifier: ^0.7.10
         version: link:../config
 
+  packages/provider-github:
+    dependencies:
+      '@callstack/repack':
+        specifier: ^5.0.3
+        version: 5.0.3(@babel/core@7.25.2)(@rspack/core@1.3.10(@swc/helpers@0.5.17))(react-native@0.76.3(@babel/core@7.25.2)(@babel/preset-env@7.25.4(@babel/core@7.25.2))(@react-native-community/cli-server-api@18.0.0)(react@19.1.0))(webpack@5.96.1(@swc/core@1.5.29(@swc/helpers@0.5.13)))
+      '@rnef/tools':
+        specifier: ^0.7.10
+        version: link:../tools
+      '@rspack/core':
+        specifier: ^1.2.8
+        version: 1.3.10(@swc/helpers@0.5.17)
+      '@swc/helpers':
+        specifier: ^0.5.15
+        version: 0.5.17
+      ts-regex-builder:
+        specifier: ^1.8.2
+        version: 1.8.2
+      tslib:
+        specifier: ^2.3.0
+        version: 2.8.1
+    devDependencies:
+      '@rnef/config':
+        specifier: ^0.7.10
+        version: link:../config
+
   packages/test-helpers:
     dependencies:
       tslib:
@@ -403,9 +428,6 @@ importers:
       tar:
         specifier: ^7.4.3
         version: 7.4.3
-      ts-regex-builder:
-        specifier: ^1.8.2
-        version: 1.8.2
       tslib:
         specifier: ^2.3.0
         version: 2.7.0
@@ -8237,6 +8259,39 @@ snapshots:
       - supports-color
       - utf-8-validate
 
+  '@callstack/repack@5.0.3(@babel/core@7.25.2)(@rspack/core@1.3.10(@swc/helpers@0.5.17))(react-native@0.76.3(@babel/core@7.25.2)(@babel/preset-env@7.25.4(@babel/core@7.25.2))(@react-native-community/cli-server-api@18.0.0)(react@19.1.0))(webpack@5.96.1(@swc/core@1.5.29(@swc/helpers@0.5.13)))':
+    dependencies:
+      '@callstack/repack-dev-server': 5.0.3
+      '@discoveryjs/json-ext': 0.5.7
+      '@rspack/plugin-react-refresh': 1.0.0(react-refresh@0.14.2)
+      babel-loader: 9.2.1(@babel/core@7.25.2)(webpack@5.96.1(@swc/core@1.5.29(@swc/helpers@0.5.13)))
+      colorette: 2.0.20
+      dedent: 0.7.0
+      estree-util-is-identifier-name: 1.1.0
+      events: 3.3.0
+      execa: 5.1.1
+      flow-remove-types: 2.254.1
+      gradient-string: 2.0.2
+      image-size: 1.2.0
+      jsonwebtoken: 9.0.2
+      memfs: 4.14.0
+      mime-types: 2.1.35
+      pretty-format: 26.6.2
+      react-native: 0.76.3(@babel/core@7.25.2)(@babel/preset-env@7.25.4(@babel/core@7.25.2))(@react-native-community/cli-server-api@18.0.0)(react@19.1.0)
+      react-refresh: 0.14.2
+      schema-utils: 4.3.0
+      shallowequal: 1.1.0
+      throttleit: 2.1.0
+      webpack-merge: 6.0.1
+    optionalDependencies:
+      '@rspack/core': 1.3.10(@swc/helpers@0.5.17)
+      webpack: 5.96.1(@swc/core@1.5.29(@swc/helpers@0.5.13))
+    transitivePeerDependencies:
+      - '@babel/core'
+      - bufferutil
+      - supports-color
+      - utf-8-validate
+
   '@callstack/rspress-theme@0.0.3(react@19.1.0)':
     dependencies:
       react: 19.1.0
@@ -9016,7 +9071,7 @@ snapshots:
       '@nx/devkit': 20.3.0(nx@20.3.0(@swc-node/register@1.9.2(@swc/core@1.5.29(@swc/helpers@0.5.13))(@swc/types@0.1.12)(typescript@5.6.3))(@swc/core@1.5.29(@swc/helpers@0.5.13)))
       '@nx/js': 20.3.0(@babel/traverse@7.26.7)(@swc-node/register@1.9.2(@swc/core@1.5.29(@swc/helpers@0.5.13))(@swc/types@0.1.12)(typescript@5.6.3))(@swc/core@1.5.29(@swc/helpers@0.5.13))(@types/node@18.19.68)(nx@20.3.0(@swc-node/register@1.9.2(@swc/core@1.5.29(@swc/helpers@0.5.13))(@swc/types@0.1.12)(typescript@5.6.3))(@swc/core@1.5.29(@swc/helpers@0.5.13)))(typescript@5.6.3)(verdaccio@6.0.5(typanion@3.14.0))
       '@phenomnomnominal/tsquery': 5.0.1(typescript@5.6.3)
-      '@swc/helpers': 0.5.15
+      '@swc/helpers': 0.5.17
       enquirer: 2.3.6
       minimatch: 9.0.3
       tsconfig-paths: 4.2.0
@@ -9396,9 +9451,9 @@ snapshots:
 
   '@rsbuild/core@1.2.3':
     dependencies:
-      '@rspack/core': 1.2.2(@swc/helpers@0.5.15)
+      '@rspack/core': 1.2.2(@swc/helpers@0.5.17)
       '@rspack/lite-tapable': 1.0.1
-      '@swc/helpers': 0.5.15
+      '@swc/helpers': 0.5.17
       core-js: 3.40.0
     transitivePeerDependencies:
       - '@rspack/tracing'
@@ -9536,14 +9591,14 @@ snapshots:
       '@rspack/binding-win32-ia32-msvc': 1.3.10
       '@rspack/binding-win32-x64-msvc': 1.3.10
 
-  '@rspack/core@1.2.2(@swc/helpers@0.5.15)':
+  '@rspack/core@1.2.2(@swc/helpers@0.5.17)':
     dependencies:
       '@module-federation/runtime-tools': 0.8.4
       '@rspack/binding': 1.2.2
       '@rspack/lite-tapable': 1.0.1
       caniuse-lite: 1.0.30001705
     optionalDependencies:
-      '@swc/helpers': 0.5.15
+      '@swc/helpers': 0.5.17
 
   '@rspack/core@1.2.8(@swc/helpers@0.5.15)':
     dependencies:

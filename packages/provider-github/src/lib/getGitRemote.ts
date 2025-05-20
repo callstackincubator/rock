@@ -1,7 +1,4 @@
-import cacheManager from './cacheManager.js';
-import logger from './logger.js';
-import { promptSelect } from './prompts.js';
-import { spawn } from './spawn.js';
+import { cacheManager, logger, promptSelect, spawn } from '@rnef/tools';
 
 export async function getGitRemote() {
   let gitRemote = cacheManager.get('gitRemote');
