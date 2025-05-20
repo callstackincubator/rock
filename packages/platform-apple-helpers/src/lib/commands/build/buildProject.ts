@@ -7,6 +7,7 @@ import { supportedPlatforms } from '../../utils/supportedPlatforms.js';
 import type { RunFlags } from '../run/runOptions.js';
 import type { BuildFlags } from './buildOptions.js';
 import { simulatorDestinationMap } from './simulatorDestinationMap.js';
+import { getGenericDestination } from '../../utils/destionation.js';
 
 let lastProgress = 0;
 /**
@@ -84,9 +85,7 @@ export const buildProject = async ({
   args: RunFlags | BuildFlags;
   deviceName?: string;
 }) => {
-  const simulatorDest = simulatorDestinationMap[platformName];
-
-  if (!simulatorDest) {
+  if (!supportedPlatforms[platformName]) {
     throw new RnefError(
       `Unknown platform: ${platformName}. Please, use one of: ${Object.values(
         supportedPlatforms
@@ -100,12 +99,7 @@ export const buildProject = async ({
     }
 
     if (args.destination) {
-      if (args.destination === 'simulator') {
-        return [`generic/platform=${simulatorDest}`];
-      }
-      if (args.destination === 'device') {
-        return [`generic/platform=${platformName}`];
-      }
+      return [getGenericDestination(platformName, args.destination)];
     }
 
     if ('catalyst' in args && args.catalyst) {
@@ -120,7 +114,7 @@ export const buildProject = async ({
       return [`name=${deviceName}`];
     }
 
-    return [`generic/platform=${platformName}`];
+    return [getGenericDestination(platformName, 'device')];
   }
 
   const destinations = determineDestinations().flatMap((destination) => [

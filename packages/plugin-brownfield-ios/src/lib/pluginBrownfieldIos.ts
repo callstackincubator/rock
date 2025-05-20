@@ -3,6 +3,7 @@ import type { PluginApi, PluginOutput } from '@rnef/config';
 import {
   type BuildFlags,
   createBuild,
+  genericDestinations,
   getBuildOptions,
   getBuildPaths,
   getInfo,
@@ -31,8 +32,8 @@ export const pluginBrownfieldIos =
         const { derivedDataDir } = getBuildPaths('ios');
 
         const destinations = args.destinations ?? [
-          'generic/platform=iphoneos',
-          'generic/platform=iphonesimulator',
+          genericDestinations.ios.device,
+          genericDestinations.ios.simulator,
         ];
 
         const buildFolder = args.buildFolder ?? derivedDataDir;
