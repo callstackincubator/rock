@@ -19,7 +19,7 @@ export function registerRunCommand(
         androidConfig,
         args as Flags,
         projectRoot,
-        api.getRemoteCacheProvider(),
+        await api.getRemoteCacheProvider(),
         api.getFingerprintOptions()
       );
     },

@@ -11,7 +11,6 @@ import {
   getLocalArtifactPath,
   getLocalBinaryPath,
   type RemoteBuildCache,
-  type SupportedRemoteCacheProviders,
 } from './common.js';
 import type { LocalBuild } from './localBuildCache.js';
 import { queryLocalBuildCache } from './localBuildCache.js';
@@ -21,11 +20,7 @@ export type Distribution = 'simulator' | 'device';
 
 type FetchCachedBuildOptions = {
   artifactName: string;
-  remoteCacheProvider:
-    | SupportedRemoteCacheProviders
-    | undefined
-    | null
-    | { (): RemoteBuildCache };
+  remoteCacheProvider: undefined | null | { (): RemoteBuildCache };
 };
 
 export async function fetchCachedBuild({

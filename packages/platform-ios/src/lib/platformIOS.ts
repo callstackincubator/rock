@@ -56,7 +56,7 @@ export const platformIOS =
           projectConfig: iosConfig,
           args: args as RunFlags,
           projectRoot,
-          remoteCacheProvider: api.getRemoteCacheProvider(),
+          remoteCacheProvider: await api.getRemoteCacheProvider(),
           fingerprintOptions: api.getFingerprintOptions(),
           reactNativePath: api.getReactNativePath(),
         });

@@ -1,6 +1,7 @@
 import * as fs from 'node:fs';
 import { createRequire } from 'node:module';
 import * as path from 'node:path';
+import type { RemoteBuildCache } from '@rnef/tools';
 import { color, logger } from '@rnef/tools';
 import type { ValidationError } from 'joi';
 import { ConfigTypeSchema } from './schema.js';
@@ -21,14 +22,14 @@ export type PluginApi = {
   getReactNativeVersion: () => string;
   getReactNativePath: () => string;
   getPlatforms: () => { [platform: string]: object };
-  getRemoteCacheProvider: () => SupportedRemoteCacheProviders | undefined;
+  getRemoteCacheProvider: () => Promise<
+    null | undefined | (() => RemoteBuildCache)
+  >;
   getFingerprintOptions: () => {
     extraSources: string[];
     ignorePaths: string[];
   };
 };
-
-type SupportedRemoteCacheProviders = 'github-actions';
 
 type PluginType = (args: PluginApi) => PluginOutput;
 
@@ -68,7 +69,7 @@ export type ConfigType = {
   plugins?: PluginType[];
   platforms?: Record<string, PlatformType>;
   commands?: Array<CommandType>;
-  remoteCacheProvider?: SupportedRemoteCacheProviders;
+  remoteCacheProvider?: null | 'github-actions' |(() => RemoteBuildCache);
   fingerprint?: {
     extraSources?: string[];
     ignorePaths?: string[];
@@ -167,7 +168,15 @@ export async function getConfig(
     getReactNativePath: () => resolveReactNativePath(projectRoot),
     getPlatforms: () =>
       validatedConfig.platforms as { [platform: string]: object },
-    getRemoteCacheProvider: () => validatedConfig.remoteCacheProvider,
+    getRemoteCacheProvider: async () => {
+      // special case for github-actions
+      if (validatedConfig.remoteCacheProvider === 'github-actions') {
+        // @ts-expect-error @rnef/provider-github may not be installed
+        const { providerGitHub } = await import('@rnef/provider-github');
+        return providerGitHub();
+      }
+      return validatedConfig.remoteCacheProvider;
+    },
     getFingerprintOptions: () =>
       validatedConfig.fingerprint as {
         extraSources: string[];
