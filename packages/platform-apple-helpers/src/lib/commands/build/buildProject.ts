@@ -2,12 +2,11 @@ import path from 'node:path';
 import type { SubprocessError } from '@rnef/tools';
 import { color, logger, RnefError, spawn, spinner } from '@rnef/tools';
 import type { ApplePlatform, XcodeProjectInfo } from '../../types/index.js';
+import { getGenericDestination } from '../../utils/destionation.js';
 import { getBuildPaths } from '../../utils/getBuildPaths.js';
 import { supportedPlatforms } from '../../utils/supportedPlatforms.js';
 import type { RunFlags } from '../run/runOptions.js';
 import type { BuildFlags } from './buildOptions.js';
-import { simulatorDestinationMap } from './simulatorDestinationMap.js';
-import { getGenericDestination } from '../../utils/destionation.js';
 
 let lastProgress = 0;
 /**

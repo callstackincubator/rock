@@ -7,7 +7,7 @@ export type DestinationInfo = {
   simulator: string;
 };
 
-export const genericDestinations: Record<ApplePlatform, DestinationInfo> = {
+export const genericDestinations = {
   ios: {
     device: 'generic/platform=iOS',
     simulator: 'generic/platform=iOS Simulator',
@@ -24,11 +24,11 @@ export const genericDestinations: Record<ApplePlatform, DestinationInfo> = {
     device: 'generic/platform=tvOS',
     simulator: 'generic/platform=tvOS Simulator',
   },
-} as const;
+} as const satisfies Record<ApplePlatform, DestinationInfo>;
 
 export function getGenericDestination(
   platform: ApplePlatform,
   type: DestinationType
-) {
+): string {
   return genericDestinations[platform][type];
 }
