@@ -1,6 +1,4 @@
-import type { ApplePlatform } from '../types/index.js';
-
-export type DestinationType = 'device' | 'simulator';
+import type { ApplePlatform, DeviceType } from '../types/index.js';
 
 export type DestinationInfo = {
   device: string;
@@ -28,7 +26,7 @@ export const genericDestinations = {
 
 export function getGenericDestination(
   platform: ApplePlatform,
-  type: DestinationType
+  deviceType: DeviceType
 ): string {
-  return genericDestinations[platform][type];
+  return genericDestinations[platform][deviceType];
 }

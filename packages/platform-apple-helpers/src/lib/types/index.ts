@@ -4,7 +4,6 @@ type ObjectValues<T> = T[keyof T];
 
 export type ApplePlatform = ObjectValues<typeof supportedPlatforms>;
 
-export type Destination = 'simulator' | 'device';
 export interface Device {
   name: string;
   udid: string;
