@@ -1,1 +1,1 @@
-export * from './lib/providerGitHub.js';
+export { providerGitHub } from './lib/providerGitHub.js';
