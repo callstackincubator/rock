@@ -88,7 +88,7 @@ Please generate a new one at: ${color.cyan(
           'https://github.com/settings/tokens'
         )} or request from your team.
 Include "repo", "workflow", and "read:org" permissions.
-Then update the token under "${color.bold('remoteCacheProvider')}" key in ${color.cyan(
+Update the token under "${color.bold('remoteCacheProvider')}" key in ${color.cyan(
           'rnef.config.mjs'
         )} config file.`
       );
