@@ -1,5 +1,13 @@
 # @rnef/config
 
+## 0.7.12
+
+### Patch Changes
+
+- dfed056: fix: mark @rnef/provider-github as optional dependency
+  - @rnef/provider-github@0.7.12
+  - @rnef/tools@0.7.12
+
 ## 0.7.11
 
 ### Patch Changes
