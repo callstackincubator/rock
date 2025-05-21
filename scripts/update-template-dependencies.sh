@@ -26,10 +26,30 @@ update_package_json() {
                 from_entries
             )
         else . end |
-        
+
         if has("devDependencies") then
             .devDependencies = (
                 .devDependencies | 
+                to_entries | 
+                map(if .key | startswith("@rnef/") then .value = $version else . end) |
+                from_entries
+            )
+
+        else . end |
+        
+        if has("optionalDependencies") then
+            .optionalDependencies = (
+                .optionalDependencies | 
+                to_entries | 
+                map(if .key | startswith("@rnef/") then .value = $version else . end) |
+                from_entries
+            )
+        
+        else . end |
+        
+        if has("peerDependencies") then
+            .peerDependencies = (
+                .peerDependencies | 
                 to_entries | 
                 map(if .key | startswith("@rnef/") then .value = $version else . end) |
                 from_entries
