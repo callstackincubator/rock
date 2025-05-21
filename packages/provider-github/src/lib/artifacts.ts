@@ -90,7 +90,7 @@ Please generate a new one at: ${color.cyan(
 Include "repo", "workflow", and "read:org" permissions.
 Then update the token under "${color.bold('remoteCacheProvider')}" key in ${color.cyan(
           'rnef.config.mjs'
-        )} config or ${color.cyan('.env')} file`
+        )} config file.`
       );
     }
     throw new RnefError(`Failed to fetch GitHub artifacts`, { cause: error });
