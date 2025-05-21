@@ -26,15 +26,15 @@ jobs:
       - name: Setup
         uses: ./.github/actions/setup-node
 
+      - name: Build
+        run: pnpm build
+
       # Nx Affected runs only tasks affected by the changes in this PR/commit. Learn more: https://nx.dev/ci/features/affected
       - name: Typecheck and lint
         run: pnpm exec nx affected -t typecheck lint
 
       - name: Run tests
         run: pnpm exec nx affected -t test
-
-      - name: Build
-        run: pnpm build
 
       - name: Run end-to-end tests
         run: |
@@ -45,7 +45,7 @@ jobs:
           pnpm verdaccio:publish
 
           NPM_CONFIG_REGISTRY=http://localhost:4873 pnpm exec nx affected -t e2e
-  
+
   check-changeset:
     name: Check Changeset
     runs-on: ubuntu-latest
@@ -56,9 +56,8 @@ jobs:
           fetch-depth: 0
 
       - name: Setup
-        uses: ./.github/actions/setup-node   
+        uses: ./.github/actions/setup-node
 
       - name: Check changeset
         if: github.ref != 'refs/heads/main'
         run: pnpm changeset status --since=origin/${{ github.base_ref }}
-
