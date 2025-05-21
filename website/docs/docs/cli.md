@@ -126,20 +126,19 @@ The `bundle` command creates an optimized JavaScript bundle for your application
 
 The `build:ios` command builds your iOS app for simulators, devices, or distribution, producing either an APP directory (for simulators) or an IPA file (for devices and distribution).
 
-| Option                            | Description                                                                                |
-| :-------------------------------- | :----------------------------------------------------------------------------------------- |
-| `--configuration <string>`        | Xcode scheme configuration (case sensitive)                                                |
-| `--scheme <string>`               | Xcode scheme to use                                                                        |
-| `--target <string>`               | Xcode target to use                                                                        |
-| `--extra-params <string>`         | Custom xcodebuild parameters                                                               |
-| `--export-extra-params <string>`  | Custom xcodebuild export archive parameters                                                |
-| `--export-options-plist <string>` | Export options file for archiving (default: ExportOptions.plist)                           |
-| `--build-folder <string>`         | Location for iOS build artifacts                                                           |
-| `--destination <string>`          | Build target: "simulator" or "device"                                                      |
-| `--destinations <list>`           | Explicit destinations (e.g., "generic/platform=iphoneos,generic/platform=iphonesimulator") |
-| `--archive`                       | Create Xcode archive (IPA)                                                                 |
-| `--no-install-pods`               | Skip CocoaPods installation                                                                |
-| `--no-new-arch`                   | Build in legacy async architecture                                                         |
+| Option                            | Description                                                                                                                                                                                                                                                  |
+| :-------------------------------- | :----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `--configuration <string>`        | Xcode scheme configuration (case sensitive)                                                                                                                                                                                                                  |
+| `--scheme <string>`               | Xcode scheme to use                                                                                                                                                                                                                                          |
+| `--target <string>`               | Xcode target to use                                                                                                                                                                                                                                          |
+| `--extra-params <string>`         | Custom xcodebuild parameters                                                                                                                                                                                                                                 |
+| `--export-extra-params <string>`  | Custom xcodebuild export archive parameters                                                                                                                                                                                                                  |
+| `--export-options-plist <string>` | Export options file for archiving (default: ExportOptions.plist)                                                                                                                                                                                             |
+| `--build-folder <string>`         | Location for iOS build artifacts                                                                                                                                                                                                                             |
+| `--destination <strings...>`      | Define destination(s) for the build. You can pass multiple destinations as separate values or repeated use of the flag. Values can be either: "simulator", "device" or destinations supported by "xcodebuild -destination" flag, e.g. "generic/platform=iOS" |
+| `--archive`                       | Create Xcode archive (IPA)                                                                                                                                                                                                                                   |
+| `--no-install-pods`               | Skip CocoaPods installation                                                                                                                                                                                                                                  |
+| `--no-new-arch`                   | Build in legacy async architecture                                                                                                                                                                                                                           |
 
 ### `rnef run:ios` Options
 

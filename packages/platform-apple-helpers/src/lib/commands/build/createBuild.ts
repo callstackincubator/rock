@@ -32,16 +32,7 @@ export const createBuild = async ({
   projectRoot: string;
   reactNativePath: string;
 }) => {
-  console.log('CreateBuild(0) destinations', args.destinations);
   await validateArgs(args);
-  console.log('CreateBuild(1) destinations', args.destinations);
-
-  if (args.destinations) {
-    args.destinations = args.destinations.map((destination) =>
-      resolveDestination(destination, platformName)
-    );
-    console.log('CreateBuild(2) destinations', args.destinations);
-  }
 
   let xcodeProject: XcodeProjectInfo;
   let sourceDir: string;
@@ -83,7 +74,7 @@ export const createBuild = async ({
 };
 
 async function validateArgs(args: BuildFlags) {
-  if (!args.destinations) {
+  if (!args.destination) {
     if (isInteractive()) {
       const destination = await promptSelect({
         message: 'Select destination for a generic build',
@@ -99,30 +90,19 @@ async function validateArgs(args: BuildFlags) {
         ],
       });
 
-      args.destinations = [destination];
+      args.destination = [destination];
 
       logger.info(
-        `You can set configuration manually next time using "--destinations ${destination}" flag.`
+        `You can set configuration manually next time using "--destination ${destination}" flag.`
       );
     } else {
       logger.error(
-        `The "--destinations" flag is required in non-interactive environments. Available flag values:
-- simulator – suitable for unsigned simulator builds for developers
-- device – suitable for signed device builds for testers`
+        `The "--destination" flag is required in non-interactive environments. Available flag values:
+- "simulator" – suitable for unsigned simulator builds for developers
+- "device" – suitable for signed device builds for testers
+- or values supported by "xcodebuild -destination" flag, e.g. "generic/platform=iOS"`
       );
       process.exit(1);
     }
   }
-}
-
-function resolveDestination(destination: string, platformName: ApplePlatform) {
-  if (destination === 'device') {
-    return getGenericDestination(platformName, 'device');
-  }
-
-  if (destination === 'simulator') {
-    return getGenericDestination(platformName, 'simulator');
-  }
-
-  return destination;
 }

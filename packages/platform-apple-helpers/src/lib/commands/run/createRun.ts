@@ -51,7 +51,7 @@ export const createRun = async ({
     const artifactName = await formatArtifactName({
       platform: 'ios',
       traits: [
-        args.destinations?.[0] ?? 'simulator',
+        args.destination?.[0] ?? 'simulator',
         args.configuration ?? 'Debug',
       ],
       root: projectRoot,
@@ -81,8 +81,8 @@ export const createRun = async ({
   if (platformName === 'macos') {
     const { appPath } = await buildApp({
       args: {
+        destination: [getGenericDestination(platformName, 'simulator')],
         ...args,
-        destinations: [getGenericDestination(platformName, 'simulator')],
       },
       projectConfig,
       platformName,
@@ -96,8 +96,8 @@ export const createRun = async ({
   } else if (args.catalyst) {
     const { appPath, scheme } = await buildApp({
       args: {
+        destination: [getGenericDestination(platformName, 'simulator')],
         ...args,
-        destinations: [getGenericDestination(platformName, 'simulator')],
       },
       projectConfig,
       platformName,
@@ -133,8 +133,8 @@ export const createRun = async ({
         launchSimulator(device),
         buildApp({
           args: {
+            destination: [getGenericDestination(platformName, 'simulator')],
             ...args,
-            destinations: [getGenericDestination(platformName, 'simulator')],
           },
           projectConfig,
           platformName,
@@ -148,8 +148,8 @@ export const createRun = async ({
     } else if (device.type === 'device') {
       const { appPath } = await buildApp({
         args: {
+          destination: [getGenericDestination(platformName, 'device')],
           ...args,
-          destinations: [getGenericDestination(platformName, 'device')],
         },
         projectConfig,
         platformName,
@@ -191,8 +191,8 @@ export const createRun = async ({
         launchSimulator(simulator),
         buildApp({
           args: {
+            destination: [getGenericDestination(platformName, 'simulator')],
             ...args,
-            destinations: [getGenericDestination(platformName, 'simulator')],
           },
           projectConfig,
           platformName,
