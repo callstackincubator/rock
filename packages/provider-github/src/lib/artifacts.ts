@@ -81,21 +81,19 @@ export async function fetchGitHubArtifactsByName(
     }
   } catch (error) {
     if ((error as { message: string }).message.includes('401 Unauthorized')) {
-      logger.warn(
+      cacheManager.remove('githubToken');
+      throw new RnefError(
         `Failed to fetch GitHub artifacts due to invalid or expired GitHub Personal Access Token provided.
 Please generate a new one at: ${color.cyan(
           'https://github.com/settings/tokens'
-        )}
+        )} or request from your team.
 Include "repo", "workflow", and "read:org" permissions.
-Next time you run the command, you will be prompted to enter the new token.`
-      );
-      cacheManager.remove('githubToken');
-    } else {
-      logger.warn(
-        'Failed to fetch GitHub artifacts: ',
-        (error as { message: string }).message
+Then update the token under "${color.bold('remoteCacheProvider')}" key in ${color.cyan(
+          'rnef.config.mjs'
+        )} config or ${color.cyan('.env')} file`
       );
     }
+    throw new RnefError(`Failed to fetch GitHub artifacts`, { cause: error });
   }
 
   result.sort((a, b) => {
