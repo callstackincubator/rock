@@ -2,7 +2,6 @@ import path from 'node:path';
 import type { SubprocessError } from '@rnef/tools';
 import { color, logger, RnefError, spawn, spinner } from '@rnef/tools';
 import type { ApplePlatform, XcodeProjectInfo } from '../../types/index.js';
-import { getGenericDestination } from '../../utils/destionation.js';
 import { getBuildPaths } from '../../utils/getBuildPaths.js';
 import { supportedPlatforms } from '../../utils/supportedPlatforms.js';
 import type { RunFlags } from '../run/runOptions.js';
@@ -69,20 +68,18 @@ export const buildProject = async ({
   xcodeProject,
   sourceDir,
   platformName,
-  udid,
   scheme,
   configuration,
+  destinations,
   args,
-  deviceName,
 }: {
   xcodeProject: XcodeProjectInfo;
   sourceDir: string;
   platformName: ApplePlatform;
-  udid: string | undefined;
   scheme: string;
   configuration: string;
+  destinations: string[];
   args: RunFlags | BuildFlags;
-  deviceName?: string;
 }) => {
   if (!supportedPlatforms[platformName]) {
     throw new RnefError(
@@ -92,36 +89,6 @@ export const buildProject = async ({
     );
   }
 
-  // At this stage the destinations should already be set
-  function determineDestinations(): string[] {
-    if (args.destinations) {
-      return args.destinations;
-    }
-
-    if (args.destinationXxx) {
-      return [getGenericDestination(platformName, args.destinationXxx)];
-    }
-
-    if ('catalyst' in args && args.catalyst) {
-      return ['platform=macOS,variant=Mac Catalyst'];
-    }
-
-    if (udid) {
-      return [`id=${udid}`];
-    }
-
-    if (deviceName) {
-      return [`name=${deviceName}`];
-    }
-
-    return [getGenericDestination(platformName, 'device')];
-  }
-
-  const destinations = determineDestinations().flatMap((destination) => [
-    '-destination',
-    destination,
-  ]);
-
   const xcodebuildArgs = [
     xcodeProject.isWorkspace ? '-workspace' : '-project',
     xcodeProject.name,
@@ -130,7 +97,7 @@ export const buildProject = async ({
     configuration,
     '-scheme',
     scheme,
-    ...destinations,
+    ...destinations.flatMap((destination) => ['-destination', destination]),
   ];
 
   if (args.archive) {

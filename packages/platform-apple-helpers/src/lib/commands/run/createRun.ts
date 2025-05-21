@@ -45,6 +45,8 @@ export const createRun = async ({
   fingerprintOptions: { extraSources: string[]; ignorePaths: string[] };
   reactNativePath: string;
 }) => {
+  console.log('createRun(1)', typeof remoteCacheProvider, remoteCacheProvider);
+
   if (!args.binaryPath && args.remoteCache) {
     const artifactName = await formatArtifactName({
       platform: 'ios',

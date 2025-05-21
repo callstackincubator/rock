@@ -12,9 +12,9 @@ type BuildSettings = {
 export async function getBuildSettings(
   xcodeProject: XcodeProjectInfo,
   sourceDir: string,
+  platformName: ApplePlatform,
   configuration: string,
   destinations: string[],
-  platformName: ApplePlatform,
   scheme: string,
   target?: string
 ): Promise<{ appPath: string; infoPlistPath: string }> {
