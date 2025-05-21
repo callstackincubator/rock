@@ -103,4 +103,8 @@ async function validateArgs(args: BuildFlags) {
       process.exit(1);
     }
   }
+
+  if (typeof args.destination === 'string') {
+    args.destination = [args.destination];
+  }
 }
