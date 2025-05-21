@@ -76,12 +76,13 @@ export const cli = async ({ cwd, argv }: CliOptions) => {
 
     // Flags
     for (const opt of command.options || []) {
-      cmd.option(
-        opt.name,
-        opt.description,
-        opt.parse ?? ((val) => val),
-        opt.default
-      );
+      // Note: we cannot use default idempotent parse, as it prevents us from using variadic options.
+      if (opt.parse) {
+        cmd.option(opt.name, opt.description, opt.parse, opt.default);
+      } else {
+        // @ts-expect-error - TS types for our default do not match commander types
+        cmd.option(opt.name, opt.description, opt.default);
+      }
     }
   });
 
