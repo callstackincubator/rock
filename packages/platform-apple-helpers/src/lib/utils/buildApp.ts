@@ -129,10 +129,6 @@ function determineDestinations({
     return args.destinations;
   }
 
-  if (args.destinationXxx) {
-    return [getGenericDestination(platformName, args.destinationXxx)];
-  }
-
   if ('catalyst' in args && args.catalyst) {
     return ['platform=macOS,variant=Mac Catalyst'];
   }

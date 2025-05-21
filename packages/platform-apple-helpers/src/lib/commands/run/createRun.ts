@@ -51,7 +51,7 @@ export const createRun = async ({
     const artifactName = await formatArtifactName({
       platform: 'ios',
       traits: [
-        args.destinationXxx ?? 'simulator',
+        args.destinations?.[0] ?? 'simulator',
         args.configuration ?? 'Debug',
       ],
       root: projectRoot,
