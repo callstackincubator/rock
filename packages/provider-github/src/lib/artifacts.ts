@@ -84,13 +84,13 @@ export async function fetchGitHubArtifactsByName(
       cacheManager.remove('githubToken');
       throw new RnefError(
         `Failed to fetch GitHub artifacts due to invalid or expired GitHub Personal Access Token provided.
-Please generate a new one at: ${color.cyan(
-          'https://github.com/settings/tokens'
-        )} or request from your team.
-Include "repo", "workflow", and "read:org" permissions.
-Update the token under "${color.bold('remoteCacheProvider')}" key in ${color.cyan(
-          'rnef.config.mjs'
-        )} config file.`
+Update the token under "${color.bold(
+          'remoteCacheProvider'
+        )}" key in ${color.cyan('rnef.config.mjs')} config file.
+
+📘 Read more about generating a new token: ${color.cyan(
+          'https://www.rnef.dev/docs/remote-cache/github-actions/configuration#generate-github-personal-access-token-for-downloading-cached-builds'
+        )}`
       );
     }
     throw new RnefError(`Failed to fetch GitHub artifacts`, { cause: error });
