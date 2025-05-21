@@ -2,7 +2,7 @@ import * as fs from 'node:fs';
 import { createRequire } from 'node:module';
 import * as path from 'node:path';
 import { pathToFileURL } from 'node:url';
-import type { FingerprintSources, RemoteBuildCache } from '@rock-js/tools';
+import { FingerprintSources, RemoteBuildCache } from '@rock-js/tools';
 import { colorLink, getReactNativeVersion, logger } from '@rock-js/tools';
 import type { ValidationError } from 'joi';
 import { ConfigTypeSchema } from './schema.js';
@@ -41,7 +41,14 @@ export type PluginApi = {
   getRemoteCacheProvider: () => Promise<
     null | undefined | (() => RemoteBuildCache)
   >;
+<<<<<<< HEAD
   getFingerprintOptions: () => FingerprintSources;
+=======
+  getFingerprintOptions: () => {
+    extraSources: string[];
+    ignorePaths: string[];
+  };
+>>>>>>> 83e802f (make it run)
   getBundlerStart: () => ({ args }: { args: any }) => void;
 };
 
@@ -176,6 +183,8 @@ export async function getConfig(
     process.exit(1);
   }
 
+  let bundler: BundlerPluginOutput | undefined;
+
   const api = {
     registerCommand: (command: CommandType) => {
       validatedConfig.commands = [...(validatedConfig.commands || []), command];
@@ -200,25 +209,24 @@ Read more: ${colorLink('https://rockjs.dev/docs/configuration#github-actions-pro
       }
       return validatedConfig.remoteCacheProvider;
     },
-    getFingerprintOptions: () =>
-      validatedConfig.fingerprint as FingerprintSources,
-      getBundlerStart:
-        () =>
-        ({ args: any }) =>
-          bundler?.start({
-            root: api.getProjectRoot(),
-            args,
-            reactNativeVersion: api.getReactNativeVersion(),
-            reactNativePath: api.getReactNativePath(),
-            platforms: api.getPlatforms(),
-          }),
+    getFingerprintOptions: () => FingerprintSources,
+    getBundlerStart:
+      () =>
+      ({ args }: { args: any }) => {
+        return bundler?.start({
+          root: api.getProjectRoot(),
+          args,
+          reactNativeVersion: api.getReactNativeVersion(),
+          reactNativePath: api.getReactNativePath(),
+          platforms: api.getPlatforms(),
+        });
+      },
   };
 
   const platforms: Record<string, PlatformOutput> = {};
   if (validatedConfig.platforms) {
     // platforms register commands and custom platform functionality (TBD)
     for (const platform in validatedConfig.platforms) {
-      // @ts-expect-error tbd
       const platformOutput = validatedConfig.platforms[platform](api);
       platforms[platform] = platformOutput;
     }
@@ -235,7 +243,6 @@ Read more: ${colorLink('https://rockjs.dev/docs/configuration#github-actions-pro
     // @ts-expect-error tbd
     bundler = assignOriginToCommand(
       validatedConfig.bundler,
-      // @ts-expect-error tbd
       api,
       validatedConfig
     );
@@ -253,6 +260,8 @@ Read more: ${colorLink('https://rockjs.dev/docs/configuration#github-actions-pro
     root: projectRoot,
     commands: validatedConfig.commands ?? [],
     platforms: platforms ?? {},
+    // @ts-expect-error tbd
+    bundler,
     ...api,
   };
 
