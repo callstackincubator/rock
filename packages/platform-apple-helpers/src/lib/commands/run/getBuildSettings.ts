@@ -25,7 +25,6 @@ export async function getBuildSettings(
       xcodeProject.name,
       '-scheme',
       scheme,
-      '-sdk',
       '-configuration',
       configuration,
       ...destinations.flatMap((destination) => ['-destination', destination]),
