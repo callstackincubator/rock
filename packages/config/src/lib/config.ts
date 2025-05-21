@@ -171,7 +171,6 @@ export async function getConfig(
     getRemoteCacheProvider: async () => {
       // special case for github-actions
       if (validatedConfig.remoteCacheProvider === 'github-actions') {
-        // @ts-expect-error @rnef/provider-github may not be installed
         const { providerGitHub } = await import('@rnef/provider-github');
         return providerGitHub();
       }

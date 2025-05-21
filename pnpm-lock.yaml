@@ -136,6 +136,9 @@ importers:
       '@babel/code-frame':
         specifier: ^7.26.2
         version: 7.26.2
+      '@rnef/provider-github':
+        specifier: ^0.7.11
+        version: link:../provider-github
       '@rnef/tools':
         specifier: ^0.7.11
         version: link:../tools
@@ -149,10 +152,6 @@ importers:
       '@types/babel__code-frame':
         specifier: ^7.0.6
         version: 7.0.6
-    optionalDependencies:
-      '@rnef/provider-github':
-        specifier: ^0.7.11
-        version: link:../provider-github
 
   packages/create-app:
     dependencies:
