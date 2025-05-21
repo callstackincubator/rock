@@ -8,13 +8,11 @@ import {
   spinner,
 } from '@rnef/tools';
 import type {
-  ApplePlatform,
   BuilderCommand,
   ProjectConfig,
   XcodeProjectInfo,
 } from '../../types/index.js';
 import { buildApp } from '../../utils/buildApp.js';
-import { getGenericDestination } from '../../utils/destionation.js';
 import { getBuildPaths } from '../../utils/getBuildPaths.js';
 import type { BuildFlags } from './buildOptions.js';
 import { exportArchive } from './exportArchive.js';
