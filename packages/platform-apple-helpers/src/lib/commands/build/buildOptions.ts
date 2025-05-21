@@ -11,7 +11,8 @@ export type BuildFlags = {
   exportExtraParams?: string[];
   exportOptionsPlist?: string;
   buildFolder?: string;
-  destination?: 'device' | 'simulator';
+  /** @deprecated Use destinations instead */
+  destinationXxx?: 'device' | 'simulator';
   destinations?: string[];
   archive?: boolean;
   installPods: boolean;
@@ -54,7 +55,8 @@ export const getBuildOptions = ({ platformName }: BuilderCommand) => {
     },
     {
       name: '--export-options-plist <string>',
-      description: 'Name of the export options file for archiving. Defaults to: ExportOptions.plist',
+      description:
+        'Name of the export options file for archiving. Defaults to: ExportOptions.plist',
     },
     {
       name: '--build-folder <string>',

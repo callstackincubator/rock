@@ -29,38 +29,3 @@ export function getPlatformInfo(platform: ApplePlatform): PlatformInfo {
       };
   }
 }
-
-export type PlatformSDK =
-  | 'iphonesimulator'
-  | 'macosx'
-  | 'appletvsimulator'
-  | 'xrsimulator'
-  | 'iphoneos'
-  | 'appletvos'
-  | 'xr';
-
-export function getSimulatorPlatformSDK(platform: ApplePlatform): PlatformSDK {
-  switch (platform) {
-    case 'ios':
-      return 'iphonesimulator';
-    case 'macos':
-      return 'macosx';
-    case 'tvos':
-      return 'appletvsimulator';
-    case 'visionos':
-      return 'xrsimulator';
-  }
-}
-
-export function getDevicePlatformSDK(platform: ApplePlatform): PlatformSDK {
-  switch (platform) {
-    case 'ios':
-      return 'iphoneos';
-    case 'macos':
-      return 'macosx';
-    case 'tvos':
-      return 'appletvos';
-    case 'visionos':
-      return 'xr';
-  }
-}

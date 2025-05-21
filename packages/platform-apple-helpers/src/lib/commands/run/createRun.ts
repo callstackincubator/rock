@@ -17,11 +17,8 @@ import type {
   ProjectConfig,
 } from '../../types/index.js';
 import { buildApp } from '../../utils/buildApp.js';
-import {
-  getDevicePlatformSDK,
-  getPlatformInfo,
-  getSimulatorPlatformSDK,
-} from '../../utils/getPlatformInfo.js';
+import { getGenericDestination } from '../../utils/destionation.js';
+import { getPlatformInfo } from '../../utils/getPlatformInfo.js';
 import { listDevicesAndSimulators } from '../../utils/listDevices.js';
 import { matchingDevice } from './matchingDevice.js';
 import { cacheRecentDevice, sortByRecentDevices } from './recentDevices.js';
@@ -51,7 +48,10 @@ export const createRun = async ({
   if (!args.binaryPath && args.remoteCache) {
     const artifactName = await formatArtifactName({
       platform: 'ios',
-      traits: [args.destination ?? 'simulator', args.configuration ?? 'Debug'],
+      traits: [
+        args.destinationXxx ?? 'simulator',
+        args.configuration ?? 'Debug',
+      ],
       root: projectRoot,
       fingerprintOptions,
     });
@@ -78,10 +78,12 @@ export const createRun = async ({
 
   if (platformName === 'macos') {
     const { appPath } = await buildApp({
-      args,
+      args: {
+        ...args,
+        destinations: [getGenericDestination(platformName, 'simulator')],
+      },
       projectConfig,
       platformName,
-      platformSDK: getSimulatorPlatformSDK(platformName),
       projectRoot,
       udid,
       deviceName,
@@ -91,10 +93,12 @@ export const createRun = async ({
     return;
   } else if (args.catalyst) {
     const { appPath, scheme } = await buildApp({
-      args,
+      args: {
+        ...args,
+        destinations: [getGenericDestination(platformName, 'simulator')],
+      },
       projectConfig,
       platformName,
-      platformSDK: getSimulatorPlatformSDK(platformName),
       projectRoot,
       udid,
       deviceName,
@@ -126,10 +130,12 @@ export const createRun = async ({
       const [, { appPath, infoPlistPath }] = await Promise.all([
         launchSimulator(device),
         buildApp({
-          args,
+          args: {
+            ...args,
+            destinations: [getGenericDestination(platformName, 'simulator')],
+          },
           projectConfig,
           platformName,
-          platformSDK: getSimulatorPlatformSDK(platformName),
           udid: device.udid,
           projectRoot,
           reactNativePath,
@@ -139,10 +145,12 @@ export const createRun = async ({
       await runOnSimulator(device, appPath, infoPlistPath);
     } else if (device.type === 'device') {
       const { appPath } = await buildApp({
-        args,
+        args: {
+          ...args,
+          destinations: [getGenericDestination(platformName, 'device')],
+        },
         projectConfig,
         platformName,
-        platformSDK: getDevicePlatformSDK(platformName),
         udid: device.udid,
         projectRoot,
         reactNativePath,
@@ -180,10 +188,12 @@ export const createRun = async ({
       const [, { appPath, infoPlistPath }] = await Promise.all([
         launchSimulator(simulator),
         buildApp({
-          args,
+          args: {
+            ...args,
+            destinations: [getGenericDestination(platformName, 'simulator')],
+          },
           projectConfig,
           platformName,
-          platformSDK: getSimulatorPlatformSDK(platformName),
           udid: simulator.udid,
           projectRoot,
           reactNativePath,

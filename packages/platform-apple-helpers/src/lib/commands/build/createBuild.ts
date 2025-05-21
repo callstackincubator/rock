@@ -8,16 +8,14 @@ import {
   spinner,
 } from '@rnef/tools';
 import type {
+  ApplePlatform,
   BuilderCommand,
   ProjectConfig,
   XcodeProjectInfo,
 } from '../../types/index.js';
 import { buildApp } from '../../utils/buildApp.js';
+import { getGenericDestination } from '../../utils/destionation.js';
 import { getBuildPaths } from '../../utils/getBuildPaths.js';
-import {
-  getDevicePlatformSDK,
-  getSimulatorPlatformSDK,
-} from '../../utils/getPlatformInfo.js';
 import type { BuildFlags } from './buildOptions.js';
 import { exportArchive } from './exportArchive.js';
 
@@ -34,7 +32,17 @@ export const createBuild = async ({
   projectRoot: string;
   reactNativePath: string;
 }) => {
+  console.log('CreateBuild(0) destinations', args.destinations);
   await validateArgs(args);
+  console.log('CreateBuild(1) destinations', args.destinations);
+
+  if (args.destinations) {
+    args.destinations = args.destinations.map((destination) =>
+      resolveDestination(destination, platformName)
+    );
+    console.log('CreateBuild(2) destinations', args.destinations);
+  }
+
   let xcodeProject: XcodeProjectInfo;
   let sourceDir: string;
   try {
@@ -42,10 +50,6 @@ export const createBuild = async ({
       projectRoot,
       projectConfig,
       platformName,
-      platformSDK:
-        args.destination === 'simulator'
-          ? getSimulatorPlatformSDK(platformName)
-          : getDevicePlatformSDK(platformName),
       args,
       reactNativePath,
     });
@@ -79,14 +83,7 @@ export const createBuild = async ({
 };
 
 async function validateArgs(args: BuildFlags) {
-  if (args.destination && args.destinations) {
-    logger.error(
-      `Both "--destination" and "--destinations" flags are set. Please pick one.`
-    );
-    process.exit(1);
-  }
-
-  if (!args.destination) {
+  if (!args.destinations) {
     if (isInteractive()) {
       const destination = await promptSelect({
         message: 'Select destination for a generic build',
@@ -102,18 +99,30 @@ async function validateArgs(args: BuildFlags) {
         ],
       });
 
-      args.destination = destination;
+      args.destinations = [destination];
 
       logger.info(
-        `You can set configuration manually next time using "--destination ${destination}" flag.`
+        `You can set configuration manually next time using "--destinations ${destination}" flag.`
       );
     } else {
       logger.error(
-        `The "--destination" flag is required in non-interactive environments. Available flag values:
+        `The "--destinations" flag is required in non-interactive environments. Available flag values:
 - simulator – suitable for unsigned simulator builds for developers
 - device – suitable for signed device builds for testers`
       );
       process.exit(1);
     }
   }
+}
+
+function resolveDestination(destination: string, platformName: ApplePlatform) {
+  if (destination === 'device') {
+    return getGenericDestination(platformName, 'device');
+  }
+
+  if (destination === 'simulator') {
+    return getGenericDestination(platformName, 'simulator');
+  }
+
+  return destination;
 }

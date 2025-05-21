@@ -92,13 +92,14 @@ export const buildProject = async ({
     );
   }
 
+  // At this stage the destinations should already be set
   function determineDestinations(): string[] {
     if (args.destinations) {
       return args.destinations;
     }
 
-    if (args.destination) {
-      return [getGenericDestination(platformName, args.destination)];
+    if (args.destinationXxx) {
+      return [getGenericDestination(platformName, args.destinationXxx)];
     }
 
     if ('catalyst' in args && args.catalyst) {

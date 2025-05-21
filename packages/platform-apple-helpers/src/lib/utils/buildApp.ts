@@ -8,7 +8,6 @@ import type { RunFlags } from '../commands/run/runOptions.js';
 import type { ApplePlatform, ProjectConfig } from '../types/index.js';
 import { getConfiguration } from './getConfiguration.js';
 import { getInfo } from './getInfo.js';
-import type { PlatformSDK } from './getPlatformInfo.js';
 import { getScheme } from './getScheme.js';
 import { getValidProjectConfig } from './getValidProjectConfig.js';
 import { installPodsIfNeeded } from './pods.js';
@@ -18,7 +17,6 @@ export async function buildApp({
   projectConfig,
   pluginConfig,
   platformName,
-  platformSDK,
   udid,
   projectRoot,
   deviceName,
@@ -28,7 +26,6 @@ export async function buildApp({
   projectConfig: ProjectConfig;
   pluginConfig?: IOSProjectConfig;
   platformName: ApplePlatform;
-  platformSDK: PlatformSDK;
   udid?: string;
   deviceName?: string;
   projectRoot: string;
@@ -73,6 +70,7 @@ export async function buildApp({
   if (!info) {
     throw new RnefError('Failed to get Xcode project information');
   }
+
   const scheme = await getScheme(info.schemes, args.scheme, xcodeProject.name);
   const configuration = await getConfiguration(
     info.configurations,
@@ -88,11 +86,17 @@ export async function buildApp({
     args,
     deviceName,
   });
+
+  if (!args.destinations) {
+    throw new RnefError('Destinations be set by now');
+  }
+
   const buildSettings = await getBuildSettings(
     xcodeProject,
     sourceDir,
     configuration,
-    platformSDK,
+    args.destinations,
+    platformName,
     scheme,
     args.target
   );
