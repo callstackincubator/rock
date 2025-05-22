@@ -43,7 +43,7 @@ export const pluginRepack =
         const root = api.getProjectRoot();
         const platforms = api.getPlatforms();
         const { port, startDevServer } = await findDevServerPort(
-          args.port ?? 8081,
+          args.port ? Number(args.port) : 8081,
           root
         );
 
@@ -58,6 +58,7 @@ export const pluginRepack =
           { ...args, port }
         );
       },
+      // @ts-expect-error fixup types
       options: startCommand.options,
     });
 

@@ -18,7 +18,7 @@ export const registerStartCommand = (api: PluginApi) => {
       intro('Starting Metro dev server');
       const root = api.getProjectRoot();
       const { port, startDevServer } = await findDevServerPort(
-        args.port ?? 8081,
+        args.port ? Number(args.port) : 8081,
         root
       );
 
@@ -44,7 +44,6 @@ export const registerStartCommand = (api: PluginApi) => {
       {
         name: '--port <number>',
         description: 'Port to run the server on',
-        parse: Number,
       },
       {
         name: '--host <string>',
@@ -81,7 +80,6 @@ export const registerStartCommand = (api: PluginApi) => {
           'Specifies the maximum number of workers the worker-pool ' +
           'will spawn for transforming files. This defaults to the number of the ' +
           'cores available on your machine.',
-        parse: (workers: string): number => Number(workers),
       },
       {
         name: '--transformer <string>',

@@ -35,7 +35,7 @@ type PluginType = (args: PluginApi) => PluginOutput;
 
 type PlatformType = (args: PluginApi) => PlatformOutput;
 
-type ArgValue = string | string[] | number | boolean;
+type ArgValue = string | string[] | boolean;
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 type ActionType<T = any> = (...args: T[]) => void | Promise<void>;

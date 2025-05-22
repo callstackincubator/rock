@@ -80,7 +80,6 @@ export const cli = async ({ cwd, argv }: CliOptions) => {
       if (opt.parse) {
         cmd.option(opt.name, opt.description, opt.parse, opt.default);
       } else {
-        // @ts-expect-error - TS types for our default do not match commander types
         cmd.option(opt.name, opt.description, opt.default);
       }
     }
