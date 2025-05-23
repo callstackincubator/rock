@@ -1,0 +1,24 @@
+{
+  "name": "@rnef/provider-s3",
+  "version": "0.7.12",
+  "type": "module",
+  "exports": {
+    "types": "./dist/src/index.d.ts",
+    "import": "./dist/src/index.js"
+  },
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "publish:npm": "npm publish --access public",
+    "publish:verdaccio": "npm publish --registry http://localhost:4873 --userconfig ../../.npmrc"
+  },
+  "dependencies": {
+    "@aws-sdk/client-s3": "^3.816.0",
+    "@rnef/tools": "^0.7.12",
+    "tslib": "^2.3.0"
+  },
+  "publishConfig": {
+    "access": "public"
+  }
+}
