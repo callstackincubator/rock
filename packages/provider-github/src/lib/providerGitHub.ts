@@ -27,7 +27,7 @@ export class GitHubBuildCache implements RemoteBuildCache {
   async getAvailabilityState(): Promise<CacheAvailabilityState> {
     const gitRemote = await getGitRemote();
     if (!gitRemote) {
-      return { isAvailable: false, reason: 'No git remote found' };
+      return { isAvailable: false, reason: 'No git remote set.' };
     }
 
     return { isAvailable: true };
