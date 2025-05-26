@@ -7,6 +7,7 @@ import {
   formatArtifactName,
   isInteractive,
   logger,
+  promptConfirm,
   promptSelect,
   RnefError,
   spinner,
@@ -55,13 +56,25 @@ export const createRun = async ({
       root: projectRoot,
       fingerprintOptions,
     });
-    const cachedBuild = await fetchCachedBuild({
-      artifactName,
-      remoteCacheProvider,
-    });
-    if (cachedBuild) {
-      // @todo replace with a more generic way to pass binary path
-      args.binaryPath = cachedBuild.binaryPath;
+    try {
+      const cachedBuild = await fetchCachedBuild({
+        artifactName,
+        remoteCacheProvider,
+      });
+      if (cachedBuild) {
+        // @todo replace with a more generic way to pass binary path
+        args.binaryPath = cachedBuild.binaryPath;
+      }
+    } catch (error) {
+      logger.warn((error as RnefError).message);
+      const shouldContinueWithLocalBuild = await promptConfirm({
+        message: 'Would you like to continue with local build?',
+        confirmLabel: 'Yes',
+        cancelLabel: 'No',
+      });
+      if (!shouldContinueWithLocalBuild) {
+        return;
+      }
     }
   }
 
