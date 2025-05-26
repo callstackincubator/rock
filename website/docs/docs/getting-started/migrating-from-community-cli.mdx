@@ -86,19 +86,24 @@ import { PackageManagerTabs } from 'rspress/theme';
    config = use_native_modules!(['npx', 'rnef', 'config', '-p', 'ios'])
    ```
 
-   In "Bundle React Native code and images" Build Phase in Xcode add:
+   In `ios/<ProjectName>.xcodeproj/project.pbxproj` update the shellScript:
 
-   ```shell title="Bundle React Native code and images build phase" {2-9}
+   ```ruby title=""
+   # shellScript = "set -e\n\nWITH_ENVIRONMENT=\"$REACT_NATIVE_PATH/scripts/xcode/with-environment.sh\"\nREACT_NATIVE_XCODE=\"$REACT_NATIVE_PATH/scripts/react-native-xcode.sh\"\n\n/bin/sh -c \"$WITH_ENVIRONMENT $REACT_NATIVE_XCODE\"\n";
+   shellScript = "bash -l -c \"${PROJECT_DIR}/react-native-xcode.sh\"\n";
+   ```
+
+   Next, create `ios/react-native-xcode.sh` with the below content. You can move there any custom code you previously had as part of the "Bundle React Native code and images" Build Phase in Xcode:
+
+   ```shell title="ios/react-native-xcode.sh"
    set -e
-   if [[ -f "$PODS_ROOT/../.xcode.env" ]]; then
-   source "$PODS_ROOT/../.xcode.env"
-   fi
-   if [[ -f "$PODS_ROOT/../.xcode.env.local" ]]; then
-   source "$PODS_ROOT/../.xcode.env.local"
-   fi
+
+   . "$REACT_NATIVE_PATH/scripts/xcode/with-environment.sh"
+
    export CONFIG_CMD="dummy-workaround-value"
    export CLI_PATH="$("$NODE_BINARY" --print "require('path').dirname(require.resolve('@rnef/cli/package.json')) + '/dist/src/bin.js'")"
-   WITH_ENVIRONMENT="$REACT_NATIVE_PATH/scripts/xcode/with-environment.sh"
+
+   . "$REACT_NATIVE_PATH/scripts/react-native-xcode.sh"
    ```
 
 1. Cleanup native files:
