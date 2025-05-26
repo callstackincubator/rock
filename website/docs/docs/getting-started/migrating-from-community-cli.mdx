@@ -88,23 +88,12 @@ import { PackageManagerTabs } from 'rspress/theme';
 
    In `ios/<ProjectName>.xcodeproj/project.pbxproj` update the shellScript:
 
-   ```ruby title=""
+   ```ruby title="Bundle React Native code and images"
    # shellScript = "set -e\n\nWITH_ENVIRONMENT=\"$REACT_NATIVE_PATH/scripts/xcode/with-environment.sh\"\nREACT_NATIVE_XCODE=\"$REACT_NATIVE_PATH/scripts/react-native-xcode.sh\"\n\n/bin/sh -c \"$WITH_ENVIRONMENT $REACT_NATIVE_XCODE\"\n";
    shellScript = "bash -l -c \"${PROJECT_DIR}/react-native-xcode.sh\"\n";
    ```
 
-   Next, create `ios/react-native-xcode.sh` with the below content. You can move there any custom code you previously had as part of the "Bundle React Native code and images" Build Phase in Xcode:
-
-   ```shell title="ios/react-native-xcode.sh"
-   set -e
-
-   . "$REACT_NATIVE_PATH/scripts/xcode/with-environment.sh"
-
-   export CONFIG_CMD="dummy-workaround-value"
-   export CLI_PATH="$("$NODE_BINARY" --print "require('path').dirname(require.resolve('@rnef/cli/package.json')) + '/dist/src/bin.js'")"
-
-   . "$REACT_NATIVE_PATH/scripts/react-native-xcode.sh"
-   ```
+   Next, create `ios/react-native-xcode.sh` based on [this template](https://github.com/callstack/rnef/blob/main/packages/platform-ios/template/ios/react-native-xcode.sh). You can move there any custom code you previously had as part of the "Bundle React Native code and images" Build Phase in Xcode.
 
 1. Cleanup native files:
 
