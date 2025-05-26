@@ -1,5 +1,12 @@
 # @rnef/provider-github
 
+## 0.7.13
+
+### Patch Changes
+
+- 70aa414: chore: throw instead of warn when token is invalid
+  - @rnef/tools@0.7.13
+
 ## 0.7.12
 
 ### Patch Changes

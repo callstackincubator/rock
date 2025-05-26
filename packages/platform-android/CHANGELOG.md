@@ -1,5 +1,12 @@
 # @rnef/platform-android
 
+## 0.7.13
+
+### Patch Changes
+
+- 9fcbbee: feat: ask whether to continue with local build when remote fails
+  - @rnef/tools@0.7.13
+
 ## 0.7.12
 
 ### Patch Changes

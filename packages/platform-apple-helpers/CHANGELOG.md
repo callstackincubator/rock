@@ -1,5 +1,13 @@
 # @rnef/platform-apple-helpers
 
+## 0.7.13
+
+### Patch Changes
+
+- 9fcbbee: feat: ask whether to continue with local build when remote fails
+- 80cc3d1: unify --destination and --destinations flags; fix building universal (device+simu) iOS brownfield framework
+  - @rnef/tools@0.7.13
+
 ## 0.7.12
 
 ### Patch Changes

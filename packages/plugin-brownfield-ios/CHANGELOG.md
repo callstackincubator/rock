@@ -1,5 +1,15 @@
 # @rnef/plugin-brownfield-ios
 
+## 0.7.13
+
+### Patch Changes
+
+- 80cc3d1: unify --destination and --destinations flags; fix building universal (device+simu) iOS brownfield framework
+- Updated dependencies [9fcbbee]
+- Updated dependencies [80cc3d1]
+  - @rnef/platform-apple-helpers@0.7.13
+  - @rnef/tools@0.7.13
+
 ## 0.7.12
 
 ### Patch Changes
