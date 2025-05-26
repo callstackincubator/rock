@@ -1,7 +1,7 @@
 import fs from 'node:fs';
 import path from 'node:path';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
-import { processExtraSources } from '../fingerprint/processExtraSources.js';
+import { processExtraSources } from '../fingerprint/extra-sources.js';
 
 describe('processExtraSources', () => {
   const mockProjectRoot = '/mock/project/root';
