@@ -41,31 +41,37 @@ type ProviderConfig = {
 
 ### AWS S3
 
-```typescript
+```ts
+// rnef.config.mjs
 import { providerS3 } from '@rnef/provider-s3';
 
-// Configure the remote cache provider
-const remoteCacheProvider = providerS3({
-  bucket: 'your-bucket',
-  region: 'your-region',
-  accessKeyId: 'access-key',
-  secretAccessKey: 'secret-key',
-});
+export default {
+  // ...
+  remoteCacheProvider: providerS3({
+    bucket: 'your-bucket',
+    region: 'your-region',
+    accessKeyId: 'access-key',
+    secretAccessKey: 'secret-key',
+  }),
+};
 ```
 
 ### Cloudflare R2
 
-```typescript
+```ts
+// rnef.config.mjs
 import { providerS3 } from '@rnef/provider-s3';
 
-// Configure the remote cache provider with Cloudflare R2
-const remoteCacheProvider = providerS3({
-  endpoint: 'https://{ACCOUNT_ID}.r2.cloudflarestorage.com',
-  bucket: 'your-bucket',
-  region: 'your-region',
-  accessKeyId: 'access-key',
-  secretAccessKey: 'secret-key',
-});
+export default {
+  // ...
+  remoteCacheProvider: providerS3({
+    endpoint: 'https://${ACCOUNT_ID}.r2.cloudflarestorage.com',
+    bucket: 'your-bucket',
+    region: 'your-region',
+    accessKeyId: 'access-key',
+    secretAccessKey: 'secret-key',
+  }),
+};
 ```
 
 ## Documentation

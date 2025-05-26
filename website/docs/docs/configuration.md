@@ -148,18 +148,76 @@ When `remoteCacheProvider` is set, the CLI will:
 1. If not found, it will look for a remote build matching your local native project state (a fingerprint).
 1. If not found, it will fall back to local build.
 
-### Built-in GitHub Actions provider
+Available providers you can use:
 
-RNEF comes with built-in GitHub Actions remote cache provider, which downloads native build artifacts uploaded through [`actions/upload-artifact`](https://github.com/actions/upload-artifact) action from [GitHub Worfklow Artifacts](https://docs.github.com/en/actions/writing-workflows/choosing-what-your-workflow-does/storing-and-sharing-data-from-a-workflow). You can configure it as follows:
+- [@rnef/provider-github](#github-actions-provider): store artifacts on GitHub Workflow Artifacts
+- [@rnef/provider-s3](#aws-s3-provider): store artifacts on S3 (or Cloudflare R2)
 
-```ts
+In case you would like to store native build artifacts in a different kind of remote storage, you can implement your own [custom provider](#custom-remote-cache-provider).
+
+### Uploading artifacts to remote storage
+
+Regardless of remote cache provider set, to download native build artifats from a remote storage, you'll need to upload them first, ideally in a continuous manner. That's why the best place to put the upload logic would be your Continuous Integration server.
+
+RNEF provides out-of-the-box GitHub Actions for:
+
+- [`callstackincubator/ios`](https://github.com/callstackincubator/ios): action for iOS compatible with `@rnef/provider-github`
+- [`callstackincubator/android`](https://github.com/callstackincubator/android): action for Android compatible with `@rnef/provider-github`
+
+For other CI providers you'll need to manage artifacts yourself. We recommend mimicking the GitHub Actions setup on your CI server.
+
+### GitHub Actions provider
+
+If you store your code on GitHub, one of the easiest way to setup remote cache is through `@rnef/provider-github` and our GitHub Actions, which will manage building, uploading and downloading your native artifacts for iOS and Android.
+
+You can configure it as follows:
+
+```ts title="rnef.config.mjs"
 import { providerGitHub } from '@rnef/provider-github';
+
 export default {
   // ...
   remoteCacheProvider: providerGitHub({
     owner: 'github_org',
     repository: 'github_repo_name',
     token: 'personal_access_token',
+  }),
+};
+```
+
+### AWS S3 provider
+
+If you prefer to store native build artifacts on AWS S3 or Cloudflare R2, you can use `@rnef/provider-s3`. You can configure it as follows.
+
+```ts title="rnef.config.mjs"
+import { providerS3 } from '@rnef/provider-s3';
+
+export default {
+  // ...
+  remoteCacheProvider: providerS3({
+    bucket: 'your-bucket',
+    region: 'your-region',
+    accessKeyId: 'access-key',
+    secretAccessKey: 'secret-key',
+  }),
+};
+```
+
+#### Cloudflare R2
+
+Thanks to R2 interface being compatible with S3, you can store and retrieve your native build artifacts from Cloudflare R2 storage using S3 provider. Set the `endpoint` option to point to your account storage.
+
+```ts title="rnef.config.mjs"
+import { providerS3 } from '@rnef/provider-s3';
+
+export default {
+  // ...
+  remoteCacheProvider: providerS3({
+    endpoint: 'https://${ACCOUNT_ID}.r2.cloudflarestorage.com',
+    bucket: 'your-bucket',
+    region: 'your-region',
+    accessKeyId: 'access-key',
+    secretAccessKey: 'secret-key',
   }),
 };
 ```
@@ -201,7 +259,7 @@ const pluginDummyLocalCacheProvider = (options) => () =>
 
 Then pass the `pluginDummyLocalCacheProvider` function called with optional configuration object (in case you need authentication or anything user-specific, such as repository information) as a value of the `remoteCacheProvider` config key:
 
-```ts
+```ts title="rnef.config.mjs"
 export default {
   // ...
   remoteCacheProvider: pluginDummyLocalCacheProvider(options),
