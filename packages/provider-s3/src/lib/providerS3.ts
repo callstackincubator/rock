@@ -12,26 +12,40 @@ function toWebStream(stream: Readable): ReadableStream {
   });
 }
 
+type ProviderConfig = {
+  /**
+   * Optional endpoint, necessary for self-hosted S3 servers or Cloudflare R2 integration.
+   */
+  endpoint?: string;
+  /**
+   * The bucket name to use for the S3 server.
+   */
+  bucket: string;
+  /**
+   * The region of the S3 server.
+   */
+  region: string;
+  /**
+   * The access key ID for the S3 server.
+   */
+  accessKeyId: string;
+  /**
+   * The secret access key for the S3 server.
+   */
+  secretAccessKey: string;
+};
+
 export class S3BuildCache implements RemoteBuildCache {
   name = 'S3';
   s3: clientS3.S3Client;
   bucket: string;
   directory = 'rnef-artifacts';
-  config: {
-    bucket: string;
-    region: string;
-    accessKeyId: string;
-    secretAccessKey: string;
-  };
+  config: ProviderConfig;
 
-  constructor(config: {
-    bucket: string;
-    region: string;
-    accessKeyId: string;
-    secretAccessKey: string;
-  }) {
+  constructor(config: ProviderConfig) {
     this.config = config;
     this.s3 = new clientS3.S3Client({
+      endpoint: config.endpoint,
       region: config.region,
       credentials: {
         accessKeyId: config.accessKeyId,
@@ -126,12 +140,5 @@ export class S3BuildCache implements RemoteBuildCache {
   }
 }
 
-export const providerS3 =
-  (options: {
-    bucket: string;
-    region: string;
-    accessKeyId: string;
-    secretAccessKey: string;
-  }) =>
-  (): RemoteBuildCache =>
-    new S3BuildCache(options);
+export const providerS3 = (options: ProviderConfig) => (): RemoteBuildCache =>
+  new S3BuildCache(options);
