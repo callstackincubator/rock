@@ -1,12 +1,13 @@
 import fs from 'node:fs';
 import path from 'node:path';
-import type { SupportedRemoteCacheProviders } from '@rnef/tools';
+import type { RemoteBuildCache } from '@rnef/tools';
 import {
   color,
   fetchCachedBuild,
   formatArtifactName,
   isInteractive,
   logger,
+  promptConfirm,
   promptSelect,
   RnefError,
   spinner,
@@ -17,11 +18,8 @@ import type {
   ProjectConfig,
 } from '../../types/index.js';
 import { buildApp } from '../../utils/buildApp.js';
-import {
-  getDevicePlatformSDK,
-  getPlatformInfo,
-  getSimulatorPlatformSDK,
-} from '../../utils/getPlatformInfo.js';
+import { getGenericDestination } from '../../utils/destionation.js';
+import { getPlatformInfo } from '../../utils/getPlatformInfo.js';
 import { listDevicesAndSimulators } from '../../utils/listDevices.js';
 import { matchingDevice } from './matchingDevice.js';
 import { cacheRecentDevice, sortByRecentDevices } from './recentDevices.js';
@@ -44,24 +42,39 @@ export const createRun = async ({
   projectConfig: ProjectConfig;
   args: RunFlags;
   projectRoot: string;
-  remoteCacheProvider: SupportedRemoteCacheProviders | undefined;
+  remoteCacheProvider: null | (() => RemoteBuildCache) | undefined;
   fingerprintOptions: { extraSources: string[]; ignorePaths: string[] };
   reactNativePath: string;
 }) => {
   if (!args.binaryPath && args.remoteCache) {
     const artifactName = await formatArtifactName({
       platform: 'ios',
-      traits: [args.destination ?? 'simulator', args.configuration ?? 'Debug'],
+      traits: [
+        args.destination?.[0] ?? 'simulator',
+        args.configuration ?? 'Debug',
+      ],
       root: projectRoot,
       fingerprintOptions,
     });
-    const cachedBuild = await fetchCachedBuild({
-      artifactName,
-      remoteCacheProvider,
-    });
-    if (cachedBuild) {
-      // @todo replace with a more generic way to pass binary path
-      args.binaryPath = cachedBuild.binaryPath;
+    try {
+      const cachedBuild = await fetchCachedBuild({
+        artifactName,
+        remoteCacheProvider,
+      });
+      if (cachedBuild) {
+        // @todo replace with a more generic way to pass binary path
+        args.binaryPath = cachedBuild.binaryPath;
+      }
+    } catch (error) {
+      logger.warn((error as RnefError).message);
+      const shouldContinueWithLocalBuild = await promptConfirm({
+        message: 'Would you like to continue with local build?',
+        confirmLabel: 'Yes',
+        cancelLabel: 'No',
+      });
+      if (!shouldContinueWithLocalBuild) {
+        return;
+      }
     }
   }
 
@@ -78,10 +91,12 @@ export const createRun = async ({
 
   if (platformName === 'macos') {
     const { appPath } = await buildApp({
-      args,
+      args: {
+        destination: [getGenericDestination(platformName, 'simulator')],
+        ...args,
+      },
       projectConfig,
       platformName,
-      platformSDK: getSimulatorPlatformSDK(platformName),
       projectRoot,
       udid,
       deviceName,
@@ -91,10 +106,12 @@ export const createRun = async ({
     return;
   } else if (args.catalyst) {
     const { appPath, scheme } = await buildApp({
-      args,
+      args: {
+        destination: [getGenericDestination(platformName, 'simulator')],
+        ...args,
+      },
       projectConfig,
       platformName,
-      platformSDK: getSimulatorPlatformSDK(platformName),
       projectRoot,
       udid,
       deviceName,
@@ -126,10 +143,12 @@ export const createRun = async ({
       const [, { appPath, infoPlistPath }] = await Promise.all([
         launchSimulator(device),
         buildApp({
-          args,
+          args: {
+            destination: [getGenericDestination(platformName, 'simulator')],
+            ...args,
+          },
           projectConfig,
           platformName,
-          platformSDK: getSimulatorPlatformSDK(platformName),
           udid: device.udid,
           projectRoot,
           reactNativePath,
@@ -139,10 +158,12 @@ export const createRun = async ({
       await runOnSimulator(device, appPath, infoPlistPath);
     } else if (device.type === 'device') {
       const { appPath } = await buildApp({
-        args,
+        args: {
+          destination: [getGenericDestination(platformName, 'device')],
+          ...args,
+        },
         projectConfig,
         platformName,
-        platformSDK: getDevicePlatformSDK(platformName),
         udid: device.udid,
         projectRoot,
         reactNativePath,
@@ -180,10 +201,12 @@ export const createRun = async ({
       const [, { appPath, infoPlistPath }] = await Promise.all([
         launchSimulator(simulator),
         buildApp({
-          args,
+          args: {
+            destination: [getGenericDestination(platformName, 'simulator')],
+            ...args,
+          },
           projectConfig,
           platformName,
-          platformSDK: getSimulatorPlatformSDK(platformName),
           udid: simulator.udid,
           projectRoot,
           reactNativePath,

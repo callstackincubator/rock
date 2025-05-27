@@ -6,7 +6,6 @@ import { getBuildPaths } from '../../utils/getBuildPaths.js';
 import { supportedPlatforms } from '../../utils/supportedPlatforms.js';
 import type { RunFlags } from '../run/runOptions.js';
 import type { BuildFlags } from './buildOptions.js';
-import { simulatorDestinationMap } from './simulatorDestinationMap.js';
 
 let lastProgress = 0;
 /**
@@ -69,64 +68,26 @@ export const buildProject = async ({
   xcodeProject,
   sourceDir,
   platformName,
-  udid,
   scheme,
   configuration,
+  destinations,
   args,
-  deviceName,
 }: {
   xcodeProject: XcodeProjectInfo;
   sourceDir: string;
   platformName: ApplePlatform;
-  udid: string | undefined;
   scheme: string;
   configuration: string;
+  destinations: string[];
   args: RunFlags | BuildFlags;
-  deviceName?: string;
 }) => {
-  const simulatorDest = simulatorDestinationMap[platformName];
-
-  if (!simulatorDest) {
+  if (!supportedPlatforms[platformName]) {
     throw new RnefError(
       `Unknown platform: ${platformName}. Please, use one of: ${Object.values(
         supportedPlatforms
       ).join(', ')}.`
     );
   }
-
-  function determineDestinations(): string[] {
-    if (args.destinations) {
-      return args.destinations;
-    }
-
-    if (args.destination) {
-      if (args.destination === 'simulator') {
-        return [`generic/platform=${simulatorDest}`];
-      }
-      if (args.destination === 'device') {
-        return [`generic/platform=${platformName}`];
-      }
-    }
-
-    if ('catalyst' in args && args.catalyst) {
-      return ['platform=macOS,variant=Mac Catalyst'];
-    }
-
-    if (udid) {
-      return [`id=${udid}`];
-    }
-
-    if (deviceName) {
-      return [`name=${deviceName}`];
-    }
-
-    return [`generic/platform=${platformName}`];
-  }
-
-  const destinations = determineDestinations().flatMap((destination) => [
-    '-destination',
-    destination,
-  ]);
 
   const xcodebuildArgs = [
     xcodeProject.isWorkspace ? '-workspace' : '-project',
@@ -136,7 +97,7 @@ export const buildProject = async ({
     configuration,
     '-scheme',
     scheme,
-    ...destinations,
+    ...destinations.flatMap((destination) => ['-destination', destination]),
   ];
 
   if (args.archive) {

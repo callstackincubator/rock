@@ -3,9 +3,9 @@ import * as path from 'node:path';
 import { renameFile, walkDirectory } from './fs.js';
 
 /**
- * Placeholder name used in template, that should be replaced with project name.
+ * Placeholder name used in template, that should be replaced with normalized project name.
  */
-const DEFAULT_PLACEHOLDER_NAME = 'HelloWorld';
+const PLACEHOLDER_NAME = 'HelloWorld';
 
 /**
  * Rename common files that cannot be put into template literaly, e.g. .gitignore.
@@ -24,38 +24,41 @@ export function renameCommonFiles(projectPath: string) {
  * - Rename paths containing placeholder
  * - Replace placeholder in text files
  */
-export function replacePlaceholder(projectPath: string, projectName: string) {
-  if (projectName === DEFAULT_PLACEHOLDER_NAME) {
+export function replacePlaceholder(
+  projectPath: string,
+  normalizedName: string
+) {
+  if (normalizedName === PLACEHOLDER_NAME) {
     return;
   }
 
   for (const filePath of walkDirectory(projectPath).reverse()) {
     if (!fs.statSync(filePath).isDirectory()) {
-      replacePlaceholderInTextFile(filePath, projectName);
+      replacePlaceholderInTextFile(filePath, normalizedName);
     }
 
-    if (path.basename(filePath).includes(DEFAULT_PLACEHOLDER_NAME)) {
-      renameFile(filePath, DEFAULT_PLACEHOLDER_NAME, projectName);
+    if (path.basename(filePath).includes(PLACEHOLDER_NAME)) {
+      renameFile(filePath, PLACEHOLDER_NAME, normalizedName);
     } else if (
-      path.basename(filePath).includes(DEFAULT_PLACEHOLDER_NAME.toLowerCase())
+      path.basename(filePath).includes(PLACEHOLDER_NAME.toLowerCase())
     ) {
       renameFile(
         filePath,
-        DEFAULT_PLACEHOLDER_NAME.toLowerCase(),
-        projectName.toLowerCase()
+        PLACEHOLDER_NAME.toLowerCase(),
+        normalizedName.toLowerCase()
       );
     }
   }
 }
 
-function replacePlaceholderInTextFile(filePath: string, projectName: string) {
+function replacePlaceholderInTextFile(
+  filePath: string,
+  normalizedName: string
+) {
   const fileContent = fs.readFileSync(filePath, 'utf8');
   const replacedFileContent = fileContent
-    .replaceAll(DEFAULT_PLACEHOLDER_NAME, projectName)
-    .replaceAll(
-      DEFAULT_PLACEHOLDER_NAME.toLowerCase(),
-      projectName.toLowerCase()
-    );
+    .replaceAll(PLACEHOLDER_NAME, normalizedName)
+    .replaceAll(PLACEHOLDER_NAME.toLowerCase(), normalizedName.toLowerCase());
 
   if (fileContent !== replacedFileContent) {
     fs.writeFileSync(filePath, replacedFileContent, 'utf8');

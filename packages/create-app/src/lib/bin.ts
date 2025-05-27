@@ -30,6 +30,10 @@ import {
   parsePackageManagerFromUserAgent,
 } from './utils/parsers.js';
 import {
+  normalizeProjectName,
+  validateProjectName,
+} from './utils/project-name.js';
+import {
   confirmOverrideFiles,
   printByeMessage,
   printHelpMessage,
@@ -65,8 +69,12 @@ export async function run() {
 
   printWelcomeMessage();
 
-  const projectName =
+  let projectName =
     (options.dir || options.name) ?? (await promptProjectName());
+  if (validateProjectName(projectName)) {
+    projectName = await promptProjectName(projectName);
+  }
+
   const { targetDir } = parsePackageInfo(projectName);
   const absoluteTargetDir = resolveAbsolutePath(targetDir);
 
@@ -124,7 +132,8 @@ export async function run() {
   }
 
   renameCommonFiles(absoluteTargetDir);
-  replacePlaceholder(absoluteTargetDir, projectName);
+  replacePlaceholder(absoluteTargetDir, normalizeProjectName(projectName));
+  // For package.json name we can use any valid name (kebab-case, PascalCase, etc).
   rewritePackageJson(absoluteTargetDir, projectName);
   createConfig(
     absoluteTargetDir,

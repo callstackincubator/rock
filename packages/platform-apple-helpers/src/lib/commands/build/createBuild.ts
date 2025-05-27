@@ -14,10 +14,6 @@ import type {
 } from '../../types/index.js';
 import { buildApp } from '../../utils/buildApp.js';
 import { getBuildPaths } from '../../utils/getBuildPaths.js';
-import {
-  getDevicePlatformSDK,
-  getSimulatorPlatformSDK,
-} from '../../utils/getPlatformInfo.js';
 import type { BuildFlags } from './buildOptions.js';
 import { exportArchive } from './exportArchive.js';
 
@@ -35,6 +31,7 @@ export const createBuild = async ({
   reactNativePath: string;
 }) => {
   await validateArgs(args);
+
   let xcodeProject: XcodeProjectInfo;
   let sourceDir: string;
   try {
@@ -42,10 +39,6 @@ export const createBuild = async ({
       projectRoot,
       projectConfig,
       platformName,
-      platformSDK:
-        args.destination === 'simulator'
-          ? getSimulatorPlatformSDK(platformName)
-          : getDevicePlatformSDK(platformName),
       args,
       reactNativePath,
     });
@@ -79,13 +72,6 @@ export const createBuild = async ({
 };
 
 async function validateArgs(args: BuildFlags) {
-  if (args.destination && args.destinations) {
-    logger.error(
-      `Both "--destination" and "--destinations" flags are set. Please pick one.`
-    );
-    process.exit(1);
-  }
-
   if (!args.destination) {
     if (isInteractive()) {
       const destination = await promptSelect({
@@ -102,7 +88,7 @@ async function validateArgs(args: BuildFlags) {
         ],
       });
 
-      args.destination = destination;
+      args.destination = [destination];
 
       logger.info(
         `You can set configuration manually next time using "--destination ${destination}" flag.`
@@ -110,8 +96,9 @@ async function validateArgs(args: BuildFlags) {
     } else {
       logger.error(
         `The "--destination" flag is required in non-interactive environments. Available flag values:
-- simulator – suitable for unsigned simulator builds for developers
-- device – suitable for signed device builds for testers`
+- "simulator" – suitable for unsigned simulator builds for developers
+- "device" – suitable for signed device builds for testers
+- or values supported by "xcodebuild -destination" flag, e.g. "generic/platform=iOS"`
       );
       process.exit(1);
     }

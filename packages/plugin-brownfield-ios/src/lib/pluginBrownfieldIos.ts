@@ -3,8 +3,11 @@ import type { PluginApi, PluginOutput } from '@rnef/config';
 import {
   type BuildFlags,
   createBuild,
+  genericDestinations,
   getBuildOptions,
   getBuildPaths,
+  getInfo,
+  getScheme,
   getValidProjectConfig,
 } from '@rnef/platform-apple-helpers';
 import { intro, outro, RnefError } from '@rnef/tools';
@@ -21,33 +24,42 @@ export const pluginBrownfieldIos =
         intro('Packaging iOS project');
 
         const projectRoot = api.getProjectRoot();
-        const iosConfig = getValidProjectConfig('ios', projectRoot, pluginConfig);
+        const iosConfig = getValidProjectConfig(
+          'ios',
+          projectRoot,
+          pluginConfig
+        );
         const { derivedDataDir } = getBuildPaths('ios');
 
-        const destinations = args.destinations ?? [
-          'generic/platform=iphoneos',
-          'generic/platform=iphonesimulator',
+        const destination = args.destination ?? [
+          genericDestinations.ios.device,
+          genericDestinations.ios.simulator,
         ];
 
         const buildFolder = args.buildFolder ?? derivedDataDir;
         const configuration = args.configuration ?? 'Debug';
 
+        const { xcodeProject, sourceDir } = iosConfig;
+        const info = await getInfo(xcodeProject, sourceDir);
+        if (!info) {
+          throw new RnefError('Failed to get Xcode project information');
+        }
+
+        const scheme = await getScheme(
+          info.schemes,
+          args.scheme,
+          xcodeProject.name
+        );
         await createBuild({
           platformName: 'ios',
           projectConfig: iosConfig,
-          args: { ...args, destinations, buildFolder },
+          args: { ...args, scheme, destination, buildFolder },
           projectRoot,
           reactNativePath: api.getReactNativePath(),
         });
 
-        if (!args.scheme) {
-          throw new RnefError(
-            'Scheme is required. Please provide "--scheme" flag.'
-          );
-        }
-
         await mergeFrameworks({
-          scheme: args.scheme,
+          scheme,
           configuration,
           sourceDir: iosConfig.sourceDir,
           platformName: 'ios',

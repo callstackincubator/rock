@@ -4,7 +4,7 @@ import type {
   AndroidProjectConfig,
   Config,
 } from '@react-native-community/cli-types';
-import type { SupportedRemoteCacheProviders } from '@rnef/tools';
+import type { RemoteBuildCache } from '@rnef/tools';
 import {
   fetchCachedBuild,
   formatArtifactName,
@@ -12,6 +12,7 @@ import {
   isInteractive,
   logger,
   outro,
+  promptConfirm,
   promptSelect,
   RnefError,
 } from '@rnef/tools';
@@ -46,7 +47,7 @@ export async function runAndroid(
   androidProject: AndroidProjectConfig,
   args: Flags,
   projectRoot: string,
-  remoteCacheProvider: SupportedRemoteCacheProviders | undefined,
+  remoteCacheProvider: null | (() => RemoteBuildCache) | undefined,
   fingerprintOptions: { extraSources: string[]; ignorePaths: string[] }
 ) {
   intro('Running Android app');
@@ -66,13 +67,25 @@ export async function runAndroid(
       root: projectRoot,
       fingerprintOptions,
     });
-    const cachedBuild = await fetchCachedBuild({
-      artifactName,
-      remoteCacheProvider,
-    });
-    if (cachedBuild) {
-      // @todo replace with a more generic way to pass binary path
-      args.binaryPath = cachedBuild.binaryPath;
+    try {
+      const cachedBuild = await fetchCachedBuild({
+        artifactName,
+        remoteCacheProvider,
+      });
+      if (cachedBuild) {
+        // @todo replace with a more generic way to pass binary path
+        args.binaryPath = cachedBuild.binaryPath;
+      }
+    } catch (error) {
+      logger.warn((error as RnefError).message);
+      const shouldContinueWithLocalBuild = await promptConfirm({
+        message: 'Would you like to continue with local build?',
+        confirmLabel: 'Yes',
+        cancelLabel: 'No',
+      });
+      if (!shouldContinueWithLocalBuild) {
+        return;
+      }
     }
   }
 

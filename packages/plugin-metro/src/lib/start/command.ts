@@ -18,7 +18,7 @@ export const registerStartCommand = (api: PluginApi) => {
       intro('Starting Metro dev server');
       const root = api.getProjectRoot();
       const { port, startDevServer } = await findDevServerPort(
-        args.port ?? 8081,
+        args.port ? Number(args.port) : 8081,
         root
       );
 
@@ -44,7 +44,6 @@ export const registerStartCommand = (api: PluginApi) => {
       {
         name: '--port <number>',
         description: 'Port to run the server on',
-        parse: Number,
       },
       {
         name: '--host <string>',
@@ -52,25 +51,25 @@ export const registerStartCommand = (api: PluginApi) => {
         default: '',
       },
       {
-        name: '--projectRoot <path>',
+        name: '--project-root, --projectRoot <path>',
         description: 'Path to a custom project root',
         parse: (val: string): string => path.resolve(val),
       },
       {
-        name: '--watchFolders <list>',
+        name: '--watch-folders, --watchFolders <list>',
         description:
           'Specify any additional folders to be added to the watch list',
         parse: (val: string): Array<string> =>
           val.split(',').map((folder: string) => path.resolve(folder)),
       },
       {
-        name: '--assetPlugins <list>',
+        name: '--asset-plugins, --assetPlugins <list>',
         description:
           'Specify any additional asset plugins to be used by the packager by full filepath',
         parse: (val: string): Array<string> => val.split(','),
       },
       {
-        name: '--sourceExts <list>',
+        name: '--source-exts, --sourceExts <list>',
         description:
           'Specify any additional source extensions to be used by the packager',
         parse: (val: string): Array<string> => val.split(','),
@@ -81,7 +80,6 @@ export const registerStartCommand = (api: PluginApi) => {
           'Specifies the maximum number of workers the worker-pool ' +
           'will spawn for transforming files. This defaults to the number of the ' +
           'cores available on your machine.',
-        parse: (workers: string): number => Number(workers),
       },
       {
         name: '--transformer <string>',

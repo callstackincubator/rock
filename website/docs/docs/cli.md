@@ -76,24 +76,24 @@ Platform plugins are configured through the [`platform`](/docs/configuration/ind
 
 The `start` command launches a development server (either Re.Pack or Metro, depending on your bundler plugin) that connects to your apps through port 8081 by default. It provides features like Hot Module Reloading (HMR) and error reporting.
 
-| Option                                | Description                                                                                 |
-| :------------------------------------ | :------------------------------------------------------------------------------------------ |
-| `--port <number>`                     | Port to run the server on (default: 8081)                                                   |
-| `--host <string>`                     | Host to run the server on (default: "")                                                     |
-| `--projectRoot <path>`                | Path to a custom project root                                                               |
-| `--watchFolders <list>`               | Specify any additional folders to be added to the watch list                                |
-| `--assetPlugins <list>`               | Specify any additional asset plugins to be used by the packager by full filepath            |
-| `--sourceExts <list>`                 | Specify any additional source extensions to be used by the packager                         |
-| `--max-workers <number>`              | Specifies the maximum number of workers the worker-pool will spawn for transforming files   |
-| `--transformer <string>`              | Specify a custom transformer to be used                                                     |
-| `--reset-cache`, `--resetCache`       | Removes cached files                                                                        |
-| `--custom-log-reporter-path <string>` | Path to a JavaScript file that exports a log reporter as a replacement for TerminalReporter |
-| `--https`                             | Enables https connections to the server                                                     |
-| `--key <path>`                        | Path to custom SSL key                                                                      |
-| `--cert <path>`                       | Path to custom SSL cert                                                                     |
-| `--config <string>`                   | Path to the CLI configuration file                                                          |
-| `--no-interactive`                    | Disables interactive mode                                                                   |
-| `--client-logs`                       | [Deprecated] Enable plain text JavaScript log streaming for all connected apps              |
+| Option                                            | Description                                                                                 |
+| :------------------------------------------------ | :------------------------------------------------------------------------------------------ |
+| `--port <number>`                                 | Port to run the server on (default: 8081)                                                   |
+| `--host <string>`                                 | Host to run the server on (default: "")                                                     |
+| `--project-root <path>`, `--projectRoot <path>`   | Path to a custom project root                                                               |
+| `--watch-folders <list>`, `--watchFolders <list>` | Specify any additional folders to be added to the watch list                                |
+| `--asset-plugins <list>`, `--assetPlugins <list>` | Specify any additional asset plugins to be used by the packager by full filepath            |
+| `--source-exts <list>`,`--sourceExts <list>`      | Specify any additional source extensions to be used by the packager                         |
+| `--max-workers <number>`                          | Specifies the maximum number of workers the worker-pool will spawn for transforming files   |
+| `--transformer <string>`                          | Specify a custom transformer to be used                                                     |
+| `--reset-cache`, `--resetCache`                   | Removes cached files                                                                        |
+| `--custom-log-reporter-path <string>`             | Path to a JavaScript file that exports a log reporter as a replacement for TerminalReporter |
+| `--https`                                         | Enables https connections to the server                                                     |
+| `--key <path>`                                    | Path to custom SSL key                                                                      |
+| `--cert <path>`                                   | Path to custom SSL cert                                                                     |
+| `--config <string>`                               | Path to the CLI configuration file                                                          |
+| `--no-interactive`                                | Disables interactive mode                                                                   |
+| `--client-logs`                                   | [Deprecated] Enable plain text JavaScript log streaming for all connected apps              |
 
 ### `rnef bundle` Options
 
@@ -126,20 +126,19 @@ The `bundle` command creates an optimized JavaScript bundle for your application
 
 The `build:ios` command builds your iOS app for simulators, devices, or distribution, producing either an APP directory (for simulators) or an IPA file (for devices and distribution).
 
-| Option                            | Description                                                                                |
-| :-------------------------------- | :----------------------------------------------------------------------------------------- |
-| `--configuration <string>`        | Xcode scheme configuration (case sensitive)                                                |
-| `--scheme <string>`               | Xcode scheme to use                                                                        |
-| `--target <string>`               | Xcode target to use                                                                        |
-| `--extra-params <string>`         | Custom xcodebuild parameters                                                               |
-| `--export-extra-params <string>`  | Custom xcodebuild export archive parameters                                                |
-| `--export-options-plist <string>` | Export options file for archiving (default: ExportOptions.plist)                           |
-| `--build-folder <string>`         | Location for iOS build artifacts                                                           |
-| `--destination <string>`          | Build target: "simulator" or "device"                                                      |
-| `--destinations <list>`           | Explicit destinations (e.g., "generic/platform=iphoneos,generic/platform=iphonesimulator") |
-| `--archive`                       | Create Xcode archive (IPA)                                                                 |
-| `--no-install-pods`               | Skip CocoaPods installation                                                                |
-| `--no-new-arch`                   | Build in legacy async architecture                                                         |
+| Option                            | Description                                                                                                                                                                                                                                                  |
+| :-------------------------------- | :----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `--configuration <string>`        | Xcode scheme configuration (case sensitive)                                                                                                                                                                                                                  |
+| `--scheme <string>`               | Xcode scheme to use                                                                                                                                                                                                                                          |
+| `--target <string>`               | Xcode target to use                                                                                                                                                                                                                                          |
+| `--extra-params <string>`         | Custom xcodebuild parameters                                                                                                                                                                                                                                 |
+| `--export-extra-params <string>`  | Custom xcodebuild export archive parameters                                                                                                                                                                                                                  |
+| `--export-options-plist <string>` | Export options file for archiving (default: ExportOptions.plist)                                                                                                                                                                                             |
+| `--build-folder <string>`         | Location for iOS build artifacts                                                                                                                                                                                                                             |
+| `--destination <strings...>`      | Define destination(s) for the build. You can pass multiple destinations as separate values or repeated use of the flag. Values can be either: "simulator", "device" or destinations supported by "xcodebuild -destination" flag, e.g. "generic/platform=iOS" |
+| `--archive`                       | Create Xcode archive (IPA)                                                                                                                                                                                                                                   |
+| `--no-install-pods`               | Skip CocoaPods installation                                                                                                                                                                                                                                  |
+| `--no-new-arch`                   | Build in legacy async architecture                                                                                                                                                                                                                           |
 
 ### `rnef run:ios` Options
 

@@ -11,8 +11,7 @@ export type BuildFlags = {
   exportExtraParams?: string[];
   exportOptionsPlist?: string;
   buildFolder?: string;
-  destination?: 'device' | 'simulator';
-  destinations?: string[];
+  destination?: string[];
   archive?: boolean;
   installPods: boolean;
   newArch: boolean;
@@ -54,7 +53,8 @@ export const getBuildOptions = ({ platformName }: BuilderCommand) => {
     },
     {
       name: '--export-options-plist <string>',
-      description: 'Name of the export options file for archiving. Defaults to: ExportOptions.plist',
+      description:
+        'Name of the export options file for archiving. Defaults to: ExportOptions.plist',
     },
     {
       name: '--build-folder <string>',
@@ -62,15 +62,9 @@ export const getBuildOptions = ({ platformName }: BuilderCommand) => {
       value: 'build',
     },
     {
-      name: '--destination <string>',
+      name: '--destination <strings...>',
       description:
-        'Define whether to build for a generic device or generic simulator. Available values: "simulator", "device"',
-    },
-    {
-      name: '--destinations <list>',
-      description:
-        'Explicitly defined destinations e.g. "arch=x86_64". You can also pass a comma separated array e.g. "generic/platform=iphoneos,generic/platform=iphonesimulator"',
-      parse: (val: string) => val.split(','),
+        'Define destination(s) for the build. You can pass multiple destinations as separate values or repeated use of the flag. Values can be either: "simulator", "device" or destinations supported by "xcodebuild -destination" flag, e.g. "generic/platform=iOS"',
     },
     {
       name: '--archive',

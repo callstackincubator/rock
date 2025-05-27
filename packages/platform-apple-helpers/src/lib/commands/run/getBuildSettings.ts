@@ -1,7 +1,6 @@
 import path from 'node:path';
 import { color, logger, RnefError, spawn } from '@rnef/tools';
-import type { XcodeProjectInfo } from '../../types/index.js';
-import type { PlatformSDK } from '../../utils/getPlatformInfo.js';
+import type { ApplePlatform, XcodeProjectInfo } from '../../types/index.js';
 
 type BuildSettings = {
   TARGET_BUILD_DIR: string;
@@ -13,8 +12,9 @@ type BuildSettings = {
 export async function getBuildSettings(
   xcodeProject: XcodeProjectInfo,
   sourceDir: string,
+  platformName: ApplePlatform,
   configuration: string,
-  platformSDK: PlatformSDK,
+  destinations: string[],
   scheme: string,
   target?: string
 ): Promise<{ appPath: string; infoPlistPath: string }> {
@@ -25,10 +25,9 @@ export async function getBuildSettings(
       xcodeProject.name,
       '-scheme',
       scheme,
-      '-sdk',
-      platformSDK,
       '-configuration',
       configuration,
+      ...destinations.flatMap((destination) => ['-destination', destination]),
       '-showBuildSettings',
       '-json',
     ],
@@ -71,7 +70,7 @@ export async function getBuildSettings(
       throw new RnefError('Failed to get build settings for your project');
     }
 
-    const appPath = getBuildPath(buildSettings, platformSDK);
+    const appPath = getBuildPath(buildSettings, platformName);
     const infoPlistPath = buildSettings.INFOPLIST_PATH;
     const targetBuildDir = buildSettings.TARGET_BUILD_DIR;
 
@@ -86,7 +85,10 @@ export async function getBuildSettings(
   );
 }
 
-function getBuildPath(buildSettings: BuildSettings, platformSDK: PlatformSDK) {
+function getBuildPath(
+  buildSettings: BuildSettings,
+  platformName: ApplePlatform
+) {
   const targetBuildDir = buildSettings.TARGET_BUILD_DIR;
   const executableFolderPath = buildSettings.EXECUTABLE_FOLDER_PATH;
   const fullProductName = buildSettings.FULL_PRODUCT_NAME;
@@ -103,7 +105,7 @@ function getBuildPath(buildSettings: BuildSettings, platformSDK: PlatformSDK) {
     throw new Error('Failed to get product name.');
   }
 
-  if (platformSDK === 'macosx') {
+  if (platformName === 'macos') {
     return path.join(targetBuildDir, fullProductName);
   } else {
     return path.join(targetBuildDir, executableFolderPath);

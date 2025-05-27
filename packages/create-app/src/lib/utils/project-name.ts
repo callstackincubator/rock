@@ -1,4 +1,8 @@
-const NAME_REGEX = /^[$A-Z_][0-9A-Z_$]*$/i;
+/**
+ * Allow for alphanumeric, hyphen (kebab-case), and underscore (_).
+ * Has to start with a letter.
+ */
+const NAME_REGEX = /^[A-Z][0-9A-Z_-]*$/i;
 
 // ref: https://docs.oracle.com/javase/tutorial/java/nutsandbolts/_keywords.html
 const javaKeywords = [
@@ -62,13 +66,29 @@ export function validateProjectName(name: string) {
   }
 
   if (!name.match(NAME_REGEX)) {
-    return `Invalid project name: "${name}". Please use a valid identifier name (alphanumeric).`;
+    return `Invalid project name: "${name}". Please use a valid identifier name (alphanumeric, hyphen, underscore).`;
   }
 
   const lowerCaseName = name.toLowerCase();
   if (reservedNames.includes(lowerCaseName)) {
-    return "Invalid project name: Can't use reserved name. Please use another name.";
+    return `Invalid project name: "${name}". Can't use reserved name. Please use another name.`;
   }
 
-  return;
+  return undefined;
+}
+
+/**
+ * Transform project name to PascalCase. The input name can be in either kebab-case or PascalCase.
+ *
+ * @param name - Project name
+ * @returns PascalCase project name
+ */
+export function normalizeProjectName(name: string) {
+  if (!name) return '';
+
+  return name
+    .split('-')
+    .filter(Boolean)
+    .map((part) => part.charAt(0).toUpperCase() + part.slice(1))
+    .join('');
 }

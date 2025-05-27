@@ -5,12 +5,12 @@
     "label": "Getting Started"
   },
   {
-    "type": "dir",
+    "type": "file",
     "name": "cli",
     "label": "CLI"
   },
   {
-    "type": "dir",
+    "type": "file",
     "name": "configuration",
     "label": "Configuration"
   },

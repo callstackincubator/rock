@@ -1,6 +1,7 @@
 import * as fs from 'node:fs';
 import { createRequire } from 'node:module';
 import * as path from 'node:path';
+import type { RemoteBuildCache } from '@rnef/tools';
 import { color, logger } from '@rnef/tools';
 import type { ValidationError } from 'joi';
 import { ConfigTypeSchema } from './schema.js';
@@ -21,20 +22,20 @@ export type PluginApi = {
   getReactNativeVersion: () => string;
   getReactNativePath: () => string;
   getPlatforms: () => { [platform: string]: object };
-  getRemoteCacheProvider: () => SupportedRemoteCacheProviders | undefined;
+  getRemoteCacheProvider: () => Promise<
+    null | undefined | (() => RemoteBuildCache)
+  >;
   getFingerprintOptions: () => {
     extraSources: string[];
     ignorePaths: string[];
   };
 };
 
-type SupportedRemoteCacheProviders = 'github-actions';
-
 type PluginType = (args: PluginApi) => PluginOutput;
 
 type PlatformType = (args: PluginApi) => PlatformOutput;
 
-type ArgValue = string | string[] | number | boolean;
+type ArgValue = string | string[] | boolean;
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 type ActionType<T = any> = (...args: T[]) => void | Promise<void>;
@@ -68,7 +69,7 @@ export type ConfigType = {
   plugins?: PluginType[];
   platforms?: Record<string, PlatformType>;
   commands?: Array<CommandType>;
-  remoteCacheProvider?: SupportedRemoteCacheProviders;
+  remoteCacheProvider?: null | 'github-actions' |(() => RemoteBuildCache);
   fingerprint?: {
     extraSources?: string[];
     ignorePaths?: string[];
@@ -117,7 +118,15 @@ const importUp = async (
   return importUp(parentDir, name);
 };
 
-export async function getConfig(dir: string): Promise<ConfigOutput> {
+export async function getConfig(
+  dir: string,
+  internalPlugins: Array<
+    (ownConfig: {
+      platforms: ConfigOutput['platforms'];
+      root: ConfigOutput['root'];
+    }) => PluginType
+  >
+): Promise<ConfigOutput> {
   const { config, filePathWithExt, configDir } = await importUp(
     dir,
     'rnef.config'
@@ -159,20 +168,20 @@ export async function getConfig(dir: string): Promise<ConfigOutput> {
     getReactNativePath: () => resolveReactNativePath(projectRoot),
     getPlatforms: () =>
       validatedConfig.platforms as { [platform: string]: object },
-    getRemoteCacheProvider: () => validatedConfig.remoteCacheProvider,
+    getRemoteCacheProvider: async () => {
+      // special case for github-actions
+      if (validatedConfig.remoteCacheProvider === 'github-actions') {
+        const { providerGitHub } = await import('@rnef/provider-github');
+        return providerGitHub();
+      }
+      return validatedConfig.remoteCacheProvider;
+    },
     getFingerprintOptions: () =>
       validatedConfig.fingerprint as {
         extraSources: string[];
         ignorePaths: string[];
       },
   };
-
-  if (validatedConfig.plugins) {
-    // plugins register commands
-    for (const plugin of validatedConfig.plugins) {
-      assignOriginToCommand(plugin, api, validatedConfig);
-    }
-  }
 
   const platforms: Record<string, PlatformOutput> = {};
   if (validatedConfig.platforms) {
@@ -183,8 +192,23 @@ export async function getConfig(dir: string): Promise<ConfigOutput> {
     }
   }
 
+  if (validatedConfig.plugins) {
+    // plugins register commands
+    for (const plugin of validatedConfig.plugins) {
+      assignOriginToCommand(plugin, api, validatedConfig);
+    }
+  }
+
   if (validatedConfig.bundler) {
     assignOriginToCommand(validatedConfig.bundler, api, validatedConfig);
+  }
+
+  for (const internalPlugin of internalPlugins) {
+    assignOriginToCommand(
+      internalPlugin({ root: projectRoot, platforms }),
+      api,
+      validatedConfig
+    );
   }
 
   const outputConfig: ConfigOutput = {

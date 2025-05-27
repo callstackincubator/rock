@@ -9,7 +9,7 @@ const ROOT_DIR = path.join(__dirname, '..');
 const VERDACCIO_REGISTRY_URL = `http://localhost:4873`;
 const VERDACCIO_STORAGE_PATH = '/tmp/verdaccio-storage';
 
-const loader = spinner();
+const loader = spinner({ indicator: 'timer' });
 
 async function run() {
   intro('Verdaccio: publishing all packages');

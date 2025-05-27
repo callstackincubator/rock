@@ -41,6 +41,9 @@ jobs:
 
   build-android:
     runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        bundler: [metro, repack]
     steps:
       - uses: actions/checkout@v4
 
@@ -71,7 +74,7 @@ jobs:
             NightlyDeploy \
             --template=default \
             --platform=ios --platform=android \
-            --bundler=metro \
+            --bundler=${{ matrix.bundler }} \
             --remote-cache-provider=github-actions
 
           cd NightlyDeploy
@@ -86,6 +89,9 @@ jobs:
 
   build-ios:
     runs-on: macos-latest
+    strategy:
+      matrix:
+        bundler: [metro, repack]
     steps:
       - uses: actions/checkout@v4
 
@@ -109,7 +115,7 @@ jobs:
             NightlyDeploy \
             --template=default \
             --platform=ios --platform=android \
-            --bundler=metro \
+            --bundler=${{ matrix.bundler }} \
             --remote-cache-provider=github-actions
 
           cd NightlyDeploy

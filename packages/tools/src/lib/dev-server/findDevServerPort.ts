@@ -6,7 +6,7 @@ export const findDevServerPort = async (
   initialPort: number,
   root: string
 ): Promise<{
-  port: number;
+  port: string;
   startDevServer: boolean;
 }> => {
   let port = initialPort;
@@ -28,7 +28,7 @@ export const findDevServerPort = async (
   }
 
   return {
-    port,
+    port: String(port),
     startDevServer,
   };
 };

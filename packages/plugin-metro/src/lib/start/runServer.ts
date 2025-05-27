@@ -26,10 +26,10 @@ export type StartCommandArgs = {
   customLogReporterPath?: string;
   host?: string;
   https?: boolean;
-  maxWorkers?: number;
+  maxWorkers?: string;
   key?: string;
   platforms: string[];
-  port?: number;
+  port?: string;
   resetCache?: boolean;
   sourceExts?: string[];
   transformer?: string;
@@ -58,7 +58,7 @@ async function runServer(
     },
     {
       config: args.config,
-      maxWorkers: args.maxWorkers,
+      maxWorkers: Number(args.maxWorkers),
       port: args.port,
       resetCache: args.resetCache,
       watchFolders: args.watchFolders,

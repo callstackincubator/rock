@@ -1,5 +1,58 @@
 # @rnef/config
 
+## 0.7.13
+
+### Patch Changes
+
+- Updated dependencies [70aa414]
+  - @rnef/provider-github@0.7.13
+  - @rnef/tools@0.7.13
+
+## 0.7.12
+
+### Patch Changes
+
+- dfed056: fix: mark @rnef/provider-github as optional dependency
+  - @rnef/provider-github@0.7.12
+  - @rnef/tools@0.7.12
+
+## 0.7.11
+
+### Patch Changes
+
+- Updated dependencies [dc7ba26]
+  - @rnef/tools@0.7.11
+
+## 0.7.10
+
+### Patch Changes
+
+- Updated dependencies [3a88d7b]
+  - @rnef/tools@0.7.10
+
+## 0.7.9
+
+### Patch Changes
+
+- Updated dependencies [fc771e7]
+  - @rnef/tools@0.7.9
+
+## 0.7.8
+
+### Patch Changes
+
+- 184cc74: feat: official support for custom remote cache providers
+- e8c9da7: refactor: internal plugins
+- Updated dependencies [184cc74]
+- Updated dependencies [af32d6f]
+  - @rnef/tools@0.7.8
+
+## 0.7.7
+
+### Patch Changes
+
+- @rnef/tools@0.7.7
+
 ## 0.7.6
 
 ### Patch Changes

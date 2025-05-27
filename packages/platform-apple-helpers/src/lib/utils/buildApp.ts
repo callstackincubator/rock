@@ -6,9 +6,9 @@ import { buildProject } from '../commands/build/buildProject.js';
 import { getBuildSettings } from '../commands/run/getBuildSettings.js';
 import type { RunFlags } from '../commands/run/runOptions.js';
 import type { ApplePlatform, ProjectConfig } from '../types/index.js';
+import { getGenericDestination } from './destionation.js';
 import { getConfiguration } from './getConfiguration.js';
 import { getInfo } from './getInfo.js';
-import type { PlatformSDK } from './getPlatformInfo.js';
 import { getScheme } from './getScheme.js';
 import { getValidProjectConfig } from './getValidProjectConfig.js';
 import { installPodsIfNeeded } from './pods.js';
@@ -18,7 +18,6 @@ export async function buildApp({
   projectConfig,
   pluginConfig,
   platformName,
-  platformSDK,
   udid,
   projectRoot,
   deviceName,
@@ -28,7 +27,6 @@ export async function buildApp({
   projectConfig: ProjectConfig;
   pluginConfig?: IOSProjectConfig;
   platformName: ApplePlatform;
-  platformSDK: PlatformSDK;
   udid?: string;
   deviceName?: string;
   projectRoot: string;
@@ -73,26 +71,35 @@ export async function buildApp({
   if (!info) {
     throw new RnefError('Failed to get Xcode project information');
   }
+
   const scheme = await getScheme(info.schemes, args.scheme, xcodeProject.name);
   const configuration = await getConfiguration(
     info.configurations,
     args.configuration
   );
+  const destinations = determineDestinations({
+    args,
+    platformName,
+    udid,
+    deviceName,
+  });
+
   await buildProject({
     xcodeProject,
     sourceDir,
     platformName,
-    udid,
     scheme,
     configuration,
+    destinations,
     args,
-    deviceName,
   });
+
   const buildSettings = await getBuildSettings(
     xcodeProject,
     sourceDir,
+    platformName,
     configuration,
-    platformSDK,
+    destinations,
     scheme,
     args.target
   );
@@ -103,4 +110,50 @@ export async function buildApp({
     xcodeProject,
     sourceDir,
   };
+}
+
+type DetermineDestinationsArgs = {
+  args: RunFlags | BuildFlags;
+  platformName: ApplePlatform;
+  udid?: string;
+  deviceName?: string;
+};
+
+function determineDestinations({
+  args,
+  platformName,
+  udid,
+  deviceName,
+}: DetermineDestinationsArgs): string[] {
+  if (args.destination && args.destination.length > 0) {
+    return args.destination.map((destination) =>
+      resolveDestination(destination, platformName)
+    );
+  }
+
+  if ('catalyst' in args && args.catalyst) {
+    return ['platform=macOS,variant=Mac Catalyst'];
+  }
+
+  if (udid) {
+    return [`id=${udid}`];
+  }
+
+  if (deviceName) {
+    return [`name=${deviceName}`];
+  }
+
+  return [getGenericDestination(platformName, 'device')];
+}
+
+function resolveDestination(destination: string, platformName: ApplePlatform) {
+  if (destination === 'device') {
+    return getGenericDestination(platformName, 'device');
+  }
+
+  if (destination === 'simulator') {
+    return getGenericDestination(platformName, 'simulator');
+  }
+
+  return destination;
 }

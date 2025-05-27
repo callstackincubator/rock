@@ -78,7 +78,6 @@ iOS:
 
 - `--mode` → `--configuration`
 - `--buildFolder` → `--build-folder`
-- `--destination` → `--destinations`
 
 ### Removed Flags
 

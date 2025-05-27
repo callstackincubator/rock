@@ -20,7 +20,7 @@ We need a special Gradle plugin to create an AAR that includes all dependencies.
 
 1. Add the gradle plugin dependency to your `android/build.gradle`:
 
-   ```gradle title="android/build.gradle" {3-10,15}
+   ```groovy title="android/build.gradle" {3-10,15}
    buildscript {
        repositories {
            google()
@@ -34,7 +34,7 @@ We need a special Gradle plugin to create an AAR that includes all dependencies.
 
 1. Add the plugin to your `rnbrownfield/build.gradle.kts`:
 
-   ```gradle title="rnbrownfield/build.gradle.kts" {4}
+   ```groovy title="rnbrownfield/build.gradle.kts" {4}
    plugins {
        id("com.android.library")
        id("org.jetbrains.kotlin.android")
@@ -50,7 +50,7 @@ We need a special Gradle plugin to create an AAR that includes all dependencies.
 
 Add the required React Native dependencies to your `rnbrownfield/build.gradle.kts`:
 
-```gradle title="rnbrownfield/build.gradle.kts" {2-3}
+```groovy title="rnbrownfield/build.gradle.kts" {2-3}
 dependencies {
     api("com.facebook.react:react-android:0.77.0")
     api("com.facebook.react:hermes-android:0.77.0")
@@ -130,7 +130,7 @@ class ReactNativeHostManager {
 
 Update your `rnbrownfield/build.gradle.kts` to use Java 17:
 
-```gradle title="rnbrownfield/build.gradle.kts" {3-4,7}
+```groovy title="rnbrownfield/build.gradle.kts" {3-4,7}
 android {
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_17
@@ -144,7 +144,7 @@ android {
 
 Add build configuration fields:
 
-```gradle title="rnbrownfield/build.gradle.kts" {4-5}
+```groovy title="rnbrownfield/build.gradle.kts" {4-5}
 android {
     defaultConfig {
         minSdk = 24
@@ -221,7 +221,7 @@ object RNViewFactory {
 
 Add the Maven publish plugin to your `rnbrownfield/build.gradle.kts`:
 
-```gradle title="rnbrownfield/build.gradle.kts" {5}
+```groovy title="rnbrownfield/build.gradle.kts" {5}
 plugins {
     id("com.android.library")
     id("org.jetbrains.kotlin.android")
@@ -232,7 +232,7 @@ plugins {
 
 Configure the publishing settings:
 
-```gradle title="rnbrownfield/build.gradle.kts"
+```groovy title="rnbrownfield/build.gradle.kts"
 publishing {
     publications {
         create<MavenPublication>("mavenAar") {
@@ -320,7 +320,7 @@ tasks.named("generateMetadataFileForMavenAarPublication") {
 
 1. Add the dependency to your app's `build.gradle.kts`:
 
-   ```gradle title="build.gradle.kts" {2}
+   ```groovy title="build.gradle.kts" {2}
    dependencies {
        implementation("com.callstack:rnbrownfield:0.0.1-local")
    }
@@ -408,4 +408,4 @@ class MainActivity : AppCompatActivity() {
 
 Now you can run your app and test the React Native integration!
 
->Note: `brownfield-gradle-plugin` copies `.so` files to the `lib` folder. Make sure to add `**/*.so` to your .gitignore file, as to not commit these .so files. The reason is they are auto-generated each time.
+> Note: `brownfield-gradle-plugin` copies `.so` files to the `lib` folder. Make sure to add `**/*.so` to your .gitignore file, as to not commit these .so files. The reason is they are auto-generated each time.
