@@ -107,6 +107,18 @@ import { PackageManagerTabs } from 'rspress/theme';
    git clean -fdx ios/ android/
    ```
 
+1. Update scripts in `package.json`:
+
+   ```json title="package.json"
+   {
+     "scripts": {
+       "start": "rnef start",
+       "run:android": "rnef run:android",
+       "run:ios": "rnef run:ios"
+     }
+   }
+   ```
+
 1. Run new commands:
 
    ```sh
