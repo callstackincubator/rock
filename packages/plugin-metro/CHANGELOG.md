@@ -1,5 +1,12 @@
 # @rnef/plugin-metro
 
+## 0.7.14
+
+### Patch Changes
+
+- 99cc693: Fix parsing of `maxWorkers` option for `start` command in `@rnef/plugin-metro`
+  - @rnef/tools@0.7.14
+
 ## 0.7.13
 
 ### Patch Changes

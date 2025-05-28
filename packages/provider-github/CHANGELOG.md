@@ -1,5 +1,12 @@
 # @rnef/provider-github
 
+## 0.7.14
+
+### Patch Changes
+
+- f9a6214: chore: drop 'No git remote found' warning
+  - @rnef/tools@0.7.14
+
 ## 0.7.13
 
 ### Patch Changes
