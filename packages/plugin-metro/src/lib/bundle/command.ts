@@ -20,7 +20,7 @@ type BundleCommandArgs = {
   dev: boolean;
   bundleOutput: string;
   bundleEncoding?: 'utf8' | 'utf16le' | 'ascii';
-  maxWorkers?: number;
+  maxWorkers?: string;
   sourcemapOutput?: string;
   sourcemapSourcesRoot?: string;
   sourcemapUseAbsolutePath: boolean;

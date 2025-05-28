@@ -58,7 +58,7 @@ async function runServer(
     },
     {
       config: args.config,
-      maxWorkers: Number(args.maxWorkers),
+      maxWorkers: args.maxWorkers,
       port: args.port,
       resetCache: args.resetCache,
       watchFolders: args.watchFolders,
