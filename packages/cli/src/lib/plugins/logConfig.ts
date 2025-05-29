@@ -62,7 +62,7 @@ export const logConfigPlugin =
     api.registerCommand({
       name: 'config',
       description: 'Output autolinking config',
-      action: async (args) => {
+      action: async (_context, args) => {
         await logConfig(args, ownConfig);
       },
       options: [

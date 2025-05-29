@@ -21,7 +21,7 @@ export function registerCreateKeystoreCommand(
   api.registerCommand({
     name: 'create-keystore:android',
     description: 'Creates a keystore file for signing Android release builds.',
-    action: async (args) => {
+    action: async (_context, args) => {
       const androidConfig = getValidProjectConfig(
         api.getProjectRoot(),
         pluginConfig

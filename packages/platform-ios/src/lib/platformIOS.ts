@@ -8,7 +8,7 @@ import {
   getRunOptions,
   getValidProjectConfig,
 } from '@rnef/platform-apple-helpers';
-import { intro, outro } from '@rnef/tools';
+import { fingerprintSourceDir, intro, outro } from '@rnef/tools';
 import { registerSignCommand } from './commands/signIos.js';
 
 const buildOptions = getBuildOptions({ platformName: 'ios' });
@@ -17,10 +17,12 @@ const runOptions = getRunOptions({ platformName: 'ios' });
 export const platformIOS =
   (pluginConfig?: IOSProjectConfig) =>
   (api: PluginApi): PlatformOutput => {
+    const sourceDir = pluginConfig?.sourceDir ?? 'ios';
+
     api.registerCommand({
       name: 'build:ios',
       description: 'Build iOS app.',
-      action: async (args) => {
+      action: async (_context, args) => {
         intro('Building iOS app');
         const projectRoot = api.getProjectRoot();
         const iosConfig = getValidProjectConfig(
@@ -43,7 +45,7 @@ export const platformIOS =
     api.registerCommand({
       name: 'run:ios',
       description: 'Run iOS app.',
-      action: async (args) => {
+      action: async (_context, args) => {
         intro('Running iOS app');
         const projectRoot = api.getProjectRoot();
         const iosConfig = getValidProjectConfig(
@@ -57,6 +59,7 @@ export const platformIOS =
           args: args as RunFlags,
           projectRoot,
           remoteCacheProvider: await api.getRemoteCacheProvider(),
+          platformConfig: getFingerprintConfig(sourceDir),
           fingerprintOptions: api.getFingerprintOptions(),
           reactNativePath: api.getReactNativePath(),
         });
@@ -81,7 +84,15 @@ export const platformIOS =
           return { ...iosConfig };
         },
       },
+      fingerprintConfig: getFingerprintConfig(sourceDir),
     };
   };
 
 export default platformIOS;
+
+function getFingerprintConfig(sourceDir: string) {
+  return {
+    sources: [fingerprintSourceDir(sourceDir, 'platform-ios')],
+    ignorePaths: [`${sourceDir}/DerivedData`, `${sourceDir}/Pods`],
+  };
+}

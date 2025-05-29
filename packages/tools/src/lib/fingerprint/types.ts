@@ -13,8 +13,7 @@ export type FingerprintResult = {
   sources: FingerprintSource[];
 };
 
-export type FingerprintPlatformSource = {
-  platform: FingerprintPlatform;
+export type FingerprintPlatformConfig = {
   sources: HashSource[];
-  dirExcludes: string[];
+  ignorePaths: string[];
 };

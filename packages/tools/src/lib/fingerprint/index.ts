@@ -3,8 +3,11 @@ import type { FingerprintSource } from '@expo/fingerprint';
 import { createFingerprintAsync } from '@expo/fingerprint';
 import { RnefError } from '../error.js';
 import { processExtraSources } from './extra-sources.js';
-import { getPlatformSources } from './platform-sources.js';
-import type { FingerprintOptions, FingerprintResult } from './types.js';
+import type {
+  FingerprintOptions,
+  FingerprintPlatformConfig,
+  FingerprintResult,
+} from './types.js';
 
 const HASH_ALGORITHM = 'sha1';
 const EXCLUDED_SOURCES = [
@@ -17,11 +20,9 @@ const EXCLUDED_SOURCES = [
  */
 export async function nativeFingerprint(
   path: string,
+  platformConfig: FingerprintPlatformConfig,
   options: FingerprintOptions
 ): Promise<FingerprintResult> {
-  const platform = options.platform;
-
-  const platformSources = getPlatformSources(platform);
   const extraSources = processExtraSources(
     options.extraSources,
     path,
@@ -30,9 +31,12 @@ export async function nativeFingerprint(
 
   const fingerprint = await createFingerprintAsync(path, {
     platforms: [],
-    dirExcludes: ['node_modules', ...platformSources.dirExcludes],
-    extraSources: [...platformSources.sources, ...extraSources],
-    ignorePaths: options.ignorePaths,
+    extraSources: [...platformConfig.sources, ...extraSources],
+    ignorePaths: [
+      'node_modules',
+      ...options.ignorePaths,
+      ...platformConfig.ignorePaths,
+    ],
   });
 
   // Filter out un-relevant sources as these caused hash mismatch between local and remote builds

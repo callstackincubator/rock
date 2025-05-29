@@ -11,7 +11,7 @@ export function registerBuildCommand(
   api.registerCommand({
     name: 'build:android',
     description: 'Builds your app for Android platform.',
-    action: async (args) => {
+    action: async (_context, args) => {
       const androidConfig = getValidProjectConfig(
         api.getProjectRoot(),
         pluginConfig

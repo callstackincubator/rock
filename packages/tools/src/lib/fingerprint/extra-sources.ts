@@ -3,7 +3,7 @@ import path from 'node:path';
 import type { HashSource } from '@expo/fingerprint';
 import glob from 'fast-glob';
 import logger from '../logger.js';
-import { sourceDir, sourceFile } from './utils.js';
+import { fingerprintSourceDir, fingerprintSourceFile } from './utils.js';
 
 /**
  * Processes extra source files and directories for fingerprinting.
@@ -33,11 +33,11 @@ export function processExtraSources(
             const stats = fs.statSync(absolutePath);
             if (stats.isDirectory()) {
               processedSources.push(
-                sourceDir(absolutePath, 'custom-user-config')
+                fingerprintSourceDir(absolutePath, 'custom-user-config')
               );
             } else {
               processedSources.push(
-                sourceFile(absolutePath, 'custom-user-config')
+                fingerprintSourceFile(absolutePath, 'custom-user-config')
               );
             }
           }
@@ -57,9 +57,13 @@ export function processExtraSources(
 
       const stats = fs.statSync(absolutePath);
       if (stats.isDirectory()) {
-        processedSources.push(sourceDir(absolutePath, 'custom-user-config'));
+        processedSources.push(
+          fingerprintSourceDir(absolutePath, 'custom-user-config')
+        );
       } else {
-        processedSources.push(sourceFile(absolutePath, 'custom-user-config'));
+        processedSources.push(
+          fingerprintSourceFile(absolutePath, 'custom-user-config')
+        );
       }
     } catch (error) {
       logger.debug(`Error processing extra source "${source}": ${error}`);

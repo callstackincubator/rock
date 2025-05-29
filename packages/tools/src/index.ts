@@ -3,6 +3,8 @@ export * from './lib/env.js';
 export * from './lib/error.js';
 export { default as logger } from './lib/logger.js';
 export * from './lib/fingerprint/index.js';
+export * from './lib/fingerprint/utils.js';
+export type * from './lib/fingerprint/types.js';
 export { default as cacheManager } from './lib/cacheManager.js';
 export * from './lib/parse-args.js';
 export * from './lib/path.js';
@@ -19,3 +21,15 @@ export {
   fetchCachedBuild,
   handleDownloadResponse,
 } from './lib/build-cache/fetchCachedBuild.js';
+
+let level = 0;
+
+export function fnStart(name: string) {
+  console.log(`${'  '.repeat(level * 2)}↘️ START ${name}`);
+  level++;
+}
+
+export function fnEnd(name: string) {
+  level--;
+  console.log(`${'  '.repeat(level * 2)}↙️ END ${name}`);
+}

@@ -66,7 +66,7 @@ export const registerSignCommand = (api: PluginApi) => {
     description: 'Sign the Android app',
     args: ARGUMENTS,
     options: OPTIONS,
-    action: async (apkPath, flags: SignFlags) => {
+    action: async (_context, apkPath, flags: SignFlags) => {
       await signAndroid({
         apkPath,
         keystorePath: flags.keystore,

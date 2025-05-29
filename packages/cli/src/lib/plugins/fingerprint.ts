@@ -1,6 +1,8 @@
 import { performance } from 'node:perf_hooks';
-import type { PluginApi } from '@rnef/config';
+import type { CommandContext, PluginApi } from '@rnef/config';
 import {
+  fnEnd,
+  fnStart,
   intro,
   isInteractive,
   logger,
@@ -21,6 +23,7 @@ type ConfigFingerprintOptions = {
 };
 
 export async function nativeFingerprintCommand(
+  context: CommandContext,
   path = '.',
   { extraSources, ignorePaths }: ConfigFingerprintOptions,
   options: NativeFingerprintCommandOptions
@@ -29,8 +32,18 @@ export async function nativeFingerprintCommand(
   const platform = options.platform;
   const readablePlatformName = platform === 'ios' ? 'iOS' : 'Android';
 
+  console.log('platform', platform);
+  console.log('context', JSON.stringify(context, null, 2));
+  const platformConfig =
+    context.config.platforms?.[platform]?.fingerprintConfig;
+  if (!platformConfig) {
+    throw new RnefError(
+      `Fingerprint config for ${platform} is not defined. Please define it in the config.`
+    );
+  }
+
   if (options?.raw || !isInteractive()) {
-    const fingerprint = await nativeFingerprint(path, {
+    const fingerprint = await nativeFingerprint(path, platformConfig, {
       platform,
       extraSources,
       ignorePaths,
@@ -45,7 +58,7 @@ export async function nativeFingerprintCommand(
   loader.start("Calculating fingerprint for the project's native parts");
 
   const start = performance.now();
-  const fingerprint = await nativeFingerprint(path, {
+  const fingerprint = await nativeFingerprint(path, platformConfig, {
     platform,
     extraSources,
     ignorePaths,
@@ -77,9 +90,17 @@ export const fingerprintPlugin = () => (api: PluginApi) => {
   api.registerCommand({
     name: 'fingerprint',
     description: 'Calculate fingerprint for given platform',
-    action: async (path, options) => {
-      const fingerprintOptions = api.getFingerprintOptions();
-      await nativeFingerprintCommand(path, fingerprintOptions, options);
+    action: async (context, path, options) => {
+      fnStart('fingerprintPlugin.action');
+      console.log('context', JSON.stringify(context, null, 2));
+
+      await nativeFingerprintCommand(
+        context,
+        path,
+        api.getFingerprintOptions(),
+        options
+      );
+      fnEnd('fingerprintPlugin.action');
     },
     options: [
       {

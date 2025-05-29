@@ -1,16 +1,22 @@
 import type { HashSourceDir, HashSourceFile } from '@expo/fingerprint';
 
-export function sourceFile(path: string, reason: string): HashSourceFile {
+export function fingerprintSourceDir(
+  path: string,
+  reason: string
+): HashSourceDir {
   return {
-    type: 'file',
+    type: 'dir',
     filePath: path,
     reasons: [reason],
   };
 }
 
-export function sourceDir(path: string, reason: string): HashSourceDir {
+export function fingerprintSourceFile(
+  path: string,
+  reason: string
+): HashSourceFile {
   return {
-    type: 'dir',
+    type: 'file',
     filePath: path,
     reasons: [reason],
   };

@@ -1,5 +1,5 @@
-import type { PluginApi, PluginOutput } from '@rnef/config';
-import type { RemoteBuildCache } from '@rnef/tools';
+import type { CommandContext, PluginApi, PluginOutput } from '@rnef/config';
+import type { FingerprintPlatform, RemoteBuildCache } from '@rnef/tools';
 import {
   formatArtifactName,
   getLocalArtifactPath,
@@ -24,12 +24,14 @@ async function remoteCache({
   remoteCacheProvider,
   projectRoot,
   fingerprintOptions,
+  context,
 }: {
   action: string;
   args: Flags;
   remoteCacheProvider: null | (() => RemoteBuildCache);
   projectRoot: string;
   fingerprintOptions: { extraSources: string[]; ignorePaths: string[] };
+  context: CommandContext;
 }) {
   const isJsonOutput = args.json;
   if (!remoteCacheProvider) {
@@ -41,12 +43,13 @@ async function remoteCache({
 
   const artifactName =
     args.name ??
-    (await formatArtifactName({
-      platform: args.platform,
-      traits: args.traits,
-      root: projectRoot,
-      fingerprintOptions,
-    }));
+    (await getArtifactName(
+      context,
+      args.platform as FingerprintPlatform,
+      args.traits as string[],
+      projectRoot,
+      fingerprintOptions
+    ));
 
   switch (action) {
     case 'list': {
@@ -184,8 +187,9 @@ export const remoteCachePlugin =
     api.registerCommand({
       name: 'remote-cache',
       description: 'Manage remote cache',
-      action: async (action: string, args: Flags) => {
+      action: async (context, action: string, args: Flags) => {
         await remoteCache({
+          context,
           action,
           args,
           remoteCacheProvider: (await api.getRemoteCacheProvider()) || null,
@@ -237,3 +241,27 @@ Example Android: --traits debug`,
       description: 'Manage remote cache',
     };
   };
+
+async function getArtifactName(
+  context: CommandContext,
+  platform: FingerprintPlatform,
+  traits: string[],
+  projectRoot: string,
+  fingerprintOptions: { extraSources: string[]; ignorePaths: string[] }
+) {
+  const platformConfig =
+    context.config.platforms?.[platform]?.fingerprintConfig;
+  if (!platformConfig) {
+    throw new RnefError(
+      `Fingerprint config for ${platform} is not defined. Please define it in the config.`
+    );
+  }
+
+  return await formatArtifactName({
+    platform: platform,
+    traits: traits,
+    root: projectRoot,
+    platformConfig,
+    fingerprintOptions,
+  });
+}

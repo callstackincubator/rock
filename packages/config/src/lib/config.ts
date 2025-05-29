@@ -1,8 +1,8 @@
 import * as fs from 'node:fs';
 import { createRequire } from 'node:module';
 import * as path from 'node:path';
-import type { RemoteBuildCache } from '@rnef/tools';
-import { color, logger } from '@rnef/tools';
+import type { FingerprintPlatformConfig, RemoteBuildCache } from '@rnef/tools';
+import { color, fnEnd, fnStart, logger } from '@rnef/tools';
 import type { ValidationError } from 'joi';
 import { ConfigTypeSchema } from './schema.js';
 import { formatValidationError } from './utils.js';
@@ -14,6 +14,7 @@ export type PluginOutput = {
 
 export type PlatformOutput = PluginOutput & {
   autolinkingConfig: { project: Record<string, unknown> | undefined };
+  fingerprintConfig: FingerprintPlatformConfig;
 };
 
 export type PluginApi = {
@@ -31,6 +32,10 @@ export type PluginApi = {
   };
 };
 
+export type CommandContext = {
+  config: ConfigOutput;
+};
+
 type PluginType = (args: PluginApi) => PluginOutput;
 
 type PlatformType = (args: PluginApi) => PlatformOutput;
@@ -38,7 +43,10 @@ type PlatformType = (args: PluginApi) => PlatformOutput;
 type ArgValue = string | string[] | boolean;
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
-type ActionType<T = any> = (...args: T[]) => void | Promise<void>;
+type ActionType<T = any> = (
+  context: CommandContext,
+  ...args: T[]
+) => void | Promise<void>;
 
 export type CommandType = {
   name: string;
@@ -69,7 +77,7 @@ export type ConfigType = {
   plugins?: PluginType[];
   platforms?: Record<string, PlatformType>;
   commands?: Array<CommandType>;
-  remoteCacheProvider?: null | 'github-actions' |(() => RemoteBuildCache);
+  remoteCacheProvider?: null | 'github-actions' | (() => RemoteBuildCache);
   fingerprint?: {
     extraSources?: string[];
     ignorePaths?: string[];
@@ -127,6 +135,7 @@ export async function getConfig(
     }) => PluginType
   >
 ): Promise<ConfigOutput> {
+  fnStart('getConfig');
   const { config, filePathWithExt, configDir } = await importUp(
     dir,
     'rnef.config'
@@ -218,6 +227,7 @@ export async function getConfig(
     ...api,
   };
 
+  fnEnd('getConfig');
   return outputConfig;
 }
 

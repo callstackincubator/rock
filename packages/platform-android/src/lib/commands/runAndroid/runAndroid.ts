@@ -4,7 +4,7 @@ import type {
   AndroidProjectConfig,
   Config,
 } from '@react-native-community/cli-types';
-import type { RemoteBuildCache } from '@rnef/tools';
+import type { FingerprintPlatformConfig, RemoteBuildCache } from '@rnef/tools';
 import {
   fetchCachedBuild,
   formatArtifactName,
@@ -47,6 +47,7 @@ export async function runAndroid(
   args: Flags,
   projectRoot: string,
   remoteCacheProvider: null | (() => RemoteBuildCache) | undefined,
+  platformConfig: FingerprintPlatformConfig,
   fingerprintOptions: { extraSources: string[]; ignorePaths: string[] }
 ) {
   intro('Running Android app');
@@ -64,6 +65,7 @@ export async function runAndroid(
       platform: 'android',
       traits: [args.variant],
       root: projectRoot,
+      platformConfig,
       fingerprintOptions,
     });
     const cachedBuild = await fetchCachedBuild({

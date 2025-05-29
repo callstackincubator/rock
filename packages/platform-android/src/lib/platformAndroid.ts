@@ -1,5 +1,7 @@
 import type { AndroidProjectConfig } from '@react-native-community/cli-types';
 import type { PlatformOutput, PluginApi } from '@rnef/config';
+import type { FingerprintPlatformConfig } from '@rnef/tools';
+import { fingerprintSourceDir } from '@rnef/tools';
 import { registerBuildCommand } from './commands/buildAndroid/command.js';
 import { registerCreateKeystoreCommand } from './commands/generateKeystore.js';
 import { getValidProjectConfig } from './commands/getValidProjectConfig.js';
@@ -28,7 +30,24 @@ export const platformAndroid =
           return { ...androidConfig };
         },
       },
+      fingerprintConfig: buildFingerprintConfig(
+        pluginConfig?.sourceDir ?? 'android'
+      ),
     };
   };
 
 export default platformAndroid;
+
+function buildFingerprintConfig(sourceDir: string): FingerprintPlatformConfig {
+  return {
+    sources: [fingerprintSourceDir(sourceDir, 'platform-android')],
+    ignorePaths: [
+      `${sourceDir}/build`,
+      `${sourceDir}/**/build`,
+      `${sourceDir}/**/.cxx`,
+      `${sourceDir}/local.properties`,
+      `${sourceDir}/.idea`,
+      `${sourceDir}/.gradle`,
+    ],
+  };
+}

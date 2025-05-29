@@ -43,12 +43,13 @@ export const cli = async ({ cwd, argv }: CliOptions) => {
   ensureUniqueCommands(config.commands);
 
   config.commands?.forEach((command) => {
+    const context = { config };
     const cmd = program
       .command(command.name)
       .description(command.description || '')
       .action(async (...args) => {
         try {
-          await command.action(...args);
+          await command.action(context, ...args);
         } catch (error) {
           if (error instanceof RnefError) {
             if (logger.isVerbose()) {

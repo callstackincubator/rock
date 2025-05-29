@@ -90,7 +90,7 @@ const simplePlugin =
     api.registerCommand({
       name: 'my-command',
       description: 'My command description',
-      action: async (args) => {
+      action: async (context, args) => {
         console.log('hello world');
       },
     });

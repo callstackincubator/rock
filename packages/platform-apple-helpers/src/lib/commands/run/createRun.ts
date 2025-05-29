@@ -1,6 +1,6 @@
 import fs from 'node:fs';
 import path from 'node:path';
-import type { RemoteBuildCache } from '@rnef/tools';
+import type { FingerprintPlatformConfig, RemoteBuildCache } from '@rnef/tools';
 import {
   color,
   fetchCachedBuild,
@@ -34,6 +34,7 @@ export const createRun = async ({
   args,
   projectRoot,
   remoteCacheProvider,
+  platformConfig,
   fingerprintOptions,
   reactNativePath,
 }: {
@@ -42,6 +43,7 @@ export const createRun = async ({
   args: RunFlags;
   projectRoot: string;
   remoteCacheProvider: null | (() => RemoteBuildCache) | undefined;
+  platformConfig: FingerprintPlatformConfig;
   fingerprintOptions: { extraSources: string[]; ignorePaths: string[] };
   reactNativePath: string;
 }) => {
@@ -53,6 +55,7 @@ export const createRun = async ({
         args.configuration ?? 'Debug',
       ],
       root: projectRoot,
+      platformConfig,
       fingerprintOptions,
     });
     const cachedBuild = await fetchCachedBuild({

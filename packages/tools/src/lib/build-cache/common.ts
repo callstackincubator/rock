@@ -1,6 +1,7 @@
 import fs from 'node:fs';
 import path from 'node:path';
 import { nativeFingerprint } from '../fingerprint/index.js';
+import type { FingerprintPlatformConfig } from '../fingerprint/types.js';
 import { getCacheRootPath } from '../project.js';
 
 export const BUILD_CACHE_DIR = 'remote-build';
@@ -84,17 +85,20 @@ export async function formatArtifactName({
   platform,
   traits,
   root,
+  platformConfig,
   fingerprintOptions,
 }: {
   platform?: 'ios' | 'android';
   traits?: string[];
   root: string;
+  platformConfig: FingerprintPlatformConfig;
   fingerprintOptions: { extraSources: string[]; ignorePaths: string[] };
 }): Promise<string> {
   if (!platform || !traits) {
     return '';
   }
-  const { hash } = await nativeFingerprint(root, {
+
+  const { hash } = await nativeFingerprint(root, platformConfig, {
     platform,
     ...fingerprintOptions,
   });

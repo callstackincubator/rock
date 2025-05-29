@@ -5,7 +5,15 @@ import {
   // @ts-expect-error missing typings - TODO drop dependency on community plugin
 } from '@react-native/community-cli-plugin';
 import type { PluginApi } from '@rnef/config';
-import { color, intro, logger, outro, RnefError, runHermes, spinner } from '@rnef/tools';
+import {
+  color,
+  intro,
+  logger,
+  outro,
+  RnefError,
+  runHermes,
+  spinner,
+} from '@rnef/tools';
 
 type BundleCommandArgs = {
   assetsDest?: string;
@@ -37,7 +45,7 @@ export function registerBundleCommand(api: PluginApi) {
     name: 'bundle',
     description:
       'Build the bundle for the provided JavaScript entry file with Metro.',
-    action: async (args: BundleCommandArgs) => {
+    action: async (_context, args: BundleCommandArgs) => {
       if (!args.platform || !args.bundleOutput || !args.entryFile) {
         throw new RnefError(
           '"rnef bundle" command requires all of these flags to bundle JavaScript with Metro: \n  "--platform", "--bundle-output", "--entry-file"'

@@ -12,14 +12,19 @@ export function registerRunCommand(
     name: 'run:android',
     description:
       'Builds your app and starts it on a connected Android emulator or a device.',
-    action: async (args) => {
+    action: async (_context, args) => {
       const projectRoot = api.getProjectRoot();
       const androidConfig = getValidProjectConfig(projectRoot, pluginConfig);
+
       await runAndroid(
         androidConfig,
         args as Flags,
         projectRoot,
         await api.getRemoteCacheProvider(),
+        {
+          sources: [],
+          ignorePaths: [],
+        },
         api.getFingerprintOptions()
       );
     },

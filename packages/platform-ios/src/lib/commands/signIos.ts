@@ -25,7 +25,8 @@ const OPTIONS = [
   },
   {
     name: '--identity <string>',
-    description: 'Certificate Identity name to use for code signing, e.g. "Apple Distribution: Your Team (HFJASKHDDS)".',
+    description:
+      'Certificate Identity name to use for code signing, e.g. "Apple Distribution: Your Team (HFJASKHDDS)".',
   },
   {
     name: '--output <string>',
@@ -51,7 +52,7 @@ export const registerSignCommand = (api: PluginApi) => {
     description: 'Sign the iOS app',
     args: ARGUMENTS,
     options: OPTIONS,
-    action: async (ipaPath, flags: SignFlags) => {
+    action: async (_context, ipaPath, flags: SignFlags) => {
       await modifyIpa({
         platformName: 'ios',
         ipaPath,

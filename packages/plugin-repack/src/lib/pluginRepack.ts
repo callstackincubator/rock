@@ -39,7 +39,7 @@ export const pluginRepack =
     api.registerCommand({
       name: 'start',
       description: 'Starts Re.Pack dev server.',
-      action: async (args: StartArgs) => {
+      action: async (_context, args: StartArgs) => {
         const root = api.getProjectRoot();
         const platforms = api.getPlatforms();
         const { port, startDevServer } = await findDevServerPort(
@@ -65,7 +65,7 @@ export const pluginRepack =
     api.registerCommand({
       name: 'bundle',
       description: 'Bundles JavaScript with Re.Pack.',
-      action: async (args: BundleArgs) => {
+      action: async (_context, args: BundleArgs) => {
         if (!args.entryFile) {
           throw new RnefError(
             '"rnef bundle" command is missing "--entry-file" argument.'

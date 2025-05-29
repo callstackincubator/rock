@@ -13,7 +13,7 @@ import { intro, RnefError } from '@rnef/tools';
 
 const getAarConfig = (
   args: PackageAarFlags | PublishLocalAarFlags,
-  androidConfig: AndroidProjectConfig,
+  androidConfig: AndroidProjectConfig
 ) => {
   const config = {
     sourceDir: androidConfig.sourceDir,
@@ -30,7 +30,7 @@ export const pluginBrownfieldAndroid =
       name: 'package:aar',
       description:
         'Produces an AAR file suitable for including React Native app in native projects.',
-      action: async (args: PackageAarFlags) => {
+      action: async (_context, args: PackageAarFlags) => {
         intro('Creating an AAR file');
 
         const androidConfig = projectConfig(projectRoot, pluginConfig);
@@ -48,7 +48,7 @@ export const pluginBrownfieldAndroid =
     api.registerCommand({
       name: 'publish-local:aar',
       description: 'Publishes a AAR to local maven repo',
-      action: async (args: PublishLocalAarFlags) => {
+      action: async (_context, args: PublishLocalAarFlags) => {
         intro('Publishing AAR');
 
         const androidConfig = projectConfig(projectRoot, pluginConfig);

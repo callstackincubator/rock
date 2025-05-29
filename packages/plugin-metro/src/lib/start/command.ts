@@ -14,7 +14,7 @@ import runServer from './runServer.js';
 export const registerStartCommand = (api: PluginApi) => {
   api.registerCommand({
     name: 'start',
-    action: async (args: StartCommandArgs) => {
+    action: async (_context, args: StartCommandArgs) => {
       intro('Starting Metro dev server');
       const root = api.getProjectRoot();
       const { port, startDevServer } = await findDevServerPort(
