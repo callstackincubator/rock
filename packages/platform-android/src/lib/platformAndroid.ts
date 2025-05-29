@@ -13,8 +13,12 @@ type PluginConfig = AndroidProjectConfig;
 export const platformAndroid =
   (pluginConfig?: PluginConfig) =>
   (api: PluginApi): PlatformOutput => {
+    const fingerprintConfig = buildFingerprintConfig(
+      pluginConfig?.sourceDir ?? 'android'
+    );
+
     registerBuildCommand(api, pluginConfig);
-    registerRunCommand(api, pluginConfig);
+    registerRunCommand(api, pluginConfig, fingerprintConfig);
     registerCreateKeystoreCommand(api, pluginConfig);
     registerSignCommand(api);
 
@@ -30,9 +34,7 @@ export const platformAndroid =
           return { ...androidConfig };
         },
       },
-      fingerprintConfig: buildFingerprintConfig(
-        pluginConfig?.sourceDir ?? 'android'
-      ),
+      fingerprintConfig,
     };
   };
 

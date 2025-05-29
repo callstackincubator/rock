@@ -18,6 +18,7 @@ export const platformIOS =
   (pluginConfig?: IOSProjectConfig) =>
   (api: PluginApi): PlatformOutput => {
     const sourceDir = pluginConfig?.sourceDir ?? 'ios';
+    const fingerprintConfig = getFingerprintConfig(sourceDir);
 
     api.registerCommand({
       name: 'build:ios',
@@ -59,7 +60,7 @@ export const platformIOS =
           args: args as RunFlags,
           projectRoot,
           remoteCacheProvider: await api.getRemoteCacheProvider(),
-          platformConfig: getFingerprintConfig(sourceDir),
+          platformConfig: fingerprintConfig,
           fingerprintOptions: api.getFingerprintOptions(),
           reactNativePath: api.getReactNativePath(),
         });
@@ -84,7 +85,7 @@ export const platformIOS =
           return { ...iosConfig };
         },
       },
-      fingerprintConfig: getFingerprintConfig(sourceDir),
+      fingerprintConfig,
     };
   };
 

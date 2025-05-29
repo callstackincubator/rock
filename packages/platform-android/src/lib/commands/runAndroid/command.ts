@@ -1,12 +1,14 @@
 import type { AndroidProjectConfig } from '@react-native-community/cli-types';
 import type { PluginApi } from '@rnef/config';
+import type { FingerprintPlatformConfig } from '@rnef/tools';
 import { getValidProjectConfig } from '../getValidProjectConfig.js';
 import type { Flags } from './runAndroid.js';
 import { runAndroid, runOptions } from './runAndroid.js';
 
 export function registerRunCommand(
   api: PluginApi,
-  pluginConfig: AndroidProjectConfig | undefined
+  pluginConfig: AndroidProjectConfig | undefined,
+  platformConfig: FingerprintPlatformConfig
 ) {
   api.registerCommand({
     name: 'run:android',
@@ -21,10 +23,7 @@ export function registerRunCommand(
         args as Flags,
         projectRoot,
         await api.getRemoteCacheProvider(),
-        {
-          sources: [],
-          ignorePaths: [],
-        },
+        platformConfig,
         api.getFingerprintOptions()
       );
     },
