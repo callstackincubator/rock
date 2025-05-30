@@ -34,6 +34,14 @@ type ProviderConfig = {
    * The secret access key for the S3 server
    */
   secretAccessKey: string;
+  /**
+   * The directory to store artifacts in the S3 server.
+   */
+  directory?: string;
+  /**
+   * The display name of the provider
+   */
+  name?: string;
 };
 ```
 
@@ -65,6 +73,7 @@ import { providerS3 } from '@rnef/provider-s3';
 export default {
   // ...
   remoteCacheProvider: providerS3({
+    name: 'R2' // optional to display R2 instead of S3
     endpoint: 'https://${ACCOUNT_ID}.r2.cloudflarestorage.com',
     bucket: 'your-bucket',
     region: 'your-region',

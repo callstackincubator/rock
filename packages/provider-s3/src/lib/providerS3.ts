@@ -33,13 +33,21 @@ type ProviderConfig = {
    * The secret access key for the S3 server.
    */
   secretAccessKey: string;
+  /**
+   * The directory to store artifacts in the S3 server.
+   */
+  directory?: string;
+  /**
+   * The display name of the provider
+   */
+  name?: string;
 };
 
 export class S3BuildCache implements RemoteBuildCache {
   name = 'S3';
+  directory = 'rnef-artifacts';
   s3: clientS3.S3Client;
   bucket: string;
-  directory = 'rnef-artifacts';
   config: ProviderConfig;
 
   constructor(config: ProviderConfig) {
@@ -55,6 +63,8 @@ export class S3BuildCache implements RemoteBuildCache {
     const awsBucket = config.bucket ?? '';
     const bucketTokens = awsBucket.split('/');
     this.bucket = bucketTokens.shift() as string;
+    this.directory = config.directory ?? this.directory;
+    this.name = config.name ?? this.name;
   }
 
   async list({
