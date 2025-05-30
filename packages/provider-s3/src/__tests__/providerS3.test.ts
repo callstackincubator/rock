@@ -1,158 +1,182 @@
-import { expect, type Mock, test, vi } from 'vitest';
+import * as clientS3 from '@aws-sdk/client-s3';
+import { expect, test, vi } from 'vitest';
 import { providerS3 } from '../lib/providerS3.js';
 
-beforeEach(() => {
-  global.fetch = vi.fn();
+// Mock the AWS S3 client
+vi.mock('@aws-sdk/client-s3', () => {
+  const mockSend = vi.fn();
+  return {
+    S3Client: vi.fn(() => ({
+      send: mockSend,
+    })),
+    ListObjectsV2Command: vi.fn(),
+    GetObjectCommand: vi.fn(),
+    DeleteObjectCommand: vi.fn(),
+    PutObjectCommand: vi.fn(),
+    mockSend,
+  };
 });
 
-const ARTIFACTS = [
-  {
-    workflow_run: { id: 2 },
-    id: 123,
-    name: 'rnef-android-debug-1234567890',
-    archive_download_url:
-      'https://api.github.com/repos/callstack/rnef/actions/artifacts/123',
-    size_in_bytes: 10000,
-    expires_at: '2025-05-20T12:00:00Z',
-  },
-  {
-    workflow_run: { id: 3 },
-    id: 124,
-    name: 'rnef-android-debug-1234567890',
-    archive_download_url:
-      'https://api.github.com/repos/callstack/rnef/actions/artifacts/124',
-    size_in_bytes: 10000,
-    expires_at: '2025-05-20T12:00:00Z',
-  },
-];
-
 test('providerS3 implements list method returning an array of artifacts', async () => {
-  const limit = 1;
-  (global.fetch as Mock).mockResolvedValue(
-    new Response(JSON.stringify({ artifacts: ARTIFACTS.slice(0, limit) }))
-  );
+  const mockSend = (clientS3 as any).mockSend;
+  mockSend.mockResolvedValueOnce({
+    Contents: [
+      {
+        Key: 'rnef-artifacts/rnef-android-debug-1234567890.zip',
+        Size: 10000,
+        LastModified: new Date(),
+      },
+    ],
+  });
+
   const cacheProvider = providerS3({
     bucket: 'test-bucket',
     region: 'test-region',
     accessKeyId: 'test-access-key-id',
     secretAccessKey: 'test-secret-access-key',
   })();
+
   const result = await cacheProvider.list({
     artifactName: 'rnef-android-debug-1234567890',
-    limit,
   });
-  expect(fetch).toHaveBeenCalledWith(
-    `https://api.github.com/repos/callstack/rnef/actions/artifacts?per_page=${limit}&page=1&name=rnef-android-debug-1234567890`,
-    {
-      headers: {
-        Authorization: 'token TEST_TOKEN',
-      },
-    }
-  );
+
+  expect(clientS3.ListObjectsV2Command).toHaveBeenCalledWith({
+    Bucket: 'test-bucket',
+    Prefix: 'rnef-artifacts/rnef-android-debug-1234567890.zip',
+  });
+  expect(mockSend).toHaveBeenCalled();
   expect(result).toEqual([
     {
-      id: '123',
       name: 'rnef-android-debug-1234567890',
-      url: 'https://api.github.com/repos/callstack/rnef/actions/artifacts/123',
+      url: 'test-bucket/rnef-artifacts/rnef-android-debug-1234567890.zip',
     },
   ]);
 });
 
 test('providerS3 implements download method returning a stream with artifact zip', async () => {
-  const limit = 1;
-  const bytes = new Uint8Array(100);
-  const downloadResponse = new Response(bytes);
-  global.fetch = vi.fn((url) => {
-    if (
-      url ===
-      'https://api.github.com/repos/callstack/rnef/actions/artifacts?per_page=100&page=1&name=rnef-android-debug-1234567890'
-    ) {
-      return Promise.resolve(
-        new Response(JSON.stringify({ artifacts: ARTIFACTS.slice(0, limit) }))
-      );
-    }
-    if (
-      url ===
-      'https://api.github.com/repos/callstack/rnef/actions/artifacts/123'
-    ) {
-      return Promise.resolve(downloadResponse);
-    }
-    return Promise.reject(new Error('Unexpected URL'));
+  const mockSend = (clientS3 as any).mockSend;
+  const mockStream = {
+    on: vi.fn((event, callback) => {
+      if (event === 'data') callback(Buffer.from('test data'));
+      if (event === 'end') callback();
+      return mockStream;
+    }),
+  };
+  mockSend.mockResolvedValueOnce({
+    Body: mockStream,
+    ContentLength: 9,
   });
+
   const cacheProvider = providerS3({
     bucket: 'test-bucket',
     region: 'test-region',
     accessKeyId: 'test-access-key-id',
     secretAccessKey: 'test-secret-access-key',
   })();
+
   const response = await cacheProvider.download({
     artifactName: 'rnef-android-debug-1234567890',
   });
-  const result = await response.arrayBuffer();
-  expect(result).toBeInstanceOf(ArrayBuffer);
-  expect(result.byteLength).toBe(100);
-  expect(new Uint8Array(result)).toEqual(new Uint8Array(100));
+
+  expect(clientS3.GetObjectCommand).toHaveBeenCalledWith({
+    Bucket: 'test-bucket',
+    Key: 'rnef-artifacts/rnef-android-debug-1234567890.zip',
+  });
+  expect(mockSend).toHaveBeenCalled();
+  expect(response.headers.get('content-length')).toBe('9');
 });
 
 test('providerS3 implements delete method', async () => {
-  const limit = undefined;
-  global.fetch = vi.fn((url, options) => {
-    if (
-      url ===
-      'https://api.github.com/repos/callstack/rnef/actions/artifacts?per_page=100&page=1&name=rnef-android-debug-1234567890'
-    ) {
-      return Promise.resolve(
-        new Response(JSON.stringify({ artifacts: ARTIFACTS }))
-      );
-    }
-    if (
-      url ===
-        'https://api.github.com/repos/callstack/rnef/actions/artifacts/123' &&
-      options.method === 'DELETE'
-    ) {
-      return Promise.resolve(new Response());
-    }
-    if (
-      url ===
-        'https://api.github.com/repos/callstack/rnef/actions/artifacts/124' &&
-      options.method === 'DELETE'
-    ) {
-      return Promise.resolve(new Response());
-    }
-    return Promise.reject(new Error('Unexpected URL'));
-  });
+  const mockSend = (clientS3 as any).mockSend;
+  mockSend.mockResolvedValueOnce({});
+
   const cacheProvider = providerS3({
     bucket: 'test-bucket',
     region: 'test-region',
     accessKeyId: 'test-access-key-id',
     secretAccessKey: 'test-secret-access-key',
   })();
-  const response = await cacheProvider.delete({
+
+  const result = await cacheProvider.delete({
     artifactName: 'rnef-android-debug-1234567890',
-    limit,
   });
-  expect(response).toEqual([
+
+  expect(clientS3.DeleteObjectCommand).toHaveBeenCalledWith({
+    Bucket: 'test-bucket',
+    Key: 'rnef-artifacts/rnef-android-debug-1234567890.zip',
+  });
+  expect(mockSend).toHaveBeenCalled();
+  expect(result).toEqual([
     {
       name: 'rnef-android-debug-1234567890',
-      url: 'https://api.github.com/repos/callstack/rnef/actions/artifacts/123',
-    },
-    {
-      name: 'rnef-android-debug-1234567890',
-      url: 'https://api.github.com/repos/callstack/rnef/actions/artifacts/124',
+      url: 'test-bucket/rnef-artifacts/rnef-android-debug-1234567890.zip',
     },
   ]);
 });
 
 test('providerS3 implements upload method', async () => {
+  const mockSend = (clientS3 as any).mockSend;
+  mockSend.mockResolvedValueOnce({});
+
   const cacheProvider = providerS3({
     bucket: 'test-bucket',
     region: 'test-region',
     accessKeyId: 'test-access-key-id',
     secretAccessKey: 'test-secret-access-key',
   })();
-  await expect(
-    cacheProvider.upload({ artifactName: 'rnef-android-debug-1234567890' })
-  ).rejects.toThrow(
-    'Uploading artifacts to GitHub is not supported through GitHub API. See: https://docs.github.com/en/rest/actions/artifacts?apiVersion=2022-11-28'
-  );
+
+  const buffer = Buffer.from('test data');
+  const result = await cacheProvider.upload({
+    artifactName: 'rnef-android-debug-1234567890',
+    buffer,
+  });
+
+  expect(clientS3.PutObjectCommand).toHaveBeenCalledWith({
+    Bucket: 'test-bucket',
+    Key: 'rnef-artifacts/rnef-android-debug-1234567890.zip',
+    Body: buffer,
+    ContentLength: buffer.length,
+    Metadata: expect.objectContaining({
+      createdAt: expect.any(String),
+    }),
+  });
+  expect(mockSend).toHaveBeenCalled();
+  expect(result).toEqual({
+    name: 'rnef-android-debug-1234567890',
+    url: 'test-bucket/rnef-artifacts/rnef-android-debug-1234567890.zip',
+  });
+});
+
+test('providerS3 supports R2', async () => {
+  const mockSend = (clientS3 as any).mockSend;
+  mockSend.mockResolvedValueOnce({
+    Contents: [
+      {
+        Key: 'rnef-artifacts-r2/rnef-android-debug-1234567890.zip',
+        Size: 10000,
+        LastModified: new Date(),
+      },
+    ],
+  });
+  const cacheProvider = providerS3({
+    name: 'R2',
+    directory: 'rnef-artifacts-r2',
+    endpoint: 'https://test-bucket.r2.cloudflarestorage.com',
+    bucket: 'test-bucket',
+    region: 'test-region',
+    accessKeyId: 'test-access-key-id',
+    secretAccessKey: 'test-secret-access-key',
+  })();
+
+  const result = await cacheProvider.list({
+    artifactName: 'rnef-android-debug-1234567890',
+  });
+  expect(cacheProvider.name).toBe('R2');
+
+  expect(result).toEqual([
+    {
+      name: 'rnef-android-debug-1234567890',
+      url: 'test-bucket/rnef-artifacts-r2/rnef-android-debug-1234567890.zip',
+    },
+  ]);
 });

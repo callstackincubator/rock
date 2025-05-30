@@ -83,7 +83,7 @@ export class S3BuildCache implements RemoteBuildCache {
     return (
       artifacts.Contents?.map((artifact) => ({
         name: artifactName ?? artifact.Key?.split('/').pop() ?? '',
-        url: `s3://${this.bucket}/${artifact.Key}`,
+        url: `${this.bucket}/${artifact.Key}`,
       })) ?? []
     );
   }
@@ -120,7 +120,7 @@ export class S3BuildCache implements RemoteBuildCache {
     return [
       {
         name: artifactName,
-        url: `s3://${this.bucket}/${this.directory}/${artifactName}.zip`,
+        url: `${this.bucket}/${this.directory}/${artifactName}.zip`,
       },
     ];
   }
@@ -145,7 +145,7 @@ export class S3BuildCache implements RemoteBuildCache {
     );
     return {
       name: artifactName,
-      url: `s3://${this.bucket}/${this.directory}/${artifactName}.zip`,
+      url: `${this.bucket}/${this.directory}/${artifactName}.zip`,
     };
   }
 }
