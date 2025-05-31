@@ -1,21 +1,13 @@
-import React from 'react';
-import { View, Text, StyleSheet } from 'react-native';
+import HomeIOS from '@rnef/platform-ios/welcome';
+import HomeAndroid from '@rnef/platform-android/welcome';
+import {Platform} from 'react-native';
 
-const App = () => {
-  return (
-    <View style={styles.container}>
-      <Text>Welcome to React Native Enterprise Framework!</Text>
-    </View>
-  );
-};
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#fff',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-});
+export function App() {
+  const Home = Platform.select({
+    ios: HomeIOS,
+    android: HomeAndroid,
+  });
+  return <Home />;
+}
 
 export default App;
