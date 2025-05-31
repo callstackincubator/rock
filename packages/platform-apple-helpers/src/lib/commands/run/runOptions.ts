@@ -22,8 +22,8 @@ export const getRunOptions = ({ platformName }: BuilderCommand) => {
         'Path relative to project root where pre-built .app binary lives.',
     },
     {
-      name: '--no-remote-cache',
-      description: 'Do not use remote build caching.',
+      name: '--local',
+      description: 'Force local build with xcodebuild.',
     },
     {
       name: '--device <string>',

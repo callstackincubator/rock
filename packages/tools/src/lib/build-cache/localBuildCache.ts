@@ -2,10 +2,7 @@ import fs from 'node:fs';
 import path from 'node:path';
 import { color } from '../color.js';
 import logger from '../logger.js';
-import {
-  getLocalArtifactPath,
-  getLocalBinaryPath,
-} from './common.js';
+import { getLocalArtifactPath, getLocalBinaryPath } from './common.js';
 
 export type LocalBuild = {
   name: string;
@@ -74,7 +71,9 @@ export function getLocalBuildCacheBinaryPath(
 ): string | undefined {
   const localBuild = queryLocalBuildCache(artifactName);
   if (localBuild) {
-    logger.log(`Found cache from local build: ${color.cyan(localBuild.name)}`);
+    logger.log(
+      `Found cache from local build: ${color.cyan(localBuild.artifactPath)}`
+    );
     return localBuild.binaryPath;
   }
   const localRemoteBuild = queryLocalRemoteBuildCache(artifactName);

@@ -36,7 +36,7 @@ export interface Flags extends BuildFlags {
   device?: string;
   binaryPath?: string;
   user?: string;
-  remoteCache: boolean;
+  local?: boolean;
 }
 
 export type AndroidProject = NonNullable<Config['project']['android']>;
@@ -67,10 +67,16 @@ export async function runAndroid(
     root: projectRoot,
     fingerprintOptions,
   });
-  let binaryPath =
-    args.binaryPath || getLocalBuildCacheBinaryPath(artifactName);
+  // 1. First check if the binary path is provided
+  let binaryPath = args.binaryPath;
 
-  if (!binaryPath && args.remoteCache) {
+  // 2. If not, check if the local build is requested
+  if (!binaryPath && !args.local) {
+    binaryPath = getLocalBuildCacheBinaryPath(artifactName);
+  }
+
+  // 3. If not, check if the remote cache is requested
+  if (!binaryPath && !args.local) {
     try {
       const cachedBuild = await fetchCachedBuild({
         artifactName,
@@ -272,7 +278,7 @@ export const runOptions = [
     description: 'Id of the User Profile you want to install the app on.',
   },
   {
-    name: '--no-remote-cache',
-    description: 'Do not use remote build cacheing.',
+    name: '--local',
+    description: 'Force local build with Gradle wrapper.',
   },
 ];
