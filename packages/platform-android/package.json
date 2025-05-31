@@ -15,7 +15,8 @@
   "files": [
     "dist",
     "template",
-    "react-native.config.ts"
+    "react-native.config.ts",
+    "welcome.js"
   ],
   "scripts": {
     "publish:npm": "npm publish --access public",
