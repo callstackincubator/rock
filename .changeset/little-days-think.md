@@ -4,4 +4,4 @@
 '@rnef/welcome': minor
 ---
 
-Introduce new template
+Introduce new template for newly created RNEF projects
