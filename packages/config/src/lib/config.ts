@@ -25,10 +25,7 @@ export type PluginApi = {
   getRemoteCacheProvider: () => Promise<
     null | undefined | (() => RemoteBuildCache)
   >;
-  getFingerprintOptions: () => {
-    extraSources: string[];
-    ignorePaths: string[];
-  };
+  getFingerprintOptions: () => FingerprintSources;
 };
 
 type PluginType = (args: PluginApi) => PluginOutput;
