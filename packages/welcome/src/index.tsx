@@ -18,7 +18,7 @@ const ICONS = {
   zap: require('./assets/zap.png'),
 } as const;
 
-const Card = ({
+function Card({
   dark,
   icon,
   title,
@@ -28,29 +28,32 @@ const Card = ({
   description: string;
   icon: keyof typeof ICONS;
   title: string;
-}) => (
-  <View style={styles.featureCard}>
-    <View style={styles.featureIconContainer}>
-      <Image
-        source={ICONS[icon]}
-        style={styles.featureIcon}
-        resizeMode="contain"
-      />
+}) {
+  return (
+    <View style={styles.featureCard}>
+      <View style={styles.featureIconContainer}>
+        <Image
+          source={ICONS[icon]}
+          style={styles.featureIcon}
+          resizeMode="contain"
+        />
+      </View>
+      <View style={styles.featureContent}>
+        <Text style={[styles.featureTitle, { color: dark ? '#fff' : '#000' }]}>
+          {title}
+        </Text>
+        <Text style={[styles.featureDescription]}>{description}</Text>
+      </View>
     </View>
-    <View style={styles.featureContent}>
-      <Text style={[styles.featureTitle, { color: dark ? '#fff' : '#000' }]}>
-        {title}
-      </Text>
-      <Text style={[styles.featureDescription]}>{description}</Text>
-    </View>
-  </View>
-);
+  );
+}
 
-const WelcomeScreen = () => {
+function WelcomeScreen() {
   const isDarkMode = useColorScheme() === 'dark';
   const bgColor = isDarkMode ? '#000' : '#fff';
   const textColor = isDarkMode ? '#fff' : '#000';
   const scaleValue = React.useRef(new Animated.Value(1)).current;
+  const animatedStyle = { transform: [{ scale: scaleValue }] };
 
   const onPressIn = () => {
     Animated.spring(scaleValue, {
@@ -74,9 +77,6 @@ const WelcomeScreen = () => {
     openURLInBrowser('https://rnef.dev');
   };
 
-  const animatedStyle = {
-    transform: [{ scale: scaleValue }],
-  };
   return (
     <View style={[styles.container, { backgroundColor: bgColor }]}>
       <View style={styles.header}>
@@ -128,7 +128,7 @@ const WelcomeScreen = () => {
       </View>
     </View>
   );
-};
+}
 
 const styles = StyleSheet.create({
   container: {
