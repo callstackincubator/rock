@@ -26,7 +26,7 @@ export default defineConfig({
         url: 'https://rnef.dev',
         image: 'https://rnef.dev/og-image.png',
         description:
-          'A successor to Community CLI with focus on modularity, build reuse and incremental adoption',
+          'Easy to adopt. Simple to scale. Built for flexibility from day one',
         twitter: {
           site: '@rnef_dev',
           card: 'summary_large_image',
