@@ -2,8 +2,8 @@ import React from 'react';
 import {
   Animated,
   Image,
-  Pressable,
   Platform,
+  Pressable,
   StyleSheet,
   Text,
   useColorScheme,
