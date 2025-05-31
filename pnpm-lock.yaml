@@ -201,6 +201,9 @@ importers:
       '@rnef/tools':
         specifier: ^0.7.14
         version: link:../tools
+      '@rnef/welcome':
+        specifier: ^0.7.14
+        version: link:../welcome
       adm-zip:
         specifier: ^0.5.16
         version: 0.5.16
