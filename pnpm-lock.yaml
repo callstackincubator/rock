@@ -269,6 +269,9 @@ importers:
       '@rnef/tools':
         specifier: ^0.7.14
         version: link:../tools
+      '@rnef/welcome':
+        specifier: ^0.7.14
+        version: link:../welcome
       tslib:
         specifier: ^2.3.0
         version: 2.8.1

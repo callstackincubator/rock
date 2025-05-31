@@ -3,8 +3,14 @@
   "version": "0.7.14",
   "type": "module",
   "exports": {
-    "types": "./dist/src/index.d.ts",
-    "import": "./dist/src/index.js"
+    ".": {
+      "types": "./dist/src/index.d.ts",
+      "import": "./dist/src/index.js"
+    },
+    "./welcome": {
+      "types": "./dist/src/welcome.d.ts",
+      "default": "./dist/src/welcome.js"
+    }
   },
   "files": [
     "dist",
@@ -20,6 +26,7 @@
     "@react-native-community/cli-types": "^18.0.0",
     "@rnef/platform-apple-helpers": "^0.7.14",
     "@rnef/tools": "^0.7.14",
+    "@rnef/welcome": "^0.7.14",
     "tslib": "^2.3.0"
   },
   "devDependencies": {
