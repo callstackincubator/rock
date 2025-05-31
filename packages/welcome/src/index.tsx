@@ -3,6 +3,7 @@ import {
   Animated,
   Image,
   Pressable,
+  Platform,
   StyleSheet,
   Text,
   useColorScheme,
@@ -104,7 +105,10 @@ function WelcomeScreen() {
             dark={isDarkMode}
             icon="debug"
             title="Debug with DevTools"
-            description="Press Cmd+M to access Dev Menu to debug, reload and inspect your app"
+            description={`Press ${Platform.select({
+              ios: 'Cmd+D',
+              android: 'Ctrl+M',
+            })} to access Dev Menu to debug, reload and inspect your app`}
           />
           <Card
             dark={isDarkMode}
