@@ -1,0 +1,30 @@
+{
+  "name": "@rnef/plugin-esbuild",
+  "version": "0.7.14",
+  "type": "module",
+  "exports": {
+    "types": "./dist/src/index.d.ts",
+    "import": "./dist/src/index.js"
+  },
+  "files": [
+    "dist",
+    "template"
+  ],
+  "scripts": {
+    "publish:npm": "npm publish --access public",
+    "publish:verdaccio": "npm publish --registry http://localhost:4873 --userconfig ../../.npmrc"
+  },
+  "dependencies": {
+    "@rnef/tools": "^0.7.14",
+    "tslib": "^2.3.0"
+  },
+  "devDependencies": {
+    "@rnef/config": "^0.7.14"
+  },
+  "peerDependencies": {
+    "@react-native-esbuild/cli": "^0.1.0-beta.12"
+  },
+  "publishConfig": {
+    "access": "public"
+  }
+}

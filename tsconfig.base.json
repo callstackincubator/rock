@@ -21,6 +21,7 @@
       "@rnef/create-app": ["packages/create-app/src/index.ts"],
       "@rnef/plugin-metro": ["packages/plugin-metro/src/index.ts"],
       "@rnef/plugin-repack": ["packages/plugin-repack/src/index.ts"],
+      "@rnef/plugin-esbuild": ["packages/plugin-esbuild/src/index.ts"],
       "@rnef/platform-android": [
         "packages/platform-android/src/index.ts"
       ],
