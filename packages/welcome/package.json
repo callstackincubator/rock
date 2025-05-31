@@ -1,0 +1,22 @@
+{
+  "name": "@rnef/welcome",
+  "version": "0.7.14",
+  "type": "module",
+  "exports": {
+    "./package.json": "./package.json"
+  },
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "publish:npm": "npm publish --access public",
+    "publish:verdaccio": "npm publish --registry http://localhost:4873 --userconfig ../../.npmrc"
+  },
+  "devDependencies": {
+    "@react-native-community/cli-types": "^18.0.0",
+    "@types/adm-zip": "^0.5.7"
+  },
+  "publishConfig": {
+    "access": "public"
+  }
+}
