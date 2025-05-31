@@ -1,14 +1,6 @@
-# @rnef/cli
+# @rnef/welcome
 
-Command-line interface for React Native Enterprise Framework (RNEF). This package is part of the RNEF ecosystem.
-
-## Quick Start
-
-Create a new RNEF project:
-
-```sh
-npx @rnef/create-app enterprise
-```
+A welcome screen component for React Native apps, used in the official template for newly created RNEF projects.
 
 ## Documentation
 
