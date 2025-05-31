@@ -125,7 +125,7 @@ function WelcomeScreen() {
               onPress={onPress}
               style={styles.button}
             >
-              <Text style={styles.buttonText}>Learn more</Text>
+              <Text style={styles.buttonText}>View Documentation</Text>
             </Pressable>
           </Animated.View>
         </View>
