@@ -200,8 +200,8 @@ Same as for `build:android` and:
 | :------------------------- | :------------------------------------ |
 | `--app-id <string>`        | Application ID                        |
 | `--app-id-suffix <string>` | Application ID suffix                 |
-| `--local`                  | Force local build with Gradle wrapper |
 | `--binary-path <string>`   | Path to pre-built APK                 |
+| `--local`                  | Force local build with Gradle wrapper |
 
 ### `rnef sign:android` Options
 

@@ -57,10 +57,16 @@ export const createRun = async ({
     root: projectRoot,
     fingerprintOptions,
   });
-  let binaryPath =
-    args.binaryPath || getLocalBuildCacheBinaryPath(artifactName);
+  // 1. First check if the binary path is provided
+  let binaryPath = args.binaryPath;
 
-  if (!binaryPath && args.remoteCache) {
+  // 2. If not, check if the local build is requested
+  if (!binaryPath && !args.local) {
+    binaryPath = getLocalBuildCacheBinaryPath(artifactName);
+  }
+
+  // 3. If not, check if the remote cache is requested
+  if (!binaryPath && !args.local) {
     try {
       const cachedBuild = await fetchCachedBuild({
         artifactName,

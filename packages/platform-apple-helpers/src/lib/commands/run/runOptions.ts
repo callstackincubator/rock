@@ -8,6 +8,7 @@ export interface RunFlags extends BuildFlags {
   remoteCache?: boolean;
   device?: string;
   catalyst?: boolean;
+  local?: boolean;
 }
 
 export const getRunOptions = ({ platformName }: BuilderCommand) => {
