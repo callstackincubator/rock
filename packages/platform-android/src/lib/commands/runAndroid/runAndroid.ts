@@ -93,7 +93,7 @@ export async function runAndroid(
         cancelLabel: 'No',
       });
       if (!shouldContinueWithLocalBuild) {
-        return;
+        throw new RnefError('Cancelled run');
       }
     }
   }

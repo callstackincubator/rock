@@ -83,7 +83,7 @@ export const createRun = async ({
         cancelLabel: 'No',
       });
       if (!shouldContinueWithLocalBuild) {
-        return;
+        throw new RnefError('Cancelled run');
       }
     }
   }
