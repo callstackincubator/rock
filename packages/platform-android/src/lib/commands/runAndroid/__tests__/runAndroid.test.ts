@@ -18,7 +18,7 @@ const args: Flags = {
   appIdSuffix: '',
   mainActivity: undefined,
   port: '8081',
-  remoteCache: false,
+  local: true,
 };
 const androidProject: AndroidProjectConfig = {
   appName: 'app',
@@ -342,7 +342,7 @@ test.each([['release'], ['debug'], ['staging']])(
   }
 );
 
-test.only('runAndroid runs gradle build with custom --appId, --appIdSuffix and --mainActivity', async () => {
+test('runAndroid runs gradle build with custom --appId, --appIdSuffix and --mainActivity', async () => {
   (spawn as Mock).mockImplementation((file, args) =>
     spawnMockImplementation(file, args)
   );

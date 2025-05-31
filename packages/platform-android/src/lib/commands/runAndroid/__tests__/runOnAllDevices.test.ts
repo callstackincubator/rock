@@ -49,7 +49,7 @@ describe('--appFolder', () => {
     mainActivity: 'MainActivity',
     port: '8081',
     activeArchOnly: false,
-    remoteCache: false,
+    local: true,
   };
   const androidProject: AndroidProjectConfig = {
     appName: 'app',

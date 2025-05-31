@@ -5,7 +5,6 @@ import { getBuildOptions } from '../build/buildOptions.js';
 export interface RunFlags extends BuildFlags {
   binaryPath?: string;
   port: string;
-  remoteCache?: boolean;
   device?: string;
   catalyst?: boolean;
   local?: boolean;
