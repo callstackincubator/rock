@@ -13,8 +13,9 @@
     "publish:verdaccio": "npm publish --registry http://localhost:4873 --userconfig ../../.npmrc"
   },
   "devDependencies": {
-    "@react-native-community/cli-types": "^18.0.0",
-    "@types/adm-zip": "^0.5.7"
+    "@types/react": "^19.0.0",
+    "react": "19.0.0",
+    "react-native": "0.79.1"
   },
   "publishConfig": {
     "access": "public"
