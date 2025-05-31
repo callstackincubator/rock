@@ -34,7 +34,6 @@ export async function localPublishAar(
     tasks,
     aarProject,
     variant: args.variant,
-    isPublishTask: true,
   });
   outro('Success 🎉.');
 }

@@ -8,9 +8,6 @@ export async function publishLocalAar(aarProject: AarProject) {
   await runGradleAar({
     tasks,
     aarProject,
-    // @todo - figure out better typeZ
-    variant: '',
-    isPublishTask: true,
   });
   outro('Success 🎉.');
 }
