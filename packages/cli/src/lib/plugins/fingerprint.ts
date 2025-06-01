@@ -17,7 +17,7 @@ type NativeFingerprintCommandOptions = {
 };
 
 export async function nativeFingerprintCommand(
-  path = '.',
+  path: string,
   { extraSources, ignorePaths }: FingerprintSources,
   options: NativeFingerprintCommandOptions
 ) {
@@ -75,7 +75,8 @@ export const fingerprintPlugin = () => (api: PluginApi) => {
     description: 'Calculate fingerprint for given platform',
     action: async (path, options) => {
       const fingerprintOptions = api.getFingerprintOptions();
-      await nativeFingerprintCommand(path, fingerprintOptions, options);
+      const dir = path || api.getProjectRoot();
+      await nativeFingerprintCommand(dir, fingerprintOptions, options);
     },
     options: [
       {
