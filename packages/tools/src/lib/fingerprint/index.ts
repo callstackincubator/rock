@@ -37,15 +37,11 @@ export async function nativeFingerprint(
   options: FingerprintOptions
 ): Promise<FingerprintResult> {
   const platform = options.platform;
-  const { output: autolinkingConfigString } = await spawn(
+  // Use stdout to avoid deprecation warnings
+  const { stdout: autolinkingConfigString } = await spawn(
     'rnef',
     ['config', '-p', options.platform],
-    {
-      cwd: path,
-      stdio: 'pipe',
-      preferLocal: true,
-      env: { ...process.env, NODE_OPTIONS: '--no-deprecation' },
-    }
+    { cwd: path, stdio: 'pipe', preferLocal: true }
   );
 
   const autolinkingSources = parseAutolinkingSources({
