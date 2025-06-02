@@ -1,5 +1,13 @@
 # rnef-docs
 
+## 1.0.6
+
+### Patch Changes
+
+- 9b4fe35: chore: add OpenGraph plugin to doc site
+- f2b4435: feat: local build cache
+- a15beb8: Add update scripts step to RNC CLI migration guide
+
 ## 1.0.5
 
 ### Patch Changes
