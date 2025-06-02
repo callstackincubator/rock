@@ -14,4 +14,4 @@
 '@rnef/tools': patch
 ---
 
-Use "default" condition instead of "import" in package exports across packages
+chore: use "default" condition instead of "import" in package exports across packages
