@@ -2,6 +2,31 @@ import { vi } from 'vitest';
 
 vi.mock('node:fs');
 
+// Spawn mock for helpers inside @rnef/tools that don't get mock with following mock
+vi.mock('nano-spawn', async (importOriginal) => {
+  // eslint-disable-next-line @typescript-eslint/consistent-type-imports
+  const actual = await importOriginal<typeof import('nano-spawn')>();
+  return {
+    ...actual,
+    default: vi.fn((file, args) => {
+      const nodeChildProcess = {
+        kill: vi.fn(),
+        finally: vi.fn(),
+      };
+      if (file === 'rnef' && args.includes('config')) {
+        return {
+          output: '{"dependencies":[]}',
+          nodeChildProcess,
+        };
+      }
+      return {
+        output: '',
+        nodeChildProcess,
+      };
+    }),
+  };
+});
+
 vi.mock('@rnef/tools', async (importOriginal) => {
   // eslint-disable-next-line @typescript-eslint/consistent-type-imports
   const actual = await importOriginal<typeof import('@rnef/tools')>();
@@ -25,6 +50,7 @@ vi.mock('@rnef/tools', async (importOriginal) => {
     promptMultiSelect: vi.fn(),
     promptSelect: vi.fn(),
     promptText: vi.fn(),
+    formatArtifactName: vi.fn().mockResolvedValue('rnef-android-debug-089e8a9887099a309e8a7845e697bbf705353f45'),
     spinner: vi.fn(() => ({
       start: vi.fn(),
       stop: vi.fn(),
