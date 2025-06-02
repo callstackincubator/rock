@@ -9,15 +9,25 @@ type BuildSettings = {
   FULL_PRODUCT_NAME: string;
 };
 
-export async function getBuildSettings(
-  xcodeProject: XcodeProjectInfo,
-  sourceDir: string,
-  platformName: ApplePlatform,
-  configuration: string,
-  destinations: string[],
-  scheme: string,
-  target?: string
-): Promise<{ appPath: string; infoPlistPath: string }> {
+export async function getBuildSettings({
+  xcodeProject,
+  sourceDir,
+  platformName,
+  configuration,
+  destinations,
+  scheme,
+  target,
+  sdk,
+}: {
+  xcodeProject: XcodeProjectInfo;
+  sourceDir: string;
+  platformName: ApplePlatform;
+  configuration: string;
+  destinations: string[];
+  scheme: string;
+  target?: string;
+  sdk?: string;
+}): Promise<{ appPath: string; infoPlistPath: string }> {
   const { stdout: buildSettings } = await spawn(
     'xcodebuild',
     [
@@ -27,6 +37,7 @@ export async function getBuildSettings(
       scheme,
       '-configuration',
       configuration,
+      ...(sdk ? ['-sdk', sdk] : []),
       ...destinations.flatMap((destination) => ['-destination', destination]),
       '-showBuildSettings',
       '-json',

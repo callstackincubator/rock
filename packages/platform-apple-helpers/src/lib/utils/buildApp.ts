@@ -24,6 +24,7 @@ export async function buildApp({
   reactNativePath,
   artifactName,
   binaryPath,
+  destination,
 }: {
   args: RunFlags | BuildFlags;
   projectConfig: ProjectConfig;
@@ -35,6 +36,7 @@ export async function buildApp({
   reactNativePath: string;
   artifactName: string;
   binaryPath?: string;
+  destination: 'simulator' | 'device';
 }) {
   if (binaryPath) {
     return {
@@ -81,8 +83,15 @@ export async function buildApp({
     info.configurations,
     args.configuration
   );
+
+  const genericDestination =
+    destination === 'simulator'
+      ? getGenericDestination(platformName, 'simulator')
+      : getGenericDestination(platformName, 'device');
+
   const destinations = determineDestinations({
-    args,
+    destination: [genericDestination],
+    isCatalyst: 'catalyst' in args && args.catalyst,
     platformName,
     udid,
     deviceName,
@@ -98,15 +107,22 @@ export async function buildApp({
     args,
   });
 
-  const buildSettings = await getBuildSettings(
+  const sdk =
+    destination === 'simulator'
+      ? getSimulatorPlatformSDK(platformName)
+      : getDevicePlatformSDK(platformName);
+
+  const buildSettings = await getBuildSettings({
     xcodeProject,
     sourceDir,
     platformName,
     configuration,
     destinations,
+    // when there are multiple destinations, we don't need to specify the sdk, or Xcode will infer it in unexpected way
+    sdk: destinations.length > 1 ? undefined : sdk,
     scheme,
-    args.target
-  );
+    target: args.target,
+  });
   const appPath = buildSettings.appPath;
 
   saveLocalBuildCache(artifactName, appPath);
@@ -120,20 +136,20 @@ export async function buildApp({
   };
 }
 
-type DetermineDestinationsArgs = {
-  args: RunFlags | BuildFlags;
-  platformName: ApplePlatform;
-  udid?: string;
-  deviceName?: string;
-};
-
 function determineDestinations({
-  args,
+  destination,
+  isCatalyst,
   platformName,
   udid,
   deviceName,
-}: DetermineDestinationsArgs): string[] {
-  if ('catalyst' in args && args.catalyst) {
+}: {
+  destination: string[];
+  isCatalyst?: boolean;
+  platformName: ApplePlatform;
+  udid?: string;
+  deviceName?: string;
+}): string[] {
+  if (isCatalyst) {
     return ['platform=macOS,variant=Mac Catalyst'];
   }
 
@@ -145,8 +161,8 @@ function determineDestinations({
     return [`name=${deviceName}`];
   }
 
-  if (args.destination && args.destination.length > 0) {
-    return args.destination.map((destination) =>
+  if (destination.length > 0) {
+    return destination.map((destination) =>
       resolveDestination(destination, platformName)
     );
   }
@@ -164,4 +180,39 @@ function resolveDestination(destination: string, platformName: ApplePlatform) {
   }
 
   return destination;
+}
+
+type PlatformSDK =
+  | 'iphonesimulator'
+  | 'macosx'
+  | 'appletvsimulator'
+  | 'xrsimulator'
+  | 'iphoneos'
+  | 'appletvos'
+  | 'xr';
+
+function getSimulatorPlatformSDK(platform: ApplePlatform): PlatformSDK {
+  switch (platform) {
+    case 'ios':
+      return 'iphonesimulator';
+    case 'macos':
+      return 'macosx';
+    case 'tvos':
+      return 'appletvsimulator';
+    case 'visionos':
+      return 'xrsimulator';
+  }
+}
+
+function getDevicePlatformSDK(platform: ApplePlatform): PlatformSDK {
+  switch (platform) {
+    case 'ios':
+      return 'iphoneos';
+    case 'macos':
+      return 'macosx';
+    case 'tvos':
+      return 'appletvos';
+    case 'visionos':
+      return 'xr';
+  }
 }

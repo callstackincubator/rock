@@ -19,7 +19,6 @@ import type {
   ProjectConfig,
 } from '../../types/index.js';
 import { buildApp } from '../../utils/buildApp.js';
-import { getGenericDestination } from '../../utils/destionation.js';
 import { getPlatformInfo } from '../../utils/getPlatformInfo.js';
 import { listDevicesAndSimulators } from '../../utils/listDevices.js';
 import { matchingDevice } from './matchingDevice.js';
@@ -48,12 +47,16 @@ export const createRun = async ({
   reactNativePath: string;
 }) => {
   validateArgs(args, projectRoot);
+
+  const deviceOrSimulator = args.destination
+    ? // there can be multiple destinations, so we'll pick the first one
+      args.destination[0].match(/simulator/i)
+      ? 'simulator'
+      : 'device'
+    : 'simulator';
   const artifactName = await formatArtifactName({
     platform: 'ios',
-    traits: [
-      args.destination?.[0] ?? 'simulator',
-      args.configuration ?? 'Debug',
-    ],
+    traits: [deviceOrSimulator, args.configuration ?? 'Debug'],
     root: projectRoot,
     fingerprintOptions,
   });
@@ -99,10 +102,8 @@ export const createRun = async ({
 
   if (platformName === 'macos') {
     const { appPath } = await buildApp({
-      args: {
-        destination: [getGenericDestination(platformName, 'simulator')],
-        ...args,
-      },
+      args,
+      destination: 'simulator',
       projectConfig,
       platformName,
       projectRoot,
@@ -116,10 +117,8 @@ export const createRun = async ({
     return;
   } else if (args.catalyst) {
     const { appPath, scheme } = await buildApp({
-      args: {
-        destination: [getGenericDestination(platformName, 'simulator')],
-        ...args,
-      },
+      args,
+      destination: 'simulator',
       projectConfig,
       platformName,
       projectRoot,
@@ -150,15 +149,23 @@ export const createRun = async ({
   const device = await selectDevice(devices, args);
 
   if (device) {
+    if (device.type !== deviceOrSimulator) {
+      throw new RnefError(
+        `Selected device "${device.name}" is not a ${deviceOrSimulator}. 
+Please select available ${deviceOrSimulator} device:
+${devices
+  .filter(({ type }) => type === deviceOrSimulator)
+  .map(({ name }) => `• ${name}`)
+  .join('\n')}`
+      );
+    }
     cacheRecentDevice(device, platformName);
     if (device.type === 'simulator') {
       const [, { appPath, infoPlistPath }] = await Promise.all([
         launchSimulator(device),
         buildApp({
-          args: {
-            destination: [getGenericDestination(platformName, 'simulator')],
-            ...args,
-          },
+          args,
+          destination: 'simulator',
           projectConfig,
           platformName,
           udid: device.udid,
@@ -172,10 +179,8 @@ export const createRun = async ({
       await runOnSimulator(device, appPath, infoPlistPath);
     } else if (device.type === 'device') {
       const { appPath } = await buildApp({
-        args: {
-          destination: [getGenericDestination(platformName, 'device')],
-          ...args,
-        },
+        args,
+        destination: 'device',
         projectConfig,
         platformName,
         udid: device.udid,
@@ -188,14 +193,17 @@ export const createRun = async ({
     }
     return;
   } else {
-    const bootedSimulators = devices.filter(
-      ({ state, type }) => state === 'Booted' && type === 'simulator'
+    const bootedDevices = devices.filter(
+      ({ state, type }) => state === 'Booted' && type === deviceOrSimulator
     );
-    if (bootedSimulators.length === 0) {
+    if (bootedDevices.length === 0) {
       // fallback to present all devices when no device is selected
       if (isInteractive()) {
-        const simulator = await promptForDeviceSelection(devices, platformName);
-        bootedSimulators.push(simulator);
+        const simulator = await promptForDeviceSelection(
+          devices.filter(({ type }) => type === deviceOrSimulator),
+          platformName
+        );
+        bootedDevices.push(simulator);
         cacheRecentDevice(simulator, platformName);
       } else {
         logger.debug(
@@ -205,7 +213,7 @@ export const createRun = async ({
           (device) => device.type === 'simulator'
         )[0];
         if (simulator) {
-          bootedSimulators.push(simulator);
+          bootedDevices.push(simulator);
         } else {
           throw new RnefError(
             'No Apple simulators found. Install simulators via Xcode.'
@@ -213,24 +221,26 @@ export const createRun = async ({
         }
       }
     }
-    for (const simulator of bootedSimulators) {
+    for (const bootedDevice of bootedDevices) {
       const [, { appPath, infoPlistPath }] = await Promise.all([
-        launchSimulator(simulator),
+        launchSimulator(bootedDevice),
         buildApp({
-          args: {
-            destination: [getGenericDestination(platformName, 'simulator')],
-            ...args,
-          },
+          args,
+          destination: bootedDevice.type,
           projectConfig,
           platformName,
-          udid: simulator.udid,
+          udid: bootedDevice.udid,
           projectRoot,
           reactNativePath,
           artifactName,
           binaryPath,
         }),
       ]);
-      await runOnSimulator(simulator, appPath, infoPlistPath);
+      if (bootedDevice.type === 'simulator') {
+        await runOnSimulator(bootedDevice, appPath, infoPlistPath);
+      } else {
+        await runOnDevice(bootedDevice, appPath, projectConfig.sourceDir);
+      }
     }
   }
 };
