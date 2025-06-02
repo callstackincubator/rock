@@ -1,5 +1,13 @@
 # @rnef/tools
 
+## 0.7.15
+
+### Patch Changes
+
+- 795aeb5: fix: fingerprint missing autolinking data
+- 6d057cc: feat: s3 remote cache provider
+- f2b4435: feat: local build cache
+
 ## 0.7.14
 
 ## 0.7.13

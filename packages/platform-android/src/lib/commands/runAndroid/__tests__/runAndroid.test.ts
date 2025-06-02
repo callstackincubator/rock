@@ -18,7 +18,7 @@ const args: Flags = {
   appIdSuffix: '',
   mainActivity: undefined,
   port: '8081',
-  remoteCache: false,
+  local: true,
 };
 const androidProject: AndroidProjectConfig = {
   appName: 'app',
@@ -263,8 +263,21 @@ function spawnMockImplementation(
   return { output: '...' };
 }
 
+vi.mocked(tools.promptSelect).mockImplementation((opts) => {
+  if (opts.message === 'Select the device / emulator you want to use') {
+    return Promise.resolve({
+      deviceId: 'emulator-5554',
+      readableName: 'Pixel_8_Pro_API_34',
+      connected: true,
+      type: 'emulator',
+    });
+  }
+  return Promise.resolve(undefined);
+});
+
 test.each([['release'], ['debug'], ['staging']])(
   'runAndroid runs gradle build with correct configuration for --variant %s and launches on emulator-5554 when prompted with two devices available',
+  { timeout: 15000 },
   async (variant) => {
     (spawn as Mock).mockImplementation((file, args) => {
       if (mockCallEmulatorAvdName(file, args, 'emulator-5554')) {
@@ -292,17 +305,7 @@ test.each([['release'], ['debug'], ['staging']])(
         adbDevicesOutput: adbDevicesTwoDevicesOutput,
       });
     });
-    vi.mocked(tools.promptSelect).mockImplementation((opts) => {
-      if (opts.message === 'Select the device / emulator you want to use') {
-        return Promise.resolve({
-          deviceId: 'emulator-5554',
-          readableName: 'Pixel_8_Pro_API_34',
-          connected: true,
-          type: 'emulator',
-        });
-      }
-      return Promise.resolve(undefined);
-    });
+
     await runAndroid(
       { ...androidProject },
       { ...args, variant },

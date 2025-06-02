@@ -3,7 +3,7 @@ pageType: home
 
 hero:
   name: React Native Enterprise Framework
-  tagline: A successor to Community CLI with focus on modularity, build reuse and incremental adoption
+  tagline: Easy to adopt. Simple to scale. Built for flexibility from day one
   actions:
     - theme: brand
       text: Learn more

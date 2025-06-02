@@ -1,7 +1,10 @@
 import crypto from 'node:crypto';
-import type { FingerprintSource } from '@expo/fingerprint';
+import path from 'node:path';
+import type { FingerprintSource, HashSource } from '@expo/fingerprint';
 import { createFingerprintAsync } from '@expo/fingerprint';
 import { RnefError } from '../error.js';
+import logger from '../logger.js';
+import { spawn } from '../spawn.js';
 import { processExtraSources } from './processExtraSources.js';
 
 const HASH_ALGORITHM = 'sha1';
@@ -9,6 +12,11 @@ const EXCLUDED_SOURCES = [
   'expoAutolinkingConfig:ios',
   'expoAutolinkingConfig:android',
 ];
+
+export type FingerprintSources = {
+  extraSources: string[];
+  ignorePaths: string[];
+};
 
 export type FingerprintOptions = {
   platform: 'ios' | 'android';
@@ -29,6 +37,17 @@ export async function nativeFingerprint(
   options: FingerprintOptions
 ): Promise<FingerprintResult> {
   const platform = options.platform;
+  const { output: autolinkingConfigString } = await spawn(
+    'rnef',
+    ['config', '-p', options.platform],
+    { cwd: path, stdio: 'pipe', preferLocal: true }
+  );
+
+  const autolinkingSources = parseAutolinkingSources({
+    config: JSON.parse(autolinkingConfigString),
+    reasons: ['rncoreAutolinking'],
+    contentsId: 'rncoreAutolinkingConfig',
+  });
 
   const fingerprint = await createFingerprintAsync(path, {
     platforms: [platform],
@@ -43,11 +62,10 @@ export async function nativeFingerprint(
       'android/.idea',
       'android/.gradle',
     ],
-    extraSources: processExtraSources(
-      options.extraSources,
-      path,
-      options.ignorePaths
-    ),
+    extraSources: [
+      ...autolinkingSources,
+      ...processExtraSources(options.extraSources, path, options.ignorePaths),
+    ],
     ignorePaths: options.ignorePaths,
   });
 
@@ -84,5 +102,72 @@ function createSourceId(source: FingerprintSource) {
     default:
       // @ts-expect-error: we intentionally want to detect invalid types
       throw new RnefError(`Unsupported source type: ${source.type}`);
+  }
+}
+
+function toPosixPath(filePath: string): string {
+  return filePath.replace(/\\/g, '/');
+}
+
+function parseAutolinkingSources({
+  config,
+  reasons,
+  contentsId,
+}: {
+  config: any;
+  reasons: string[];
+  contentsId: string;
+}): HashSource[] {
+  const results: HashSource[] = [];
+  const { root } = config;
+  const autolinkingConfig: Record<string, any> = {};
+  for (const [depName, depData] of Object.entries<any>(config.dependencies)) {
+    try {
+      stripAutolinkingAbsolutePaths(depData, root);
+      const filePath = toPosixPath(depData.root);
+      results.push({ type: 'dir', filePath, reasons });
+
+      autolinkingConfig[depName] = depData;
+    } catch (e) {
+      logger.debug(
+        `Error adding react-native core autolinking - ${depName}.\n${e}`
+      );
+    }
+  }
+  results.push({
+    type: 'contents',
+    id: contentsId,
+    contents: JSON.stringify(autolinkingConfig),
+    reasons,
+  });
+  return results;
+}
+
+function stripAutolinkingAbsolutePaths(dependency: any, root: string): void {
+  const dependencyRoot = dependency.root;
+  const cmakeDepRoot =
+    process.platform === 'win32' ? toPosixPath(dependencyRoot) : dependencyRoot;
+
+  dependency.root = toPosixPath(path.relative(root, dependencyRoot));
+  for (const platformData of Object.values<any>(dependency.platforms)) {
+    for (const [key, value] of Object.entries<any>(platformData ?? {})) {
+      let newValue;
+      if (
+        process.platform === 'win32' &&
+        ['cmakeListsPath', 'cxxModuleCMakeListsPath'].includes(key)
+      ) {
+        // CMake paths on Windows are serving in slashes,
+        // we have to check startsWith with the same slashes.
+        // @todo revisit windows logic
+        newValue = value?.startsWith?.(cmakeDepRoot)
+          ? toPosixPath(path.relative(root, value))
+          : value;
+      } else {
+        newValue = value?.startsWith?.(dependencyRoot)
+          ? toPosixPath(path.relative(root, value))
+          : value;
+      }
+      platformData[key] = newValue;
+    }
   }
 }
