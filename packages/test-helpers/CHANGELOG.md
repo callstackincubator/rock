@@ -1,5 +1,11 @@
 # @rnef/test-helpers
 
+## 0.7.16
+
+### Patch Changes
+
+- c765b64: chore: use "default" condition instead of "import" in package exports across packages
+
 ## 0.7.15
 
 ## 0.7.14

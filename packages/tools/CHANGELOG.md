@@ -1,5 +1,12 @@
 # @rnef/tools
 
+## 0.7.16
+
+### Patch Changes
+
+- c765b64: chore: use "default" condition instead of "import" in package exports across packages
+- 040e772: fix: deprecation warning when calling 'rnef config' internally
+
 ## 0.7.15
 
 ### Patch Changes
