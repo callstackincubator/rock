@@ -40,7 +40,12 @@ export async function nativeFingerprint(
   const { output: autolinkingConfigString } = await spawn(
     'rnef',
     ['config', '-p', options.platform],
-    { cwd: path, stdio: 'pipe', preferLocal: true }
+    {
+      cwd: path,
+      stdio: 'pipe',
+      preferLocal: true,
+      env: { ...process.env, NODE_OPTIONS: '--no-deprecation' },
+    }
   );
 
   const autolinkingSources = parseAutolinkingSources({
