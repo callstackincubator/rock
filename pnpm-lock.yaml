@@ -202,7 +202,7 @@ importers:
         specifier: ^0.7.15
         version: link:../tools
       '@rnef/welcome':
-        specifier: ^0.7.14
+        specifier: ^0.7.15
         version: link:../welcome
       adm-zip:
         specifier: ^0.5.16
@@ -270,7 +270,7 @@ importers:
         specifier: ^0.7.15
         version: link:../tools
       '@rnef/welcome':
-        specifier: ^0.7.14
+        specifier: ^0.7.15
         version: link:../welcome
       tslib:
         specifier: ^2.3.0
