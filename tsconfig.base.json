@@ -21,12 +21,8 @@
       "@rnef/create-app": ["packages/create-app/src/index.ts"],
       "@rnef/plugin-metro": ["packages/plugin-metro/src/index.ts"],
       "@rnef/plugin-repack": ["packages/plugin-repack/src/index.ts"],
-      "@rnef/platform-android": [
-        "packages/platform-android/src/index.ts"
-      ],
-      "@rnef/platform-ios": [
-        "packages/platform-ios/src/index.ts"
-      ],
+      "@rnef/platform-android": ["packages/platform-android/src/index.ts"],
+      "@rnef/platform-ios": ["packages/platform-ios/src/index.ts"],
       "@rnef/test-helpers": ["packages/test-helpers/src/index.ts"],
       "@rnef/tools": ["packages/tools/src/index.ts"],
       "@rnef/platform-apple-helpers": [
@@ -36,7 +32,8 @@
         "packages/plugin-brownfield-android/src/index.ts"
       ],
       "@rnef/provider-github": ["packages/provider-github/src/index.ts"],
-      "@rnef/provider-s3": ["packages/provider-s3/src/index.ts"]
+      "@rnef/provider-s3": ["packages/provider-s3/src/index.ts"],
+      "@rnef/welcome": ["packages/welcome/src/index.tsx"]
     }
   },
   "exclude": ["node_modules", "tmp"]
