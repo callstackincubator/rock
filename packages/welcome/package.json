@@ -4,7 +4,7 @@
   "type": "module",
   "exports": {
     "types": "./dist/src/index.d.ts",
-    "import": "./dist/src/index.jsx"
+    "default": "./dist/src/index.jsx"
   },
   "files": [
     "dist"
