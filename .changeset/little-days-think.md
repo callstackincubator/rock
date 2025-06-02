@@ -1,7 +1,5 @@
 ---
-'@rnef/platform-android': minor
-'@rnef/platform-ios': minor
-'@rnef/welcome': minor
+'@rnef/welcome-screen': minor
 ---
 
 feat: introduce new template for newly created RNEF projects

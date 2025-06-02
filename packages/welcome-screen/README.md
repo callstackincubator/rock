@@ -1,4 +1,4 @@
-# @rnef/welcome
+# @rnef/welcome-screen
 
 A welcome screen component for React Native apps, used in the official template for newly created RNEF projects.
 

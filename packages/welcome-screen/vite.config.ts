@@ -4,7 +4,7 @@ import { defineConfig } from 'vite';
 
 export default defineConfig({
   root: __dirname,
-  cacheDir: '../../node_modules/.vite/packages/welcome',
+  cacheDir: '../../node_modules/.vite/packages/welcome-screen',
 
   plugins: [nxViteTsPaths(), nxCopyAssetsPlugin(['*.md'])],
 
@@ -21,7 +21,7 @@ export default defineConfig({
     passWithNoTests: true,
     reporters: ['default'],
     coverage: {
-      reportsDirectory: '../../coverage/packages/welcome',
+      reportsDirectory: '../../coverage/packages/welcome-screen',
       provider: 'v8',
     },
   },
