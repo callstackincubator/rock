@@ -133,12 +133,6 @@ function determineDestinations({
   udid,
   deviceName,
 }: DetermineDestinationsArgs): string[] {
-  if (args.destination && args.destination.length > 0) {
-    return args.destination.map((destination) =>
-      resolveDestination(destination, platformName)
-    );
-  }
-
   if ('catalyst' in args && args.catalyst) {
     return ['platform=macOS,variant=Mac Catalyst'];
   }
@@ -149,6 +143,12 @@ function determineDestinations({
 
   if (deviceName) {
     return [`name=${deviceName}`];
+  }
+
+  if (args.destination && args.destination.length > 0) {
+    return args.destination.map((destination) =>
+      resolveDestination(destination, platformName)
+    );
   }
 
   return [getGenericDestination(platformName, 'device')];
