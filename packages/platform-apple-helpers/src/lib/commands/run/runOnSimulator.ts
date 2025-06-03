@@ -5,6 +5,10 @@ import type { Device } from '../../types/index.js';
 import { readKeyFromPlist } from '../../utils/plist.js';
 
 export async function launchSimulator(device: Device) {
+  if (device.type !== 'simulator') {
+    // bail if device is not a simulator
+    return undefined;
+  }
   /**
    * Booting simulator through `xcrun simctl boot` will boot it in the `headless` mode
    * (running in the background).

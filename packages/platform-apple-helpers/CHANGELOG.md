@@ -1,5 +1,22 @@
 # @rnef/platform-apple-helpers
 
+## 0.7.17
+
+### Patch Changes
+
+- e2ddcde: fix: missing -sdk for getting build settings; running incompatible destinations
+  - @rnef/tools@0.7.17
+
+## 0.7.16
+
+### Patch Changes
+
+- c765b64: chore: use "default" condition instead of "import" in package exports across packages
+- 46763b6: fix: bring back using id/name before setting generic destination
+- Updated dependencies [c765b64]
+- Updated dependencies [040e772]
+  - @rnef/tools@0.7.16
+
 ## 0.7.15
 
 ### Patch Changes

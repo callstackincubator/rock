@@ -1,5 +1,22 @@
 # @rnef/config
 
+## 0.7.17
+
+### Patch Changes
+
+- @rnef/provider-github@0.7.17
+- @rnef/tools@0.7.17
+
+## 0.7.16
+
+### Patch Changes
+
+- c765b64: chore: use "default" condition instead of "import" in package exports across packages
+- Updated dependencies [c765b64]
+- Updated dependencies [040e772]
+  - @rnef/provider-github@0.7.16
+  - @rnef/tools@0.7.16
+
 ## 0.7.15
 
 ### Patch Changes

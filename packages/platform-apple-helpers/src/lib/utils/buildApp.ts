@@ -82,7 +82,8 @@ export async function buildApp({
     args.configuration
   );
   const destinations = determineDestinations({
-    args,
+    destination: args.destination,
+    isCatalyst: 'catalyst' in args && args.catalyst,
     platformName,
     udid,
     deviceName,
@@ -98,15 +99,15 @@ export async function buildApp({
     args,
   });
 
-  const buildSettings = await getBuildSettings(
+  const buildSettings = await getBuildSettings({
     xcodeProject,
     sourceDir,
     platformName,
     configuration,
     destinations,
     scheme,
-    args.target
-  );
+    target: args.target,
+  });
   const appPath = buildSettings.appPath;
 
   saveLocalBuildCache(artifactName, appPath);
@@ -120,37 +121,33 @@ export async function buildApp({
   };
 }
 
-type DetermineDestinationsArgs = {
-  args: RunFlags | BuildFlags;
-  platformName: ApplePlatform;
-  udid?: string;
-  deviceName?: string;
-};
-
 function determineDestinations({
-  args,
+  destination,
+  isCatalyst,
   platformName,
   udid,
   deviceName,
-}: DetermineDestinationsArgs): string[] {
-  if ('catalyst' in args && args.catalyst) {
+}: {
+  destination?: string[];
+  isCatalyst?: boolean;
+  platformName: ApplePlatform;
+  udid?: string;
+  deviceName?: string;
+}): string[] {
+  if (isCatalyst) {
     return ['platform=macOS,variant=Mac Catalyst'];
   }
-
   if (udid) {
     return [`id=${udid}`];
   }
-
   if (deviceName) {
     return [`name=${deviceName}`];
   }
-
-  if (args.destination && args.destination.length > 0) {
-    return args.destination.map((destination) =>
+  if (destination && destination.length > 0) {
+    return destination.map((destination) =>
       resolveDestination(destination, platformName)
     );
   }
-
   return [getGenericDestination(platformName, 'device')];
 }
 

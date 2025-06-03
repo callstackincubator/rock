@@ -38,16 +38,19 @@ export const createBuild = async ({
 
   let xcodeProject: XcodeProjectInfo;
   let sourceDir: string;
+  const deviceOrSimulator = args.destination
+    ? // there can be multiple destinations, so we'll pick the first one
+      args.destination[0].match(/simulator/i)
+      ? 'simulator'
+      : 'device'
+    : 'simulator';
+  const artifactName = await formatArtifactName({
+    platform: 'ios',
+    traits: [deviceOrSimulator, args.configuration ?? 'Debug'],
+    root: projectRoot,
+    fingerprintOptions,
+  });
   try {
-    const artifactName = await formatArtifactName({
-      platform: 'ios',
-      traits: [
-        args.destination?.[0] ?? 'simulator',
-        args.configuration ?? 'Debug',
-      ],
-      root: projectRoot,
-      fingerprintOptions,
-    });
     const { appPath, ...buildAppResult } = await buildApp({
       projectRoot,
       projectConfig,
