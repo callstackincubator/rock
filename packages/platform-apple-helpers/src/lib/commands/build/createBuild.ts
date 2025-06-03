@@ -58,7 +58,6 @@ export const createBuild = async ({
       args,
       reactNativePath,
       artifactName,
-      destination: deviceOrSimulator,
     });
     const loader = spinner();
     loader.start('');

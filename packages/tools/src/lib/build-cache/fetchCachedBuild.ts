@@ -13,8 +13,6 @@ import {
 } from './common.js';
 import type { LocalBuild } from './localBuildCache.js';
 
-export type Distribution = 'simulator' | 'device';
-
 type FetchCachedBuildOptions = {
   artifactName: string;
   remoteCacheProvider: undefined | null | { (): RemoteBuildCache };

@@ -17,7 +17,6 @@ export async function getBuildSettings({
   destinations,
   scheme,
   target,
-  sdk,
 }: {
   xcodeProject: XcodeProjectInfo;
   sourceDir: string;
@@ -26,8 +25,12 @@ export async function getBuildSettings({
   destinations: string[];
   scheme: string;
   target?: string;
-  sdk?: string;
 }): Promise<{ appPath: string; infoPlistPath: string }> {
+  const destination = destinations[0];
+  const sdk = destination.includes('Simulator')
+    ? getSimulatorPlatformSDK(platformName)
+    : getDevicePlatformSDK(platformName);
+
   const { stdout: buildSettings } = await spawn(
     'xcodebuild',
     [
@@ -37,8 +40,11 @@ export async function getBuildSettings({
       scheme,
       '-configuration',
       configuration,
-      ...(sdk ? ['-sdk', sdk] : []),
-      ...destinations.flatMap((destination) => ['-destination', destination]),
+      '-sdk',
+      sdk,
+      // -showBuildSettings supports exactly one -destination argument
+      '-destination',
+      destination,
       '-showBuildSettings',
       '-json',
     ],
@@ -120,5 +126,40 @@ function getBuildPath(
     return path.join(targetBuildDir, fullProductName);
   } else {
     return path.join(targetBuildDir, executableFolderPath);
+  }
+}
+
+type PlatformSDK =
+  | 'iphonesimulator'
+  | 'macosx'
+  | 'appletvsimulator'
+  | 'xrsimulator'
+  | 'iphoneos'
+  | 'appletvos'
+  | 'xr';
+
+function getSimulatorPlatformSDK(platform: ApplePlatform): PlatformSDK {
+  switch (platform) {
+    case 'ios':
+      return 'iphonesimulator';
+    case 'macos':
+      return 'macosx';
+    case 'tvos':
+      return 'appletvsimulator';
+    case 'visionos':
+      return 'xrsimulator';
+  }
+}
+
+function getDevicePlatformSDK(platform: ApplePlatform): PlatformSDK {
+  switch (platform) {
+    case 'ios':
+      return 'iphoneos';
+    case 'macos':
+      return 'macosx';
+    case 'tvos':
+      return 'appletvos';
+    case 'visionos':
+      return 'xr';
   }
 }

@@ -103,7 +103,6 @@ export const createRun = async ({
   if (platformName === 'macos') {
     const { appPath } = await buildApp({
       args,
-      destination: 'simulator',
       projectConfig,
       platformName,
       projectRoot,
@@ -118,7 +117,6 @@ export const createRun = async ({
   } else if (args.catalyst) {
     const { appPath, scheme } = await buildApp({
       args,
-      destination: 'simulator',
       projectConfig,
       platformName,
       projectRoot,
@@ -165,7 +163,6 @@ ${devices
         launchSimulator(device),
         buildApp({
           args,
-          destination: 'simulator',
           projectConfig,
           platformName,
           udid: device.udid,
@@ -180,7 +177,6 @@ ${devices
     } else if (device.type === 'device') {
       const { appPath } = await buildApp({
         args,
-        destination: 'device',
         projectConfig,
         platformName,
         udid: device.udid,
@@ -226,7 +222,6 @@ ${devices
         launchSimulator(bootedDevice),
         buildApp({
           args,
-          destination: bootedDevice.type,
           projectConfig,
           platformName,
           udid: bootedDevice.udid,
