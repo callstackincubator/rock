@@ -18,12 +18,16 @@ function filterConfig(config: Config) {
   // but in our case we don't install `@react-native-community/cli-platform-*` as a dependencies
   // so the config.platforms key is empty, which makes autolinking treat it as a dependency.
   delete filtered.dependencies['react-native'];
+  const dependencies: Record<string, DependencyConfig> = {};
   Object.keys(filtered.dependencies).forEach((item) => {
-    if (!isValidRNDependency(filtered.dependencies[item])) {
-      delete filtered.dependencies[item];
+    if (isValidRNDependency(filtered.dependencies[item])) {
+      dependencies[item] = filtered.dependencies[item];
     }
   });
-  return filtered;
+  return {
+    ...filtered,
+    dependencies,
+  };
 }
 
 export const logConfig = async (
