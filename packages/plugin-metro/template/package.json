@@ -1,7 +1,7 @@
 {
   "name": "rnef-plugin-metro-template",
   "devDependencies": {
-    "@rnef/plugin-metro": "^0.7.17",
+    "@rnef/plugin-metro": "^0.7.18",
     "@react-native/metro-config": "0.79.1"
   }
 }
