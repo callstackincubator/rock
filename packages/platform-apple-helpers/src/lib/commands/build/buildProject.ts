@@ -126,6 +126,8 @@ Configuration   ${color.bold(configuration)}`);
 
   const message = `${args.archive ? 'Archiving' : 'Building'} the app`;
 
+  let commandOutput = '';
+
   loader.start(message);
   try {
     const process = spawn('xcodebuild', xcodebuildArgs, {
@@ -134,30 +136,28 @@ Configuration   ${color.bold(configuration)}`);
 
     // Process the output from the AsyncIterable
     for await (const chunk of process) {
+      commandOutput += chunk + '\n';
       reportProgress(chunk, loader, message);
     }
 
     await process;
     loader.stop(`${args.archive ? 'Archived' : 'Built'} the app.`);
   } catch (error) {
-    if ((error as SubprocessError).stderr.trim() === '') {
-      loader.stop(
-        'Running xcodebuild failed. Use --verbose flag to see the full output.'
-      );
-    } else {
-      logger.error((error as SubprocessError).stderr);
-      loader.stop('Running xcodebuild failed. See error details above.', 1);
-    }
-
+    loader.stop(`Failed: ${message}.`, 1);
     if (!xcodeProject.isWorkspace) {
-      throw new RnefError(
-        `If your project uses CocoaPods, make sure to install pods with "pod install" in ${sourceDir} directory.`,
-        { cause: (error as SubprocessError).stderr }
+      logger.error(
+        `If your project uses CocoaPods, make sure to install pods with "pod install" in ${sourceDir} directory.`
       );
     }
-
+    if (commandOutput) {
+      logger.error(`xcodebuild output: ${commandOutput}`);
+      throw new RnefError(
+        'Running xcodebuild failed. See error details above.'
+      );
+    }
     throw new RnefError('Running xcodebuild failed', {
-      cause: (error as SubprocessError).stderr,
+      cause:
+        (error as SubprocessError).stderr || (error as SubprocessError).command,
     });
   }
 };
