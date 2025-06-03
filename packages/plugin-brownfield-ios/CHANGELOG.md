@@ -1,5 +1,13 @@
 # @rnef/plugin-brownfield-ios
 
+## 0.7.17
+
+### Patch Changes
+
+- Updated dependencies [e2ddcde]
+  - @rnef/platform-apple-helpers@0.7.17
+  - @rnef/tools@0.7.17
+
 ## 0.7.16
 
 ### Patch Changes
