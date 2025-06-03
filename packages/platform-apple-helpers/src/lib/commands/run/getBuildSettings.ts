@@ -27,7 +27,7 @@ export async function getBuildSettings({
   target?: string;
 }): Promise<{ appPath: string; infoPlistPath: string }> {
   const destination = destinations[0];
-  const sdk = destination.includes('Simulator')
+  const sdk = destination.match(/simulator/i)
     ? getSimulatorPlatformSDK(platformName)
     : getDevicePlatformSDK(platformName);
 
