@@ -1,6 +1,7 @@
 import {
   cacheManager,
   color,
+  colorLink,
   logger,
   type RemoteArtifact,
   RnefError,
@@ -59,7 +60,7 @@ export async function fetchGitHubArtifactsByName(
         data = await response.json();
       } catch (error) {
         throw new Error(
-          `Error fetching artifacts from ${color.underline(url)}: ${error}`
+          `Error fetching artifacts from ${colorLink(url)}: ${error}`
         );
       }
 

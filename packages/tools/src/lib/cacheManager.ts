@@ -1,6 +1,6 @@
 import fs from 'node:fs';
 import path from 'node:path';
-import { color } from './color.js';
+import { color, colorLink } from './color.js';
 import { RnefError } from './error.js';
 import logger from './logger.js';
 import { getCacheRootPath } from './project.js';
@@ -44,7 +44,7 @@ function removeProjectCache() {
     }
   } catch (error) {
     throw new RnefError(
-      `Failed to remove cache for ${name}. If you experience any issues when running freshly initialized project, please remove the "${color.underline(
+      `Failed to remove cache for ${name}. If you experience any issues when running freshly initialized project, please remove the "${colorLink(
         path.join(getCacheFile())
       )}" folder manually.`,
       { cause: error }

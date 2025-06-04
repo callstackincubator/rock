@@ -1,6 +1,6 @@
 import fs from 'node:fs';
 import path from 'node:path';
-import { color } from '../color.js';
+import { color, colorLink } from '../color.js';
 import logger from '../logger.js';
 import { getLocalArtifactPath, getLocalBinaryPath } from './common.js';
 
@@ -9,24 +9,6 @@ export type LocalBuild = {
   artifactPath: string;
   binaryPath: string;
 };
-
-export function queryLocalRemoteBuildCache(
-  artifactName: string
-): LocalBuild | null {
-  const artifactPath = getLocalArtifactPath(artifactName);
-  if (!fs.statSync(artifactPath, { throwIfNoEntry: false })?.isDirectory()) {
-    return null;
-  }
-  const binaryPath = getLocalBinaryPath(artifactPath);
-  if (binaryPath == null || !fs.existsSync(binaryPath)) {
-    return null;
-  }
-  return {
-    name: artifactName,
-    artifactPath,
-    binaryPath,
-  };
-}
 
 export function queryLocalBuildCache(artifactName: string): LocalBuild | null {
   const artifactPath = getLocalArtifactPath(artifactName);
@@ -60,7 +42,11 @@ export function saveLocalBuildCache(artifactName: string, binaryPath: string) {
         path.join(cachePath, path.basename(binaryPath))
       );
     }
-    logger.debug(`Saved build cache to ${color.cyan(cachePath)}`);
+    logger.debug(
+      `Saved build cache to: ${colorLink(
+        path.relative(process.cwd(), cachePath)
+      )}`
+    );
   } catch (error) {
     logger.debug('Failed to copy binary to local build cache', error);
   }
@@ -71,15 +57,10 @@ export function getLocalBuildCacheBinaryPath(
 ): string | undefined {
   const localBuild = queryLocalBuildCache(artifactName);
   if (localBuild) {
-    logger.log(`Found build cache at: ${color.cyan(localBuild.artifactPath)}`);
-    return localBuild.binaryPath;
-  }
-  const localRemoteBuild = queryLocalRemoteBuildCache(artifactName);
-  if (localRemoteBuild != null) {
     logger.log(
-      `Found cache from remote build: ${color.cyan(localRemoteBuild.name)}`
+      `Found build cache for: ${color.bold(color.blue(localBuild.name))}`
     );
-    return localRemoteBuild.binaryPath;
+    return localBuild.binaryPath;
   }
   return undefined;
 }
