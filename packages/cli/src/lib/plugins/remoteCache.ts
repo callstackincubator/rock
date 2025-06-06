@@ -181,6 +181,10 @@ async function remoteCache({
       }
       break;
     }
+    case 'get-provider-name': {
+      console.log(remoteBuildCache.name);
+      break;
+    }
   }
 
   return null;
@@ -193,8 +197,9 @@ function validateArgs(args: Flags, action: string) {
       'Action is required. Available actions: list, list-all, download, upload, delete'
     );
   }
-  if (action === 'list-all') {
-    // return early as we don't need to validate name or platform to list all artifacts
+  if (action === 'list-all' || action === 'get-provider-name') {
+    // return early as we don't need to validate name or platform
+    // to list all artifacts or get provider name
     return;
   }
   if (args.name && (args.platform || args.traits)) {
