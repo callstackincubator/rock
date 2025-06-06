@@ -1,6 +1,6 @@
 {
   "name": "@rnef/welcome-screen",
-  "version": "0.7.18",
+  "version": "0.7.19",
   "type": "module",
   "main": "./dist/src/index.jsx",
   "types": "./dist/src/index.d.ts",

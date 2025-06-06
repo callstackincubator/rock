@@ -1,5 +1,14 @@
 # @rnef/config
 
+## 0.7.19
+
+### Patch Changes
+
+- b3472c2: fix: use file:// URLs for ESM config on Windows
+- Updated dependencies [bf92778]
+  - @rnef/provider-github@0.7.19
+  - @rnef/tools@0.7.19
+
 ## 0.7.18
 
 ### Patch Changes

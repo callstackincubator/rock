@@ -1,5 +1,7 @@
 # @rnef/welcome-screen
 
+## 0.7.19
+
 ## 0.7.18
 
 ### Patch Changes

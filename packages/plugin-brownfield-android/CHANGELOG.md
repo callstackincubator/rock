@@ -1,5 +1,12 @@
 # @rnef/plugin-brownfield-android
 
+## 0.7.19
+
+### Patch Changes
+
+- @rnef/platform-android@0.7.19
+- @rnef/tools@0.7.19
+
 ## 0.7.18
 
 ### Patch Changes

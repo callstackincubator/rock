@@ -1,5 +1,15 @@
 # @rnef/cli
 
+## 0.7.19
+
+### Patch Changes
+
+- 65aac17: feat: add get-provider-name action for remote-cache
+- dce9c01: perf: avoid double invoking of native deps in config command
+- Updated dependencies [b3472c2]
+  - @rnef/config@0.7.19
+  - @rnef/tools@0.7.19
+
 ## 0.7.18
 
 ### Patch Changes

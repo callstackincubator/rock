@@ -1,5 +1,12 @@
 # @rnef/platform-apple-helpers
 
+## 0.7.19
+
+### Patch Changes
+
+- bf92778: chore: throw more information when fetch github fails
+  - @rnef/tools@0.7.19
+
 ## 0.7.18
 
 ### Patch Changes
