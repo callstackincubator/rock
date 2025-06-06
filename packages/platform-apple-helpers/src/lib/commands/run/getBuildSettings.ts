@@ -17,6 +17,7 @@ export async function getBuildSettings({
   destinations,
   scheme,
   target,
+  buildFolder,
 }: {
   xcodeProject: XcodeProjectInfo;
   sourceDir: string;
@@ -25,6 +26,7 @@ export async function getBuildSettings({
   destinations: string[];
   scheme: string;
   target?: string;
+  buildFolder?: string;
 }): Promise<{ appPath: string; infoPlistPath: string }> {
   const destination = destinations[0];
   const sdk = destination.match(/simulator/i)
@@ -36,6 +38,7 @@ export async function getBuildSettings({
     [
       xcodeProject.isWorkspace ? '-workspace' : '-project',
       xcodeProject.name,
+      ...(buildFolder ? ['-derivedDataPath', buildFolder] : []),
       '-scheme',
       scheme,
       '-configuration',

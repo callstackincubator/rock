@@ -107,6 +107,7 @@ export async function buildApp({
     destinations,
     scheme,
     target: args.target,
+    buildFolder: args.buildFolder,
   });
   const appPath = buildSettings.appPath;
 
