@@ -1,5 +1,12 @@
 # @rnef/platform-apple-helpers
 
+## 0.7.20
+
+### Patch Changes
+
+- 7d348ee: fix: set build-folder for build settings as well
+  - @rnef/tools@0.7.20
+
 ## 0.7.19
 
 ### Patch Changes
