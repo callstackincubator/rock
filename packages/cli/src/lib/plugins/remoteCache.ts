@@ -239,7 +239,8 @@ export const remoteCachePlugin =
       args: [
         {
           name: '[action]',
-          description: 'Select action, e.g. query, download, upload, delete',
+          description:
+            'Select action, e.g. list, list-all, download, upload, delete, get-provider-name',
         },
       ],
       options: [
