@@ -79,7 +79,9 @@ export const createRun = async ({
         binaryPath = cachedBuild.binaryPath;
       }
     } catch (error) {
-      logger.warn((error as RnefError).message);
+      const message = (error as RnefError).message;
+      const cause = (error as RnefError).cause;
+      logger.warn(message, cause ? `\nCause: ${cause.toString()}` : '');
       const shouldContinueWithLocalBuild = await promptConfirm({
         message: 'Would you like to continue with local build?',
         confirmLabel: 'Yes',

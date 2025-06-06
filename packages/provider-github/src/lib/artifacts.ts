@@ -58,7 +58,9 @@ export async function fetchGitHubArtifactsByName(
         }
         data = await response.json();
       } catch (error) {
-        throw new Error(`Error fetching artifacts: ${error}`);
+        throw new Error(
+          `Error fetching artifacts from ${color.underline(url)}: ${error}`
+        );
       }
 
       const artifacts = data.artifacts
