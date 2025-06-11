@@ -11,6 +11,7 @@ import {
   promptConfirm,
   promptSelect,
   RnefError,
+  saveLocalBuildCache,
   spinner,
 } from '@rnef/tools';
 import type {
@@ -111,7 +112,6 @@ export const createRun = async ({
       udid,
       deviceName,
       reactNativePath,
-      artifactName,
       binaryPath,
     });
     await runOnMac(appPath);
@@ -125,7 +125,6 @@ export const createRun = async ({
       udid,
       deviceName,
       reactNativePath,
-      artifactName,
       binaryPath,
     });
     if (scheme) {
@@ -170,11 +169,10 @@ ${devices
           udid: device.udid,
           projectRoot,
           reactNativePath,
-          artifactName,
           binaryPath,
         }),
       ]);
-
+      saveLocalBuildCache(artifactName, appPath);
       await runOnSimulator(device, appPath, infoPlistPath);
     } else if (device.type === 'device') {
       const { appPath } = await buildApp({
@@ -184,7 +182,6 @@ ${devices
         udid: device.udid,
         projectRoot,
         reactNativePath,
-        artifactName,
         binaryPath,
       });
       await runOnDevice(device, appPath, projectConfig.sourceDir);
@@ -229,10 +226,10 @@ ${devices
           udid: bootedDevice.udid,
           projectRoot,
           reactNativePath,
-          artifactName,
           binaryPath,
         }),
       ]);
+      saveLocalBuildCache(artifactName, appPath);
       if (bootedDevice.type === 'simulator') {
         await runOnSimulator(bootedDevice, appPath, infoPlistPath);
       } else {

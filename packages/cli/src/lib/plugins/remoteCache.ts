@@ -105,7 +105,7 @@ async function remoteCache({
       await handleDownloadResponse(response, localArtifactPath, artifactName);
       const binaryPath = getLocalBinaryPath(localArtifactPath);
       if (!binaryPath) {
-        throw new RnefError(`No binary found for "${artifactName}".`);
+        throw new RnefError(`Failed to save binary for "${artifactName}".`);
       }
       if (isJsonOutput) {
         console.log(

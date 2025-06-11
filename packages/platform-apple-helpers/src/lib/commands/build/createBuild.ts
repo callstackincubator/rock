@@ -59,7 +59,6 @@ export const createBuild = async ({
       platformName,
       args,
       reactNativePath,
-      artifactName,
     });
     if (fs.existsSync(appPath)) {
       const loader = spinner();

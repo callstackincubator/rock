@@ -1,6 +1,6 @@
 import path from 'node:path';
 import type { IOSProjectConfig } from '@react-native-community/cli-types';
-import { RnefError, saveLocalBuildCache } from '@rnef/tools';
+import { RnefError } from '@rnef/tools';
 import type { BuildFlags } from '../commands/build/buildOptions.js';
 import { buildProject } from '../commands/build/buildProject.js';
 import { getBuildSettings } from '../commands/run/getBuildSettings.js';
@@ -22,7 +22,6 @@ export async function buildApp({
   projectRoot,
   deviceName,
   reactNativePath,
-  artifactName,
   binaryPath,
 }: {
   args: RunFlags | BuildFlags;
@@ -33,7 +32,6 @@ export async function buildApp({
   deviceName?: string;
   projectRoot: string;
   reactNativePath: string;
-  artifactName: string;
   binaryPath?: string;
 }) {
   if (binaryPath) {
@@ -109,12 +107,9 @@ export async function buildApp({
     target: args.target,
     buildFolder: args.buildFolder,
   });
-  const appPath = buildSettings.appPath;
-
-  saveLocalBuildCache(artifactName, appPath);
 
   return {
-    appPath,
+    appPath: buildSettings.appPath,
     infoPlistPath: buildSettings.infoPlistPath,
     scheme: scheme,
     xcodeProject,
