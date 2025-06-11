@@ -1,5 +1,12 @@
 # @rnef/provider-s3
 
+## 0.7.23
+
+### Patch Changes
+
+- 5335290: fix: don't delete from s3 if --all-but-latest is provided
+  - @rnef/tools@0.7.23
+
 ## 0.7.22
 
 ### Patch Changes
