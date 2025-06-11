@@ -1,5 +1,12 @@
 # @rnef/config
 
+## 0.7.22
+
+### Patch Changes
+
+- @rnef/provider-github@0.7.22
+- @rnef/tools@0.7.22
+
 ## 0.7.21
 
 ### Patch Changes

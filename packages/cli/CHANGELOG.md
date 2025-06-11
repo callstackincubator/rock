@@ -1,5 +1,13 @@
 # @rnef/cli
 
+## 0.7.22
+
+### Patch Changes
+
+- c7a4a52: feat: add --binary-path flag to remote-cache upload
+  - @rnef/config@0.7.22
+  - @rnef/tools@0.7.22
+
 ## 0.7.21
 
 ### Patch Changes
