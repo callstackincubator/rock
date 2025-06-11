@@ -34,11 +34,20 @@ We need a special Gradle plugin to create an AAR that includes all dependencies.
 
 1. Add the plugin to your `rnbrownfield/build.gradle.kts`:
 
-   ```groovy title="rnbrownfield/build.gradle.kts" {4}
+   ```groovy title="rnbrownfield/build.gradle.kts" {5}
    plugins {
        id("com.android.library")
        id("org.jetbrains.kotlin.android")
+       id("com.facebook.react")
        id("com.callstack.react.brownfield")
+   }
+   ```
+
+1. Add autolinking setup to the `react` block in `rnbrownfield/build.gradle.kts`:
+
+   ```groovy title="rnbrownfield/build.gradle.kts" {1,3}
+   react {
+       autolinkLibrariesWithApp()
    }
    ```
 
@@ -221,10 +230,11 @@ object RNViewFactory {
 
 Add the Maven publish plugin to your `rnbrownfield/build.gradle.kts`:
 
-```groovy title="rnbrownfield/build.gradle.kts" {5}
+```groovy title="rnbrownfield/build.gradle.kts" {6}
 plugins {
     id("com.android.library")
     id("org.jetbrains.kotlin.android")
+    id("com.facebook.react")
     id("com.callstack.react.brownfield")
     `maven-publish`
 }
