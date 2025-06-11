@@ -20,6 +20,7 @@ type Flags = {
   json?: boolean;
   all?: boolean;
   allButLatest?: boolean;
+  binaryPath?: string
 };
 
 async function remoteCache({
@@ -119,7 +120,7 @@ async function remoteCache({
     }
     case 'upload': {
       const localArtifactPath = getLocalArtifactPath(artifactName);
-      const binaryPath = getLocalBinaryPath(localArtifactPath);
+      const binaryPath = args.binaryPath ?? getLocalBinaryPath(localArtifactPath);
       if (!binaryPath) {
         throw new RnefError(`No binary found for "${artifactName}".`);
       }
@@ -272,6 +273,10 @@ export const remoteCachePlugin =
 Example iOS: --traits simulator,Release
 Example Android: --traits debug`,
           parse: (val: string) => val.split(','),
+        },
+        {
+          name: '--binary-path <string>',
+          description: 'Path to the binary to upload',
         },
       ],
     });
