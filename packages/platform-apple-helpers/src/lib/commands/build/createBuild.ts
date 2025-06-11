@@ -1,3 +1,4 @@
+import fs from 'node:fs';
 import path from 'node:path';
 import type { FingerprintSources } from '@rnef/tools';
 import {
@@ -7,6 +8,7 @@ import {
   logger,
   promptSelect,
   RnefError,
+  saveLocalBuildCache,
   spinner,
 } from '@rnef/tools';
 import type {
@@ -59,10 +61,11 @@ export const createBuild = async ({
       reactNativePath,
       artifactName,
     });
-    const loader = spinner();
-    loader.start('');
-    loader.stop(`Build available at: ${color.cyan(appPath)}`);
-
+    if (fs.existsSync(appPath)) {
+      const loader = spinner();
+      loader.start('');
+      loader.stop(`Build available at: ${color.cyan(appPath)}`);
+    }
     xcodeProject = buildAppResult.xcodeProject;
     sourceDir = buildAppResult.sourceDir;
   } catch (error) {
@@ -78,13 +81,16 @@ export const createBuild = async ({
       `${xcodeProject.name.replace('.xcworkspace', '')}.xcarchive`
     );
 
-    await exportArchive({
+    const { ipaPath } = await exportArchive({
       sourceDir,
       archivePath,
       platformName,
       exportExtraParams: args.exportExtraParams ?? [],
       exportOptionsPlist: args.exportOptionsPlist,
     });
+
+    // Save the IPA to the local build cache so it's available for remote-cache command
+    saveLocalBuildCache(artifactName, ipaPath);
   }
 };
 

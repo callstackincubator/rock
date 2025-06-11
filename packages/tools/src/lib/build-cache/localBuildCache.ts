@@ -60,7 +60,7 @@ export function saveLocalBuildCache(artifactName: string, binaryPath: string) {
         path.join(cachePath, path.basename(binaryPath))
       );
     }
-    logger.info(`Saved build cache to ${color.cyan(cachePath)}`);
+    logger.debug(`Saved build cache to ${color.cyan(cachePath)}`);
   } catch (error) {
     logger.debug('Failed to copy binary to local build cache', error);
   }

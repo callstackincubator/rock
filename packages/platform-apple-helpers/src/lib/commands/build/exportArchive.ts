@@ -1,5 +1,5 @@
 import type { SubprocessError } from '@rnef/tools';
-import { RnefError, spawn, spinner } from '@rnef/tools';
+import { color, RnefError, spawn, spinner } from '@rnef/tools';
 import { existsSync, readdirSync } from 'fs';
 import path from 'path';
 import { getBuildPaths } from '../../utils/getBuildPaths.js';
@@ -16,7 +16,7 @@ export const exportArchive = async ({
   platformName: string;
   exportExtraParams: string[];
   exportOptionsPlist?: string;
-}) => {
+}): Promise<{ ipaPath: string }> => {
   const loader = spinner();
 
   loader.start('Exporting the archive...');
@@ -50,7 +50,7 @@ export const exportArchive = async ({
   try {
     let ipaFiles: string[] = [];
 
-    const { output } = await spawn('xcodebuild', xcodebuildArgs, {
+    await spawn('xcodebuild', xcodebuildArgs, {
       cwd: sourceDir,
       stdio: 'pipe',
     });
@@ -61,11 +61,11 @@ export const exportArchive = async ({
     }
 
     loader.stop(
-      `Exported the archive to ${
+      `Archive available at: ${color.cyan(
         path.join(exportDir, ipaFiles[0]) ?? exportDir
-      }`
+      )}`
     );
-    return output;
+    return { ipaPath: path.join(exportDir, ipaFiles[0]) };
   } catch (error) {
     loader.stop('Running xcodebuild failed.', 1);
     throw new Error('Running xcodebuild failed', {
