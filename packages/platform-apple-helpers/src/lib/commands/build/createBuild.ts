@@ -60,6 +60,7 @@ export const createBuild = async ({
       args,
       reactNativePath,
     });
+    // The path may not exist when we archive
     if (fs.existsSync(appPath)) {
       const loader = spinner();
       loader.start('');
