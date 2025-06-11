@@ -1,5 +1,12 @@
 # @rnef/provider-s3
 
+## 0.7.21
+
+### Patch Changes
+
+- Updated dependencies [ac68104]
+  - @rnef/tools@0.7.21
+
 ## 0.7.20
 
 ### Patch Changes
