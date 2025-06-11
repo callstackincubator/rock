@@ -1,4 +1,3 @@
-import fs from 'node:fs';
 import path from 'node:path';
 import type { FingerprintSources } from '@rnef/tools';
 import {
@@ -61,10 +60,11 @@ export const createBuild = async ({
       reactNativePath,
     });
     // The path may not exist when we archive
-    if (fs.existsSync(appPath)) {
+    if (!args.archive) {
       const loader = spinner();
       loader.start('');
       loader.stop(`Build available at: ${color.cyan(appPath)}`);
+      saveLocalBuildCache(artifactName, appPath);
     }
     xcodeProject = buildAppResult.xcodeProject;
     sourceDir = buildAppResult.sourceDir;
