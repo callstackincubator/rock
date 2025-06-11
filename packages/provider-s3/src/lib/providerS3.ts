@@ -108,9 +108,15 @@ export class S3BuildCache implements RemoteBuildCache {
 
   async delete({
     artifactName,
+    skipLatest,
   }: {
     artifactName: string;
+    skipLatest?: boolean;
   }): Promise<RemoteArtifact[]> {
+    if (skipLatest) {
+      // Artifacts on S3 are unique by name, so skipping latest means we don't delete anything
+      return [];
+    }
     await this.s3.send(
       new clientS3.DeleteObjectCommand({
         Bucket: this.bucket,
