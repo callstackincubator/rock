@@ -1,5 +1,12 @@
 # @rnef/platform-apple-helpers
 
+## 0.7.24
+
+### Patch Changes
+
+- 98c44d8: fix: bring back local cache saving in simulator builds
+  - @rnef/tools@0.7.24
+
 ## 0.7.23
 
 ### Patch Changes
