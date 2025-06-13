@@ -243,6 +243,9 @@ plugins {
 Configure the publishing settings:
 
 ```groovy title="rnbrownfield/build.gradle.kts"
+import groovy.json.JsonOutput
+import groovy.json.JsonSlurper
+
 publishing {
     publications {
         create<MavenPublication>("mavenAar") {
