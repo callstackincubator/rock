@@ -27,6 +27,7 @@ export const createBuild = async ({
   projectRoot,
   reactNativePath,
   fingerprintOptions,
+  brownfield,
 }: {
   platformName: BuilderCommand['platformName'];
   projectConfig: ProjectConfig;
@@ -34,6 +35,7 @@ export const createBuild = async ({
   projectRoot: string;
   reactNativePath: string;
   fingerprintOptions: FingerprintSources;
+  brownfield?: boolean;
 }) => {
   await validateArgs(args);
 
@@ -58,6 +60,7 @@ export const createBuild = async ({
       platformName,
       args,
       reactNativePath,
+      brownfield,
     });
     // The path may not exist when we archive
     if (!args.archive) {

@@ -23,6 +23,7 @@ export async function buildApp({
   deviceName,
   reactNativePath,
   binaryPath,
+  brownfield,
 }: {
   args: RunFlags | BuildFlags;
   projectConfig: ProjectConfig;
@@ -33,6 +34,7 @@ export async function buildApp({
   projectRoot: string;
   reactNativePath: string;
   binaryPath?: string;
+  brownfield?: boolean;
 }) {
   if (binaryPath) {
     return {
@@ -53,7 +55,8 @@ export async function buildApp({
       platformName,
       sourceDir,
       args.newArch,
-      reactNativePath
+      reactNativePath,
+      brownfield
     );
     // When the project is not a workspace, we need to get the project config again,
     // because running pods install might have generated .xcworkspace project.

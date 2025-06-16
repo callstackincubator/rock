@@ -36,10 +36,7 @@ If you have an existing RNEF project, you can follow these steps to add brownfie
 
 1. Add your new framework to `ios/Podfile`:
 
-   ```ruby title="Podfile"
-   # turn on static linking for frameworks
-   use_frameworks! :linkage => :static
-
+   ```ruby title="Podfile" {3-5}
    target '<project_name>' do
      # Add these lines
      target '<framework_target_name>' do
