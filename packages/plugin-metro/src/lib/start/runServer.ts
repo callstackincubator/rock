@@ -112,6 +112,9 @@ async function runServer(
     projectRoot,
     serverBaseUrl: devServerUrl,
     logger: createDevMiddlewareLogger(terminalReporter),
+    unstable_experiments: {
+      enableNetworkInspector: true,
+    },
   });
 
   const reporter: Reporter = {
