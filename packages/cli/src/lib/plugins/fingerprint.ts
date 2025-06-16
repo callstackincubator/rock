@@ -25,13 +25,24 @@ export async function nativeFingerprintCommand(
   const platform = options.platform;
   const readablePlatformName = platform === 'ios' ? 'iOS' : 'Android';
 
-  if (options?.raw || !isInteractive()) {
+  if (options.raw || !isInteractive()) {
     const fingerprint = await nativeFingerprint(path, {
       platform,
       extraSources,
       ignorePaths,
     });
     console.log(fingerprint.hash);
+    // log sources to stderr to avoid polluting the standard output
+    console.error(
+      JSON.stringify(
+        {
+          hash: fingerprint.hash,
+          sources: fingerprint.sources.filter((source) => source.hash != null),
+        },
+        null,
+        2
+      )
+    );
     return;
   }
 
@@ -50,7 +61,14 @@ export async function nativeFingerprintCommand(
 
   loader.stop(`Fingerprint calculated: ${fingerprint.hash}`);
 
-  logger.debug('Sources:', JSON.stringify(fingerprint.sources, null, 2));
+  logger.debug(
+    'Sources:',
+    JSON.stringify(
+      fingerprint.sources.filter((source) => source.hash != null),
+      null,
+      2
+    )
+  );
   logger.debug(`Duration: ${(duration / 1000).toFixed(1)}s`);
 
   outro('Success 🎉.');
