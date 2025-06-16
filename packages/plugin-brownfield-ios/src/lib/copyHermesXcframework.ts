@@ -3,10 +3,10 @@ import path from 'node:path';
 import { color, logger, spinner } from '@rnef/tools';
 
 export function copyHermesXcframework({
-  iosDir,
+  sourceDir,
   destinationDir,
 }: {
-  iosDir: string;
+  sourceDir: string;
   destinationDir: string;
 }) {
   const loader = spinner();
@@ -21,7 +21,7 @@ export function copyHermesXcframework({
 
   fs.cpSync(
     path.join(
-      iosDir,
+      sourceDir,
       'Pods/hermes-engine/destroot/Library/Frameworks/universal/hermes.xcframework'
     ),
     hermesDestination,

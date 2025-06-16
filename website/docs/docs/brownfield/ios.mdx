@@ -68,6 +68,8 @@ If you have an existing RNEF project, you can follow these steps to add brownfie
    ```swift
    // Export helpers from @callstack/react-native-brownfield library
    @_exported import ReactBrownfield
+   public let ReactNativeBundle = Bundle(for: InternalClassForBundle.self)
+   class InternalClassForBundle {}
    ```
 
 ### 5. Create the XCFramework:

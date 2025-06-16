@@ -7,11 +7,9 @@ import {
   genericDestinations,
   getBuildOptions,
   getBuildPaths,
-  getInfo,
-  getScheme,
   getValidProjectConfig,
 } from '@rnef/platform-apple-helpers';
-import { color, intro, outro, RnefError, spinner } from '@rnef/tools';
+import { color, intro, outro, spinner } from '@rnef/tools';
 import { copyHermesXcframework } from './copyHermesXcframework.js';
 import { mergeFrameworks } from './mergeFrameworks.js';
 const buildOptions = getBuildOptions({ platformName: 'ios' });
@@ -42,21 +40,12 @@ export const pluginBrownfieldIos =
         const buildFolder = args.buildFolder ?? derivedDataDir;
         const configuration = args.configuration ?? 'Debug';
 
-        const { xcodeProject, sourceDir: iosDir } = iosConfig;
-        const info = await getInfo(xcodeProject, iosDir);
-        if (!info) {
-          throw new RnefError('Failed to get Xcode project information');
-        }
+        const { sourceDir } = iosConfig;
 
-        const scheme = await getScheme(
-          info.schemes,
-          args.scheme,
-          xcodeProject.name
-        );
-        await createBuild({
+        const { scheme } = await createBuild({
           platformName: 'ios',
           projectConfig: iosConfig,
-          args: { ...args, scheme, destination, buildFolder },
+          args: { ...args, destination, buildFolder },
           projectRoot,
           reactNativePath: api.getReactNativePath(),
           fingerprintOptions: api.getFingerprintOptions(),
@@ -68,7 +57,7 @@ export const pluginBrownfieldIos =
         const { packageDir: frameworkTargetOutputDir } = getBuildPaths('ios');
 
         await mergeFrameworks({
-          sourceDir: iosDir,
+          sourceDir,
           frameworkPaths: [
             path.join(
               productsPath,
@@ -89,7 +78,7 @@ export const pluginBrownfieldIos =
 
         // 3) Merge React Native Brownfield paths
         await mergeFrameworks({
-          sourceDir: iosDir,
+          sourceDir,
           frameworkPaths: [
             path.join(
               productsPath,
@@ -112,7 +101,7 @@ export const pluginBrownfieldIos =
 
         // 4) Copy hermes xcframework to the output path
         copyHermesXcframework({
-          iosDir,
+          sourceDir,
           destinationDir: frameworkTargetOutputDir,
         });
 
