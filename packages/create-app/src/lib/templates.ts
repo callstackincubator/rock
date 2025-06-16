@@ -40,7 +40,7 @@ export const PLUGINS: TemplateInfo[] = [
     version: 'latest',
     directory: 'template',
     importName: 'pluginBrownfieldIos',
-  }
+  },
 ];
 
 export const BUNDLERS: TemplateInfo[] = [

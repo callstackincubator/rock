@@ -10,43 +10,35 @@ import { color, logger, spawn, spinner } from '@rnef/tools';
 export async function mergeFrameworks({
   frameworkPaths,
   outputPath,
-  sourceDir
+  sourceDir,
 }: {
-  frameworkPaths: string[],
-  outputPath: string
-  sourceDir: string
+  frameworkPaths: string[];
+  outputPath: string;
+  sourceDir: string;
 }) {
   const loader = spinner();
-  const xcframeworkName = path.basename(outputPath)
+  const xcframeworkName = path.basename(outputPath);
 
   if (existsSync(outputPath)) {
-    logger.debug(`Removing `)
-    await fs.promises.rm(outputPath, { recursive: true, force: true });
+    logger.debug(`Removing `);
+    fs.rmSync(outputPath, { recursive: true, force: true });
   }
 
   loader.start(`Creating ${color.bold(xcframeworkName)}`);
 
   const xcodebuildArgs = [
     '-create-xcframework',
-    ...frameworkPaths.flatMap(frameworkPath => [
-      '-framework',
-      frameworkPath
-    ]),
+    ...frameworkPaths.flatMap((frameworkPath) => ['-framework', frameworkPath]),
     '-output',
-    outputPath
+    outputPath,
   ];
 
   try {
     await spawn('xcodebuild', xcodebuildArgs, { cwd: sourceDir });
 
-    loader.stop(
-      `Created ${color.bold(xcframeworkName)}`
-    );
+    loader.stop(`Created ${color.bold(xcframeworkName)}`);
   } catch (error) {
-    loader.stop(
-      `Couldn't create ${color.bold(xcframeworkName)}.  Check the error message above for details.`,
-      1
-    );
+    loader.stop(`Couldn't create ${color.bold(xcframeworkName)}.`, 1);
     throw new Error('Running xcodebuild failed', {
       cause: (error as SubprocessError).stderr,
     });
