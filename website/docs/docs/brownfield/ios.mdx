@@ -65,8 +65,11 @@ If you have an existing RNEF project, you can follow these steps to add brownfie
 
 1. Install `react-native-brownfield`:
    <PackageManagerTabs command="install @callstack/react-native-brownfield" />
-1. Create a new Swift file in your framework folder using Xcode[^1]
-1. Copy and paste the contents of [HelloWorldReact.swift](https://github.com/callstack/rnef/tree/main/packages/plugin-brownfield-ios/template/ios/HelloWorldReact/HelloWorldReact.swift) to your Swift file
+1. Create a new Swift file in your framework folder using Xcode with the following contents:
+   ```swift
+   // Export helpers from @callstack/react-native-brownfield library
+   @_exported import ReactBrownfield
+   ```
 
 ### 5. Create the XCFramework:
 
