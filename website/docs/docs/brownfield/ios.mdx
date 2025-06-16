@@ -8,7 +8,7 @@ To add React Native to your iOS app, we'll package your React Native code into a
 
 ## Creating a New RNEF Project (Automated)
 
-If you are creating a new RNEF project, you can select the `brownfield-ios` plugin to add brownfield capabilities.
+If you are creating a new RNEF project, you can select the `brownfield-ios` plugin to add brownfield capabilities for you.
 
 ## Integrating to An Existing RNEF Project (Manual)
 
@@ -37,8 +37,10 @@ If you have an existing RNEF project, you can follow these steps to add brownfie
 1. Add your new framework to `ios/Podfile`:
 
    ```ruby title="Podfile"
+   # turn on static linking for frameworks
+   use_frameworks! :linkage => :static
+
    target '<project_name>' do
-     # ...
      # Add these lines
      target '<framework_target_name>' do
        inherit! :complete
@@ -103,9 +105,10 @@ If you have an existing RNEF project, you can follow these steps to add brownfie
    <framework_target_name>.xcframework # Your framework target
    ```
 1. Initialize React Native in `AppDelegate.swift`:
-   ```swift
+
+   ```swift title="AppDelegate.swift" {6-9}
    import <framework_target_name>
-   
+
    @main
    class AppDelegate: UIResponder, UIApplicationDelegate {
        func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
