@@ -6,13 +6,15 @@ React Native Enterprise Framework helps you package your React Native code into 
 
 To add React Native to your iOS app, we'll package your React Native code into an XCFramework. This way, you don't need to set up Node.js or CocoaPods in your main app.
 
+To make the integration simpler and more powerful, we'll use the [React Native Brownfield](https://github.com/callstack/react-native-brownfield) library.
+
 ## Creating a New RNEF Project (Automated)
 
-If you are creating a new RNEF project, you can select the `brownfield-ios` plugin to add brownfield capabilities for you.
+If you are creating a new RNEF project, you can select the `brownfield-ios` plugin to add brownfield capabilities, install dependencies, and jump to [6. Create the XCFramework](#6-create-the-xcframework) step.
 
 ## Integrating to An Existing RNEF Project (Manual)
 
-If you have an existing RNEF project, you can follow these steps to add brownfield capabilities:
+If you have an existing RNEF project, follow the instructions below.
 
 ### 1. Create a New Framework in React Native app's Xcode:
 
@@ -21,8 +23,8 @@ If you have an existing RNEF project, you can follow these steps to add brownfie
 1. Choose the `Framework` template
    ![Framework Target](/brownfield_framework_target.png)
 1. Give your framework a unique name. You'll use this name when adding it to your main app
-1. Right-click the framework folder and select `Convert to Group`. CocoaPods doesn't work properly with references.
-   ![The menu that appears when user right clicks on the generated framework folder](/brownfield_convert_to_group.png). Perform this step for both `<FrameworkName>` and `<FrameworkName>Tests` folders.
+1. Right-click the framework folder and select `Convert to Group`. CocoaPods doesn't work properly with references. Perform this step for both `<FrameworkName>` and `<FrameworkName>Tests` folders.
+   ![The menu that appears when user right clicks on the generated framework folder](/brownfield_convert_to_group.png)
 1. Set these build settings for your framework:
 
    | Build Setting                    | Value | What it does                                                                                      |
@@ -32,7 +34,7 @@ If you have an existing RNEF project, you can follow these steps to add brownfie
    | Skip Install                     | NO    | Makes sure Xcode creates the framework files we need.                                             |
    | Enable Module Verifier           | NO    | Skips testing the framework during build, which makes builds faster.                              |
 
-### 2. Set Up CocoaPods:
+### 2. Update CocoaPods in your React Native app:
 
 1. Add your new framework to `ios/Podfile`:
 
@@ -47,13 +49,15 @@ If you have an existing RNEF project, you can follow these steps to add brownfie
 
 ### 3. Add the Bundle Script:
 
-1. In Xcode, click on your app target
+1. In Xcode, click on your React Native app target
 1. Go to Build Phases
 1. Find the `Bundle React Native code and images` step
+   ![Bundle React Native code and images build phase](/bundle_phase.png)
 1. Copy the script from there
 1. Click on your framework target
 1. Go to Build Phases
 1. Click the + button and choose `New Run Script Phase`
+   ![New Run Script Phase](/new_run_script.png)
 1. Paste the script you copied
 1. Name the phase `Bundle React Native code and images`
 1. Add these files to the script's input files:
@@ -62,20 +66,20 @@ If you have an existing RNEF project, you can follow these steps to add brownfie
 
 ### 4. Create the Framework's Public Interface:
 
-1. Install `react-native-brownfield`:
+1. Install React Native Brownfield library:
    <PackageManagerTabs command="install @callstack/react-native-brownfield" />
 1. Create a new Swift file in your framework folder using Xcode with the following contents:
    ```swift
    // Export helpers from @callstack/react-native-brownfield library
    @_exported import ReactBrownfield
-   // Initializes a Bundle instance that points at the framework target. 
+   // Initializes a Bundle instance that points at the framework target.
    public let ReactNativeBundle = Bundle(for: InternalClassForBundle.self)
    class InternalClassForBundle {}
    ```
 
-### 5. Create the XCFramework:
+### 5. Setup RNEF's brownfield plugin:
 
-1. Add `@rnef/plugin-brownfield-ios` to your project
+1. Add `@rnef/plugin-brownfield-ios` to your React Native project
    <PackageManagerTabs command="install @rnef/plugin-brownfield-ios" />
 1. Add this to your `rnef.config.mjs`:
 
@@ -90,21 +94,32 @@ If you have an existing RNEF project, you can follow these steps to add brownfie
    };
    ```
 
-1. Open Terminal and run:
+### 6. Create the XCFramework
 
-   ```sh title="Terminal"
-   rnef package:ios --scheme <framework_target_name> --configuration Release
+Run the following command in Terminal:
+
+```sh title="Terminal"
+rnef package:ios --scheme <framework_target_name> --configuration Release
+```
+
+### 7. Add the Framework to Your iOS App:
+
+1. Open the `.rnef/cache/ios/package` directory and drag the following files into your app's Xcode project (you can select all at once):
+
+   ```
+   .rnef/cache/ios/package
+   ├── hermes.xcframework                  # JavaScript runtime
+   ├── ReactBrownfield.xcframework         # React Native Brownfield library
+   └── <framework_target_name>.xcframework # Your framework target
    ```
 
-### 6. Add the Framework to Your App:
+   ![Linked frameworks in Xcode sidebar](/frameworks_sidebar.png)
 
-1. `open .rnef/cache/ios/package` and drag the following files into your app's Xcode project:
-   ```
-   hermes.xcframework                  # JavaScript runtime
-   ReactBrownfield.xcframework         # react-native-brownfield package
-   <framework_target_name>.xcframework # Your framework target
-   ```
-1. Initialize React Native in `AppDelegate.swift`:
+   :::info
+   Xcode builds depend on files being referenced in the project file. If you create a new source file without using Xcode, your file is not going to be referenced by the project.
+   :::
+
+1. Initialize React Native in `AppDelegate.swift` and show it using `ReactNativeViewController` available from React Native Brownfield library:
 
    ```swift title="AppDelegate.swift" {6-9}
    import <framework_target_name>
@@ -112,67 +127,42 @@ If you have an existing RNEF project, you can follow these steps to add brownfie
    @main
    class AppDelegate: UIResponder, UIApplicationDelegate {
        func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
+           // Initialize React Native
            ReactNativeBrownfield.shared.bundle = ReactNativeBundle
            ReactNativeBrownfield.shared.startReactNative(onBundleLoaded: {
                print("React Native bundle loaded")
            }, launchOptions: launchOptions)
-           // ...
-       }
-   ```
 
-1. Add the `window` property to your `AppDelegate` or `SceneDelegate`:
-
-   If using `AppDelegate`:
-
-   ```swift title="AppDelegate.swift"
-   @main
-   class AppDelegate: UIResponder, UIApplicationDelegate {
-       var window: UIWindow?
-
-       func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
+           // Add `window` property required by React Native
            window = UIWindow(frame: UIScreen.main.bounds)
-           // ...
+
+           // Create VC that calls your module by name
+           let reactNativeVC = ReactNativeViewController(moduleName: "Enterprise")
+
+           // Display the view as full window or anyhow you need
+           window?.rootViewController = reactNativeVC
+           window?.makeKeyAndVisible()
        }
-   }
    ```
 
-   If using `SceneDelegate`:
+   :::note
+   Instead of using `AppDelegate` you can also use `SceneDelegate`
+   :::
 
-   ```swift title="SceneDelegate.swift"
-   class SceneDelegate: UIResponder, UIWindowSceneDelegate {
-       var window: UIWindow?
+   ### 8. Run the your native iOS App
 
-       func scene(
-           _ scene: UIScene, willConnectTo _: UISceneSession,
-           options _: UIScene.ConnectionOptions
-       ) {
-           guard let windowScene = (scene as? UIWindowScene) else { return }
+   Now that you have everything set up, you can run your app in Debug or Release configuration, and it will display a React Native app we just packaged with `package:ios` command.
 
-           window = UIWindow(windowScene: windowScene)
+   #### Debug configuration
 
-           let customViewController = CustomViewController()
+   When running in Debug, React Native Brownfield will expect you to run a JS dev server.
 
-           window.rootViewController = customViewController
-           window.makeKeyAndVisible()
-       }
-   }
+   You can do so by running `start` command in your Terminal app:
+
+   ```shell
+   npx rnef start
    ```
 
-1. Show the React Native view:
+   #### Release configuration
 
-   ```swift title="MyViewController.swift"
-   import UIKit
-   import <framework_target_name>
-
-   class ViewController: UIViewController {
-       override func viewDidLoad() {
-           super.viewDidLoad()
-           view = ReactNativeBrownfield.shared.view(
-               moduleName: "MyModule", // Replace with name passed to AppRegistry.registerComponent
-               initialProps: ["message": "hello world!"],
-           )
-       }
-   }
-   ```
-
-[^1]: Xcode builds depend on files being referenced in the project file. If you create a new source file without using Xcode, your file is not going to be referenced by the project.
+   When running in Release, React Native Brownfield will load the JS bundle (`main.jsbundle`) directly from the release XCFramework file without requiring you to run any JavaScript tooling.
