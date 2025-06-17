@@ -7,10 +7,10 @@ export function spawn(
   args?: readonly string[],
   options?: Options
 ): Subprocess {
-  const defualtStream = logger.isVerbose() ? 'inherit' : 'pipe';
+  const defaultStream = logger.isVerbose() ? 'inherit' : 'pipe';
   const defaultOptions: Options = {
-    stdin: defualtStream,
-    stdout: defualtStream,
+    stdin: defaultStream,
+    stdout: defaultStream,
     // Always 'pipe' stderr to handle errors properly down the line
     stderr: 'pipe',
   };
