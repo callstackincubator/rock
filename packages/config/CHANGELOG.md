@@ -1,5 +1,15 @@
 # @rnef/config
 
+## 0.7.25
+
+### Patch Changes
+
+- Updated dependencies [02d0a0b]
+- Updated dependencies [e5e6a31]
+- Updated dependencies [e45fc32]
+  - @rnef/tools@0.7.25
+  - @rnef/provider-github@0.7.25
+
 ## 0.7.24
 
 ### Patch Changes

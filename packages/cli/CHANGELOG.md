@@ -1,5 +1,16 @@
 # @rnef/cli
 
+## 0.7.25
+
+### Patch Changes
+
+- 65ba8a8: fix: filter null fingerprint sources; output sources to stderr when --raw
+- Updated dependencies [02d0a0b]
+- Updated dependencies [e5e6a31]
+- Updated dependencies [e45fc32]
+  - @rnef/tools@0.7.25
+  - @rnef/config@0.7.25
+
 ## 0.7.24
 
 ### Patch Changes

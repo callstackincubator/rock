@@ -1,5 +1,17 @@
 # @rnef/plugin-brownfield-android
 
+## 0.7.25
+
+### Patch Changes
+
+- d509636: feat: turn on R8 by default in release
+- Updated dependencies [d509636]
+- Updated dependencies [02d0a0b]
+- Updated dependencies [e5e6a31]
+- Updated dependencies [e45fc32]
+  - @rnef/platform-android@0.7.25
+  - @rnef/tools@0.7.25
+
 ## 0.7.24
 
 ### Patch Changes

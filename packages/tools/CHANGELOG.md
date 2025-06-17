@@ -1,5 +1,13 @@
 # @rnef/tools
 
+## 0.7.25
+
+### Patch Changes
+
+- 02d0a0b: Collect stderr stream for verbose mode in order to catch and report correct errors in the CLI.
+- e5e6a31: feat: extract and inject debugId in hermes sourcemaps
+- e45fc32: feat: support hermes sourcemap compose
+
 ## 0.7.24
 
 ## 0.7.23
