@@ -1,4 +1,4 @@
-<a href="https://www.callstack.com/open-source" align="center">
+<a href="https://www.callstack.com/open-source?utm_campaign=generic&utm_source=github&utm_medium=referral&utm_content=rnef" align="center">
   <picture>
     <img alt="React Native Enterprise Framework" src="https://github.com/user-attachments/assets/5d7d2dd4-4561-431c-a70b-05a76896b8d4">
   </picture>
