@@ -7,8 +7,12 @@ export function spawn(
   args?: readonly string[],
   options?: Options
 ): Subprocess {
+  const defaultStream = logger.isVerbose() ? 'inherit' : 'pipe';
   const defaultOptions: Options = {
-    stdio: logger.isVerbose() ? 'inherit' : 'pipe',
+    stdin: defaultStream,
+    stdout: defaultStream,
+    // Always 'pipe' stderr to handle errors properly down the line
+    stderr: 'pipe',
   };
   logger.debug(`Running: ${file}`, ...(args ?? []));
   const childProcess = nanoSpawn(file, args, { ...defaultOptions, ...options });
