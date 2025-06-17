@@ -73,6 +73,8 @@ After adding these, sync your project and run `./gradlew assembleRelease` to ver
 Create a new file called `ReactNativeHostManager.kt` in your `rnbrownfield` module:
 
 ```kotlin
+package com.callstack.rnbrownfield // If you used a different package name when creating the library, change it here
+
 import android.app.Application
 import com.facebook.react.ReactNativeHost
 import com.facebook.react.ReactPackage
@@ -169,6 +171,8 @@ android {
 Create a new file called `RNViewFactory.kt` to wrap your React Native UI in a `FrameLayout`:
 
 ```kotlin title="RNViewFactory.kt"
+package com.callstack.rnbrownfield // If you used a different package name when creating the library, change it here
+
 import android.content.Context
 import android.os.Bundle
 import android.widget.FrameLayout
