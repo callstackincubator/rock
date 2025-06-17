@@ -335,7 +335,17 @@ tasks.named("generateMetadataFileForMavenAarPublication") {
 
 > Note: You'll need an existing Android app or create a new one in Android Studio.
 
-1. Add the dependency to your app's `build.gradle.kts`:
+1. Add `mavenLocal()` to your app's dependency resolution in `settings.gradle.kts`:
+
+   ```groovy title="settings.gradle.kts" {3}
+    dependencyResolutionManagement {
+        repositories {
+            mavenLocal()
+        }
+    }
+   ```
+
+2. Add the dependency to your app's `build.gradle.kts`:
 
    ```groovy title="build.gradle.kts" {2}
    dependencies {
@@ -343,7 +353,7 @@ tasks.named("generateMetadataFileForMavenAarPublication") {
    }
    ```
 
-1. Initialize React Native in your `MainActivity`:
+3. Initialize React Native in your `MainActivity`:
 
    ```kotlin
    class MainActivity : AppCompatActivity() {
