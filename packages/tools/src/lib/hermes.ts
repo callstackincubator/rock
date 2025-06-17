@@ -32,6 +32,42 @@ function getComposeSourceMapsPath(): string {
   return composeSourceMapsPath;
 }
 
+/**
+ * Extracts debugId from sourcemap file.
+ * @see https://github.com/tc39/ecma426/blob/main/proposals/debug-id.md
+ * @param sourceMapPath - Sourcemap file path
+ * @returns debugId value. Returns null if extraction fails
+ */
+function extractDebugId(sourceMapPath: string): string | null {
+  try {
+    const sourceMapContent = fs.readFileSync(sourceMapPath, 'utf-8');
+    const sourceMap = JSON.parse(sourceMapContent);
+    return sourceMap.debugId;
+  } catch {
+    return null;
+  }
+}
+
+/**
+ * Inject debugId into sourcemap file at the top level.
+ * @see https://github.com/tc39/ecma426/blob/main/proposals/debug-id.md
+ * @param sourceMapPath - Sourcemap file path
+ * @param debugId - debugId value to inject
+ * @throws {RnefError} Throws an error if injection fails
+ */
+function injectDebugId(sourceMapPath: string, debugId: string) {
+  try {
+    const sourceMapContent = fs.readFileSync(sourceMapPath, 'utf-8');
+    const sourceMap = JSON.parse(sourceMapContent);
+    sourceMap.debugId = debugId;
+    fs.writeFileSync(sourceMapPath, JSON.stringify(sourceMap));
+  } catch {
+    throw new RnefError(
+      `Failed to inject debugId into sourcemap: ${sourceMapPath}`
+    );
+  }
+}
+
 export async function runHermes({
   bundleOutputPath,
   sourcemapOutputPath,
@@ -79,6 +115,9 @@ export async function runHermes({
     const composeSourceMapsPath = getComposeSourceMapsPath();
 
     try {
+      // Extract debugId from original sourcemap
+      const debugId = extractDebugId(sourcemapOutputPath);
+
       await spawn('node', [
         composeSourceMapsPath,
         sourcemapOutputPath,
@@ -86,6 +125,12 @@ export async function runHermes({
         '-o',
         sourcemapOutputPath,
       ]);
+
+      // Inject debugId back into the composed sourcemap
+      if (debugId) {
+        injectDebugId(sourcemapOutputPath, debugId);
+      }
+
     } catch (error) {
       throw new RnefError(
         'Failed to run compose-source-maps script',
