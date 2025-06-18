@@ -1,5 +1,13 @@
 # @rnef/plugin-brownfield-ios
 
+## 0.7.26
+
+### Patch Changes
+
+- 6acb2db: Implement [react-native-brownfield](https://github.com/callstack/react-native-brownfield) to iOS brownfield template.
+  - @rnef/platform-apple-helpers@0.7.26
+  - @rnef/tools@0.7.26
+
 ## 0.7.25
 
 ### Patch Changes

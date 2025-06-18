@@ -1,5 +1,12 @@
 # @rnef/create-app
 
+## 0.7.26
+
+### Patch Changes
+
+- 6acb2db: List the `brownfield-ios` plugin on the plugins list shown while creating an app.
+  - @rnef/tools@0.7.26
+
 ## 0.7.25
 
 ### Patch Changes

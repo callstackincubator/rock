@@ -1,6 +1,6 @@
 {
   "name": "@rnef/provider-s3",
-  "version": "0.7.25",
+  "version": "0.7.26",
   "type": "module",
   "exports": {
     "types": "./dist/src/index.d.ts",
@@ -16,7 +16,7 @@
   "dependencies": {
     "@aws-sdk/client-s3": "^3.830.0",
     "@aws-sdk/s3-request-presigner": "^3.830.0",
-    "@rnef/tools": "^0.7.25",
+    "@rnef/tools": "^0.7.26",
     "tslib": "^2.3.0"
   },
   "publishConfig": {
