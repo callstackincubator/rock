@@ -110,7 +110,7 @@ export const pluginBrownfieldIos =
         loader.start('');
         loader.stop(
           `XCFrameworks are available at: ${color.cyan(
-            frameworkTargetOutputDir
+            path.relative(process.cwd(), frameworkTargetOutputDir)
           )}`
         );
 

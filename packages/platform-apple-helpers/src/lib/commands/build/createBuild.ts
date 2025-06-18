@@ -67,7 +67,11 @@ export const createBuild = async ({
     if (!args.archive) {
       const loader = spinner();
       loader.start('');
-      loader.stop(`Build available at: ${color.cyan(appPath)}`);
+      loader.stop(
+        `Build available at: ${color.cyan(
+          path.relative(process.cwd(), appPath)
+        )}`
+      );
       saveLocalBuildCache(artifactName, appPath);
     }
     xcodeProject = buildAppResult.xcodeProject;
