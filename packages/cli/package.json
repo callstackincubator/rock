@@ -2,7 +2,12 @@
   "name": "@rnef/cli",
   "version": "0.7.25",
   "type": "module",
+  "types": "./dist/src/index.d.ts",
   "exports": {
+    ".": {
+      "types": "./dist/src/index.d.ts",
+      "default": null
+    },
     "./package.json": "./package.json"
   },
   "bin": {
