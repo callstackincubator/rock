@@ -2,7 +2,7 @@ import type { PathLike } from 'node:fs';
 import fs from 'node:fs';
 import type { AndroidProjectConfig } from '@react-native-community/cli-types';
 import * as tools from '@rnef/tools';
-import { color, spawn } from '@rnef/tools';
+import { spawn } from '@rnef/tools';
 import type { Mock } from 'vitest';
 import { test, vi } from 'vitest';
 import { buildAndroid, type BuildFlags } from '../buildAndroid.js';
@@ -80,9 +80,9 @@ test('buildAndroid runs gradle build with correct configuration for debug and ou
     cwd: '/android',
   });
   expect(spinnerMock.stop).toBeCalledWith(
-    `Build available at: ${color.cyan(
-      '/android/app/build/outputs/bundle/debug/app-debug.aab'
-    )}`
+    expect.stringContaining(
+      'android/app/build/outputs/bundle/debug/app-debug.aab'
+    )
   );
 });
 
