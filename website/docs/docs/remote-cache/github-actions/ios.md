@@ -87,8 +87,9 @@ A certificate can be either Development or Distribution. The Development certifi
 
 A certificate has a public and private part. The public part can generally be downloaded from the Apple Developer portal, while the private part is stored on a developer’s machine and needs to be distributed separately (e.g., to other developers or CI).
 
-> [!IMPORTANT]
-> You need to have access to both the public and private parts of the certificate on the CI to generate an IPA file.
+:::info
+You need to have access to both the public and private parts of the certificate on the CI to generate an IPA file.
+:::
 
 In order to install the certificate on GitHub Actions, you need to export the certificate (including the private key) as a base64 string, as described in the [GitHub docs](https://docs.github.com/en/actions/use-cases-and-examples/deploying/installing-an-apple-certificate-on-macos-runners-for-xcode-development). You can do it using the following command, which will copy the contents to your clipboard:
 
@@ -98,8 +99,9 @@ base64 -i BUILD_CERTIFICATE.p12 | pbcopy
 
 Once created, store it as `RNEF_APPLE_CERTIFICATE_BASE64` secret on your GitHub repository.
 
-> [!NOTE]
-> A modern alternative to the Distribution certificate is the "Distributed Managed" certificate, which is a managed certificate where the private part is stored on Apple’s servers, and Apple actually handles the signing operation.
+:::note
+A modern alternative to the Distribution certificate is the "Distributed Managed" certificate, which is a managed certificate where the private part is stored on Apple’s servers, and Apple actually handles the signing operation.
+:::
 
 #### GitHub Actions Secrets
 

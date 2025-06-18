@@ -1,6 +1,7 @@
 import {
   color,
   intro,
+  isInteractive,
   note,
   outro,
   promptConfirm,
@@ -124,7 +125,7 @@ export function promptPlatforms(
 export function promptPlugins(
   plugins: TemplateInfo[]
 ): Promise<TemplateInfo[] | null> {
-  if (plugins.length === 0) {
+  if (plugins.length === 0 || !isInteractive()) {
     return Promise.resolve(null);
   }
 

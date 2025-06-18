@@ -1,3 +1,4 @@
+import path from 'node:path';
 import type { AndroidProjectConfig } from '@react-native-community/cli-types';
 import type { FingerprintSources } from '@rnef/tools';
 import {
@@ -43,7 +44,11 @@ export async function buildAndroid(
   if (outputFilePath) {
     const loader = spinner();
     loader.start('');
-    loader.stop(`Build available at: ${color.cyan(outputFilePath)}`);
+    loader.stop(
+      `Build available at: ${color.cyan(
+        path.relative(process.cwd(), outputFilePath)
+      )}`
+    );
   }
   outro('Success 🎉.');
 }

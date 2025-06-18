@@ -27,6 +27,7 @@ export const createBuild = async ({
   projectRoot,
   reactNativePath,
   fingerprintOptions,
+  brownfield,
 }: {
   platformName: BuilderCommand['platformName'];
   projectConfig: ProjectConfig;
@@ -34,11 +35,13 @@ export const createBuild = async ({
   projectRoot: string;
   reactNativePath: string;
   fingerprintOptions: FingerprintSources;
+  brownfield?: boolean;
 }) => {
   await validateArgs(args);
 
   let xcodeProject: XcodeProjectInfo;
   let sourceDir: string;
+  let scheme: string;
   const deviceOrSimulator = args.destination
     ? // there can be multiple destinations, so we'll pick the first one
       args.destination[0].match(/simulator/i)
@@ -58,16 +61,24 @@ export const createBuild = async ({
       platformName,
       args,
       reactNativePath,
+      brownfield,
     });
     // The path may not exist when we archive
     if (!args.archive) {
       const loader = spinner();
       loader.start('');
-      loader.stop(`Build available at: ${color.cyan(appPath)}`);
+      loader.stop(
+        `Build available at: ${color.cyan(
+          path.relative(process.cwd(), appPath)
+        )}`
+      );
       saveLocalBuildCache(artifactName, appPath);
     }
     xcodeProject = buildAppResult.xcodeProject;
     sourceDir = buildAppResult.sourceDir;
+    // @ts-expect-error - scheme is not set when binaryPath is provided,
+    // which is not supported for build command (but is used by run command)
+    scheme = buildAppResult.scheme;
   } catch (error) {
     const message = `Failed to create ${args.archive ? 'archive' : 'build'}`;
     throw new RnefError(message, { cause: error });
@@ -92,6 +103,8 @@ export const createBuild = async ({
     // Save the IPA to the local build cache so it's available for remote-cache command
     saveLocalBuildCache(artifactName, ipaPath);
   }
+
+  return { scheme };
 };
 
 async function validateArgs(args: BuildFlags) {

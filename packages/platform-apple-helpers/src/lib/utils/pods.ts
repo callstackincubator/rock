@@ -23,7 +23,8 @@ export async function installPodsIfNeeded(
   platformName: ApplePlatform,
   sourceDir: string,
   newArch: boolean,
-  reactNativePath: string
+  reactNativePath: string,
+  brownfield?: boolean
 ) {
   const podsPath = path.join(sourceDir, 'Pods');
   const podfilePath = path.join(sourceDir, 'Podfile');
@@ -43,7 +44,13 @@ export async function installPodsIfNeeded(
 
   if (!podsDirExists || hashChanged) {
     await runCodegen({ projectRoot, platformName, reactNativePath, sourceDir });
-    await installPods({ projectRoot, sourceDir, podfilePath, newArch });
+    await installPods({
+      projectRoot,
+      sourceDir,
+      podfilePath,
+      newArch,
+      brownfield,
+    });
     cacheManager.set(
       cacheKey,
       calculateCurrentHash({ podfilePath, podsPath, nativeDependencies })
@@ -92,6 +99,7 @@ async function runPodInstall(options: {
   sourceDir: string;
   newArch: boolean;
   useBundler: boolean;
+  brownfield?: boolean;
 }) {
   if (!options.useBundler) {
     await validatePodCommand(options.sourceDir);
@@ -113,6 +121,7 @@ async function runPodInstall(options: {
       env: {
         RCT_NEW_ARCH_ENABLED: options.newArch ? '1' : '0',
         RCT_IGNORE_PODS_DEPRECATION: '1',
+        ...(options.brownfield && { USE_FRAMEWORKS: 'static' }),
         ...(process.env['USE_THIRD_PARTY_JSC'] && {
           USE_THIRD_PARTY_JSC: process.env['USE_THIRD_PARTY_JSC'],
         }),
@@ -137,6 +146,7 @@ async function runPodInstall(options: {
         sourceDir: options.sourceDir,
         newArch: options.newArch,
         useBundler: options.useBundler,
+        brownfield: options.brownfield,
       });
     } else {
       throw new RnefError(
@@ -177,6 +187,7 @@ async function installPods(options: {
   projectRoot: string;
   podfilePath: string;
   newArch: boolean;
+  brownfield?: boolean;
 }) {
   if (!fs.existsSync(options.podfilePath)) {
     logger.debug(
@@ -195,6 +206,7 @@ async function installPods(options: {
     sourceDir: options.sourceDir,
     newArch: options.newArch,
     useBundler,
+    brownfield: options.brownfield,
   });
 }
 
