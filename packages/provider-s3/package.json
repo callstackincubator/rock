@@ -14,7 +14,8 @@
     "publish:verdaccio": "npm publish --registry http://localhost:4873 --userconfig ../../.npmrc"
   },
   "dependencies": {
-    "@aws-sdk/client-s3": "^3.816.0",
+    "@aws-sdk/client-s3": "^3.830.0",
+    "@aws-sdk/s3-request-presigner": "^3.830.0",
     "@rnef/tools": "^0.7.25",
     "tslib": "^2.3.0"
   },
