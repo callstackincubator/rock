@@ -17,6 +17,12 @@ vi.mock('@aws-sdk/client-s3', () => {
   };
 });
 
+vi.mock('@aws-sdk/s3-request-presigner', () => {
+  return {
+    getSignedUrl: vi.fn(() => 'https://test-bucket.s3.amazonaws.com/rnef-artifacts/rnef-android-debug-1234567890.zip'),
+  };
+});
+
 test('providerS3 implements list method returning an array of artifacts', async () => {
   const mockSend = (clientS3 as any).mockSend;
   mockSend.mockResolvedValueOnce({
@@ -48,7 +54,7 @@ test('providerS3 implements list method returning an array of artifacts', async 
   expect(result).toEqual([
     {
       name: 'rnef-android-debug-1234567890',
-      url: 'test-bucket/rnef-artifacts/rnef-android-debug-1234567890.zip',
+      url: 'https://test-bucket.s3.amazonaws.com/rnef-artifacts/rnef-android-debug-1234567890.zip',
     },
   ]);
 });
@@ -143,7 +149,7 @@ test('providerS3 implements upload method', async () => {
   expect(mockSend).toHaveBeenCalled();
   expect(result).toEqual({
     name: 'rnef-android-debug-1234567890',
-    url: 'test-bucket/rnef-artifacts/rnef-android-debug-1234567890.zip',
+    url: 'https://test-bucket.s3.amazonaws.com/rnef-artifacts/rnef-android-debug-1234567890.zip',
   });
 });
 
@@ -176,7 +182,7 @@ test('providerS3 supports R2', async () => {
   expect(result).toEqual([
     {
       name: 'rnef-android-debug-1234567890',
-      url: 'test-bucket/rnef-artifacts-r2/rnef-android-debug-1234567890.zip',
+      url: 'https://test-bucket.s3.amazonaws.com/rnef-artifacts/rnef-android-debug-1234567890.zip',
     },
   ]);
 });
