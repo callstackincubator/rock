@@ -9,7 +9,7 @@ The most basic configuration would, assuming you only support iOS platform and c
 import { platformIOS } from '@rnef/platform-ios';
 import { pluginMetro } from '@rnef/plugin-metro';
 
-/** @type {import('@rnef/config').Config} */
+/** @type {import('@rnef/cli').Config} */
 export default {
   bundler: pluginMetro(),
   platforms: {
