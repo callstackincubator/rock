@@ -203,6 +203,19 @@ export default {
 };
 ```
 
+#### S3 Provider Options
+
+| Option               | Type     | Required | Description                                                                          |
+| -------------------- | -------- | -------- | ------------------------------------------------------------------------------------ |
+| `endpoint`           | `string` | No       | Optional endpoint, necessary for self-hosted S3 servers or Cloudflare R2 integration |
+| `bucket`             | `string` | Yes      | The bucket name to use for the S3 server                                             |
+| `region`             | `string` | Yes      | The region of the S3 server                                                          |
+| `accessKeyId`        | `string` | Yes      | The access key ID for the S3 server                                                  |
+| `secretAccessKey`    | `string` | Yes      | The secret access key for the S3 server                                              |
+| `directory`          | `string` | No       | The directory to store artifacts in the S3 server (defaults to `rnef-artifacts`)     |
+| `name`               | `string` | No       | The display name of the provider (defaults to `S3`)                                  |
+| `linkExpirationTime` | `number` | No       | The time in seconds for presigned URLs to expire (defaults to 24 hours)              |
+
 #### Cloudflare R2
 
 Thanks to R2 interface being compatible with S3, you can store and retrieve your native build artifacts from Cloudflare R2 storage using S3 provider. Set the `endpoint` option to point to your account storage.

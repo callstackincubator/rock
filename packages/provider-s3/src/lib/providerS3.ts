@@ -1,4 +1,5 @@
 import * as clientS3 from '@aws-sdk/client-s3';
+import { getSignedUrl } from '@aws-sdk/s3-request-presigner';
 import type { RemoteArtifact, RemoteBuildCache } from '@rnef/tools';
 import type { Readable } from 'stream';
 
@@ -41,6 +42,10 @@ type ProviderConfig = {
    * The display name of the provider
    */
   name?: string;
+  /**
+   * The time in seconds for the presigned URL to expire. By default, it is 24 hours.
+   */
+  linkExpirationTime?: number;
 };
 
 export class S3BuildCache implements RemoteBuildCache {
@@ -49,6 +54,7 @@ export class S3BuildCache implements RemoteBuildCache {
   s3: clientS3.S3Client;
   bucket: string;
   config: ProviderConfig;
+  linkExpirationTime: number;
 
   constructor(config: ProviderConfig) {
     this.config = config;
@@ -65,6 +71,7 @@ export class S3BuildCache implements RemoteBuildCache {
     this.bucket = bucketTokens.shift() as string;
     this.directory = config.directory ?? this.directory;
     this.name = config.name ?? this.name;
+    this.linkExpirationTime = config.linkExpirationTime ?? 3600 * 24;
   }
 
   async list({
@@ -80,12 +87,28 @@ export class S3BuildCache implements RemoteBuildCache {
           : `${this.directory}/`,
       })
     );
-    return (
-      artifacts.Contents?.map((artifact) => ({
-        name: artifactName ?? artifact.Key?.split('/').pop() ?? '',
-        url: `${this.bucket}/${artifact.Key}`,
-      })) ?? []
-    );
+
+    const results: RemoteArtifact[] = [];
+
+    for (const artifact of artifacts.Contents ?? []) {
+      if (!artifact.Key) continue;
+
+      const name = artifactName ?? artifact.Key.split('/').pop() ?? '';
+
+      // Generate presigned URL for each artifact
+      const presignedUrl = await getSignedUrl(
+        this.s3,
+        new clientS3.GetObjectCommand({
+          Bucket: this.bucket,
+          Key: artifact.Key,
+        }),
+        { expiresIn: this.linkExpirationTime }
+      );
+
+      results.push({ name, url: presignedUrl });
+    }
+
+    return results;
   }
 
   async download({
@@ -138,10 +161,12 @@ export class S3BuildCache implements RemoteBuildCache {
     artifactName: string;
     buffer: Buffer;
   }): Promise<RemoteArtifact> {
+    const key = `${this.directory}/${artifactName}.zip`;
+
     await this.s3.send(
       new clientS3.PutObjectCommand({
         Bucket: this.bucket,
-        Key: `${this.directory}/${artifactName}.zip`,
+        Key: key,
         Body: buffer,
         ContentLength: buffer.length,
         Metadata: {
@@ -149,10 +174,15 @@ export class S3BuildCache implements RemoteBuildCache {
         },
       })
     );
-    return {
-      name: artifactName,
-      url: `${this.bucket}/${this.directory}/${artifactName}.zip`,
-    };
+
+    // Generate a presigned URL for the uploaded object
+    const presignedUrl = await getSignedUrl(
+      this.s3,
+      new clientS3.GetObjectCommand({ Bucket: this.bucket, Key: key }),
+      { expiresIn: this.linkExpirationTime }
+    );
+
+    return { name: artifactName, url: presignedUrl };
   }
 }
 

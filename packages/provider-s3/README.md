@@ -42,6 +42,10 @@ type ProviderConfig = {
    * The display name of the provider
    */
   name?: string;
+  /**
+   * The time in seconds for the presigned URL to expire. By default, it is 24 hours.
+   */
+  linkExpirationTime?: number;
 };
 ```
 
