@@ -1,5 +1,13 @@
 # @rnef/cli
 
+## 0.7.26
+
+### Patch Changes
+
+- 778a11f: fix: export Config type from @rnef/cli
+  - @rnef/config@0.7.26
+  - @rnef/tools@0.7.26
+
 ## 0.7.25
 
 ### Patch Changes

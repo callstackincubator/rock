@@ -1,5 +1,11 @@
 # @rnef/platform-apple-helpers
 
+## 0.7.26
+
+### Patch Changes
+
+- @rnef/tools@0.7.26
+
 ## 0.7.25
 
 ### Patch Changes

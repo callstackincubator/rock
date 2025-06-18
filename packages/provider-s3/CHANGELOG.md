@@ -1,5 +1,12 @@
 # @rnef/provider-s3
 
+## 0.7.26
+
+### Patch Changes
+
+- 4d4dce0: feat: support presigned links in s3 provider
+  - @rnef/tools@0.7.26
+
 ## 0.7.25
 
 ### Patch Changes

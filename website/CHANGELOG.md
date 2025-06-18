@@ -1,5 +1,12 @@
 # rnef-docs
 
+## 1.0.7
+
+### Patch Changes
+
+- 778a11f: fix: export Config type from @rnef/cli
+- 4d4dce0: feat: support presigned links in s3 provider
+
 ## 1.0.6
 
 ### Patch Changes
