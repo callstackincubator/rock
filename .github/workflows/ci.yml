@@ -80,7 +80,7 @@ jobs:
           for dir in ./packages/*; do
             if [ -d "$dir" ]; then
               cd "$dir"
-              npx license-kit --copyleft
+              npx license-kit copyleft
               cd "$original_dir"
             fi
           done
