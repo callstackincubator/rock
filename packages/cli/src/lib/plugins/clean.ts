@@ -106,6 +106,11 @@ function findRnefProjects(baseDir: string): ProjectInfo[] {
   return projects;
 }
 
+/**
+ * Checks if a project has Metro configuration.
+ * @param projectRoot - The root directory of the project
+ * @returns True if the project has Metro configuration, false otherwise
+ */
 function hasMetroProject(projectRoot: string): boolean {
   const metroConfig = path.join(projectRoot, 'metro.config.js');
   const metroConfigTs = path.join(projectRoot, 'metro.config.ts');
@@ -149,6 +154,12 @@ function cleanTempDirectoryPattern(pattern: string): void {
   }
 }
 
+/**
+ * Creates an array of cleanup tasks for a specific project.
+ * @param projectRoot - The root directory of the project
+ * @param options - Clean options that affect task creation
+ * @returns Array of cleanup tasks with their configurations
+ */
 function createCleanupTasks(projectRoot: string, options: CleanOptions): CleanupTask[] {
   const tasks: CleanupTask[] = [];
 
@@ -316,6 +327,11 @@ function createCleanupTasks(projectRoot: string, options: CleanOptions): Cleanup
   return tasks;
 }
 
+/**
+ * Executes cleanup tasks for a specific project.
+ * @param projectRoot - The root directory of the project to clean
+ * @param options - Clean options that determine which tasks to run
+ */
 async function cleanProject(projectRoot: string, options: CleanOptions) {
   const tasks = createCleanupTasks(projectRoot, options);
   
@@ -372,6 +388,11 @@ async function cleanProject(projectRoot: string, options: CleanOptions) {
   }
 }
 
+/**
+ * Main command function that handles the overall clean operation.
+ * Determines whether to clean the current project or scan for projects in the directory.
+ * @param options - Clean options that control the cleanup behavior
+ */
 async function cleanCommand(options: CleanOptions) {
   intro('🧹 RNEF Clean');
   
