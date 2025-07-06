@@ -28,6 +28,7 @@ RNEF CLI uses a modular design where available commands depend on your configura
 | :------------ | :---------------------------------------------- |
 | `config`      | Outputs autolinking config (from Community CLI) |
 | `fingerprint` | Calculates fingerprint for project or platform  |
+| `clean`       | Cleans various caches to free up disk space     |
 | `help`        | Displays help menu for a command                |
 
 Additional commands for development, building, and running apps are provided by specialized plugins.
@@ -215,3 +216,12 @@ The `sign:android` command signs your Android app with a keystore, producing a s
 | `--build-jsbundle`             | Build JS bundle before signing            |
 | `--jsbundle <string>`          | Path to JS bundle to apply before signing |
 | `--no-hermes`                  | Don't use Hermes for JS bundle            |
+
+### `rnef clean` Options
+
+The `clean` command helps you free up disk space by removing various caches and temporary files from your React Native project. It can clean Android (Gradle), iOS (CocoaPods), Metro, Watchman, and package manager caches.
+
+| Option                         | Description                               |
+| :----------------------------- | :---------------------------------------- |
+| `--include <string>`           | Comma-separated list of caches to clean. Available options: `android`, `cocoapods`, `metro`, `watchman`, `npm`, `yarn`, `bun`, `pnpm`    |
+| `--all`                        | Clean all available caches                |
