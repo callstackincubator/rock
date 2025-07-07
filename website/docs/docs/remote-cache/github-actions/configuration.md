@@ -17,12 +17,6 @@ Settings -> Actions -> General -> Workflow Permissions -> **Read and write permi
 
 When using GitHub Actions workflows with RNEF, you can optimize your CI/CD pipelines by using `paths-ignore` to skip unnecessary workflow runs. This can significantly reduce CI time and costs, especially in large repositories where not all changes require rebuilding the mobile applications.
 
-### Why use paths-ignore?
-
-- **Save CI/CD minutes**: Skip mobile app builds when only irrelevant files change
-- **Faster feedback cycles**: Only run workflows when truly necessary
-- **Cost optimization**: Reduce computational resources needed for CI/CD
-
 ### How to implement paths-ignore
 
 Add a `paths-ignore` section to your workflow's trigger configuration to specify which file patterns should not trigger the workflow:
