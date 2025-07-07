@@ -13,6 +13,54 @@ Make sure to include the following workflow permissions for your project:
 
 Settings -> Actions -> General -> Workflow Permissions -> **Read and write permissions**
 
+## Optimizing CI/CD Performance with paths-ignore
+
+When using GitHub Actions workflows with RNEF, you can optimize your CI/CD pipelines by using `paths-ignore` to skip unnecessary workflow runs. This can significantly reduce CI time and costs, especially in large repositories where not all changes require rebuilding the mobile applications.
+
+### Why use paths-ignore?
+
+- **Save CI/CD minutes**: Skip mobile app builds when only irrelevant files change
+- **Faster feedback cycles**: Only run workflows when truly necessary
+- **Cost optimization**: Reduce computational resources needed for CI/CD
+
+### How to implement paths-ignore
+
+Add a `paths-ignore` section to your workflow's trigger configuration to specify which file patterns should not trigger the workflow:
+
+```yaml
+name: Mobile Build
+
+on:
+  push:
+    branches:
+      - main
+    paths-ignore:
+      - '*.md'                    # Skip documentation changes
+      - 'docs/**'                 # Skip documentation directory
+      - '.github/ISSUE_TEMPLATE/**' # Skip issue templates
+      - 'web/**'                  # Skip web-specific code
+      - 'server/**'               # Skip backend code
+      - 'design/**'               # Skip design files
+  pull_request:
+    branches:
+      - main
+    paths-ignore:
+      - '*.md'
+      - 'docs/**'
+      - '.github/ISSUE_TEMPLATE/**'
+      - 'web/**'
+      - 'server/**'
+      - 'design/**'
+```
+
+### Best practices
+
+1. **Analyze your codebase structure**: Identify directories that don't affect your mobile app
+2. **Start broad, refine gradually**: Begin with obvious exclusions and refine based on experience
+3. **Monitor skipped runs**: Ensure your paths-ignore rules aren't skipping necessary builds
+4. **Consider dependencies**: If you're excluding directories, ensure they truly don't affect your app
+5. **Document your choices**: Add comments in your workflow files explaining the rationale for paths-ignore patterns
+
 ## Generate GitHub Personal Access Token for downloading cached builds
 
 You'll be asked about this token when cached build is available while running the `npx rnef run:` command.
