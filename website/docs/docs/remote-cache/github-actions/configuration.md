@@ -13,6 +13,28 @@ Make sure to include the following workflow permissions for your project:
 
 Settings -> Actions -> General -> Workflow Permissions -> **Read and write permissions**
 
+## GitHub Workflow Setup
+
+This is the recommended base setup for a GitHub Workflow file running our GitHub Actions:
+
+```yaml
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - '**'
+
+concurrency:
+  group: remote-build-ios-${{ github.ref }}
+```
+
+This configuration:
+- Runs the workflow on pushes to the `main` branch
+- Runs the workflow on pull requests to any branch
+
+
 ## Optimizing CI/CD Performance with paths-ignore
 
 When using GitHub Actions workflows with RNEF, you can optimize your CI/CD pipelines by using `paths-ignore` to skip unnecessary workflow runs. This can significantly reduce CI time and costs, especially in large repositories where not all changes require rebuilding the mobile applications.
