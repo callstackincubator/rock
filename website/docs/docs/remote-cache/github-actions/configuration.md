@@ -35,25 +35,8 @@ on:
       - 'web/**'                  # Skip web-specific code
       - 'server/**'               # Skip backend code
       - 'design/**'               # Skip design files
-  pull_request:
-    branches:
-      - main
-    paths-ignore:
-      - '*.md'
-      - 'docs/**'
-      - '.github/ISSUE_TEMPLATE/**'
-      - 'web/**'
-      - 'server/**'
-      - 'design/**'
+  # You can set similar config for pull_request hook
 ```
-
-### Best practices
-
-1. **Analyze your codebase structure**: Identify directories that don't affect your mobile app
-2. **Start broad, refine gradually**: Begin with obvious exclusions and refine based on experience
-3. **Monitor skipped runs**: Ensure your paths-ignore rules aren't skipping necessary builds
-4. **Consider dependencies**: If you're excluding directories, ensure they truly don't affect your app
-5. **Document your choices**: Add comments in your workflow files explaining the rationale for paths-ignore patterns
 
 ## Generate GitHub Personal Access Token for downloading cached builds
 
