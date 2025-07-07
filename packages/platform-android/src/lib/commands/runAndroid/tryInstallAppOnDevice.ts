@@ -3,7 +3,6 @@ import {
   logger,
   RnefError,
   spawn,
-  spinner,
   type SubprocessError,
 } from '@rnef/tools';
 import { getAdbPath } from './adb.js';
@@ -28,7 +27,7 @@ export async function tryInstallAppOnDevice(
   } else {
     deviceId = device.deviceId;
   }
-  logger.log(`Connected to device ${color.bold(device.readableName)}`);
+  logger.debug(`Connected to device ${color.bold(device.readableName)}`);
   let pathToApk: string;
   if (!binaryPath) {
     const outputFilePath = await findOutputFile(
@@ -57,13 +56,10 @@ export async function tryInstallAppOnDevice(
   adbArgs.push(pathToApk);
 
   const adbPath = getAdbPath();
-  const loader = spinner();
-  loader.start(`Installing the app on the device`);
   try {
     await spawn(adbPath, adbArgs, { stdio: 'pipe' });
-    loader.stop(`Installed the app`);
   } catch (error) {
-    loader.stop(`Failed: Installing the app`, 1);
+    logger.debug(`Failed: Installing the app`, error);
     const errorMessage =
       (error as SubprocessError).stderr || (error as SubprocessError).stdout;
     const isInsufficientStorage = errorMessage.includes(
@@ -77,14 +73,13 @@ export async function tryInstallAppOnDevice(
         const message = isInsufficientStorage
           ? 'Recovery: Trying to re-install the app due to insufficient storage'
           : 'Recovery: Trying to re-install the app due to binary incompatibility';
-        loader.start(message);
+        logger.debug(message);
         const appId = args.appId || androidProject.applicationId;
         await spawn(adbPath, ['-s', deviceId, 'uninstall', appId]);
         await spawn(adbPath, adbArgs);
-        loader.stop(`Recovery: Re-installed the app`);
+        logger.debug(`Recovery: Re-installed the app`);
         return;
       } catch (error) {
-        loader.stop(`Failed: Re-installing the app`, 1);
         const errorMessage =
           (error as SubprocessError).stderr ||
           (error as SubprocessError).stdout;

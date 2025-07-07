@@ -11,7 +11,6 @@ import {
   promptSelect,
   RnefError,
   saveLocalBuildCache,
-  spinner,
 } from '@rnef/tools';
 import type {
   ApplePlatform,
@@ -131,8 +130,6 @@ export const createRun = async ({
     }
   }
 
-  const loader = spinner();
-  loader.start('Looking for available devices and simulators');
   const devices = await listDevicesAndSimulators(platformName);
   if (devices.length === 0) {
     const { readableName } = getPlatformInfo(platformName);
@@ -140,11 +137,6 @@ export const createRun = async ({
       `No devices or simulators detected. Install simulators via Xcode or connect a physical ${readableName} device.`
     );
   }
-  const deviceCount = devices.filter(({ type }) => type === 'device').length;
-  const simulatorCount = devices.filter(
-    ({ type }) => type === 'simulator'
-  ).length;
-  loader.stop(`Found ${deviceCount} devices and ${simulatorCount} simulators.`);
   const device = await selectDevice(devices, args);
 
   if (device) {

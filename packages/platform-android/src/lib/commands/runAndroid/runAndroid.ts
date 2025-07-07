@@ -6,6 +6,7 @@ import type {
 } from '@react-native-community/cli-types';
 import type { FingerprintSources, RemoteBuildCache } from '@rnef/tools';
 import {
+  color,
   fetchCachedBuild,
   formatArtifactName,
   getLocalBuildCacheBinaryPath,
@@ -15,6 +16,7 @@ import {
   outro,
   promptSelect,
   RnefError,
+  spinner,
 } from '@rnef/tools';
 import type { BuildFlags } from '../buildAndroid/buildAndroid.js';
 import { options } from '../buildAndroid/buildAndroid.js';
@@ -238,8 +240,28 @@ async function runOnDevice({
   tasks: string[];
   binaryPath: string | undefined;
 }) {
+  const loader = spinner();
+  loader.start('Installing the app');
   await tryInstallAppOnDevice(device, androidProject, args, tasks, binaryPath);
-  await tryLaunchAppOnDevice(device, androidProject, args);
+  loader.message('Launching the app');
+  const { applicationIdWithSuffix } = await tryLaunchAppOnDevice(
+    device,
+    androidProject,
+    args
+  );
+  if (applicationIdWithSuffix) {
+    loader.stop(
+      `Installed and launched the app ${color.bold(
+        color.blue(applicationIdWithSuffix)
+      )} on ${color.bold(device.readableName)}`
+    );
+  } else {
+    loader.stop(
+      `Failed: installing and launching the app on ${color.bold(
+        device.readableName
+      )}`
+    );
+  }
 }
 
 export const runOptions = [

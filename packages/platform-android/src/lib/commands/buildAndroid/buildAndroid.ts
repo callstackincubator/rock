@@ -1,8 +1,8 @@
 import path from 'node:path';
 import type { AndroidProjectConfig } from '@react-native-community/cli-types';
-import type { FingerprintSources } from '@rnef/tools';
 import {
-  color,
+  colorLink,
+  type FingerprintSources,
   formatArtifactName,
   logger,
   outro,
@@ -45,7 +45,7 @@ export async function buildAndroid(
     const loader = spinner();
     loader.start('');
     loader.stop(
-      `Build available at: ${color.cyan(
+      `Build available at: ${colorLink(
         path.relative(process.cwd(), outputFilePath)
       )}`
     );
