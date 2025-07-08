@@ -8,7 +8,6 @@ import {
   getLocalBuildCacheBinaryPath,
   isInteractive,
   logger,
-  promptConfirm,
   promptSelect,
   RnefError,
   saveLocalBuildCache,
@@ -82,15 +81,12 @@ export const createRun = async ({
     } catch (error) {
       const message = (error as RnefError).message;
       const cause = (error as RnefError).cause;
-      logger.warn(message, cause ? `\nCause: ${cause.toString()}` : '');
-      const shouldContinueWithLocalBuild = await promptConfirm({
-        message: 'Would you like to continue with local build?',
-        confirmLabel: 'Yes',
-        cancelLabel: 'No',
-      });
-      if (!shouldContinueWithLocalBuild) {
-        throw new RnefError('Cancelled run');
-      }
+      logger.warn(
+        `Failed to fetch cached build for ${artifactName}: \n${message}`,
+        cause ? `\nCause: ${cause.toString()}` : ''
+      );
+      logger.debug('Remote cache failure error:', error);
+      logger.info('Continuing with local build');
     }
   }
 
