@@ -219,9 +219,10 @@ The `sign:android` command signs your Android app with a keystore, producing a s
 
 ### `rnef clean` Options
 
-The `clean` command helps you free up disk space by removing various caches and temporary files from your React Native project. It can clean Android (Gradle), iOS (CocoaPods), Metro, Watchman, and package manager caches.
+The `clean` command helps you free up disk space by removing various caches and temporary files from your React Native project. It can clean Android (Gradle), iOS (CocoaPods), Metro, Watchman, RNEF's own project caches, and package manager caches.
 
 | Option                         | Description                               |
 | :----------------------------- | :---------------------------------------- |
-| `--include <string>`           | Comma-separated list of caches to clean. Available options: `android`, `cocoapods`, `metro`, `watchman`, `npm`, `yarn`, `bun`, `pnpm`    |
-| `--all`                        | Clean all available caches                |
+| `--include <string>`           | Comma-separated list of caches to clean. Available options: `android`, `gradle`, `cocoapods`, `metro`, `watchman`, `npm`, `yarn`, `bun`, `pnpm`, `rnef`    |
+| `--verify-cache`               | Whether to verify the cache (currently only applies to npm cache)                |
+| `--all`                        | Clean all available caches without interactive prompt                |
