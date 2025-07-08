@@ -63,7 +63,7 @@ const OPTIONS = [
 export const registerSignCommand = (api: PluginApi) => {
   api.registerCommand({
     name: 'sign:android',
-    description: 'Sign the Android app',
+    description: 'Sign the Android app with modified JS bundle.',
     args: ARGUMENTS,
     options: OPTIONS,
     action: async (apkPath, flags: SignFlags) => {

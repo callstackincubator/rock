@@ -1,9 +1,8 @@
 import type { PluginApi } from '@rnef/config';
-import { modifyIpa } from '@rnef/platform-apple-helpers';
+import { modifyApp, modifyIpa } from '@rnef/platform-apple-helpers';
 
 export type SignFlags = {
-  verbose?: boolean;
-  ipa: string;
+  app: string;
   output?: string;
   identity?: string;
   buildJsbundle?: boolean;
@@ -13,19 +12,20 @@ export type SignFlags = {
 
 const ARGUMENTS = [
   {
-    name: 'ipa',
-    description: 'IPA file path',
+    name: 'binaryPath',
+    description: 'Path to the IPA or APP file.',
   },
 ];
 
 const OPTIONS = [
   {
-    name: '--verbose',
-    description: '',
+    name: '--app',
+    description: 'Modify APP file (directory) instead of IPA file. No signing is done.',
   },
   {
     name: '--identity <string>',
-    description: 'Certificate Identity name to use for code signing, e.g. "Apple Distribution: Your Team (HFJASKHDDS)".',
+    description:
+      'Certificate Identity name to use for code signing, e.g. "Apple Distribution: Your Team (HFJASKHDDS)".',
   },
   {
     name: '--output <string>',
@@ -48,19 +48,29 @@ const OPTIONS = [
 export const registerSignCommand = (api: PluginApi) => {
   api.registerCommand({
     name: 'sign:ios',
-    description: 'Sign the iOS app',
+    description: 'Sign the iOS app (IPA or APP file) with modified JS bundle.',
     args: ARGUMENTS,
     options: OPTIONS,
-    action: async (ipaPath, flags: SignFlags) => {
-      await modifyIpa({
-        platformName: 'ios',
-        ipaPath,
-        identity: flags.identity,
-        outputPath: flags.output,
-        buildJsBundle: flags.buildJsbundle,
-        jsBundlePath: flags.jsbundle,
-        useHermes: !flags.noHermes,
-      });
+    action: async (binaryPath, flags: SignFlags) => {
+      if (flags.app) {
+        await modifyApp({
+          appPath: binaryPath,
+          outputPath: flags.output,
+          buildJsBundle: flags.buildJsbundle,
+          jsBundlePath: flags.jsbundle,
+          useHermes: !flags.noHermes,
+        });
+      } else {
+        await modifyIpa({
+          platformName: 'ios',
+          ipaPath: binaryPath,
+          identity: flags.identity,
+          outputPath: flags.output,
+          buildJsBundle: flags.buildJsbundle,
+          jsBundlePath: flags.jsbundle,
+          useHermes: !flags.noHermes,
+        });
+      }
     },
   });
 };

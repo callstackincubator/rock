@@ -162,15 +162,20 @@ The build cache is populated either by a local build or when downloaded frome re
 
 ### `rnef sign:ios` Options
 
-The `sign:ios` command signs your iOS app with certificates and provisioning profiles, producing a signed IPA file ready for distribution.
+The `sign:ios` command either signs your iOS app with certificates and provisioning profiles, producing a signed IPA file ready for distribution, or modifies APP file without signing. It allows for replacing the JS bundle with a new version.
 
-| Option                | Description                                |
-| :-------------------- | :----------------------------------------- |
-| `--identity <string>` | Certificate Identity name for code signing |
-| `--output <string>`   | Path to output IPA file                    |
-| `--build-jsbundle`    | Build JS bundle before signing             |
-| `--jsbundle <string>` | Path to JS bundle to apply before signing  |
-| `--no-hermes`         | Don't use Hermes for JS bundle             |
+| Argument     | Description                 |
+| :----------- | :-------------------------- |
+| `binaryPath` | Path to the IPA or APP file |
+
+| Option                | Description                                                         |
+| :-------------------- | :------------------------------------------------------------------ |
+| `--app`               | Modify APP file (directory) instead of IPA file. No signing is done |
+| `--identity <string>` | Certificate Identity name for code signing                          |
+| `--output <string>`   | Path to output IPA file                                             |
+| `--build-jsbundle`    | Build JS bundle before signing                                      |
+| `--jsbundle <string>` | Path to JS bundle to apply before signing                           |
+| `--no-hermes`         | Don't use Hermes for JS bundle                                      |
 
 ### `rnef build:android` Options
 
@@ -205,7 +210,11 @@ Same as for `build:android` and:
 
 ### `rnef sign:android` Options
 
-The `sign:android` command signs your Android app with a keystore, producing a signed APK file ready for distribution.
+The `sign:android` command signs your Android app with a keystore, producing a signed APK file ready for distribution. It allows for replacing the JS bundle with a new version.
+
+| Argument     | Description          |
+| :----------- | :------------------- |
+| `binaryPath` | Path to the APK file |
 
 | Option                         | Description                               |
 | :----------------------------- | :---------------------------------------- |
