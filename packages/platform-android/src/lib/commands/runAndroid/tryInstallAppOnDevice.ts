@@ -85,13 +85,15 @@ export async function tryInstallAppOnDevice(
         const errorMessage =
           (error as SubprocessError).stderr ||
           (error as SubprocessError).stdout;
-        throw new RnefError(errorMessage);
+        throw new RnefError(
+          `The "adb" command failed with: ${errorMessage}. \nPlease uninstall the app manually and try again.`
+        );
       }
     }
     loader.stop(
       `Failed: Installing the app on ${device.readableName} (id: ${deviceId})`,
       1
     );
-    throw new RnefError(errorMessage);
+    throw new RnefError(`The "adb" command failed with: ${errorMessage}.`);
   }
 }
