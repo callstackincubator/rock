@@ -298,7 +298,7 @@ function createCleanupTasks(projectRoot: string, options: CleanOptions): Cleanup
   // RNEF cleanup
   tasks.push({
     name: 'rnef',
-    description: 'RNEF project cache and build artifacts',
+    description: 'RNEF project cache and build artifacts (iOS/Android)',
     enabled: true,
     action: async () => {
       const rnefCacheDir = path.join(projectRoot, '.rnef', 'cache');
@@ -312,6 +312,9 @@ function createCleanupTasks(projectRoot: string, options: CleanOptions): Cleanup
       
       // Clean iOS archive and export cache directory
       cleanDirectories(['ios'], rnefCacheDir);
+      
+      // Clean Android build cache directory
+      cleanDirectories(['android'], rnefCacheDir);
     },
   });
 
