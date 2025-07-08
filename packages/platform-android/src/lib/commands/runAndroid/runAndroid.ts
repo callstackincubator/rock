@@ -13,7 +13,6 @@ import {
   isInteractive,
   logger,
   outro,
-  promptConfirm,
   promptSelect,
   RnefError,
 } from '@rnef/tools';
@@ -86,15 +85,14 @@ export async function runAndroid(
         binaryPath = cachedBuild.binaryPath;
       }
     } catch (error) {
-      logger.warn((error as RnefError).message);
-      const shouldContinueWithLocalBuild = await promptConfirm({
-        message: 'Would you like to continue with local build?',
-        confirmLabel: 'Yes',
-        cancelLabel: 'No',
-      });
-      if (!shouldContinueWithLocalBuild) {
-        throw new RnefError('Cancelled run');
-      }
+      const message = (error as RnefError).message;
+      const cause = (error as RnefError).cause;
+      logger.warn(
+        `Failed to fetch cached build for ${artifactName}: \n${message}`,
+        cause ? `\nCause: ${cause.toString()}` : ''
+      );
+      logger.debug('Remote cache failure error:', error);
+      logger.info('Continuing with local build');
     }
   }
 
