@@ -131,12 +131,12 @@ export function promptPlugins(
 
   return promptMultiselect({
     message: 'Select plugins:',
-    initialValues: [plugins[0]],
     // @ts-expect-error todo fixup type
     options: plugins.map((plugin) => ({
       value: plugin,
       label: plugin.name,
     })),
+    required: false,
   });
 }
 
