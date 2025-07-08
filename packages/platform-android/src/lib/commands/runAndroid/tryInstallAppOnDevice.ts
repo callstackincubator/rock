@@ -65,7 +65,8 @@ export async function tryInstallAppOnDevice(
       `Installed the app on ${device.readableName} (id: ${deviceId}).`
     );
   } catch (error) {
-    const errorMessage = (error as SubprocessError).stdout;
+    const errorMessage =
+      (error as SubprocessError).stderr || (error as SubprocessError).stdout;
     if (errorMessage.includes('INSTALL_FAILED_INSUFFICIENT_STORAGE')) {
       try {
         loader.message('Trying to install again due to insufficient storage');
@@ -81,14 +82,18 @@ export async function tryInstallAppOnDevice(
           `Failed: Uninstalling and installing the app on ${device.readableName} (id: ${deviceId})`,
           1
         );
-        const errorMessage = (error as SubprocessError).stdout;
-        throw new RnefError(errorMessage);
+        const errorMessage =
+          (error as SubprocessError).stderr ||
+          (error as SubprocessError).stdout;
+        throw new RnefError(
+          `The "adb" command failed with: ${errorMessage}. \nPlease uninstall the app manually and try again.`
+        );
       }
     }
     loader.stop(
       `Failed: Installing the app on ${device.readableName} (id: ${deviceId})`,
       1
     );
-    throw new RnefError(errorMessage);
+    throw new RnefError(`The "adb" command failed with: ${errorMessage}.`);
   }
 }

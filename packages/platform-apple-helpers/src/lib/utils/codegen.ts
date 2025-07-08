@@ -35,7 +35,7 @@ async function runCodegen(options: CodegenOptions) {
     ]);
   } catch (error) {
     throw new RnefError('Failed to run React Native codegen script', {
-      cause: (error as SubprocessError).stdout,
+      cause: (error as SubprocessError).output,
     });
   }
 }
