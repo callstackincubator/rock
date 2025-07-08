@@ -41,6 +41,7 @@ const CLEANUP_TASK_NAMES = [
   'yarn',
   'bun',
   'pnpm',
+  'rnef',
 ] as const;
 
 
@@ -291,6 +292,26 @@ function createCleanupTasks(projectRoot: string, options: CleanOptions): Cleanup
       } catch (error) {
         logger.debug(`pnpm cache clean failed: ${error}`);
       }
+    },
+  });
+
+  // RNEF cleanup
+  tasks.push({
+    name: 'rnef',
+    description: 'RNEF project cache and build artifacts',
+    enabled: true,
+    action: async () => {
+      const rnefCacheDir = path.join(projectRoot, '.rnef', 'cache');
+      
+      // Clean project cache file
+      const projectCacheFile = path.join(rnefCacheDir, 'project.json');
+      removeDirectorySync(projectCacheFile);
+      
+      // Clean remote build cache directory
+      cleanDirectories(['remote-build'], rnefCacheDir);
+      
+      // Clean iOS archive and export cache directory
+      cleanDirectories(['ios'], rnefCacheDir);
     },
   });
 
