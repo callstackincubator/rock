@@ -1,5 +1,14 @@
 # @rnef/platform-android
 
+## 0.7.27
+
+### Patch Changes
+
+- 24d6e3a: fix: better errors when android install fails
+- 6f898c3: feat: add '--app' flag to sign:ios to support replacing js bundle in APP files
+- dc200cd: feat: continue with local build instead of prompting
+  - @rnef/tools@0.7.27
+
 ## 0.7.26
 
 ### Patch Changes
