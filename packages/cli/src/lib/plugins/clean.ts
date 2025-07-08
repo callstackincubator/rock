@@ -1,15 +1,14 @@
 import fs from 'node:fs';
+import os from 'node:os';
 import path from 'node:path';
 import type { PluginApi, PluginOutput } from '@rnef/config';
 import {
   color,
-  getProjectConfig,
   getProjectRoot,
   intro,
   logger,
   note,
   outro,
-  promptConfirm,
   promptMultiselect,
   RnefError,
   spawn,
@@ -30,14 +29,11 @@ type CleanupTask = {
   action: () => Promise<void>;
 };
 
-type ProjectInfo = {
-  name: string;
-  path: string;
-  configFile: string;
-};
+
 
 const CLEANUP_TASK_NAMES = [
   'android',
+  'gradle',
   'cocoapods', 
   'metro',
   'watchman',
@@ -64,47 +60,19 @@ function validateCleanupTasks(taskNames: string[]): void {
   }
 }
 
-/**
- * Recursively scans a directory for RNEF projects.
- * @param baseDir - The base directory to start scanning from
- * @returns Array of found RNEF project information
- */
-function findRnefProjects(baseDir: string): ProjectInfo[] {
-  const projects: ProjectInfo[] = [];
-  const visited = new Set<string>();
 
-  function scanDirectory(dir: string) {
+function removeDirectorySync(dirPath: string): void {
+  if (fs.existsSync(dirPath)) {
     try {
-      const resolvedDir = path.resolve(dir);
-      if (visited.has(resolvedDir)) return;
-      visited.add(resolvedDir);
-
-      try {
-        const configFile = getProjectConfig(resolvedDir);
-        projects.push({
-          name: path.basename(resolvedDir),
-          path: resolvedDir,
-          configFile,
-        });
-      } catch {
-        // Not an RNEF project, continue scanning
-      }
-
-      const entries = fs.readdirSync(resolvedDir, { withFileTypes: true });
-      for (const entry of entries) {
-        if (entry.isDirectory() && !entry.name.startsWith('.') && entry.name !== 'node_modules') {
-          scanDirectory(path.join(resolvedDir, entry.name));
-        }
-      }
+      fs.rmSync(dirPath, { recursive: true, force: true });
+      logger.debug(`Cleaned directory: ${dirPath}`);
     } catch (error) {
-      // Silently ignore permission errors and other issues
-      logger.debug(`Error scanning directory ${dir}: ${error}`);
+      logger.debug(`Failed to clean directory ${dirPath}: ${error}`);
     }
   }
-
-  scanDirectory(baseDir);
-  return projects;
 }
+
+
 
 /**
  * Checks if a project has Metro configuration.
@@ -137,7 +105,7 @@ function hasMetroProject(projectRoot: string): boolean {
  * @param pattern - The pattern to match temporary directory names
  */
 function cleanTempDirectoryPattern(pattern: string): void {
-  const tmpDir = process.env['TMPDIR'] || process.env['TMP'] || '/tmp';
+  const tmpDir = os.tmpdir();
   try {
     const tmpDirContents = fs.readdirSync(tmpDir);
     const matchingFiles = tmpDirContents
@@ -145,12 +113,22 @@ function cleanTempDirectoryPattern(pattern: string): void {
       .map(name => path.join(tmpDir, name));
     
     for (const file of matchingFiles) {
-      if (fs.existsSync(file)) {
-        fs.rmSync(file, { recursive: true, force: true });
-      }
+      removeDirectorySync(file);
     }
   } catch (error) {
     logger.debug(`${pattern} cache cleanup failed: ${error}`);
+  }
+}
+
+/**
+ * Cleans multiple directories by removing them recursively.
+ * @param directories - Array of directory paths to clean
+ * @param baseDir - Base directory to resolve relative paths from
+ */
+function cleanDirectories(directories: string[], baseDir: string): void {
+  for (const dir of directories) {
+    const fullPath = path.isAbsolute(dir) ? dir : path.join(baseDir, dir);
+    removeDirectorySync(fullPath);
   }
 }
 
@@ -166,31 +144,31 @@ function createCleanupTasks(projectRoot: string, options: CleanOptions): Cleanup
   // Android cleanup
   tasks.push({
     name: 'android',
-    description: 'Android build caches (Gradle)',
+    description: 'Android build directories (.gradle, build, .cxx)',
     enabled: true,
     action: async () => {
       const androidDir = path.join(projectRoot, 'android');
       if (fs.existsSync(androidDir)) {
-        // Clean Gradle cache
-        const gradleDir = path.join(androidDir, '.gradle');
-        if (fs.existsSync(gradleDir)) {
-          fs.rmSync(gradleDir, { recursive: true, force: true });
-        }
-        
-        // Clean build directory
-        const buildDir = path.join(androidDir, 'build');
-        if (fs.existsSync(buildDir)) {
-          fs.rmSync(buildDir, { recursive: true, force: true });
-        }
-        
-        // Run gradle clean if gradlew exists
-        const gradlewPath = path.join(androidDir, 'gradlew');
-        if (fs.existsSync(gradlewPath)) {
-          try {
-            await spawn('sh', [gradlewPath, 'clean'], { cwd: androidDir });
-          } catch (error) {
-            logger.debug(`Gradle clean failed: ${error}`);
-          }
+        // Clean Android build directories
+        const directoriesToClean = ['.gradle', 'build', '.cxx'];
+        cleanDirectories(directoriesToClean, androidDir);
+      }
+    },
+  });
+
+  // Gradlew cleanup (separate task for slower operation)
+  tasks.push({
+    name: 'gradle',
+    description: 'Run gradle clean',
+    enabled: true,
+    action: async () => {
+      const androidDir = path.join(projectRoot, 'android');
+      const gradlewPath = path.join(androidDir, 'gradlew');
+      if (fs.existsSync(gradlewPath)) {
+        try {
+          await spawn(gradlewPath, ['clean'], { cwd: androidDir });
+        } catch (error) {
+          logger.debug(`Gradle clean failed: ${error}`);
         }
       }
     },
@@ -205,28 +183,23 @@ function createCleanupTasks(projectRoot: string, options: CleanOptions): Cleanup
       const iosDir = path.join(projectRoot, 'ios');
       if (fs.existsSync(iosDir)) {
         // Remove Pods directory
-        const podsDir = path.join(iosDir, 'Pods');
-        if (fs.existsSync(podsDir)) {
-          fs.rmSync(podsDir, { recursive: true, force: true });
-        }
+        cleanDirectories(['Pods'], iosDir);
         
         // Clean CocoaPods cache
         try {
-          await spawn('pod', ['cache', 'clean', '--all'], { cwd: iosDir });
+          await spawn('bundle', ['exec', 'pod', 'cache', 'clean', '--all'], { cwd: iosDir });
         } catch (error) {
-          logger.debug(`CocoaPods cache clean failed: ${error}`);
+          logger.debug(`Bundle exec pod cache clean failed: ${error}`);
+          try {
+            await spawn('pod', ['cache', 'clean', '--all'], { cwd: iosDir });
+          } catch (fallbackError) {
+            logger.debug(`CocoaPods cache clean failed: ${fallbackError}`);
+          }
         }
       }
       
       // Clean global CocoaPods cache directory
-      const globalCocoaPodsCache = path.join(process.env['HOME'] || '', '.cocoapods');
-      if (fs.existsSync(globalCocoaPodsCache)) {
-        try {
-          fs.rmSync(globalCocoaPodsCache, { recursive: true, force: true });
-        } catch (error) {
-          logger.debug(`Global CocoaPods cache cleanup failed: ${error}`);
-        }
-      }
+      cleanDirectories(['.cocoapods'], process.env['HOME'] || '');
     },
   });
 
@@ -267,10 +240,7 @@ function createCleanupTasks(projectRoot: string, options: CleanOptions): Cleanup
     description: 'node_modules and NPM cache',
     enabled: true,
     action: async () => {
-      const nodeModulesDir = path.join(projectRoot, 'node_modules');
-      if (fs.existsSync(nodeModulesDir)) {
-        fs.rmSync(nodeModulesDir, { recursive: true, force: true });
-      }
+      cleanDirectories(['node_modules'], projectRoot);
       
       if (options['verify-cache']) {
         try {
@@ -390,76 +360,14 @@ async function cleanProject(projectRoot: string, options: CleanOptions) {
 
 /**
  * Main command function that handles the overall clean operation.
- * Determines whether to clean the current project or scan for projects in the directory.
  * @param options - Clean options that control the cleanup behavior
  */
 async function cleanCommand(options: CleanOptions) {
   intro('🧹 RNEF Clean');
   
-  try {
-    // Try to get the project root (automatically finds the project by traversing up from cwd)
-    const projectRoot = getProjectRoot();
-    // If we get here, we're in an RNEF project
-    await cleanProject(projectRoot, options);
-    outro('Project cleaned successfully!');
-    return;
-  } catch {
-    // Not in an RNEF project, scan for projects in current directory
-    const scanDir = process.cwd();
-    const scanSpinner = spinner();
-    scanSpinner.start('Scanning for RNEF projects...');
-    
-    const projects = findRnefProjects(scanDir);
-    scanSpinner.stop(`Found ${projects.length} RNEF project(s)`);
-    
-    if (projects.length === 0) {
-      outro('No RNEF projects found in the current directory or subdirectories.');
-      return;
-    }
-    
-    if (projects.length === 1) {
-      // Only one project found, ask if user wants to clean it
-      const shouldClean = await promptConfirm({
-        message: `Clean the RNEF project "${projects[0].name}"?`,
-        confirmLabel: 'Yes, clean it',
-        cancelLabel: 'No, cancel',
-      });
-      
-      if (shouldClean) {
-        await cleanProject(projects[0].path, options);
-        outro('Project cleaned successfully!');
-      } else {
-        outro('Cleanup cancelled.');
-      }
-      return;
-    }
-    
-    // Multiple projects found, let user select
-    const choices = projects.map(project => ({
-      value: project.path,
-      label: `${project.name} (${color.dim(project.path)})`,
-    }));
-    
-    const selectedProjects = await promptMultiselect({
-      message: 'Select RNEF projects to clean:',
-      options: choices,
-    });
-    
-    if (selectedProjects.length === 0) {
-      outro('No projects selected for cleanup.');
-      return;
-    }
-    
-    // Clean selected projects
-    for (const projectPath of selectedProjects) {
-      const project = projects.find(p => p.path === projectPath);
-      if (project) {
-        await cleanProject(projectPath, options);
-      }
-    }
-    
-    outro(`Cleaned ${selectedProjects.length} project(s) successfully!`);
-  }
+  const projectRoot = getProjectRoot();
+  await cleanProject(projectRoot, options);
+  outro('Project cleaned successfully!');
 }
 
 export const cleanPlugin = () => (api: PluginApi): PluginOutput => {
@@ -467,19 +375,7 @@ export const cleanPlugin = () => (api: PluginApi): PluginOutput => {
     name: 'clean',
     description: 'Clean caches and build artifacts for RNEF projects',
     action: async (options: CleanOptions) => {
-      try {
-        await cleanCommand(options);
-      } catch (error) {
-        if (error instanceof RnefError) {
-          logger.error(error.message);
-          if (error.cause) {
-            logger.debug(`Cause: ${error.cause}`);
-          }
-        } else {
-          logger.error('Unexpected error during cleanup:', error);
-        }
-        process.exit(1);
-      }
+      await cleanCommand(options);
     },
     options: [
       {
