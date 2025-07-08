@@ -1,5 +1,11 @@
 # rnef-docs
 
+## 1.0.8
+
+### Patch Changes
+
+- 6f898c3: feat: add '--app' flag to sign:ios to support replacing js bundle in APP files
+
 ## 1.0.7
 
 ### Patch Changes

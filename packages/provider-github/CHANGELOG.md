@@ -1,5 +1,12 @@
 # @rnef/provider-github
 
+## 0.7.27
+
+### Patch Changes
+
+- 9f94154: feat: handle 404 from github gracefully
+  - @rnef/tools@0.7.27
+
 ## 0.7.26
 
 ### Patch Changes

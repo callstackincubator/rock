@@ -1,5 +1,13 @@
 # @rnef/config
 
+## 0.7.27
+
+### Patch Changes
+
+- Updated dependencies [9f94154]
+  - @rnef/provider-github@0.7.27
+  - @rnef/tools@0.7.27
+
 ## 0.7.26
 
 ### Patch Changes

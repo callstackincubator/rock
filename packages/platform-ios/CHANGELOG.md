@@ -1,5 +1,16 @@
 # @rnef/platform-ios
 
+## 0.7.27
+
+### Patch Changes
+
+- 6f898c3: feat: add '--app' flag to sign:ios to support replacing js bundle in APP files
+- Updated dependencies [24d6e3a]
+- Updated dependencies [6f898c3]
+- Updated dependencies [dc200cd]
+  - @rnef/platform-apple-helpers@0.7.27
+  - @rnef/tools@0.7.27
+
 ## 0.7.26
 
 ### Patch Changes
