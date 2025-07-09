@@ -1,5 +1,13 @@
 # @rnef/cli
 
+## 0.7.28
+
+### Patch Changes
+
+- aa48ebd: Added clean command `rnef clean` to clean caches and build artifacts
+  - @rnef/config@0.7.28
+  - @rnef/tools@0.7.28
+
 ## 0.7.27
 
 ### Patch Changes

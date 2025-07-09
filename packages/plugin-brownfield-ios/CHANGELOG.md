@@ -1,5 +1,13 @@
 # @rnef/plugin-brownfield-ios
 
+## 0.7.28
+
+### Patch Changes
+
+- 656717b: fix: make brownfield plugin optional; update dep; add android
+  - @rnef/platform-apple-helpers@0.7.28
+  - @rnef/tools@0.7.28
+
 ## 0.7.27
 
 ### Patch Changes
