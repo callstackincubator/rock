@@ -3,11 +3,9 @@ import os from 'node:os';
 import path from 'node:path';
 import type { PluginApi, PluginOutput } from '@rnef/config';
 import {
-  color,
   getProjectRoot,
   intro,
   logger,
-  note,
   outro,
   promptMultiselect,
   RnefError,
