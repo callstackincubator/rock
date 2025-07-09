@@ -251,9 +251,7 @@ async function runOnDevice({
   );
   if (applicationIdWithSuffix) {
     loader.stop(
-      `Installed and launched the app ${color.bold(
-        color.blue(applicationIdWithSuffix)
-      )} on ${color.bold(device.readableName)}`
+      `Installed and launched the app on ${color.bold(device.readableName)}`
     );
   } else {
     loader.stop(

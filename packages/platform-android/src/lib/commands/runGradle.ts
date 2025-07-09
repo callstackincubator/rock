@@ -42,8 +42,14 @@ export async function runGradle({
   artifactName,
 }: RunGradleArgs) {
   const humanReadableTasks = tasks.join(', ');
+  const { appId, appIdSuffix } = args as Flags;
+  const { applicationId } = androidProject;
+  const applicationIdWithSuffix = [appId || applicationId, appIdSuffix]
+    .filter(Boolean)
+    .join('.');
 
   logger.log(`Build Settings:
+App ID    ${color.bold(color.blue(applicationIdWithSuffix))}
 Variant   ${color.bold(args.variant)}
 Tasks     ${color.bold(humanReadableTasks)}`);
 
