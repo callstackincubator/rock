@@ -3,6 +3,7 @@ import path from 'node:path';
 import type { SubprocessError } from '@rnef/tools';
 import {
   color,
+  colorLink,
   getDotRnefPath,
   intro,
   outro,
@@ -54,7 +55,7 @@ export async function signAndroid(options: SignAndroidOptions) {
       useHermes: options.useHermes ?? true,
     });
     loader.stop(
-      `Built JS bundle: ${color.cyan(relativeToCwd(bundleOutputPath))}`
+      `Built JS bundle: ${colorLink(relativeToCwd(bundleOutputPath))}`
     );
 
     options.jsBundlePath = bundleOutputPath;
@@ -85,7 +86,7 @@ export async function signAndroid(options: SignAndroidOptions) {
       jsBundlePath: options.jsBundlePath,
     });
     loader.stop(
-      `Replaced JS bundle with ${color.cyan(
+      `Replaced JS bundle with ${colorLink(
         relativeToCwd(options.jsBundlePath)
       )}.`
     );
@@ -96,7 +97,7 @@ export async function signAndroid(options: SignAndroidOptions) {
   const outputApkPath = options.outputPath ?? options.apkPath;
   await alignApkFile(tempApkPath, outputApkPath);
   loader.stop(
-    `Created output APK file: ${color.cyan(relativeToCwd(outputApkPath))}.`
+    `Created output APK file: ${colorLink(relativeToCwd(outputApkPath))}.`
   );
 
   // 5. Sign APK file
@@ -110,7 +111,7 @@ export async function signAndroid(options: SignAndroidOptions) {
     keyPassword: options.keyPassword,
   });
   loader.stop(
-    `Signed the APK file with keystore: ${color.cyan(keystorePath)}.`
+    `Signed the APK file with keystore: ${colorLink(keystorePath)}.`
   );
 
   outro('Success 🎉.');
@@ -165,7 +166,7 @@ async function alignApkFile(inputApkPath: string, outputApkPath: string) {
   const zipAlignPath = findAndroidBuildTool('zipalign');
   if (!zipAlignPath) {
     throw new RnefError(
-      `"zipalign" not found in Android Build-Tools directory: ${color.cyan(
+      `"zipalign" not found in Android Build-Tools directory: ${colorLink(
         getAndroidBuildToolsPath()
       )}
 Please follow instructions at: https://reactnative.dev/docs/set-up-your-environment?platform=android'`
@@ -216,7 +217,7 @@ async function signApkFile({
   const apksignerPath = findAndroidBuildTool('apksigner');
   if (!apksignerPath) {
     throw new RnefError(
-      `"apksigner" not found in Android Build-Tools directory: ${color.cyan(
+      `"apksigner" not found in Android Build-Tools directory: ${colorLink(
         getAndroidBuildToolsPath()
       )}
 Please follow instructions at: https://reactnative.dev/docs/set-up-your-environment?platform=android'`

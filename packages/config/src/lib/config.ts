@@ -3,7 +3,7 @@ import { createRequire } from 'node:module';
 import * as path from 'node:path';
 import { pathToFileURL } from 'node:url';
 import type { FingerprintSources, RemoteBuildCache } from '@rnef/tools';
-import { color, logger } from '@rnef/tools';
+import { color, colorLink, logger } from '@rnef/tools';
 import type { ValidationError } from 'joi';
 import { ConfigTypeSchema } from './schema.js';
 import { formatValidationError } from './utils.js';
@@ -67,7 +67,7 @@ export type ConfigType = {
   plugins?: PluginType[];
   platforms?: Record<string, PlatformType>;
   commands?: Array<CommandType>;
-  remoteCacheProvider?: null | 'github-actions' |(() => RemoteBuildCache);
+  remoteCacheProvider?: null | 'github-actions' | (() => RemoteBuildCache);
   fingerprint?: {
     extraSources?: string[];
     ignorePaths?: string[];
@@ -98,7 +98,9 @@ const importUp = async (
       let config: ConfigType;
 
       if (ext === '.mjs') {
-        config = await import(pathToFileURL(filePathWithExt).href).then((module) => module.default);
+        config = await import(pathToFileURL(filePathWithExt).href).then(
+          (module) => module.default
+        );
       } else {
         const require = createRequire(import.meta.url);
         config = require(filePathWithExt);
@@ -139,7 +141,7 @@ export async function getConfig(
 
   if (error) {
     logger.error(
-      `Invalid ${color.cyan(
+      `Invalid ${colorLink(
         path.relative(configDir, filePathWithExt)
       )} file:\n` + formatValidationError(config, error)
     );

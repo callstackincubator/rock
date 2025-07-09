@@ -1,5 +1,11 @@
 import type { SubprocessError } from '@rnef/tools';
-import { color, RnefError, spawn, spinner } from '@rnef/tools';
+import {
+  colorLink,
+  relativeToCwd,
+  RnefError,
+  spawn,
+  spinner,
+} from '@rnef/tools';
 import { existsSync, readdirSync } from 'fs';
 import path from 'path';
 import { getBuildPaths } from '../../utils/getBuildPaths.js';
@@ -28,9 +34,8 @@ export const exportArchive = async ({
   if (!existsSync(exportOptionsPlistPath)) {
     loader.stop('Failed to export the archive.', 1);
     throw new RnefError(
-      `ExportOptions.plist not found, please create ${path.relative(
-        process.cwd(),
-        exportOptionsPlistPath
+      `ExportOptions.plist not found, please create ${colorLink(
+        relativeToCwd(exportOptionsPlistPath)
       )} file with valid configuration for Archive export.`
     );
   }
@@ -61,7 +66,7 @@ export const exportArchive = async ({
     }
 
     loader.stop(
-      `Archive available at: ${color.cyan(
+      `Archive available at: ${colorLink(
         path.join(exportDir, ipaFiles[0]) ?? exportDir
       )}`
     );

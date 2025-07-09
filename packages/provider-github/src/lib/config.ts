@@ -1,6 +1,6 @@
 import {
   cacheManager,
-  color,
+  colorLink,
   logger,
   promptPassword,
   RnefError,
@@ -60,7 +60,7 @@ export async function detectGitHubRepoDetails(): Promise<GitHubRepoDetails> {
     if (!token) {
       logger.warn(
         `No GitHub Personal Access Token found necessary to download cached builds.
-Please generate one at: ${color.cyan('https://github.com/settings/tokens')}
+Please generate one at: ${colorLink('https://github.com/settings/tokens')}
 Include "repo", "workflow", and "read:org" permissions.`
       );
       token = await promptForGitHubToken();

@@ -3,6 +3,7 @@ import type {
   SubprocessError} from '@rnef/tools';
 import {
   color,
+  colorLink,
   intro,
   isInteractive,
   logger,
@@ -41,7 +42,7 @@ export const modifyIpa = async (options: ModifyIpaOptions) => {
   loader.start(`Unzipping the IPA file`);
   const tempPaths = getTempPaths(options.platformName);
   const appPath = unpackIpa(options.ipaPath, tempPaths.content);
-  loader.stop(`Unzipped IPA contents: ${color.cyan(relativeToCwd(appPath))}`);
+  loader.stop(`Unzipped IPA contents: ${colorLink(relativeToCwd(appPath))}`);
 
   // 2. Make IPA content changes if needed: build or swap JS bundle
   const appPaths = getAppPaths(appPath);
@@ -53,13 +54,13 @@ export const modifyIpa = async (options: ModifyIpaOptions) => {
       useHermes: options.useHermes ?? true,
     });
     loader.stop(
-      `Built JS bundle: ${color.cyan(relativeToCwd(appPaths.jsBundle))}`
+      `Built JS bundle: ${colorLink(relativeToCwd(appPaths.jsBundle))}`
     );
   } else if (options.jsBundlePath) {
     loader.start('Replacing JS bundle');
     fs.copyFileSync(options.jsBundlePath, appPaths.jsBundle);
     loader.stop(
-      `Replaced JS bundle with ${color.cyan(
+      `Replaced JS bundle with ${colorLink(
         relativeToCwd(options.jsBundlePath)
       )}`
     );
@@ -113,7 +114,7 @@ export const modifyIpa = async (options: ModifyIpaOptions) => {
   loader.start('Creating final IPA file');
   const outputPath = options.outputPath ?? options.ipaPath;
   packIpa(tempPaths.content, outputPath);
-  loader.stop(`Created final IPA file: ${color.cyan(outputPath)}`);
+  loader.stop(`Created final IPA file: ${colorLink(outputPath)}`);
 
   outro('Success 🎉.');
 };

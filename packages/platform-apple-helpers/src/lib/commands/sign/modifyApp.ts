@@ -1,6 +1,6 @@
 import fs from 'node:fs';
 import {
-  color,
+  colorLink,
   intro,
   logger,
   outro,
@@ -32,7 +32,7 @@ export const modifyApp = async (options: ModifyAppOptions) => {
       fs.cpSync(options.appPath, options.outputPath, { recursive: true });
     } catch (error) {
       throw new RnefError(
-        `Failed to copy APP file to ${color.cyan(
+        `Failed to copy APP file to ${colorLink(
           relativeToCwd(options.outputPath)
         )}.`,
         { cause: error }
@@ -50,20 +50,20 @@ export const modifyApp = async (options: ModifyAppOptions) => {
       useHermes: options.useHermes ?? true,
     });
     loader.stop(
-      `Built JS bundle: ${color.cyan(relativeToCwd(appPaths.jsBundle))}`
+      `Built JS bundle: ${colorLink(relativeToCwd(appPaths.jsBundle))}`
     );
   } else if (options.jsBundlePath) {
     loader.start('Replacing JS bundle');
     fs.copyFileSync(options.jsBundlePath, appPaths.jsBundle);
     loader.stop(
-      `Replaced JS bundle with ${color.cyan(
+      `Replaced JS bundle with ${colorLink(
         relativeToCwd(options.jsBundlePath)
       )}`
     );
   }
 
   logger.log(
-    `Modified APP file with new JS bundle. Available at: ${color.cyan(
+    `Modified APP file with new JS bundle. Available at: ${colorLink(
       relativeToCwd(options.outputPath ?? options.appPath)
     )}`
   );

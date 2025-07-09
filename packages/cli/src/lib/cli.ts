@@ -2,7 +2,7 @@ import { createRequire } from 'node:module';
 import { dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { type CommandType, getConfig } from '@rnef/config';
-import { color, logger, resolveFilenameUp, RnefError } from '@rnef/tools';
+import { colorLink, logger, resolveFilenameUp, RnefError } from '@rnef/tools';
 import { Command } from 'commander';
 import { checkDeprecatedOptions } from './checkDeprecatedOptions.js';
 import { cleanPlugin } from './plugins/clean.js';
@@ -104,12 +104,12 @@ function ensureUniqueCommands(commands: CommandType[] | undefined) {
           command.name
         }" registered twice by the same "${
           command.__origin
-        }" plugin in ${color.cyan('rnef.config.mjs')} file.
+        }" plugin in ${colorLink('rnef.config.mjs')} file.
 Please declare the plugin only once.`);
       } else {
         logger.error(`Found duplicated command "${
           command.name
-        }" registered by 2 plugins in ${color.cyan('rnef.config.mjs')} file:
+        }" registered by 2 plugins in ${colorLink('rnef.config.mjs')} file:
 1. Added by "${command.__origin}" plugin
 2. Added by "${duplicate.__origin}" plugin
 Command names must be unique. Please check if you import a plugin multiple times or use incompatible plugins.`);

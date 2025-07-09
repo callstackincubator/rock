@@ -5,7 +5,15 @@ import {
   // @ts-expect-error missing typings - TODO drop dependency on community plugin
 } from '@react-native/community-cli-plugin';
 import type { PluginApi } from '@rnef/config';
-import { color, intro, logger, outro, RnefError, runHermes, spinner } from '@rnef/tools';
+import {
+  colorLink,
+  intro,
+  logger,
+  outro,
+  RnefError,
+  runHermes,
+  spinner,
+} from '@rnef/tools';
 
 type BundleCommandArgs = {
   assetsDest?: string;
@@ -67,11 +75,11 @@ export function registerBundleCommand(api: PluginApi) {
           sourcemapOutputPath: args.sourcemapOutput,
         });
         loader.stop(
-          `Hermes bytecode bundle created at: ${color.cyan(args.bundleOutput)}`
+          `Hermes bytecode bundle created at: ${colorLink(args.bundleOutput)}`
         );
       } else {
         logger.info(
-          `JavaScript bundle created at: ${color.cyan(args.bundleOutput)}`
+          `JavaScript bundle created at: ${colorLink(args.bundleOutput)}`
         );
       }
       outro('Success 🎉.');

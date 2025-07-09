@@ -89,9 +89,9 @@ export async function fetchGitHubArtifactsByName(
         `Failed to fetch GitHub artifacts due to invalid or expired GitHub Personal Access Token provided.
 Update the token under "${color.bold(
           'remoteCacheProvider'
-        )}" key in ${color.cyan('rnef.config.mjs')} config file.
+        )}" key in ${colorLink('rnef.config.mjs')} config file.
 
-📘 Read more about generating a new token: ${color.cyan(
+📘 Read more about generating a new token: ${colorLink(
           'https://rnef.dev/docs/remote-cache/github-actions/configuration#generate-github-personal-access-token-for-downloading-cached-builds'
         )}`
       );
@@ -105,9 +105,9 @@ Update the token under "${color.bold(
 
 Make sure the repository information and token under "${color.bold(
           'remoteCacheProvider'
-        )}" key in ${color.cyan('rnef.config.mjs')} config file is valid.
+        )}" key in ${colorLink('rnef.config.mjs')} config file is valid.
 
-📘 Read more about generating a new token: ${color.cyan(
+📘 Read more about generating a new token: ${colorLink(
           'https://rnef.dev/docs/remote-cache/github-actions/configuration#generate-github-personal-access-token-for-downloading-cached-builds'
         )}`
       );

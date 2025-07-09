@@ -1,7 +1,7 @@
 import commands from '@callstack/repack/commands/rspack';
 import type { PluginApi, PluginOutput } from '@rnef/config';
 import {
-  color,
+  colorLink,
   findDevServerPort,
   intro,
   logger,
@@ -95,13 +95,13 @@ export const pluginRepack =
             sourcemapOutputPath: args.sourcemapOutput,
           });
           loader.stop(
-            `Hermes bytecode bundle created at: ${color.cyan(
+            `Hermes bytecode bundle created at: ${colorLink(
               args.bundleOutput
             )}`
           );
-        } else {
+        } else if (args.bundleOutput) {
           logger.info(
-            `JavaScript bundle created at: ${color.cyan(args.bundleOutput)}`
+            `JavaScript bundle created at: ${colorLink(args.bundleOutput)}`
           );
         }
       },

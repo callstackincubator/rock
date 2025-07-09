@@ -1,12 +1,12 @@
 import path from 'node:path';
 import type { FingerprintSources } from '@rnef/tools';
 import {
-  color,
   colorLink,
   formatArtifactName,
   isInteractive,
   logger,
   promptSelect,
+  relativeToCwd,
   RnefError,
   saveLocalBuildCache,
   spinner,
@@ -67,7 +67,7 @@ export const createBuild = async ({
     const loader = spinner();
     loader.start('');
     loader.stop(
-      `Build available at: ${colorLink(path.relative(process.cwd(), appPath))}`
+      `Build available at: ${colorLink(relativeToCwd(appPath))}`
     );
 
     xcodeProject = buildAppResult.xcodeProject;

@@ -12,6 +12,7 @@ import {
   type RemoteBuildCache,
 } from './common.js';
 import type { LocalBuild } from './localBuildCache.js';
+import { relativeToCwd } from '../path.js';
 
 type FetchCachedBuildOptions = {
   artifactName: string;
@@ -27,7 +28,7 @@ export async function fetchCachedBuild({
   }
   if (remoteCacheProvider === undefined) {
     logger.warn(`No remote cache provider set. You won't be able to access reusable builds from e.g. GitHub Actions. 
-To configure it, set the "remoteCacheProvider" key in ${color.cyan(
+To configure it, set the "remoteCacheProvider" key in ${colorLink(
       'rnef.config.mjs'
     )} file. For example:
 
@@ -63,9 +64,7 @@ To disable this warning, set the provider to null:
     return undefined;
   }
   loader.stop(
-    `Downloaded cached build to: ${colorLink(
-      path.relative(process.cwd(), localArtifactPath)
-    )}`
+    `Downloaded cached build to: ${colorLink(relativeToCwd(localArtifactPath))}`
   );
 
   return {

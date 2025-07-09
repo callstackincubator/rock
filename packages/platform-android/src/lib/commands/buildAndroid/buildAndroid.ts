@@ -1,4 +1,3 @@
-import path from 'node:path';
 import type { AndroidProjectConfig } from '@react-native-community/cli-types';
 import {
   colorLink,
@@ -7,6 +6,7 @@ import {
   logger,
   outro,
   parseArgs,
+  relativeToCwd,
   spinner,
 } from '@rnef/tools';
 import { findOutputFile } from '../runAndroid/findOutputFile.js';
@@ -45,9 +45,7 @@ export async function buildAndroid(
     const loader = spinner();
     loader.start('');
     loader.stop(
-      `Build available at: ${colorLink(
-        path.relative(process.cwd(), outputFilePath)
-      )}`
+      `Build available at: ${colorLink(relativeToCwd(outputFilePath))}`
     );
   }
   outro('Success 🎉.');

@@ -3,6 +3,7 @@ import path from 'node:path';
 import { color, colorLink } from '../color.js';
 import logger from '../logger.js';
 import { getLocalArtifactPath, getLocalBinaryPath } from './common.js';
+import { relativeToCwd } from '../path.js';
 
 export type LocalBuild = {
   name: string;
@@ -43,9 +44,7 @@ export function saveLocalBuildCache(artifactName: string, binaryPath: string) {
       );
     }
     logger.debug(
-      `Saved build cache to: ${colorLink(
-        path.relative(process.cwd(), cachePath)
-      )}`
+      `Saved build cache to: ${colorLink(relativeToCwd(cachePath))}`
     );
   } catch (error) {
     logger.debug('Failed to copy binary to local build cache', error);
