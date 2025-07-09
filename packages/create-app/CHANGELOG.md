@@ -1,5 +1,12 @@
 # @rnef/create-app
 
+## 0.7.28
+
+### Patch Changes
+
+- 656717b: fix: make brownfield plugin optional; update dep; add android
+  - @rnef/tools@0.7.28
+
 ## 0.7.27
 
 ### Patch Changes

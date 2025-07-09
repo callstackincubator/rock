@@ -1,5 +1,11 @@
 # rnef-docs
 
+## 1.0.9
+
+### Patch Changes
+
+- aa48ebd: Added clean command `rnef clean` to clean caches and build artifacts
+
 ## 1.0.8
 
 ### Patch Changes
