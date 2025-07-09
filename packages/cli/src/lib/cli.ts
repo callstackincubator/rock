@@ -5,6 +5,7 @@ import { type CommandType, getConfig } from '@rnef/config';
 import { color, logger, resolveFilenameUp, RnefError } from '@rnef/tools';
 import { Command } from 'commander';
 import { checkDeprecatedOptions } from './checkDeprecatedOptions.js';
+import { cleanPlugin } from './plugins/clean.js';
 import { fingerprintPlugin } from './plugins/fingerprint.js';
 import { logConfigPlugin } from './plugins/logConfig.js';
 import { remoteCachePlugin } from './plugins/remoteCache.js';
@@ -36,6 +37,7 @@ export const cli = async ({ cwd, argv }: CliOptions) => {
     remoteCachePlugin,
     logConfigPlugin,
     fingerprintPlugin,
+    cleanPlugin,
   ];
   // Register commands from the config
   const config = await getConfig(cwd, internalPlugins);
