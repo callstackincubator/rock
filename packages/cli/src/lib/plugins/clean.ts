@@ -27,14 +27,13 @@ type CleanupTask = {
   action: () => Promise<void>;
 };
 
-
-
 const CLEANUP_TASK_NAMES = [
   'android',
   'gradle',
-  'cocoapods', 
+  'cocoapods',
   'metro',
   'watchman',
+  'node_modules',
   'npm',
   'yarn',
   'bun',
@@ -42,23 +41,22 @@ const CLEANUP_TASK_NAMES = [
   'rnef',
 ] as const;
 
-
-
 /**
  * Validates that the provided task names are valid cleanup tasks.
  * @param taskNames - Array of task names to validate
  * @throws {RnefError} If any task names are invalid
  */
 function validateCleanupTasks(taskNames: string[]): void {
-  const invalidTasks = taskNames.filter(name => !CLEANUP_TASK_NAMES.includes(name as any));
+  const invalidTasks = taskNames.filter(
+    (name) => !CLEANUP_TASK_NAMES.includes(name as any)
+  );
   if (invalidTasks.length > 0) {
     throw new RnefError(
       `Invalid cleanup task(s): ${invalidTasks.join(', ')}. ` +
-      `Valid options are: ${CLEANUP_TASK_NAMES.join(', ')}`
+        `Valid options are: ${CLEANUP_TASK_NAMES.join(', ')}`
     );
   }
 }
-
 
 function removeDirectorySync(dirPath: string): void {
   if (fs.existsSync(dirPath)) {
@@ -71,8 +69,6 @@ function removeDirectorySync(dirPath: string): void {
   }
 }
 
-
-
 /**
  * Checks if a project has Metro configuration.
  * @param projectRoot - The root directory of the project
@@ -82,20 +78,22 @@ function hasMetroProject(projectRoot: string): boolean {
   const metroConfig = path.join(projectRoot, 'metro.config.js');
   const metroConfigTs = path.join(projectRoot, 'metro.config.ts');
   const packageJsonPath = path.join(projectRoot, 'package.json');
-  
+
   if (fs.existsSync(metroConfig) || fs.existsSync(metroConfigTs)) {
     return true;
   }
-  
+
   if (fs.existsSync(packageJsonPath)) {
     try {
       const packageJson = JSON.parse(fs.readFileSync(packageJsonPath, 'utf-8'));
-      return packageJson.dependencies?.metro || packageJson.devDependencies?.metro;
+      return (
+        packageJson.dependencies?.metro || packageJson.devDependencies?.metro
+      );
     } catch {
       return false;
     }
   }
-  
+
   return false;
 }
 
@@ -108,9 +106,9 @@ function cleanTempDirectoryPattern(pattern: string): void {
   try {
     const tmpDirContents = fs.readdirSync(tmpDir);
     const matchingFiles = tmpDirContents
-      .filter(name => name.startsWith(pattern))
-      .map(name => path.join(tmpDir, name));
-    
+      .filter((name) => name.startsWith(pattern))
+      .map((name) => path.join(tmpDir, name));
+
     for (const file of matchingFiles) {
       removeDirectorySync(file);
     }
@@ -137,13 +135,16 @@ function cleanDirectories(directories: string[], baseDir: string): void {
  * @param options - Clean options that affect task creation
  * @returns Array of cleanup tasks with their configurations
  */
-function createCleanupTasks(projectRoot: string, options: CleanOptions): CleanupTask[] {
+function createCleanupTasks(
+  projectRoot: string,
+  options: CleanOptions
+): CleanupTask[] {
   const tasks: CleanupTask[] = [];
 
   // Android cleanup
   tasks.push({
     name: 'android',
-    description: 'Android build directories (.gradle, build, .cxx)',
+    description: '[Android] Gradle build and cache (.gradle, build, .cxx)',
     enabled: true,
     action: async () => {
       const androidDir = path.join(projectRoot, 'android');
@@ -158,7 +159,7 @@ function createCleanupTasks(projectRoot: string, options: CleanOptions): Cleanup
   // Gradlew cleanup (separate task for slower operation)
   tasks.push({
     name: 'gradle',
-    description: 'Run gradle clean',
+    description: '[Android] gradlew clean',
     enabled: true,
     action: async () => {
       const androidDir = path.join(projectRoot, 'android');
@@ -172,37 +173,36 @@ function createCleanupTasks(projectRoot: string, options: CleanOptions): Cleanup
   // CocoaPods cleanup
   tasks.push({
     name: 'cocoapods',
-    description: 'CocoaPods cache and Pods directory',
+    description: '[iOS] CocoaPods cache and Pods directory',
     enabled: true,
     action: async () => {
       const iosDir = path.join(projectRoot, 'ios');
       if (fs.existsSync(iosDir)) {
         // Remove Pods directory
         cleanDirectories(['Pods'], iosDir);
-        
+
         // Clean CocoaPods cache
         try {
-          await spawn('bundle', ['exec', 'pod', 'cache', 'clean', '--all'], { cwd: iosDir });
+          await spawn('bundle', ['exec', 'pod', 'cache', 'clean', '--all'], {
+            cwd: iosDir,
+          });
         } catch (error) {
           logger.debug(`Bundle exec pod cache clean failed: ${error}`);
           await spawn('pod', ['cache', 'clean', '--all'], { cwd: iosDir });
         }
       }
-      
-      // Clean global CocoaPods cache directory
-      cleanDirectories(['.cocoapods'], process.env['HOME'] || '');
+
+      cleanDirectories(['.cocoapods'], os.homedir());
     },
   });
 
   // Metro cleanup
   tasks.push({
     name: 'metro',
-    description: 'Metro and haste-map caches',
+    description: '[JS] Metro and haste-map caches',
     enabled: true,
     action: async () => {
-      // Clean Metro cache
       cleanTempDirectoryPattern('metro-');
-      // Clean haste-map cache
       cleanTempDirectoryPattern('haste-map');
     },
   });
@@ -211,34 +211,39 @@ function createCleanupTasks(projectRoot: string, options: CleanOptions): Cleanup
   const hasMetro = hasMetroProject(projectRoot);
   tasks.push({
     name: 'watchman',
-    description: 'Watchman cache (Metro projects only)',
+    description: '[JS] Watchman cache for this project',
     enabled: hasMetro,
     action: async () => {
       if (hasMetro) {
-        await spawn('killall', ['watchman']);
-        await spawn('watchman', ['watch-del-all']);
+        await spawn('watchman', ['watch-del', projectRoot]);
       }
+    },
+  });
+
+  // node_modules cleanup
+  tasks.push({
+    name: 'node_modules',
+    description: '[JS] node_modules',
+    enabled: true,
+    action: async () => {
+      cleanDirectories(['node_modules'], projectRoot);
     },
   });
 
   // NPM cleanup
   tasks.push({
     name: 'npm',
-    description: 'node_modules and NPM cache',
-    enabled: true,
+    description: '[JS] NPM cache ',
+    enabled: options['verify-cache'] ?? false,
     action: async () => {
-      cleanDirectories(['node_modules'], projectRoot);
-      
-      if (options['verify-cache']) {
-        await spawn('npm', ['cache', 'verify']);
-      }
+      await spawn('npm', ['cache', 'verify']);
     },
   });
 
   // Yarn cleanup
   tasks.push({
     name: 'yarn',
-    description: 'Yarn cache',
+    description: '[JS] Yarn cache',
     enabled: true,
     action: async () => {
       await spawn('yarn', ['cache', 'clean']);
@@ -248,7 +253,7 @@ function createCleanupTasks(projectRoot: string, options: CleanOptions): Cleanup
   // Bun cleanup
   tasks.push({
     name: 'bun',
-    description: 'Bun cache',
+    description: '[JS] Bun cache',
     enabled: true,
     action: async () => {
       await spawn('bun', ['pm', 'cache', 'rm']);
@@ -258,7 +263,7 @@ function createCleanupTasks(projectRoot: string, options: CleanOptions): Cleanup
   // PNPM cleanup
   tasks.push({
     name: 'pnpm',
-    description: 'pnpm cache',
+    description: '[JS] pnpm cache',
     enabled: true,
     action: async () => {
       await spawn('pnpm', ['store', 'prune']);
@@ -268,21 +273,21 @@ function createCleanupTasks(projectRoot: string, options: CleanOptions): Cleanup
   // RNEF cleanup
   tasks.push({
     name: 'rnef',
-    description: 'RNEF project cache and build artifacts (iOS/Android)',
+    description: '[RNEF] project cache and build artifacts (iOS/Android)',
     enabled: true,
     action: async () => {
       const rnefCacheDir = path.join(projectRoot, '.rnef', 'cache');
-      
+
       // Clean project cache file
       const projectCacheFile = path.join(rnefCacheDir, 'project.json');
       removeDirectorySync(projectCacheFile);
-      
+
       // Clean remote build cache directory
       cleanDirectories(['remote-build'], rnefCacheDir);
-      
+
       // Clean iOS archive and export cache directory
       cleanDirectories(['ios'], rnefCacheDir);
-      
+
       // Clean Android build cache directory
       cleanDirectories(['android'], rnefCacheDir);
     },
@@ -298,53 +303,37 @@ function createCleanupTasks(projectRoot: string, options: CleanOptions): Cleanup
  */
 async function cleanProject(projectRoot: string, options: CleanOptions) {
   const tasks = createCleanupTasks(projectRoot, options);
-  
+
   let selectedTasks: CleanupTask[];
-  
+  const availableTasks = tasks.filter((task) => task.enabled);
+
   if (options.include && options.include.length > 0) {
-    // Validate task names
     validateCleanupTasks(options.include);
-    // Non-interactive mode with specific tasks
-    selectedTasks = tasks.filter(task => 
-      options.include?.includes(task.name) && task.enabled
+    selectedTasks = tasks.filter(
+      (task) => options.include?.includes(task.name) && task.enabled
     );
   } else if (options.all) {
-    // Clean all available tasks
-    selectedTasks = tasks.filter(task => task.enabled);
+    selectedTasks = availableTasks;
   } else {
-    // Interactive mode
-    const availableTasks = tasks.filter(task => task.enabled);
-    const choices = availableTasks.map(task => ({
-      value: task.name,
-      label: task.description,
-      // Default to true for metro and watchman
-      hint: task.name === 'metro' || task.name === 'watchman' ? 'recommended' : undefined,
-    }));
-    
     const selected = await promptMultiselect({
       message: 'Select caches to clean:',
-      options: choices,
+      options: availableTasks.map((task) => ({
+        value: task.name,
+        label: task.description,
+      })),
     });
-    
-    selectedTasks = tasks.filter(task => selected.includes(task.name));
+    selectedTasks = tasks.filter((task) => selected.includes(task.name));
   }
-  
-  if (selectedTasks.length === 0) {
-    logger.info('No cleanup tasks selected.');
-    return;
-  }
-  
-  logger.info(`Cleaning...`);
-  
+
   for (const task of selectedTasks) {
     const taskSpinner = spinner();
     taskSpinner.start(`Cleaning ${task.description}`);
-    
+
     try {
       await task.action();
-      taskSpinner.stop(`✓ ${task.description} cleaned`);
+      taskSpinner.stop(`Success: ${task.description}`);
     } catch (error) {
-      taskSpinner.stop(`✗ Failed to clean ${task.description}`, 1);
+      taskSpinner.stop(`Failure: ${task.description}`, 1);
       logger.debug(`Task ${task.name} failed: ${error}`);
     }
   }
@@ -356,39 +345,44 @@ async function cleanProject(projectRoot: string, options: CleanOptions) {
  */
 async function cleanCommand(options: CleanOptions) {
   intro('🧹 RNEF Clean');
-  
+
   const projectRoot = getProjectRoot();
   await cleanProject(projectRoot, options);
   outro('Success 🎉.');
 }
 
-export const cleanPlugin = () => (api: PluginApi): PluginOutput => {
-  api.registerCommand({
-    name: 'clean',
-    description: 'Clean caches and build artifacts for RNEF projects',
-    action: async (options: CleanOptions) => {
-      await cleanCommand(options);
-    },
-    options: [
-      {
-        name: '--include <string>',
-        description: `Comma-separated list of caches to clear (${CLEANUP_TASK_NAMES.join(', ')})`,
-        parse: (val: string) => val.split(','),
+export const cleanPlugin =
+  () =>
+  (api: PluginApi): PluginOutput => {
+    api.registerCommand({
+      name: 'clean',
+      description: 'Clean caches and build artifacts for RNEF projects',
+      action: async (options: CleanOptions) => {
+        await cleanCommand(options);
       },
+      options: [
+        {
+          name: '--include <list>',
+          description: `Comma-separated list of caches to clear (${CLEANUP_TASK_NAMES.join(
+            ', '
+          )})`,
+          parse: (val: string) => val.split(','),
+        },
 
-      {
-        name: '--verify-cache',
-        description: 'Whether to verify the cache (currently only applies to npm cache)',
-      },
-      {
-        name: '--all',
-        description: 'Clean all available caches without interactive prompt',
-      },
-    ],
-  });
+        {
+          name: '--verify-cache',
+          description:
+            'Whether to verify the cache (currently only applies to npm cache)',
+        },
+        {
+          name: '--all',
+          description: 'Clean all available caches without interactive prompt',
+        },
+      ],
+    });
 
-  return {
-    name: 'internal_clean',
-    description: 'Clean plugin for RNEF projects',
+    return {
+      name: 'internal_clean',
+      description: 'Clean plugin for RNEF projects',
+    };
   };
-};
