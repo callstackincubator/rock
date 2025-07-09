@@ -14,8 +14,8 @@
     "publish:verdaccio": "npm publish --registry http://localhost:4873 --userconfig ../../.npmrc"
   },
   "dependencies": {
-    "@react-native-community/cli-config": "^18.0.0",
-    "@react-native-community/cli-config-apple": "^18.0.0",
+    "@react-native-community/cli-config": "^19.1.0",
+    "@react-native-community/cli-config-apple": "^19.1.0",
     "@rnef/tools": "^0.7.28",
     "@types/adm-zip": "^0.5.7",
     "adm-zip": "^0.5.16",
@@ -24,7 +24,7 @@
     "tslib": "^2.3.0"
   },
   "devDependencies": {
-    "@react-native-community/cli-types": "^18.0.0",
+    "@react-native-community/cli-types": "^19.1.0",
     "@rnef/config": "^0.7.28"
   },
   "publishConfig": {
