@@ -112,8 +112,8 @@ importers:
   packages/cli:
     dependencies:
       '@react-native-community/cli-config':
-        specifier: ^18.0.0
-        version: 18.0.0(typescript@5.8.3)
+        specifier: ^19.1.0
+        version: 19.1.0(typescript@5.8.3)
       '@rnef/config':
         specifier: ^0.7.28
         version: link:../config
@@ -134,8 +134,8 @@ importers:
         version: 2.8.1
     devDependencies:
       '@react-native-community/cli-types':
-        specifier: ^18.0.0
-        version: 18.0.0
+        specifier: ^19.1.0
+        version: 19.1.0
       '@types/adm-zip':
         specifier: ^0.5.7
         version: 0.5.7
@@ -196,8 +196,8 @@ importers:
   packages/platform-android:
     dependencies:
       '@react-native-community/cli-config-android':
-        specifier: ^18.0.0
-        version: 18.0.0
+        specifier: ^19.1.0
+        version: 19.1.0
       '@rnef/tools':
         specifier: ^0.7.28
         version: link:../tools
@@ -209,8 +209,8 @@ importers:
         version: 2.8.1
     devDependencies:
       '@react-native-community/cli-types':
-        specifier: ^18.0.0
-        version: 18.0.0
+        specifier: ^19.1.0
+        version: 19.1.0
       '@rnef/config':
         specifier: ^0.7.28
         version: link:../config
@@ -221,11 +221,11 @@ importers:
   packages/platform-apple-helpers:
     dependencies:
       '@react-native-community/cli-config':
-        specifier: ^18.0.0
-        version: 18.0.0(typescript@5.8.3)
+        specifier: ^19.1.0
+        version: 19.1.0(typescript@5.8.3)
       '@react-native-community/cli-config-apple':
-        specifier: ^18.0.0
-        version: 18.0.0
+        specifier: ^19.1.0
+        version: 19.1.0
       '@rnef/tools':
         specifier: ^0.7.28
         version: link:../tools
@@ -246,8 +246,8 @@ importers:
         version: 2.8.1
     devDependencies:
       '@react-native-community/cli-types':
-        specifier: ^18.0.0
-        version: 18.0.0
+        specifier: ^19.1.0
+        version: 19.1.0
       '@rnef/config':
         specifier: ^0.7.28
         version: link:../config
@@ -255,11 +255,11 @@ importers:
   packages/platform-ios:
     dependencies:
       '@react-native-community/cli-config-apple':
-        specifier: ^18.0.0
-        version: 18.0.0
+        specifier: ^19.1.0
+        version: 19.1.0
       '@react-native-community/cli-types':
-        specifier: ^18.0.0
-        version: 18.0.0
+        specifier: ^19.1.0
+        version: 19.1.0
       '@rnef/platform-apple-helpers':
         specifier: ^0.7.28
         version: link:../platform-apple-helpers
@@ -277,8 +277,8 @@ importers:
   packages/plugin-brownfield-android:
     dependencies:
       '@react-native-community/cli-config-android':
-        specifier: ^18.0.0
-        version: 18.0.0
+        specifier: ^19.1.0
+        version: 19.1.0
       '@rnef/platform-android':
         specifier: ^0.7.28
         version: link:../platform-android
@@ -290,8 +290,8 @@ importers:
         version: 2.8.1
     devDependencies:
       '@react-native-community/cli-types':
-        specifier: ^18.0.0
-        version: 18.0.0
+        specifier: ^19.1.0
+        version: 19.1.0
       '@rnef/config':
         specifier: ^0.7.28
         version: link:../config
@@ -299,11 +299,11 @@ importers:
   packages/plugin-brownfield-ios:
     dependencies:
       '@react-native-community/cli-config-apple':
-        specifier: ^18.0.0
-        version: 18.0.0
+        specifier: ^19.1.0
+        version: 19.1.0
       '@react-native-community/cli-types':
-        specifier: ^18.0.0
-        version: 18.0.0
+        specifier: ^19.1.0
+        version: 19.1.0
       '@rnef/platform-apple-helpers':
         specifier: ^0.7.28
         version: link:../platform-apple-helpers
@@ -321,8 +321,8 @@ importers:
   packages/plugin-metro:
     dependencies:
       '@react-native-community/cli-server-api':
-        specifier: ^18.0.0
-        version: 18.0.0
+        specifier: ^19.1.0
+        version: 19.1.0
       '@react-native/dev-middleware':
         specifier: ^0.80.1
         version: 0.80.1
@@ -1872,23 +1872,23 @@ packages:
   '@polka/url@1.0.0-next.28':
     resolution: {integrity: sha512-8LduaNlMZGwdZ6qWrKlfa+2M4gahzFkprZiAt2TF8uS0qQgBizKXpXURqvTJ4WtmupWxaLqjRb2UCTe72mu+Aw==}
 
-  '@react-native-community/cli-config-android@18.0.0':
-    resolution: {integrity: sha512-pgnhEO2cmOeb+bBFEBZFYjeFjDTqWoV0JTorTiugj9bb4RQRCl8cr35baVlBGhxAuaio3722CsJ9GRF1oHjP8w==}
+  '@react-native-community/cli-config-android@19.1.0':
+    resolution: {integrity: sha512-IlIs9iawZvvzrXsKrHGS+iGt9ixfcwmtXRSdxygQMX3po+H2T1PJnnh+Shum5ja9hw3R+cqTb4kj3YsaFo4VTQ==}
 
-  '@react-native-community/cli-config-apple@18.0.0':
-    resolution: {integrity: sha512-6edjTt3mlNMFBuB/Xd6u0O7GEkhJiKvQgmcoBH18FsNy5cpiHDwQsG8EWM5cHeINp1gMK845qq9fFsTko6gqyQ==}
+  '@react-native-community/cli-config-apple@19.1.0':
+    resolution: {integrity: sha512-2nJtMgWfW+YDhVcwspo3Pnnaqo/QMFUBFK1jUhI3pD5XLXnoY3jq1kb43o1Nvj1ADLewGqZnDqcSxG0Pd7P98Q==}
 
-  '@react-native-community/cli-config@18.0.0':
-    resolution: {integrity: sha512-GUGvyek06JRF4mfd9zXao9YQW4+H8ny69HznqNXVRtVSIIekFyjOpKQeSEzdcyqJEEa5gej22GOz1JCHMKBccg==}
+  '@react-native-community/cli-config@19.1.0':
+    resolution: {integrity: sha512-OHcXRwjaN6a6MVc8Y/vn9sY2xMj1eXO86GogzV0fR3Pk3Fz1Kj5lerTjY9jKkskdRbpetfpAibeSgqxJ4I838g==}
 
-  '@react-native-community/cli-server-api@18.0.0':
-    resolution: {integrity: sha512-tdmGV7ZntYmzrXWheZNpAy6dVI2yrsX4sQH+xAzU7lCfKHk6J8GucxedduXnB5qBB4JgSrrbzg2RLNxv5v0S/Q==}
+  '@react-native-community/cli-server-api@19.1.0':
+    resolution: {integrity: sha512-YvFS8aTHfs+vnxEBFnBThkwzDm60B6OyajiYAn4c+m10vsEnExrurMWdmANMyKG0dM2LjADqkFvqUARtO/+1jQ==}
 
-  '@react-native-community/cli-tools@18.0.0':
-    resolution: {integrity: sha512-oR6FcDEcSDYos79vZy4+Tj8jgAE0Xf5HEiRXMJFGISYLRx7tvslSaK8SodUOW9TZe2bCZOb5QSvj8zeMpORmxg==}
+  '@react-native-community/cli-tools@19.1.0':
+    resolution: {integrity: sha512-JjTL5fj77v1urcHYcqnd4ZBTO52ORYzOqxMdDmJdadwh08iMguGfJ1rXNyybBSTyK/Ev60upo3sIm2A26nWydg==}
 
-  '@react-native-community/cli-types@18.0.0':
-    resolution: {integrity: sha512-J84+4IRXl8WlVdoe1maTD5skYZZO9CbQ6LNXEHx1kaZcFmvPZKfjsaxuyQ+8BsSqZnM2izOw8dEWnAp/Zuwb0w==}
+  '@react-native-community/cli-types@19.1.0':
+    resolution: {integrity: sha512-MEF7WBG17hQOusrphgEjbojqAoGkIwtYg0HhcJ+/MRLMQg6jty6K98gr6VYmjphXGkAPx1T/AN8/DmWmlw/atw==}
 
   '@react-native/assets-registry@0.80.1':
     resolution: {integrity: sha512-T3C8OthBHfpFIjaGFa0q6rc58T2AsJ+jKAa+qPquMKBtYGJMc75WgNbk/ZbPBxeity6FxZsmg3bzoUaWQo4Mow==}
@@ -9491,23 +9491,23 @@ snapshots:
 
   '@polka/url@1.0.0-next.28': {}
 
-  '@react-native-community/cli-config-android@18.0.0':
+  '@react-native-community/cli-config-android@19.1.0':
     dependencies:
-      '@react-native-community/cli-tools': 18.0.0
+      '@react-native-community/cli-tools': 19.1.0
       chalk: 4.1.2
       fast-glob: 3.3.3
       fast-xml-parser: 4.5.1
 
-  '@react-native-community/cli-config-apple@18.0.0':
+  '@react-native-community/cli-config-apple@19.1.0':
     dependencies:
-      '@react-native-community/cli-tools': 18.0.0
+      '@react-native-community/cli-tools': 19.1.0
       chalk: 4.1.2
       execa: 5.1.1
       fast-glob: 3.3.3
 
-  '@react-native-community/cli-config@18.0.0(typescript@5.8.3)':
+  '@react-native-community/cli-config@19.1.0(typescript@5.8.3)':
     dependencies:
-      '@react-native-community/cli-tools': 18.0.0
+      '@react-native-community/cli-tools': 19.1.0
       chalk: 4.1.2
       cosmiconfig: 9.0.0(typescript@5.8.3)
       deepmerge: 4.3.1
@@ -9516,9 +9516,9 @@ snapshots:
     transitivePeerDependencies:
       - typescript
 
-  '@react-native-community/cli-server-api@18.0.0':
+  '@react-native-community/cli-server-api@19.1.0':
     dependencies:
-      '@react-native-community/cli-tools': 18.0.0
+      '@react-native-community/cli-tools': 19.1.0
       body-parser: 1.20.3
       compression: 1.7.5
       connect: 3.7.0
@@ -9533,7 +9533,7 @@ snapshots:
       - supports-color
       - utf-8-validate
 
-  '@react-native-community/cli-tools@18.0.0':
+  '@react-native-community/cli-tools@19.1.0':
     dependencies:
       '@vscode/sudo-prompt': 9.3.1
       appdirsjs: 1.2.7
@@ -9546,7 +9546,7 @@ snapshots:
       prompts: 2.4.2
       semver: 7.7.1
 
-  '@react-native-community/cli-types@18.0.0':
+  '@react-native-community/cli-types@19.1.0':
     dependencies:
       joi: 17.13.3
 
