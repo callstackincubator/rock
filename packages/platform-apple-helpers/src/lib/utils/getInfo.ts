@@ -1,12 +1,6 @@
 import * as fs from 'node:fs';
 import * as path from 'node:path';
-import {
-  logger,
-  RnefError,
-  spawn,
-  spinner,
-  type SubprocessError,
-} from '@rnef/tools';
+import { logger, RnefError, spawn, type SubprocessError } from '@rnef/tools';
 import { XMLParser } from 'fast-xml-parser';
 import type { Info, XcodeProjectInfo } from '../types/index.js';
 
@@ -30,8 +24,6 @@ export async function getInfo(
   projectInfo: XcodeProjectInfo,
   sourceDir: string
 ): Promise<Info | undefined> {
-  const loader = spinner();
-  loader.start('Gathering Xcode project information');
   if (!projectInfo.isWorkspace) {
     try {
       const { stdout } = await spawn('xcodebuild', ['-list', '-json'], {
@@ -41,14 +33,11 @@ export async function getInfo(
       const info = parseTargetList(stdout);
 
       if (!info) {
-        loader.stop('Failed: Gathering Xcode project information', 1);
         throw new RnefError('Failed to get Xcode project information');
       }
 
-      loader.stop('Gathered Xcode project information.');
       return info;
     } catch (error) {
-      loader.stop('Failed to get a target list.', 1);
       throw new RnefError('Failed to get a target list.', {
         cause: error,
       });
@@ -86,7 +75,6 @@ export async function getInfo(
       logger.debug(stdout);
       logger.debug(buildOutput.stderr);
     } catch (error) {
-      loader.stop('Failed to get project info.', 1);
       throw new RnefError('Failed to get project info', {
         cause: (error as SubprocessError).stderr,
       });
@@ -116,6 +104,5 @@ export async function getInfo(
       info.schemes = info.schemes.concat(schemes);
     }
   }
-  loader.stop('Gathered Xcode project information.');
   return info;
 }
