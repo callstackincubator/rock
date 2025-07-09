@@ -166,11 +166,7 @@ function createCleanupTasks(projectRoot: string, options: CleanOptions): Cleanup
       const androidDir = path.join(projectRoot, 'android');
       const gradlewPath = path.join(androidDir, 'gradlew');
       if (fs.existsSync(gradlewPath)) {
-        try {
-          await spawn(gradlewPath, ['clean'], { cwd: androidDir });
-        } catch (error) {
-          logger.debug(`Gradle clean failed: ${error}`);
-        }
+        await spawn(gradlewPath, ['clean'], { cwd: androidDir });
       }
     },
   });
@@ -191,11 +187,7 @@ function createCleanupTasks(projectRoot: string, options: CleanOptions): Cleanup
           await spawn('bundle', ['exec', 'pod', 'cache', 'clean', '--all'], { cwd: iosDir });
         } catch (error) {
           logger.debug(`Bundle exec pod cache clean failed: ${error}`);
-          try {
-            await spawn('pod', ['cache', 'clean', '--all'], { cwd: iosDir });
-          } catch (fallbackError) {
-            logger.debug(`CocoaPods cache clean failed: ${fallbackError}`);
-          }
+          await spawn('pod', ['cache', 'clean', '--all'], { cwd: iosDir });
         }
       }
       
@@ -225,12 +217,8 @@ function createCleanupTasks(projectRoot: string, options: CleanOptions): Cleanup
     enabled: hasMetro,
     action: async () => {
       if (hasMetro) {
-        try {
-          await spawn('killall', ['watchman']);
-          await spawn('watchman', ['watch-del-all']);
-        } catch (error) {
-          logger.debug(`Watchman cleanup failed: ${error}`);
-        }
+        await spawn('killall', ['watchman']);
+        await spawn('watchman', ['watch-del-all']);
       }
     },
   });
@@ -244,11 +232,7 @@ function createCleanupTasks(projectRoot: string, options: CleanOptions): Cleanup
       cleanDirectories(['node_modules'], projectRoot);
       
       if (options['verify-cache']) {
-        try {
-          await spawn('npm', ['cache', 'verify']);
-        } catch (error) {
-          logger.debug(`NPM cache verify failed: ${error}`);
-        }
+        await spawn('npm', ['cache', 'verify']);
       }
     },
   });
@@ -259,11 +243,7 @@ function createCleanupTasks(projectRoot: string, options: CleanOptions): Cleanup
     description: 'Yarn cache',
     enabled: true,
     action: async () => {
-      try {
-        await spawn('yarn', ['cache', 'clean']);
-      } catch (error) {
-        logger.debug(`Yarn cache clean failed: ${error}`);
-      }
+      await spawn('yarn', ['cache', 'clean']);
     },
   });
 
@@ -273,11 +253,7 @@ function createCleanupTasks(projectRoot: string, options: CleanOptions): Cleanup
     description: 'Bun cache',
     enabled: true,
     action: async () => {
-      try {
-        await spawn('bun', ['pm', 'cache', 'rm']);
-      } catch (error) {
-        logger.debug(`Bun cache clean failed: ${error}`);
-      }
+      await spawn('bun', ['pm', 'cache', 'rm']);
     },
   });
 
@@ -287,11 +263,7 @@ function createCleanupTasks(projectRoot: string, options: CleanOptions): Cleanup
     description: 'pnpm cache',
     enabled: true,
     action: async () => {
-      try {
-        await spawn('pnpm', ['store', 'prune']);
-      } catch (error) {
-        logger.debug(`pnpm cache clean failed: ${error}`);
-      }
+      await spawn('pnpm', ['store', 'prune']);
     },
   });
 
@@ -336,7 +308,7 @@ async function cleanProject(projectRoot: string, options: CleanOptions) {
     validateCleanupTasks(options.include);
     // Non-interactive mode with specific tasks
     selectedTasks = tasks.filter(task => 
-      options.include!.includes(task.name) && task.enabled
+      options.include?.includes(task.name) && task.enabled
     );
   } else if (options.all) {
     // Clean all available tasks
@@ -354,7 +326,6 @@ async function cleanProject(projectRoot: string, options: CleanOptions) {
     const selected = await promptMultiselect({
       message: 'Select caches to clean:',
       options: choices,
-      initialValues: ['metro', 'watchman'],
     });
     
     selectedTasks = tasks.filter(task => selected.includes(task.name));
@@ -365,8 +336,7 @@ async function cleanProject(projectRoot: string, options: CleanOptions) {
     return;
   }
   
-  const projectName = path.basename(projectRoot);
-  note(`Cleaning ${color.cyan(projectName)} project at ${color.dim(projectRoot)}`);
+  logger.info(`Cleaning...`);
   
   for (const task of selectedTasks) {
     const taskSpinner = spinner();
@@ -391,7 +361,7 @@ async function cleanCommand(options: CleanOptions) {
   
   const projectRoot = getProjectRoot();
   await cleanProject(projectRoot, options);
-  outro('Project cleaned successfully!');
+  outro('Success 🎉.');
 }
 
 export const cleanPlugin = () => (api: PluginApi): PluginOutput => {
