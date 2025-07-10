@@ -9,14 +9,7 @@ import {
   getBuildPaths,
   getValidProjectConfig,
 } from '@rnef/platform-apple-helpers';
-import {
-  color,
-  colorLink,
-  intro,
-  outro,
-  relativeToCwd,
-  spinner,
-} from '@rnef/tools';
+import { colorLink, intro, outro, relativeToCwd, spinner } from '@rnef/tools';
 import { copyHermesXcframework } from './copyHermesXcframework.js';
 import { mergeFrameworks } from './mergeFrameworks.js';
 const buildOptions = getBuildOptions({ platformName: 'ios' });
