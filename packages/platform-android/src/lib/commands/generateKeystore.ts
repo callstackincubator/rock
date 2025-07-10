@@ -4,6 +4,7 @@ import type { PluginApi } from '@rnef/config';
 import type { SubprocessError } from '@rnef/tools';
 import {
   color,
+  colorLink,
   intro,
   logger,
   outro,
@@ -78,9 +79,9 @@ async function runKeytool(androidProject: AndroidProjectConfig, args: Flags) {
       { stdio: 'inherit' }
     );
 
-    logger.success(`Keystore generated at: ${color.cyan(keystoreOutputPath)}`);
+    logger.success(`Keystore generated at: ${colorLink(keystoreOutputPath)}`);
     logger.warn(
-      `Edit the ${color.bold('~/.gradle/gradle.properties')} or ${color.bold(
+      `Edit the ${colorLink('~/.gradle/gradle.properties')} or ${colorLink(
         './android/gradle.properties'
       )} file, and add the following (replace ***** with the correct keystore password):`
     );
@@ -94,7 +95,7 @@ async function runKeytool(androidProject: AndroidProjectConfig, args: Flags) {
     );
   } catch (error) {
     throw new RnefError(
-      `Failed to generate keystore. Please try manually by following instructions at: ${color.cyan(
+      `Failed to generate keystore. Please try manually by following instructions at: ${colorLink(
         'https://reactnative.dev/docs/signed-apk-android'
       )}`,
       { cause: (error as SubprocessError).stderr }

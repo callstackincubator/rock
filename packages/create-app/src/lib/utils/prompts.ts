@@ -8,11 +8,11 @@ import {
   promptMultiselect,
   promptSelect,
   promptText,
+  relativeToCwd,
   RnefError,
   type SupportedRemoteCacheProviders,
 } from '@rnef/tools';
 import { vice } from 'gradient-string';
-import path from 'path';
 import type { TemplateInfo } from '../templates.js';
 import { validateProjectName } from './project-name.js';
 import { getRnefVersion } from './version.js';
@@ -59,7 +59,7 @@ export function printByeMessage(
   pkgManager: string,
   installDeps: boolean
 ) {
-  const relativeDir = path.relative(process.cwd(), targetDir);
+  const relativeDir = relativeToCwd(targetDir);
 
   const nextSteps = [
     `cd ${relativeDir}`,

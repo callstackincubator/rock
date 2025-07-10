@@ -1,10 +1,4 @@
-import {
-  logger,
-  RnefError,
-  spawn,
-  spinner,
-  type SubprocessError,
-} from '@rnef/tools';
+import { logger, RnefError, spawn, type SubprocessError } from '@rnef/tools';
 import { getAdbPath } from './adb.js';
 import type { DeviceData } from './listAndroidDevices.js';
 import type { AndroidProject, Flags } from './runAndroid.js';
@@ -20,7 +14,7 @@ export async function tryLaunchAppOnDevice(
     logger.debug(
       `No device with id "${device.deviceId}", skipping launching the app.`
     );
-    return;
+    return {};
   } else {
     deviceId = device.deviceId;
   }
@@ -59,17 +53,12 @@ export async function tryLaunchAppOnDevice(
 
   const adbPath = getAdbPath();
   logger.debug(`Running ${adbPath} ${adbArgs.join(' ')}.`);
-  const loader = spinner();
-  loader.start(`Launching the app on ${device.readableName} (id: ${deviceId})`);
   try {
     await spawn(adbPath, adbArgs);
-    loader.stop(
-      `Launched the app on ${device.readableName} (id: ${deviceId}) and listening on port ${args.port}.`
-    );
   } catch (error) {
-    loader.stop(`Failed to launch the app.`, 1);
     throw new RnefError(`Failed to launch the app on ${device.readableName}`, {
       cause: (error as SubprocessError).stderr,
     });
   }
+  return { applicationIdWithSuffix };
 }

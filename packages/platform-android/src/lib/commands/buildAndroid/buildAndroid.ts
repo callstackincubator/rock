@@ -1,13 +1,12 @@
-import path from 'node:path';
 import type { AndroidProjectConfig } from '@react-native-community/cli-types';
-import type { FingerprintSources } from '@rnef/tools';
 import {
-  color,
+  colorLink,
+  type FingerprintSources,
   formatArtifactName,
   logger,
   outro,
   parseArgs,
-  spinner,
+  relativeToCwd,
 } from '@rnef/tools';
 import { findOutputFile } from '../runAndroid/findOutputFile.js';
 import { runGradle } from '../runGradle.js';
@@ -42,12 +41,8 @@ export async function buildAndroid(
   const outputFilePath = await findOutputFile(androidProject, tasks);
 
   if (outputFilePath) {
-    const loader = spinner();
-    loader.start('');
-    loader.stop(
-      `Build available at: ${color.cyan(
-        path.relative(process.cwd(), outputFilePath)
-      )}`
+    logger.log(
+      `Build available at: ${colorLink(relativeToCwd(outputFilePath))}`
     );
   }
   outro('Success 🎉.');

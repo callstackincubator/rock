@@ -1,14 +1,14 @@
 import path from 'node:path';
 import type { FingerprintSources } from '@rnef/tools';
 import {
-  color,
+  colorLink,
   formatArtifactName,
   isInteractive,
   logger,
   promptSelect,
+  relativeToCwd,
   RnefError,
   saveLocalBuildCache,
-  spinner,
 } from '@rnef/tools';
 import type {
   BuilderCommand,
@@ -63,17 +63,8 @@ export const createBuild = async ({
       reactNativePath,
       brownfield,
     });
-    // The path may not exist when we archive
-    if (!args.archive) {
-      const loader = spinner();
-      loader.start('');
-      loader.stop(
-        `Build available at: ${color.cyan(
-          path.relative(process.cwd(), appPath)
-        )}`
-      );
-      saveLocalBuildCache(artifactName, appPath);
-    }
+    logger.log(`Build available at: ${colorLink(relativeToCwd(appPath))}`);
+
     xcodeProject = buildAppResult.xcodeProject;
     sourceDir = buildAppResult.sourceDir;
     // @ts-expect-error - scheme is not set when binaryPath is provided,

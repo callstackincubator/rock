@@ -1,6 +1,6 @@
 import os from 'node:os';
 import type { SubprocessError } from '@rnef/tools';
-import { spawn, spinner } from '@rnef/tools';
+import { color, RnefError, spawn, spinner } from '@rnef/tools';
 import { getAdbPath, getDevices } from './adb.js';
 
 const emulatorCommand = process.env['ANDROID_HOME']
@@ -24,11 +24,15 @@ export const getEmulators = async () => {
   }
 };
 
-const launchEmulator = async (
-  emulatorName: string,
-  port: number,
-  loader: ReturnType<typeof spinner>
-): Promise<string> => {
+const launchEmulator = async ({
+  emulatorName,
+  port,
+  onConnected,
+}: {
+  emulatorName: string;
+  port: number;
+  onConnected: () => void;
+}): Promise<string> => {
   const manualCommand = `${emulatorCommand} @${emulatorName}`;
 
   const cp = spawn(emulatorCommand, [`@${emulatorName}`, '-port', `${port}`], {
@@ -46,9 +50,7 @@ const launchEmulator = async (
         : false;
 
       if (connected) {
-        loader.message(
-          `Emulator "${emulatorName}" is connected. Waiting for boot`
-        );
+        onConnected();
         if (await isEmulatorBooted(connected)) {
           cleanup();
           resolve(connected);
@@ -87,7 +89,7 @@ async function getAvailableDevicePort(
    */
   const devices = await getDevices();
   if (port > 5682) {
-    throw new Error('Failed to launch emulator');
+    throw new RnefError('Failed to launch emulator');
   }
   if (devices.some((d) => d.includes(port.toString()))) {
     return await getAvailableDevicePort(port + 2);
@@ -101,15 +103,26 @@ export async function tryLaunchEmulator(name?: string) {
   loader.start(`Looking for available emulators"`);
   const emulators = await getEmulators();
   const emulatorName = name ?? emulators[0];
+  const displayEmulatorName = color.bold(emulatorName);
   let deviceId;
   if (emulators.length > 0) {
     try {
-      loader.message(`Launching emulator "${emulatorName}"`);
-      deviceId = await launchEmulator(emulatorName, port, loader);
-      loader.stop(`Launched ${emulatorName} emulator.`);
+      loader.message(`Launching emulator ${displayEmulatorName}`);
+      deviceId = await launchEmulator({
+        emulatorName,
+        port,
+        onConnected: () => {
+          loader.message(
+            `Emulator ${color.bold(
+              emulatorName
+            )} is connected. Waiting for boot`
+          );
+        },
+      });
+      loader.stop(`Launched ${displayEmulatorName} emulator.`);
     } catch (error) {
       loader.stop(
-        `Failed to launch ${emulatorName} emulator. ${
+        `Failed to launch ${displayEmulatorName} emulator. ${
           (error as SubprocessError).message
         }`,
         1

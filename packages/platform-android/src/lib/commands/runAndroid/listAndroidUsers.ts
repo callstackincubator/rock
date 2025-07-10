@@ -1,4 +1,4 @@
-import { promptSelect, spawn, spinner } from '@rnef/tools';
+import { logger, promptSelect, spawn } from '@rnef/tools';
 import { getAdbPath } from './adb.js';
 
 type User = {
@@ -13,14 +13,12 @@ const regex = new RegExp(
 export async function checkUsers(device: string): Promise<User[]> {
   const adbPath = getAdbPath();
   const adbArgs = ['-s', device, 'shell', 'pm', 'list', 'users'];
-  const loader = spinner();
-  loader.start(`Checking users on "${device}"`);
 
   try {
     const { stdout, stderr } = await spawn(adbPath, adbArgs, { stdio: 'pipe' });
 
     if (stderr) {
-      loader.stop(`Failed to check users of "${device}". ${stderr}`, 1);
+      logger.debug(`Failed to check users on the device. ${stderr}`, 1);
       return [];
     }
 
@@ -34,11 +32,10 @@ export async function checkUsers(device: string): Promise<User[]> {
       }
     }
 
-    loader.stop(`Found ${users.length} users on "${device}".`);
     return users;
   } catch (error) {
-    loader.stop(
-      `Unexpected error while checking users of "${device}". Continuing without user selection. Error details: ${
+    logger.debug(
+      `Unexpected error while checking users on the device. Continuing without user selection. Error details: ${
         (error as { message: string }).message
       }.`,
       1

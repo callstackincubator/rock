@@ -6,6 +6,7 @@ import type {
 } from '@react-native-community/cli-types';
 import type { FingerprintSources, RemoteBuildCache } from '@rnef/tools';
 import {
+  color,
   fetchCachedBuild,
   formatArtifactName,
   getLocalBuildCacheBinaryPath,
@@ -15,6 +16,7 @@ import {
   outro,
   promptSelect,
   RnefError,
+  spinner,
 } from '@rnef/tools';
 import type { BuildFlags } from '../buildAndroid/buildAndroid.js';
 import { options } from '../buildAndroid/buildAndroid.js';
@@ -105,14 +107,7 @@ export async function runAndroid(
       if (!binaryPath) {
         await runGradle({ tasks, androidProject, args, artifactName });
       }
-      await tryInstallAppOnDevice(
-        device,
-        androidProject,
-        args,
-        tasks,
-        binaryPath
-      );
-      await tryLaunchAppOnDevice(device, androidProject, args);
+      await runOnDevice({ device, androidProject, args, tasks, binaryPath });
     }
   } else {
     if ((await getDevices()).length === 0) {
@@ -131,14 +126,7 @@ export async function runAndroid(
     }
 
     for (const device of await listAndroidDevices()) {
-      await tryInstallAppOnDevice(
-        device,
-        androidProject,
-        args,
-        tasks,
-        binaryPath
-      );
-      await tryLaunchAppOnDevice(device, androidProject, args);
+      await runOnDevice({ device, androidProject, args, tasks, binaryPath });
     }
   }
 
@@ -237,6 +225,41 @@ async function promptForDeviceSelection(
   });
 
   return selected;
+}
+
+async function runOnDevice({
+  device,
+  androidProject,
+  args,
+  tasks,
+  binaryPath,
+}: {
+  device: DeviceData;
+  androidProject: AndroidProject;
+  args: Flags;
+  tasks: string[];
+  binaryPath: string | undefined;
+}) {
+  const loader = spinner();
+  loader.start('Installing the app');
+  await tryInstallAppOnDevice(device, androidProject, args, tasks, binaryPath);
+  loader.message('Launching the app');
+  const { applicationIdWithSuffix } = await tryLaunchAppOnDevice(
+    device,
+    androidProject,
+    args
+  );
+  if (applicationIdWithSuffix) {
+    loader.stop(
+      `Installed and launched the app on ${color.bold(device.readableName)}`
+    );
+  } else {
+    loader.stop(
+      `Failed: installing and launching the app on ${color.bold(
+        device.readableName
+      )}`
+    );
+  }
 }
 
 export const runOptions = [

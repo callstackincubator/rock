@@ -13,7 +13,7 @@ export { findDevServerPort } from './lib/dev-server/findDevServerPort.js';
 export { isDevServerRunning } from './lib/dev-server/isDevServerRunning.js';
 export { isInteractive } from './lib/isInteractive.js';
 export { spawn, SubprocessError } from './lib/spawn.js';
-export { color } from './lib/color.js';
+export { color, colorLink } from './lib/color.js';
 export { runHermes } from './lib/hermes.js';
 export {
   fetchCachedBuild,

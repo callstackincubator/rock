@@ -6,6 +6,7 @@ import type { SubprocessError } from '@rnef/tools';
 import {
   cacheManager,
   color,
+  colorLink,
   logger,
   RnefError,
   spawn,
@@ -252,7 +253,7 @@ async function runBundleInstall(sourceDir: string, projectRoot: string) {
   const gemfilePath = path.join(projectRoot, 'Gemfile');
   if (!fs.existsSync(gemfilePath)) {
     logger.debug(
-      `Could not find the Gemfile at: ${color.cyan(gemfilePath)}
+      `Could not find the Gemfile at: ${colorLink(gemfilePath)}
 The default React Native Template uses Gemfile to leverage Ruby Bundler and we advice the same.
 If you use Gemfile, make sure it's ${color.bold(
         'in the project root directory'
@@ -264,7 +265,7 @@ Falling back to installing CocoaPods using globally installed "pod".`
 
   if (!checkGemfileForCocoaPods(gemfilePath)) {
     logger.debug(
-      `CocoaPods not found in Gemfile at: ${color.cyan(gemfilePath)}
+      `CocoaPods not found in Gemfile at: ${colorLink(gemfilePath)}
 skipping Ruby Gems installation.`
     );
     return false;
