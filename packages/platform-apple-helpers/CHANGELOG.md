@@ -1,5 +1,14 @@
 # @rnef/platform-apple-helpers
 
+## 0.8.0
+
+### Patch Changes
+
+- d2948de: feat: new looks that makes important information easier to parse
+- 7157d23: chore: update RNC CLI to 19.1 for RN 0.80 compat
+- Updated dependencies [d2948de]
+  - @rnef/tools@0.8.0
+
 ## 0.7.28
 
 ### Patch Changes

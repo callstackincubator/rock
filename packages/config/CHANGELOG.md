@@ -1,5 +1,14 @@
 # @rnef/config
 
+## 0.8.0
+
+### Patch Changes
+
+- d2948de: feat: new looks that makes important information easier to parse
+- Updated dependencies [d2948de]
+  - @rnef/provider-github@0.8.0
+  - @rnef/tools@0.8.0
+
 ## 0.7.28
 
 ### Patch Changes
