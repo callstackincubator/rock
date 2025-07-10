@@ -9,7 +9,6 @@ import {
   relativeToCwd,
   RnefError,
   saveLocalBuildCache,
-  spinner,
 } from '@rnef/tools';
 import type {
   BuilderCommand,
@@ -64,11 +63,7 @@ export const createBuild = async ({
       reactNativePath,
       brownfield,
     });
-    const loader = spinner();
-    loader.start('');
-    loader.stop(
-      `Build available at: ${colorLink(relativeToCwd(appPath))}`
-    );
+    logger.log(`Build available at: ${colorLink(relativeToCwd(appPath))}`);
 
     xcodeProject = buildAppResult.xcodeProject;
     sourceDir = buildAppResult.sourceDir;

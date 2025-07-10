@@ -9,7 +9,7 @@ import {
   getBuildPaths,
   getValidProjectConfig,
 } from '@rnef/platform-apple-helpers';
-import { colorLink, intro, outro, relativeToCwd, spinner } from '@rnef/tools';
+import { colorLink, intro, logger, outro, relativeToCwd } from '@rnef/tools';
 import { copyHermesXcframework } from './copyHermesXcframework.js';
 import { mergeFrameworks } from './mergeFrameworks.js';
 const buildOptions = getBuildOptions({ platformName: 'ios' });
@@ -106,9 +106,7 @@ export const pluginBrownfieldIos =
         });
 
         // 5) Inform the user
-        const loader = spinner();
-        loader.start('');
-        loader.stop(
+        logger.log(
           `XCFrameworks are available at: ${colorLink(
             relativeToCwd(frameworkTargetOutputDir)
           )}`

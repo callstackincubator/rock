@@ -7,7 +7,6 @@ import {
   outro,
   parseArgs,
   relativeToCwd,
-  spinner,
 } from '@rnef/tools';
 import { findOutputFile } from '../runAndroid/findOutputFile.js';
 import { runGradle } from '../runGradle.js';
@@ -42,9 +41,7 @@ export async function buildAndroid(
   const outputFilePath = await findOutputFile(androidProject, tasks);
 
   if (outputFilePath) {
-    const loader = spinner();
-    loader.start('');
-    loader.stop(
+    logger.log(
       `Build available at: ${colorLink(relativeToCwd(outputFilePath))}`
     );
   }
