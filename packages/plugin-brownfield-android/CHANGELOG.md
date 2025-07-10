@@ -1,5 +1,20 @@
 # @rnef/plugin-brownfield-android
 
+## 0.8.0
+
+### Minor Changes
+
+- 4c0a3eb: feat: upgrade templates to 0.80
+
+### Patch Changes
+
+- 7157d23: chore: update RNC CLI to 19.1 for RN 0.80 compat
+- Updated dependencies [d2948de]
+- Updated dependencies [4c0a3eb]
+- Updated dependencies [7157d23]
+  - @rnef/platform-android@0.8.0
+  - @rnef/tools@0.8.0
+
 ## 0.7.28
 
 ### Patch Changes

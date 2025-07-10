@@ -1,5 +1,11 @@
 # @rnef/welcome-screen
 
+## 0.8.0
+
+### Minor Changes
+
+- 4c0a3eb: feat: upgrade templates to 0.80
+
 ## 0.7.28
 
 ## 0.7.27

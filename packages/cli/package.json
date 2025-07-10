@@ -1,6 +1,6 @@
 {
   "name": "@rnef/cli",
-  "version": "0.7.28",
+  "version": "0.8.0",
   "type": "module",
   "types": "./dist/src/index.d.ts",
   "exports": {
@@ -23,8 +23,8 @@
   "dependencies": {
     "adm-zip": "^0.5.16",
     "@react-native-community/cli-config": "^19.1.0",
-    "@rnef/config": "^0.7.28",
-    "@rnef/tools": "^0.7.28",
+    "@rnef/config": "^0.8.0",
+    "@rnef/tools": "^0.8.0",
     "commander": "^12.1.0",
     "tar": "^7.4.3",
     "tslib": "^2.3.0"
