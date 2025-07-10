@@ -2,7 +2,6 @@ import fs from 'node:fs';
 import path from 'node:path';
 import type { SubprocessError } from '@rnef/tools';
 import {
-  color,
   colorLink,
   getDotRnefPath,
   intro,
@@ -110,9 +109,7 @@ export async function signAndroid(options: SignAndroidOptions) {
     keyAlias: options.keyAlias,
     keyPassword: options.keyPassword,
   });
-  loader.stop(
-    `Signed the APK file with keystore: ${colorLink(keystorePath)}.`
-  );
+  loader.stop(`Signed the APK file with keystore: ${colorLink(keystorePath)}.`);
 
   outro('Success 🎉.');
 }

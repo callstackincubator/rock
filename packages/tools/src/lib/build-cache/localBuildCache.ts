@@ -2,8 +2,8 @@ import fs from 'node:fs';
 import path from 'node:path';
 import { color, colorLink } from '../color.js';
 import logger from '../logger.js';
-import { getLocalArtifactPath, getLocalBinaryPath } from './common.js';
 import { relativeToCwd } from '../path.js';
+import { getLocalArtifactPath, getLocalBinaryPath } from './common.js';
 
 export type LocalBuild = {
   name: string;

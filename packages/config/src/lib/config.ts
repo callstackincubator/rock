@@ -3,7 +3,7 @@ import { createRequire } from 'node:module';
 import * as path from 'node:path';
 import { pathToFileURL } from 'node:url';
 import type { FingerprintSources, RemoteBuildCache } from '@rnef/tools';
-import { color, colorLink, logger } from '@rnef/tools';
+import { colorLink, logger } from '@rnef/tools';
 import type { ValidationError } from 'joi';
 import { ConfigTypeSchema } from './schema.js';
 import { formatValidationError } from './utils.js';

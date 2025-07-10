@@ -5,6 +5,7 @@ import * as tar from 'tar';
 import { color, colorLink } from '../color.js';
 import { RnefError } from '../error.js';
 import logger from '../logger.js';
+import { relativeToCwd } from '../path.js';
 import { spinner } from '../prompts.js';
 import {
   getLocalArtifactPath,
@@ -12,7 +13,6 @@ import {
   type RemoteBuildCache,
 } from './common.js';
 import type { LocalBuild } from './localBuildCache.js';
-import { relativeToCwd } from '../path.js';
 
 type FetchCachedBuildOptions = {
   artifactName: string;

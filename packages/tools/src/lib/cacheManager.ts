@@ -1,6 +1,6 @@
 import fs from 'node:fs';
 import path from 'node:path';
-import { color, colorLink } from './color.js';
+import { colorLink } from './color.js';
 import { RnefError } from './error.js';
 import logger from './logger.js';
 import { getCacheRootPath } from './project.js';
