@@ -79,11 +79,7 @@ test('buildAndroid runs gradle build with correct configuration for debug and ou
   expect(spawn).toBeCalledWith('./gradlew', ['app:bundleDebug', '-x', 'lint'], {
     cwd: '/android',
   });
-  expect(spinnerMock.stop).toBeCalledWith(
-    expect.stringContaining(
-      'android/app/build/outputs/bundle/debug/app-debug.aab'
-    )
-  );
+  expect(spinnerMock.stop).toBeCalledWith('Built the app');
 });
 
 test('buildAndroid fails gracefully when gradle errors', async () => {
