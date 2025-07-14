@@ -7,7 +7,7 @@ import pluginSitemap from 'rspress-plugin-sitemap';
 import vercelPluginAnalytics from 'rspress-plugin-vercel-analytics';
 
 export default defineConfig({
-  root: path.join(__dirname, 'docs'),
+  root: path.join(__dirname, '.'),
   title: 'React Native Enterprise Framework',
   icon: '/logo.svg',
   outDir: 'build',
