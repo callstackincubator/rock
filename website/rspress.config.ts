@@ -47,6 +47,7 @@ export default defineConfig({
         'Copyright © 2025 <a href="https://callstack.com">Callstack</a>.',
     },
   },
+  globalStyles: './styles.css',
   plugins: [
     pluginCallstackTheme(),
     // @ts-expect-error outdated @rspress/shared declared as dependency
