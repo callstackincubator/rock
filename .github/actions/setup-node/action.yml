@@ -4,12 +4,12 @@ description: Setup Node.js, pnpm & nx
 runs:
   using: composite
   steps:
-    - uses: pnpm/action-setup@v4
+    - uses: pnpm/action-setup@a7487c7e89a18df4991f7f222e4898a00d66ddda # v4.1.0
       with:
         version: 10.11.0
 
       # Cache node_modules
-    - uses: actions/setup-node@v4
+    - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4.4.0
       with:
         node-version: 20
         cache: 'pnpm'
@@ -17,4 +17,4 @@ runs:
     - run: pnpm install --frozen-lockfile
       shell: bash
 
-    - uses: nrwl/nx-set-shas@v4
+    - uses: nrwl/nx-set-shas@dbe0650947e5f2c81f59190a38512cf49126fe6b # v4.3.0
