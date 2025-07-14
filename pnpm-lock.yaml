@@ -482,6 +482,9 @@ importers:
       '@types/node':
         specifier: ^18.11.17
         version: 18.19.68
+      '@types/react':
+        specifier: ^19.1.8
+        version: 19.1.8
 
 packages:
 

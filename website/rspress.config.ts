@@ -47,7 +47,7 @@ export default defineConfig({
         'Copyright © 2025 <a href="https://callstack.com">Callstack</a>.',
     },
   },
-  globalStyles: './styles.css',
+  globalStyles: path.join(__dirname, 'styles.css'),
   plugins: [
     pluginCallstackTheme(),
     // @ts-expect-error outdated @rspress/shared declared as dependency

@@ -1,5 +1,4 @@
 import {
-  Announcement,
   HomeBanner,
   HomeFeature,
   HomeFooter,
@@ -14,16 +13,7 @@ import {
 
 // You can customize the default Layout and HomeLayout like this:
 const Layout = () => (
-  <RspressLayout
-    beforeNav={
-      <Announcement
-        href="./guide"
-        message="Announcement Test"
-        localStorageKey=""
-      />
-    }
-    afterOutline={<OutlineCTA href="https://callstack.com" />}
-  />
+  <RspressLayout afterOutline={<OutlineCTA href="https://callstack.com" />} />
 );
 
 const HomeLayout = () => (
