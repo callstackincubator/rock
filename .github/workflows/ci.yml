@@ -19,7 +19,7 @@ jobs:
     name: Validate
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
         with:
           fetch-depth: 0
 
@@ -45,18 +45,18 @@ jobs:
           pnpm verdaccio:publish
 
           NPM_CONFIG_REGISTRY=http://localhost:4873 pnpm exec nx affected -t e2e
-  
+
   check-changeset:
     name: Check Changeset
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
         with:
           fetch-depth: 0
 
       - name: Setup
-        uses: ./.github/actions/setup-node   
+        uses: ./.github/actions/setup-node
 
       - name: Check changeset
         if: github.ref != 'refs/heads/main'
@@ -67,7 +67,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
         with:
           fetch-depth: 0
 
