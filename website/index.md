@@ -3,9 +3,11 @@ pageType: home
 
 hero:
   image: 
-    src: /logo.svg
-    alt: RNEF logo
-  name: React Native Enterprise Framework
+    src: 
+      light: /logo-light.svg
+      dark: /logo-dark.svg
+    alt: React Native Enterprise Framework logo
+  name: React Native framework for Enterprise scale
   tagline: Easy to adopt. Simple to scale. Built for flexibility from day one
   actions:
     - theme: brand
