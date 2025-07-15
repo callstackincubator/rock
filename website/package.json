@@ -8,10 +8,10 @@
     "preview": "rspress preview"
   },
   "dependencies": {
-    "@callstack/rspress-theme": "^0.1.4",
-    "@rspress/plugin-llms": "2.0.0-beta.19",
+    "@callstack/rspress-theme": "^0.2.0",
+    "@rspress/plugin-llms": "2.0.0-beta.21",
     "rsbuild-plugin-open-graph": "^1.0.2",
-    "rspress": "2.0.0-beta.19",
+    "rspress": "2.0.0-beta.21",
     "rspress-plugin-sitemap": "^1.1.2",
     "rspress-plugin-vercel-analytics": "^0.3.0"
   },
