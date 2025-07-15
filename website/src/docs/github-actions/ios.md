@@ -1,8 +1,10 @@
-# iOS
+# iOS GitHub Action
+
+This GitHub Action allows you to build iOS apps using RNEF's remote build system. It supports both simulator builds for development and signed device builds for testing and release. If you haven't yet, please check the [configuration guide](./configuration.md) where you can find information on optimal workflow setup, permissions, optimizations and GitHub Personal Access Tokens.
 
 ## Development Builds For Simulators
 
-This action from RNEF builds an APP (`.app`) file in debug configuration suitable for development. Doesn't require signing.
+Builds an APP (`.app`) file in debug configuration suitable for development. Doesn't require signing.
 
 Use in the GitHub Workflow file like this:
 
@@ -18,7 +20,7 @@ Use in the GitHub Workflow file like this:
 
 ## Tester Builds For Devices
 
-This action from RNEF builds an IPA (`.ipa`) file in release variant suitable for testing. Requires signing.
+Builds an IPA (`.ipa`) file in release variant suitable for testing. Requires signing.
 
 ### Prerequisites
 

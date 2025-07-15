@@ -1,4 +1,4 @@
-# Adding React Native to Android app
+# Integrating with Android Apps
 
 React Native Enterprise Framework helps you package your React Native code into files that your iOS and Android apps can use. For Android, it creates an `.aar` file that you can easily add to your app.
 

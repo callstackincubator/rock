@@ -8,14 +8,15 @@
     "preview": "rspress preview"
   },
   "dependencies": {
-    "@callstack/rspress-theme": "^0.0.3",
-    "@rspress/plugin-llms": "^2.0.0-beta.6",
+    "@callstack/rspress-theme": "^0.2.0",
+    "@rspress/plugin-llms": "2.0.0-beta.21",
     "rsbuild-plugin-open-graph": "^1.0.2",
-    "rspress": "^2.0.0-beta.6",
+    "rspress": "2.0.0-beta.21",
     "rspress-plugin-sitemap": "^1.1.2",
     "rspress-plugin-vercel-analytics": "^0.3.0"
   },
   "devDependencies": {
-    "@types/node": "^18.11.17"
+    "@types/node": "^18.11.17",
+    "@types/react": "^19.1.8"
   }
 }

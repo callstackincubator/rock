@@ -1,0 +1,17 @@
+[
+  {
+    "name": "intro",
+    "type": "file",
+    "label": "Introduction"
+  },
+  {
+    "name": "ios",
+    "type": "file",
+    "label": "iOS Brownfield"
+  },
+  {
+    "name": "android",
+    "type": "file",
+    "label": "Android Brownfield"
+  }
+]

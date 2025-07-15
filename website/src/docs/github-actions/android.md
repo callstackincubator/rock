@@ -1,8 +1,10 @@
-# Android
+# Android GitHub Action
+
+This GitHub Action allows you to build Android apps using RNEF's remote build system. It supports both simulator builds for development and signed device builds for testing and release. If you haven't yet, please check the [configuration guide](./configuration.md) where you can find information on optimal workflow setup, permissions, optimizations and GitHub Personal Access Tokens.
 
 ## Development Builds For All Devices
 
-This action from RNEF builds an APK (`.apk`) file in debug variants suitable for development. Doesn't require signing.
+Builds an APK (`.apk`) file in debug variants suitable for development. Doesn't require signing.
 
 ### Running on GitHub Actions
 
@@ -19,7 +21,7 @@ Use in the GitHub Workflow file like this:
 
 ## Tester Builds For All Devices
 
-This action from RNEF builds an APK file in release variants suitable for testing. Requires signing.
+Builds an APK file in release variants suitable for testing. Requires signing.
 
 ### Prerequisites
 
