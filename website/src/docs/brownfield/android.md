@@ -306,7 +306,118 @@ tasks.named("generateMetadataFileForMavenAarPublication") {
 }
 ```
 
-## 7. Set up RNEF for AAR generation
+## Extra steps for Expo
+
+1. Make `ReactNativeHostManager` aware with expo modules:
+```diff
+@@ -11,6 +11,8 @@ import com.facebook.react.defaults.DefaultReactHost.getDefaultReactHost
+ import com.facebook.react.defaults.DefaultReactNativeHost
+ import com.facebook.react.soloader.OpenSourceMergedSoMapping
+ import com.facebook.soloader.SoLoader
++import expo.modules.ApplicationLifecycleDispatcher
++import expo.modules.ReactNativeHostWrapper
+ 
+ class ReactNativeHostManager {
+     companion object {
+@@ -37,21 +39,23 @@ class ReactNativeHostManager {
+             // If you opted-in for the New Architecture, we load the native entry point for this app.
+             load()
+         }
++        ApplicationLifecycleDispatcher.onApplicationCreate(application)
+ 
+         val reactApp = object : ReactApplication {
+-            override val reactNativeHost: ReactNativeHost = object : DefaultReactNativeHost(application) {
++            override val reactNativeHost: ReactNativeHost = ReactNativeHostWrapper(application,
++                object : DefaultReactNativeHost(application) {
+                     override fun getPackages(): MutableList<ReactPackage> {
+                         return PackageList(application).packages
+                     }
+ 
+-                    override fun getJSMainModuleName(): String = "index"
++                    override fun getJSMainModuleName(): String = ".expo/.virtual-metro-entry"
+                     override fun getBundleAssetName(): String = "index.android.bundle"
+ 
+                     override fun getUseDeveloperSupport() = BuildConfig.DEBUG
+ 
+                     override val isNewArchEnabled: Boolean = BuildConfig.IS_NEW_ARCHITECTURE_ENABLED
+                     override val isHermesEnabled: Boolean = BuildConfig.IS_HERMES_ENABLED
+-                }
++                })
+ 
+             override val reactHost: ReactHost
+                 get() = getDefaultReactHost(application, reactNativeHost)
+```
+
+2. Update your `rnbrownfield/build.gradle`:
+
+```diff
+
++ reactBrownfield {
+    /**
+     * This will be available from `com.callstack.react.brownfield` version > 3.0.0
+     * It takes care of linking expo dependencies like expo-image with your AAR module.
+     *
+     * Default value is false.
+     */
++     isExpo = true
++ }
+
+react {
+    autolinkLibrariesWithApp()
+}
+
+@@ -76,6 +76,18 @@ dependencies {
+     androidTestImplementation("androidx.test.espresso:espresso-core:3.6.1")
+ }
+ 
+/**
+* This function is used in the places where we:
+*
+* Remove the `expo` dependency from the `module.json` and `pom.xml file. Otherwise, the
+* gradle will try to resolve this and will throw an error, since this dependency won't
+* be available from a remote repository.
+*
+* Your AAR does not need this dependency.
+*/
++ fun isExpoArtifact(group: String, artifactId: String): Boolean {
++     return group == "host.exp.exponent" && artifactId == "expo"
++ }
+ 
+ publishing {
+     publications {
+@@ -97,7 +109,12 @@ publishing {
+                     val dependenciesNode = (asNode().get("dependencies") as groovy.util.NodeList).first() as groovy.util.Node
+                     dependenciesNode.children()
+                         .filterIsInstance<groovy.util.Node>()
+-                        .filter { (it.get("groupId") as groovy.util.NodeList).text() == rootProject.name }
++                        .filter {
++                            val artifactId = (it["artifactId"] as groovy.util.NodeList).text()
++                            val group = (it["groupId"] as groovy.util.NodeList).text()
++
++                            (isExpoArtifact(group, artifactId) || group == rootProject.name)
++                        }
+                         .forEach { dependenciesNode.remove(it) }
+                 }
+             }
+@@ -121,7 +138,12 @@ tasks.register("removeDependenciesFromModuleFile") {
+         file("$moduleBuildDir/publications/mavenAar/module.json").run {
+             val json = inputStream().use { JsonSlurper().parse(it) as Map<String, Any> }
+             (json["variants"] as? List<MutableMap<String, Any>>)?.forEach { variant ->
+-                (variant["dependencies"] as? MutableList<Map<String, Any>>)?.removeAll { it["group"] == rootProject.name }
++                (variant["dependencies"] as? MutableList<Map<String, Any>>)?.removeAll {
++                    val module = it["module"] as String
++                    val group = it["group"] as String
++
++                    (isExpoArtifact(group, module) || group == rootProject.name)
++                }
+             }
+             writer().use { it.write(JsonOutput.prettyPrint(JsonOutput.toJson(json))) }
+         }
+```
+
+That is all you need to change. Step 7 is not required with Expo, you can skip it.
+
+## 7. Set up RNEF for AAR generation (not required for Expo)
 
 1. Add `@rnef/plugin-brownfield-android` to your dependencies
 1. Update your `rnef.config.mjs`:
