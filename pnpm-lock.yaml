@@ -461,8 +461,8 @@ importers:
   website:
     dependencies:
       '@callstack/rspress-theme':
-        specifier: ^0.1.1
-        version: 0.1.1(react@19.1.0)
+        specifier: ^0.1.3
+        version: 0.1.3(react@19.1.0)
       '@rspress/plugin-llms':
         specifier: 2.0.0-beta.19
         version: 2.0.0-beta.19(@rspress/core@2.0.0-beta.20(@types/react@19.1.8)(acorn@8.14.0)(webpack@5.96.1(@swc/core@1.5.29(@swc/helpers@0.5.17))))
@@ -1285,8 +1285,8 @@ packages:
       webpack:
         optional: true
 
-  '@callstack/rspress-theme@0.1.1':
-    resolution: {integrity: sha512-vUPdzXR0lTKk6TMwxo1M/rUMz4ttqwdcF64DPCkP/UooU6sm83o7NHuwRH6iiULsntLBmUIA4cFq5I6I/RGYQA==}
+  '@callstack/rspress-theme@0.1.3':
+    resolution: {integrity: sha512-RQwSjNTyTSNUwTj3nI5MZ6iyWccpdzir5nPrBQaDhI5iPIPQ1ZTNzFjl8I7vCb5tqapWlSjkQCl034OPz7o8DQ==}
     hasBin: true
     peerDependencies:
       react: ^19.0.0
@@ -8754,7 +8754,7 @@ snapshots:
       - supports-color
       - utf-8-validate
 
-  '@callstack/rspress-theme@0.1.1(react@19.1.0)':
+  '@callstack/rspress-theme@0.1.3(react@19.1.0)':
     dependencies:
       react: 19.1.0
 

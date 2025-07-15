@@ -1,5 +1,10 @@
 [
   {
+    "name": "intro",
+    "type": "file",
+    "label": "Introduction"
+  },
+  {
     "name": "ios",
     "type": "file",
     "label": "iOS"

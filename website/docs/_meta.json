@@ -16,12 +16,12 @@
   },
   {
     "type": "dir",
-    "name": "remote-cache",
-    "label": "Remote Cache"
+    "name": "github-actions",
+    "label": "GitHub Actions"
   },
   {
     "type": "dir",
     "name": "brownfield",
-    "label": "Adding to existing native apps"
+    "label": "Integration with Native Apps"
   }
 ]
