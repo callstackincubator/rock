@@ -24,7 +24,7 @@ export default defineConfig({
         title: 'React Native Enterprise Framework',
         type: 'website',
         url: 'https://rnef.dev',
-        image: 'https://rnef.dev/og-image.png',
+        image: 'https://rnef.dev/og-image.jpg',
         description:
           'Easy to adopt. Simple to scale. Built for flexibility from day one',
         twitter: {
