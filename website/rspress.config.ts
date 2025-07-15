@@ -18,6 +18,7 @@ export default defineConfig({
     light: '/logo.svg',
     dark: '/logo.svg',
   },
+  logoText: 'RNEF',
   builderConfig: {
     plugins: [
       pluginOpenGraph({

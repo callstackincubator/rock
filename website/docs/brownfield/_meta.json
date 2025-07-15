@@ -7,11 +7,11 @@
   {
     "name": "ios",
     "type": "file",
-    "label": "iOS"
+    "label": "iOS Brownfield"
   },
   {
     "name": "android",
     "type": "file",
-    "label": "Android"
+    "label": "Android Brownfield"
   }
 ]

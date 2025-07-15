@@ -1,1 +1,17 @@
-["configuration", "ios", "android"]
+[
+  {
+    "name": "configuration",
+    "type": "file",
+    "label": "Configuration"
+  },
+  {
+    "name": "ios",
+    "type": "file",
+    "label": "iOS GitHub Action"
+  },
+  {
+    "name": "android",
+    "type": "file",
+    "label": "Android GitHub Action"
+  }
+]

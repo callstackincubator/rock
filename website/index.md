@@ -2,6 +2,9 @@
 pageType: home
 
 hero:
+  image: 
+    src: /logo.svg
+    alt: RNEF logo
   name: React Native Enterprise Framework
   tagline: Easy to adopt. Simple to scale. Built for flexibility from day one
   actions:
