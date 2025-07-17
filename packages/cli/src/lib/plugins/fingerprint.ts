@@ -2,6 +2,7 @@ import { performance } from 'node:perf_hooks';
 import type { PluginApi } from '@rnef/config';
 import type { FingerprintSources } from '@rnef/tools';
 import {
+  color,
   intro,
   isInteractive,
   logger,
@@ -59,7 +60,7 @@ export async function nativeFingerprintCommand(
   });
   const duration = performance.now() - start;
 
-  loader.stop(`Fingerprint calculated: ${fingerprint.hash}`);
+  loader.stop(`Fingerprint calculated: ${color.bold(color.magenta(fingerprint.hash))}`);
 
   logger.debug(
     'Sources:',

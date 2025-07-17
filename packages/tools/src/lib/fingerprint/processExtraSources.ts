@@ -52,6 +52,7 @@ export function processExtraSources(
       const absolutePath = path.isAbsolute(source)
         ? source
         : path.join(projectRoot, source);
+
       if (!fs.existsSync(absolutePath)) {
         logger.warn(
           `Extra source "${absolutePath}" does not exist, skipping...`
@@ -60,16 +61,18 @@ export function processExtraSources(
       }
 
       const stats = fs.statSync(absolutePath);
+      const relativePath = path.relative(projectRoot, absolutePath);
+
       if (stats.isDirectory()) {
         processedSources.push({
           type: 'dir',
-          filePath: absolutePath,
+          filePath: relativePath,
           reasons: ['custom-user-config'],
         });
       } else {
         processedSources.push({
           type: 'contents',
-          id: absolutePath,
+          id: relativePath,
           contents: fs.readFileSync(absolutePath, 'utf-8'),
           reasons: ['custom-user-config'],
         });
