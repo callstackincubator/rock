@@ -1,8 +1,10 @@
 import type { AndroidProjectConfig } from '@react-native-community/cli-types';
+import type { RemoteBuildCache } from '@rnef/tools';
 import {
   colorLink,
   type FingerprintSources,
   formatArtifactName,
+  getBinaryPath,
   logger,
   outro,
   parseArgs,
@@ -18,12 +20,14 @@ export interface BuildFlags {
   activeArchOnly?: boolean;
   tasks?: Array<string>;
   extraParams?: Array<string>;
+  local?: boolean;
 }
 
 export async function buildAndroid(
   androidProject: AndroidProjectConfig,
   args: BuildFlags,
   projectRoot: string,
+  remoteCacheProvider: null | (() => RemoteBuildCache) | undefined,
   fingerprintOptions: FingerprintSources
 ) {
   normalizeArgs(args);
@@ -36,9 +40,19 @@ export async function buildAndroid(
     root: projectRoot,
     fingerprintOptions,
   });
-  await runGradle({ tasks, androidProject, args, artifactName });
+  const binaryPath = await getBinaryPath({
+    artifactName,
+    localFlag: args.local,
+    remoteCacheProvider,
+  });
+  if (binaryPath) {
+    //
+  } else {
+    await runGradle({ tasks, androidProject, args, artifactName });
+  }
 
-  const outputFilePath = await findOutputFile(androidProject, tasks);
+  const outputFilePath =
+    binaryPath ?? (await findOutputFile(androidProject, tasks));
 
   if (outputFilePath) {
     logger.log(
@@ -84,5 +98,9 @@ export const options = [
     name: '--extra-params <string>',
     description: 'Custom params passed to gradle build command',
     parse: parseArgs,
+  },
+  {
+    name: '--local',
+    description: 'Force local build with Gradle wrapper.',
   },
 ];

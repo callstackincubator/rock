@@ -22,10 +22,6 @@ export const getRunOptions = ({ platformName }: BuilderCommand) => {
         'Path relative to project root where pre-built .app binary lives.',
     },
     {
-      name: '--local',
-      description: 'Force local build with xcodebuild.',
-    },
-    {
       name: '--device <string>',
       description:
         'Explicitly set the device or simulator to use by name or by UDID.',
