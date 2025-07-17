@@ -73,7 +73,7 @@ export function processExtraSources(
         processedSources.push({
           type: 'contents',
           id: relativePath,
-          contents: fs.readFileSync(relativePath, 'utf-8'),
+          contents: fs.readFileSync(absolutePath, 'utf-8'),
           reasons: ['custom-user-config'],
         });
       }
