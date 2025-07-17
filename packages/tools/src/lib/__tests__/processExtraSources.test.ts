@@ -27,7 +27,7 @@ describe('processExtraSources', () => {
     expect(result).toEqual([
       {
         type: 'contents',
-        id: path.join(mockProjectRoot, 'file.txt'),
+        id: 'file.txt',
         contents: 'mock content',
         reasons: ['custom-user-config'],
       },
@@ -47,7 +47,7 @@ describe('processExtraSources', () => {
     expect(result).toEqual([
       {
         type: 'dir',
-        filePath: path.join(mockProjectRoot, 'dir'),
+        filePath: 'dir',
         reasons: ['custom-user-config'],
       },
     ]);
@@ -72,13 +72,13 @@ describe('processExtraSources', () => {
     expect(result).toEqual([
       {
         type: 'contents',
-        id: path.join(mockProjectRoot, 'file.txt'),
+        id: 'file.txt',
         contents: 'mock content',
         reasons: ['custom-user-config'],
       },
       {
         type: 'dir',
-        filePath: path.join(mockProjectRoot, 'dir'),
+        filePath: 'dir',
         reasons: ['custom-user-config'],
       },
     ]);
@@ -92,7 +92,7 @@ describe('processExtraSources', () => {
     expect(result).toEqual([
       {
         type: 'contents',
-        id: absolutePath,
+        id: path.relative(mockProjectRoot, absolutePath),
         contents: 'mock content',
         reasons: ['custom-user-config'],
       },
@@ -193,7 +193,7 @@ describe('processExtraSources', () => {
     expect(result).toEqual([
       {
         type: 'contents',
-        id: path.join(mockProjectRoot, 'file.txt'),
+        id: 'file.txt',
         contents: 'mock content',
         reasons: ['custom-user-config'],
       },
