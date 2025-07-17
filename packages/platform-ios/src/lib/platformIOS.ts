@@ -35,6 +35,7 @@ export const platformIOS =
           projectRoot,
           reactNativePath: api.getReactNativePath(),
           fingerprintOptions: api.getFingerprintOptions(),
+          remoteCacheProvider: await api.getRemoteCacheProvider(),
         });
         outro('Success 🎉.');
       },

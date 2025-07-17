@@ -15,6 +15,7 @@ export type BuildFlags = {
   archive?: boolean;
   installPods: boolean;
   newArch: boolean;
+  local?: boolean;
 };
 
 export const getBuildOptions = ({ platformName }: BuilderCommand) => {
@@ -78,6 +79,10 @@ export const getBuildOptions = ({ platformName }: BuilderCommand) => {
     {
       name: '--no-new-arch',
       description: 'Run React Native in legacy async architecture.',
+    },
+    {
+      name: '--local',
+      description: 'Force local build with xcodebuild.',
     },
   ];
 };
