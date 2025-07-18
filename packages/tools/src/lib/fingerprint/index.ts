@@ -58,6 +58,7 @@ export async function nativeFingerprint(
       'android/**/.cxx',
       'ios/DerivedData',
       'ios/Pods',
+      'ios/tmp.xcconfig', // added by react-native-config
       'node_modules',
       'android/local.properties',
       'android/.idea',
