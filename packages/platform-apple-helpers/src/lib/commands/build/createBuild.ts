@@ -67,11 +67,13 @@ export const createBuild = async ({
   if (binaryPath) {
     logger.log(`Build available at: ${colorLink(relativeToCwd(binaryPath))}`);
 
-    const { exportDir } = getBuildPaths(platformName);
-    if (fs.statSync(exportDir).isDirectory()) {
-      logger.log(
-        `Archives available at: ${colorLink(relativeToCwd(exportDir))}`
-      );
+    if (args.archive) {
+      const { exportDir } = getBuildPaths(platformName);
+      if (fs.statSync(exportDir).isDirectory()) {
+        logger.log(
+          `Archives available at: ${colorLink(relativeToCwd(exportDir))}`
+        );
+      }
     }
 
     return { scheme };
@@ -91,6 +93,7 @@ export const createBuild = async ({
     xcodeProject = buildAppResult.xcodeProject;
     sourceDir = buildAppResult.sourceDir;
     scheme = buildAppResult.scheme;
+    saveLocalBuildCache(artifactName, appPath);
   } catch (error) {
     const message = `Failed to create ${args.archive ? 'archive' : 'build'}`;
     throw new RnefError(message, { cause: error });
