@@ -1,7 +1,7 @@
 import fs from 'node:fs';
 import path from 'node:path';
 import { cleanup, getTempDirectory } from '@rnef/test-helpers';
-import { beforeEach, describe, vi } from 'vitest';
+import { afterEach, beforeEach, describe, vi } from 'vitest';
 import cacheManager, { getCacheFile } from '../cacheManager.js';
 
 const CACHE_ROOT = getTempDirectory('cache_root');

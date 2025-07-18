@@ -34,5 +34,6 @@ vi.mock('@rnef/tools', async (importOriginal) => {
     })),
     // Spawn
     spawn: vi.fn(),
+    getBinaryPath: vi.fn(),
   };
 });

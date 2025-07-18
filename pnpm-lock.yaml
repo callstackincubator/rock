@@ -140,6 +140,9 @@ importers:
         specifier: ^2.3.0
         version: 2.8.1
     devDependencies:
+      '@rnef/test-helpers':
+        specifier: ^0.8.0
+        version: link:../test-helpers
       '@types/babel__code-frame':
         specifier: ^7.0.6
         version: 7.0.6
@@ -427,6 +430,10 @@ importers:
       tslib:
         specifier: ^2.3.0
         version: 2.8.1
+    devDependencies:
+      '@rnef/test-helpers':
+        specifier: ^0.8.0
+        version: link:../test-helpers
 
   packages/welcome-screen:
     devDependencies:
