@@ -306,7 +306,7 @@ tasks.named("generateMetadataFileForMavenAarPublication") {
 }
 ```
 
-## Extra steps for Expo
+## 7. Extra steps for Expo CLI and Expo Modules
 
 1. Make `ReactNativeHostManager` aware with expo modules:
 ```diff
@@ -324,6 +324,14 @@ tasks.named("generateMetadataFileForMavenAarPublication") {
              load()
          }
 +        ApplicationLifecycleDispatcher.onApplicationCreate(application)
+
+
+        /**
+         * If your project is using ExpoModules, you can use `index` instead.
+         *
+         * Below module name is used when your project is using Expo CLI
+         */
++        val jsMainModuleName = ".expo/.virtual-metro-entry"
  
          val reactApp = object : ReactApplication {
 -            override val reactNativeHost: ReactNativeHost = object : DefaultReactNativeHost(application) {
@@ -334,7 +342,7 @@ tasks.named("generateMetadataFileForMavenAarPublication") {
                      }
  
 -                    override fun getJSMainModuleName(): String = "index"
-+                    override fun getJSMainModuleName(): String = ".expo/.virtual-metro-entry"
++                    override fun getJSMainModuleName(): String = jsMainModuleName
                      override fun getBundleAssetName(): String = "index.android.bundle"
  
                      override fun getUseDeveloperSupport() = BuildConfig.DEBUG
@@ -415,9 +423,9 @@ react {
          }
 ```
 
-That is all you need to change. Step 7 is not required with Expo, you can skip it.
+That is all you need to change. Step 8.i is not required with Expo, you can skip it. See Step 8.ii to generate AAR.
 
-## 7. Set up RNEF for AAR generation (not required for Expo)
+## 8.i Set up RNEF for AAR generation (not required for Expo)
 
 1. Add `@rnef/plugin-brownfield-android` to your dependencies
 1. Update your `rnef.config.mjs`:
@@ -442,7 +450,12 @@ That is all you need to change. Step 7 is not required with Expo, you can skip i
    rnef publish-local:aar --module-name rnbrownfield
    ```
 
-## 8. Add the AAR to Your Android App
+## 8.ii Generate AAR when using Expo
+
+Here you can see how to generate AAR. The link uses a script which first builds the AAR and then publish to to `mavenLocal`.
+[see here](https://github.com/callstackincubator/modern-brownfield-ref/blob/b23641f3ff7c278743d35013841d5494905ba190/package.json#L14)
+
+## 9. Add the AAR to Your Android App
 
 > Note: You'll need an existing Android app or create a new one in Android Studio.
 
@@ -476,7 +489,7 @@ That is all you need to change. Step 7 is not required with Expo, you can skip i
    }
    ```
 
-## 9. Show the React Native UI
+## 10. Show the React Native UI
 
 Create a new `RNAppFragment.kt`:
 
