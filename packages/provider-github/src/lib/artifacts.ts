@@ -92,7 +92,7 @@ Update the token under "${color.bold(
         )}" key in ${colorLink('rnef.config.mjs')} config file.
 
 📘 Read more about generating a new token: ${colorLink(
-          'https://rnef.dev/docs/remote-cache/github-actions/configuration#generate-github-personal-access-token-for-downloading-cached-builds'
+          'https://rnef.dev/docs/github-actions/configuration#generate-github-personal-access-token-for-downloading-cached-builds'
         )}`
       );
     }
@@ -108,7 +108,7 @@ Make sure the repository information and token under "${color.bold(
         )}" key in ${colorLink('rnef.config.mjs')} config file is valid.
 
 📘 Read more about generating a new token: ${colorLink(
-          'https://rnef.dev/docs/remote-cache/github-actions/configuration#generate-github-personal-access-token-for-downloading-cached-builds'
+          'https://rnef.dev/docs/github-actions/configuration#generate-github-personal-access-token-for-downloading-cached-builds'
         )}`
       );
     }
