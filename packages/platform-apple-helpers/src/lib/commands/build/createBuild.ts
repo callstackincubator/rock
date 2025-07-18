@@ -62,6 +62,8 @@ export const createBuild = async ({
     artifactName,
     localFlag: args.local,
     remoteCacheProvider,
+    fingerprintOptions,
+    sourceDir: projectConfig.sourceDir,
   });
 
   if (binaryPath) {

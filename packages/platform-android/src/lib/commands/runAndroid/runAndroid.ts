@@ -72,6 +72,8 @@ export async function runAndroid(
     binaryPathFlag: args.binaryPath,
     localFlag: args.local,
     remoteCacheProvider,
+    fingerprintOptions,
+    sourceDir: androidProject.sourceDir,
   });
 
   if (device) {

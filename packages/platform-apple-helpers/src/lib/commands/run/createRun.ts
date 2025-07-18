@@ -63,6 +63,8 @@ export const createRun = async ({
     binaryPathFlag: args.binaryPath,
     localFlag: args.local,
     remoteCacheProvider,
+    fingerprintOptions,
+    sourceDir: projectConfig.sourceDir,
   });
 
   // Check if the device argument looks like a UDID

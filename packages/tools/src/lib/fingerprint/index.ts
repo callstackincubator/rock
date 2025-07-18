@@ -6,11 +6,25 @@ import { RnefError } from '../error.js';
 import logger from '../logger.js';
 import { spawn } from '../spawn.js';
 import { processExtraSources } from './processExtraSources.js';
+export { DEFAULT_IGNORE_PATHS as EXPO_DEFAULT_IGNORE_PATHS } from '@expo/fingerprint';
 
 const HASH_ALGORITHM = 'sha1';
 const EXCLUDED_SOURCES = [
   'expoAutolinkingConfig:ios',
   'expoAutolinkingConfig:android',
+];
+
+export const DEFAULT_IGNORE_PATHS = [
+  'android/build',
+  'android/**/build',
+  'android/**/.cxx',
+  'android/.kotlin/**',
+  'ios/DerivedData',
+  'ios/Pods',
+  'node_modules',
+  'android/local.properties',
+  'android/.idea',
+  'android/.gradle',
 ];
 
 export type FingerprintSources = {
@@ -52,17 +66,7 @@ export async function nativeFingerprint(
 
   const fingerprint = await createFingerprintAsync(path, {
     platforms: [platform],
-    dirExcludes: [
-      'android/build',
-      'android/**/build',
-      'android/**/.cxx',
-      'ios/DerivedData',
-      'ios/Pods',
-      'node_modules',
-      'android/local.properties',
-      'android/.idea',
-      'android/.gradle',
-    ],
+    dirExcludes: DEFAULT_IGNORE_PATHS,
     extraSources: [
       ...autolinkingSources,
       ...processExtraSources(options.extraSources, path, options.ignorePaths),
