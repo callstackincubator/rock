@@ -4,12 +4,13 @@
   "license": "MIT",
   "type": "module",
   "scripts": {
-    "build": "nx run-many --target build",
-    "test": "nx run-many --target test",
-    "e2e": "nx run-many --target e2e",
-    "lint": "nx run-many --target lint",
-    "typecheck": "nx run-many --target typecheck",
-    "watch": "nx watch --all -- nx run \\$NX_PROJECT_NAME:build",
+    "build": "pnpm -r run build",
+    "test": "vitest run",
+    "e2e": "pnpm -r run e2e",
+    "lint": "eslint .",
+    "typecheck": "tsc --noEmit",
+    "watch": "pnpm -r --parallel --stream run dev",
+    "dev": "pnpm -r --parallel --stream run dev",
     "validate": "pnpm typecheck && pnpm lint && pnpm test",
     "link-packages": "node ./scripts/linkPackages.mjs",
     "version": "changeset version && ./scripts/update-template-dependencies.sh && pnpm install --no-frozen-lockfile",
@@ -27,11 +28,6 @@
     "@changesets/cli": "^2.27.12",
     "@clack/prompts": "^0.10.0",
     "@eslint/js": "^9.8.0",
-    "@nx/eslint": "21.2.1",
-    "@nx/eslint-plugin": "21.2.1",
-    "@nx/js": "21.2.1",
-    "@nx/vite": "21.2.1",
-    "@nx/web": "21.2.1",
     "@swc-node/register": "~1.9.1",
     "@swc/core": "~1.5.7",
     "@swc/helpers": "~0.5.11",
@@ -47,7 +43,6 @@
     "fast-glob": "^3.3.2",
     "jsonc-eslint-parser": "^2.4.0",
     "nano-spawn": "^0.2.0",
-    "nx": "21.2.1",
     "prettier": "^2.6.2",
     "ts-node": "10.9.1",
     "typescript": "5.6.3",
@@ -55,9 +50,6 @@
     "verdaccio": "^6.0.5",
     "vite": "^5.0.0",
     "vitest": "^2.1.2"
-  },
-  "nx": {
-    "includedScripts": []
   },
   "packageManager": "pnpm@10.11.0"
 }

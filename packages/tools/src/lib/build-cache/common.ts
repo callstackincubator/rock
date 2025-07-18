@@ -111,7 +111,7 @@ export async function formatArtifactName({
     platform,
   });
   loader.stop(
-    `Calculated project fingerprint: ${color.bold(color.magenta(hash))}`
+    `Calculated project fingerprint xd: ${color.bold(color.magenta(hash))}`
   );
   return `rnef-${platform}-${traits.join('-')}-${hash}`;
 }

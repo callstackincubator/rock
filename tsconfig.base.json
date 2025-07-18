@@ -1,7 +1,6 @@
 {
   "compileOnSave": false,
   "compilerOptions": {
-    "rootDir": ".",
     "sourceMap": true,
     "declaration": false,
     "moduleResolution": "NodeNext",
@@ -17,27 +16,27 @@
     "jsx": "preserve",
     "baseUrl": ".",
     "paths": {
-      "@rnef/cli": ["packages/cli/src/index.ts"],
-      "@rnef/config": ["packages/config/src/index.ts"],
-      "@rnef/create-app": ["packages/create-app/src/index.ts"],
-      "@rnef/plugin-metro": ["packages/plugin-metro/src/index.ts"],
-      "@rnef/plugin-repack": ["packages/plugin-repack/src/index.ts"],
-      "@rnef/platform-android": ["packages/platform-android/src/index.ts"],
-      "@rnef/platform-ios": ["packages/platform-ios/src/index.ts"],
-      "@rnef/test-helpers": ["packages/test-helpers/src/index.ts"],
-      "@rnef/tools": ["packages/tools/src/index.ts"],
+      "@rnef/cli": ["packages/cli/dist/src/index"],
+      "@rnef/config": ["packages/config/dist/src/index"],
+      "@rnef/create-app": ["packages/create-app/dist/src/index"],
+      "@rnef/plugin-metro": ["packages/plugin-metro/dist/src/index"],
+      "@rnef/plugin-repack": ["packages/plugin-repack/dist/src/index"],
+      "@rnef/platform-android": ["packages/platform-android/dist/src/index"],
+      "@rnef/platform-ios": ["packages/platform-ios/dist/src/index"],
+      "@rnef/test-helpers": ["packages/test-helpers/dist/src/index"],
+      "@rnef/tools": ["packages/tools/dist/src/index"],
       "@rnef/platform-apple-helpers": [
-        "packages/platform-apple-helpers/src/index.ts"
+        "packages/platform-apple-helpers/dist/src/index"
       ],
       "@rnef/plugin-brownfield-android": [
-        "packages/plugin-brownfield-android/src/index.ts"
+        "packages/plugin-brownfield-android/dist/src/index"
       ],
       "@rnef/platform-brownfield-ios": [
-        "packages/plugin-brownfield-ios/src/index.ts"
+        "packages/plugin-brownfield-ios/dist/src/index"
       ],
-      "@rnef/provider-github": ["packages/provider-github/src/index.ts"],
-      "@rnef/provider-s3": ["packages/provider-s3/src/index.ts"],
-      "@rnef/welcome-screen": ["packages/welcome-screen/src/index.tsx"]
+      "@rnef/provider-github": ["packages/provider-github/dist/src/index"],
+      "@rnef/provider-s3": ["packages/provider-s3/dist/src/index"],
+      "@rnef/welcome-screen": ["packages/welcome-screen/dist/src/index"]
     }
   },
   "exclude": ["node_modules", "tmp"]
