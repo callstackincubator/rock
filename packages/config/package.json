@@ -27,6 +27,6 @@
   },
   "devDependencies": {
     "@types/babel__code-frame": "^7.0.6",
-    "@rnef/test-helpers": "^0.8.0"
+    "@rnef/test-helpers": "^0.8.1"
   }
 }

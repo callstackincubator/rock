@@ -4,11 +4,6 @@ export default defineConfig({
   root: __dirname,
   cacheDir: '../../node_modules/.vite/packages/test-helpers',
 
-
-  // Uncomment this if you are using workers.
-  // worker: {
-  // },
-
   test: {
     watch: false,
     globals: true,
