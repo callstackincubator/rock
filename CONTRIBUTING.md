@@ -64,7 +64,6 @@ In order to test changes to `create-app` package, you need to run the following 
 
 ```sh
 # Ensure fresh build
-nx reset
 pnpm build
 
 # Start local verdaccio registry (in one terminal), keep it open
@@ -123,7 +122,7 @@ When you're sending a pull request:
 
 ## Publishing workflow
 
-This part is for maintainers only, documenting steps to manually publish the packages with Nx.
+This part is for maintainers only, documenting steps to manually publish the packages with Changesets.
 
 ### Stable version
 

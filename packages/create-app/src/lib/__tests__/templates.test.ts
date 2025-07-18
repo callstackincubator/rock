@@ -1,5 +1,5 @@
-import { expect, test } from 'vitest';
 import path from 'node:path';
+import { expect, test } from 'vitest';
 import { resolveTemplate, TEMPLATES } from '../templates.js';
 
 test('resolveTemplateName with built-in templates', () => {
