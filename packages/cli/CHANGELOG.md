@@ -1,5 +1,15 @@
 # @rnef/cli
 
+## 0.8.1
+
+### Patch Changes
+
+- 771403d: fix(fingerprint): pass relative path to processedSources
+- Updated dependencies [771403d]
+- Updated dependencies [3e45983]
+  - @rnef/tools@0.8.1
+  - @rnef/config@0.8.1
+
 ## 0.8.0
 
 ### Patch Changes

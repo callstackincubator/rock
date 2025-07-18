@@ -1,5 +1,14 @@
 # @rnef/provider-github
 
+## 0.8.1
+
+### Patch Changes
+
+- 955d104: Fix broken GH token docs links
+- Updated dependencies [771403d]
+- Updated dependencies [3e45983]
+  - @rnef/tools@0.8.1
+
 ## 0.8.0
 
 ### Patch Changes

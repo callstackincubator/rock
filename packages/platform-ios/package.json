@@ -1,6 +1,6 @@
 {
   "name": "@rnef/platform-ios",
-  "version": "0.8.0",
+  "version": "0.8.1",
   "type": "module",
   "exports": {
     "types": "./dist/src/index.d.ts",
@@ -18,12 +18,12 @@
   "dependencies": {
     "@react-native-community/cli-config-apple": "^19.1.0",
     "@react-native-community/cli-types": "^19.1.0",
-    "@rnef/platform-apple-helpers": "^0.8.0",
-    "@rnef/tools": "^0.8.0",
+    "@rnef/platform-apple-helpers": "^0.8.1",
+    "@rnef/tools": "^0.8.1",
     "tslib": "^2.3.0"
   },
   "devDependencies": {
-    "@rnef/config": "^0.8.0"
+    "@rnef/config": "^0.8.1"
   },
   "publishConfig": {
     "access": "public"
