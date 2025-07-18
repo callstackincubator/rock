@@ -1,5 +1,12 @@
 # rnef-docs
 
+## 1.0.10
+
+### Patch Changes
+
+- 2b59f4f: website: new docs UI
+- b78c7e6: add steps required for expo
+
 ## 1.0.9
 
 ### Patch Changes

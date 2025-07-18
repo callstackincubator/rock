@@ -1,5 +1,13 @@
 # @rnef/plugin-metro
 
+## 0.8.1
+
+### Patch Changes
+
+- Updated dependencies [771403d]
+- Updated dependencies [3e45983]
+  - @rnef/tools@0.8.1
+
 ## 0.8.0
 
 ### Minor Changes

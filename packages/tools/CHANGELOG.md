@@ -1,5 +1,12 @@
 # @rnef/tools
 
+## 0.8.1
+
+### Patch Changes
+
+- 771403d: fix(fingerprint): pass relative path to processedSources
+- 3e45983: fix: add ios/tmp.xcconfig from react-native-config to fingerprint ignores
+
 ## 0.8.0
 
 ### Patch Changes
