@@ -44,6 +44,8 @@ export async function buildAndroid(
     artifactName,
     localFlag: args.local,
     remoteCacheProvider,
+    fingerprintOptions,
+    sourceDir: androidProject.sourceDir,
   });
   if (binaryPath) {
     //
