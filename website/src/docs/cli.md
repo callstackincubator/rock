@@ -24,12 +24,13 @@ The following options are available for all commands:
 
 RNEF CLI uses a modular design where available commands depend on your configuration. The following commands are available by default for all configurations (these are internal commands that you typically won't need to run):
 
-| Command       | Description                                     |
-| :------------ | :---------------------------------------------- |
-| `config`      | Outputs autolinking config (from Community CLI) |
-| `fingerprint` | Calculates fingerprint for project or platform  |
-| `clean`       | Cleans various caches to free up disk space     |
-| `help`        | Displays help menu for a command                |
+| Command        | Description                                     |
+| :------------- | :---------------------------------------------- |
+| `config`       | Outputs autolinking config (from Community CLI) |
+| `fingerprint`  | Calculates fingerprint for project or platform  |
+| `clean`        | Cleans various caches to free up disk space     |
+| `help`         | Displays help menu for a command                |
+| `remote-cache` | Manage remote cache                             |
 
 Additional commands for development, building, and running apps are provided by specialized plugins.
 
@@ -211,7 +212,7 @@ Same as for `build:android` and:
 
 ### `rnef sign:android` Options
 
-The `sign:android` command signs your Android app with a keystore, producing a signed APK file ready for distribution. It allows for replacing the JS bundle with a new version.
+The `sign:android <binaryPath>` command signs your Android app with a keystore, producing a signed APK file ready for distribution. It allows for replacing the JS bundle with a new version.
 
 | Argument     | Description          |
 | :----------- | :------------------- |
@@ -230,8 +231,47 @@ The `sign:android` command signs your Android app with a keystore, producing a s
 
 The `clean` command helps you free up disk space by removing various caches and temporary files from your React Native project. It can clean Android (Gradle), iOS (CocoaPods), Metro, Watchman, RNEF's own project caches, and package manager caches.
 
-| Option                         | Description                               |
-| :----------------------------- | :---------------------------------------- |
-| `--include <string>`           | Comma-separated list of caches to clean. Available options: `android`, `gradle`, `cocoapods`, `metro`, `watchman`, `npm`, `yarn`, `bun`, `pnpm`, `rnef`    |
-| `--verify-cache`               | Whether to verify the cache (currently only applies to npm cache)                |
-| `--all`                        | Clean all available caches without interactive prompt                |
+| Option               | Description                                                                                                                                             |
+| :------------------- | :------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| `--include <string>` | Comma-separated list of caches to clean. Available options: `android`, `gradle`, `cocoapods`, `metro`, `watchman`, `npm`, `yarn`, `bun`, `pnpm`, `rnef` |
+| `--verify-cache`     | Whether to verify the cache (currently only applies to npm cache)                                                                                       |
+| `--all`              | Clean all available caches without interactive prompt                                                                                                   |
+
+### `rnef remote-cache` Actions and Options
+
+The `remote-cache <action>` command provides utilities to interact with the remote build cache configured via your `remoteCacheProvider`. This is useful for inspecting, downloading, uploading, or deleting build artifacts stored remotely.
+
+Available actions:
+
+| Action              | Description                                                      |
+| :------------------ | :--------------------------------------------------------------- |
+| `list`              | Lists the latest artifact matching the specified criteria        |
+| `list-all`          | Lists all artifacts (optionally filtered by platform and traits) |
+| `download`          | Downloads an artifact from remote cache to local cache           |
+| `upload`            | Uploads a binary to remote cache                                 |
+| `delete`            | Deletes artifacts from remote cache                              |
+| `get-provider-name` | Returns the name of the configured remote cache provider         |
+
+Actions have different options available:
+
+| Option                    | Description                                                                                                                                                                        |
+| :------------------------ | :--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `--json`                  | Output results in JSON format instead of human-readable format                                                                                                                     |
+| `--name <string>`         | Full artifact name to operate on. Cannot be used with `--platform` or `--traits`                                                                                                   |
+| `--all`                   | List or delete all matching artifacts (affects `list` and `delete` actions only)                                                                                                   |
+| `--all-but-latest`        | Delete all but the latest matching artifact (affects `delete` action only)                                                                                                         |
+| `-p, --platform <string>` | Platform to target (`ios` or `android`). Must be used with `--traits`                                                                                                              |
+| `-t, --traits <list>`     | Comma-separated traits that construct the final artifact name. For Android: variant (e.g., `debug`, `release`). For iOS: destination and configuration (e.g., `simulator,Release`) |
+| `--binary-path <string>`  | Path to the binary to upload (used with `upload` action)                                                                                                                           |
+
+For example, to download remote cache for iOS simulator with Release configuration, you can use `remote-cache download` with `--name` option
+
+```shell
+npx rnef remote-cache download --name rnef-ios-simulator-Release-abc123fbd28298
+```
+
+or pass `--traits`, so you don't need to pass the fingerprint:
+
+```shell
+npx rnef remote-cache download --platform ios --traits simulator,Release
+```
