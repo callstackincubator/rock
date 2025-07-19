@@ -1,5 +1,5 @@
 name: Setup Node.js
-description: Setup Node.js, pnpm & nx
+description: Setup Node.js and pnpm
 
 runs:
   using: composite
@@ -16,5 +16,3 @@ runs:
 
     - run: pnpm install --frozen-lockfile
       shell: bash
-
-    - uses: nrwl/nx-set-shas@dbe0650947e5f2c81f59190a38512cf49126fe6b # v4.3.0

@@ -2,7 +2,7 @@
 set -e
 
 echo "Building all packages..."
-pnpm nx reset
+
 pnpm build
 
 if [ -z "$NPM_TOKEN" ]; then
@@ -12,9 +12,9 @@ fi
 echo "NPM: Publishing all packages"
 # If NPM_TOKEN is set (CI environment), use it
 if [ -n "$NPM_TOKEN" ]; then
-  pnpm nx run-many -t publish:npm
+  pnpm -r run publish:npm
 else
-  pnpm nx run-many -t publish:npm -- --otp="$OTP"
+  pnpm -r run publish:npm -- --otp="$OTP"
 fi
 
 echo "NPM: Publishing template"

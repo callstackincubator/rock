@@ -13,9 +13,13 @@ import {
 import openURLInBrowser from 'react-native/Libraries/Core/Devtools/openURLInBrowser';
 
 const ICONS = {
+  // eslint-disable-next-line @typescript-eslint/no-require-imports
   book: require('./assets/book-open.png'),
+  // eslint-disable-next-line @typescript-eslint/no-require-imports
   logo: require('./assets/building-skyscraper.png'),
+  // eslint-disable-next-line @typescript-eslint/no-require-imports
   debug: require('./assets/debug-check.png'),
+  // eslint-disable-next-line @typescript-eslint/no-require-imports
   zap: require('./assets/zap.png'),
 } as const;
 

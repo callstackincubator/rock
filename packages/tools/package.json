@@ -10,6 +10,8 @@
     "dist"
   ],
   "scripts": {
+    "build": "tsc -p tsconfig.lib.json",
+    "dev": "tsc -p tsconfig.lib.json --watch",
     "publish:npm": "npm publish --access public",
     "publish:verdaccio": "npm publish --registry http://localhost:4873 --userconfig ../../.npmrc"
   },
@@ -26,6 +28,9 @@
     "string-argv": "^0.3.2",
     "tar": "^7.4.3",
     "tslib": "^2.3.0"
+  },
+  "devDependencies": {
+    "@rnef/test-helpers": "^0.8.1"
   },
   "publishConfig": {
     "access": "public"

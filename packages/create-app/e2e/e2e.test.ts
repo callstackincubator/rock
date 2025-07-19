@@ -9,7 +9,6 @@ import { beforeEach,describe, expect, it } from 'vitest';
 
 /**
  * Perform following commands to test e2e locally (on macOS):
- * 1. nx reset
  * pnpm build
  * pnpm verdaccio:init (keep it running)
  * rm -rf ~/Library/Caches/pnpm/dlx/

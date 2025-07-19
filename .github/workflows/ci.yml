@@ -26,15 +26,14 @@ jobs:
       - name: Setup
         uses: ./.github/actions/setup-node
 
-      # Nx Affected runs only tasks affected by the changes in this PR/commit. Learn more: https://nx.dev/ci/features/affected
-      - name: Typecheck and lint
-        run: pnpm exec nx affected -t typecheck lint
-
-      - name: Run tests
-        run: pnpm exec nx affected -t test
-
       - name: Build
         run: pnpm build
+
+      - name: Lint
+        run: pnpm lint
+
+      - name: Run tests
+        run: pnpm test
 
       - name: Run end-to-end tests
         run: |
@@ -44,7 +43,7 @@ jobs:
           npx wait-on@8.0.1 http://localhost:4873
           pnpm verdaccio:publish
 
-          NPM_CONFIG_REGISTRY=http://localhost:4873 pnpm exec nx affected -t e2e
+          NPM_CONFIG_REGISTRY=http://localhost:4873 pnpm e2e
 
   check-changeset:
     name: Check Changeset

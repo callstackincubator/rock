@@ -10,6 +10,8 @@
     "dist"
   ],
   "scripts": {
+    "build": "tsc -p tsconfig.lib.json",
+    "dev": "tsc -p tsconfig.lib.json --watch",
     "publish:npm": "npm publish --access public",
     "publish:verdaccio": "npm publish --registry http://localhost:4873 --userconfig ../../.npmrc"
   },

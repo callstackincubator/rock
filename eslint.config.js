@@ -1,33 +1,22 @@
-import nx from '@nx/eslint-plugin';
+import eslint from '@eslint/js';
+import { globalIgnores } from 'eslint/config';
 import simpleImportSort from 'eslint-plugin-simple-import-sort';
-import jsoncParser from 'jsonc-eslint-parser';
+import tseslint from 'typescript-eslint';
 
 export default [
-  ...nx.configs['flat/base'],
-  ...nx.configs['flat/typescript'],
-  ...nx.configs['flat/javascript'],
+  eslint.configs.recommended,
+  ...tseslint.configs.recommended,
+  globalIgnores(['website/', 'templates/']),
   {
     files: ['**/*.ts', '**/*.tsx', '**/*.js', '**/*.jsx'],
     rules: {
       '@typescript-eslint/consistent-type-imports': 'error',
+      '@typescript-eslint/no-explicit-any': 'warn',
       '@typescript-eslint/no-unused-vars': [
         'error',
         {
           argsIgnorePattern: '^_',
           caughtErrorsIgnorePattern: '^_',
-        },
-      ],
-      '@nx/enforce-module-boundaries': [
-        'error',
-        {
-          enforceBuildableLibDependency: true,
-          allow: ['^.*/eslint(\\.base)?\\.config\\.[cm]?js$'],
-          depConstraints: [
-            {
-              sourceTag: '*',
-              onlyDependOnLibsWithTags: ['*'],
-            },
-          ],
         },
       ],
     },
@@ -48,31 +37,23 @@ export default [
   {
     files: ['**/*.ts', '**/*.tsx', '**/*.js', '**/*.jsx'],
     // Override or add rules here
-    rules: {},
   },
   {
-    files: ['**/*.test.ts', '**/__tests__/**'],
+    files: ['scripts/**/*.mjs'],
+    // Override or add rules here
+    rules: {
+      'no-undef': 'off',
+    },
+  },
+  {
+    files: ['**/*.test.ts', '**/__tests__/**', '**/metro.config.js', '**/vite.e2e.config.js'],
     rules: {
       '@typescript-eslint/no-empty-function': 'off',
+      '@typescript-eslint/no-require-imports': 'off',
+      'no-undef': 'off',
     },
   },
   {
     ignores: ['**/template/**/*.mjs', '**/dist/**', '**/__fixtures__/**'],
-  },
-  {
-    files: ['**/*.json'],
-    rules: {
-      '@nx/dependency-checks': [
-        'warn',
-        {
-          ignoredFiles: ['{projectRoot}/eslint.config.{js,cjs,mjs}'],
-          // TODO: @nx/dependency-checks incorrectly reports unused dependencies
-          checkObsoleteDependencies: false,
-        },
-      ],
-    },
-    languageOptions: {
-      parser: jsoncParser,
-    },
   },
 ];

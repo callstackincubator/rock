@@ -40,7 +40,7 @@ async function publishPackages() {
   // we use `npm publish` instead of `pnpm publish` to publish packages.
   // This also prevents us from using `workspace:` dependencies.
   // This is a known issue: https://github.com/pnpm/pnpm/issues/8862
-  await spawn('pnpm', ['nx', 'run-many', '-t', 'publish:verdaccio']);
+  await spawn('pnpm', ['-r', 'run', 'publish:verdaccio']);
   loader.stop('Published all packages.');
 }
 
