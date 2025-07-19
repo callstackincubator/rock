@@ -6,4 +6,4 @@
 '@rnef/tools': patch
 ---
 
-feat: warn about ignored files affecting fingerprint
+feat: support local cache for build:\* commands
