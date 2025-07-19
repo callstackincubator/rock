@@ -1,5 +1,13 @@
 # @rnef/create-app
 
+## 0.8.2
+
+### Patch Changes
+
+- Updated dependencies [3b3e374]
+- Updated dependencies [c3c3dec]
+  - @rnef/tools@0.8.2
+
 ## 0.8.1
 
 ### Patch Changes

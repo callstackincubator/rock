@@ -1,5 +1,12 @@
 # @rnef/tools
 
+## 0.8.2
+
+### Patch Changes
+
+- 3b3e374: feat: support local cache for build:\* commands
+- c3c3dec: feat: support local cache for build:\* commands
+
 ## 0.8.1
 
 ### Patch Changes

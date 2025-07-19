@@ -1,5 +1,11 @@
 # rnef-docs
 
+## 1.0.11
+
+### Patch Changes
+
+- f0da5b1: docs: add docs for remote-cache command
+
 ## 1.0.10
 
 ### Patch Changes
