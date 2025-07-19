@@ -47,9 +47,7 @@ export async function buildAndroid(
     fingerprintOptions,
     sourceDir: androidProject.sourceDir,
   });
-  if (binaryPath) {
-    //
-  } else {
+  if (!binaryPath) {
     await runGradle({ tasks, androidProject, args, artifactName });
   }
 
