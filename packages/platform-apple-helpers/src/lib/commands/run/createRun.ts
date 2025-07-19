@@ -3,9 +3,8 @@ import path from 'node:path';
 import type { FingerprintSources, RemoteBuildCache } from '@rnef/tools';
 import {
   color,
-  fetchCachedBuild,
   formatArtifactName,
-  getLocalBuildCacheBinaryPath,
+  getBinaryPath,
   isInteractive,
   logger,
   promptSelect,
@@ -59,35 +58,14 @@ export const createRun = async ({
     root: projectRoot,
     fingerprintOptions,
   });
-  // 1. First check if the binary path is provided
-  let binaryPath = args.binaryPath;
-
-  // 2. If not, check if the local build is requested
-  if (!binaryPath && !args.local) {
-    binaryPath = getLocalBuildCacheBinaryPath(artifactName);
-  }
-
-  // 3. If not, check if the remote cache is requested
-  if (!binaryPath && !args.local) {
-    try {
-      const cachedBuild = await fetchCachedBuild({
-        artifactName,
-        remoteCacheProvider,
-      });
-      if (cachedBuild) {
-        binaryPath = cachedBuild.binaryPath;
-      }
-    } catch (error) {
-      const message = (error as RnefError).message;
-      const cause = (error as RnefError).cause;
-      logger.warn(
-        `Failed to fetch cached build for ${artifactName}: \n${message}`,
-        cause ? `\nCause: ${cause.toString()}` : ''
-      );
-      logger.debug('Remote cache failure error:', error);
-      logger.info('Continuing with local build');
-    }
-  }
+  const binaryPath = await getBinaryPath({
+    artifactName,
+    binaryPathFlag: args.binaryPath,
+    localFlag: args.local,
+    remoteCacheProvider,
+    fingerprintOptions,
+    sourceDir: projectConfig.sourceDir,
+  });
 
   // Check if the device argument looks like a UDID
   // (assuming UDIDs are alphanumeric and have specific length)
