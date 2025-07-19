@@ -20,7 +20,6 @@ export function registerBuildCommand(
         androidConfig,
         args as BuildFlags,
         api.getProjectRoot(),
-        await api.getRemoteCacheProvider(),
         api.getFingerprintOptions()
       );
     },

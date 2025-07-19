@@ -1,10 +1,8 @@
-import fs from 'node:fs';
 import path from 'node:path';
-import type { FingerprintSources, RemoteBuildCache } from '@rnef/tools';
+import type { FingerprintSources } from '@rnef/tools';
 import {
   colorLink,
   formatArtifactName,
-  getBinaryPath,
   isInteractive,
   logger,
   promptSelect,
@@ -30,7 +28,6 @@ export const createBuild = async ({
   reactNativePath,
   fingerprintOptions,
   brownfield,
-  remoteCacheProvider,
 }: {
   platformName: BuilderCommand['platformName'];
   projectConfig: ProjectConfig;
@@ -39,13 +36,12 @@ export const createBuild = async ({
   reactNativePath: string;
   fingerprintOptions: FingerprintSources;
   brownfield?: boolean;
-  remoteCacheProvider: null | (() => RemoteBuildCache) | undefined;
 }) => {
   await validateArgs(args);
 
   let xcodeProject: XcodeProjectInfo;
   let sourceDir: string;
-  let scheme: string | undefined;
+  let scheme: string;
   const deviceOrSimulator = args.destination
     ? // there can be multiple destinations, so we'll pick the first one
       args.destination[0].match(/simulator/i)
@@ -58,27 +54,6 @@ export const createBuild = async ({
     root: projectRoot,
     fingerprintOptions,
   });
-  const binaryPath = await getBinaryPath({
-    artifactName,
-    localFlag: args.local,
-    remoteCacheProvider,
-  });
-
-  if (binaryPath) {
-    logger.log(`Build available at: ${colorLink(relativeToCwd(binaryPath))}`);
-
-    if (args.archive) {
-      const { exportDir } = getBuildPaths(platformName);
-      if (fs.statSync(exportDir).isDirectory()) {
-        logger.log(
-          `Archives available at: ${colorLink(relativeToCwd(exportDir))}`
-        );
-      }
-    }
-
-    return { scheme };
-  }
-
   try {
     const { appPath, ...buildAppResult } = await buildApp({
       projectRoot,
@@ -92,8 +67,9 @@ export const createBuild = async ({
 
     xcodeProject = buildAppResult.xcodeProject;
     sourceDir = buildAppResult.sourceDir;
+    // @ts-expect-error - scheme is not set when binaryPath is provided,
+    // which is not supported for build command (but is used by run command)
     scheme = buildAppResult.scheme;
-    saveLocalBuildCache(artifactName, appPath);
   } catch (error) {
     const message = `Failed to create ${args.archive ? 'archive' : 'build'}`;
     throw new RnefError(message, { cause: error });

@@ -50,7 +50,6 @@ export const pluginBrownfieldIos =
           reactNativePath: api.getReactNativePath(),
           fingerprintOptions: api.getFingerprintOptions(),
           brownfield: true,
-          remoteCacheProvider: await api.getRemoteCacheProvider(),
         });
 
         // 2) Merge the .framework outputs of the framework target

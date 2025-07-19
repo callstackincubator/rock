@@ -9,7 +9,6 @@ export * from './lib/path.js';
 export * from './lib/project.js';
 export * from './lib/build-cache/common.js';
 export * from './lib/build-cache/localBuildCache.js';
-export { getBinaryPath } from './lib/build-cache/getBinaryPath.js';
 export { findDevServerPort } from './lib/dev-server/findDevServerPort.js';
 export { isDevServerRunning } from './lib/dev-server/isDevServerRunning.js';
 export { isInteractive } from './lib/isInteractive.js';

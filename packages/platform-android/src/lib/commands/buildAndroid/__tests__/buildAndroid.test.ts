@@ -14,7 +14,6 @@ const args: BuildFlags = {
   variant: 'debug',
   activeArchOnly: false,
   extraParams: undefined,
-  local: true,
 };
 const androidProject: AndroidProjectConfig = {
   appName: 'app',
@@ -74,7 +73,6 @@ test('buildAndroid runs gradle build with correct configuration for debug and ou
     androidProject,
     { ...args, aab: true },
     '/root',
-    null,
     fingerprintOptions
   );
 
@@ -88,7 +86,7 @@ test('buildAndroid fails gracefully when gradle errors', async () => {
   vi.mocked(spawn).mockRejectedValueOnce({ stderr: 'gradle error' });
 
   await expect(
-    buildAndroid(androidProject, args, '/root', null, fingerprintOptions)
+    buildAndroid(androidProject, args, '/root', fingerprintOptions)
   ).rejects.toThrowErrorMatchingInlineSnapshot(
     `[RnefError: Failed to build the app. See the error above for details from Gradle.]`
   );
