@@ -1,6 +1,6 @@
 {
   "name": "@rnef/plugin-repack",
-  "version": "0.8.2",
+  "version": "0.8.3",
   "type": "module",
   "exports": {
     "types": "./dist/src/index.d.ts",
@@ -17,11 +17,11 @@
     "publish:verdaccio": "npm publish --registry http://localhost:4873 --userconfig ../../.npmrc"
   },
   "dependencies": {
-    "@rnef/tools": "^0.8.2",
+    "@rnef/tools": "^0.8.3",
     "tslib": "^2.3.0"
   },
   "devDependencies": {
-    "@rnef/config": "^0.8.2"
+    "@rnef/config": "^0.8.3"
   },
   "peerDependencies": {
     "@callstack/repack": "^5.0.3",

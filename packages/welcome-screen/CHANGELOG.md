@@ -1,5 +1,11 @@
 # @rnef/welcome-screen
 
+## 0.8.3
+
+### Patch Changes
+
+- 481821d: fix: assets not available in welcome-screen
+
 ## 0.8.2
 
 ## 0.8.1
