@@ -285,18 +285,18 @@ importers:
   packages/plugin-expo-config-plugins:
     dependencies:
       '@expo/config-plugins':
-        specifier: ^9.0.15
-        version: 9.1.7
+        specifier: ^10.1.2
+        version: 10.1.2
       '@rnef/tools':
-        specifier: ^0.2.0
-        version: 0.2.0
+        specifier: ^0.8.2
+        version: 0.8.3
       tslib:
         specifier: ^2.3.0
         version: 2.8.1
     devDependencies:
       '@rnef/config':
-        specifier: ^0.2.0
-        version: 0.2.0
+        specifier: ^0.8.2
+        version: 0.8.3
 
   packages/plugin-metro:
     dependencies:
@@ -3773,6 +3773,10 @@ packages:
 
   getenv@1.0.0:
     resolution: {integrity: sha512-7yetJWqbS9sbn0vIfliPsFgoXMKn/YMF+Wuiog97x+urnSRRRZ7xB+uVkwGKzRgq9CDFfMQnE9ruL5DHv9c6Xg==}
+    engines: {node: '>=6'}
+
+  getenv@2.0.0:
+    resolution: {integrity: sha512-VilgtJj/ALgGY77fiLam5iD336eSWi96Q15JSAG1zi8NRBysm3LXKdGnHb4m5cuyxvOLQQKWpBZAT6ni4FI2iQ==}
     engines: {node: '>=6'}
 
   getpass@0.1.7:
@@ -10996,6 +11000,8 @@ snapshots:
   get-stream@6.0.1: {}
 
   getenv@1.0.0: {}
+
+  getenv@2.0.0: {}
 
   getpass@0.1.7:
     dependencies:
