@@ -42,10 +42,6 @@ export default defineConfig({
         content: 'https://github.com/callstack/rnef',
       },
     ],
-    footer: {
-      message:
-        'Copyright © 2025 <a href="https://callstack.com">Callstack</a>.',
-    },
   },
   globalStyles: path.join(__dirname, 'theme/styles.css'),
   plugins: [
