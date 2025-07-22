@@ -41,12 +41,12 @@ export async function fetchGitHubArtifactsByName(
   const result: GitHubArtifact[] = [];
   const owner = repoDetails.owner;
   const repo = repoDetails.repository;
-  const url = `https://api.github.com/repos/${owner}/${repo}/actions/artifacts?per_page=${
-    limit ?? PAGE_SIZE
-  }&page=${page}${name ? `&name=${name}` : ''}`;
 
   try {
     while (true) {
+      const url = `https://api.github.com/repos/${owner}/${repo}/actions/artifacts?per_page=${
+        limit ?? PAGE_SIZE
+      }&page=${page}${name ? `&name=${name}` : ''}`;
       let data: GitHubArtifactResponse;
       try {
         const response = await fetch(url, {
