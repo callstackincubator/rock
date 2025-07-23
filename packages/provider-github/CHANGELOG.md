@@ -1,5 +1,14 @@
 # @rnef/provider-github
 
+## 0.8.4
+
+### Patch Changes
+
+- 7aeb527: Add types field to package.json files
+- bc5e5ea: Fix infinite loop in remote-cache list-all command when GH returns more than one page of results
+- Updated dependencies [7aeb527]
+  - @rnef/tools@0.8.4
+
 ## 0.8.3
 
 ### Patch Changes

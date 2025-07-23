@@ -1,5 +1,11 @@
 # @rnef/tools
 
+## 0.8.4
+
+### Patch Changes
+
+- 7aeb527: Add types field to package.json files
+
 ## 0.8.3
 
 ## 0.8.2

@@ -1,5 +1,11 @@
 # rnef-docs
 
+## 1.0.12
+
+### Patch Changes
+
+- cd25a5f: chore: migrate actions to v2
+
 ## 1.0.11
 
 ### Patch Changes
