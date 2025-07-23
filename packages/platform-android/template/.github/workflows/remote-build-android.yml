@@ -30,7 +30,7 @@ jobs:
         run: npm install
 
       - name: RNEF Remote Build - Android device
-        uses: callstackincubator/android@v1
+        uses: callstackincubator/android@v2
         with:
           sign: true
           variant: release
@@ -58,7 +58,7 @@ jobs:
         run: npm install
 
       - name: RNEF Remote Build - Android
-        uses: callstackincubator/android@v1
+        uses: callstackincubator/android@v2
         with:
           variant: debug
           github-token: ${{ secrets.GITHUB_TOKEN }}

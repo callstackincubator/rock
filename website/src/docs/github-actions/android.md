@@ -13,7 +13,7 @@ Use in the GitHub Workflow file like this:
 ```yaml
 - name: RNEF Remote Build - Android
   id: rnef-remote-build-android
-  uses: callstackincubator/android@v1
+  uses: callstackincubator/android@v2
   with:
     variant: debug
     github-token: ${{ secrets.GITHUB_TOKEN }}
@@ -46,7 +46,7 @@ Use in the GitHub Workflow file like this:
 ```yaml
 - name: RNEF Remote Build - Android device
   id: rnef-remote-build-android
-  uses: callstackincubator/android@v1
+  uses: callstackincubator/android@v2
   with:
     variant: release
     github-token: ${{ secrets.GITHUB_TOKEN }}
@@ -70,7 +70,7 @@ Pass extra parameters to the `rnef build:android` command, in order to apply cus
 ```yaml
 - name: RNEF Remote Build - Android
   id: rnef-remote-build-android
-  uses: callstackincubator/android@v1
+  uses: callstackincubator/android@v2
   with:
     variant: release
     github-token: ${{ secrets.GITHUB_TOKEN }}
@@ -88,7 +88,7 @@ To avoid polluting artifact storage it will also handle removal of old artifacts
 ```yaml
 - name: RNEF Remote Build - Android
   id: rnef-remote-build-android
-  uses: callstackincubator/android@v1
+  uses: callstackincubator/android@v2
   with:
     variant: release
     github-token: ${{ secrets.GITHUB_TOKEN }}
@@ -104,7 +104,7 @@ For security reasons we add Gradle Wrapper validation step to Android build acti
 ```yaml
 - name: RNEF Remote Build - Android
   id: rnef-remote-build-android
-  uses: callstackincubator/android@v1
+  uses: callstackincubator/android@v2
   with:
     variant: debug
     github-token: ${{ secrets.GITHUB_TOKEN }}
@@ -132,7 +132,7 @@ You'll need to set `working-directory: ./packages/mobile`:
 ```yaml
 - name: RNEF Remote Build - Android
   id: rnef-remote-build-android
-  uses: callstackincubator/android@v1
+  uses: callstackincubator/android@v2
   with:
     variant: debug
     github-token: ${{ secrets.GITHUB_TOKEN }}
