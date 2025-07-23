@@ -20,7 +20,7 @@ type Flags = {
   json?: boolean;
   all?: boolean;
   allButLatest?: boolean;
-  binaryPath?: string
+  binaryPath?: string;
 };
 
 async function remoteCache({
@@ -121,15 +121,22 @@ async function remoteCache({
     }
     case 'upload': {
       const localArtifactPath = getLocalArtifactPath(artifactName);
-      const binaryPath = args.binaryPath ?? getLocalBinaryPath(localArtifactPath);
+      const binaryPath =
+        args.binaryPath ?? getLocalBinaryPath(localArtifactPath);
       if (!binaryPath) {
         throw new RnefError(`No binary found for "${artifactName}".`);
       }
       const zip = new AdmZip();
-      const absoluteTarballPath = path.join(localArtifactPath, 'app.tar.gz');
+      const absoluteTarballPath =
+        args.binaryPath ?? path.join(localArtifactPath, 'app.tar.gz');
       const isAppDirectory = fs.statSync(binaryPath).isDirectory();
       if (isAppDirectory) {
         const appName = path.basename(binaryPath);
+        if (!fs.existsSync(absoluteTarballPath)) {
+          throw new RnefError(
+            `No tarball found for "${artifactName}" in "${localArtifactPath}".`
+          );
+        }
         await tar.create(
           {
             file: absoluteTarballPath,
