@@ -1,5 +1,13 @@
 # @rnef/cli
 
+## 0.8.4
+
+### Patch Changes
+
+- Updated dependencies [7aeb527]
+  - @rnef/config@0.8.4
+  - @rnef/tools@0.8.4
+
 ## 0.8.3
 
 ### Patch Changes

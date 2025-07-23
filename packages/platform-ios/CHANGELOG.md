@@ -1,5 +1,14 @@
 # @rnef/platform-ios
 
+## 0.8.4
+
+### Patch Changes
+
+- 7aeb527: Add types field to package.json files
+- Updated dependencies [7aeb527]
+  - @rnef/platform-apple-helpers@0.8.4
+  - @rnef/tools@0.8.4
+
 ## 0.8.3
 
 ### Patch Changes
