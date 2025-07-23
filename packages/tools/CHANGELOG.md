@@ -1,5 +1,11 @@
 # @rnef/tools
 
+## 0.8.5
+
+### Patch Changes
+
+- 0183d14: fix: remote-cache in json mode
+
 ## 0.8.4
 
 ### Patch Changes
