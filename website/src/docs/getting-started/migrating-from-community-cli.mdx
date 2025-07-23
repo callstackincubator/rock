@@ -146,7 +146,7 @@ import { PackageManagerTabs } from 'rspress/theme';
    ```yaml title=".github/workflows/build-ios"
    - name: RNEF Remote Build - iOS simulator
      id: rnef-remote-build-ios
-     uses: callstackincubator/ios@v1
+     uses: callstackincubator/ios@v2
      with:
        destination: simulator
        github-token: ${{ secrets.GITHUB_TOKEN }}
@@ -158,7 +158,7 @@ import { PackageManagerTabs } from 'rspress/theme';
    ```yaml title=".github/workflows/build-android"
    - name: RNEF Remote Build - Android
      id: rnef-remote-build-android
-     uses: callstackincubator/android@v1
+     uses: callstackincubator/android@v2
      with:
        variant: debug
        github-token: ${{ secrets.GITHUB_TOKEN }}
