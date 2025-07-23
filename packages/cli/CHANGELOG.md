@@ -1,5 +1,13 @@
 # @rnef/cli
 
+## 0.8.6
+
+### Patch Changes
+
+- fe37baa: fix: upload app.tar.gz with binary-path
+  - @rnef/config@0.8.6
+  - @rnef/tools@0.8.6
+
 ## 0.8.5
 
 ### Patch Changes
