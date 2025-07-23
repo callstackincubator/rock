@@ -3,6 +3,7 @@ import path from 'node:path';
 import { color } from '../color.js';
 import type { FingerprintSources } from '../fingerprint/index.js';
 import { nativeFingerprint } from '../fingerprint/index.js';
+import { isInteractive } from '../isInteractive.js';
 import { getCacheRootPath } from '../project.js';
 import { spinner } from '../prompts.js';
 
@@ -95,15 +96,26 @@ export async function formatArtifactName({
   traits,
   root,
   fingerprintOptions,
+  raw,
 }: {
   platform?: 'ios' | 'android';
   traits?: string[];
   root: string;
   fingerprintOptions: FingerprintSources;
+  raw?: boolean;
 }): Promise<string> {
   if (!platform || !traits) {
     return '';
   }
+
+  if (raw || !isInteractive()) {
+    const { hash } = await nativeFingerprint(root, {
+      ...fingerprintOptions,
+      platform,
+    });
+    return `rnef-${platform}-${traits.join('-')}-${hash}`;
+  }
+
   const loader = spinner();
   loader.start('Calculating project fingerprint');
   const { hash } = await nativeFingerprint(root, {

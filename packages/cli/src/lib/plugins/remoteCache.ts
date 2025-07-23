@@ -51,6 +51,7 @@ async function remoteCache({
       traits: args.traits,
       root: projectRoot,
       fingerprintOptions,
+      raw: isJsonOutput,
     }));
 
   switch (action) {
