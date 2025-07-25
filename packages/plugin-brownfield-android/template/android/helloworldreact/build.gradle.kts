@@ -28,15 +28,6 @@ android {
         buildConfigField("boolean", "IS_HERMES_ENABLED", properties["hermesEnabled"].toString())
     }
 
-    compileOptions {
-        sourceCompatibility = JavaVersion.VERSION_17
-        targetCompatibility = JavaVersion.VERSION_17
-    }
-
-    kotlinOptions {
-        jvmTarget = "17"
-    }
-
     publishing {
         multipleVariants {
             allVariants()
