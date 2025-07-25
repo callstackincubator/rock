@@ -1,4 +1,4 @@
-name: Nighlty
+name: Nightly
 
 on:
   # Runs every night at 2 AM
@@ -20,14 +20,14 @@ jobs:
       - name: Setup
         uses: ./.github/actions/setup-node
 
-      - name: Typecheck and lint
-        run: pnpm lint typecheck
-
-      - name: Run tests
-        run: pnpm test
-
       - name: Build framework
         run: pnpm build
+
+      - name: Lint
+        run: pnpm lint
+
+      - name: Test
+        run: pnpm test
 
       - name: Publish framework to Verdaccio
         run: |
