@@ -80,7 +80,9 @@ Here we add the `react-native-brownfield` library to help us with APIs required 
 
 Create a new file called `ReactNativeHostManager.kt` in your `rnbrownfield` module:
 
-> Note: The `loadReactNative` call is only required if you're on RN version >= 0.80.0
+> [!IMPORTANT]
+> The `loadReactNative` call is only required if you're on React Native version >= 0.80.0.
+> If you're on lower version, skip it.
 
 ```kotlin
 package com.callstack.rnbrownfield // If you used a different package name when creating the library, change it here
