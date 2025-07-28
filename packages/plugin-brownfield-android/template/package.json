@@ -4,6 +4,9 @@
     "package:aar": "rnef package:aar --variant Release --module-name helloworldreact",
     "publish-local:aar": "pnpm package:aar && rnef publish-local:aar --module-name helloworldreact"
   },
+  "dependencies": {
+    "@callstack/react-native-brownfield": "^1.2.0"
+  },
   "devDependencies": {
     "@rnef/plugin-brownfield-android": "^0.8.6"
   }
