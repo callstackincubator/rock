@@ -63,8 +63,9 @@ Add the required React Native dependencies to your `rnbrownfield/build.gradle.kt
 
 ```groovy title="rnbrownfield/build.gradle.kts" {2-3}
 dependencies {
-    api("com.facebook.react:react-android:0.77.0")
-    api("com.facebook.react:hermes-android:0.77.0")
+    // Set version to match your React Native dependency version
+    api("com.facebook.react:react-android:0.80.0")
+    api("com.facebook.react:hermes-android:0.80.0")
 }
 ```
 
@@ -80,9 +81,10 @@ Here we add the `react-native-brownfield` library to help us with APIs required 
 
 Create a new file called `ReactNativeHostManager.kt` in your `rnbrownfield` module:
 
-> [!IMPORTANT]
-> The `loadReactNative` call is only required if you're on React Native version >= 0.80.0.
-> If you're on lower version, skip it.
+:::info
+The `loadReactNative` call is only required if you're on React Native version >= 0.80.0.
+If you're on lower version, skip it.
+:::
 
 ```kotlin
 package com.callstack.rnbrownfield // If you used a different package name when creating the library, change it here
