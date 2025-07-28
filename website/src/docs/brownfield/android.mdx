@@ -76,7 +76,33 @@ Here we add the `react-native-brownfield` library to help us with APIs required 
 
 <PackageManagerTabs command="install @callstack/react-native-brownfield" />
 
-## 5. Populate Build Config:
+## 5. Create React Native Host Manager
+
+Create a new file called `ReactNativeHostManager.kt` in your `rnbrownfield` module:
+
+```kotlin
+package com.callstack.rnbrownfield // If you used a different package name when creating the library, change it here
+
+import android.app.Application
+import com.callstack.reactnativebrownfield.OnJSBundleLoaded
+import com.callstack.reactnativebrownfield.ReactNativeBrownfield
+import com.facebook.react.PackageList
+import com.facebook.react.ReactNativeApplicationEntryPoint.loadReactNative
+
+object ReactNativeHostManager {
+    fun initialize(application: Application, onJSBundleLoaded: OnJSBundleLoaded? = null) {
+        loadReactNative(application) // Only required if you're on RN version >= 0.80.0
+
+        val packageList = PackageList(application).packages
+        ReactNativeBrownfield.initialize(application, packageList, onJSBundleLoaded)
+    }
+}
+```
+Here, we wrap the `react-native-brownfield` API in our own `ReactNativeHostManager` so that the native App only have to pass an
+`Application` instance and not interact with any react-native API directly. [See more](https://github.com/callstack/react-native-brownfield/blob/main/docs/GUIDELINES.md)
+
+
+## 6. Populate Build Config:
 
 Add build configuration fields:
 
@@ -91,7 +117,7 @@ android {
 }
 ```
 
-## 6. Configure Maven Publishing
+## 7. Configure Maven Publishing
 
 Add the Maven publish plugin to your `rnbrownfield/build.gradle.kts`:
 
@@ -167,7 +193,7 @@ tasks.named("generateMetadataFileForMavenAarPublication") {
 }
 ```
 
-## 7. Extra steps for Expo CLI and Expo Modules
+## 8. Extra steps for Expo CLI and Expo Modules
 
 1. Make `ReactNativeHostManager` aware with expo modules:
 ```diff
@@ -286,7 +312,7 @@ react {
 
 That is all you need to change. Step 8.i is not required with Expo, you can skip it. See Step 8.ii to generate AAR.
 
-## 8.i Set up RNEF for AAR generation (not required for Expo)
+## 9.i Set up RNEF for AAR generation (not required for Expo)
 
 1. Add `@rnef/plugin-brownfield-android` to your dependencies
 1. Update your `rnef.config.mjs`:
@@ -311,12 +337,12 @@ That is all you need to change. Step 8.i is not required with Expo, you can skip
    rnef publish-local:aar --module-name rnbrownfield
    ```
 
-## 8.ii Generate AAR when using Expo
+## 9.ii Generate AAR when using Expo
 
 Here you can see how to generate AAR. The link uses a script which first builds the AAR and then publish to to `mavenLocal`.
 [see here](https://github.com/callstackincubator/modern-brownfield-ref/blob/b23641f3ff7c278743d35013841d5494905ba190/package.json#L14)
 
-## 9. Add the AAR to Your Android App
+## 10. Add the AAR to Your Android App
 
 > Note: You'll need an existing Android app or create a new one in Android Studio.
 
@@ -341,12 +367,12 @@ Here you can see how to generate AAR. The link uses a script which first builds 
 3. Initialize React Native in your `MainActivity`:
 
    ```kotlin
-   import com.callstack.reactnativebrownfield.ReactNativeBrownfield
+   import com.callstack.rnbrownfield.ReactNativeHostManager
 
    class MainActivity : AppCompatActivity() {
        override fun onCreate(savedInstanceState: Bundle?) {
            super.onCreate(savedInstanceState)
-           ReactNativeBrownfield.initialize(this.application) {
+           ReactNativeHostManager.initialize(this.application) {
                 println("JS bundle loaded")
            }
            // ... rest of your onCreate code
@@ -354,7 +380,7 @@ Here you can see how to generate AAR. The link uses a script which first builds 
    }
    ```
 
-## 10. Show the React Native UI
+## 11. Show the React Native UI
 
 Add a button to your `activity_main.xml`:
 
@@ -373,7 +399,7 @@ Add a button to your `activity_main.xml`:
 Update your `MainActivity` to show the fragment:
 
 ```kotlin {2,8-13}
-import com.callstack.reactnativebrownfield.ReactNativeBrownfield
+import com.callstack.rnbrownfield.ReactNativeHostManager
 import com.callstack.reactnativebrownfield.ReactNativeFragment
 
 class MainActivity : AppCompatActivity() {
@@ -381,7 +407,7 @@ class MainActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        ReactNativeBrownfield.initialize(this.application) {
+        ReactNativeHostManager.initialize(this.application) {
             println("JS bundle loaded")
         }
 
