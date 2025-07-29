@@ -34,7 +34,6 @@ export async function registerBundleCommand(api: PluginApi) {
       fs.mkdirSync(bundleOutputDir, { recursive: true });
 
       await buildBundle(
-        [],
         { root, reactNativeVersion, reactNativePath, platforms },
         args
       );

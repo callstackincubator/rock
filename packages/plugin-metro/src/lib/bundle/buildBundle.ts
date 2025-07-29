@@ -11,8 +11,8 @@ import type { RunBuildOptions } from 'metro';
 import { runBuild } from 'metro';
 import type { ConfigT } from 'metro-config';
 import path from 'path';
+import loadMetroConfig from '../../utils/loadMetroConfig.js';
 import parseKeyValueParamArray from '../../utils/parseKeyValueParamArray.js';
-import loadMetroConfig from '../start/loadMetroConfig.js';
 import saveAssets from './saveAssets.js';
 // import { styleText } from 'util'; // Not available in all Node versions
 function styleText(style: string, text: string): string {
@@ -58,16 +58,28 @@ export type Config = {
 };
 
 async function buildBundle(
-  _argv: Array<string>,
-  ctx: Config,
+  options: {
+    platforms: Record<string, object>;
+    reactNativeVersion: string;
+    reactNativePath: string;
+    root: string;
+  },
   args: BundleCommandArgs,
   bundleImpl?: RunBuildOptions['output']
 ): Promise<void> {
-  const config = await loadMetroConfig(ctx, {
-    maxWorkers: args.maxWorkers,
-    resetCache: args.resetCache,
-    config: args.config,
-  });
+  const config = await loadMetroConfig(
+    {
+      platforms: options.platforms,
+      reactNativeVersion: options.reactNativeVersion,
+      reactNativePath: options.reactNativePath,
+      root: options.root,
+    },
+    {
+      maxWorkers: args.maxWorkers,
+      resetCache: args.resetCache,
+      config: args.config,
+    }
+  );
 
   return buildBundleWithConfig(args, config, bundleImpl);
 }

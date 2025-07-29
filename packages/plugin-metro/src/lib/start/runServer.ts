@@ -15,9 +15,9 @@ import type { Reporter } from 'metro/src/lib/reporting';
 import type { TerminalReportableEvent } from 'metro/src/lib/TerminalReporter';
 import type { TerminalReporter } from 'metro/src/lib/TerminalReporter';
 import { Terminal } from 'metro-core';
+import loadMetroConfig from '../../utils/loadMetroConfig.js';
 import attachKeyHandlers from './attachKeyHandlers.js';
 import createDevMiddlewareLogger from './createDevMiddlewareLogger.js';
-import loadMetroConfig from './loadMetroConfig.js';
 
 export type StartCommandArgs = {
   assetPlugins?: string[];
