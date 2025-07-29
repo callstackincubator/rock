@@ -305,30 +305,27 @@ importers:
       '@react-native-community/cli-server-api':
         specifier: ^19.1.0
         version: 19.1.0
-      '@react-native/dev-middleware':
-        specifier: ^0.80.1
-        version: 0.80.1
       '@rnef/tools':
         specifier: ^0.8.6
         version: link:../tools
       metro:
-        specifier: ^0.82.2
+        specifier: ^0.82.3
         version: 0.82.5
       metro-config:
-        specifier: ^0.82.2
+        specifier: ^0.82.3
         version: 0.82.5
       metro-core:
-        specifier: ^0.82.2
+        specifier: ^0.82.3
         version: 0.82.5
       metro-resolver:
-        specifier: ^0.82.2
+        specifier: ^0.82.3
         version: 0.82.5
       tslib:
         specifier: ^2.3.0
         version: 2.8.1
     devDependencies:
-      '@react-native/community-cli-plugin':
-        specifier: 0.80.1
+      '@react-native/dev-middleware':
+        specifier: ^0.80.1
         version: 0.80.1
       '@rnef/config':
         specifier: ^0.8.6
@@ -13479,7 +13476,7 @@ snapshots:
   terser@5.38.1:
     dependencies:
       '@jridgewell/source-map': 0.3.6
-      acorn: 8.14.0
+      acorn: 8.15.0
       commander: 2.20.3
       source-map-support: 0.5.21
 

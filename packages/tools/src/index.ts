@@ -12,6 +12,7 @@ export * from './lib/build-cache/localBuildCache.js';
 export { getBinaryPath } from './lib/build-cache/getBinaryPath.js';
 export { findDevServerPort } from './lib/dev-server/findDevServerPort.js';
 export { isDevServerRunning } from './lib/dev-server/isDevServerRunning.js';
+export { getDevMiddleware } from './lib/dev-server/getDevMiddleware.js';
 export { isInteractive } from './lib/isInteractive.js';
 export { spawn, SubprocessError } from './lib/spawn.js';
 export { color, colorLink } from './lib/color.js';
