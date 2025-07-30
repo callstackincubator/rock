@@ -86,4 +86,74 @@ export const platformIOS =
     };
   };
 
+export const platformTVOS =
+  (pluginConfig?: IOSProjectConfig) =>
+  (api: PluginApi): PlatformOutput => {
+    api.registerCommand({
+      name: 'build:ios:tv',
+      description: 'Build tvOS app.',
+      action: async (args) => {
+        intro('Building tvOS app');
+        const projectRoot = api.getProjectRoot();
+        const tvosConfig = getValidProjectConfig(
+          'tvos',
+          projectRoot,
+          pluginConfig
+        );
+        await createBuild({
+          platformName: 'tvos',
+          projectConfig: tvosConfig,
+          args: args as BuildFlags,
+          projectRoot,
+          reactNativePath: api.getReactNativePath(),
+          fingerprintOptions: api.getFingerprintOptions(),
+          remoteCacheProvider: await api.getRemoteCacheProvider(),
+        });
+        outro('Success 🎉.');
+      },
+      options: buildOptions,
+    });
+
+    api.registerCommand({
+      name: 'run:ios:tv',
+      description: 'Run tvOS app.',
+      action: async (args) => {
+        intro('Running tvOS app');
+        const projectRoot = api.getProjectRoot();
+        const tvosConfig = getValidProjectConfig(
+          'tvos',
+          projectRoot,
+          pluginConfig
+        );
+        await createRun({
+          platformName: 'tvos',
+          projectConfig: tvosConfig,
+          args: args as RunFlags,
+          projectRoot,
+          remoteCacheProvider: await api.getRemoteCacheProvider(),
+          fingerprintOptions: api.getFingerprintOptions(),
+          reactNativePath: api.getReactNativePath(),
+        });
+        outro('Success 🎉.');
+      },
+      // @ts-expect-error: fix `simulator` is not defined in `RunFlags`
+      options: runOptions,
+    });
+
+    return {
+      name: '@rnef/platform-tvos',
+      description: 'RNEF plugin for everything tvOS.',
+      autolinkingConfig: {
+        get project() {
+          const tvosConfig = getValidProjectConfig(
+            'tvos',
+            api.getProjectRoot(),
+            pluginConfig
+          );
+          return { ...tvosConfig };
+        },
+      },
+    };
+  };
+
 export default platformIOS;

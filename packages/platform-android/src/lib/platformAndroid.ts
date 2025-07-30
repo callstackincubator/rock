@@ -11,10 +11,10 @@ type PluginConfig = AndroidProjectConfig;
 export const platformAndroid =
   (pluginConfig?: PluginConfig) =>
   (api: PluginApi): PlatformOutput => {
-    registerBuildCommand(api, pluginConfig);
-    registerRunCommand(api, pluginConfig);
-    registerCreateKeystoreCommand(api, pluginConfig);
-    registerSignCommand(api);
+    registerBuildCommand(api, pluginConfig, 'build:android');
+    registerRunCommand(api, pluginConfig, 'run:android');
+    registerCreateKeystoreCommand(api, pluginConfig, 'create-keystore:keystore');
+    registerSignCommand(api, 'sign:android');
 
     return {
       name: '@rnef/platform-android',
@@ -25,6 +25,30 @@ export const platformAndroid =
             api.getProjectRoot(),
             pluginConfig
           );
+          return { ...androidConfig };
+        },
+      },
+    };
+  };
+
+export const platformAndroidTV =
+  (pluginConfig?: PluginConfig) =>
+  (api: PluginApi): PlatformOutput => {
+    registerBuildCommand(api, pluginConfig, 'build:android:tv');
+    registerRunCommand(api, pluginConfig, 'run:android:tv');
+    registerCreateKeystoreCommand(api, pluginConfig, 'create-keystore:keystore:tv');
+    registerSignCommand(api, 'sign:android:tv');
+
+    return {
+      name: '@rnef/platform-android-tv',
+      description: 'RNEF plugin for everything Android TV.',
+      autolinkingConfig: {
+        get project() {
+          const androidConfig = getValidProjectConfig(
+            api.getProjectRoot(),
+            pluginConfig
+          );
+          console.log({ androidConfig, pluginConfig });
           return { ...androidConfig };
         },
       },
