@@ -48,7 +48,6 @@ export const platformAndroidTV =
             api.getProjectRoot(),
             pluginConfig
           );
-          console.log({ androidConfig, pluginConfig });
           return { ...androidConfig };
         },
       },
