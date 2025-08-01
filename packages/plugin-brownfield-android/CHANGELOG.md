@@ -1,5 +1,13 @@
 # @rnef/plugin-brownfield-android
 
+## 0.8.7
+
+### Patch Changes
+
+- 3a7c76d: leverage react-native-brownfield APIs for integration
+  - @rnef/platform-android@0.8.7
+  - @rnef/tools@0.8.7
+
 ## 0.8.6
 
 ### Patch Changes

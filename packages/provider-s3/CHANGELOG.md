@@ -1,5 +1,12 @@
 # @rnef/provider-s3
 
+## 0.8.7
+
+### Patch Changes
+
+- be425dd: feat: support more options for AWS S3 auth
+  - @rnef/tools@0.8.7
+
 ## 0.8.6
 
 ### Patch Changes
