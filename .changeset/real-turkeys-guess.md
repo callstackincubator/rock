@@ -1,5 +1,5 @@
 ---
-'@rnef/plugin-brownfield-android': minor
+'@rnef/plugin-brownfield-android': patch
 ---
 
 leverage react-native-brownfield APIs for integration
