@@ -23,14 +23,14 @@ export const platformIOS =
       action: async (args) => {
         intro('Building iOS app');
         const projectRoot = api.getProjectRoot();
-        const iosConfig = getValidProjectConfig(
+        const projectConfig = getValidProjectConfig(
           'ios',
           projectRoot,
           pluginConfig
         );
         await createBuild({
           platformName: 'ios',
-          projectConfig: iosConfig,
+          projectConfig,
           args: args as BuildFlags,
           projectRoot,
           reactNativePath: api.getReactNativePath(),
@@ -48,14 +48,14 @@ export const platformIOS =
       action: async (args) => {
         intro('Running iOS app');
         const projectRoot = api.getProjectRoot();
-        const iosConfig = getValidProjectConfig(
+        const projectConfig = getValidProjectConfig(
           'ios',
           projectRoot,
           pluginConfig
         );
         await createRun({
           platformName: 'ios',
-          projectConfig: iosConfig,
+          projectConfig,
           args: args as RunFlags,
           projectRoot,
           remoteCacheProvider: await api.getRemoteCacheProvider(),
@@ -75,12 +75,12 @@ export const platformIOS =
       description: 'RNEF plugin for everything iOS.',
       autolinkingConfig: {
         get project() {
-          const iosConfig = getValidProjectConfig(
+          const projectConfig = getValidProjectConfig(
             'ios',
             api.getProjectRoot(),
             pluginConfig
           );
-          return { ...iosConfig };
+          return { ...projectConfig };
         },
       },
     };
@@ -95,14 +95,14 @@ export const platformTVOS =
       action: async (args) => {
         intro('Building tvOS app');
         const projectRoot = api.getProjectRoot();
-        const tvosConfig = getValidProjectConfig(
+        const projectConfig = getValidProjectConfig(
           'tvos',
           projectRoot,
           pluginConfig
         );
         await createBuild({
           platformName: 'tvos',
-          projectConfig: tvosConfig,
+          projectConfig,
           args: args as BuildFlags,
           projectRoot,
           reactNativePath: api.getReactNativePath(),
@@ -120,14 +120,14 @@ export const platformTVOS =
       action: async (args) => {
         intro('Running tvOS app');
         const projectRoot = api.getProjectRoot();
-        const tvosConfig = getValidProjectConfig(
+        const projectConfig = getValidProjectConfig(
           'tvos',
           projectRoot,
           pluginConfig
         );
         await createRun({
           platformName: 'tvos',
-          projectConfig: tvosConfig,
+          projectConfig,
           args: args as RunFlags,
           projectRoot,
           remoteCacheProvider: await api.getRemoteCacheProvider(),
@@ -145,12 +145,12 @@ export const platformTVOS =
       description: 'RNEF plugin for everything tvOS.',
       autolinkingConfig: {
         get project() {
-          const tvosConfig = getValidProjectConfig(
+          const projectConfig = getValidProjectConfig(
             'tvos',
             api.getProjectRoot(),
             pluginConfig
           );
-          return { ...tvosConfig };
+          return { ...projectConfig };
         },
       },
     };
