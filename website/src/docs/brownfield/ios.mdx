@@ -107,11 +107,21 @@ If you have an existing RNEF project, follow the instructions below.
 
 ### 6. Create the XCFramework
 
-Run the following command in Terminal:
+Run the following command in Terminal to compile frameworks for Hermes, React Native Brownfield library, and your app:
 
 ```sh title="Terminal"
 rnef package:ios --scheme <framework_target_name> --configuration Release
 ```
+
+:::warning
+If you want to run the React Native app independently from the native iOS app, you'll still need to run the `package:ios` command and add the `ReactBrownfield.xcframework` to the project, as instructed in [step 7](#7-add-the-framework-to-your-ios-app).
+Otherwise, the `run:ios` command will fail with:
+
+```
+error: underlying Objective-C module 'ReactBrownfield' not found
+```
+
+:::
 
 ### 7. Add the Framework to Your iOS App:
 
