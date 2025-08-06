@@ -132,7 +132,7 @@ async function remoteCache({
       const isAppDirectory = fs.statSync(binaryPath).isDirectory();
       if (isAppDirectory) {
         const appName = path.basename(binaryPath);
-        if (!fs.existsSync(absoluteTarballPath)) {
+        if (args.binaryPath && !fs.existsSync(absoluteTarballPath)) {
           throw new RnefError(
             `No tarball found for "${artifactName}" in "${localArtifactPath}".`
           );
