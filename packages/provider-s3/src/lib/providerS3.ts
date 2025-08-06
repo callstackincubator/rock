@@ -239,67 +239,54 @@ export class S3BuildCache implements RemoteBuildCache {
   async uploadAdhocFolder({
     artifactName,
     folderPath,
+    writeIndexAndManifest,
   }: {
     artifactName: string;
     folderPath: string;
+    writeIndexAndManifest: (baseUrl: string) => void;
   }): Promise<RemoteArtifact> {
     const uploadPromises: Promise<void>[] = [];
-
-    // Return a reference to the folder (using the first file as the main URL)
-    const firstFileKey = `${this.directory}/ad-hoc/${artifactName}`;
+    const uploadDirectory = `${this.directory}/ad-hoc/${artifactName}`;
     const presignedUrl = await getSignedUrl(
       this.s3,
-      new clientS3.GetObjectCommand({ Bucket: this.bucket, Key: firstFileKey }),
+      new clientS3.GetObjectCommand({
+        Bucket: this.bucket,
+        Key: uploadDirectory,
+      }),
       { expiresIn: this.linkExpirationTime }
     );
+    const baseUrl = presignedUrl.split('?')[0];
 
     const uploadFileToFolder = async (
       filePath: string,
       relativePath: string
     ) => {
       const fileBuffer = fs.readFileSync(filePath);
-      const key = `${this.directory}/ad-hoc/${artifactName}/${relativePath}`;
-      const isHTML = filePath.endsWith('.html');
-
-      await this.uploadFile(key, fileBuffer, isHTML ? 'text/html' : undefined);
+      const key = `${uploadDirectory}/${relativePath}`;
+      const contentType = filePath.endsWith('.html') ? 'text/html' : undefined;
+      return this.uploadFile(key, fileBuffer, contentType);
     };
 
-    const processDirectory = (dirPath: string, relativePath: string = '') => {
+    const gatherFilesToUpload = (
+      dirPath: string,
+      relativePath: string = ''
+    ) => {
       const items = fs.readdirSync(dirPath);
-
       for (const item of items) {
         const fullPath = path.join(dirPath, item);
-
-        if (fullPath.endsWith('.html')) {
-          fs.writeFileSync(
-            fullPath,
-            fs
-              .readFileSync(fullPath, 'utf-8')
-              .replace('{{BASE_URL}}', presignedUrl.split('?')[0])
-          );
-        }
-        if (fullPath.endsWith('.plist')) {
-          fs.writeFileSync(
-            fullPath,
-            fs
-              .readFileSync(fullPath, 'utf-8')
-              .replace('{{BASE_URL}}', presignedUrl.split('?')[0])
-          );
-        }
-
-        const itemRelativePath = relativePath
-          ? path.join(relativePath, item)
-          : item;
+        const itemRelativePath = path.join(relativePath, item);
 
         if (fs.statSync(fullPath).isDirectory()) {
-          processDirectory(fullPath, itemRelativePath);
+          gatherFilesToUpload(fullPath, itemRelativePath);
         } else {
           uploadPromises.push(uploadFileToFolder(fullPath, itemRelativePath));
         }
       }
     };
 
-    processDirectory(folderPath);
+    writeIndexAndManifest(baseUrl);
+    gatherFilesToUpload(folderPath);
+
     await Promise.all(uploadPromises);
 
     return { name: artifactName, url: presignedUrl };

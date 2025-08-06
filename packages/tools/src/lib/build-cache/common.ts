@@ -88,15 +88,18 @@ export interface RemoteBuildCache {
    * Upload a folder with multiple files to remote storage for ad-hoc builds
    * @param artifactName - Name of the artifact to upload, e.g. `rnef-android-debug-1234567890` for android in debug variant
    * @param folderPath - Path to the folder containing files to upload
+   * @param writeIndexAndManifest - Function to write index.html and manifest.plist files with the base URL. Must be called after obtaining the URL and before uploading files.
    * @returns Remote artifact info if upload successful
    * @throws {Error} Throws if upload fails
    */
   uploadAdhocFolder?({
     artifactName,
     folderPath,
+    writeIndexAndManifest,
   }: {
     artifactName: string;
     folderPath: string;
+    writeIndexAndManifest: (baseUrl: string) => void;
   }): Promise<RemoteArtifact>;
 }
 

@@ -214,32 +214,30 @@ async function remoteCache({
             }
           }
 
-          // Generate templates for ad-hoc distribution
-          // We'll generate the base URL after upload, so use a placeholder for now
-          const indexHtml = templateIndexHtml({
-            appName,
-            bundleIdentifier,
-            version,
-            manifestPlistUrl: `{{BASE_URL}}/manifest.plist`,
-          });
-          const manifestPlist = templateManifestPlist({
-            appName,
-            version,
-            baseUrl: '{{BASE_URL}}',
-            ipaName: ipaFileName,
-            bundleIdentifier,
-            platformIdentifier: 'com.apple.platform.iphoneos',
-          });
-
-          fs.writeFileSync(path.join(binaryPath, 'index.html'), indexHtml);
-          fs.writeFileSync(
-            path.join(binaryPath, 'manifest.plist'),
-            manifestPlist
-          );
-
           uploadedArtifact = await remoteBuildCache.uploadAdhocFolder({
             artifactName,
             folderPath: binaryPath,
+            writeIndexAndManifest: (baseUrl: string) => {
+              // Generate templates for ad-hoc distribution
+              const indexHtml = templateIndexHtml({
+                appName,
+                bundleIdentifier,
+                version,
+              });
+              const manifestPlist = templateManifestPlist({
+                appName,
+                version,
+                baseUrl,
+                ipaName: ipaFileName,
+                bundleIdentifier,
+                platformIdentifier: 'com.apple.platform.iphoneos',
+              });
+              fs.writeFileSync(path.join(binaryPath, 'index.html'), indexHtml);
+              fs.writeFileSync(
+                path.join(binaryPath, 'manifest.plist'),
+                manifestPlist
+              );
+            },
           });
         } else {
           uploadedArtifact = await remoteBuildCache.upload({
@@ -295,12 +293,10 @@ function templateIndexHtml({
   appName,
   version,
   bundleIdentifier,
-  manifestPlistUrl,
 }: {
   appName: string;
   version: string;
   bundleIdentifier: string;
-  manifestPlistUrl: string;
 }) {
   return `<!DOCTYPE html>
 <html lang="en">
@@ -454,11 +450,17 @@ function templateIndexHtml({
         device.
       </p>
 
-      <a
-        href="itms-services://?action=download-manifest&url=${manifestPlistUrl}"
-        class="download-button">
-        Download App
+      <a href="#" id="install-link" class="download-button">
+        Install App
       </a>
+
+      <script>
+        // Update the link dynamically to point to the manifest.plist
+        const link = document.getElementById('install-link');
+        const currentUrl = window.location.href;
+        const manifestUrl = currentUrl.replace('index.html', 'manifest.plist');
+        link.href = \`itms-services://?action=download-manifest&url=\${encodeURIComponent(manifestUrl)}\`;
+      </script>
 
       <div class="instructions">
         <h3>Installation Instructions:</h3>
