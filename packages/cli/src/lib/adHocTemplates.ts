@@ -165,7 +165,7 @@ export function templateIndexHtml({
           margin-top: 20px;
           padding: 1em 2em;
           border-left: 3px solid var(--accent-primary);
-          background: var(--bg-secondary);
+          background: var(--bg-primary);
           border-radius: 4px;
           transition: background-color 0.3s ease;
         }
