@@ -3,16 +3,22 @@ import path from 'node:path';
 import type { PluginApi, PluginOutput } from '@rnef/config';
 import type { FingerprintSources, RemoteBuildCache } from '@rnef/tools';
 import {
+  color,
+  colorLink,
   formatArtifactName,
   getLocalArtifactPath,
   getLocalBinaryPath,
   handleDownloadResponse,
+  handleUploadResponse,
   logger,
+  relativeToCwd,
   RnefError,
   spawn,
+  spinner,
 } from '@rnef/tools';
 import AdmZip from 'adm-zip';
 import * as tar from 'tar';
+import { templateIndexHtml, templateManifestPlist } from '../adHocTemplates.js';
 
 type Flags = {
   platform?: 'ios' | 'android';
@@ -105,8 +111,27 @@ async function remoteCache({
     case 'download': {
       const localArtifactPath = getLocalArtifactPath(artifactName);
       const response = await remoteBuildCache.download({ artifactName });
-      await handleDownloadResponse(response, localArtifactPath, artifactName);
+      const loader = spinner({ silent: isJsonOutput });
+      loader.start(
+        `Downloading cached build from ${color.bold(remoteBuildCache.name)}`
+      );
+      await handleDownloadResponse(
+        response,
+        localArtifactPath,
+        (progress, totalMB) => {
+          loader.message(
+            `Downloading cached build from ${color.bold(
+              remoteBuildCache.name
+            )} (${progress}% of ${totalMB} MB)`
+          );
+        }
+      );
       const binaryPath = getLocalBinaryPath(localArtifactPath);
+      loader.stop(
+        `Downloaded cached build to: ${colorLink(
+          relativeToCwd(localArtifactPath)
+        )}`
+      );
       if (!binaryPath) {
         throw new RnefError(`Failed to save binary for "${artifactName}".`);
       }
@@ -127,92 +152,28 @@ async function remoteCache({
       if (!binaryPath) {
         throw new RnefError(`No binary found for "${artifactName}".`);
       }
-      const zip = new AdmZip();
-      const isBinaryPathDirectory = fs.statSync(binaryPath).isDirectory();
-      const isAppDirectory = fs.statSync(binaryPath).isDirectory();
-      const absoluteTarballPath =
-        args.binaryPath ?? path.join(localArtifactPath, 'app.tar.gz');
-      if (isBinaryPathDirectory) {
-        // skip zipping, we're uploading a folder for ad-hoc builds
-      } else if (isAppDirectory) {
-        const appName = path.basename(binaryPath);
-        if (args.binaryPath && !fs.existsSync(absoluteTarballPath)) {
-          throw new RnefError(
-            `No tarball found for "${artifactName}" in "${localArtifactPath}".`
-          );
-        }
-        await tar.create(
-          {
-            file: absoluteTarballPath,
-            cwd: path.dirname(binaryPath),
-            gzip: true,
-            filter: (filePath) => filePath.includes(appName),
-          },
-          [appName]
-        );
-        zip.addLocalFile(absoluteTarballPath);
-      } else {
-        zip.addLocalFile(binaryPath);
-      }
-      const buffer = zip.toBuffer();
+      const {
+        buffer,
+        isBinaryPathDirectory,
+        isAppDirectory,
+        absoluteTarballPath,
+      } = await getBinaryBuffer(
+        binaryPath,
+        artifactName,
+        localArtifactPath,
+        args
+      );
 
       try {
         let uploadedArtifact;
 
-        if (isBinaryPathDirectory && remoteBuildCache.uploadAdhocFolder) {
-          // Extract Info.plist from .ipa file for ad-hoc distribution
-          const ipaFiles = fs
-            .readdirSync(binaryPath)
-            .filter((file) => file.endsWith('.ipa'));
-          if (ipaFiles.length === 0) {
-            throw new RnefError(`No .ipa file found in ${binaryPath}`);
-          }
-
-          const ipaFileName = ipaFiles[0];
-          const ipaPath = path.join(binaryPath, ipaFileName);
-          const appName = path.basename(ipaFileName, '.ipa');
-
-          const zip = new AdmZip(ipaPath);
-          const infoPlistPath = `Payload/${appName}.app/Info.plist`;
-          const infoPlistEntry = zip.getEntry(infoPlistPath);
-
-          if (!infoPlistEntry) {
-            throw new RnefError(
-              `Info.plist not found at ${infoPlistPath} in ${ipaFileName}`
-            );
-          }
-
-          const infoPlistBuffer = infoPlistEntry.getData();
-          const tempPlistPath = path.join(binaryPath, 'temp_info.plist');
-          fs.writeFileSync(tempPlistPath, infoPlistBuffer);
-
-          let version = 'unknown';
-          let bundleIdentifier = 'unknown';
-          try {
-            await spawn('plutil', [
-              '-convert',
-              'json',
-              '-o',
-              tempPlistPath,
-              tempPlistPath,
-            ]);
-
-            const jsonContent = fs.readFileSync(tempPlistPath, 'utf8');
-            const infoPlistJson = JSON.parse(jsonContent) as Record<
-              string,
-              any
-            >;
-
-            version =
-              infoPlistJson['CFBundleShortVersionString'] ||
-              infoPlistJson['CFBundleVersion'] ||
-              'unknown';
-            bundleIdentifier = infoPlistJson['CFBundleIdentifier'] || 'unknown';
-          } finally {
-            if (fs.existsSync(tempPlistPath)) {
-              fs.unlinkSync(tempPlistPath);
-            }
-          }
+        if (
+          isBinaryPathDirectory &&
+          !isAppDirectory &&
+          remoteBuildCache.uploadAdhocFolder
+        ) {
+          const { version, bundleIdentifier, appName, ipaFileName } =
+            await getInfoPlist(binaryPath);
 
           uploadedArtifact = await remoteBuildCache.uploadAdhocFolder({
             artifactName,
@@ -240,10 +201,35 @@ async function remoteCache({
             },
           });
         } else {
-          uploadedArtifact = await remoteBuildCache.upload({
+          const { name, url, getResponse } = await remoteBuildCache.upload({
             artifactName,
-            buffer,
           });
+
+          if (getResponse) {
+            const loader = spinner({ silent: isJsonOutput });
+            loader.start(`Uploading to ${color.bold(remoteBuildCache.name)}`);
+            await handleUploadResponse(
+              getResponse,
+              buffer,
+              (progress, totalMB) => {
+                loader.message(
+                  `Uploading to ${color.bold(
+                    remoteBuildCache.name
+                  )} (${progress}% of ${totalMB} MB)`
+                );
+              }
+            );
+            loader.stop(
+              `Uploaded build to ${color.bold(remoteBuildCache.name)}`
+            );
+          } else {
+            // handle legacy behavior
+          }
+
+          uploadedArtifact = {
+            name,
+            url,
+          };
         }
 
         if (isJsonOutput) {
@@ -288,258 +274,98 @@ async function remoteCache({
   return null;
 }
 
-// Template functions for ad-hoc iOS distribution
-function templateIndexHtml({
-  appName,
-  version,
-  bundleIdentifier,
-}: {
-  appName: string;
-  version: string;
-  bundleIdentifier: string;
-}) {
-  return `<!DOCTYPE html>
-<html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Download ${appName} for iOS</title>
-    <style>
-      * {
-        margin: 0;
-        padding: 0;
-        box-sizing: border-box;
-      }
+async function getInfoPlist(binaryPath: string) {
+  // Extract Info.plist from .ipa file for ad-hoc distribution
+  const ipaFiles = fs
+    .readdirSync(binaryPath)
+    .filter((file) => file.endsWith('.ipa'));
+  if (ipaFiles.length === 0) {
+    throw new RnefError(`No .ipa file found in ${binaryPath}`);
+  }
 
-      body {
-        font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto,
-          Oxygen, Ubuntu, Cantarell, sans-serif;
-        min-height: 100vh;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        padding: 20px;
-        font-size: 16px;
-      }
+  const ipaFileName = ipaFiles[0];
+  const appName = path.basename(ipaFileName, '.ipa');
+  const ipaPath = path.join(binaryPath, ipaFileName);
+  const zip = new AdmZip(ipaPath);
+  const infoPlistPath = `Payload/${appName}.app/Info.plist`;
+  const infoPlistEntry = zip.getEntry(infoPlistPath);
 
-      .container {
-        text-align: center;
-        max-width: 500px;
-        width: 100%;
-      }
+  if (!infoPlistEntry) {
+    throw new RnefError(
+      `Info.plist not found at ${infoPlistPath} in ${ipaFileName}`
+    );
+  }
+  const infoPlistBuffer = infoPlistEntry.getData();
+  const tempPlistPath = path.join(binaryPath, 'temp_info.plist');
+  fs.writeFileSync(tempPlistPath, infoPlistBuffer);
 
-      .app-icon {
-        width: 100px;
-        height: 100px;
-        margin: 0 auto 15px;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        font-size: 48px;
-        color: white;
-      }
+  let version = 'unknown';
+  let bundleIdentifier = 'unknown';
+  try {
+    await spawn('plutil', [
+      '-convert',
+      'json',
+      '-o',
+      tempPlistPath,
+      tempPlistPath,
+    ]);
 
-      h1 {
-        color: #1d1d1f;
-        font-size: 28px;
-        font-weight: 600;
-        margin-bottom: 15px;
-        overflow-wrap: break-word;
-      }
+    const jsonContent = fs.readFileSync(tempPlistPath, 'utf8');
+    const infoPlistJson = JSON.parse(jsonContent) as Record<string, any>;
 
-      .subtitle {
-        color: #86868b;
-        font-size: 16px;
-        line-height: 1.5;
-        margin-bottom: 30px;
-      }
+    version =
+      infoPlistJson['CFBundleShortVersionString'] ||
+      infoPlistJson['CFBundleVersion'] ||
+      'unknown';
+    bundleIdentifier = infoPlistJson['CFBundleIdentifier'];
+  } finally {
+    if (fs.existsSync(tempPlistPath)) {
+      fs.unlinkSync(tempPlistPath);
+    }
+  }
 
-      .version {
-        color: #1d1d1f;
-        font-size: 16px;
-        line-height: 1.5;
-        margin-bottom: 10px;
-      }
-
-      .download-button {
-        background: #8232ff;
-        color: white;
-        border: none;
-        padding: 16px 32px;
-        border-radius: 2px;
-        font-size: 14px;
-        cursor: pointer;
-        transition: all 0.3s ease;
-        text-decoration: none;
-        display: inline-block;
-        margin-bottom: 20px;
-      }
-
-      .download-button:hover {
-        transform: translateY(-2px);
-        box-shadow: 0 10px 25px rgba(0, 122, 255, 0.3);
-      }
-
-      .download-button:active {
-        transform: translateY(0);
-      }
-
-      .instructions {
-        background: #f5f5f7;
-        border-radius: 2px;
-        padding: 20px;
-        margin-top: 20px;
-        text-align: left;
-      }
-
-      .instructions h3 {
-        color: #1d1d1f;
-        font-size: 16px;
-        margin-bottom: 10px;
-      }
-
-      .instructions ol {
-        color: #86868b;
-        font-size: 14px;
-        line-height: 1.6;
-        padding-left: 20px;
-      }
-
-      .instructions li {
-        margin-bottom: 8px;
-      }
-
-      .adhoc-info {
-        text-align: left;
-        margin-top: 20px;
-        padding: 1em 2em;
-        border-left: 2px solid #8232ff;
-      }
-
-      .adhoc-info-title {
-        font-weight: 600;
-        margin-bottom: 10px;
-      }
-
-      .adhoc-info-text {
-        color: #1d1d1f;
-        margin: 0;
-      }
-
-      .footer {
-        text-align: center;
-        margin-top: 40px;
-        font-size: 12px;
-        color: #86868b;
-      }
-
-      .link {
-        color: #8232ff;
-        text-decoration: none;
-      }
-    </style>
-  </head>
-  <body>
-    <div class="container">
-      <div class="app-icon">📱</div>
-
-      <h1>${appName}</h1>
-      <p class="version">${bundleIdentifier} (${version})</p>
-      <p class="subtitle">
-        Download and install the latest version of our iOS app directly to your
-        device.
-      </p>
-
-      <a href="#" id="install-link" class="download-button">
-        Install App
-      </a>
-
-      <script>
-        // Update the link dynamically to point to the manifest.plist
-        const link = document.getElementById('install-link');
-        const currentUrl = window.location.href;
-        const manifestUrl = currentUrl.replace('index.html', 'manifest.plist');
-        link.href = \`itms-services://?action=download-manifest&url=\${encodeURIComponent(manifestUrl)}\`;
-      </script>
-
-      <div class="instructions">
-        <h3>Installation Instructions:</h3>
-        <ol>
-          <li>Tap the "Download App" button above</li>
-          <li>When prompted, tap "Install" in the popup dialog</li>
-          <li>The app will now start installing and will be available on your home screen</li>
-        </ol>
-      </div>
-
-      <div class="adhoc-info">
-        <p class="adhoc-info-title">Ad-hoc build notice</p>
-        <p class="adhoc-info-text">
-          This is an ad-hoc build for testing purposes. Make sure you're using a
-          device that's registered in the provisioning profile.
-        </p>
-      </div>
-      <div class="footer">
-        <p>
-          Generated with <a class="link" href="https://rnef.dev">RNEF</a> by
-          <a class="link" href="https://callstack.com">Callstack</a>
-        </p>
-      </div>
-    </div>
-  </body>
-</html>
-`;
+  return { version, bundleIdentifier, appName, ipaFileName };
 }
 
-function templateManifestPlist({
-  baseUrl,
-  ipaName,
-  bundleIdentifier,
-  version,
-  appName,
-  platformIdentifier,
-}: {
-  baseUrl: string;
-  ipaName: string;
-  bundleIdentifier: string;
-  version: string;
-  appName: string;
-  platformIdentifier: string;
-}) {
-  return `<?xml version="1.0" encoding="UTF-8"?>
-<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
-<plist version="1.0">
-<dict>
-    <key>items</key>
-    <array>
-        <dict>
-            <key>assets</key>
-            <array>
-                <dict>
-                    <key>kind</key>
-                    <string>software-package</string>
-                    <key>url</key>
-                    <string>${baseUrl}/${ipaName}</string>
-                </dict>
-            </array>
-            <key>metadata</key>
-            <dict>
-                <key>bundle-identifier</key>
-                <string>${bundleIdentifier}</string>
-                <key>bundle-version</key>
-                <string>${version}</string>
-                <key>kind</key>
-                <string>software</string>
-                <key>platform-identifier</key>
-                <string>${
-                  platformIdentifier ?? 'com.apple.platform.iphoneos'
-                }</string>
-                <key>title</key>
-                <string>${appName}</string>
-            </dict>
-        </dict>
-      </array>
-    </dict>
-  </plist>`;
+async function getBinaryBuffer(
+  binaryPath: string,
+  artifactName: string,
+  localArtifactPath: string,
+  args: Flags
+) {
+  const zip = new AdmZip();
+  const isBinaryPathDirectory =
+    !binaryPath.endsWith('.app') && fs.statSync(binaryPath).isDirectory();
+  const isAppDirectory =
+    binaryPath.endsWith('.app') && fs.statSync(binaryPath).isDirectory();
+  const absoluteTarballPath =
+    args.binaryPath ?? path.join(localArtifactPath, 'app.tar.gz');
+
+  if (isBinaryPathDirectory) {
+    // skip zipping, we're uploading a folder for ad-hoc builds
+  } else if (isAppDirectory) {
+    const appName = path.basename(binaryPath);
+    if (args.binaryPath && !fs.existsSync(absoluteTarballPath)) {
+      throw new RnefError(
+        `No tarball found for "${artifactName}" in "${localArtifactPath}".`
+      );
+    }
+    tar.create(
+      {
+        file: absoluteTarballPath,
+        cwd: path.dirname(binaryPath),
+        gzip: true,
+        filter: (filePath) => filePath.includes(appName),
+      },
+      [appName]
+    );
+    zip.addLocalFile(absoluteTarballPath);
+  } else {
+    zip.addLocalFile(binaryPath);
+  }
+  const buffer = zip.toBuffer();
+
+  return { buffer, isBinaryPathDirectory, isAppDirectory, absoluteTarballPath };
 }
 
 function validateArgs(args: Flags, action: string) {

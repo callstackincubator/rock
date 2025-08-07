@@ -95,7 +95,14 @@ export async function promptGroup<T>(
   return result;
 }
 
-export function spinner(options?: clack.SpinnerOptions) {
+export function spinner(options?: clack.SpinnerOptions & { silent?: boolean }) {
+  if (options?.silent) {
+    return {
+      start: () => {},
+      stop: () => {},
+      message: () => {},
+    };
+  }
   if (logger.isVerbose() || !isInteractive()) {
     return {
       start: (message?: string) => logger.log(formatStartMessage(message)),

@@ -1,11 +1,12 @@
 import fs from 'node:fs';
 import path from 'node:path';
+import type { Readable } from 'node:stream';
 import * as clientS3 from '@aws-sdk/client-s3';
 import { fromIni } from '@aws-sdk/credential-provider-ini';
 import { fromTemporaryCredentials } from '@aws-sdk/credential-providers';
+import { Upload } from '@aws-sdk/lib-storage';
 import { getSignedUrl } from '@aws-sdk/s3-request-presigner';
 import type { RemoteArtifact, RemoteBuildCache } from '@rnef/tools';
-import type { Readable } from 'stream';
 
 function toWebStream(stream: Readable): ReadableStream {
   return new ReadableStream({
@@ -117,12 +118,8 @@ export class S3BuildCache implements RemoteBuildCache {
     this.linkExpirationTime = config.linkExpirationTime ?? 3600 * 24;
   }
 
-  private async uploadFile(
-    key: string,
-    buffer: Buffer,
-    contentType?: string
-  ): Promise<void> {
-    await this.s3.send(
+  private async uploadFile(key: string, buffer: Buffer, contentType?: string) {
+    return this.s3.send(
       new clientS3.PutObjectCommand({
         Bucket: this.bucket,
         Key: key,
@@ -134,6 +131,34 @@ export class S3BuildCache implements RemoteBuildCache {
         },
       })
     );
+  }
+
+  private async uploadFileWithProgress(
+    key: string,
+    buffer: Buffer,
+    onProgress: (loaded: number, total: number) => void,
+    contentType?: string
+  ) {
+    const upload = new Upload({
+      client: this.s3,
+      params: {
+        Bucket: this.bucket,
+        Key: key,
+        Body: buffer,
+        ContentType: contentType || 'application/octet-stream',
+        Metadata: {
+          createdAt: new Date().toISOString(),
+        },
+      },
+    });
+
+    upload.on('httpUploadProgress', (progress) => {
+      if (progress.loaded !== undefined && progress.total !== undefined) {
+        onProgress(progress.loaded, progress.total);
+      }
+    });
+
+    return upload.done();
   }
 
   async list({
@@ -218,14 +243,10 @@ export class S3BuildCache implements RemoteBuildCache {
 
   async upload({
     artifactName,
-    buffer,
   }: {
     artifactName: string;
-    buffer: Buffer;
-  }): Promise<RemoteArtifact> {
+  }): Promise<RemoteArtifact & { getResponse?: (buffer: Buffer) => Response }> {
     const key = `${this.directory}/${artifactName}.zip`;
-
-    await this.uploadFile(key, buffer);
 
     const presignedUrl = await getSignedUrl(
       this.s3,
@@ -233,7 +254,42 @@ export class S3BuildCache implements RemoteBuildCache {
       { expiresIn: this.linkExpirationTime }
     );
 
-    return { name: artifactName, url: presignedUrl };
+    return {
+      name: artifactName,
+      url: presignedUrl,
+      getResponse: (buffer: Buffer) => {
+        const readable = new ReadableStream({
+          start: (controller) => {
+            let lastEmittedBytes = 0;
+
+            try {
+              this.uploadFileWithProgress(key, buffer, (loaded, total) => {
+                // Emit chunks based on actual upload progress
+                const newBytes = loaded - lastEmittedBytes;
+                if (newBytes > 0) {
+                  const chunk = buffer.subarray(lastEmittedBytes, loaded);
+                  controller.enqueue(chunk);
+                  lastEmittedBytes = loaded;
+
+                  if (loaded >= total) {
+                    controller.close();
+                  }
+                }
+              });
+            } catch (error) {
+              controller.error(error);
+            }
+          },
+        });
+
+        return new Response(readable, {
+          headers: {
+            'content-length': String(buffer.length),
+            'content-type': 'application/octet-stream',
+          },
+        });
+      },
+    };
   }
 
   async uploadAdhocFolder({
@@ -245,7 +301,7 @@ export class S3BuildCache implements RemoteBuildCache {
     folderPath: string;
     writeIndexAndManifest: (baseUrl: string) => void;
   }): Promise<RemoteArtifact> {
-    const uploadPromises: Promise<void>[] = [];
+    const uploadPromises: Promise<clientS3.PutObjectCommandOutput>[] = [];
     const uploadDirectory = `${this.directory}/ad-hoc/${artifactName}`;
     const presignedUrl = await getSignedUrl(
       this.s3,
@@ -289,7 +345,10 @@ export class S3BuildCache implements RemoteBuildCache {
 
     await Promise.all(uploadPromises);
 
-    return { name: artifactName, url: presignedUrl };
+    return {
+      name: artifactName,
+      url: presignedUrl,
+    };
   }
 }
 

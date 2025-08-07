@@ -72,17 +72,14 @@ export interface RemoteBuildCache {
   /**
    * Upload a local artifact stored in build cache to remote storage
    * @param artifactName - Name of the artifact to upload, e.g. `rnef-android-debug-1234567890` for android in debug variant
-   * @param buffer - Buffer of the artifact to upload
-   * @returns Remote artifact info if upload successful
+   * @returns Remote artifact info with response function for upload control
    * @throws {Error} Throws if upload fails
    */
   upload({
     artifactName,
-    buffer,
   }: {
     artifactName: string;
-    buffer: Buffer;
-  }): Promise<RemoteArtifact>;
+  }): Promise<RemoteArtifact & { getResponse?: (buffer: Buffer) => Response }>;
 
   /**
    * Upload a folder with multiple files to remote storage for ad-hoc builds

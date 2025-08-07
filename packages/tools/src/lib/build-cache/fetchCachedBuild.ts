@@ -54,8 +54,11 @@ To disable this warning, set the provider to null:
   await handleDownloadResponse(
     response,
     localArtifactPath,
-    remoteBuildCache.name,
-    loader
+    (progress, totalMB) => {
+      loader.message(
+        `Downloading cached build from ${color.bold(remoteBuildCache.name)} (${progress}% of ${totalMB} MB)`
+      );
+    }
   );
   await extractArtifactTarballIfNeeded(localArtifactPath);
   const binaryPath = getLocalBinaryPath(localArtifactPath);
@@ -74,56 +77,85 @@ To disable this warning, set the provider to null:
   };
 }
 
+async function trackProgressFromStream(
+  response: Response,
+  onProgress: (progress: string, totalMB: string) => void
+): Promise<Response> {
+  const contentLength = response.headers.get('content-length');
+
+  if (!contentLength || !response.body) {
+    return response;
+  }
+
+  const totalBytes = parseInt(contentLength, 10);
+  const totalMB = (totalBytes / 1024 / 1024).toFixed(2);
+  let processedBytes = 0;
+
+  const reader = response.body.getReader();
+  const stream = new ReadableStream({
+    async start(controller) {
+      while (true) {
+        const { done, value } = await reader.read();
+        if (done) {
+          break;
+        }
+        processedBytes += value.length;
+        const progress = ((processedBytes / totalBytes) * 100).toFixed(0);
+
+        onProgress(progress, totalMB);
+
+        controller.enqueue(value);
+      }
+      controller.close();
+    },
+  });
+
+  return new Response(stream);
+}
+
 export async function handleDownloadResponse(
   response: Response,
   localArtifactPath: string,
-  name: string,
-  loader?: ReturnType<typeof spinner>
+  onProgress: (progress: string, totalMB: string) => void
 ) {
   try {
     fs.mkdirSync(localArtifactPath, { recursive: true });
     if (!response.ok || !response.body) {
       throw new Error(`Failed to download artifact: ${response.statusText}`);
     }
-    let responseData = response;
-    const contentLength = response.headers.get('content-length');
 
-    if (contentLength) {
-      const totalBytes = parseInt(contentLength, 10);
-      const totalMB = (totalBytes / 1024 / 1024).toFixed(2);
-      let downloadedBytes = 0;
-
-      const reader = response.body.getReader();
-      const stream = new ReadableStream({
-        async start(controller) {
-          while (true) {
-            const { done, value } = await reader.read();
-            if (done) {
-              break;
-            }
-            downloadedBytes += value.length;
-            const progress = ((downloadedBytes / totalBytes) * 100).toFixed(0);
-            loader?.message(
-              `Downloading cached build from ${color.bold(
-                name
-              )} (${progress}% of ${totalMB} MB)`
-            );
-            controller.enqueue(value);
-          }
-          controller.close();
-        },
-      });
-      responseData = new Response(stream);
-    }
+    const responseWithProgress = await trackProgressFromStream(
+      response,
+      onProgress
+    );
 
     const zipPath = localArtifactPath + '.zip';
-    const buffer = await responseData.arrayBuffer();
+    const buffer = await responseWithProgress.arrayBuffer();
     fs.writeFileSync(zipPath, new Uint8Array(buffer));
     unzipFile(zipPath, localArtifactPath);
     fs.unlinkSync(zipPath);
   } catch (error) {
-    loader?.stop(`Failed: Downloading cached build from ${name}`);
     throw new RnefError(`Unexpected error`, { cause: error });
+  }
+}
+
+export async function handleUploadResponse(
+  getResponse: (buffer: Buffer) => Response,
+  buffer: Buffer,
+  onProgress: (progress: string, totalMB: string) => void
+) {
+  try {
+    const response = getResponse(buffer);
+    if (!response.body) {
+      throw new Error('Response body is empty');
+    }
+    const responseWithProgress = await trackProgressFromStream(
+      response,
+      onProgress
+    );
+    await responseWithProgress.arrayBuffer();
+  } catch (error) {
+    throw new RnefError(`Unexpected error during upload`, { cause: error });
   }
 }
 
