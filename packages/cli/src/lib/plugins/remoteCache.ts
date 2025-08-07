@@ -151,7 +151,7 @@ ${output
         logger.log(
           `Artifact information:
 - name: ${color.bold(color.blue(artifactName))}
-- path: ${colorLink(binaryPath)}`
+- path: ${colorLink(relativeToCwd(binaryPath))}`
         );
       }
       break;
