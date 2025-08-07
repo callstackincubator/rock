@@ -297,15 +297,12 @@ class DummyLocalCacheProvider implements RemoteBuildCache {
   async delete({ artifactName }: { artifactName: string }) {
     // optional...
   }
-  async upload({ artifactName }: { artifactName: string }) {
-    // optional...
-  }
-  async uploadAdhocFolder({
+  async upload({
     artifactName,
-    folderPath,
+    uploadArtifactName,
   }: {
     artifactName: string;
-    folderPath: string;
+    uploadArtifactName?: string;
   }) {
     // optional...
   }

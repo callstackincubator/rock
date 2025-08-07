@@ -1,4 +1,5 @@
 import fs from 'node:fs';
+import os from 'node:os';
 import path from 'node:path';
 import type { PluginApi, PluginOutput } from '@rnef/config';
 import type { FingerprintSources, RemoteBuildCache } from '@rnef/tools';
@@ -28,6 +29,7 @@ type Flags = {
   all?: boolean;
   allButLatest?: boolean;
   binaryPath?: string;
+  adHoc?: boolean;
 };
 
 async function remoteCache({
@@ -167,69 +169,97 @@ async function remoteCache({
       try {
         let uploadedArtifact;
 
-        if (
-          isBinaryPathDirectory &&
-          !isAppDirectory &&
-          remoteBuildCache.uploadAdhocFolder
-        ) {
+        if (args.adHoc) {
           const { version, bundleIdentifier, appName, ipaFileName } =
             await getInfoPlist(binaryPath);
-
-          uploadedArtifact = await remoteBuildCache.uploadAdhocFolder({
+          const { name, getResponse } = await remoteBuildCache.upload({
             artifactName,
-            folderPath: binaryPath,
-            writeIndexAndManifest: (baseUrl: string) => {
-              // Generate templates for ad-hoc distribution
-              const indexHtml = templateIndexHtml({
+            uploadArtifactName: `ad-hoc/${artifactName}/${appName}.ipa`,
+          });
+          const { url: urlIndexHtml, getResponse: getResponseIndexHtml } =
+            await remoteBuildCache.upload({
+              artifactName,
+              uploadArtifactName: `ad-hoc/${artifactName}/index.html`,
+            });
+          const { getResponse: getResponseManifestPlist } =
+            await remoteBuildCache.upload({
+              artifactName,
+              uploadArtifactName: `ad-hoc/${artifactName}/manifest.plist`,
+            });
+
+          const loader = spinner({ silent: isJsonOutput });
+          loader.start(
+            `Uploading IPA, index.html and manifest.plist to ${color.bold(
+              remoteBuildCache.name
+            )}`
+          );
+          await handleUploadResponse(
+            getResponse,
+            buffer,
+            (progress, totalMB) => {
+              loader.message(
+                `Uploading IPA, index.html and manifest.plist to ${color.bold(
+                  remoteBuildCache.name
+                )} (${progress}% of ${totalMB} MB)`
+              );
+            }
+          );
+
+          await getResponseIndexHtml(
+            Buffer.from(
+              templateIndexHtml({
                 appName,
                 bundleIdentifier,
                 version,
-              });
-              const manifestPlist = templateManifestPlist({
+              })
+            ),
+            'text/html'
+          ).arrayBuffer();
+
+          await getResponseManifestPlist((baseUrl) =>
+            Buffer.from(
+              templateManifestPlist({
                 appName,
                 version,
-                baseUrl,
+                baseUrl: baseUrl.replace('/manifest.plist', ''),
                 ipaName: ipaFileName,
                 bundleIdentifier,
                 platformIdentifier: 'com.apple.platform.iphoneos',
-              });
-              fs.writeFileSync(path.join(binaryPath, 'index.html'), indexHtml);
-              fs.writeFileSync(
-                path.join(binaryPath, 'manifest.plist'),
-                manifestPlist
-              );
-            },
-          });
+              })
+            )
+          ).arrayBuffer();
+
+          loader.stop(
+            `Uploaded build, index.html and manifest.plist to ${color.bold(
+              remoteBuildCache.name
+            )}`
+          );
+
+          uploadedArtifact = {
+            name,
+            url: urlIndexHtml.split('?')[0] + '',
+          };
         } else {
           const { name, url, getResponse } = await remoteBuildCache.upload({
             artifactName,
           });
-
-          if (getResponse) {
-            const loader = spinner({ silent: isJsonOutput });
-            loader.start(`Uploading to ${color.bold(remoteBuildCache.name)}`);
-            await handleUploadResponse(
-              getResponse,
-              buffer,
-              (progress, totalMB) => {
-                loader.message(
-                  `Uploading to ${color.bold(
-                    remoteBuildCache.name
-                  )} (${progress}% of ${totalMB} MB)`
-                );
-              }
-            );
-            loader.stop(
-              `Uploaded build to ${color.bold(remoteBuildCache.name)}`
-            );
-          } else {
-            // handle legacy behavior
-          }
-
-          uploadedArtifact = {
-            name,
-            url,
-          };
+          const loader = spinner({ silent: isJsonOutput });
+          loader.start(
+            `Uploading build to ${color.bold(remoteBuildCache.name)}`
+          );
+          await handleUploadResponse(
+            getResponse,
+            buffer,
+            (progress, totalMB) => {
+              loader.message(
+                `Uploading build to ${color.bold(
+                  remoteBuildCache.name
+                )} (${progress}% of ${totalMB} MB)`
+              );
+            }
+          );
+          loader.stop(`Uploaded build to ${color.bold(remoteBuildCache.name)}`);
+          uploadedArtifact = { name, url };
         }
 
         if (isJsonOutput) {
@@ -238,6 +268,11 @@ async function remoteCache({
           logger.log(`- name: ${uploadedArtifact.name}
 - url: ${uploadedArtifact.url}`);
         }
+      } catch (error) {
+        throw new RnefError(
+          `Failed to upload build to ${color.bold(remoteBuildCache.name)}`,
+          { cause: error }
+        );
       } finally {
         if (isAppDirectory && !isBinaryPathDirectory) {
           fs.unlinkSync(absoluteTarballPath);
@@ -275,17 +310,9 @@ async function remoteCache({
 }
 
 async function getInfoPlist(binaryPath: string) {
-  // Extract Info.plist from .ipa file for ad-hoc distribution
-  const ipaFiles = fs
-    .readdirSync(binaryPath)
-    .filter((file) => file.endsWith('.ipa'));
-  if (ipaFiles.length === 0) {
-    throw new RnefError(`No .ipa file found in ${binaryPath}`);
-  }
-
-  const ipaFileName = ipaFiles[0];
+  const ipaFileName = path.basename(binaryPath);
   const appName = path.basename(ipaFileName, '.ipa');
-  const ipaPath = path.join(binaryPath, ipaFileName);
+  const ipaPath = binaryPath;
   const zip = new AdmZip(ipaPath);
   const infoPlistPath = `Payload/${appName}.app/Info.plist`;
   const infoPlistEntry = zip.getEntry(infoPlistPath);
@@ -296,7 +323,7 @@ async function getInfoPlist(binaryPath: string) {
     );
   }
   const infoPlistBuffer = infoPlistEntry.getData();
-  const tempPlistPath = path.join(binaryPath, 'temp_info.plist');
+  const tempPlistPath = path.join(os.tmpdir(), 'rnef-temp-info.plist');
   fs.writeFileSync(tempPlistPath, infoPlistBuffer);
 
   let version = 'unknown';
@@ -454,6 +481,11 @@ Example Android: --traits debug`,
         {
           name: '--binary-path <string>',
           description: 'Path to the binary to upload',
+        },
+        {
+          name: '--ad-hoc',
+          description:
+            'Upload IPA for ad-hoc distribution and installation from URL. Additionally uploads index.html and manifest.plist',
         },
       ],
     });
