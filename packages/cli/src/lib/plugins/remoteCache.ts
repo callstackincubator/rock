@@ -74,16 +74,18 @@ async function remoteCache({
         if (isJsonOutput) {
           console.log(JSON.stringify(artifact, null, 2));
         } else {
-          logger.log(`- name: ${artifact.name}
-- url: ${artifact.url}`);
+          logger.log(`Artifact information:
+- name: ${color.bold(color.blue(artifact.name))}
+- url: ${colorLink(artifact.url)}`);
         }
       } else if (artifacts.length > 0 && args.all) {
         if (isJsonOutput) {
           console.log(JSON.stringify(artifacts, null, 2));
         } else {
           artifacts.forEach((artifact) => {
-            logger.log(`- name: ${artifact.name}
-- url: ${artifact.url}`);
+            logger.log(`Artifact information:
+- name: ${color.bold(color.blue(artifact.name))}
+- url: ${colorLink(artifact.url)}`);
           });
         }
       }
@@ -103,10 +105,16 @@ async function remoteCache({
       if (isJsonOutput) {
         console.log(JSON.stringify(output, null, 2));
       } else {
-        output.forEach((artifact) => {
-          logger.log(`- name: ${artifact.name}
-- url: ${artifact.url}`);
-        });
+        logger.log(`Artifacts:
+${output
+  .map(
+    (artifact) =>
+      `- name: ${color.bold(color.blue(artifact.name))}\n- url: ${colorLink(
+        artifact.url
+      )}`
+  )
+  .join('\n')}
+        `);
       }
       break;
     }
@@ -130,9 +138,7 @@ async function remoteCache({
       );
       const binaryPath = getLocalBinaryPath(localArtifactPath);
       loader.stop(
-        `Downloaded cached build to: ${colorLink(
-          relativeToCwd(localArtifactPath)
-        )}`
+        `Downloaded cached build from ${color.bold(remoteBuildCache.name)}`
       );
       if (!binaryPath) {
         throw new RnefError(`Failed to save binary for "${artifactName}".`);
@@ -142,8 +148,11 @@ async function remoteCache({
           JSON.stringify({ name: artifactName, path: binaryPath }, null, 2)
         );
       } else {
-        logger.log(`- name: ${artifactName}
-- path: ${binaryPath}`);
+        logger.log(
+          `Artifact information:
+- name: ${color.bold(color.blue(artifactName))}
+- path: ${colorLink(binaryPath)}`
+        );
       }
       break;
     }
@@ -265,8 +274,9 @@ async function remoteCache({
         if (isJsonOutput) {
           console.log(JSON.stringify(uploadedArtifact, null, 2));
         } else {
-          logger.log(`- name: ${uploadedArtifact.name}
-- url: ${uploadedArtifact.url}`);
+          logger.log(`Artifact information:
+- name: ${color.bold(color.blue(uploadedArtifact.name))}
+- url: ${colorLink(uploadedArtifact.url)}`);
         }
       } catch (error) {
         throw new RnefError(
@@ -290,12 +300,15 @@ async function remoteCache({
         console.log(JSON.stringify(deletedArtifacts, null, 2));
       } else {
         logger.log(
-          deletedArtifacts
-            .map(
-              (artifact) => `- name: ${artifact.name}
-- url: ${artifact.url}`
-            )
-            .join('\n')
+          `Deleted artifacts:
+${deletedArtifacts
+  .map(
+    (artifact) =>
+      `- name: ${color.bold(color.blue(artifact.name))}\n- url: ${colorLink(
+        artifact.url
+      )}`
+  )
+  .join('\n')}`
         );
       }
       break;
