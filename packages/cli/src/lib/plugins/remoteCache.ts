@@ -172,10 +172,8 @@ ${output
 
       try {
         let uploadedArtifact;
-
-        const { version, bundleIdentifier, appName, ipaFileName } =
-          await getInfoPlist(binaryPath);
-
+        const appFileName = path.basename(binaryPath);
+        const appName = appFileName.replace(/\.[^/.]+$/, '');
         const { name, url, getResponse } = await remoteBuildCache.upload({
           artifactName,
           uploadArtifactName: args.adHoc
@@ -197,6 +195,7 @@ ${output
 
         // Upload index.html and manifest.plist for ad-hoc distribution
         if (args.adHoc) {
+          const { version, bundleIdentifier } = await getInfoPlist(binaryPath);
           const { url: urlIndexHtml, getResponse: getResponseIndexHtml } =
             await remoteBuildCache.upload({
               artifactName,
@@ -220,7 +219,7 @@ ${output
                 appName,
                 version,
                 baseUrl: baseUrl.replace('/manifest.plist', ''),
-                ipaName: ipaFileName,
+                ipaName: appFileName,
                 bundleIdentifier,
                 platformIdentifier: 'com.apple.platform.iphoneos',
               })
@@ -231,9 +230,7 @@ ${output
           uploadedArtifact = { name, url: urlIndexHtml.split('?')[0] + '' };
         }
 
-        loader.stop(
-          `Uploaded ${uploadMessage} to ${color.bold(remoteBuildCache.name)}`
-        );
+        loader.stop(`Uploaded ${uploadMessage}`);
 
         if (isJsonOutput) {
           console.log(JSON.stringify(uploadedArtifact, null, 2));
@@ -324,7 +321,7 @@ async function getInfoPlist(binaryPath: string) {
     }
   }
 
-  return { version, bundleIdentifier, appName, ipaFileName };
+  return { version, bundleIdentifier };
 }
 
 async function getBinaryBuffer(
@@ -340,7 +337,7 @@ async function getBinaryBuffer(
     args.binaryPath ?? path.join(localArtifactPath, 'app.tar.gz');
 
   if (isAppDirectory) {
-    const appName = path.basename(binaryPath);
+    const appDirectoryName = path.basename(binaryPath);
     if (args.binaryPath && !fs.existsSync(absoluteTarballPath)) {
       throw new RnefError(
         `No tarball found for "${artifactName}" in "${localArtifactPath}".`
@@ -351,9 +348,9 @@ async function getBinaryBuffer(
         file: absoluteTarballPath,
         cwd: path.dirname(binaryPath),
         gzip: true,
-        filter: (filePath) => filePath.includes(appName),
+        filter: (filePath) => filePath.includes(appDirectoryName),
       },
-      [appName]
+      [appDirectoryName]
     );
     zip.addLocalFile(absoluteTarballPath);
   } else {

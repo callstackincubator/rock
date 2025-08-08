@@ -273,37 +273,267 @@ export default {
 
 ### Custom remote cache provider
 
-You can plug in any remote storage by implementing [`RemoteBuildCache`](https://github.com/callstack/rnef/blob/main/packages/tools/src/lib/build-cache/common.ts#L24) interface. A simplest remote cache provider, that loads artifact from a local directory available on your filesystem, would look like this:
+You can plug in any remote storage by implementing the `RemoteBuildCache` interface. This section explains how to implement each method and handle the complexity that RNEF manages for you.
+
+#### Interface
+
+Your provider must implement:
 
 ```ts
-import type { RemoteBuildCache } from '@rnef/tools'; // dev dependency of provider
+interface RemoteBuildCache {
+  name: string;
+
+  list({
+    artifactName,
+    limit,
+  }: {
+    artifactName: string | undefined;
+    limit?: number;
+  }): Promise<Array<{ name: string; url: string; id?: string }>>;
+
+  download({ artifactName }: { artifactName: string }): Promise<Response>;
+
+  delete({
+    artifactName,
+    limit,
+    skipLatest,
+  }: {
+    artifactName: string;
+    limit?: number;
+    skipLatest?: boolean;
+  }): Promise<Array<{ name: string; url: string; id?: string }>>;
+
+  upload({
+    artifactName,
+    uploadArtifactName,
+  }: {
+    artifactName: string;
+    uploadArtifactName?: string; // e.g. 'ad-hoc/<artifact>/<file>'
+  }): Promise<{
+    name: string;
+    url: string;
+    id?: string;
+    getResponse: (
+      buffer: Buffer | ((baseUrl: string) => Buffer),
+      contentType?: string
+    ) => Response;
+  }>;
+}
+```
+
+#### list
+
+Return a list of artifacts with at least `name` and a downloadable `url`. Optionally add an `id`.
+
+:::info
+The artifacts are uploaded as ZIP archives (excluding ad-hoc scenario), so make sure to append the `.zip` suffix to the `artifactName`.
+:::
+
+**Example (S3-style):** prefix-filter objects and convert each to `{ name, url }`. Signed URLs are fine.
+
+```ts
+async list({ artifactName, limit }) {
+  const artifacts = await this.s3.send(
+    new ListObjectsV2Command({
+      Bucket: this.bucket,
+      Prefix: artifactName
+        ? `${this.directory}/${artifactName}.zip`
+        : `${this.directory}/`,
+    })
+  );
+
+  const results = [];
+  for (const artifact of artifacts.Contents ?? []) {
+    if (!artifact.Key) continue;
+
+    const name = artifactName ?? artifact.Key.split('/').pop() ?? '';
+    const presignedUrl = await getSignedUrl(/* ... */);
+
+    results.push({ name, url: presignedUrl });
+  }
+
+  return results;
+}
+```
+
+#### download
+
+Return a Web `Response` whose `body` is a readable stream of the artifact and (if available) a `content-length` header. RNEF uses this to report download progress.
+
+:::info
+The artifacts are uploaded as ZIP archives (excluding ad-hoc scenario), so make sure to append the `.zip` suffix to the `artifactName`.
+:::
+
+If your SDK returns a Node stream, convert it to a Web stream and wrap in `Response`:
+
+```ts
+function toWebStream(node: Readable): ReadableStream {
+  return new ReadableStream({
+    start(controller) {
+      node.on('data', (chunk) => controller.enqueue(chunk));
+      node.on('end', () => controller.close());
+      node.on('error', (e) => controller.error(e));
+    },
+  });
+}
+
+async download({ artifactName }) {
+  const res = await this.s3.send(
+    new GetObjectCommand({
+      Bucket: this.bucket,
+      Key: `${this.directory}/${artifactName}.zip`,
+    })
+  );
+
+  return new Response(toWebStream(res.Body), {
+    headers: {
+      'content-length': String(res.ContentLength ?? ''),
+    },
+  });
+}
+```
+
+#### delete
+
+Delete the requested artifact(s) and return the list of deleted entries: `{ name, url, id? }`.
+
+:::info
+The artifacts are uploaded as ZIP archives (excluding ad-hoc scenario), so make sure to append the `.zip` suffix to the `artifactName`.
+:::
+
+Respect `skipLatest` if your backend supports ordering/versioning, as it's used to clean up stale artifacts e.g. created in an open pull request. Otherwise you may simply delete the single matching object.
+
+```ts
+async delete({ artifactName, skipLatest }) {
+  if (skipLatest) {
+    // Skip the latest artifact - implement based on your backend's versioning
+    return [];
+  }
+
+  await this.s3.send(
+    new DeleteObjectCommand({
+      Bucket: this.bucket,
+      Key: `${this.directory}/${artifactName}.zip`,
+    })
+  );
+
+  return [{
+    name: artifactName,
+    url: `${this.bucket}/${this.directory}/${artifactName}.zip`,
+  }];
+}
+```
+
+#### upload
+
+RNEF expects `upload()` to return metadata and a `getResponse` function:
+
+- `getResponse(buffer, contentType?) => Response`:
+  - RNEF calls this to initiate the upload and to surface upload progress
+  - It passes either:
+    - a `Buffer` (for normal builds), or
+    - a function `(baseUrl) => Buffer` (for ad‑hoc pages) so you can inject absolute URLs into HTML/plist before upload
+  - You should start the actual upload here and return a `Response` object
+  - RNEF will read that stream to display progress
+- for ad-hoc scenario `upload` will pass the `uploadArtifactName` variable, so use that instead of `artifactName`
+
+**For progress signaling, you can:**
+
+- Stream the original buffer in chunks, or
+- Use your SDK's progress events (e.g. S3's `httpUploadProgress`) to enqueue chunks proportional to actual bytes uploaded
+
+**Example (S3-like) using real SDK progress:**
+
+```ts
+async upload({ artifactName, uploadArtifactName }) {
+  const key = uploadArtifactName
+    ? `${this.directory}/${uploadArtifactName}`
+    : `${this.directory}/${artifactName}.zip`;
+
+  const presignedUrl = await getSignedUrl(/* ... */);
+
+  return {
+    name: artifactName,
+    url: presignedUrl,
+    getResponse: (buffer, contentType) => {
+      const upload = new Upload({
+        client: this.s3,
+        params: {
+          Bucket: this.bucket,
+          Key: key,
+          Body: buffer,
+          ContentType: contentType ?? 'application/octet-stream',
+          Metadata: { createdAt: new Date().toISOString() },
+        },
+      });
+
+      const stream = new ReadableStream({
+        start(controller) {
+          let last = 0;
+          upload.on('httpUploadProgress', ({ loaded, total }) => {
+            if (loaded != null && total != null && loaded > last) {
+              controller.enqueue(buffer.subarray(last, loaded));
+              last = loaded;
+              if (loaded >= total) controller.close();
+            }
+          });
+          upload.done().catch((e) => controller.error(e));
+        },
+      });
+
+      return new Response(stream, {
+        headers: {
+          'content-length': String(buffer.length),
+          'content-type': contentType ?? 'application/octet-stream',
+        },
+      });
+    },
+  };
+}
+```
+
+#### What ends up on the provider
+
+- **Normal builds:** RNEF uploads a single build artifact (a ZIP archive). Your provider stores it at a path like `<directory>/<artifactName>.zip`.
+  - For iOS simulator builds (APP directory), RNEF creates a temporary `app.tar.gz` to preserve permissions and includes it in the artifact; you just receive the buffer via `getResponse`. You don't need to create the tarball yourself.
+- **Ad-hoc distribution:**
+  - RNEF uploads:
+    - The signed IPA at `ad-hoc/<artifactName>/<AppName>.ipa`
+    - An `index.html` landing page
+    - A `manifest.plist`
+
+#### Notes and tips
+
+- If your backend cannot support uploads, throw in `upload()` with a link to docs (as GitHub provider does).
+- Always return valid, downloadable `url`s from `list()`; signed URLs are OK.
+- Prefer setting `content-length` on both download and upload `Response` objects so RNEF can display progress.
+- For uploads, it's fine to start the SDK upload in the background; RNEF drains the returned `Response` to show progress, and your SDK promise resolves independently. In tests, mock your SDK's upload to resolve quickly.
+
+**Example provider:**
+
+```ts
+import type { RemoteBuildCache } from '@rnef/tools';
 
 class DummyLocalCacheProvider implements RemoteBuildCache {
   name = 'dummy';
-  // artifactName is provided by RNEF, and will look like this:
-  // - rnef-android-release-7af554b93cd696ca95308fdebe3a4484001bb7b4
-  // - rnef-ios-simulator-Debug-04c166be56d916367462fc3cb1f067f8ac4c34d4
-  // depending on flags passed to the `run:*` commands
+
   async list({ artifactName }) {
     const url = new URL(`${artifactName}.zip`, import.meta.url);
     return [{ name: artifactName, url }];
   }
+
   async download({ artifactName }) {
     const artifacts = await this.list({ artifactName });
     const filePath = artifacts[0].url.pathname;
     const fileStream = fs.createReadStream(filePath);
     return new Response(fileStream);
   }
-  async delete({ artifactName }: { artifactName: string }) {
+
+  async delete({ artifactName }) {
     // optional...
   }
-  async upload({
-    artifactName,
-    uploadArtifactName,
-  }: {
-    artifactName: string;
-    uploadArtifactName?: string;
-  }) {
+
+  async upload({ artifactName, uploadArtifactName }) {
     // optional...
   }
 }
@@ -312,7 +542,7 @@ const pluginDummyLocalCacheProvider = (options) => () =>
   new DummyLocalCacheProvider(options);
 ```
 
-Then pass the `pluginDummyLocalCacheProvider` function called with optional configuration object (in case you need authentication or anything user-specific, such as repository information) as a value of the `remoteCacheProvider` config key:
+Then use it in your config:
 
 ```ts title="rnef.config.mjs"
 export default {
@@ -320,8 +550,6 @@ export default {
   remoteCacheProvider: pluginDummyLocalCacheProvider(options),
 };
 ```
-
-Once this is set up, when running `run:*` commands, RNEF will calculate the hash of your native project for said platform, and call the `download` method to resolve the path to the binary that will be installed on a device.
 
 ### Opt-out of remote cache
 
