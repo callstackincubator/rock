@@ -163,12 +163,7 @@ ${output
       if (!binaryPath) {
         throw new RnefError(`No binary found for "${artifactName}".`);
       }
-      const {
-        buffer,
-        isBinaryPathDirectory,
-        isAppDirectory,
-        absoluteTarballPath,
-      } = await getBinaryBuffer(
+      const buffer = await getBinaryBuffer(
         binaryPath,
         artifactName,
         localArtifactPath,
@@ -187,10 +182,10 @@ ${output
             ? `ad-hoc/${artifactName}/${appName}.ipa`
             : undefined,
         });
-        const loader = spinner({ silent: isJsonOutput });
         const uploadMessage = `${
           args.adHoc ? 'IPA, index.html and manifest.plist' : 'build'
         } to ${color.bold(remoteBuildCache.name)}`;
+        const loader = spinner({ silent: isJsonOutput });
         loader.start(`Uploading ${uploadMessage}`);
         await handleUploadResponse(getResponse, buffer, (progress, totalMB) => {
           loader.message(
@@ -252,10 +247,6 @@ ${output
           `Failed to upload build to ${color.bold(remoteBuildCache.name)}`,
           { cause: error }
         );
-      } finally {
-        if (isAppDirectory && !isBinaryPathDirectory) {
-          fs.unlinkSync(absoluteTarballPath);
-        }
       }
       break;
     }
@@ -343,16 +334,12 @@ async function getBinaryBuffer(
   args: Flags
 ) {
   const zip = new AdmZip();
-  const isBinaryPathDirectory =
-    !binaryPath.endsWith('.app') && fs.statSync(binaryPath).isDirectory();
   const isAppDirectory =
     binaryPath.endsWith('.app') && fs.statSync(binaryPath).isDirectory();
   const absoluteTarballPath =
     args.binaryPath ?? path.join(localArtifactPath, 'app.tar.gz');
 
-  if (isBinaryPathDirectory) {
-    // skip zipping, we're uploading a folder for ad-hoc builds
-  } else if (isAppDirectory) {
+  if (isAppDirectory) {
     const appName = path.basename(binaryPath);
     if (args.binaryPath && !fs.existsSync(absoluteTarballPath)) {
       throw new RnefError(
@@ -374,7 +361,11 @@ async function getBinaryBuffer(
   }
   const buffer = zip.toBuffer();
 
-  return { buffer, isBinaryPathDirectory, isAppDirectory, absoluteTarballPath };
+  if (isAppDirectory) {
+    fs.unlinkSync(absoluteTarballPath);
+  }
+
+  return buffer;
 }
 
 function validateArgs(args: Flags, action: string) {
