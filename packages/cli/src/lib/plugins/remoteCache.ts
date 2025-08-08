@@ -390,7 +390,7 @@ async function getBinaryBuffer(
         `No tarball found for "${artifactName}" in "${localArtifactPath}".`
       );
     }
-    tar.create(
+    await tar.create(
       {
         file: absoluteTarballPath,
         cwd: path.dirname(binaryPath),
