@@ -1,17 +1,25 @@
 import fs from 'node:fs';
+import os from 'node:os';
 import path from 'node:path';
 import type { PluginApi, PluginOutput } from '@rnef/config';
 import type { FingerprintSources, RemoteBuildCache } from '@rnef/tools';
 import {
+  color,
+  colorLink,
   formatArtifactName,
   getLocalArtifactPath,
   getLocalBinaryPath,
   handleDownloadResponse,
+  handleUploadResponse,
   logger,
+  relativeToCwd,
   RnefError,
+  spawn,
+  spinner,
 } from '@rnef/tools';
 import AdmZip from 'adm-zip';
 import * as tar from 'tar';
+import { templateIndexHtml, templateManifestPlist } from '../adHocTemplates.js';
 
 type Flags = {
   platform?: 'ios' | 'android';
@@ -21,6 +29,7 @@ type Flags = {
   all?: boolean;
   allButLatest?: boolean;
   binaryPath?: string;
+  adHoc?: boolean;
 };
 
 async function remoteCache({
@@ -65,16 +74,18 @@ async function remoteCache({
         if (isJsonOutput) {
           console.log(JSON.stringify(artifact, null, 2));
         } else {
-          logger.log(`- name: ${artifact.name}
-- url: ${artifact.url}`);
+          logger.log(`Artifact information:
+- name: ${color.bold(color.blue(artifact.name))}
+- url: ${colorLink(artifact.url)}`);
         }
       } else if (artifacts.length > 0 && args.all) {
         if (isJsonOutput) {
           console.log(JSON.stringify(artifacts, null, 2));
         } else {
           artifacts.forEach((artifact) => {
-            logger.log(`- name: ${artifact.name}
-- url: ${artifact.url}`);
+            logger.log(`Artifact information:
+- name: ${color.bold(color.blue(artifact.name))}
+- url: ${colorLink(artifact.url)}`);
           });
         }
       }
@@ -94,18 +105,41 @@ async function remoteCache({
       if (isJsonOutput) {
         console.log(JSON.stringify(output, null, 2));
       } else {
-        output.forEach((artifact) => {
-          logger.log(`- name: ${artifact.name}
-- url: ${artifact.url}`);
-        });
+        logger.log(`Artifacts:
+${output
+  .map(
+    (artifact) =>
+      `- name: ${color.bold(color.blue(artifact.name))}\n- url: ${colorLink(
+        artifact.url
+      )}`
+  )
+  .join('\n')}
+        `);
       }
       break;
     }
     case 'download': {
       const localArtifactPath = getLocalArtifactPath(artifactName);
       const response = await remoteBuildCache.download({ artifactName });
-      await handleDownloadResponse(response, localArtifactPath, artifactName);
+      const loader = spinner({ silent: isJsonOutput });
+      loader.start(
+        `Downloading cached build from ${color.bold(remoteBuildCache.name)}`
+      );
+      await handleDownloadResponse(
+        response,
+        localArtifactPath,
+        (progress, totalMB) => {
+          loader.message(
+            `Downloading cached build from ${color.bold(
+              remoteBuildCache.name
+            )} (${progress}% of ${totalMB} MB)`
+          );
+        }
+      );
       const binaryPath = getLocalBinaryPath(localArtifactPath);
+      loader.stop(
+        `Downloaded cached build from ${color.bold(remoteBuildCache.name)}`
+      );
       if (!binaryPath) {
         throw new RnefError(`Failed to save binary for "${artifactName}".`);
       }
@@ -114,8 +148,11 @@ async function remoteCache({
           JSON.stringify({ name: artifactName, path: binaryPath }, null, 2)
         );
       } else {
-        logger.log(`- name: ${artifactName}
-- path: ${binaryPath}`);
+        logger.log(
+          `Artifact information:
+- name: ${color.bold(color.blue(artifactName))}
+- path: ${colorLink(relativeToCwd(binaryPath))}`
+        );
       }
       break;
     }
@@ -126,47 +163,87 @@ async function remoteCache({
       if (!binaryPath) {
         throw new RnefError(`No binary found for "${artifactName}".`);
       }
-      const zip = new AdmZip();
-      const absoluteTarballPath =
-        args.binaryPath ?? path.join(localArtifactPath, 'app.tar.gz');
-      const isAppDirectory = fs.statSync(binaryPath).isDirectory();
-      if (isAppDirectory) {
-        const appName = path.basename(binaryPath);
-        if (args.binaryPath && !fs.existsSync(absoluteTarballPath)) {
-          throw new RnefError(
-            `No tarball found for "${artifactName}" in "${localArtifactPath}".`
-          );
-        }
-        await tar.create(
-          {
-            file: absoluteTarballPath,
-            cwd: path.dirname(binaryPath),
-            gzip: true,
-            filter: (filePath) => filePath.includes(appName),
-          },
-          [appName]
-        );
-        zip.addLocalFile(absoluteTarballPath);
-      } else {
-        zip.addLocalFile(binaryPath);
-      }
-      const buffer = zip.toBuffer();
+      const buffer = await getBinaryBuffer(
+        binaryPath,
+        artifactName,
+        localArtifactPath,
+        args
+      );
 
       try {
-        const uploadedArtifact = await remoteBuildCache.upload({
+        let uploadedArtifact;
+        const appFileName = path.basename(binaryPath);
+        const appName = appFileName.replace(/\.[^/.]+$/, '');
+        const { name, url, getResponse } = await remoteBuildCache.upload({
           artifactName,
-          buffer,
+          uploadArtifactName: args.adHoc
+            ? `ad-hoc/${artifactName}/${appName}.ipa`
+            : undefined,
         });
+        const uploadMessage = `${
+          args.adHoc ? 'IPA, index.html and manifest.plist' : 'build'
+        } to ${color.bold(remoteBuildCache.name)}`;
+        const loader = spinner({ silent: isJsonOutput });
+        loader.start(`Uploading ${uploadMessage}`);
+        await handleUploadResponse(getResponse, buffer, (progress, totalMB) => {
+          loader.message(
+            `Uploading ${uploadMessage} (${progress}% of ${totalMB} MB)`
+          );
+        });
+
+        uploadedArtifact = { name, url };
+
+        // Upload index.html and manifest.plist for ad-hoc distribution
+        if (args.adHoc) {
+          const { version, bundleIdentifier } = await getInfoPlist(binaryPath);
+          const { url: urlIndexHtml, getResponse: getResponseIndexHtml } =
+            await remoteBuildCache.upload({
+              artifactName,
+              uploadArtifactName: `ad-hoc/${artifactName}/index.html`,
+            });
+          getResponseIndexHtml(
+            Buffer.from(
+              templateIndexHtml({ appName, bundleIdentifier, version })
+            ),
+            'text/html'
+          );
+
+          const { getResponse: getResponseManifestPlist } =
+            await remoteBuildCache.upload({
+              artifactName,
+              uploadArtifactName: `ad-hoc/${artifactName}/manifest.plist`,
+            });
+          getResponseManifestPlist((baseUrl) =>
+            Buffer.from(
+              templateManifestPlist({
+                appName,
+                version,
+                baseUrl: baseUrl.replace('/manifest.plist', ''),
+                ipaName: appFileName,
+                bundleIdentifier,
+                platformIdentifier: 'com.apple.platform.iphoneos',
+              })
+            )
+          );
+
+          // For ad-hoc distribution, we want the url to point to the index.html for easier installation
+          uploadedArtifact = { name, url: urlIndexHtml.split('?')[0] + '' };
+        }
+
+        loader.stop(`Uploaded ${uploadMessage}`);
+
         if (isJsonOutput) {
           console.log(JSON.stringify(uploadedArtifact, null, 2));
         } else {
-          logger.log(`- name: ${uploadedArtifact.name}
-- url: ${uploadedArtifact.url}`);
+          logger.log(`Artifact information:
+- name: ${color.bold(color.blue(uploadedArtifact.name))}
+- url: ${colorLink(uploadedArtifact.url)}`);
         }
-      } finally {
-        if (isAppDirectory) {
-          fs.unlinkSync(absoluteTarballPath);
-        }
+      } catch (error) {
+        throw new RnefError(
+          `Failed to upload build to ${color.bold(remoteBuildCache.name)}`,
+          { cause: error }
+        );
       }
       break;
     }
@@ -180,12 +257,15 @@ async function remoteCache({
         console.log(JSON.stringify(deletedArtifacts, null, 2));
       } else {
         logger.log(
-          deletedArtifacts
-            .map(
-              (artifact) => `- name: ${artifact.name}
-- url: ${artifact.url}`
-            )
-            .join('\n')
+          `Deleted artifacts:
+${deletedArtifacts
+  .map(
+    (artifact) =>
+      `- name: ${color.bold(color.blue(artifact.name))}\n- url: ${colorLink(
+        artifact.url
+      )}`
+  )
+  .join('\n')}`
         );
       }
       break;
@@ -197,6 +277,92 @@ async function remoteCache({
   }
 
   return null;
+}
+
+async function getInfoPlist(binaryPath: string) {
+  const ipaFileName = path.basename(binaryPath);
+  const appName = path.basename(ipaFileName, '.ipa');
+  const ipaPath = binaryPath;
+  const zip = new AdmZip(ipaPath);
+  const infoPlistPath = `Payload/${appName}.app/Info.plist`;
+  const infoPlistEntry = zip.getEntry(infoPlistPath);
+
+  if (!infoPlistEntry) {
+    throw new RnefError(
+      `Info.plist not found at ${infoPlistPath} in ${ipaFileName}`
+    );
+  }
+  const infoPlistBuffer = infoPlistEntry.getData();
+  const tempPlistPath = path.join(os.tmpdir(), 'rnef-temp-info.plist');
+  fs.writeFileSync(tempPlistPath, infoPlistBuffer);
+
+  let version = 'unknown';
+  let bundleIdentifier = 'unknown';
+  try {
+    await spawn('plutil', [
+      '-convert',
+      'json',
+      '-o',
+      tempPlistPath,
+      tempPlistPath,
+    ]);
+
+    const jsonContent = fs.readFileSync(tempPlistPath, 'utf8');
+    const infoPlistJson = JSON.parse(jsonContent) as Record<string, any>;
+
+    version =
+      infoPlistJson['CFBundleShortVersionString'] ||
+      infoPlistJson['CFBundleVersion'] ||
+      'unknown';
+    bundleIdentifier = infoPlistJson['CFBundleIdentifier'];
+  } finally {
+    if (fs.existsSync(tempPlistPath)) {
+      fs.unlinkSync(tempPlistPath);
+    }
+  }
+
+  return { version, bundleIdentifier };
+}
+
+async function getBinaryBuffer(
+  binaryPath: string,
+  artifactName: string,
+  localArtifactPath: string,
+  args: Flags
+) {
+  const zip = new AdmZip();
+  const isAppDirectory =
+    binaryPath.endsWith('.app') && fs.statSync(binaryPath).isDirectory();
+  const absoluteTarballPath =
+    args.binaryPath ?? path.join(localArtifactPath, 'app.tar.gz');
+
+  if (isAppDirectory) {
+    const appDirectoryName = path.basename(binaryPath);
+    if (args.binaryPath && !fs.existsSync(absoluteTarballPath)) {
+      throw new RnefError(
+        `No tarball found for "${artifactName}" in "${localArtifactPath}".`
+      );
+    }
+    await tar.create(
+      {
+        file: absoluteTarballPath,
+        cwd: path.dirname(binaryPath),
+        gzip: true,
+        filter: (filePath) => filePath.includes(appDirectoryName),
+      },
+      [appDirectoryName]
+    );
+    zip.addLocalFile(absoluteTarballPath);
+  } else {
+    zip.addLocalFile(binaryPath);
+  }
+  const buffer = zip.toBuffer();
+
+  if (isAppDirectory) {
+    fs.unlinkSync(absoluteTarballPath);
+  }
+
+  return buffer;
 }
 
 function validateArgs(args: Flags, action: string) {
@@ -285,6 +451,11 @@ Example Android: --traits debug`,
         {
           name: '--binary-path <string>',
           description: 'Path to the binary to upload',
+        },
+        {
+          name: '--ad-hoc',
+          description:
+            'Upload IPA for ad-hoc distribution and installation from URL. Additionally uploads index.html and manifest.plist',
         },
       ],
     });

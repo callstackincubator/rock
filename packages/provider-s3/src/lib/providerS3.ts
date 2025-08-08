@@ -1,9 +1,10 @@
+import type { Readable } from 'node:stream';
 import * as clientS3 from '@aws-sdk/client-s3';
 import { fromIni } from '@aws-sdk/credential-provider-ini';
 import { fromTemporaryCredentials } from '@aws-sdk/credential-providers';
+import { Upload } from '@aws-sdk/lib-storage';
 import { getSignedUrl } from '@aws-sdk/s3-request-presigner';
 import type { RemoteArtifact, RemoteBuildCache } from '@rnef/tools';
-import type { Readable } from 'stream';
 
 function toWebStream(stream: Readable): ReadableStream {
   return new ReadableStream({
@@ -115,6 +116,34 @@ export class S3BuildCache implements RemoteBuildCache {
     this.linkExpirationTime = config.linkExpirationTime ?? 3600 * 24;
   }
 
+  private async uploadFileWithProgress(
+    key: string,
+    buffer: Buffer,
+    contentType: string | undefined,
+    onProgress: (loaded: number, total: number) => void
+  ) {
+    const upload = new Upload({
+      client: this.s3,
+      params: {
+        Bucket: this.bucket,
+        Key: key,
+        Body: buffer,
+        ContentType: contentType || 'application/octet-stream',
+        Metadata: {
+          createdAt: new Date().toISOString(),
+        },
+      },
+    });
+
+    upload.on('httpUploadProgress', (progress) => {
+      if (progress.loaded !== undefined && progress.total !== undefined) {
+        onProgress(progress.loaded, progress.total);
+      }
+    });
+
+    return upload.done();
+  }
+
   async list({
     artifactName,
   }: {
@@ -136,7 +165,6 @@ export class S3BuildCache implements RemoteBuildCache {
 
       const name = artifactName ?? artifact.Key.split('/').pop() ?? '';
 
-      // Generate presigned URL for each artifact
       const presignedUrl = await getSignedUrl(
         this.s3,
         new clientS3.GetObjectCommand({
@@ -179,6 +207,7 @@ export class S3BuildCache implements RemoteBuildCache {
   }): Promise<RemoteArtifact[]> {
     if (skipLatest) {
       // Artifacts on S3 are unique by name, so skipping latest means we don't delete anything
+      // @todo revisit with bucket versioning
       return [];
     }
     await this.s3.send(
@@ -197,33 +226,79 @@ export class S3BuildCache implements RemoteBuildCache {
 
   async upload({
     artifactName,
-    buffer,
+    uploadArtifactName,
   }: {
     artifactName: string;
-    buffer: Buffer;
-  }): Promise<RemoteArtifact> {
-    const key = `${this.directory}/${artifactName}.zip`;
+    uploadArtifactName?: string;
+  }): Promise<
+    RemoteArtifact & {
+      getResponse: (
+        buffer: Buffer | ((baseUrl: string) => Buffer),
+        contentType?: string
+      ) => Response;
+    }
+  > {
+    const key = uploadArtifactName
+      ? `${this.directory}/${uploadArtifactName}`
+      : `${this.directory}/${artifactName}.zip`;
 
-    await this.s3.send(
-      new clientS3.PutObjectCommand({
-        Bucket: this.bucket,
-        Key: key,
-        Body: buffer,
-        ContentLength: buffer.length,
-        Metadata: {
-          createdAt: new Date().toISOString(),
-        },
-      })
-    );
-
-    // Generate a presigned URL for the uploaded object
     const presignedUrl = await getSignedUrl(
       this.s3,
       new clientS3.GetObjectCommand({ Bucket: this.bucket, Key: key }),
       { expiresIn: this.linkExpirationTime }
     );
 
-    return { name: artifactName, url: presignedUrl };
+    return {
+      name: artifactName,
+      url: presignedUrl,
+      getResponse: (
+        buffer: Buffer | ((baseUrl: string) => Buffer),
+        contentType?: string
+      ) => {
+        const bufferToUpload =
+          typeof buffer === 'function'
+            ? buffer(presignedUrl.split('?')[0])
+            : buffer;
+
+        const readable = new ReadableStream({
+          start: (controller) => {
+            let lastEmittedBytes = 0;
+
+            try {
+              this.uploadFileWithProgress(
+                key,
+                bufferToUpload,
+                contentType,
+                (loaded, total) => {
+                  const newBytes = loaded - lastEmittedBytes;
+                  if (newBytes > 0) {
+                    const chunk = bufferToUpload.subarray(
+                      lastEmittedBytes,
+                      loaded
+                    );
+                    controller.enqueue(chunk);
+                    lastEmittedBytes = loaded;
+
+                    if (loaded >= total) {
+                      controller.close();
+                    }
+                  }
+                }
+              );
+            } catch (error) {
+              controller.error(error);
+            }
+          },
+        });
+
+        return new Response(readable, {
+          headers: {
+            'content-length': String(bufferToUpload.length),
+            'content-type': contentType || 'application/octet-stream',
+          },
+        });
+      },
+    };
   }
 }
 

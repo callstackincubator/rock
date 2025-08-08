@@ -19,4 +19,5 @@ export { runHermes } from './lib/hermes.js';
 export {
   fetchCachedBuild,
   handleDownloadResponse,
+  handleUploadResponse,
 } from './lib/build-cache/fetchCachedBuild.js';

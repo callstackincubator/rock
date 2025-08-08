@@ -90,7 +90,14 @@ export class GitHubBuildCache implements RemoteBuildCache {
     );
   }
 
-  async upload(): Promise<RemoteArtifact> {
+  async upload(): Promise<
+    RemoteArtifact & {
+      getResponse: (
+        buffer: Buffer | ((baseUrl: string) => Buffer),
+        contentType?: string | undefined
+      ) => Response;
+    }
+  > {
     throw new Error(
       'Uploading artifacts to GitHub is not supported through GitHub API. See: https://docs.github.com/en/rest/actions/artifacts?apiVersion=2022-11-28'
     );

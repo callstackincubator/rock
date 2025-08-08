@@ -243,14 +243,14 @@ The `remote-cache <action>` command provides utilities to interact with the remo
 
 Available actions:
 
-| Action              | Description                                                      |
-| :------------------ | :--------------------------------------------------------------- |
-| `list`              | Lists the latest artifact matching the specified criteria        |
-| `list-all`          | Lists all artifacts (optionally filtered by platform and traits) |
-| `download`          | Downloads an artifact from remote cache to local cache           |
-| `upload`            | Uploads a binary to remote cache                                 |
-| `delete`            | Deletes artifacts from remote cache                              |
-| `get-provider-name` | Returns the name of the configured remote cache provider         |
+| Action              | Description                                                                       |
+| :------------------ | :-------------------------------------------------------------------------------- |
+| `list`              | Lists the latest artifact matching the specified criteria                         |
+| `list-all`          | Lists all artifacts (optionally filtered by platform and traits)                  |
+| `download`          | Downloads an artifact from remote cache to local cache                            |
+| `upload`            | Uploads a binary to remote cache. Accepts `--ad-hoc` flag for Ad-Hoc distritbuion |
+| `delete`            | Deletes artifacts from remote cache                                               |
+| `get-provider-name` | Returns the name of the configured remote cache provider                          |
 
 Actions have different options available:
 
@@ -263,6 +263,7 @@ Actions have different options available:
 | `-p, --platform <string>` | Platform to target (`ios` or `android`). Must be used with `--traits`                                                                                                              |
 | `-t, --traits <list>`     | Comma-separated traits that construct the final artifact name. For Android: variant (e.g., `debug`, `release`). For iOS: destination and configuration (e.g., `simulator,Release`) |
 | `--binary-path <string>`  | Path to the binary to upload (used with `upload` action)                                                                                                                           |
+| `--ad-hoc <string>`       | Upload IPA for ad-hoc distribution and installation from URL. Additionally uploads index.html and manifest.plist'                                                                  |
 
 For example, to download remote cache for iOS simulator with Release configuration, you can use `remote-cache download` with `--name` option
 
@@ -275,3 +276,32 @@ or pass `--traits`, so you don't need to pass the fingerprint:
 ```shell
 npx rnef remote-cache download --platform ios --traits simulator,Release
 ```
+
+#### Ad-hoc distribution
+
+Ad-hoc distribution allows you to share your iOS app with testers without going through the App Store. Testers can install your app directly on their devices by visiting a web page and tapping "Install App".
+
+**What is Ad-hoc distribution?**
+
+Ad-hoc distribution is a method for sharing iOS apps with testers without going through the App Store. It requires devices to be registered in your Apple Developer account and is perfect for beta testing, internal testing, or client demos. Apps installed this way will appear on the device's home screen just like any other app.
+
+**How it works:**
+
+1. Build your app with a valid provisioning profile that includes your testers' devices
+   ```shell
+   npx rnef build:ios --archive # ...other required flags
+   ```
+2. Use `upload --ad-hoc` to upload the app for ad-hoc distribution
+   ```shell
+   npx rnef remote-cache upload --ad-hoc --platform ios --traits device,Release
+   ```
+3. Share the generated URL with your testers
+4. Testers visit the URL and tap "Install App" to install directly on their device
+
+The command creates a special folder structure that includes:
+
+- Your signed IPA file
+- An HTML page for easy installation (you need to configure your provider to **make this file publicly available**)
+- A manifest file that iOS uses to install the app
+
+The folder will be available at `ad-hoc/` directory of your configured remote cache provider.
