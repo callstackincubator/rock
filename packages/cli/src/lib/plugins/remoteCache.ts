@@ -178,32 +178,30 @@ ${output
       try {
         let uploadedArtifact;
 
+        const { version, bundleIdentifier, appName, ipaFileName } =
+          await getInfoPlist(binaryPath);
+
+        const { name, url, getResponse } = await remoteBuildCache.upload({
+          artifactName,
+          uploadArtifactName: args.adHoc
+            ? `ad-hoc/${artifactName}/${appName}.ipa`
+            : undefined,
+        });
+        const loader = spinner({ silent: isJsonOutput });
+        const uploadMessage = `${
+          args.adHoc ? 'IPA, index.html and manifest.plist' : 'build'
+        } to ${color.bold(remoteBuildCache.name)}`;
+        loader.start(`Uploading ${uploadMessage}`);
+        await handleUploadResponse(getResponse, buffer, (progress, totalMB) => {
+          loader.message(
+            `Uploading ${uploadMessage} (${progress}% of ${totalMB} MB)`
+          );
+        });
+
+        uploadedArtifact = { name, url };
+
+        // Upload index.html and manifest.plist for ad-hoc distribution
         if (args.adHoc) {
-          const { version, bundleIdentifier, appName, ipaFileName } =
-            await getInfoPlist(binaryPath);
-          const { name, getResponse } = await remoteBuildCache.upload({
-            artifactName,
-            uploadArtifactName: `ad-hoc/${artifactName}/${appName}.ipa`,
-          });
-
-          const loader = spinner({ silent: isJsonOutput });
-          loader.start(
-            `Uploading IPA, index.html and manifest.plist to ${color.bold(
-              remoteBuildCache.name
-            )}`
-          );
-          await handleUploadResponse(
-            getResponse,
-            buffer,
-            (progress, totalMB) => {
-              loader.message(
-                `Uploading IPA, index.html and manifest.plist to ${color.bold(
-                  remoteBuildCache.name
-                )} (${progress}% of ${totalMB} MB)`
-              );
-            }
-          );
-
           const { url: urlIndexHtml, getResponse: getResponseIndexHtml } =
             await remoteBuildCache.upload({
               artifactName,
@@ -234,38 +232,13 @@ ${output
             )
           );
 
-          loader.stop(
-            `Uploaded build, index.html and manifest.plist to ${color.bold(
-              remoteBuildCache.name
-            )}`
-          );
-
-          uploadedArtifact = {
-            name,
-            url: urlIndexHtml.split('?')[0] + '',
-          };
-        } else {
-          const { name, url, getResponse } = await remoteBuildCache.upload({
-            artifactName,
-          });
-          const loader = spinner({ silent: isJsonOutput });
-          loader.start(
-            `Uploading build to ${color.bold(remoteBuildCache.name)}`
-          );
-          await handleUploadResponse(
-            getResponse,
-            buffer,
-            (progress, totalMB) => {
-              loader.message(
-                `Uploading build to ${color.bold(
-                  remoteBuildCache.name
-                )} (${progress}% of ${totalMB} MB)`
-              );
-            }
-          );
-          loader.stop(`Uploaded build to ${color.bold(remoteBuildCache.name)}`);
-          uploadedArtifact = { name, url };
+          // For ad-hoc distribution, we want the url to point to the index.html for easier installation
+          uploadedArtifact = { name, url: urlIndexHtml.split('?')[0] + '' };
         }
+
+        loader.stop(
+          `Uploaded ${uploadMessage} to ${color.bold(remoteBuildCache.name)}`
+        );
 
         if (isJsonOutput) {
           console.log(JSON.stringify(uploadedArtifact, null, 2));
