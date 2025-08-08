@@ -185,16 +185,6 @@ ${output
             artifactName,
             uploadArtifactName: `ad-hoc/${artifactName}/${appName}.ipa`,
           });
-          const { url: urlIndexHtml, getResponse: getResponseIndexHtml } =
-            await remoteBuildCache.upload({
-              artifactName,
-              uploadArtifactName: `ad-hoc/${artifactName}/index.html`,
-            });
-          const { getResponse: getResponseManifestPlist } =
-            await remoteBuildCache.upload({
-              artifactName,
-              uploadArtifactName: `ad-hoc/${artifactName}/manifest.plist`,
-            });
 
           const loader = spinner({ silent: isJsonOutput });
           loader.start(
@@ -214,18 +204,24 @@ ${output
             }
           );
 
-          await getResponseIndexHtml(
+          const { url: urlIndexHtml, getResponse: getResponseIndexHtml } =
+            await remoteBuildCache.upload({
+              artifactName,
+              uploadArtifactName: `ad-hoc/${artifactName}/index.html`,
+            });
+          getResponseIndexHtml(
             Buffer.from(
-              templateIndexHtml({
-                appName,
-                bundleIdentifier,
-                version,
-              })
+              templateIndexHtml({ appName, bundleIdentifier, version })
             ),
             'text/html'
-          ).arrayBuffer();
+          );
 
-          await getResponseManifestPlist((baseUrl) =>
+          const { getResponse: getResponseManifestPlist } =
+            await remoteBuildCache.upload({
+              artifactName,
+              uploadArtifactName: `ad-hoc/${artifactName}/manifest.plist`,
+            });
+          getResponseManifestPlist((baseUrl) =>
             Buffer.from(
               templateManifestPlist({
                 appName,
@@ -236,7 +232,7 @@ ${output
                 platformIdentifier: 'com.apple.platform.iphoneos',
               })
             )
-          ).arrayBuffer();
+          );
 
           loader.stop(
             `Uploaded build, index.html and manifest.plist to ${color.bold(
