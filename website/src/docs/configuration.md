@@ -497,10 +497,20 @@ async upload({ artifactName, uploadArtifactName }) {
 - **Normal builds:** RNEF uploads a single build artifact (a ZIP archive). Your provider stores it at a path like `<directory>/<artifactName>.zip`.
   - For iOS simulator builds (APP directory), RNEF creates a temporary `app.tar.gz` to preserve permissions and includes it in the artifact; you just receive the buffer via `getResponse`. You don't need to create the tarball yourself.
 - **Ad-hoc distribution:**
-  - RNEF uploads:
+
+  - with `--ad-hoc` flag passed to `remote-cache upload` RNEF uploads:
+
     - The signed IPA at `<directory>/ad-hoc/<artifactName>/<AppName>.ipa`
-    - An `index.html` landing page
+    - An `index.html` landing page (make sure it's accessible for testers)
     - A `manifest.plist`
+
+  This `index.html` file will display an ad-hoc distribution web portal, allowing developers and testers to install apps on their provisioned devices by simply clicking "Install App".
+
+  Learn more about ad-hoc distribution and how it works with `remote-cache upload --ad-hoc` command [here](./cli#ad-hoc-distribution).
+
+  | Ad-hoc distribution web portal       | Ad-hoc distribution web portal        |
+  | ------------------------------------ | ------------------------------------- |
+  | ![](./assets/ad-hoc-portal-dark.png) | ![](./assets/ad-hoc-portal-light.png) |
 
 #### Notes and tips
 
