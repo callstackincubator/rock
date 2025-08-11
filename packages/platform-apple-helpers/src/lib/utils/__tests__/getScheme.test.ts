@@ -30,7 +30,7 @@ describe('getScheme', () => {
     const result = await getScheme(
       ['StageScheme', 'TestScheme'],
       undefined,
-      'ProjectName'
+      'ProjectName',
     );
 
     expect(promptSelect).toHaveBeenCalledWith({

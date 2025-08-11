@@ -5,7 +5,7 @@ import { logAlreadyRunningBundler } from './logAlreadyRunningBundler.js';
 
 export const handlePortUnavailable = async (
   initialPort: number,
-  projectRoot: string
+  projectRoot: string,
 ): Promise<{
   port: number;
   startDevServer: boolean;
@@ -25,7 +25,7 @@ export const handlePortUnavailable = async (
     } else {
       startDevServer = false;
       logger.info(
-        'Exiting. You can try again with a different port using "--port" flag'
+        'Exiting. You can try again with a different port using "--port" flag',
       );
     }
   }

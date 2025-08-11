@@ -46,7 +46,12 @@ export default [
     },
   },
   {
-    files: ['**/*.test.ts', '**/__tests__/**', '**/metro.config.js', '**/vite.e2e.config.js'],
+    files: [
+      '**/*.test.ts',
+      '**/__tests__/**',
+      '**/metro.config.js',
+      '**/vite.e2e.config.js',
+    ],
     rules: {
       '@typescript-eslint/no-empty-function': 'off',
       '@typescript-eslint/no-require-imports': 'off',

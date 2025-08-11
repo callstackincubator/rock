@@ -99,7 +99,7 @@ async function remoteCache({
       const output =
         platform && traits
           ? artifacts.filter((artifact) =>
-              artifact.name.startsWith(`rnef-${platform}-${traits.join('-')}`)
+              artifact.name.startsWith(`rnef-${platform}-${traits.join('-')}`),
             )
           : artifacts;
       if (isJsonOutput) {
@@ -110,8 +110,8 @@ ${output
   .map(
     (artifact) =>
       `- name: ${color.bold(color.blue(artifact.name))}\n- url: ${colorLink(
-        artifact.url
-      )}`
+        artifact.url,
+      )}`,
   )
   .join('\n')}
         `);
@@ -123,7 +123,7 @@ ${output
       const response = await remoteBuildCache.download({ artifactName });
       const loader = spinner({ silent: isJsonOutput });
       loader.start(
-        `Downloading cached build from ${color.bold(remoteBuildCache.name)}`
+        `Downloading cached build from ${color.bold(remoteBuildCache.name)}`,
       );
       await handleDownloadResponse(
         response,
@@ -131,27 +131,27 @@ ${output
         (progress, totalMB) => {
           loader.message(
             `Downloading cached build from ${color.bold(
-              remoteBuildCache.name
-            )} (${progress}% of ${totalMB} MB)`
+              remoteBuildCache.name,
+            )} (${progress}% of ${totalMB} MB)`,
           );
-        }
+        },
       );
       const binaryPath = getLocalBinaryPath(localArtifactPath);
       loader.stop(
-        `Downloaded cached build from ${color.bold(remoteBuildCache.name)}`
+        `Downloaded cached build from ${color.bold(remoteBuildCache.name)}`,
       );
       if (!binaryPath) {
         throw new RnefError(`Failed to save binary for "${artifactName}".`);
       }
       if (isJsonOutput) {
         console.log(
-          JSON.stringify({ name: artifactName, path: binaryPath }, null, 2)
+          JSON.stringify({ name: artifactName, path: binaryPath }, null, 2),
         );
       } else {
         logger.log(
           `Artifact information:
 - name: ${color.bold(color.blue(artifactName))}
-- path: ${colorLink(relativeToCwd(binaryPath))}`
+- path: ${colorLink(relativeToCwd(binaryPath))}`,
         );
       }
       break;
@@ -167,7 +167,7 @@ ${output
         binaryPath,
         artifactName,
         localArtifactPath,
-        args
+        args,
       );
 
       try {
@@ -187,7 +187,7 @@ ${output
         loader.start(`Uploading ${uploadMessage}`);
         await handleUploadResponse(getResponse, buffer, (progress, totalMB) => {
           loader.message(
-            `Uploading ${uploadMessage} (${progress}% of ${totalMB} MB)`
+            `Uploading ${uploadMessage} (${progress}% of ${totalMB} MB)`,
           );
         });
 
@@ -203,9 +203,9 @@ ${output
             });
           getResponseIndexHtml(
             Buffer.from(
-              templateIndexHtml({ appName, bundleIdentifier, version })
+              templateIndexHtml({ appName, bundleIdentifier, version }),
             ),
-            'text/html'
+            'text/html',
           );
 
           const { getResponse: getResponseManifestPlist } =
@@ -222,8 +222,8 @@ ${output
                 ipaName: appFileName,
                 bundleIdentifier,
                 platformIdentifier: 'com.apple.platform.iphoneos',
-              })
-            )
+              }),
+            ),
           );
 
           // For ad-hoc distribution, we want the url to point to the index.html for easier installation
@@ -242,7 +242,7 @@ ${output
       } catch (error) {
         throw new RnefError(
           `Failed to upload build to ${color.bold(remoteBuildCache.name)}`,
-          { cause: error }
+          { cause: error },
         );
       }
       break;
@@ -262,10 +262,10 @@ ${deletedArtifacts
   .map(
     (artifact) =>
       `- name: ${color.bold(color.blue(artifact.name))}\n- url: ${colorLink(
-        artifact.url
-      )}`
+        artifact.url,
+      )}`,
   )
-  .join('\n')}`
+  .join('\n')}`,
         );
       }
       break;
@@ -289,7 +289,7 @@ async function getInfoPlist(binaryPath: string) {
 
   if (!infoPlistEntry) {
     throw new RnefError(
-      `Info.plist not found at ${infoPlistPath} in ${ipaFileName}`
+      `Info.plist not found at ${infoPlistPath} in ${ipaFileName}`,
     );
   }
   const infoPlistBuffer = infoPlistEntry.getData();
@@ -328,7 +328,7 @@ async function getBinaryBuffer(
   binaryPath: string,
   artifactName: string,
   localArtifactPath: string,
-  args: Flags
+  args: Flags,
 ) {
   // For ad-hoc, we don't need to zip the binary, we just upload the IPA
   if (args.adHoc) {
@@ -344,7 +344,7 @@ async function getBinaryBuffer(
     const appDirectoryName = path.basename(binaryPath);
     if (args.binaryPath && !fs.existsSync(absoluteTarballPath)) {
       throw new RnefError(
-        `No tarball found for "${artifactName}" in "${localArtifactPath}".`
+        `No tarball found for "${artifactName}" in "${localArtifactPath}".`,
       );
     }
     await tar.create(
@@ -354,7 +354,7 @@ async function getBinaryBuffer(
         gzip: true,
         filter: (filePath) => filePath.includes(appDirectoryName),
       },
-      [appDirectoryName]
+      [appDirectoryName],
     );
     zip.addLocalFile(absoluteTarballPath);
   } else {
@@ -373,7 +373,7 @@ function validateArgs(args: Flags, action: string) {
   if (!action) {
     // @todo make Commander handle this
     throw new RnefError(
-      'Action is required. Available actions: list, list-all, download, upload, delete'
+      'Action is required. Available actions: list, list-all, download, upload, delete',
     );
   }
   if (action === 'list-all' || action === 'get-provider-name') {
@@ -383,18 +383,18 @@ function validateArgs(args: Flags, action: string) {
   }
   if (args.name && (args.platform || args.traits)) {
     throw new RnefError(
-      'Cannot use "--name" together with "--platform" or "--traits". Use either name or platform with traits'
+      'Cannot use "--name" together with "--platform" or "--traits". Use either name or platform with traits',
     );
   }
   if (!args.name) {
     if ((args.platform && !args.traits) || (!args.platform && args.traits)) {
       throw new RnefError(
-        'Either "--platform" and "--traits" must be provided together'
+        'Either "--platform" and "--traits" must be provided together',
       );
     }
     if (!args.platform || !args.traits) {
       throw new RnefError(
-        'Either "--name" or "--platform" and "--traits" must be provided'
+        'Either "--name" or "--platform" and "--traits" must be provided',
       );
     }
   }

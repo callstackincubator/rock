@@ -33,9 +33,9 @@ export const modifyApp = async (options: ModifyAppOptions) => {
     } catch (error) {
       throw new RnefError(
         `Failed to copy APP file to ${colorLink(
-          relativeToCwd(options.outputPath)
+          relativeToCwd(options.outputPath),
         )}.`,
-        { cause: error }
+        { cause: error },
       );
     }
   }
@@ -50,22 +50,22 @@ export const modifyApp = async (options: ModifyAppOptions) => {
       useHermes: options.useHermes ?? true,
     });
     loader.stop(
-      `Built JS bundle: ${colorLink(relativeToCwd(appPaths.jsBundle))}`
+      `Built JS bundle: ${colorLink(relativeToCwd(appPaths.jsBundle))}`,
     );
   } else if (options.jsBundlePath) {
     loader.start('Replacing JS bundle');
     fs.copyFileSync(options.jsBundlePath, appPaths.jsBundle);
     loader.stop(
       `Replaced JS bundle with ${colorLink(
-        relativeToCwd(options.jsBundlePath)
-      )}`
+        relativeToCwd(options.jsBundlePath),
+      )}`,
     );
   }
 
   logger.log(
     `Modified APP file with new JS bundle. Available at: ${colorLink(
-      relativeToCwd(options.outputPath ?? options.appPath)
-    )}`
+      relativeToCwd(options.outputPath ?? options.appPath),
+    )}`,
   );
 
   outro('Success 🎉.');
@@ -74,19 +74,19 @@ export const modifyApp = async (options: ModifyAppOptions) => {
 function validateOptions(options: ModifyAppOptions) {
   if (!fs.existsSync(options.appPath)) {
     throw new RnefError(
-      `APP file (directory) not found at "${options.appPath}". Please provide a correct path.`
+      `APP file (directory) not found at "${options.appPath}". Please provide a correct path.`,
     );
   }
 
   if (options.buildJsBundle && options.jsBundlePath) {
     throw new RnefError(
-      'The "--build-jsbundle" flag is incompatible with "--jsbundle". Pick one.'
+      'The "--build-jsbundle" flag is incompatible with "--jsbundle". Pick one.',
     );
   }
 
   if (options.jsBundlePath && !fs.existsSync(options.jsBundlePath)) {
     throw new RnefError(
-      `JS bundle file not found at "${options.jsBundlePath}". Please provide a correct path.`
+      `JS bundle file not found at "${options.jsBundlePath}". Please provide a correct path.`,
     );
   }
 }

@@ -53,7 +53,7 @@ async function publishTemplate() {
       `--registry=${VERDACCIO_REGISTRY_URL}`,
       `--userconfig=${ROOT_DIR}/.npmrc`,
     ],
-    { cwd: `${ROOT_DIR}/templates/rnef-template-default` }
+    { cwd: `${ROOT_DIR}/templates/rnef-template-default` },
   );
   loader.stop('Published template.');
 }

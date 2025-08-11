@@ -40,11 +40,11 @@ export function saveLocalBuildCache(artifactName: string, binaryPath: string) {
     } else {
       fs.copyFileSync(
         binaryPath,
-        path.join(cachePath, path.basename(binaryPath))
+        path.join(cachePath, path.basename(binaryPath)),
       );
     }
     logger.debug(
-      `Saved build cache to: ${colorLink(relativeToCwd(cachePath))}`
+      `Saved build cache to: ${colorLink(relativeToCwd(cachePath))}`,
     );
   } catch (error) {
     logger.debug('Failed to copy binary to local build cache', error);
@@ -52,12 +52,12 @@ export function saveLocalBuildCache(artifactName: string, binaryPath: string) {
 }
 
 export function getLocalBuildCacheBinaryPath(
-  artifactName: string
+  artifactName: string,
 ): string | undefined {
   const localBuild = queryLocalBuildCache(artifactName);
   if (localBuild) {
     logger.log(
-      `Found build cache for: ${color.bold(color.blue(localBuild.name))}`
+      `Found build cache for: ${color.bold(color.blue(localBuild.name))}`,
     );
     return localBuild.binaryPath;
   }

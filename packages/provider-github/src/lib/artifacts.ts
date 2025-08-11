@@ -35,7 +35,7 @@ type GitHubArtifactResponse = {
 export async function fetchGitHubArtifactsByName(
   name: string | undefined,
   repoDetails: GitHubRepoDetails,
-  limit?: number
+  limit?: number,
 ): Promise<GitHubArtifact[] | []> {
   let page = 1;
   const result: GitHubArtifact[] = [];
@@ -54,13 +54,13 @@ export async function fetchGitHubArtifactsByName(
         });
         if (!response.ok) {
           throw new Error(
-            `HTTP error: ${response.status} ${response.statusText}`
+            `HTTP error: ${response.status} ${response.statusText}`,
           );
         }
         data = await response.json();
       } catch (error) {
         throw new Error(
-          `Error fetching artifacts from ${colorLink(url)}: ${error}`
+          `Error fetching artifacts from ${colorLink(url)}: ${error}`,
         );
       }
 
@@ -88,12 +88,12 @@ export async function fetchGitHubArtifactsByName(
       throw new RnefError(
         `Failed to fetch GitHub artifacts due to invalid or expired GitHub Personal Access Token provided.
 Update the token under "${color.bold(
-          'remoteCacheProvider'
+          'remoteCacheProvider',
         )}" key in ${colorLink('rnef.config.mjs')} config file.
 
 📘 Read more about generating a new token: ${colorLink(
-          'https://rnef.dev/docs/github-actions/configuration#generate-github-personal-access-token-for-downloading-cached-builds'
-        )}`
+          'https://rnef.dev/docs/github-actions/configuration#generate-github-personal-access-token-for-downloading-cached-builds',
+        )}`,
       );
     }
     if ((error as { message: string }).message.includes('404 Not Found')) {
@@ -104,12 +104,12 @@ Update the token under "${color.bold(
 - repository address is incorrect
 
 Make sure the repository information and token under "${color.bold(
-          'remoteCacheProvider'
+          'remoteCacheProvider',
         )}" key in ${colorLink('rnef.config.mjs')} config file is valid.
 
 📘 Read more about generating a new token: ${colorLink(
-          'https://rnef.dev/docs/github-actions/configuration#generate-github-personal-access-token-for-downloading-cached-builds'
-        )}`
+          'https://rnef.dev/docs/github-actions/configuration#generate-github-personal-access-token-for-downloading-cached-builds',
+        )}`,
       );
     }
     throw new RnefError(`Failed to fetch GitHub artifacts`, { cause: error });
@@ -127,7 +127,7 @@ Make sure the repository information and token under "${color.bold(
 export async function deleteGitHubArtifacts(
   artifacts: GitHubArtifact[],
   repoDetails: GitHubRepoDetails,
-  artifactName: string
+  artifactName: string,
 ): Promise<RemoteArtifact[]> {
   const deletedArtifacts: RemoteArtifact[] = [];
   try {
@@ -149,7 +149,7 @@ export async function deleteGitHubArtifacts(
 
       if (!response.ok) {
         logger.warn(
-          `Failed to delete artifact ID ${artifactId}: ${response.status} ${response.statusText}`
+          `Failed to delete artifact ID ${artifactId}: ${response.status} ${response.statusText}`,
         );
         continue;
       }

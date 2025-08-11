@@ -64,7 +64,7 @@ export const unpackIpa = (ipaPath: string, destination: string): string => {
   const appPath = findDirectoriesWithPattern(payloadPath, /\.app$/)[0];
   if (!appPath) {
     throw new RnefError(
-      `.app package not found in the extracted IPA file ${payloadPath}`
+      `.app package not found in the extracted IPA file ${payloadPath}`,
     );
   }
 

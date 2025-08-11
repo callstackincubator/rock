@@ -5,7 +5,9 @@ export default defineConfig({
     watch: false,
     globals: true,
     environment: 'node',
-    include: ['packages/**/src/**/*.{test,spec}.{js,mjs,cjs,ts,mts,cts,jsx,tsx}'],
+    include: [
+      'packages/**/src/**/*.{test,spec}.{js,mjs,cjs,ts,mts,cts,jsx,tsx}',
+    ],
     projects: ['packages/*/vitest.config.ts'],
     reporters: ['default'],
     coverage: {

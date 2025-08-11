@@ -50,7 +50,11 @@ vi.mock('@rnef/tools', async (importOriginal) => {
     promptMultiSelect: vi.fn(),
     promptSelect: vi.fn(),
     promptText: vi.fn(),
-    formatArtifactName: vi.fn().mockResolvedValue('rnef-android-debug-089e8a9887099a309e8a7845e697bbf705353f45'),
+    formatArtifactName: vi
+      .fn()
+      .mockResolvedValue(
+        'rnef-android-debug-089e8a9887099a309e8a7845e697bbf705353f45',
+      ),
     spinner: vi.fn(() => ({
       start: vi.fn(),
       stop: vi.fn(),

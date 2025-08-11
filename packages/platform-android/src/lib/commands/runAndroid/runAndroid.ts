@@ -49,7 +49,7 @@ export async function runAndroid(
   args: Flags,
   projectRoot: string,
   remoteCacheProvider: null | (() => RemoteBuildCache) | undefined,
-  fingerprintOptions: FingerprintSources
+  fingerprintOptions: FingerprintSources,
 ) {
   intro('Running Android app');
 
@@ -93,7 +93,7 @@ export async function runAndroid(
         await selectAndLaunchDevice();
       } else {
         logger.debug(
-          'No booted devices or emulators found. Launching first available emulator.'
+          'No booted devices or emulators found. Launching first available emulator.',
         );
         await tryLaunchEmulator();
       }
@@ -130,7 +130,7 @@ async function selectDevice(devices: DeviceData[], args: Flags) {
   const device = args.device ? matchingDevice(devices, args.device) : undefined;
   if (!device && args.device) {
     logger.warn(
-      `No devices or emulators found matching "${args.device}". Using available one instead.`
+      `No devices or emulators found matching "${args.device}". Using available one instead.`,
     );
   }
   return device;
@@ -138,7 +138,7 @@ async function selectDevice(devices: DeviceData[], args: Flags) {
 
 function matchingDevice(devices: Array<DeviceData>, deviceArg: string) {
   const deviceByName = devices.find(
-    (device) => device.readableName === deviceArg
+    (device) => device.readableName === deviceArg,
   );
   const deviceById = devices.find((d) => d.deviceId === deviceArg);
   return deviceByName || deviceById;
@@ -147,7 +147,7 @@ function matchingDevice(devices: Array<DeviceData>, deviceArg: string) {
 function normalizeArgs(args: Flags, projectRoot: string) {
   if (args.tasks && args.variant) {
     logger.warn(
-      'Both "--tasks" and "--variant" parameters were passed. Using "--tasks" for building the app.'
+      'Both "--tasks" and "--variant" parameters were passed. Using "--tasks" for building the app.',
     );
   }
 
@@ -168,7 +168,7 @@ function normalizeArgs(args: Flags, projectRoot: string) {
   if (args.binaryPath) {
     if (args.tasks) {
       throw new RnefError(
-        'Both "--binary-path" and "--tasks" flags were specified, which are incompatible. Please specify only one.'
+        'Both "--binary-path" and "--tasks" flags were specified, which are incompatible. Please specify only one.',
       );
     }
 
@@ -178,18 +178,18 @@ function normalizeArgs(args: Flags, projectRoot: string) {
 
     if (args.binaryPath && !fs.existsSync(args.binaryPath)) {
       throw new RnefError(
-        `"--binary-path" was specified, but the file was not found at "${args.binaryPath}".`
+        `"--binary-path" was specified, but the file was not found at "${args.binaryPath}".`,
       );
     }
   }
 }
 
 async function promptForDeviceSelection(
-  allDevices: Array<DeviceData>
+  allDevices: Array<DeviceData>,
 ): Promise<DeviceData> {
   if (!allDevices.length) {
     throw new RnefError(
-      'No devices and/or emulators connected. Please create emulator with Android Studio or connect Android device.'
+      'No devices and/or emulators connected. Please create emulator with Android Studio or connect Android device.',
     );
   }
   const selected = await promptSelect({
@@ -225,17 +225,17 @@ async function runOnDevice({
   const { applicationIdWithSuffix } = await tryLaunchAppOnDevice(
     device,
     androidProject,
-    args
+    args,
   );
   if (applicationIdWithSuffix) {
     loader.stop(
-      `Installed and launched the app on ${color.bold(device.readableName)}`
+      `Installed and launched the app on ${color.bold(device.readableName)}`,
     );
   } else {
     loader.stop(
       `Failed: installing and launching the app on ${color.bold(
-        device.readableName
-      )}`
+        device.readableName,
+      )}`,
     );
   }
 }

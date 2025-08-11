@@ -38,9 +38,9 @@ export default class OpenDebuggerKeyboardHandler {
       await fetch(
         new URL(
           '/open-debugger?target=' + encodeURIComponent(target.id),
-          this.#devServerUrl
+          this.#devServerUrl,
         ).href,
-        { method: 'POST' }
+        { method: 'POST' },
       );
     } catch (e) {
       this.#log(
@@ -48,7 +48,7 @@ export default class OpenDebuggerKeyboardHandler {
         'Failed to open debugger for %s (%s): %s',
         target.title,
         target.description,
-        'Network error'
+        'Network error',
       );
       // @ts-expect-error - TBD
       if (e.cause != null) {
@@ -89,7 +89,7 @@ export default class OpenDebuggerKeyboardHandler {
         this.#clearTerminalMenu();
       } else if (targets.length === 1) {
         const target = targets[0];
-         
+
         void this.#tryOpenDebuggerForTarget(target);
       } else {
         this.#targetsShownForSelection = targets;
@@ -97,7 +97,7 @@ export default class OpenDebuggerKeyboardHandler {
         if (targets.length > 9) {
           this.#log(
             'warn',
-            '10 or more debug targets available, showing the first 9.'
+            '10 or more debug targets available, showing the first 9.',
           );
         }
 
@@ -105,10 +105,9 @@ export default class OpenDebuggerKeyboardHandler {
           `Multiple debug targets available, please select:\n  ${targets
             .slice(0, 9)
             .map(
-              ({ title }, i) =>
-                `${color.inverse(` ${i + 1} `)} - "${title}"`
+              ({ title }, i) => `${color.inverse(` ${i + 1} `)} - "${title}"`,
             )
-            .join('\n  ')}`
+            .join('\n  ')}`,
         );
       }
     } catch (e) {
@@ -133,7 +132,7 @@ export default class OpenDebuggerKeyboardHandler {
         targetIndex < this.#targetsShownForSelection.length
       ) {
         const target = this.#targetsShownForSelection[targetIndex];
-         
+
         void this.#tryOpenDebuggerForTarget(target);
         return true;
       }

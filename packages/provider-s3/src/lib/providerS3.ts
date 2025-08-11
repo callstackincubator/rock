@@ -120,7 +120,7 @@ export class S3BuildCache implements RemoteBuildCache {
     key: string,
     buffer: Buffer,
     contentType: string | undefined,
-    onProgress: (loaded: number, total: number) => void
+    onProgress: (loaded: number, total: number) => void,
   ) {
     const upload = new Upload({
       client: this.s3,
@@ -155,7 +155,7 @@ export class S3BuildCache implements RemoteBuildCache {
         Prefix: artifactName
           ? `${this.directory}/${artifactName}.zip`
           : `${this.directory}/`,
-      })
+      }),
     );
 
     const results: RemoteArtifact[] = [];
@@ -171,7 +171,7 @@ export class S3BuildCache implements RemoteBuildCache {
           Bucket: this.bucket,
           Key: artifact.Key,
         }),
-        { expiresIn: this.linkExpirationTime }
+        { expiresIn: this.linkExpirationTime },
       );
 
       results.push({ name, url: presignedUrl });
@@ -189,7 +189,7 @@ export class S3BuildCache implements RemoteBuildCache {
       new clientS3.GetObjectCommand({
         Bucket: this.bucket,
         Key: `${this.directory}/${artifactName}.zip`,
-      })
+      }),
     );
     return new Response(toWebStream(res.Body as Readable), {
       headers: {
@@ -214,7 +214,7 @@ export class S3BuildCache implements RemoteBuildCache {
       new clientS3.DeleteObjectCommand({
         Bucket: this.bucket,
         Key: `${this.directory}/${artifactName}.zip`,
-      })
+      }),
     );
     return [
       {
@@ -234,7 +234,7 @@ export class S3BuildCache implements RemoteBuildCache {
     RemoteArtifact & {
       getResponse: (
         buffer: Buffer | ((baseUrl: string) => Buffer),
-        contentType?: string
+        contentType?: string,
       ) => Response;
     }
   > {
@@ -245,7 +245,7 @@ export class S3BuildCache implements RemoteBuildCache {
     const presignedUrl = await getSignedUrl(
       this.s3,
       new clientS3.GetObjectCommand({ Bucket: this.bucket, Key: key }),
-      { expiresIn: this.linkExpirationTime }
+      { expiresIn: this.linkExpirationTime },
     );
 
     return {
@@ -253,7 +253,7 @@ export class S3BuildCache implements RemoteBuildCache {
       url: presignedUrl,
       getResponse: (
         buffer: Buffer | ((baseUrl: string) => Buffer),
-        contentType?: string
+        contentType?: string,
       ) => {
         const bufferToUpload =
           typeof buffer === 'function'
@@ -274,7 +274,7 @@ export class S3BuildCache implements RemoteBuildCache {
                   if (newBytes > 0) {
                     const chunk = bufferToUpload.subarray(
                       lastEmittedBytes,
-                      loaded
+                      loaded,
                     );
                     controller.enqueue(chunk);
                     lastEmittedBytes = loaded;
@@ -283,7 +283,7 @@ export class S3BuildCache implements RemoteBuildCache {
                       controller.close();
                     }
                   }
-                }
+                },
               );
             } catch (error) {
               controller.error(error);

@@ -4,7 +4,7 @@ import { logAlreadyRunningBundler } from './logAlreadyRunningBundler.js';
 
 export const findDevServerPort = async (
   initialPort: number,
-  root: string
+  root: string,
 ): Promise<{
   port: string;
   startDevServer: boolean;

@@ -11,7 +11,7 @@ type PListBuddyOptions = {
 export async function readKeyFromPlist(
   plistPath: string,
   key: string,
-  options: PListBuddyOptions = {}
+  options: PListBuddyOptions = {},
 ) {
   try {
     const result = await plistBuddy(plistPath, `Print:${key}`, options);
@@ -26,7 +26,7 @@ export async function readKeyFromPlist(
 async function plistBuddy(
   path: string,
   command: string,
-  options?: PListBuddyOptions
+  options?: PListBuddyOptions,
 ) {
   const args = ['-c', command, path];
   if (options?.xml) {
@@ -42,7 +42,7 @@ async function plistBuddy(
 
 export async function readBufferFromPlist(
   plistPath: string,
-  key: string
+  key: string,
 ): Promise<Buffer> {
   try {
     const result = await binaryPlistBuddy(plistPath, `Print:${key}`);

@@ -23,7 +23,7 @@ export const platformAndroid =
         get project() {
           const androidConfig = getValidProjectConfig(
             api.getProjectRoot(),
-            pluginConfig
+            pluginConfig,
           );
           return { ...androidConfig };
         },

@@ -24,7 +24,7 @@ async function startVerdaccio() {
     const npmConfigPath = path.join(ROOT_DIR, '.npmrc');
     fs.writeFileSync(
       npmConfigPath,
-      `//localhost:${VERDACCIO_PORT}/:_authToken=secretToken\nregistry=${VERDACCIO_REGISTRY_URL}\n`
+      `//localhost:${VERDACCIO_PORT}/:_authToken=secretToken\nregistry=${VERDACCIO_REGISTRY_URL}\n`,
     );
     loader.stop(`Wrote .npmrc: ${ROOT_DIR}`);
 

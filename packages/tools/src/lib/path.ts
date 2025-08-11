@@ -18,7 +18,7 @@ export function resolveFilenameUp(path: string, filename: string) {
   const parentDir = nodePath.dirname(path);
   if (parentDir === path) {
     throw new RnefError(
-      `${filename} not found in any parent directory of ${path}`
+      `${filename} not found in any parent directory of ${path}`,
     );
   }
 

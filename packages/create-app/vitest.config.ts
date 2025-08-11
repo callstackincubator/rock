@@ -1,6 +1,5 @@
 import { defineConfig } from 'vitest/config';
 
-
 export default defineConfig({
   root: __dirname,
   cacheDir: '../../node_modules/.vite/packages/create-app',

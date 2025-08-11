@@ -8,6 +8,7 @@
     "test": "vitest run",
     "e2e": "pnpm -r run e2e",
     "lint": "eslint .",
+    "prettier": "prettier --write .",
     "typecheck": "tsc --noEmit",
     "watch": "pnpm --filter='./packages/**' -r --parallel --stream run dev",
     "dev": "pnpm --filter='./packages/**' -r --parallel --stream run dev",

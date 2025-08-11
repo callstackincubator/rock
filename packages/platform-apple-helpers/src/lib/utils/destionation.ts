@@ -26,7 +26,7 @@ export const genericDestinations = {
 
 export function getGenericDestination(
   platform: ApplePlatform,
-  deviceType: DeviceType
+  deviceType: DeviceType,
 ): string {
   return genericDestinations[platform][deviceType];
 }

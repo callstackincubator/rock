@@ -26,7 +26,7 @@ export const platformIOS =
         const iosConfig = getValidProjectConfig(
           'ios',
           projectRoot,
-          pluginConfig
+          pluginConfig,
         );
         await createBuild({
           platformName: 'ios',
@@ -51,7 +51,7 @@ export const platformIOS =
         const iosConfig = getValidProjectConfig(
           'ios',
           projectRoot,
-          pluginConfig
+          pluginConfig,
         );
         await createRun({
           platformName: 'ios',
@@ -78,7 +78,7 @@ export const platformIOS =
           const iosConfig = getValidProjectConfig(
             'ios',
             api.getProjectRoot(),
-            pluginConfig
+            pluginConfig,
           );
           return { ...iosConfig };
         },

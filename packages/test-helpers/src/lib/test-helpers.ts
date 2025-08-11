@@ -21,7 +21,7 @@ export const cleanup = (directory: string) => {
  */
 export const writeFiles = (
   directory: string,
-  files: { [filename: string]: string | NodeJS.ArrayBufferView }
+  files: { [filename: string]: string | NodeJS.ArrayBufferView },
 ) => {
   createDirectory(directory);
 
@@ -33,7 +33,7 @@ export const writeFiles = (
     }
     fs.writeFileSync(
       path.resolve(directory, ...fileOrPath.split('/')),
-      files[fileOrPath]
+      files[fileOrPath],
     );
   });
 };

@@ -94,7 +94,7 @@ describe('--appFolder', () => {
     });
 
     expect((spawn as Mock).mock.calls[0][1]).toContain(
-      'anotherApp:installRelease'
+      'anotherApp:installRelease',
     );
   });
 

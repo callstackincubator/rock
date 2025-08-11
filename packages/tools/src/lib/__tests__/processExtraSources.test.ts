@@ -12,7 +12,7 @@ describe('processExtraSources', () => {
       () =>
         ({
           isDirectory: () => false,
-        } as any)
+        }) as any,
     );
     vi.spyOn(fs, 'readFileSync').mockImplementation(() => 'mock content');
   });
@@ -39,7 +39,7 @@ describe('processExtraSources', () => {
       () =>
         ({
           isDirectory: () => true,
-        } as any)
+        }) as any,
     );
 
     const result = processExtraSources(['dir'], mockProjectRoot);
@@ -64,8 +64,8 @@ describe('processExtraSources', () => {
   it('should process multiple sources of different types', async () => {
     const statSyncMock = vi.spyOn(fs, 'statSync');
     statSyncMock
-      .mockImplementationOnce(() => ({ isDirectory: () => false } as any))
-      .mockImplementationOnce(() => ({ isDirectory: () => true } as any));
+      .mockImplementationOnce(() => ({ isDirectory: () => false }) as any)
+      .mockImplementationOnce(() => ({ isDirectory: () => true }) as any);
 
     const result = processExtraSources(['file.txt', 'dir'], mockProjectRoot);
 
@@ -187,7 +187,7 @@ describe('processExtraSources', () => {
 
     const result = processExtraSources(
       ['file.txt', 'non-existent.txt'],
-      mockProjectRoot
+      mockProjectRoot,
     );
 
     expect(result).toEqual([

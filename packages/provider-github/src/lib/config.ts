@@ -47,13 +47,13 @@ export async function detectGitHubRepoDetails(): Promise<GitHubRepoDetails> {
     const { output: url } = await spawn(
       'git',
       ['config', '--get', `remote.${gitRemote}.url`],
-      { stdio: 'pipe' }
+      { stdio: 'pipe' },
     );
 
     const match = url.match(GITHUB_REPO_REGEX);
     if (!match) {
       throw new RnefError(
-        `The remote URL "${url}" doesn't look like a GitHub repo.`
+        `The remote URL "${url}" doesn't look like a GitHub repo.`,
       );
     }
     let token = getGitHubToken();
@@ -61,7 +61,7 @@ export async function detectGitHubRepoDetails(): Promise<GitHubRepoDetails> {
       logger.warn(
         `No GitHub Personal Access Token found necessary to download cached builds.
 Please generate one at: ${colorLink('https://github.com/settings/tokens')}
-Include "repo", "workflow", and "read:org" permissions.`
+Include "repo", "workflow", and "read:org" permissions.`,
       );
       token = await promptForGitHubToken();
     }

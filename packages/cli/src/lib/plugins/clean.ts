@@ -48,12 +48,12 @@ const CLEANUP_TASK_NAMES = [
  */
 function validateCleanupTasks(taskNames: string[]): void {
   const invalidTasks = taskNames.filter(
-    (name) => !CLEANUP_TASK_NAMES.includes(name as any)
+    (name) => !CLEANUP_TASK_NAMES.includes(name as any),
   );
   if (invalidTasks.length > 0) {
     throw new RnefError(
       `Invalid cleanup task(s): ${invalidTasks.join(', ')}. ` +
-        `Valid options are: ${CLEANUP_TASK_NAMES.join(', ')}`
+        `Valid options are: ${CLEANUP_TASK_NAMES.join(', ')}`,
     );
   }
 }
@@ -137,7 +137,7 @@ function cleanDirectories(directories: string[], baseDir: string): void {
  */
 function createCleanupTasks(
   projectRoot: string,
-  options: CleanOptions
+  options: CleanOptions,
 ): CleanupTask[] {
   const tasks: CleanupTask[] = [];
 
@@ -310,7 +310,7 @@ async function cleanProject(projectRoot: string, options: CleanOptions) {
   if (options.include && options.include.length > 0) {
     validateCleanupTasks(options.include);
     selectedTasks = tasks.filter(
-      (task) => options.include?.includes(task.name) && task.enabled
+      (task) => options.include?.includes(task.name) && task.enabled,
     );
   } else if (options.all) {
     selectedTasks = availableTasks;
@@ -364,7 +364,7 @@ export const cleanPlugin =
         {
           name: '--include <list>',
           description: `Comma-separated list of caches to clear (${CLEANUP_TASK_NAMES.join(
-            ', '
+            ', ',
           )})`,
           parse: (val: string) => val.split(','),
         },

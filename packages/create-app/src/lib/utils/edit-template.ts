@@ -26,7 +26,7 @@ export function renameCommonFiles(projectPath: string) {
  */
 export function replacePlaceholder(
   projectPath: string,
-  normalizedName: string
+  normalizedName: string,
 ) {
   if (normalizedName === PLACEHOLDER_NAME) {
     return;
@@ -45,7 +45,7 @@ export function replacePlaceholder(
       renameFile(
         filePath,
         PLACEHOLDER_NAME.toLowerCase(),
-        normalizedName.toLowerCase()
+        normalizedName.toLowerCase(),
       );
     }
   }
@@ -53,7 +53,7 @@ export function replacePlaceholder(
 
 function replacePlaceholderInTextFile(
   filePath: string,
-  normalizedName: string
+  normalizedName: string,
 ) {
   const fileContent = fs.readFileSync(filePath, 'utf8');
   const replacedFileContent = fileContent

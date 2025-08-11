@@ -112,7 +112,7 @@ export const createRun = async ({
   if (devices.length === 0) {
     const { readableName } = getPlatformInfo(platformName);
     throw new RnefError(
-      `No devices or simulators detected. Install simulators via Xcode or connect a physical ${readableName} device.`
+      `No devices or simulators detected. Install simulators via Xcode or connect a physical ${readableName} device.`,
     );
   }
   const device = await selectDevice(devices, args);
@@ -127,7 +127,7 @@ Please either use "--destination ${
 ${devices
   .filter(({ type }) => type === deviceOrSimulator)
   .map(({ name }) => `• ${name}`)
-  .join('\n')}`
+  .join('\n')}`,
       );
     }
     cacheRecentDevice(device, platformName);
@@ -161,29 +161,29 @@ ${devices
     return;
   } else {
     const bootedDevices = devices.filter(
-      ({ state, type }) => state === 'Booted' && type === deviceOrSimulator
+      ({ state, type }) => state === 'Booted' && type === deviceOrSimulator,
     );
     if (bootedDevices.length === 0) {
       // fallback to present all devices when no device is selected
       if (isInteractive()) {
         const simulator = await promptForDeviceSelection(
           devices.filter(({ type }) => type === deviceOrSimulator),
-          platformName
+          platformName,
         );
         bootedDevices.push(simulator);
         cacheRecentDevice(simulator, platformName);
       } else {
         logger.debug(
-          'No booted devices or simulators found. Launching first available simulator...'
+          'No booted devices or simulators found. Launching first available simulator...',
         );
         const simulator = devices.filter(
-          (device) => device.type === 'simulator'
+          (device) => device.type === 'simulator',
         )[0];
         if (simulator) {
           bootedDevices.push(simulator);
         } else {
           throw new RnefError(
-            'No Apple simulators found. Install simulators via Xcode.'
+            'No Apple simulators found. Install simulators via Xcode.',
           );
         }
       }
@@ -218,7 +218,7 @@ async function selectDevice(devices: Device[], args: RunFlags) {
   }
   if (!device && args.device) {
     logger.warn(
-      `No devices or simulators found matching "${args.device}". Falling back to default simulator.`
+      `No devices or simulators found matching "${args.device}". Falling back to default simulator.`,
     );
   }
   return device;
@@ -232,7 +232,7 @@ function validateArgs(args: RunFlags, projectRoot: string) {
 
     if (!fs.existsSync(args.binaryPath)) {
       throw new Error(
-        `"--binary-path" was specified, but the file was not found at "${args.binaryPath}".`
+        `"--binary-path" was specified, but the file was not found at "${args.binaryPath}".`,
       );
     }
     // No need to install pods if binary path is provided
@@ -242,7 +242,7 @@ function validateArgs(args: RunFlags, projectRoot: string) {
 
 function promptForDeviceSelection(
   devices: Device[],
-  platformName: ApplePlatform
+  platformName: ApplePlatform,
 ) {
   const sortedDevices = sortByRecentDevices(devices, platformName);
   return promptSelect({

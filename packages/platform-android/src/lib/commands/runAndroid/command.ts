@@ -6,7 +6,7 @@ import { runAndroid, runOptions } from './runAndroid.js';
 
 export function registerRunCommand(
   api: PluginApi,
-  pluginConfig: AndroidProjectConfig | undefined
+  pluginConfig: AndroidProjectConfig | undefined,
 ) {
   api.registerCommand({
     name: 'run:android',
@@ -20,7 +20,7 @@ export function registerRunCommand(
         args as Flags,
         projectRoot,
         await api.getRemoteCacheProvider(),
-        api.getFingerprintOptions()
+        api.getFingerprintOptions(),
       );
     },
     options: runOptions,

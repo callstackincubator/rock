@@ -37,7 +37,7 @@ export class GitHubBuildCache implements RemoteBuildCache {
     const artifacts = await fetchGitHubArtifactsByName(
       artifactName,
       repoDetails,
-      limit
+      limit,
     );
     return artifacts.map((artifact) => ({
       name: artifact.name,
@@ -77,7 +77,7 @@ export class GitHubBuildCache implements RemoteBuildCache {
     const artifacts = await fetchGitHubArtifactsByName(
       artifactName,
       repoDetails,
-      limit
+      limit,
     );
     if (artifacts.length === 0) {
       throw new Error(`No artifact found with name "${artifactName}"`);
@@ -86,7 +86,7 @@ export class GitHubBuildCache implements RemoteBuildCache {
     return await deleteGitHubArtifacts(
       skipLatest ? rest : artifacts,
       repoDetails,
-      artifactName
+      artifactName,
     );
   }
 
@@ -94,12 +94,12 @@ export class GitHubBuildCache implements RemoteBuildCache {
     RemoteArtifact & {
       getResponse: (
         buffer: Buffer | ((baseUrl: string) => Buffer),
-        contentType?: string | undefined
+        contentType?: string | undefined,
       ) => Response;
     }
   > {
     throw new Error(
-      'Uploading artifacts to GitHub is not supported through GitHub API. See: https://docs.github.com/en/rest/actions/artifacts?apiVersion=2022-11-28'
+      'Uploading artifacts to GitHub is not supported through GitHub API. See: https://docs.github.com/en/rest/actions/artifacts?apiVersion=2022-11-28',
     );
   }
 }

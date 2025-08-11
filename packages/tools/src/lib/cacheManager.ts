@@ -45,9 +45,9 @@ function removeProjectCache() {
   } catch (error) {
     throw new RnefError(
       `Failed to remove cache for ${name}. If you experience any issues when running freshly initialized project, please remove the "${colorLink(
-        path.join(getCacheFile())
+        path.join(getCacheFile()),
       )}" folder manually.`,
-      { cause: error }
+      { cause: error },
     );
   }
 }

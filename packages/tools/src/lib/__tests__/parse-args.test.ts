@@ -3,7 +3,7 @@ import { parseArgs } from '../parse-args.js';
 
 test('parseArgs', () => {
   const args = parseArgs(
-    `-aaaa CODE_SIGNING="iPhone Distribution" TEST='AAA BBB'`
+    `-aaaa CODE_SIGNING="iPhone Distribution" TEST='AAA BBB'`,
   );
   expect(args).toMatchInlineSnapshot(`
     [

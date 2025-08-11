@@ -5,7 +5,7 @@ import logger from './logger.js';
 export function spawn(
   file: string,
   args?: readonly string[],
-  options?: Options
+  options?: Options,
 ): Subprocess {
   const defaultStream = logger.isVerbose() ? 'inherit' : 'pipe';
   const defaultOptions: Options = {

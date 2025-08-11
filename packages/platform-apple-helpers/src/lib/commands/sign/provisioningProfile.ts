@@ -11,17 +11,17 @@ import { readBufferFromPlist, readKeyFromPlist } from '../../utils/plist.js';
  */
 export async function decodeProvisioningProfileToPlist(
   profilePath: string,
-  outputPath: string
+  outputPath: string,
 ) {
   try {
     await spawn('security', ['cms', '-D', '-i', profilePath, '-o', outputPath]);
     logger.debug(
-      `Decoded provisioning profile to plist: ${relativeToCwd(outputPath)}`
+      `Decoded provisioning profile to plist: ${relativeToCwd(outputPath)}`,
     );
   } catch (error) {
     throw new RnefError(
       `Failed to decode provisioning profile: ${profilePath}`,
-      { cause: (error as SubprocessError).stderr }
+      { cause: (error as SubprocessError).stderr },
     );
   }
 }
@@ -45,7 +45,7 @@ export const generateEntitlementsPlist = async ({
     'Entitlements',
     {
       xml: true,
-    }
+    },
   );
 
   fs.writeFileSync(outputPath, entitlements);

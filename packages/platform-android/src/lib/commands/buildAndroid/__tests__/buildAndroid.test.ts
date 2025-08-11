@@ -61,7 +61,7 @@ function spawnMockImplementation(file: string, args: string[]) {
 
 test('buildAndroid runs gradle build with correct configuration for debug and outputs build path', async () => {
   (spawn as Mock).mockImplementation((file, args) =>
-    spawnMockImplementation(file, args)
+    spawnMockImplementation(file, args),
   );
   vi.mocked(fs.existsSync).mockImplementation((file: PathLike) => {
     if (file === '/android/app/build/outputs/bundle/debug/app-debug.aab') {
@@ -75,7 +75,7 @@ test('buildAndroid runs gradle build with correct configuration for debug and ou
     { ...args, aab: true },
     '/root',
     null,
-    fingerprintOptions
+    fingerprintOptions,
   );
 
   expect(spawn).toBeCalledWith('./gradlew', ['app:bundleDebug', '-x', 'lint'], {
@@ -88,14 +88,14 @@ test('buildAndroid fails gracefully when gradle errors', async () => {
   vi.mocked(spawn).mockRejectedValueOnce({ stderr: 'gradle error' });
 
   await expect(
-    buildAndroid(androidProject, args, '/root', null, fingerprintOptions)
+    buildAndroid(androidProject, args, '/root', null, fingerprintOptions),
   ).rejects.toThrowErrorMatchingInlineSnapshot(
-    `[RnefError: Failed to build the app. See the error above for details from Gradle.]`
+    `[RnefError: Failed to build the app. See the error above for details from Gradle.]`,
   );
 
   expect(spawn).toBeCalledWith(
     './gradlew',
     ['app:assembleDebug', '-x', 'lint'],
-    { cwd: '/android' }
+    { cwd: '/android' },
   );
 });

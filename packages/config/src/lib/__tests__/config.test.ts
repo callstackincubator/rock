@@ -29,7 +29,7 @@ test.each([['.js'], ['.mjs'], ['.ts']])(
     });
     const config = await getConfig(DIR, []);
     expect(config).toMatchObject({ commands: [] });
-  }
+  },
 );
 
 test('should load plugin that registers a command', async () => {
@@ -68,7 +68,7 @@ test('should load plugin that registers a command', async () => {
   const __dirname = dirname(fileURLToPath(import.meta.url));
   const config = await getConfig(
     join(__dirname, './__fixtures__/config-with-sample-plugin'),
-    []
+    [],
   );
   expect(config).toMatchObject({
     commands: [

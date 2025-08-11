@@ -86,7 +86,7 @@ export interface RemoteBuildCache {
     RemoteArtifact & {
       getResponse: (
         buffer: Buffer | ((baseUrl: string) => Buffer),
-        contentType?: string
+        contentType?: string,
       ) => Response;
     }
   >;
@@ -130,7 +130,7 @@ export async function formatArtifactName({
     platform,
   });
   loader.stop(
-    `Calculated project fingerprint: ${color.bold(color.magenta(hash))}`
+    `Calculated project fingerprint: ${color.bold(color.magenta(hash))}`,
   );
   return `rnef-${platform}-${traits.join('-')}-${hash}`;
 }

@@ -19,7 +19,7 @@ export const registerStartCommand = (api: PluginApi) => {
       const root = api.getProjectRoot();
       const { port, startDevServer } = await findDevServerPort(
         args.port ? Number(args.port) : 8081,
-        root
+        root,
       );
 
       if (!startDevServer) {
@@ -36,7 +36,7 @@ export const registerStartCommand = (api: PluginApi) => {
           reactNativePath,
           platforms,
         },
-        { ...args, port }
+        { ...args, port },
       );
     },
     description: 'Start the Metro development server.',

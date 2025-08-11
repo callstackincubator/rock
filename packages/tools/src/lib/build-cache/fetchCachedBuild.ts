@@ -29,7 +29,7 @@ export async function fetchCachedBuild({
   if (remoteCacheProvider === undefined) {
     logger.warn(`No remote cache provider set. You won't be able to access reusable builds from e.g. GitHub Actions. 
 To configure it, set the "remoteCacheProvider" key in ${colorLink(
-      'rnef.config.mjs'
+      'rnef.config.mjs',
     )} file. For example:
 
 import { providerGitHub } from '@rnef/provider-github';
@@ -49,16 +49,16 @@ To disable this warning, set the provider to null:
   const remoteBuildCache = remoteCacheProvider();
   const response = await remoteBuildCache.download({ artifactName });
   loader.start(
-    `Downloading cached build from ${color.bold(remoteBuildCache.name)}`
+    `Downloading cached build from ${color.bold(remoteBuildCache.name)}`,
   );
   await handleDownloadResponse(
     response,
     localArtifactPath,
     (progress, totalMB) => {
       loader.message(
-        `Downloading cached build from ${color.bold(remoteBuildCache.name)} (${progress}% of ${totalMB} MB)`
+        `Downloading cached build from ${color.bold(remoteBuildCache.name)} (${progress}% of ${totalMB} MB)`,
       );
-    }
+    },
   );
   await extractArtifactTarballIfNeeded(localArtifactPath);
   const binaryPath = getLocalBinaryPath(localArtifactPath);
@@ -67,7 +67,7 @@ To disable this warning, set the provider to null:
     return undefined;
   }
   loader.stop(
-    `Downloaded cached build to: ${colorLink(relativeToCwd(localArtifactPath))}`
+    `Downloaded cached build to: ${colorLink(relativeToCwd(localArtifactPath))}`,
   );
 
   return {
@@ -79,7 +79,7 @@ To disable this warning, set the provider to null:
 
 async function trackProgressFromStream(
   response: Response,
-  onProgress: (progress: string, totalMB: string) => void
+  onProgress: (progress: string, totalMB: string) => void,
 ): Promise<Response> {
   const contentLength = response.headers.get('content-length');
 
@@ -116,7 +116,7 @@ async function trackProgressFromStream(
 export async function handleDownloadResponse(
   response: Response,
   localArtifactPath: string,
-  onProgress: (progress: string, totalMB: string) => void
+  onProgress: (progress: string, totalMB: string) => void,
 ) {
   try {
     fs.mkdirSync(localArtifactPath, { recursive: true });
@@ -126,7 +126,7 @@ export async function handleDownloadResponse(
 
     const responseWithProgress = await trackProgressFromStream(
       response,
-      onProgress
+      onProgress,
     );
 
     const zipPath = localArtifactPath + '.zip';
@@ -142,7 +142,7 @@ export async function handleDownloadResponse(
 export async function handleUploadResponse(
   getResponse: (buffer: Buffer) => Response,
   buffer: Buffer,
-  onProgress: (progress: string, totalMB: string) => void
+  onProgress: (progress: string, totalMB: string) => void,
 ) {
   try {
     const response = getResponse(buffer);
@@ -151,7 +151,7 @@ export async function handleUploadResponse(
     }
     const responseWithProgress = await trackProgressFromStream(
       response,
-      onProgress
+      onProgress,
     );
     await responseWithProgress.arrayBuffer();
   } catch (error) {

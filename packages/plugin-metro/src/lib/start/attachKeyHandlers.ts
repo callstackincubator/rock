@@ -95,7 +95,6 @@ export default function attachKeyHandlers({
         messageSocket.broadcast('devMenu', null);
         break;
       case 'j':
-         
         void openDebuggerKeyboardHandler.handleOpenDebugger();
         break;
       case CTRL_C:
@@ -132,7 +131,7 @@ export default function attachKeyHandlers({
 function setRawMode(enable: boolean) {
   if (!(process.stdin instanceof ReadStream)) {
     throw new RnefError(
-      'process.stdin must be a readable stream to modify raw mode'
+      'process.stdin must be a readable stream to modify raw mode',
     );
   }
   process.stdin.setRawMode(enable);

@@ -5,4 +5,3 @@ Metro bundler integration plugin for React Native Enterprise Framework (RNEF). T
 ## Documentation
 
 For detailed documentation about RNEF and its tools, visit [RNEF Documentation](https://rnef.dev)
-

@@ -53,14 +53,14 @@ describe('getInfo', () => {
 
     const info = await getInfo(
       { isWorkspace: true, name: 'YourProjectName' } as XcodeProjectInfo,
-      'some/path'
+      'some/path',
     );
 
     // Should not call on Pods or the other misc groups
     expect(spawn).toHaveBeenCalledWith(
       'xcodebuild',
       ['-list', '-json', '-project', `YourProjectName.xcodeproj`],
-      expect.objectContaining({ cwd: 'some/path' })
+      expect.objectContaining({ cwd: 'some/path' }),
     );
     expect(spawn).toHaveBeenCalledTimes(1);
 

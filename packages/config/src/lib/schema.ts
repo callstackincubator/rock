@@ -4,7 +4,7 @@ const ArgValueSchema = Joi.alternatives().try(
   Joi.string(),
   Joi.array().items(Joi.string()),
   Joi.number(),
-  Joi.boolean()
+  Joi.boolean(),
 );
 
 const CommandTypeSchema = Joi.object({
@@ -17,7 +17,7 @@ const CommandTypeSchema = Joi.object({
         name: Joi.string().required(),
         description: Joi.string().required(),
         default: ArgValueSchema.optional(),
-      })
+      }),
     )
     .optional(),
   options: Joi.array()
@@ -27,7 +27,7 @@ const CommandTypeSchema = Joi.object({
         description: Joi.string().required(),
         default: ArgValueSchema.optional(),
         parse: Joi.function().optional(),
-      })
+      }),
     )
     .optional(),
 }).unknown(false);
@@ -40,11 +40,13 @@ const ConfigTypeSchema = Joi.object({
   plugins: Joi.array().items(Joi.function()).optional(),
   platforms: Joi.object().pattern(Joi.string(), Joi.function()).optional(),
   commands: Joi.array().items(CommandTypeSchema).optional(),
-  remoteCacheProvider: Joi.alternatives().try(
-    Joi.string().valid('github-actions'),
-    Joi.function(),
-    Joi.any().valid(null)
-  ).optional(),
+  remoteCacheProvider: Joi.alternatives()
+    .try(
+      Joi.string().valid('github-actions'),
+      Joi.function(),
+      Joi.any().valid(null),
+    )
+    .optional(),
   fingerprint: Joi.object({
     extraSources: Joi.array().items(Joi.string()).default([]),
     ignorePaths: Joi.array().items(Joi.string()).default([]),

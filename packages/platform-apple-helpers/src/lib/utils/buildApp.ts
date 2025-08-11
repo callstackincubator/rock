@@ -56,7 +56,7 @@ export async function buildApp({
       sourceDir,
       args.newArch,
       reactNativePath,
-      brownfield
+      brownfield,
     );
     // When the project is not a workspace, we need to get the project config again,
     // because running pods install might have generated .xcworkspace project.
@@ -65,7 +65,7 @@ export async function buildApp({
       const newProjectConfig = getValidProjectConfig(
         platformName,
         projectRoot,
-        pluginConfig
+        pluginConfig,
       );
       xcodeProject = newProjectConfig.xcodeProject;
       sourceDir = newProjectConfig.sourceDir;
@@ -80,7 +80,7 @@ export async function buildApp({
   const scheme = await getScheme(info.schemes, args.scheme, xcodeProject.name);
   const configuration = await getConfiguration(
     info.configurations,
-    args.configuration
+    args.configuration,
   );
   const destinations = determineDestinations({
     destination: args.destination,
@@ -144,7 +144,7 @@ function determineDestinations({
   }
   if (destination && destination.length > 0) {
     return destination.map((destination) =>
-      resolveDestination(destination, platformName)
+      resolveDestination(destination, platformName),
     );
   }
   return [getGenericDestination(platformName, 'device')];

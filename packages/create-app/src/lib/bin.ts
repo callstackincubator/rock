@@ -140,7 +140,7 @@ export async function run() {
     platforms,
     plugins,
     bundler,
-    remoteCacheProvider
+    remoteCacheProvider,
   );
   loader.stop('Applied template, platforms and plugins.');
 
@@ -164,7 +164,7 @@ function getPkgManager() {
 
 async function installDependencies(
   absoluteTargetDir: string,
-  pkgManager: string
+  pkgManager: string,
 ) {
   const loader = spinner();
   loader.start(`Installing dependencies with ${pkgManager}`);
@@ -179,7 +179,7 @@ async function extractPackage(absoluteTargetDir: string, pkg: TemplateInfo) {
     tarballPath = await downloadTarballFromNpm(
       pkg.packageName,
       pkg.version,
-      absoluteTargetDir
+      absoluteTargetDir,
     );
   }
   // Local tarball file
@@ -195,7 +195,7 @@ async function extractPackage(absoluteTargetDir: string, pkg: TemplateInfo) {
   if (tarballPath) {
     const localPath = await extractTarballToTempDirectory(
       absoluteTargetDir,
-      tarballPath
+      tarballPath,
     );
 
     if (pkg.packageName) {
@@ -211,7 +211,7 @@ async function extractPackage(absoluteTargetDir: string, pkg: TemplateInfo) {
   if (pkg.type === 'local') {
     copyDirSync(
       path.join(pkg.localPath, pkg.directory ?? ''),
-      absoluteTargetDir
+      absoluteTargetDir,
     );
 
     return;
@@ -219,7 +219,7 @@ async function extractPackage(absoluteTargetDir: string, pkg: TemplateInfo) {
 
   // This should never happen as we have either NPM package or local path (tarball or directory).
   throw new RnefError(
-    `Invalid state: template not found: ${JSON.stringify(pkg, null, 2)}`
+    `Invalid state: template not found: ${JSON.stringify(pkg, null, 2)}`,
   );
 }
 
@@ -228,12 +228,12 @@ function createConfig(
   platforms: TemplateInfo[],
   plugins: TemplateInfo[] | null,
   bundler: TemplateInfo,
-  remoteCacheProvider: SupportedRemoteCacheProviders | null
+  remoteCacheProvider: SupportedRemoteCacheProviders | null,
 ) {
   const rnefConfig = path.join(absoluteTargetDir, 'rnef.config.mjs');
   fs.writeFileSync(
     rnefConfig,
-    formatConfig(platforms, plugins, bundler, remoteCacheProvider)
+    formatConfig(platforms, plugins, bundler, remoteCacheProvider),
   );
 }
 
@@ -241,10 +241,10 @@ export function formatConfig(
   platforms: TemplateInfo[],
   plugins: TemplateInfo[] | null,
   bundler: TemplateInfo,
-  remoteCacheProvider: SupportedRemoteCacheProviders | null
+  remoteCacheProvider: SupportedRemoteCacheProviders | null,
 ) {
   const platformsWithImports = platforms.filter(
-    (template) => template.importName
+    (template) => template.importName,
   );
   const pluginsWithImports = plugins
     ? plugins.filter((template) => template.importName)
@@ -252,7 +252,7 @@ export function formatConfig(
   return `${[...platformsWithImports, ...(pluginsWithImports ?? []), bundler]
     .map(
       (template) =>
-        `import { ${template.importName} } from '${template.packageName}';`
+        `import { ${template.importName} } from '${template.packageName}';`,
     )
     .join('\n')}
 

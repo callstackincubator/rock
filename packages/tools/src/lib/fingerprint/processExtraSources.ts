@@ -14,7 +14,7 @@ import logger from '../logger.js';
 export function processExtraSources(
   extraSources: string[],
   projectRoot: string,
-  ignorePaths?: string[]
+  ignorePaths?: string[],
 ) {
   const processedSources: Array<HashSourceDir | HashSourceContents> = [];
 
@@ -55,7 +55,7 @@ export function processExtraSources(
 
       if (!fs.existsSync(absolutePath)) {
         logger.warn(
-          `Extra source "${absolutePath}" does not exist, skipping...`
+          `Extra source "${absolutePath}" does not exist, skipping...`,
         );
         continue;
       }

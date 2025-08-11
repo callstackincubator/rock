@@ -73,7 +73,7 @@ export const createBuild = async ({
       const { exportDir } = getBuildPaths(platformName);
       if (fs.existsSync(exportDir) && fs.statSync(exportDir).isDirectory()) {
         logger.log(
-          `Archives available at: ${colorLink(relativeToCwd(exportDir))}`
+          `Archives available at: ${colorLink(relativeToCwd(exportDir))}`,
         );
       }
     }
@@ -106,7 +106,7 @@ export const createBuild = async ({
 
     const archivePath = path.join(
       archiveDir,
-      `${xcodeProject.name.replace('.xcworkspace', '')}.xcarchive`
+      `${xcodeProject.name.replace('.xcworkspace', '')}.xcarchive`,
     );
 
     const { ipaPath } = await exportArchive({
@@ -144,14 +144,14 @@ async function validateArgs(args: BuildFlags) {
       args.destination = [destination];
 
       logger.info(
-        `You can set configuration manually next time using "--destination ${destination}" flag.`
+        `You can set configuration manually next time using "--destination ${destination}" flag.`,
       );
     } else {
       logger.error(
         `The "--destination" flag is required in non-interactive environments. Available flag values:
 - "simulator" – suitable for unsigned simulator builds for developers
 - "device" – suitable for signed device builds for testers
-- or values supported by "xcodebuild -destination" flag, e.g. "generic/platform=iOS"`
+- or values supported by "xcodebuild -destination" flag, e.g. "generic/platform=iOS"`,
       );
       process.exit(1);
     }

@@ -5,7 +5,7 @@ import {
   getRandomString,
   getTempDirectory,
 } from '@rnef/test-helpers';
-import { beforeEach,describe, expect, it } from 'vitest';
+import { beforeEach, describe, expect, it } from 'vitest';
 
 /**
  * Perform following commands to test e2e locally (on macOS):
@@ -44,7 +44,7 @@ describe('create-app command', { timeout: 30_000 }, () => {
 
       await execAsync(
         `${CREATE_APP_COMMAND} ${projectName} --template=default --platform=ios --platform=android --bundler=metro --remote-cache-provider=github-actions`,
-        execArgs
+        execArgs,
       );
 
       const packageJsonPath = path.join(projectPath, 'package.json');
@@ -64,7 +64,7 @@ describe('create-app command', { timeout: 30_000 }, () => {
       expect(packageJson.keywords).not.toBeDefined();
       expect(packageJson.packageManager).not.toBeDefined();
       expect(packageJson.publishConfig).not.toBeDefined();
-    }
+    },
   );
 
   it('should create a new project from npm template', async () => {
@@ -77,7 +77,7 @@ describe('create-app command', { timeout: 30_000 }, () => {
 
     await execAsync(
       `${CREATE_APP_COMMAND} ${projectName} --template=@rnef/template-default --platform=ios --platform=android --bundler=metro --remote-cache-provider=github-actions`,
-      execArgs
+      execArgs,
     );
 
     const packageJsonPath = path.join(projectPath, 'package.json');
@@ -113,7 +113,7 @@ describe('create-app command', { timeout: 30_000 }, () => {
       const templatePath = `${ROOT_DIR}/templates/rnef-template-default`;
       await execAsync(
         `${CREATE_APP_COMMAND} ${projectName} --template="${templatePath}" --platform=ios --platform=android --bundler=metro --remote-cache-provider=github-actions`,
-        execArgs
+        execArgs,
       );
 
       const packageJsonPath = path.join(projectPath, 'package.json');
@@ -133,6 +133,6 @@ describe('create-app command', { timeout: 30_000 }, () => {
       expect(packageJson.keywords).not.toBeDefined();
       expect(packageJson.packageManager).not.toBeDefined();
       expect(packageJson.publishConfig).not.toBeDefined();
-    }
+    },
   );
 });

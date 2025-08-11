@@ -48,7 +48,7 @@ export function registerBundleCommand(api: PluginApi) {
     action: async (args: BundleCommandArgs) => {
       if (!args.platform || !args.bundleOutput || !args.entryFile) {
         throw new RnefError(
-          '"rnef bundle" command requires all of these flags to bundle JavaScript with Metro: \n  "--platform", "--bundle-output", "--entry-file"'
+          '"rnef bundle" command requires all of these flags to bundle JavaScript with Metro: \n  "--platform", "--bundle-output", "--entry-file"',
         );
       }
       intro('Compiling JS bundle with Metro');
@@ -64,7 +64,7 @@ export function registerBundleCommand(api: PluginApi) {
       await bundleCommand.func(
         undefined,
         { root, reactNativeVersion, reactNativePath, platforms },
-        args
+        args,
       );
 
       if (args.hermes) {
@@ -75,11 +75,11 @@ export function registerBundleCommand(api: PluginApi) {
           sourcemapOutputPath: args.sourcemapOutput,
         });
         loader.stop(
-          `Hermes bytecode bundle created at: ${colorLink(args.bundleOutput)}`
+          `Hermes bytecode bundle created at: ${colorLink(args.bundleOutput)}`,
         );
       } else {
         logger.info(
-          `JavaScript bundle created at: ${colorLink(args.bundleOutput)}`
+          `JavaScript bundle created at: ${colorLink(args.bundleOutput)}`,
         );
       }
       outro('Success 🎉.');

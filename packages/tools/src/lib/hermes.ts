@@ -26,7 +26,7 @@ function getComposeSourceMapsPath(): string {
   );
   if (!fs.existsSync(composeSourceMapsPath)) {
     throw new RnefError(
-      "Could not find react-native's compose-source-maps.js script."
+      "Could not find react-native's compose-source-maps.js script.",
     );
   }
   return composeSourceMapsPath;
@@ -63,7 +63,7 @@ function injectDebugId(sourceMapPath: string, debugId: string) {
     fs.writeFileSync(sourceMapPath, JSON.stringify(sourceMap));
   } catch {
     throw new RnefError(
-      `Failed to inject debugId into sourcemap: ${sourceMapPath}`
+      `Failed to inject debugId into sourcemap: ${sourceMapPath}`,
     );
   }
 }
@@ -78,7 +78,7 @@ export async function runHermes({
   const hermescPath = getHermescPath();
   if (!hermescPath) {
     throw new RnefError(
-      'Hermesc binary not found. Use `--no-hermes` flag to disable Hermes.'
+      'Hermesc binary not found. Use `--no-hermes` flag to disable Hermes.',
     );
   }
 
@@ -105,7 +105,7 @@ export async function runHermes({
   } catch (error) {
     throw new RnefError(
       'Compiling JS bundle with Hermes failed. Use `--no-hermes` flag to disable Hermes.',
-      { cause: (error as SubprocessError).stderr }
+      { cause: (error as SubprocessError).stderr },
     );
   }
 
@@ -130,12 +130,10 @@ export async function runHermes({
       if (debugId) {
         injectDebugId(sourcemapOutputPath, debugId);
       }
-
     } catch (error) {
-      throw new RnefError(
-        'Failed to run compose-source-maps script',
-        { cause: (error as SubprocessError).stderr }
-      );
+      throw new RnefError('Failed to run compose-source-maps script', {
+        cause: (error as SubprocessError).stderr,
+      });
     }
   }
 
@@ -147,7 +145,7 @@ export async function runHermes({
     fs.renameSync(hbcOutputPath, bundleOutputPath);
   } catch (error) {
     throw new RnefError(
-      `Failed to move compiled Hermes bytecode to bundle output path: ${error}`
+      `Failed to move compiled Hermes bytecode to bundle output path: ${error}`,
     );
   }
 }
@@ -162,7 +160,7 @@ function getHermescPath() {
   // Local build from source: node_modules/react-native/sdks/hermes/build/bin/hermesc
   const localBuildPath = path.join(
     reactNativePath,
-    'sdks/hermes/build/bin/hermesc'
+    'sdks/hermes/build/bin/hermesc',
   );
   if (fs.existsSync(localBuildPath)) {
     return localBuildPath;

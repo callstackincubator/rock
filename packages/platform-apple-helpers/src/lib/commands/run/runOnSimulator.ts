@@ -39,7 +39,7 @@ export async function launchSimulator(device: Device) {
 export async function runOnSimulator(
   device: Device,
   binaryPath: string,
-  infoPlistPath: string
+  infoPlistPath: string,
 ) {
   const loader = spinner();
 
@@ -58,11 +58,11 @@ async function bootSimulator(selectedSimulator: Device) {
       // It may happen on GitHub Actions when the simulator is already booted,
       // even though the simctl returns its state as Shutdown
       (error as SubprocessError).stderr.includes(
-        'Unable to boot device in current state: Booted'
+        'Unable to boot device in current state: Booted',
       )
     ) {
       logger.debug(
-        `Simulator ${selectedSimulator.udid} already booted. Skipping.`
+        `Simulator ${selectedSimulator.udid} already booted. Skipping.`,
       );
       return;
     }
@@ -74,7 +74,7 @@ async function bootSimulator(selectedSimulator: Device) {
 
 export default async function installAppOnSimulator(
   udid: string,
-  binaryPath: string
+  binaryPath: string,
 ) {
   logger.debug(`Installing "${path.basename(binaryPath)}"`);
   try {
@@ -89,7 +89,7 @@ export default async function installAppOnSimulator(
 export async function launchAppOnSimulator(
   udid: string,
   binaryPath: string,
-  infoPlistPath: string
+  infoPlistPath: string,
 ) {
   const infoPlist = binaryPath
     ? // @todo Info.plist is hardcoded when reading from binaryPath

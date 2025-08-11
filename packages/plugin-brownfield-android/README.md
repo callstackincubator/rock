@@ -5,4 +5,3 @@ Android brownfield integration plugin for React Native Enterprise Framework (RNE
 ## Documentation
 
 For detailed documentation about RNEF and its tools, visit [RNEF Documentation](https://rnef.dev)
-

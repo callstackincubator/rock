@@ -7,12 +7,12 @@ import { tryRunAdbReverse } from './tryRunAdbReverse.js';
 export async function tryLaunchAppOnDevice(
   device: DeviceData,
   androidProject: AndroidProject,
-  args: Flags
+  args: Flags,
 ) {
   let deviceId;
   if (!device.deviceId) {
     logger.debug(
-      `No device with id "${device.deviceId}", skipping launching the app.`
+      `No device with id "${device.deviceId}", skipping launching the app.`,
     );
     return {};
   } else {
@@ -33,8 +33,8 @@ export async function tryLaunchAppOnDevice(
     (!activity.startsWith('.') && activity.includes('.'))
       ? activity
       : activity.startsWith('.')
-      ? [packageName, activity].join('')
-      : [packageName, activity].filter(Boolean).join('.');
+        ? [packageName, activity].join('')
+        : [packageName, activity].filter(Boolean).join('.');
 
   // Here we're using the same flags as Android Studio to launch the app
   const adbArgs = [

@@ -49,14 +49,14 @@ export type FingerprintResult = {
  */
 export async function nativeFingerprint(
   path: string,
-  options: FingerprintOptions
+  options: FingerprintOptions,
 ): Promise<FingerprintResult> {
   const platform = options.platform;
   // Use stdout to avoid deprecation warnings
   const { stdout: autolinkingConfigString } = await spawn(
     'rnef',
     ['config', '-p', options.platform],
-    { cwd: path, stdio: 'pipe', preferLocal: true }
+    { cwd: path, stdio: 'pipe', preferLocal: true },
   );
 
   const autolinkingSources = parseAutolinkingSources({
@@ -77,7 +77,7 @@ export async function nativeFingerprint(
 
   // Filter out un-relevant sources as these caused hash mismatch between local and remote builds
   const sources = fingerprint.sources.filter((source) =>
-    'id' in source ? !EXCLUDED_SOURCES.includes(source.id) : true
+    'id' in source ? !EXCLUDED_SOURCES.includes(source.id) : true,
   );
 
   const hash = await hashSources(sources);
@@ -136,7 +136,7 @@ function parseAutolinkingSources({
       autolinkingConfig[depName] = depData;
     } catch (e) {
       logger.debug(
-        `Error adding react-native core autolinking - ${depName}.\n${e}`
+        `Error adding react-native core autolinking - ${depName}.\n${e}`,
       );
     }
   }

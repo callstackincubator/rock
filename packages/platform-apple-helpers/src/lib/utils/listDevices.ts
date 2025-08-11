@@ -73,7 +73,7 @@ async function getSimulators() {
   const { output } = await spawn(
     'xcrun',
     ['simctl', 'list', 'devices', 'available'],
-    { stdio: 'pipe' }
+    { stdio: 'pipe' },
   );
   return parseSimctlOutput(output);
 }
@@ -82,7 +82,7 @@ export async function listDevicesAndSimulators(platform: ApplePlatform) {
   const simulators = await getSimulators();
   const devices = await getDevices();
   return [...simulators, ...devices].filter(
-    (device) => device.platform === platform
+    (device) => device.platform === platform,
   );
 }
 
@@ -101,7 +101,7 @@ function parseSimctlOutput(input: string): Device[] {
       osVersion = currentOsMatch[currentOSIdx];
     }
     const deviceMatch = line.match(
-      /(.*?) (\(([0-9.]+)\) )?\(([0-9A-F-]+)\) \((.*?)\)/
+      /(.*?) (\(([0-9.]+)\) )?\(([0-9A-F-]+)\) \((.*?)\)/,
     );
     if (deviceMatch && deviceMatch.length > 0) {
       devices.push({
@@ -119,7 +119,7 @@ function parseSimctlOutput(input: string): Device[] {
 }
 
 function getPlatformFromOsVersion(
-  osVersion: string
+  osVersion: string,
 ): ApplePlatform | undefined {
   switch (osVersion) {
     case 'iOS':

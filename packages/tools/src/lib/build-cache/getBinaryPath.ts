@@ -49,7 +49,7 @@ export async function getBinaryPath({
       const cause = (error as RnefError).cause;
       logger.warn(
         `Failed to fetch cached build for ${artifactName}: \n${message}`,
-        cause ? `\nCause: ${cause.toString()}` : ''
+        cause ? `\nCause: ${cause.toString()}` : '',
       );
       await warnIgnoredFiles(fingerprintOptions, sourceDir);
       logger.debug('Remote cache failure error:', error);
@@ -62,7 +62,7 @@ export async function getBinaryPath({
 
 async function warnIgnoredFiles(
   fingerprintOptions: FingerprintSources,
-  sourceDir: string
+  sourceDir: string,
 ) {
   const ignorePaths = [
     ...(fingerprintOptions?.ignorePaths ?? []),
@@ -85,10 +85,10 @@ async function warnIgnoredFiles(
     logger.warn(`There are files that likely affect fingerprint:
 ${ignoredFiles.map((file) => `- ${color.bold(file)}`).join('\n')}
 Consider removing them or update ${color.bold(
-      'fingerprint.ignorePaths'
+      'fingerprint.ignorePaths',
     )} in ${colorLink('rnef.config.mjs')}:
 Read more: ${colorLink(
-  'https://www.rnef.dev/docs/configuration#fingerprint-configuration'
-)}`);
+      'https://www.rnef.dev/docs/configuration#fingerprint-configuration',
+    )}`);
   }
 }

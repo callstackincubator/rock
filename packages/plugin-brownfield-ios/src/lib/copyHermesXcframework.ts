@@ -22,10 +22,10 @@ export function copyHermesXcframework({
   fs.cpSync(
     path.join(
       sourceDir,
-      'Pods/hermes-engine/destroot/Library/Frameworks/universal/hermes.xcframework'
+      'Pods/hermes-engine/destroot/Library/Frameworks/universal/hermes.xcframework',
     ),
     hermesDestination,
-    { recursive: true, force: true }
+    { recursive: true, force: true },
   );
 
   loader.stop(`Copied ${color.bold('hermes.xcframework')}`);

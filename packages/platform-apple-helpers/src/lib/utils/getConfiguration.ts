@@ -3,7 +3,7 @@ import type { Info } from '../types/index.js';
 
 export async function getConfiguration(
   configurations: Info['configurations'],
-  preselectedConfiguration: string | undefined
+  preselectedConfiguration: string | undefined,
 ) {
   let configuration = preselectedConfiguration;
   if (
@@ -23,7 +23,7 @@ export async function getConfiguration(
     } else if (isInteractive()) {
       configuration = await promptForConfigurationSelection(configurations);
       logger.info(
-        `You can set configuration manually next time using "--configuration ${configuration}" flag.`
+        `You can set configuration manually next time using "--configuration ${configuration}" flag.`,
       );
     }
   }
@@ -36,11 +36,11 @@ export async function getConfiguration(
 
 function invalidateConfiguration(
   configurations: Info['configurations'],
-  configuration: string
+  configuration: string,
 ) {
   if (!configurations || configurations.length === 0) {
     logger.warn(
-      `Unable to check whether "${configuration}" configuration exists in your project`
+      `Unable to check whether "${configuration}" configuration exists in your project`,
     );
     return;
   }
@@ -49,7 +49,7 @@ function invalidateConfiguration(
     throw new RnefError(
       `Configuration "${configuration}" doesn't exist. Please use one of the existing configurations: ${configurations
         .map((configuration) => `\n- ${configuration}`)
-        .join('')}`
+        .join('')}`,
     );
   }
 }

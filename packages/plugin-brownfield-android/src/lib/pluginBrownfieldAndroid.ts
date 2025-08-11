@@ -12,7 +12,7 @@ import { intro, RnefError } from '@rnef/tools';
 
 const getAarConfig = (
   args: PackageAarFlags,
-  androidConfig: AndroidProjectConfig
+  androidConfig: AndroidProjectConfig,
 ) => {
   const config = {
     sourceDir: androidConfig.sourceDir,

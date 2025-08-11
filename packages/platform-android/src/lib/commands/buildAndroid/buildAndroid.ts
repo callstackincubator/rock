@@ -28,7 +28,7 @@ export async function buildAndroid(
   args: BuildFlags,
   projectRoot: string,
   remoteCacheProvider: null | (() => RemoteBuildCache) | undefined,
-  fingerprintOptions: FingerprintSources
+  fingerprintOptions: FingerprintSources,
 ) {
   normalizeArgs(args);
   // Use assemble task by default, but bundle if the flag is set
@@ -56,7 +56,7 @@ export async function buildAndroid(
 
   if (outputFilePath) {
     logger.log(
-      `Build available at: ${colorLink(relativeToCwd(outputFilePath))}`
+      `Build available at: ${colorLink(relativeToCwd(outputFilePath))}`,
     );
   }
   outro('Success 🎉.');
@@ -65,7 +65,7 @@ export async function buildAndroid(
 function normalizeArgs(args: BuildFlags) {
   if (args.tasks && args.variant) {
     logger.warn(
-      'Both "--tasks" and "--variant" parameters were passed. Using "--tasks" for building the app.'
+      'Both "--tasks" and "--variant" parameters were passed. Using "--tasks" for building the app.',
     );
   }
   if (!args.variant) {

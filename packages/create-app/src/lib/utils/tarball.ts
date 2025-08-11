@@ -8,7 +8,7 @@ import { getNameWithoutExtension } from './fs.js';
 export async function downloadTarballFromNpm(
   packageName: string,
   version = 'latest',
-  targetDir: string
+  targetDir: string,
 ) {
   try {
     const metadata = await packageJson(packageName, { version });
@@ -21,13 +21,13 @@ export async function downloadTarballFromNpm(
     const response = await fetch(tarballUrl);
     if (!response.ok) {
       throw new RnefError(
-        `Failed to fetch package ${packageName}: ${response.statusText}`
+        `Failed to fetch package ${packageName}: ${response.statusText}`,
       );
     }
 
     const tarballPath = path.join(
       targetDir,
-      `${packageName.replace('/', '-')}.tgz`
+      `${packageName.replace('/', '-')}.tgz`,
     );
     // Write the tarball to disk
     const arrayBuffer = await response.arrayBuffer();
@@ -50,11 +50,11 @@ export async function downloadTarballFromNpm(
 // This automatically handles both .tgz and .tar files
 export async function extractTarballToTempDirectory(
   targetDir: string,
-  tarballPath: string
+  tarballPath: string,
 ): Promise<string> {
   const tempFolder = path.join(
     targetDir,
-    `.temp-${getNameWithoutExtension(tarballPath)}-${Date.now()}`
+    `.temp-${getNameWithoutExtension(tarballPath)}-${Date.now()}`,
   );
   fs.mkdirSync(tempFolder, { recursive: true });
 

@@ -23,11 +23,11 @@ export type ConfigLoadingContext = Readonly<{
  */
 function getOverrideConfig(
   ctx: ConfigLoadingContext,
-  config: ConfigT
+  config: ConfigT,
 ): InputConfigT {
   const outOfTreePlatforms = Object.keys(ctx.platforms).filter(
     // @ts-expect-error - TBD
-    (platform) => ctx.platforms[platform].npmPackageName
+    (platform) => ctx.platforms[platform].npmPackageName,
   );
   const resolver: Partial<ConfigT['resolver']> = {
     platforms: [...Object.keys(ctx.platforms), 'native'],
@@ -42,9 +42,9 @@ function getOverrideConfig(
           result[platform] = ctx.platforms[platform].npmPackageName;
           return result;
         },
-        {}
+        {},
       ),
-      config.resolver?.resolveRequest
+      config.resolver?.resolveRequest,
     );
   }
 
@@ -57,14 +57,14 @@ function getOverrideConfig(
       getModulesRunBeforeMainModule: () => [
         require.resolve(
           path.join(ctx.reactNativePath, 'Libraries/Core/InitializeCore'),
-          { paths: [ctx.root] }
+          { paths: [ctx.root] },
         ),
         ...outOfTreePlatforms.map((platform) =>
           require.resolve(
             // @ts-expect-error - TBD
             `${ctx.platforms[platform].npmPackageName}/Libraries/Core/InitializeCore`,
-            { paths: [ctx.root] }
-          )
+            { paths: [ctx.root] },
+          ),
         ),
       ],
     },
@@ -84,7 +84,7 @@ export default async function loadMetroConfig(
     reactNativePath: string;
     root: string;
   },
-  options: YargArguments = {}
+  options: YargArguments = {},
 ): Promise<ConfigT> {
   const cwd = ctx.root;
   const projectConfig = await resolveConfig(options.config, cwd);

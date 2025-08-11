@@ -13,10 +13,10 @@ test('writeFiles in temp directory with cleanup', () => {
   writeFiles(directory, files);
 
   expect(fs.readFileSync(path.join(directory, 'package.json'), 'utf8')).toBe(
-    '{}'
+    '{}',
   );
   expect(fs.readFileSync(path.join(directory, 'dir', 'file.js'), 'utf8')).toBe(
-    'module.exports = "x";'
+    'module.exports = "x";',
   );
 
   cleanup(directory);

@@ -10,7 +10,6 @@ const pluginApi = {
   getRemoteCacheProvider: vi.fn(),
 };
 
-
 test('plugin is called with correct arguments and returns its name and description', () => {
   const plugin = pluginRepack({
     platforms: {

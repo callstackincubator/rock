@@ -20,7 +20,7 @@ async function runCodegen(options: CodegenOptions) {
 
   const codegenScript = path.join(
     options.reactNativePath,
-    'scripts/generate-codegen-artifacts.js'
+    'scripts/generate-codegen-artifacts.js',
   );
 
   try {

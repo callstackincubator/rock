@@ -2,8 +2,8 @@
 pageType: home
 
 hero:
-  image: 
-    src: 
+  image:
+    src:
       light: /logo-light.svg
       dark: /logo-dark.svg
     alt: React Native Enterprise Framework logo

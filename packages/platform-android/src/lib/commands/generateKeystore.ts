@@ -17,7 +17,7 @@ import { getValidProjectConfig } from './getValidProjectConfig.js';
 
 export function registerCreateKeystoreCommand(
   api: PluginApi,
-  pluginConfig: AndroidProjectConfig | undefined
+  pluginConfig: AndroidProjectConfig | undefined,
 ) {
   api.registerCommand({
     name: 'create-keystore:android',
@@ -25,7 +25,7 @@ export function registerCreateKeystoreCommand(
     action: async (args) => {
       const androidConfig = getValidProjectConfig(
         api.getProjectRoot(),
-        pluginConfig
+        pluginConfig,
       );
       await generateKeystore(androidConfig, args);
     },
@@ -35,7 +35,7 @@ export function registerCreateKeystoreCommand(
 
 export async function generateKeystore(
   androidProject: AndroidProjectConfig,
-  args: Flags
+  args: Flags,
 ) {
   intro('Generate a keystore file for signing Android release builds.');
   await runKeytool(androidProject, args);
@@ -52,10 +52,10 @@ async function runKeytool(androidProject: AndroidProjectConfig, args: Flags) {
   const keystoreOutputPath = path.join(
     androidProject.sourceDir,
     androidProject.appName,
-    `${name}.keystore`
+    `${name}.keystore`,
   );
   logger.info(
-    `Running "keytool" command. You'll be further prompted for password and extra information.`
+    `Running "keytool" command. You'll be further prompted for password and extra information.`,
   );
   logger.log('');
   try {
@@ -76,14 +76,14 @@ async function runKeytool(androidProject: AndroidProjectConfig, args: Flags) {
         '-validity',
         '10000',
       ],
-      { stdio: 'inherit' }
+      { stdio: 'inherit' },
     );
 
     logger.success(`Keystore generated at: ${colorLink(keystoreOutputPath)}`);
     logger.warn(
       `Edit the ${colorLink('~/.gradle/gradle.properties')} or ${colorLink(
-        './android/gradle.properties'
-      )} file, and add the following (replace ***** with the correct keystore password):`
+        './android/gradle.properties',
+      )} file, and add the following (replace ***** with the correct keystore password):`,
     );
     // use console log to make it easy to copy-paste without messing with "|" characters injected by `logger.log`
     console.log(
@@ -91,14 +91,14 @@ async function runKeytool(androidProject: AndroidProjectConfig, args: Flags) {
    RNEF_UPLOAD_STORE_FILE=release.keystore
    RNEF_UPLOAD_KEY_ALIAS=rnef-alias
    RNEF_UPLOAD_STORE_PASSWORD=*****
-   RNEF_UPLOAD_KEY_PASSWORD=*****`)
+   RNEF_UPLOAD_KEY_PASSWORD=*****`),
     );
   } catch (error) {
     throw new RnefError(
       `Failed to generate keystore. Please try manually by following instructions at: ${colorLink(
-        'https://reactnative.dev/docs/signed-apk-android'
+        'https://reactnative.dev/docs/signed-apk-android',
       )}`,
-      { cause: (error as SubprocessError).stderr }
+      { cause: (error as SubprocessError).stderr },
     );
   }
 }
