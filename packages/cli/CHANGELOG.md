@@ -1,5 +1,17 @@
 # @rnef/cli
 
+## 0.8.8
+
+### Patch Changes
+
+- 6800150: chore: bump and cleanup deps in root project
+- 07e3239: feat: uploadAdhocFolder for providers; support S3"
+- c20aa22: fix: check for args.binaryPath before bailing with no app.tar.gz
+- Updated dependencies [6800150]
+- Updated dependencies [07e3239]
+  - @rnef/config@0.8.8
+  - @rnef/tools@0.8.8
+
 ## 0.8.7
 
 ### Patch Changes

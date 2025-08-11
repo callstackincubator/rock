@@ -1,5 +1,14 @@
 # @rnef/provider-github
 
+## 0.8.8
+
+### Patch Changes
+
+- 6800150: chore: bump and cleanup deps in root project
+- Updated dependencies [6800150]
+- Updated dependencies [07e3239]
+  - @rnef/tools@0.8.8
+
 ## 0.8.7
 
 ### Patch Changes
