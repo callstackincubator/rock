@@ -1,5 +1,13 @@
 # @rnef/cli
 
+## 0.8.9
+
+### Patch Changes
+
+- d9102bf: fix: upload ad-hoc buffer
+  - @rnef/config@0.8.9
+  - @rnef/tools@0.8.9
+
 ## 0.8.8
 
 ### Patch Changes

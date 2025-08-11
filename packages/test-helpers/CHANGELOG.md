@@ -1,5 +1,7 @@
 # @rnef/test-helpers
 
+## 0.8.9
+
 ## 0.8.8
 
 ### Patch Changes

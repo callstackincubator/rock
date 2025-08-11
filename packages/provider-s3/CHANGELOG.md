@@ -1,5 +1,11 @@
 # @rnef/provider-s3
 
+## 0.8.9
+
+### Patch Changes
+
+- @rnef/tools@0.8.9
+
 ## 0.8.8
 
 ### Patch Changes
