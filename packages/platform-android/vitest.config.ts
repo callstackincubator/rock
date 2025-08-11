@@ -1,8 +1,9 @@
-import { defineConfig } from 'vite';
+import { defineConfig } from 'vitest/config';
 
 export default defineConfig({
   root: __dirname,
-  cacheDir: '../../node_modules/.vite/packages/tools',
+  cacheDir: '../../node_modules/.vite/packages/platform-android',
+
   test: {
     watch: false,
     globals: true,
@@ -10,8 +11,9 @@ export default defineConfig({
     include: ['src/**/*.{test,spec}.{js,mjs,cjs,ts,mts,cts,jsx,tsx}'],
     reporters: ['default'],
     coverage: {
-      reportsDirectory: '../../coverage/packages/tools',
+      reportsDirectory: '../../coverage/packages/platform-android',
       provider: 'v8',
     },
+    setupFiles: ['./vitest-setup.ts'],
   },
 });
