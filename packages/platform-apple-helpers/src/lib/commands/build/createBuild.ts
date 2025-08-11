@@ -45,7 +45,7 @@ export const createBuild = async ({
 
   let xcodeProject: XcodeProjectInfo;
   let sourceDir: string;
-  let scheme: string | undefined;
+  let scheme = args.scheme;
   const deviceOrSimulator = args.destination
     ? // there can be multiple destinations, so we'll pick the first one
       args.destination[0].match(/simulator/i)
