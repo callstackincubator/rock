@@ -38,7 +38,7 @@
     "eslint-plugin-simple-import-sort": "^12.1.1",
     "fast-glob": "^3.3.3",
     "nano-spawn": "^0.2.1",
-    "prettier": "^2.8.8",
+    "prettier": "^3.6.2",
     "typescript": "5.9.2",
     "typescript-eslint": "^8.39.0",
     "verdaccio": "^6.1.6",
