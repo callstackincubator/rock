@@ -330,6 +330,10 @@ async function getBinaryBuffer(
   localArtifactPath: string,
   args: Flags
 ) {
+  // For ad-hoc, we don't need to zip the binary, we just upload the IPA
+  if (args.adHoc) {
+    return fs.readFileSync(binaryPath);
+  }
   const zip = new AdmZip();
   const isAppDirectory =
     binaryPath.endsWith('.app') && fs.statSync(binaryPath).isDirectory();
