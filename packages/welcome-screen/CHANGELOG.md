@@ -1,5 +1,11 @@
 # @rnef/welcome-screen
 
+## 0.8.8
+
+### Patch Changes
+
+- 6800150: chore: bump and cleanup deps in root project
+
 ## 0.8.7
 
 ## 0.8.6

@@ -1,5 +1,16 @@
 # @rnef/platform-apple-helpers
 
+## 0.8.8
+
+### Patch Changes
+
+- 241659b: chore: support RN prebuilds in 0.80 and 0.81
+- 6800150: chore: bump and cleanup deps in root project
+- 07e3239: feat: uploadAdhocFolder for providers; support S3"
+- Updated dependencies [6800150]
+- Updated dependencies [07e3239]
+  - @rnef/tools@0.8.8
+
 ## 0.8.7
 
 ### Patch Changes
