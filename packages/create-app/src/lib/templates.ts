@@ -91,7 +91,7 @@ export const PLATFORMS: TemplateInfo[] = [
 
 export function resolveTemplate(
   templates: TemplateInfo[],
-  name: string
+  name: string,
 ): TemplateInfo {
   // Check if the template is a template from the list
   const templateFromList = templates.find((t) => t.name === name);

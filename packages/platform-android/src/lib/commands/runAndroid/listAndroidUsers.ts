@@ -7,7 +7,7 @@ type User = {
 };
 
 const regex = new RegExp(
-  /^\s*UserInfo\{(?<userId>\d+):(?<userName>.*):(?<userFlags>[0-9a-f]*)}/
+  /^\s*UserInfo\{(?<userId>\d+):(?<userName>.*):(?<userFlags>[0-9a-f]*)}/,
 );
 
 export async function checkUsers(device: string): Promise<User[]> {
@@ -38,7 +38,7 @@ export async function checkUsers(device: string): Promise<User[]> {
       `Unexpected error while checking users on the device. Continuing without user selection. Error details: ${
         (error as { message: string }).message
       }.`,
-      1
+      1,
     );
     return [];
   }

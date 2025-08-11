@@ -44,7 +44,7 @@ export const pluginRepack =
         const platforms = api.getPlatforms();
         const { port, startDevServer } = await findDevServerPort(
           args.port ? Number(args.port) : 8081,
-          root
+          root,
         );
 
         if (!startDevServer) {
@@ -55,7 +55,7 @@ export const pluginRepack =
           [],
           // @ts-expect-error TODO fix getPlatforms type
           { root, platforms, ...pluginConfig },
-          { ...args, port }
+          { ...args, port },
         );
       },
       // @ts-expect-error fixup types
@@ -68,7 +68,7 @@ export const pluginRepack =
       action: async (args: BundleArgs) => {
         if (!args.entryFile) {
           throw new RnefError(
-            '"rnef bundle" command is missing "--entry-file" argument.'
+            '"rnef bundle" command is missing "--entry-file" argument.',
           );
         }
         intro('Compiling JS bundle with Re.Pack');
@@ -78,13 +78,13 @@ export const pluginRepack =
           [],
           // @ts-expect-error TODO fix getPlatforms type
           { root, platforms, ...pluginConfig },
-          args
+          args,
         );
 
         if (args.hermes) {
           if (!args.bundleOutput) {
             throw new RnefError(
-              'Missing "--bundle-output" argument to run "bundle --hermes".'
+              'Missing "--bundle-output" argument to run "bundle --hermes".',
             );
           }
 
@@ -95,13 +95,11 @@ export const pluginRepack =
             sourcemapOutputPath: args.sourcemapOutput,
           });
           loader.stop(
-            `Hermes bytecode bundle created at: ${colorLink(
-              args.bundleOutput
-            )}`
+            `Hermes bytecode bundle created at: ${colorLink(args.bundleOutput)}`,
           );
         } else if (args.bundleOutput) {
           logger.info(
-            `JavaScript bundle created at: ${colorLink(args.bundleOutput)}`
+            `JavaScript bundle created at: ${colorLink(args.bundleOutput)}`,
           );
         }
       },

@@ -11,7 +11,7 @@ export function formatValidationError(config: unknown, error: any): string {
       value.some((item) => typeof item === 'function')
     ) {
       return value.map((item) =>
-        typeof item === 'function' ? '[Function]' : item
+        typeof item === 'function' ? '[Function]' : item,
       );
     }
     return value;
@@ -36,6 +36,6 @@ export function formatValidationError(config: unknown, error: any): string {
   return codeFrameColumns(
     configString,
     { start: { line, column } },
-    { message: error.message, highlightCode: true }
+    { message: error.message, highlightCode: true },
   );
 }

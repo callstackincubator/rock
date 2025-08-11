@@ -20,7 +20,7 @@ type NativeFingerprintCommandOptions = {
 export async function nativeFingerprintCommand(
   path: string,
   { extraSources, ignorePaths }: FingerprintSources,
-  options: NativeFingerprintCommandOptions
+  options: NativeFingerprintCommandOptions,
 ) {
   validateOptions(options);
   const platform = options.platform;
@@ -41,8 +41,8 @@ export async function nativeFingerprintCommand(
           sources: fingerprint.sources.filter((source) => source.hash != null),
         },
         null,
-        2
-      )
+        2,
+      ),
     );
     return;
   }
@@ -60,15 +60,17 @@ export async function nativeFingerprintCommand(
   });
   const duration = performance.now() - start;
 
-  loader.stop(`Fingerprint calculated: ${color.bold(color.magenta(fingerprint.hash))}`);
+  loader.stop(
+    `Fingerprint calculated: ${color.bold(color.magenta(fingerprint.hash))}`,
+  );
 
   logger.debug(
     'Sources:',
     JSON.stringify(
       fingerprint.sources.filter((source) => source.hash != null),
       null,
-      2
-    )
+      2,
+    ),
   );
   logger.debug(`Duration: ${(duration / 1000).toFixed(1)}s`);
 
@@ -78,12 +80,12 @@ export async function nativeFingerprintCommand(
 function validateOptions(options: NativeFingerprintCommandOptions) {
   if (!options.platform) {
     throw new RnefError(
-      'The --platform flag is required. Please specify either "ios" or "android".'
+      'The --platform flag is required. Please specify either "ios" or "android".',
     );
   }
   if (options.platform !== 'ios' && options.platform !== 'android') {
     throw new RnefError(
-      `Unsupported platform "${options.platform}". Please specify either "ios" or "android".`
+      `Unsupported platform "${options.platform}". Please specify either "ios" or "android".`,
     );
   }
 }

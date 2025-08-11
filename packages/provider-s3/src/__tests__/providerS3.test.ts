@@ -22,25 +22,26 @@ vi.mock('@aws-sdk/s3-request-presigner', () => {
   return {
     getSignedUrl: vi.fn(
       () =>
-        'https://test-bucket.s3.amazonaws.com/rnef-artifacts/rnef-android-debug-1234567890.zip'
+        'https://test-bucket.s3.amazonaws.com/rnef-artifacts/rnef-android-debug-1234567890.zip',
     ),
   };
 });
 
 vi.mock('@aws-sdk/lib-storage', () => {
-  const Upload = vi
-    .fn()
-    .mockImplementation(function Upload(this: any, _opts: any) {
-      this.on = vi.fn(
-        (event: string, cb: (p: { loaded: number; total: number }) => void) => {
-          if (event === 'httpUploadProgress') {
-            cb({ loaded: 5, total: 10 });
-            cb({ loaded: 10, total: 10 });
-          }
+  const Upload = vi.fn().mockImplementation(function Upload(
+    this: any,
+    _opts: any,
+  ) {
+    this.on = vi.fn(
+      (event: string, cb: (p: { loaded: number; total: number }) => void) => {
+        if (event === 'httpUploadProgress') {
+          cb({ loaded: 5, total: 10 });
+          cb({ loaded: 10, total: 10 });
         }
-      );
-      this.done = vi.fn(async () => {});
-    });
+      },
+    );
+    this.done = vi.fn(async () => {});
+  });
   return { Upload };
 });
 
@@ -166,7 +167,7 @@ test('providerS3 implements upload method', async () => {
         Key: 'rnef-artifacts/rnef-android-debug-1234567890.zip',
         Body: buffer,
       }),
-    })
+    }),
   );
 
   expect({ name, url }).toEqual({

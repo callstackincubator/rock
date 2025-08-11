@@ -5,7 +5,7 @@
  * LICENSE file in the root directory of this source tree.
  */
 
-import type {CustomResolver} from 'metro-resolver';
+import type { CustomResolver } from 'metro-resolver';
 
 /**
  * This is an implementation of a metro resolveRequest option which will remap react-native imports
@@ -23,7 +23,7 @@ import type {CustomResolver} from 'metro-resolver';
  */
 export function reactNativePlatformResolver(
   platformImplementations: {
-    [platform: string]: string,
+    [platform: string]: string;
   },
   customResolver: CustomResolver | null | undefined,
 ): CustomResolver {

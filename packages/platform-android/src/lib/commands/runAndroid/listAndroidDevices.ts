@@ -20,7 +20,7 @@ async function getEmulatorName(deviceId: string) {
   const { output } = await spawn(
     adbPath,
     ['-s', deviceId, 'emu', 'avd', 'name'],
-    { stdio: 'pipe' }
+    { stdio: 'pipe' },
   );
 
   // 1st line should get us emu name
@@ -40,7 +40,7 @@ async function getPhoneName(deviceId: string) {
   const { output } = await spawn(
     adbPath,
     ['-s', deviceId, 'shell', 'getprop', 'ro.product.model'],
-    { stdio: 'pipe' }
+    { stdio: 'pipe' },
   );
   return output.replace(/\[ro\.product\.model\]:\s*\[(.*)\]/, '$1').trim();
 }

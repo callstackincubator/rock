@@ -53,7 +53,7 @@ test('dummy remote cache provider downloads artifacts', async () => {
   });
   const response = await artifact?.text();
   expect(response).toEqual(
-    'rnef-android-debug-7af554b93cd696ca95308fdebe3a4484001bb7b4'
+    'rnef-android-debug-7af554b93cd696ca95308fdebe3a4484001bb7b4',
   );
 });
 

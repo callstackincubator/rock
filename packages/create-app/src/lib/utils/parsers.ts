@@ -22,7 +22,7 @@ export type PackageManagerInfo = {
 };
 
 export function parsePackageManagerFromUserAgent(
-  userAgent: string | undefined
+  userAgent: string | undefined,
 ): PackageManagerInfo | undefined {
   if (!userAgent) {
     return undefined;

@@ -10,11 +10,11 @@ import type { ApplePlatform, ProjectConfig } from '../types/index.js';
 export function getValidProjectConfig(
   platformName: ApplePlatform,
   projectRoot: string,
-  userConfig: IOSProjectParams = {}
+  userConfig: IOSProjectParams = {},
 ): ProjectConfig {
   const newProjectConfig = getProjectConfig({ platformName })(
     projectRoot,
-    userConfig
+    userConfig,
   );
   if (!newProjectConfig || newProjectConfig.xcodeProject === null) {
     throw new RnefError('Failed to get Xcode project information');

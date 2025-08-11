@@ -29,7 +29,7 @@ const ARTIFACTS = [
 test('providerGitHub implements list method returning an array of artifacts', async () => {
   const limit = 1;
   (global.fetch as Mock).mockResolvedValue(
-    new Response(JSON.stringify({ artifacts: ARTIFACTS.slice(0, limit) }))
+    new Response(JSON.stringify({ artifacts: ARTIFACTS.slice(0, limit) })),
   );
   const cacheProvider = providerGitHub({
     owner: 'callstack',
@@ -46,7 +46,7 @@ test('providerGitHub implements list method returning an array of artifacts', as
       headers: {
         Authorization: 'token TEST_TOKEN',
       },
-    }
+    },
   );
   expect(result).toEqual([
     {
@@ -67,7 +67,7 @@ test('providerGitHub implements download method returning a stream with artifact
       'https://api.github.com/repos/callstack/rnef/actions/artifacts?per_page=100&page=1&name=rnef-android-debug-1234567890'
     ) {
       return Promise.resolve(
-        new Response(JSON.stringify({ artifacts: ARTIFACTS.slice(0, limit) }))
+        new Response(JSON.stringify({ artifacts: ARTIFACTS.slice(0, limit) })),
       );
     }
     if (
@@ -100,7 +100,7 @@ test('providerGitHub implements delete method', async () => {
       'https://api.github.com/repos/callstack/rnef/actions/artifacts?per_page=100&page=1&name=rnef-android-debug-1234567890'
     ) {
       return Promise.resolve(
-        new Response(JSON.stringify({ artifacts: ARTIFACTS }))
+        new Response(JSON.stringify({ artifacts: ARTIFACTS })),
       );
     }
     if (
@@ -147,8 +147,8 @@ test('providerGitHub does not implement upload method', async () => {
     token: 'TEST_TOKEN',
   })();
   await expect(
-    cacheProvider.upload({ artifactName: 'rnef-android-debug-1234567890' })
+    cacheProvider.upload({ artifactName: 'rnef-android-debug-1234567890' }),
   ).rejects.toThrow(
-    'Uploading artifacts to GitHub is not supported through GitHub API. See: https://docs.github.com/en/rest/actions/artifacts?apiVersion=2022-11-28'
+    'Uploading artifacts to GitHub is not supported through GitHub API. See: https://docs.github.com/en/rest/actions/artifacts?apiVersion=2022-11-28',
   );
 });

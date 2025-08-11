@@ -6,7 +6,7 @@ describe('normalizeProjectName', () => {
     expect(normalizeProjectName('hello')).toBe('Hello');
     expect(normalizeProjectName('hello-world')).toBe('HelloWorld');
     expect(normalizeProjectName('hello-world-long-name')).toBe(
-      'HelloWorldLongName'
+      'HelloWorldLongName',
     );
   });
 
@@ -14,7 +14,7 @@ describe('normalizeProjectName', () => {
     expect(normalizeProjectName('Hello')).toBe('Hello');
     expect(normalizeProjectName('HelloWorld')).toBe('HelloWorld');
     expect(normalizeProjectName('HelloWorldLongName')).toBe(
-      'HelloWorldLongName'
+      'HelloWorldLongName',
     );
   });
 

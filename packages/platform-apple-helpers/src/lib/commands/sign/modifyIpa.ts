@@ -1,6 +1,5 @@
 import fs from 'node:fs';
-import type {
-  SubprocessError} from '@rnef/tools';
+import type { SubprocessError } from '@rnef/tools';
 import {
   color,
   colorLink,
@@ -11,7 +10,7 @@ import {
   relativeToCwd,
   RnefError,
   spawn,
-  spinner
+  spinner,
 } from '@rnef/tools';
 import { promptSigningIdentity } from '../../utils/signingIdentities.js';
 import { buildJsBundle } from './bundle.js';
@@ -54,32 +53,32 @@ export const modifyIpa = async (options: ModifyIpaOptions) => {
       useHermes: options.useHermes ?? true,
     });
     loader.stop(
-      `Built JS bundle: ${colorLink(relativeToCwd(appPaths.jsBundle))}`
+      `Built JS bundle: ${colorLink(relativeToCwd(appPaths.jsBundle))}`,
     );
   } else if (options.jsBundlePath) {
     loader.start('Replacing JS bundle');
     fs.copyFileSync(options.jsBundlePath, appPaths.jsBundle);
     loader.stop(
       `Replaced JS bundle with ${colorLink(
-        relativeToCwd(options.jsBundlePath)
-      )}`
+        relativeToCwd(options.jsBundlePath),
+      )}`,
     );
   }
 
   // 3. Sign the IPA contents
   await decodeProvisioningProfileToPlist(
     appPaths.provisioningProfile,
-    tempPaths.provisioningPlist
+    tempPaths.provisioningPlist,
   );
 
   let identity = options.identity;
   if (!identity) {
     const currentIdentity = await getIdentityFromProvisioningPlist(
-      tempPaths.provisioningPlist
+      tempPaths.provisioningPlist,
     );
     if (currentIdentity) {
       logger.debug(
-        `Extracted identity from provisioning profile: ${currentIdentity}`
+        `Extracted identity from provisioning profile: ${currentIdentity}`,
       );
     }
 
@@ -122,25 +121,25 @@ export const modifyIpa = async (options: ModifyIpaOptions) => {
 function validateOptions(options: ModifyIpaOptions) {
   if (!fs.existsSync(options.ipaPath)) {
     throw new RnefError(
-      `IPA file not found at "${options.ipaPath}". Please provide a correct path.`
+      `IPA file not found at "${options.ipaPath}". Please provide a correct path.`,
     );
   }
 
   if (!options.identity && !isInteractive()) {
     throw new RnefError(
-      'The "--identity" flag is required in non-interactive environments, such as CI. Please pass one.'
+      'The "--identity" flag is required in non-interactive environments, such as CI. Please pass one.',
     );
   }
 
   if (options.buildJsBundle && options.jsBundlePath) {
     throw new RnefError(
-      'The "--build-jsbundle" flag is incompatible with "--jsbundle". Pick one.'
+      'The "--build-jsbundle" flag is incompatible with "--jsbundle". Pick one.',
     );
   }
 
   if (options.jsBundlePath && !fs.existsSync(options.jsBundlePath)) {
     throw new RnefError(
-      `JS bundle file not found at "${options.jsBundlePath}". Please provide a correct path.`
+      `JS bundle file not found at "${options.jsBundlePath}". Please provide a correct path.`,
     );
   }
 }

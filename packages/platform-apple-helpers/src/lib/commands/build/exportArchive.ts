@@ -28,15 +28,15 @@ export const exportArchive = async ({
   loader.start('Exporting the archive...');
   const exportOptionsPlistPath = path.join(
     sourceDir,
-    exportOptionsPlist ?? 'ExportOptions.plist'
+    exportOptionsPlist ?? 'ExportOptions.plist',
   );
 
   if (!existsSync(exportOptionsPlistPath)) {
     loader.stop('Failed to export the archive.', 1);
     throw new RnefError(
       `ExportOptions.plist not found, please create ${colorLink(
-        relativeToCwd(exportOptionsPlistPath)
-      )} file with valid configuration for Archive export.`
+        relativeToCwd(exportOptionsPlistPath),
+      )} file with valid configuration for Archive export.`,
     );
   }
 
@@ -67,8 +67,8 @@ export const exportArchive = async ({
 
     loader.stop(
       `Archive available at: ${colorLink(
-        path.join(exportDir, ipaFiles[0]) ?? exportDir
-      )}`
+        path.join(exportDir, ipaFiles[0]) ?? exportDir,
+      )}`,
     );
     return { ipaPath: path.join(exportDir, ipaFiles[0]) };
   } catch (error) {

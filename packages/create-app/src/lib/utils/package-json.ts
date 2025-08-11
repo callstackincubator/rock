@@ -34,24 +34,24 @@ export function rewritePackageJson(projectPath: string, packageName: string) {
 
   if (packageJson.dependencies) {
     packageJson.dependencies = Object.fromEntries(
-      Object.entries(packageJson.dependencies).sort()
+      Object.entries(packageJson.dependencies).sort(),
     );
   }
 
   if (packageJson.devDependencies) {
     packageJson.devDependencies = Object.fromEntries(
-      Object.entries(packageJson.devDependencies).sort()
+      Object.entries(packageJson.devDependencies).sort(),
     );
   }
   if (packageJson.peerDependencies) {
     packageJson.peerDependencies = Object.fromEntries(
-      Object.entries(packageJson.peerDependencies).sort()
+      Object.entries(packageJson.peerDependencies).sort(),
     );
   }
 
   fs.writeFileSync(
     packageJsonPath,
-    JSON.stringify(sortPackageJson(packageJson), null, 2)
+    JSON.stringify(sortPackageJson(packageJson), null, 2),
   );
 }
 

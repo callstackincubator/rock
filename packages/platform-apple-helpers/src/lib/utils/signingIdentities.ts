@@ -37,7 +37,7 @@ export async function getValidSigningIdentities(): Promise<SigningIdentity[]> {
     const { output } = await spawn(
       'security',
       ['find-identity', '-v', '-p', 'codesigning'],
-      { stdio: 'pipe' }
+      { stdio: 'pipe' },
     );
 
     return parseSigningIdentities(output);

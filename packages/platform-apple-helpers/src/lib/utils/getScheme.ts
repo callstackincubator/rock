@@ -5,14 +5,14 @@ import type { Info } from '../types/index.js';
 export async function getScheme(
   schemes: Info['schemes'],
   preselectedScheme: string | undefined,
-  projectName: string
+  projectName: string,
 ) {
   let scheme = preselectedScheme;
   if (schemes && schemes.length > 1 && !preselectedScheme) {
     if (isInteractive()) {
       scheme = await promptForSchemeSelection(schemes);
       logger.info(
-        `You can set scheme manually next time using "--scheme ${scheme}" flag.`
+        `You can set scheme manually next time using "--scheme ${scheme}" flag.`,
       );
     }
   }
@@ -26,7 +26,7 @@ export async function getScheme(
 function invalidateScheme(schemes: Info['schemes'], scheme: string) {
   if (!schemes || schemes.length === 0) {
     logger.warn(
-      `Unable to check whether "${scheme}" scheme exists in your project`
+      `Unable to check whether "${scheme}" scheme exists in your project`,
     );
     return;
   }
@@ -34,7 +34,7 @@ function invalidateScheme(schemes: Info['schemes'], scheme: string) {
     throw new RnefError(
       `Scheme "${scheme}" doesn't exist. Please use one of the existing schemes: ${schemes
         .map((scheme) => `\n- ${scheme}`)
-        .join('')}`
+        .join('')}`,
     );
   }
 }

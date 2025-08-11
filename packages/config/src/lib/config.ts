@@ -84,7 +84,7 @@ const extensions = ['.js', '.ts', '.mjs'];
 
 const importUp = async (
   dir: string,
-  name: string
+  name: string,
 ): Promise<{
   config: ConfigType;
   filePathWithExt: string;
@@ -99,7 +99,7 @@ const importUp = async (
 
       if (ext === '.mjs') {
         config = await import(pathToFileURL(filePathWithExt).href).then(
-          (module) => module.default
+          (module) => module.default,
         );
       } else {
         const require = createRequire(import.meta.url);
@@ -125,15 +125,15 @@ export async function getConfig(
       platforms: ConfigOutput['platforms'];
       root: ConfigOutput['root'];
     }) => PluginType
-  >
+  >,
 ): Promise<ConfigOutput> {
   const { config, filePathWithExt, configDir } = await importUp(
     dir,
-    'rnef.config'
+    'rnef.config',
   );
 
   const { error, value: validatedConfig } = ConfigTypeSchema.validate(
-    config
+    config,
   ) as {
     error: ValidationError | null;
     value: ConfigType;
@@ -142,8 +142,8 @@ export async function getConfig(
   if (error) {
     logger.error(
       `Invalid ${colorLink(
-        path.relative(configDir, filePathWithExt)
-      )} file:\n` + formatValidationError(config, error)
+        path.relative(configDir, filePathWithExt),
+      )} file:\n` + formatValidationError(config, error),
     );
     process.exit(1);
   }
@@ -154,7 +154,7 @@ export async function getConfig(
 
   if (!fs.existsSync(projectRoot)) {
     logger.error(
-      `Project root ${projectRoot} does not exist. Please check your config file.`
+      `Project root ${projectRoot} does not exist. Please check your config file.`,
     );
     process.exit(1);
   }
@@ -204,7 +204,7 @@ export async function getConfig(
     assignOriginToCommand(
       internalPlugin({ root: projectRoot, platforms }),
       api,
-      validatedConfig
+      validatedConfig,
     );
   }
 
@@ -226,10 +226,10 @@ function getReactNativeVersion(root: string) {
         path.join(
           require.resolve('react-native', { paths: [root] }),
           '..',
-          'package.json'
+          'package.json',
         ),
-        'utf-8'
-      )
+        'utf-8',
+      ),
     ).version;
   } catch {
     return 'unknown';
@@ -248,7 +248,7 @@ function resolveReactNativePath(root: string) {
 function assignOriginToCommand(
   plugin: PluginType,
   api: PluginApi,
-  config: ConfigType
+  config: ConfigType,
 ) {
   const len = config.commands?.length ?? 0;
   const { name } = plugin(api);

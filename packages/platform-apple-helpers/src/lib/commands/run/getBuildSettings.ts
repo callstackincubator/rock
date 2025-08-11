@@ -51,7 +51,7 @@ export async function getBuildSettings({
       '-showBuildSettings',
       '-json',
     ],
-    { cwd: sourceDir, stdio: 'pipe' }
+    { cwd: sourceDir, stdio: 'pipe' },
   );
 
   const settings = JSON.parse(buildSettings);
@@ -67,8 +67,8 @@ export async function getBuildSettings({
     if (!targets.includes(target)) {
       logger.info(
         `Target ${color.bold(target)} not found for scheme ${color.bold(
-          scheme
-        )}, automatically selected target ${color.bold(selectedTarget)}`
+          scheme,
+        )}, automatically selected target ${color.bold(selectedTarget)}`,
       );
     } else {
       selectedTarget = target;
@@ -101,13 +101,13 @@ export async function getBuildSettings({
   }
 
   throw new RnefError(
-    `Failed to get build settings for your project. Looking for "app" or "framework" wrapper extension but found: ${wrapperExtension}`
+    `Failed to get build settings for your project. Looking for "app" or "framework" wrapper extension but found: ${wrapperExtension}`,
   );
 }
 
 function getBuildPath(
   buildSettings: BuildSettings,
-  platformName: ApplePlatform
+  platformName: ApplePlatform,
 ) {
   const targetBuildDir = buildSettings.TARGET_BUILD_DIR;
   const executableFolderPath = buildSettings.EXECUTABLE_FOLDER_PATH;

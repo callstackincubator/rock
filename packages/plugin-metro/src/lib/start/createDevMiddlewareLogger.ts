@@ -14,7 +14,7 @@ type LoggerFn = (...message: ReadonlyArray<string>) => void;
  * terminal reporter.
  */
 export default function createDevMiddlewareLogger(
-  reporter: TerminalReporter
+  reporter: TerminalReporter,
 ): Readonly<{
   info: LoggerFn;
   error: LoggerFn;
@@ -29,7 +29,7 @@ export default function createDevMiddlewareLogger(
 
 function makeLogger(
   reporter: TerminalReporter,
-  level: 'info' | 'warn' | 'error'
+  level: 'info' | 'warn' | 'error',
 ): LoggerFn {
   return (...data: Array<unknown>) =>
     reporter.update({

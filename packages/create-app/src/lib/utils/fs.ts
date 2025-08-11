@@ -15,7 +15,7 @@ type CopyDirOptions = {
 export function copyDirSync(
   from: string,
   to: string,
-  { skipFiles = [] }: CopyDirOptions = {}
+  { skipFiles = [] }: CopyDirOptions = {},
 ) {
   fs.mkdirSync(to, { recursive: true });
 
@@ -56,7 +56,7 @@ export function walkDirectory(currentPath: string): string[] {
 export function renameFile(filePath: string, oldName: string, newName: string) {
   const newFileName = nodePath.join(
     nodePath.dirname(filePath),
-    nodePath.basename(filePath).replaceAll(oldName, newName)
+    nodePath.basename(filePath).replaceAll(oldName, newName),
   );
 
   fs.renameSync(filePath, newFileName);

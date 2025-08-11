@@ -25,7 +25,7 @@ export async function installPodsIfNeeded(
   sourceDir: string,
   newArch: boolean,
   reactNativePath: string,
-  brownfield?: boolean
+  brownfield?: boolean,
 ) {
   const podsPath = path.join(sourceDir, 'Pods');
   const podfilePath = path.join(sourceDir, 'Podfile');
@@ -39,7 +39,7 @@ export async function installPodsIfNeeded(
   const hashChanged = cachedDependenciesHash
     ? !compareMd5Hashes(
         calculateCurrentHash({ podfilePath, podsPath, nativeDependencies }),
-        cachedDependenciesHash
+        cachedDependenciesHash,
       )
     : true;
 
@@ -54,7 +54,7 @@ export async function installPodsIfNeeded(
     });
     cacheManager.set(
       cacheKey,
-      calculateCurrentHash({ podfilePath, podsPath, nativeDependencies })
+      calculateCurrentHash({ podfilePath, podsPath, nativeDependencies }),
     );
   }
 }
@@ -76,7 +76,7 @@ const calculateCurrentHash = ({
   } catch {
     throw new RnefError(
       `No Podfile found at: ${podfilePath}.
-${podErrorHelpMessage}`
+${podErrorHelpMessage}`,
     );
   }
 
@@ -159,7 +159,7 @@ async function runPodInstall(options: {
       throw new RnefError(
         `CocoaPods installation failed. 
 ${podErrorHelpMessage}`,
-        { cause: stderr }
+        { cause: stderr },
       );
     }
   }
@@ -184,7 +184,7 @@ async function runPodUpdate(cwd: string, useBundler: boolean) {
     throw new RnefError(
       `Failed to update CocoaPods repositories for iOS project.
 ${podErrorHelpMessage}`,
-      { cause: stderr }
+      { cause: stderr },
     );
   }
 }
@@ -198,13 +198,13 @@ async function installPods(options: {
 }) {
   if (!fs.existsSync(options.podfilePath)) {
     logger.debug(
-      `No Podfile at ${options.podfilePath}. Skipping pod installation.`
+      `No Podfile at ${options.podfilePath}. Skipping pod installation.`,
     );
     return;
   }
   const useBundler = await runBundleInstall(
     options.sourceDir,
-    options.projectRoot
+    options.projectRoot,
   );
   if (!useBundler) {
     logger.info('Unable to use Ruby bundler, falling back to "pod install"');
@@ -230,7 +230,7 @@ async function validatePodCommand(sourceDir: string) {
     if (cause instanceof Error && cause.message.includes('ENOENT')) {
       throw new RnefError(
         `The "pod" command is not available.
-${podErrorHelpMessage}`
+${podErrorHelpMessage}`,
       );
     }
     const stderr =
@@ -238,7 +238,7 @@ ${podErrorHelpMessage}`
     throw new RnefError(
       `CocoaPods "pod" command failed.
 ${podErrorHelpMessage}`,
-      { cause: stderr }
+      { cause: stderr },
     );
   }
 }
@@ -262,9 +262,9 @@ async function runBundleInstall(sourceDir: string, projectRoot: string) {
       `Could not find the Gemfile at: ${colorLink(gemfilePath)}
 The default React Native Template uses Gemfile to leverage Ruby Bundler and we advice the same.
 If you use Gemfile, make sure it's ${color.bold(
-        'in the project root directory'
+        'in the project root directory',
       )}.
-Falling back to installing CocoaPods using globally installed "pod".`
+Falling back to installing CocoaPods using globally installed "pod".`,
     );
     return false;
   }
@@ -272,7 +272,7 @@ Falling back to installing CocoaPods using globally installed "pod".`
   if (!checkGemfileForCocoaPods(gemfilePath)) {
     logger.debug(
       `CocoaPods not found in Gemfile at: ${colorLink(gemfilePath)}
-skipping Ruby Gems installation.`
+skipping Ruby Gems installation.`,
     );
     return false;
   }
@@ -288,7 +288,7 @@ skipping Ruby Gems installation.`
     throw new RnefError(
       `Failed to install Ruby Gems with "bundle install".
 ${podErrorHelpMessage}`,
-      { cause: stderr }
+      { cause: stderr },
     );
   }
 
@@ -312,7 +312,7 @@ async function getNativeDependencies(platformName: ApplePlatform) {
               platformName
             ] as IOSDependencyConfig
           ).version
-        }`
+        }`,
     )
     .sort();
 }

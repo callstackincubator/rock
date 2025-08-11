@@ -20,7 +20,8 @@ const ARGUMENTS = [
 const OPTIONS = [
   {
     name: '--app',
-    description: 'Modify APP file (directory) instead of IPA file. No signing is done.',
+    description:
+      'Modify APP file (directory) instead of IPA file. No signing is done.',
   },
   {
     name: '--identity <string>',

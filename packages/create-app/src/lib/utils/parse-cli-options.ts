@@ -50,7 +50,7 @@ export function parseCliOptions(argv: string[]): CliOptions {
 }
 
 function ensureOptionalString(
-  value: string | string[] | undefined
+  value: string | string[] | undefined,
 ): string | undefined {
   if (value == undefined) {
     return undefined;

@@ -49,12 +49,12 @@ export async function signAndroid(options: SignAndroidOptions) {
       assetsDestPath: path.join(tempPath, 'res'),
       sourcemapOutputPath: path.join(
         tempPath,
-        'index.android.bundle.packager.map'
+        'index.android.bundle.packager.map',
       ),
       useHermes: options.useHermes ?? true,
     });
     loader.stop(
-      `Built JS bundle: ${colorLink(relativeToCwd(bundleOutputPath))}`
+      `Built JS bundle: ${colorLink(relativeToCwd(bundleOutputPath))}`,
     );
 
     options.jsBundlePath = bundleOutputPath;
@@ -72,7 +72,7 @@ export async function signAndroid(options: SignAndroidOptions) {
   } catch (error) {
     throw new RnefError(
       `Failed to initialize output APK file: ${options.outputPath}`,
-      { cause: (error as SubprocessError).stderr }
+      { cause: (error as SubprocessError).stderr },
     );
   }
   loader.stop(`Initialized output APK.`);
@@ -86,8 +86,8 @@ export async function signAndroid(options: SignAndroidOptions) {
     });
     loader.stop(
       `Replaced JS bundle with ${colorLink(
-        relativeToCwd(options.jsBundlePath)
-      )}.`
+        relativeToCwd(options.jsBundlePath),
+      )}.`,
     );
   }
 
@@ -96,7 +96,7 @@ export async function signAndroid(options: SignAndroidOptions) {
   const outputApkPath = options.outputPath ?? options.apkPath;
   await alignApkFile(tempApkPath, outputApkPath);
   loader.stop(
-    `Created output APK file: ${colorLink(relativeToCwd(outputApkPath))}.`
+    `Created output APK file: ${colorLink(relativeToCwd(outputApkPath))}.`,
   );
 
   // 5. Sign APK file
@@ -121,7 +121,7 @@ function validateOptions(options: SignAndroidOptions) {
 
   if (options.buildJsBundle && options.jsBundlePath) {
     throw new RnefError(
-      'The "--build-jsbundle" flag is incompatible with "--jsbundle". Pick one.'
+      'The "--build-jsbundle" flag is incompatible with "--jsbundle". Pick one.',
     );
   }
 
@@ -147,7 +147,7 @@ async function replaceJsBundle({
   } catch (error) {
     throw new RnefError(
       `Failed to replace JS bundle in destination file: ${apkPath}}`,
-      { cause: error }
+      { cause: error },
     );
   }
 }
@@ -164,9 +164,9 @@ async function alignApkFile(inputApkPath: string, outputApkPath: string) {
   if (!zipAlignPath) {
     throw new RnefError(
       `"zipalign" not found in Android Build-Tools directory: ${colorLink(
-        getAndroidBuildToolsPath()
+        getAndroidBuildToolsPath(),
       )}
-Please follow instructions at: https://reactnative.dev/docs/set-up-your-environment?platform=android'`
+Please follow instructions at: https://reactnative.dev/docs/set-up-your-environment?platform=android'`,
     );
   }
 
@@ -185,7 +185,7 @@ Please follow instructions at: https://reactnative.dev/docs/set-up-your-environm
   } catch (error) {
     throw new RnefError(
       `Failed to align APK file: ${zipAlignPath} ${zipalignArgs.join(' ')}`,
-      { cause: (error as SubprocessError).stderr }
+      { cause: (error as SubprocessError).stderr },
     );
   }
 }
@@ -207,7 +207,7 @@ async function signApkFile({
 }: SignApkOptions) {
   if (!fs.existsSync(keystorePath)) {
     throw new RnefError(
-      `Keystore file not found "${keystorePath}". Provide a valid keystore path using the "--keystore" option.`
+      `Keystore file not found "${keystorePath}". Provide a valid keystore path using the "--keystore" option.`,
     );
   }
 
@@ -215,9 +215,9 @@ async function signApkFile({
   if (!apksignerPath) {
     throw new RnefError(
       `"apksigner" not found in Android Build-Tools directory: ${colorLink(
-        getAndroidBuildToolsPath()
+        getAndroidBuildToolsPath(),
       )}
-Please follow instructions at: https://reactnative.dev/docs/set-up-your-environment?platform=android'`
+Please follow instructions at: https://reactnative.dev/docs/set-up-your-environment?platform=android'`,
     );
   }
 
@@ -238,7 +238,7 @@ Please follow instructions at: https://reactnative.dev/docs/set-up-your-environm
   } catch (error) {
     throw new RnefError(
       `Failed to sign APK file: ${apksignerPath} ${apksignerArgs.join(' ')}`,
-      { cause: (error as SubprocessError).stderr }
+      { cause: (error as SubprocessError).stderr },
     );
   }
 }

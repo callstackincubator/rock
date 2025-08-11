@@ -10,7 +10,7 @@ export function cacheRecentDevice(device: Device, platform: ApplePlatform) {
     cacheManager.set(cacheKey, JSON.stringify(uniqueDevices));
   } catch (error) {
     logger.debug(
-      `Failed to cache recent device ${device.name} with UDID ${device.udid}. ${error}`
+      `Failed to cache recent device ${device.name} with UDID ${device.udid}. ${error}`,
     );
   }
 }
@@ -28,11 +28,11 @@ function getRecentDevices(platform: ApplePlatform): string[] {
 
 export function sortByRecentDevices(
   devices: Device[],
-  platform: ApplePlatform
+  platform: ApplePlatform,
 ) {
   const recentDevices = getRecentDevices(platform);
   const udids = Array.from(
-    new Set([...recentDevices, ...devices.map(({ udid }) => udid)])
+    new Set([...recentDevices, ...devices.map(({ udid }) => udid)]),
   );
   return udids
     .map((udid) => devices.find((device) => device.udid === udid))

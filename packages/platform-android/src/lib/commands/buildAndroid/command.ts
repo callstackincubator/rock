@@ -6,7 +6,7 @@ import { buildAndroid, options } from './buildAndroid.js';
 
 export function registerBuildCommand(
   api: PluginApi,
-  pluginConfig: AndroidProjectConfig | undefined
+  pluginConfig: AndroidProjectConfig | undefined,
 ) {
   api.registerCommand({
     name: 'build:android',
@@ -14,14 +14,14 @@ export function registerBuildCommand(
     action: async (args) => {
       const androidConfig = getValidProjectConfig(
         api.getProjectRoot(),
-        pluginConfig
+        pluginConfig,
       );
       await buildAndroid(
         androidConfig,
         args as BuildFlags,
         api.getProjectRoot(),
         await api.getRemoteCacheProvider(),
-        api.getFingerprintOptions()
+        api.getFingerprintOptions(),
       );
     },
     options: options,

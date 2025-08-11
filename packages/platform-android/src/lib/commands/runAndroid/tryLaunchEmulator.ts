@@ -60,7 +60,7 @@ const launchEmulator = async ({
     // Reject command after timeout
     const rejectTimeout = setTimeout(() => {
       stopWaitingAndReject(
-        `It took too long to start and connect with Android emulator: ${emulatorName}. You can try starting the emulator manually from the terminal with: ${manualCommand}`
+        `It took too long to start and connect with Android emulator: ${emulatorName}. You can try starting the emulator manually from the terminal with: ${manualCommand}`,
       );
     }, timeout * 1000);
 
@@ -82,7 +82,7 @@ const launchEmulator = async ({
 
 const defaultPort = 5552;
 async function getAvailableDevicePort(
-  port: number = defaultPort
+  port: number = defaultPort,
 ): Promise<number> {
   /**
    * The default value is 5554 for the first virtual device instance running on your machine. A virtual device normally occupies a pair of adjacent ports: a console port and an adb port. The console of the first virtual device running on a particular machine uses console port 5554 and adb port 5555. Subsequent instances use port numbers increasing by two. For example, 5556/5557, 5558/5559, and so on. The range is 5554 to 5682, allowing for 64 concurrent virtual devices.
@@ -114,8 +114,8 @@ export async function tryLaunchEmulator(name?: string) {
         onConnected: () => {
           loader.message(
             `Emulator ${color.bold(
-              emulatorName
-            )} is connected. Waiting for boot`
+              emulatorName,
+            )} is connected. Waiting for boot`,
           );
         },
       });
@@ -125,13 +125,13 @@ export async function tryLaunchEmulator(name?: string) {
         `Failed to launch ${displayEmulatorName} emulator. ${
           (error as SubprocessError).message
         }`,
-        1
+        1,
       );
     }
   } else {
     loader.stop(
       'No emulators found as an output of `emulator -list-avds`. Please launch an emulator manually or connect a device',
-      1
+      1,
     );
   }
   return deviceId;

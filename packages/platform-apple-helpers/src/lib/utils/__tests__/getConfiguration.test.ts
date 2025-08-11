@@ -27,7 +27,10 @@ describe('getConfiguration', () => {
     vi.mocked(isInteractive).mockReturnValue(true);
     vi.mocked(promptSelect).mockResolvedValueOnce('Release');
 
-    const result = await getConfiguration(['Debug', 'Release', 'Internal'], undefined);
+    const result = await getConfiguration(
+      ['Debug', 'Release', 'Internal'],
+      undefined,
+    );
 
     expect(promptSelect).toHaveBeenCalledWith({
       message: 'Select the configuration you want to use',

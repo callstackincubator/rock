@@ -47,7 +47,7 @@ async function runServer(
     reactNativePath: string;
     root: string;
   },
-  args: StartCommandArgs
+  args: StartCommandArgs,
 ) {
   const metroConfig = await loadMetroConfig(
     {
@@ -64,7 +64,7 @@ async function runServer(
       watchFolders: args.watchFolders,
       projectRoot: args.projectRoot,
       sourceExts: args.sourceExts,
-    }
+    },
   );
   const hostname = args.host?.length ? args.host : 'localhost';
   const {
@@ -80,7 +80,7 @@ async function runServer(
   if (args.assetPlugins) {
     // @ts-expect-error Assigning to readonly property
     metroConfig.transformer.assetPlugins = args.assetPlugins.map((plugin) =>
-      require.resolve(plugin)
+      require.resolve(plugin),
     );
   }
   // TODO(T214991636): Remove legacy Metro log forwarding

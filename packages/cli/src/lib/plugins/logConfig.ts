@@ -7,7 +7,7 @@ import type { ConfigOutput, PluginApi } from '@rnef/config';
 function isValidRNDependency(config: DependencyConfig) {
   return (
     Object.keys(config.platforms).filter((key) =>
-      Boolean(config.platforms[key])
+      Boolean(config.platforms[key]),
     ).length !== 0
   );
 }
@@ -35,7 +35,7 @@ export const logConfig = async (
   ownConfig: {
     platforms: ConfigOutput['platforms'];
     root: ConfigOutput['root'];
-  }
+  },
 ) => {
   const { loadConfigAsync } = await import(
     '@react-native-community/cli-config'

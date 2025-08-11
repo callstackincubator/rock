@@ -28,7 +28,7 @@ export const pluginBrownfieldIos =
         const iosConfig = getValidProjectConfig(
           'ios',
           projectRoot,
-          pluginConfig
+          pluginConfig,
         );
         const { derivedDataDir } = getBuildPaths('ios');
 
@@ -63,17 +63,17 @@ export const pluginBrownfieldIos =
             path.join(
               productsPath,
               `${configuration}-iphoneos`,
-              `${scheme}.framework`
+              `${scheme}.framework`,
             ),
             path.join(
               productsPath,
               `${configuration}-iphonesimulator`,
-              `${scheme}.framework`
+              `${scheme}.framework`,
             ),
           ],
           outputPath: path.join(
             frameworkTargetOutputDir,
-            `${scheme}.xcframework`
+            `${scheme}.xcframework`,
           ),
         });
 
@@ -85,18 +85,18 @@ export const pluginBrownfieldIos =
               productsPath,
               `${configuration}-iphoneos`,
               'ReactBrownfield',
-              'ReactBrownfield.framework'
+              'ReactBrownfield.framework',
             ),
             path.join(
               productsPath,
               `${configuration}-iphonesimulator`,
               'ReactBrownfield',
-              'ReactBrownfield.framework'
+              'ReactBrownfield.framework',
             ),
           ],
           outputPath: path.join(
             frameworkTargetOutputDir,
-            'ReactBrownfield.xcframework'
+            'ReactBrownfield.xcframework',
           ),
         });
 
@@ -109,8 +109,8 @@ export const pluginBrownfieldIos =
         // 5) Inform the user
         logger.log(
           `XCFrameworks are available at: ${colorLink(
-            relativeToCwd(frameworkTargetOutputDir)
-          )}`
+            relativeToCwd(frameworkTargetOutputDir),
+          )}`,
         );
 
         outro('Success 🎉.');

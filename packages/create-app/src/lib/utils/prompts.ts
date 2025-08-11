@@ -19,7 +19,7 @@ import { getRnefVersion } from './version.js';
 
 export function printHelpMessage(
   templates: TemplateInfo[],
-  platforms: TemplateInfo[]
+  platforms: TemplateInfo[],
 ) {
   console.log(`
      Usage: create-rnef [options]
@@ -57,7 +57,7 @@ export function printWelcomeMessage() {
 export function printByeMessage(
   targetDir: string,
   pkgManager: string,
-  installDeps: boolean
+  installDeps: boolean,
 ) {
   const relativeDir = relativeToCwd(targetDir);
 
@@ -84,7 +84,7 @@ export function promptProjectName(name?: string): Promise<string> {
 }
 
 export async function promptTemplate(
-  templates: TemplateInfo[]
+  templates: TemplateInfo[],
 ): Promise<TemplateInfo> {
   if (templates.length === 0) {
     throw new RnefError('No templates found');
@@ -101,14 +101,14 @@ export async function promptTemplate(
 }
 
 export function promptPlatforms(
-  platforms: TemplateInfo[]
+  platforms: TemplateInfo[],
 ): Promise<TemplateInfo[]> {
   if (platforms.length === 0) {
     throw new RnefError('No platforms found');
   }
 
   const defaultPlatforms = platforms.filter(
-    (platform) => platform.name === 'android' || platform.name === 'ios'
+    (platform) => platform.name === 'android' || platform.name === 'ios',
   );
 
   return promptMultiselect({
@@ -123,7 +123,7 @@ export function promptPlatforms(
 }
 
 export function promptPlugins(
-  plugins: TemplateInfo[]
+  plugins: TemplateInfo[],
 ): Promise<TemplateInfo[] | null> {
   if (plugins.length === 0 || !isInteractive()) {
     return Promise.resolve(null);
@@ -141,7 +141,7 @@ export function promptPlugins(
 }
 
 export function promptBundlers(
-  bundlers: TemplateInfo[]
+  bundlers: TemplateInfo[],
 ): Promise<TemplateInfo> {
   if (bundlers.length === 0) {
     throw new RnefError('No bundlers found');

@@ -87,7 +87,7 @@ describe('parsePackageManagerFromUserAgent', () => {
     const unknownUserAgent = 'unknown/1.0.0 node/v16.18.0 linux x64';
     const expected = { name: 'unknown', version: '1.0.0' };
     expect(parsePackageManagerFromUserAgent(unknownUserAgent)).toEqual(
-      expected
+      expected,
     );
   });
 });

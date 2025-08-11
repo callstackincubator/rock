@@ -14,7 +14,7 @@ export type PackageAarFlags = {
 
 export async function packageAar(
   aarProject: AarProject,
-  args: PackageAarFlags
+  args: PackageAarFlags,
 ) {
   normalizeArgs(args);
 
@@ -26,7 +26,7 @@ export async function packageAar(
 
 export async function localPublishAar(
   aarProject: AarProject,
-  args: PackageAarFlags
+  args: PackageAarFlags,
 ) {
   const tasks = ['publishToMavenLocal'];
 

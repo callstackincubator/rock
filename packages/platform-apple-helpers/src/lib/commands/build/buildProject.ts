@@ -29,7 +29,7 @@ function createProgressBar(percent: number, length = 20): string {
 function reportProgress(
   chunk: string,
   loader: ReturnType<typeof spinner>,
-  message: string
+  message: string,
 ) {
   if (chunk.includes('PhaseScriptExecution')) {
     if (chunk.includes('[CP-User]\\ [Hermes]\\ Replace\\ Hermes\\')) {
@@ -84,8 +84,8 @@ export const buildProject = async ({
   if (!supportedPlatforms[platformName]) {
     throw new RnefError(
       `Unknown platform: ${platformName}. Please, use one of: ${Object.values(
-        supportedPlatforms
-      ).join(', ')}.`
+        supportedPlatforms,
+      ).join(', ')}.`,
     );
   }
 
@@ -104,13 +104,13 @@ export const buildProject = async ({
     const { archiveDir } = getBuildPaths(platformName);
     const archiveName = `${xcodeProject.name.replace(
       '.xcworkspace',
-      ''
+      '',
     )}.xcarchive`;
 
     xcodebuildArgs.push(
       '-archivePath',
       path.join(archiveDir, archiveName),
-      'archive'
+      'archive',
     );
   }
 
@@ -146,13 +146,13 @@ Configuration   ${color.bold(configuration)}`);
     loader.stop(`Failed: ${message}.`, 1);
     if (!xcodeProject.isWorkspace) {
       logger.error(
-        `If your project uses CocoaPods, make sure to install pods with "pod install" in ${sourceDir} directory.`
+        `If your project uses CocoaPods, make sure to install pods with "pod install" in ${sourceDir} directory.`,
       );
     }
     if (commandOutput) {
       logger.error(`xcodebuild output: ${commandOutput}`);
       throw new RnefError(
-        'Running xcodebuild failed. See error details above.'
+        'Running xcodebuild failed. See error details above.',
       );
     }
     throw new RnefError('Running xcodebuild failed', {

@@ -74,7 +74,7 @@ test('launches adb shell with intent to launch com.myapp.MainActivity with diffe
   await tryLaunchAppOnDevice(
     device,
     { ...androidProject, mainActivity: 'com.myapp.MainActivity' },
-    args
+    args,
   );
 
   expect(spawn).toHaveBeenCalledWith('/mock/android/home/platform-tools/adb', [
@@ -89,7 +89,7 @@ test('launches adb shell with intent to launch com.myapp.MainActivity with same 
   await tryLaunchAppOnDevice(
     device,
     { ...androidProject, applicationId: 'com.myapp' },
-    args
+    args,
   );
 
   expect(spawn).toHaveBeenCalledWith('/mock/android/home/platform-tools/adb', [
@@ -121,7 +121,7 @@ test('launches adb shell with intent to launch fully specified activity with dif
     {
       ...args,
       appIdSuffix: 'dev',
-    }
+    },
   );
 
   expect(spawn).toHaveBeenCalledWith('/mock/android/home/platform-tools/adb', [

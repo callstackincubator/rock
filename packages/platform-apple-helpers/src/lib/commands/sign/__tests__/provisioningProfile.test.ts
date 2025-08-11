@@ -5,7 +5,7 @@ describe('extractCertificateName', () => {
     const subject =
       'C=US\nO=Apple Inc.\nOU=Apple Worldwide Developer Relations\nCN=Apple Development: John Doe (TEAMID1234)';
     expect(extractCertificateName(subject)).toBe(
-      'Apple Development: John Doe (TEAMID1234)'
+      'Apple Development: John Doe (TEAMID1234)',
     );
   });
 

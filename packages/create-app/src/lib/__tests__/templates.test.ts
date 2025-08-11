@@ -38,7 +38,7 @@ test('resolveTemplateName with local paths', () => {
   });
 
   expect(
-    resolveTemplate(TEMPLATES, 'file:///url-based/path/template-4')
+    resolveTemplate(TEMPLATES, 'file:///url-based/path/template-4'),
   ).toEqual({
     type: 'local',
     name: 'template-4',

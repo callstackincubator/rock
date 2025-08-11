@@ -16,12 +16,12 @@ export async function tryInstallAppOnDevice(
   androidProject: AndroidProject,
   args: Flags,
   tasks: string[],
-  binaryPath: string | undefined
+  binaryPath: string | undefined,
 ) {
   let deviceId: string;
   if (!device.deviceId) {
     logger.debug(
-      `No device with id "${device.deviceId}", skipping launching the app.`
+      `No device with id "${device.deviceId}", skipping launching the app.`,
     );
     return;
   } else {
@@ -33,11 +33,11 @@ export async function tryInstallAppOnDevice(
     const outputFilePath = await findOutputFile(
       androidProject,
       tasks,
-      deviceId
+      deviceId,
     );
     if (!outputFilePath) {
       logger.warn(
-        "Skipping installation because there's no build output file."
+        "Skipping installation because there's no build output file.",
       );
       return;
     }
@@ -63,10 +63,10 @@ export async function tryInstallAppOnDevice(
     const errorMessage =
       (error as SubprocessError).stderr || (error as SubprocessError).stdout;
     const isInsufficientStorage = errorMessage.includes(
-      'INSTALL_FAILED_INSUFFICIENT_STORAGE'
+      'INSTALL_FAILED_INSUFFICIENT_STORAGE',
     );
     const isUpdateIncompatible = errorMessage.includes(
-      'INSTALL_FAILED_UPDATE_INCOMPATIBLE'
+      'INSTALL_FAILED_UPDATE_INCOMPATIBLE',
     );
     if (isInsufficientStorage || isUpdateIncompatible) {
       try {

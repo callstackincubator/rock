@@ -31,9 +31,9 @@ concurrency:
 ```
 
 This configuration:
+
 - Runs the workflow on pushes to the `main` branch
 - Runs the workflow on pull requests to any branch
-
 
 ## Optimizing CI/CD Performance with paths-ignore
 
@@ -51,12 +51,12 @@ on:
     branches:
       - main
     paths-ignore:
-      - '*.md'                    # Skip documentation changes
-      - 'docs/**'                 # Skip documentation directory
+      - '*.md' # Skip documentation changes
+      - 'docs/**' # Skip documentation directory
       - '.github/ISSUE_TEMPLATE/**' # Skip issue templates
-      - 'web/**'                  # Skip web-specific code
-      - 'server/**'               # Skip backend code
-      - 'design/**'               # Skip design files
+      - 'web/**' # Skip web-specific code
+      - 'server/**' # Skip backend code
+      - 'design/**' # Skip design files
   # You can set similar config for pull_request hook
 ```
 

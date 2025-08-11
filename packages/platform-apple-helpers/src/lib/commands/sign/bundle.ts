@@ -1,12 +1,6 @@
 import fs from 'node:fs';
-import type {
-  SubprocessError} from '@rnef/tools';
-import {
-  logger,
-  RnefError,
-  runHermes,
-  spawn
-} from '@rnef/tools';
+import type { SubprocessError } from '@rnef/tools';
+import { logger, RnefError, runHermes, spawn } from '@rnef/tools';
 
 type BuildJsBundleOptions = {
   bundleOutputPath: string;
@@ -42,7 +36,9 @@ export async function buildJsBundle(options: BuildJsBundleOptions) {
     options.bundleOutputPath,
     '--assets-dest',
     options.assetsDestPath,
-    ...(options.sourcemapOutputPath ? ['--sourcemap-output', options.sourcemapOutputPath] : []),
+    ...(options.sourcemapOutputPath
+      ? ['--sourcemap-output', options.sourcemapOutputPath]
+      : []),
   ];
   try {
     await spawn('rnef', rnefBundleArgs, { preferLocal: true });

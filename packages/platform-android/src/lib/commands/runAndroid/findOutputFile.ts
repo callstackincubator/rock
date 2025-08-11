@@ -6,14 +6,14 @@ import type { AndroidProject } from './runAndroid.js';
 export async function findOutputFile(
   androidProject: AndroidProject,
   tasks: string[],
-  device?: string
+  device?: string,
 ) {
   const { appName, sourceDir } = androidProject;
   const selectedTask = tasks.find(
     (t) =>
       t.startsWith('install') ||
       t.startsWith('assemble') ||
-      t.startsWith('bundle')
+      t.startsWith('bundle'),
   );
   if (!selectedTask) {
     return false;
@@ -36,7 +36,7 @@ export async function findOutputFile(
     variantAppName,
     buildDirectory,
     apkOrBundle === 'apk' ? 'apk' : 'aab',
-    device
+    device,
   );
   return outputFile ? `${buildDirectory}/${outputFile}` : undefined;
 }
@@ -46,7 +46,7 @@ async function getInstallOutputFileName(
   variant: string,
   buildDirectory: string,
   apkOrAab: 'apk' | 'aab',
-  device: string | undefined
+  device: string | undefined,
 ) {
   const availableCPUs = await getAvailableCPUs(device);
 

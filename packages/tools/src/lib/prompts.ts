@@ -24,7 +24,7 @@ export async function promptText(options: clack.TextOptions): Promise<string> {
 }
 
 export async function promptPassword(
-  options: clack.PasswordOptions
+  options: clack.PasswordOptions,
 ): Promise<string> {
   const result = await clack.password(options);
   if (clack.isCancel(result)) {
@@ -35,7 +35,7 @@ export async function promptPassword(
 }
 
 export async function promptSelect<T>(
-  options: clack.SelectOptions<T>
+  options: clack.SelectOptions<T>,
 ): Promise<T> {
   // If there is only one option, return it immediately
   if (options.options.length === 1) {
@@ -73,7 +73,7 @@ export async function promptConfirm(options: ConfirmOptions): Promise<boolean> {
 }
 
 export async function promptMultiselect<T>(
-  options: clack.MultiSelectOptions<T>
+  options: clack.MultiSelectOptions<T>,
 ): Promise<T[]> {
   const result = await clack.multiselect<T>(options);
   if (clack.isCancel(result)) {
@@ -85,7 +85,7 @@ export async function promptMultiselect<T>(
 
 export async function promptGroup<T>(
   prompts: clack.PromptGroup<T>,
-  options?: clack.PromptGroupOptions<T> | undefined
+  options?: clack.PromptGroupOptions<T> | undefined,
 ) {
   const result = await clack.group(prompts, options);
   if (clack.isCancel(result)) {
@@ -129,7 +129,7 @@ export function spinner(options?: clack.SpinnerOptions & { silent?: boolean }) {
 }
 
 export function formatStartMessage(
-  text: string | undefined
+  text: string | undefined,
 ): string | undefined {
   if (text === undefined) {
     return undefined;

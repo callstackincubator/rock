@@ -73,7 +73,7 @@ Tasks     ${color.bold(humanReadableTasks)}`);
     const devices = await getDevices();
     const cpus = await Promise.all(devices.map(getCPU));
     const architectures = cpus.filter(
-      (arch, index, array) => arch != null && array.indexOf(arch) === index
+      (arch, index, array) => arch != null && array.indexOf(arch) === index,
     );
 
     if (architectures.length > 0) {
@@ -89,7 +89,7 @@ Tasks     ${color.bold(humanReadableTasks)}`);
   } catch (error) {
     loader.stop('Failed to build the app');
     const cleanedErrorMessage = getCleanedErrorMessage(
-      error as SubprocessError
+      error as SubprocessError,
     );
 
     if (cleanedErrorMessage) {
@@ -99,7 +99,7 @@ Tasks     ${color.bold(humanReadableTasks)}`);
     const hints = getErrorHints((error as SubprocessError).stdout ?? '');
     throw new RnefError(
       hints ||
-        'Failed to build the app. See the error above for details from Gradle.'
+        'Failed to build the app. See the error above for details from Gradle.',
     );
   }
 
@@ -132,12 +132,12 @@ export async function runGradleAar({
     loader.stop(
       variant
         ? `Built the AAR in ${variant} build variant.`
-        : 'Published the AAR to local maven (~/.m2/repository)'
+        : 'Published the AAR to local maven (~/.m2/repository)',
     );
   } catch (error) {
     loader.stop(`Failed to ${variant ? 'build' : 'publish'} the AAR`);
     const cleanedErrorMessage = getCleanedErrorMessage(
-      error as SubprocessError
+      error as SubprocessError,
     );
 
     if (cleanedErrorMessage) {
@@ -150,7 +150,7 @@ export async function runGradleAar({
         `Failed to ${
           variant ? 'build' : 'publish'
         } the AAR. See the error above for details from Gradle.`,
-      { cause: (error as SubprocessError).stderr }
+      { cause: (error as SubprocessError).stderr },
     );
   }
 }
@@ -158,7 +158,7 @@ export async function runGradleAar({
 function getErrorHints(output: string) {
   const signingMessage = output.includes('validateSigningRelease FAILED')
     ? `Hint: You can run "${color.bold(
-        'rnef create-keystore:android'
+        'rnef create-keystore:android',
       )}" to create a keystore file.`
     : '';
   return signingMessage;
@@ -192,7 +192,7 @@ async function getCPU(device: string) {
     const { output } = await spawn(
       adbPath,
       ['-s', device, 'shell', 'getprop', 'ro.product.cpu.abi'],
-      { stdio: 'pipe' }
+      { stdio: 'pipe' },
     );
     const cpus = output.trim();
     return cpus.length > 0 ? cpus : null;

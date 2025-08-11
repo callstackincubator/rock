@@ -8,7 +8,7 @@ it('should throw when config not found', async () => {
     cli({
       cwd: join(__dirname),
       argv: ['node', 'rnef', 'test'],
-    })
+    }),
   ).rejects.toThrow('rnef.config not found in any parent directory of /');
 });
 

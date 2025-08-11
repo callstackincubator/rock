@@ -6,7 +6,7 @@ const checkDeprecatedCommand = (
   argv: string[],
   oldCmd: string,
   newCmd: string,
-  deprecatedFlags: Array<{ old: string; new: string }>
+  deprecatedFlags: Array<{ old: string; new: string }>,
 ) => {
   if (argv.includes(oldCmd)) {
     const args = argv.slice(argv.indexOf(oldCmd) + 1);
@@ -20,7 +20,7 @@ const checkDeprecatedCommand = (
 const checkCurrentCommand = (
   argv: string[],
   cmd: string,
-  deprecatedFlags: Array<{ old: string; new: string }>
+  deprecatedFlags: Array<{ old: string; new: string }>,
 ) => {
   if (argv.includes(cmd)) {
     const args = argv.slice(argv.indexOf(cmd) + 1);
@@ -34,13 +34,13 @@ const checkCurrentCommand = (
 
 function getFormattedFlagsArray(
   flags: { old: string; new: string }[],
-  args: string[]
+  args: string[],
 ) {
   return flags
     .map(({ old, new: newFlag }) =>
       args.includes(old)
         ? `• "${color.bold(old)}" changed to "${color.bold(newFlag)}"`
-        : undefined
+        : undefined,
     )
     .filter(Boolean) as string[];
 }
@@ -49,7 +49,7 @@ function logFlagsAndCommand(
   formattedFlags: string[],
   cmd: string,
   args: string[],
-  deprecatedFlags: { old: string; new: string }[]
+  deprecatedFlags: { old: string; new: string }[],
 ) {
   if (formattedFlags.length > 0) {
     logger.error(`Found deprecated flags:
@@ -61,7 +61,7 @@ ${formattedFlags.join('\n')}`);
   });
   logger.error(
     `Use new command${formattedFlags ? ' with new flags' : ''}:
-  ${color.bold(npxBin)} ${color.bold(cmd)} ${color.bold(newArgs.join(' '))}`
+  ${color.bold(npxBin)} ${color.bold(cmd)} ${color.bold(newArgs.join(' '))}`,
   );
 }
 
@@ -84,7 +84,7 @@ export const checkDeprecatedOptions = (argv: string[]) => {
     argv,
     'run-android',
     'run:android',
-    deprecatedAndroidFlags
+    deprecatedAndroidFlags,
   );
   checkDeprecatedCommand(argv, 'run-ios', 'run:ios', deprecatedIosFlags);
 

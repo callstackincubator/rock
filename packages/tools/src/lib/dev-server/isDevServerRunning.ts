@@ -6,7 +6,7 @@
  *   - `{status: 'unrecognized'}`: one other process is running on the port we expect the dev server to be running.
  */
 export async function isDevServerRunning(
-  port: string | number = process.env['RCT_METRO_PORT'] || '8081'
+  port: string | number = process.env['RCT_METRO_PORT'] || '8081',
 ): Promise<
   | { status: 'running'; root: string }
   | { status: 'not_running' | 'unrecognized' }
