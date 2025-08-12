@@ -16,8 +16,8 @@ importers:
         specifier: ^2.29.5
         version: 2.29.5
       '@clack/prompts':
-        specifier: ^0.10.1
-        version: 0.10.1
+        specifier: ^0.11.0
+        version: 0.11.0
       '@eslint/js':
         specifier: ^9.33.0
         version: 9.33.0
@@ -383,8 +383,8 @@ importers:
   packages/tools:
     dependencies:
       '@clack/prompts':
-        specifier: ^0.10.0
-        version: 0.10.1
+        specifier: ^0.11.0
+        version: 0.11.0
       '@expo/fingerprint':
         specifier: ^0.11.6
         version: 0.11.11
@@ -917,11 +917,11 @@ packages:
   '@changesets/write@0.4.0':
     resolution: {integrity: sha512-CdTLvIOPiCNuH71pyDu3rA+Q0n65cmAbXnwWH84rKGiFumFzkmHNT8KHTMEchcxN+Kl8I54xGUhJ7l3E7X396Q==}
 
-  '@clack/core@0.4.2':
-    resolution: {integrity: sha512-NYQfcEy8MWIxrT5Fj8nIVchfRFA26yYKJcvBS7WlUIlw2OmQOY9DhGGXMovyI5J5PpxrCPGkgUi207EBrjpBvg==}
+  '@clack/core@0.5.0':
+    resolution: {integrity: sha512-p3y0FIOwaYRUPRcMO7+dlmLh8PSRcrjuTndsiA0WAFbWES0mLZlrjVoBRZ9DzkPFJZG6KGkJmoEAY0ZcVWTkow==}
 
-  '@clack/prompts@0.10.1':
-    resolution: {integrity: sha512-Q0T02vx8ZM9XSv9/Yde0jTmmBQufZhPJfYAg2XrrrxWWaZgq1rr8nU8Hv710BQ1dhoP8rtY7YUdpGej2Qza/cw==}
+  '@clack/prompts@0.11.0':
+    resolution: {integrity: sha512-pMN5FcrEw9hUkZA4f+zLlzivQSeQf5dRGJjSUbvVYDLvpKCdQx5OaknvKzgbtXOizhP+SJJJjqEbOe55uKKfAw==}
 
   '@cypress/request@3.0.9':
     resolution: {integrity: sha512-I3l7FdGRXluAS44/0NguwWlO83J18p0vlr2FYHrJkWdNYhgVoiYo61IXPqaOsL+vNxU1ZqMACzItGK3/KKDsdw==}
@@ -7548,14 +7548,14 @@ snapshots:
       human-id: 4.1.1
       prettier: 2.8.8
 
-  '@clack/core@0.4.2':
+  '@clack/core@0.5.0':
     dependencies:
       picocolors: 1.1.1
       sisteransi: 1.0.5
 
-  '@clack/prompts@0.10.1':
+  '@clack/prompts@0.11.0':
     dependencies:
-      '@clack/core': 0.4.2
+      '@clack/core': 0.5.0
       picocolors: 1.1.1
       sisteransi: 1.0.5
 
