@@ -1,13 +1,14 @@
 import fs from 'node:fs';
 import path from 'node:path';
-import type { SupportedRemoteCacheProviders } from '@rnef/tools';
 import {
   cancelPromptAndExit,
   isInteractive,
+  promptConfirm,
   resolveAbsolutePath,
   RnefError,
   spawn,
   spinner,
+  type SupportedRemoteCacheProviders,
 } from '@rnef/tools';
 import { gitInitStep } from './steps/git-init.js';
 import type { TemplateInfo } from './templates.js';
@@ -23,12 +24,11 @@ import {
   replacePlaceholder,
 } from './utils/edit-template.js';
 import { copyDirSync, isEmptyDirSync, removeDirSync } from './utils/fs.js';
+import { getPkgManager } from './utils/getPkgManager.js';
+import { initInExistingProject } from './utils/initInExistingProject.js';
 import { rewritePackageJson } from './utils/package-json.js';
 import { parseCliOptions } from './utils/parse-cli-options.js';
-import {
-  parsePackageInfo,
-  parsePackageManagerFromUserAgent,
-} from './utils/parsers.js';
+import { parsePackageInfo } from './utils/parsers.js';
 import {
   normalizeProjectName,
   validateProjectName,
@@ -68,6 +68,20 @@ export async function run() {
   }
 
   printWelcomeMessage();
+
+  if (isReactNativeProject(options.dir || process.cwd())) {
+    const projectRoot = resolveAbsolutePath(options.dir || process.cwd());
+    const shouldInit = await promptConfirm({
+      message: `Detected existing React Native project. Would you like to initialize RNEF in this project?`,
+      confirmLabel: 'Yes',
+      cancelLabel: 'No',
+    });
+    if (!shouldInit) {
+      cancelPromptAndExit();
+    }
+    await initInExistingProject(projectRoot);
+    return;
+  }
 
   let projectName =
     (options.dir || options.name) ?? (await promptProjectName());
@@ -155,10 +169,15 @@ export async function run() {
   printByeMessage(absoluteTargetDir, pkgManager, shouldInstallDependencies);
 }
 
-function getPkgManager() {
+function isReactNativeProject(dir: string) {
+  const packageJson = path.join(dir, 'package.json');
+  if (!fs.existsSync(packageJson)) {
+    return false;
+  }
+  const packageJsonContent = JSON.parse(fs.readFileSync(packageJson, 'utf8'));
   return (
-    parsePackageManagerFromUserAgent(process.env['npm_config_user_agent'])
-      ?.name ?? 'npm'
+    packageJsonContent.dependencies?.['react-native'] !== undefined ||
+    packageJsonContent.devDependencies?.['react-native'] !== undefined
   );
 }
 
