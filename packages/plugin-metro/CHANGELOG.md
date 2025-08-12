@@ -1,5 +1,11 @@
 # @rnef/plugin-metro
 
+## 0.8.10
+
+### Patch Changes
+
+- @rnef/tools@0.8.10
+
 ## 0.8.9
 
 ### Patch Changes
