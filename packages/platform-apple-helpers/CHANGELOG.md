@@ -1,5 +1,12 @@
 # @rnef/platform-apple-helpers
 
+## 0.8.10
+
+### Patch Changes
+
+- 42ad8db: fix: get scheme from args if available
+  - @rnef/tools@0.8.10
+
 ## 0.8.9
 
 ### Patch Changes
