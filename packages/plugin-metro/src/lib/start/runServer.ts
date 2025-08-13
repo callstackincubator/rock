@@ -8,7 +8,6 @@
 import { createRequire } from 'node:module';
 import path from 'node:path';
 import url from 'node:url';
-import { createDevMiddleware } from '@react-native/dev-middleware';
 import { createDevServerMiddleware } from '@react-native-community/cli-server-api';
 import { color } from '@rnef/tools';
 import Metro from 'metro';
@@ -16,6 +15,7 @@ import type { Reporter } from 'metro/src/lib/reporting';
 import type { TerminalReportableEvent } from 'metro/src/lib/TerminalReporter';
 import type { TerminalReporter } from 'metro/src/lib/TerminalReporter';
 import { Terminal } from 'metro-core';
+import { getDevMiddleware } from '../getReactNativeDeps.js';
 import attachKeyHandlers from './attachKeyHandlers.js';
 import createDevMiddlewareLogger from './createDevMiddlewareLogger.js';
 import loadMetroConfig from './loadMetroConfig.js';
@@ -108,6 +108,9 @@ async function runServer(
     port,
     watchFolders,
   });
+  const { createDevMiddleware } = await getDevMiddleware(
+    options.reactNativePath,
+  );
   const { middleware, websocketEndpoints } = createDevMiddleware({
     projectRoot,
     serverBaseUrl: devServerUrl,

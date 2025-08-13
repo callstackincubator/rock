@@ -287,9 +287,6 @@ importers:
       '@react-native-community/cli-server-api':
         specifier: ^19.1.0
         version: 19.1.1
-      '@react-native/dev-middleware':
-        specifier: ^0.80.1
-        version: 0.80.2
       '@rnef/tools':
         specifier: ^0.8.12
         version: link:../tools
@@ -309,8 +306,8 @@ importers:
         specifier: ^2.3.0
         version: 2.8.1
     devDependencies:
-      '@react-native/community-cli-plugin':
-        specifier: 0.80.1
+      '@react-native/dev-middleware':
+        specifier: ^0.80.1
         version: 0.80.1
       '@rnef/config':
         specifier: ^0.8.12
@@ -1460,20 +1457,12 @@ packages:
     resolution: {integrity: sha512-5dQJdX1ZS4dINNw51KNsDIL+A06sZQd2hqN2Pldq5SavxAwEJh5NxAx7K+lutKhwp1By5gxd6/9ruVt+9NCvKA==}
     engines: {node: '>=18'}
 
-  '@react-native/debugger-frontend@0.80.2':
-    resolution: {integrity: sha512-n3D88bqNk0bY+YjNxbM6giqva06xj+rgEfu91Pg+nJ0szSL2eLl7ULERJqI3hxFt0XGuTpTOxZgw/Po5maXa4g==}
-    engines: {node: '>=18'}
-
   '@react-native/dev-middleware@0.78.3':
     resolution: {integrity: sha512-7upCJUYTFt3AwDQqByWDmTdlHYU93AdU+rsndis2xsJI4h7DrEjKtvvEgFOJG+jGHcyct9vNu1S+Jj2g8DRguQ==}
     engines: {node: '>=18'}
 
   '@react-native/dev-middleware@0.80.1':
     resolution: {integrity: sha512-EBnZ3s6+hGAlUggDvo9uI37Xh0vG55H2rr3A6l6ww7+sgNuUz+wEJ63mGINiU6DwzQSgr6av7rjrVERxKH6vxg==}
-    engines: {node: '>=18'}
-
-  '@react-native/dev-middleware@0.80.2':
-    resolution: {integrity: sha512-8OeBEZNiApdbZaqTrrzeyFwXn/JwgJox7jdtjVAH56DggTVJXdbnyUjQ4ts6XAacEQgpFOAskoO730eyafOkAA==}
     engines: {node: '>=18'}
 
   '@react-native/gradle-plugin@0.80.1':
@@ -8208,12 +8197,12 @@ snapshots:
     dependencies:
       '@react-native/dev-middleware': 0.80.1
       chalk: 4.1.2
-      debug: 4.4.0
+      debug: 4.4.1
       invariant: 2.2.4
       metro: 0.82.5
       metro-config: 0.82.5
       metro-core: 0.82.5
-      semver: 7.7.1
+      semver: 7.7.2
     transitivePeerDependencies:
       - bufferutil
       - supports-color
@@ -8222,8 +8211,6 @@ snapshots:
   '@react-native/debugger-frontend@0.78.3': {}
 
   '@react-native/debugger-frontend@0.80.1': {}
-
-  '@react-native/debugger-frontend@0.80.2': {}
 
   '@react-native/dev-middleware@0.78.3':
     dependencies:
@@ -8251,25 +8238,7 @@ snapshots:
       chrome-launcher: 0.15.2
       chromium-edge-launcher: 0.2.0
       connect: 3.7.0
-      debug: 4.4.0
-      invariant: 2.2.4
-      nullthrows: 1.1.1
-      open: 7.4.2
-      serve-static: 1.16.2
-      ws: 6.2.3
-    transitivePeerDependencies:
-      - bufferutil
-      - supports-color
-      - utf-8-validate
-
-  '@react-native/dev-middleware@0.80.2':
-    dependencies:
-      '@isaacs/ttlcache': 1.4.1
-      '@react-native/debugger-frontend': 0.80.2
-      chrome-launcher: 0.15.2
-      chromium-edge-launcher: 0.2.0
-      connect: 3.7.0
-      debug: 4.4.0
+      debug: 4.4.1
       invariant: 2.2.4
       nullthrows: 1.1.1
       open: 7.4.2
@@ -10045,7 +10014,7 @@ snapshots:
 
   chrome-launcher@0.15.2:
     dependencies:
-      '@types/node': 24.2.1
+      '@types/node': 18.19.122
       escape-string-regexp: 4.0.0
       is-wsl: 2.2.0
       lighthouse-logger: 1.4.2
@@ -10056,7 +10025,7 @@ snapshots:
 
   chromium-edge-launcher@0.2.0:
     dependencies:
-      '@types/node': 24.2.1
+      '@types/node': 18.19.122
       escape-string-regexp: 4.0.0
       is-wsl: 2.2.0
       lighthouse-logger: 1.4.2
