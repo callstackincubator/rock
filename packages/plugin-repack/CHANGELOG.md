@@ -1,5 +1,12 @@
 # @rnef/plugin-repack
 
+## 0.8.11
+
+### Patch Changes
+
+- Updated dependencies [cb43201]
+  - @rnef/tools@0.8.11
+
 ## 0.8.10
 
 ### Patch Changes

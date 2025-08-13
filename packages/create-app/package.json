@@ -1,6 +1,6 @@
 {
   "name": "@rnef/create-app",
-  "version": "0.8.10",
+  "version": "0.8.11",
   "type": "module",
   "types": "./dist/src/index.d.ts",
   "exports": {
@@ -21,7 +21,7 @@
     "create-app": "./dist/src/bin.js"
   },
   "dependencies": {
-    "@rnef/tools": "^0.8.10",
+    "@rnef/tools": "^0.8.11",
     "gradient-string": "^3.0.0",
     "minimist": "^1.2.8",
     "package-json": "^10.0.1",
@@ -30,7 +30,7 @@
   },
   "devDependencies": {
     "@types/gradient-string": "^1.1.6",
-    "@rnef/test-helpers": "^0.8.10",
+    "@rnef/test-helpers": "^0.8.11",
     "@types/minimist": "^1.2.5"
   },
   "publishConfig": {

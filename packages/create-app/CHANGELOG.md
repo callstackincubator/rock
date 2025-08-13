@@ -1,5 +1,13 @@
 # @rnef/create-app
 
+## 0.8.11
+
+### Patch Changes
+
+- 5fdce1b: feat: init in existing project
+- Updated dependencies [cb43201]
+  - @rnef/tools@0.8.11
+
 ## 0.8.10
 
 ### Patch Changes
