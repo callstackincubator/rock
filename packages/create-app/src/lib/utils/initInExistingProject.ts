@@ -272,6 +272,7 @@ function updatePackageJsonScripts(projectRoot: string) {
   }
   const content = fs.readFileSync(packageJsonPath, 'utf8');
   const replaced = content
+    .replaceAll('react-native start', 'rnef start')
     .replaceAll('react-native run-android', 'rnef run:android')
     .replaceAll('react-native build-android', 'rnef build:android')
     .replaceAll('react-native run-ios', 'rnef run:ios')
