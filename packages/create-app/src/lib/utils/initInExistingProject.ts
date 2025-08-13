@@ -64,12 +64,17 @@ export async function initInExistingProject(projectRoot: string) {
     `Updated ${color.bold(`${androidSourceDir}/app/build.gradle`)} and ${color.bold(`${androidSourceDir}/settings.gradle`)}`,
   );
 
-  // 6) iOS file changes
+  // 6) Podfile changes
   loader.start(`Updating ${color.bold(`${iosSourceDir}/Podfile`)}`);
   updatePodfile(projectRoot, iosSourceDir);
   loader.stop(`Updated ${color.bold(`${iosSourceDir}/Podfile`)}`);
 
-  // 7) Update package.json scripts
+  // 7) Xcode project changes
+  loader.start(`Updating ${color.bold(`${iosSourceDir}/project.pbxproj`)}`);
+  updateXcodeProject(projectRoot, iosSourceDir);
+  loader.stop(`Updated ${color.bold(`${iosSourceDir}/project.pbxproj`)}`);
+
+  // 8) Update package.json scripts
   loader.start(`Updating ${color.bold('package.json')} scripts`);
   updatePackageJsonScripts(projectRoot);
   loader.stop(`Updated ${color.bold('package.json')} scripts`);
@@ -199,6 +204,46 @@ function updateAndroidSettingsGradle(projectRoot: string, sourceDir: string) {
   }
   if (replaced !== content) {
     fs.writeFileSync(filePath, replaced);
+  }
+}
+
+function updateXcodeProject(projectRoot: string, sourceDir: string) {
+  const toReplace =
+    'shellScript = "set -e\\n\\nWITH_ENVIRONMENT=\\"$REACT_NATIVE_PATH/scripts/xcode/with-environment.sh\\"\\nREACT_NATIVE_XCODE=\\"$REACT_NATIVE_PATH/scripts/react-native-xcode.sh\\"\\n\\n/bin/sh -c \\"$WITH_ENVIRONMENT $REACT_NATIVE_XCODE\\"\\n";';
+  const expected =
+    'shellScript = "set -e\\nif [[ -f \\"$PODS_ROOT/../.xcode.env\\" ]]; then\\nsource \\"$PODS_ROOT/../.xcode.env\\"\\nfi\\nif [[ -f \\"$PODS_ROOT/../.xcode.env.local\\" ]]; then\\nsource \\"$PODS_ROOT/../.xcode.env.local\\"\\nfi\\nexport CONFIG_CMD=\\"dummy-workaround-value\\"\\nexport CLI_PATH=\\"$(\\"$NODE_BINARY\\" --print \\"require(\'path\').dirname(require.resolve(\'@rnef/cli/package.json\')) + \'/dist/src/bin.js\'\\")\\"\\nWITH_ENVIRONMENT=\\"$REACT_NATIVE_PATH/scripts/xcode/with-environment.sh\\"\\n";';
+
+  const xcodeProjectFolder = fs
+    .readdirSync(path.join(projectRoot, sourceDir))
+    .find((file) => file.endsWith('.xcodeproj'));
+  const xcodeProjectPath = xcodeProjectFolder
+    ? path.join(projectRoot, sourceDir, xcodeProjectFolder, 'project.pbxproj')
+    : undefined;
+
+  if (!xcodeProjectPath) {
+    logger.debug(`No Xcode project found in ${sourceDir}`);
+    return;
+  }
+  const content = fs.readFileSync(xcodeProjectPath, 'utf8');
+  const replaced = content.replace(toReplace, expected);
+  if (replaced !== content) {
+    fs.writeFileSync(xcodeProjectPath, replaced);
+  } else {
+    logger.warn(
+      `Unable to update ${color.bold(xcodeProjectPath)}. 
+Please update the "Bundle React Native code and images" build phase manually with:
+  set -e
+  if [[ -f "$PODS_ROOT/../.xcode.env" ]]; then
+  source "$PODS_ROOT/../.xcode.env"
+  fi
+  if [[ -f "$PODS_ROOT/../.xcode.env.local" ]]; then
+  source "$PODS_ROOT/../.xcode.env.local"
+  fi
+  export CONFIG_CMD="dummy-workaround-value"
+  export CLI_PATH="$("$NODE_BINARY" --print "require('path').dirname(require.resolve('@rnef/cli/package.json')) + '/dist/src/bin.js'")"
+  WITH_ENVIRONMENT="$REACT_NATIVE_PATH/scripts/xcode/with-environment.sh"
+`,
+    );
   }
 }
 
