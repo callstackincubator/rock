@@ -15,7 +15,7 @@ import type { Reporter } from 'metro/src/lib/reporting';
 import type { TerminalReportableEvent } from 'metro/src/lib/TerminalReporter';
 import type { TerminalReporter } from 'metro/src/lib/TerminalReporter';
 import { Terminal } from 'metro-core';
-import { getDevMiddleware } from '../getDevMiddleware.js';
+import { getDevMiddleware } from '../getReactNativeDeps.js';
 import attachKeyHandlers from './attachKeyHandlers.js';
 import createDevMiddlewareLogger from './createDevMiddlewareLogger.js';
 import loadMetroConfig from './loadMetroConfig.js';

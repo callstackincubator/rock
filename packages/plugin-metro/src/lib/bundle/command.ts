@@ -10,7 +10,7 @@ import {
   runHermes,
   spinner,
 } from '@rnef/tools';
-import { getReactNativeCommunityCliPlugin } from '../getDevMiddleware.js';
+import { getReactNativeCommunityCliPlugin } from '../getReactNativeDeps.js';
 
 type BundleCommandArgs = {
   assetsDest?: string;
