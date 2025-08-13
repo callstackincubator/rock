@@ -1,5 +1,12 @@
 # @rnef/cli
 
+## 0.8.13
+
+### Patch Changes
+
+- @rnef/config@0.8.13
+- @rnef/tools@0.8.13
+
 ## 0.8.12
 
 ### Patch Changes
