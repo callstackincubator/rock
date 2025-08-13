@@ -1,5 +1,12 @@
 # @rnef/platform-apple-helpers
 
+## 0.8.12
+
+### Patch Changes
+
+- a1995b6: fix: stdout buffer overflow and excessive logs accumulation when building ios
+  - @rnef/tools@0.8.12
+
 ## 0.8.11
 
 ### Patch Changes
