@@ -134,10 +134,12 @@ Configuration   ${color.bold(configuration)}`);
       cwd: sourceDir,
     });
 
-    // Process the output from the AsyncIterable
-    for await (const chunk of process) {
-      commandOutput += chunk + '\n';
-      reportProgress(chunk, loader, message);
+    if (!logger.isVerbose()) {
+      // Process the output from the AsyncIterable
+      for await (const chunk of process) {
+        commandOutput += chunk + '\n';
+        reportProgress(chunk, loader, message);
+      }
     }
 
     await process;
@@ -150,7 +152,7 @@ Configuration   ${color.bold(configuration)}`);
       );
     }
     if (commandOutput) {
-      logger.error(`xcodebuild output: ${commandOutput}`);
+      console.error(color.red(`xcodebuild output: ${commandOutput}`));
       throw new RnefError(
         'Running xcodebuild failed. See error details above.',
       );
