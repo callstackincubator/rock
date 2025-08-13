@@ -1,6 +1,6 @@
 # Android GitHub Action
 
-This GitHub Action allows you to build Android apps using RNEF's remote build system. It supports both simulator builds for development and signed device builds for testing and release. If you haven't yet, please check the [configuration guide](./configuration.md) where you can find information on optimal workflow setup, permissions, optimizations and GitHub Personal Access Tokens.
+This GitHub Action allows you to build Android apps using Rock's remote build system. It supports both simulator builds for development and signed device builds for testing and release. If you haven't yet, please check the [configuration guide](./configuration.md) where you can find information on optimal workflow setup, permissions, optimizations and GitHub Personal Access Tokens.
 
 ## Development Builds For All Devices
 
@@ -11,8 +11,8 @@ Builds an APK (`.apk`) file in debug variants suitable for development. Doesn't 
 Use in the GitHub Workflow file like this:
 
 ```yaml
-- name: RNEF Remote Build - Android
-  id: rnef-remote-build-android
+- name: Rock Remote Build - Android
+  id: rock-remote-build-android
   uses: callstackincubator/android@v2
   with:
     variant: debug
@@ -34,18 +34,18 @@ base64 -i release.keystore | pbcopy
 On GitHub Actions secrets and variables page you'll need to set up the following secrets for your GitHub repository:
 
 - `KEYSTORE_BASE64` – Base64 version of the release keystore
-- `RNEF_UPLOAD_STORE_FILE` – Keystore store file name
-- `RNEF_UPLOAD_STORE_PASSWORD` – Keystore store password
-- `RNEF_UPLOAD_KEY_ALIAS` – Keystore key alias
-- `RNEF_UPLOAD_KEY_PASSWORD` – Keystore key password
+- `ROCK_UPLOAD_STORE_FILE` – Keystore store file name
+- `ROCK_UPLOAD_STORE_PASSWORD` – Keystore store password
+- `ROCK_UPLOAD_KEY_ALIAS` – Keystore key alias
+- `ROCK_UPLOAD_KEY_PASSWORD` – Keystore key password
 
 ### Running on GitHub Actions
 
 Use in the GitHub Workflow file like this:
 
 ```yaml
-- name: RNEF Remote Build - Android device
-  id: rnef-remote-build-android
+- name: Rock Remote Build - Android device
+  id: rock-remote-build-android
   uses: callstackincubator/android@v2
   with:
     variant: release
@@ -53,41 +53,41 @@ Use in the GitHub Workflow file like this:
     # if you need to sign with non-debug keystore
     sign: true
     keystore-base64: ${{ secrets.KEYSTORE_BASE64 }}
-    keystore-store-file: ${{ secrets.RNEF_UPLOAD_STORE_FILE }}
-    keystore-store-password: ${{ secrets.RNEF_UPLOAD_STORE_PASSWORD }}
-    keystore-key-alias: ${{ secrets.RNEF_UPLOAD_KEY_ALIAS }}
-    keystore-key-password: ${{ secrets.RNEF_UPLOAD_KEY_PASSWORD }}
+    keystore-store-file: ${{ secrets.ROCK_UPLOAD_STORE_FILE }}
+    keystore-store-password: ${{ secrets.ROCK_UPLOAD_STORE_PASSWORD }}
+    keystore-key-alias: ${{ secrets.ROCK_UPLOAD_KEY_ALIAS }}
+    keystore-key-password: ${{ secrets.ROCK_UPLOAD_KEY_PASSWORD }}
 ```
 
 ### Other Action Inputs
 
-#### `rnef-build-extra-params`
+#### `rock-build-extra-params`
 
 Default: ""
 
-Pass extra parameters to the `rnef build:android` command, in order to apply custom params for gradlew command.
+Pass extra parameters to the `rock build:android` command, in order to apply custom params for gradlew command.
 
 ```yaml
-- name: RNEF Remote Build - Android
-  id: rnef-remote-build-android
+- name: Rock Remote Build - Android
+  id: rock-remote-build-android
   uses: callstackincubator/android@v2
   with:
     variant: release
     github-token: ${{ secrets.GITHUB_TOKEN }}
-    rnef-build-extra-params: '--aab' # build an Android App Bundle for the Play Store
+    rock-build-extra-params: '--aab' # build an Android App Bundle for the Play Store
 ```
 
 #### `re-sign`
 
 Default: `false`
 
-Re-sign the APK with latest JS bytecode bundle with `rnef sign:android`. Necessary for tester device builds.
-When `true`, it will produce new artifact for every commit in a Pull Request, with a PR number appended to the original artifact name associated with native state of the app, e.g. `rnef-android-release-9482df3912-1337`, where `1337` is the unique PR number.
+Re-sign the APK with latest JS bytecode bundle with `rock sign:android`. Necessary for tester device builds.
+When `true`, it will produce new artifact for every commit in a Pull Request, with a PR number appended to the original artifact name associated with native state of the app, e.g. `rock-android-release-9482df3912-1337`, where `1337` is the unique PR number.
 To avoid polluting artifact storage it will also handle removal of old artifacts associated with older commits.
 
 ```yaml
-- name: RNEF Remote Build - Android
-  id: rnef-remote-build-android
+- name: Rock Remote Build - Android
+  id: rock-remote-build-android
   uses: callstackincubator/android@v2
   with:
     variant: release
@@ -102,8 +102,8 @@ Default: `true`
 For security reasons we add Gradle Wrapper validation step to Android build action. Pass `false` to disable validation.
 
 ```yaml
-- name: RNEF Remote Build - Android
-  id: rnef-remote-build-android
+- name: Rock Remote Build - Android
+  id: rock-remote-build-android
   uses: callstackincubator/android@v2
   with:
     variant: debug
@@ -124,14 +124,14 @@ packages/
   mobile/
     ios/
     android/
-    rnef.config.mjs
+    rock.config.mjs
 ```
 
 You'll need to set `working-directory: ./packages/mobile`:
 
 ```yaml
-- name: RNEF Remote Build - Android
-  id: rnef-remote-build-android
+- name: Rock Remote Build - Android
+  id: rock-remote-build-android
   uses: callstackincubator/android@v2
   with:
     variant: debug
@@ -152,8 +152,8 @@ ID of the relevant Android build artifact. Suitable for retrieving artifacts for
 ```yaml
 build-release:
   outputs:
-    artifact-id: ${{ steps.rnef-remote-build-android.outputs.artifact-id }}
-  # ...steps running action with `rnef-remote-build-android` id
+    artifact-id: ${{ steps.rock-remote-build-android.outputs.artifact-id }}
+  # ...steps running action with `rock-remote-build-android` id
 
 run-e2e-tests:
   runs-on: ubuntu-latest

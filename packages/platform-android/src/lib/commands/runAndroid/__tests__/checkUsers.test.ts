@@ -1,4 +1,4 @@
-import { spawn } from '@rnef/tools';
+import { spawn } from '@rock-js/tools';
 import type { Mock } from 'vitest';
 import { describe, it } from 'vitest';
 import { checkUsers } from '../listAndroidUsers.js';

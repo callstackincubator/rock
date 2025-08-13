@@ -1,11 +1,11 @@
-import type { SubprocessError } from '@rnef/tools';
+import type { SubprocessError } from '@rock-js/tools';
 import {
   colorLink,
   relativeToCwd,
-  RnefError,
+  RockError,
   spawn,
   spinner,
-} from '@rnef/tools';
+} from '@rock-js/tools';
 import { existsSync, readdirSync } from 'fs';
 import path from 'path';
 import { getBuildPaths } from '../../utils/getBuildPaths.js';
@@ -33,7 +33,7 @@ export const exportArchive = async ({
 
   if (!existsSync(exportOptionsPlistPath)) {
     loader.stop('Failed to export the archive.', 1);
-    throw new RnefError(
+    throw new RockError(
       `ExportOptions.plist not found, please create ${colorLink(
         relativeToCwd(exportOptionsPlistPath),
       )} file with valid configuration for Archive export.`,

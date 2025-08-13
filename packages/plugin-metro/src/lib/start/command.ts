@@ -6,8 +6,8 @@
  */
 
 import path from 'node:path';
-import type { PluginApi } from '@rnef/config';
-import { findDevServerPort, intro } from '@rnef/tools';
+import type { PluginApi } from '@rock-js/config';
+import { findDevServerPort, intro } from '@rock-js/tools';
 import type { StartCommandArgs } from './runServer.js';
 import runServer from './runServer.js';
 

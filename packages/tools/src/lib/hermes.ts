@@ -2,7 +2,7 @@ import fs from 'node:fs';
 import { createRequire } from 'node:module';
 import path from 'node:path';
 import { getLocalOS } from './env.js';
-import { RnefError } from './error.js';
+import { RockError } from './error.js';
 import { getProjectRoot } from './project.js';
 import type { SubprocessError } from './spawn.js';
 import { spawn } from './spawn.js';
@@ -25,7 +25,7 @@ function getComposeSourceMapsPath(): string {
     'compose-source-maps.js',
   );
   if (!fs.existsSync(composeSourceMapsPath)) {
-    throw new RnefError(
+    throw new RockError(
       "Could not find react-native's compose-source-maps.js script.",
     );
   }
@@ -53,7 +53,7 @@ function extractDebugId(sourceMapPath: string): string | null {
  * @see https://github.com/tc39/ecma426/blob/main/proposals/debug-id.md
  * @param sourceMapPath - Sourcemap file path
  * @param debugId - debugId value to inject
- * @throws {RnefError} Throws an error if injection fails
+ * @throws {RockError} Throws an error if injection fails
  */
 function injectDebugId(sourceMapPath: string, debugId: string) {
   try {
@@ -62,7 +62,7 @@ function injectDebugId(sourceMapPath: string, debugId: string) {
     sourceMap.debugId = debugId;
     fs.writeFileSync(sourceMapPath, JSON.stringify(sourceMap));
   } catch {
-    throw new RnefError(
+    throw new RockError(
       `Failed to inject debugId into sourcemap: ${sourceMapPath}`,
     );
   }
@@ -77,7 +77,7 @@ export async function runHermes({
 }) {
   const hermescPath = getHermescPath();
   if (!hermescPath) {
-    throw new RnefError(
+    throw new RockError(
       'Hermesc binary not found. Use `--no-hermes` flag to disable Hermes.',
     );
   }
@@ -103,7 +103,7 @@ export async function runHermes({
   try {
     await spawn(hermescPath, hermescArgs);
   } catch (error) {
-    throw new RnefError(
+    throw new RockError(
       'Compiling JS bundle with Hermes failed. Use `--no-hermes` flag to disable Hermes.',
       { cause: (error as SubprocessError).stderr },
     );
@@ -131,7 +131,7 @@ export async function runHermes({
         injectDebugId(sourcemapOutputPath, debugId);
       }
     } catch (error) {
-      throw new RnefError('Failed to run compose-source-maps script', {
+      throw new RockError('Failed to run compose-source-maps script', {
         cause: (error as SubprocessError).stderr,
       });
     }
@@ -144,7 +144,7 @@ export async function runHermes({
     }
     fs.renameSync(hbcOutputPath, bundleOutputPath);
   } catch (error) {
-    throw new RnefError(
+    throw new RockError(
       `Failed to move compiled Hermes bytecode to bundle output path: ${error}`,
     );
   }

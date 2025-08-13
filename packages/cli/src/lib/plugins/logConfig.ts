@@ -2,7 +2,7 @@ import type {
   Config,
   DependencyConfig,
 } from '@react-native-community/cli-types';
-import type { ConfigOutput, PluginApi } from '@rnef/config';
+import type { ConfigOutput, PluginApi } from '@rock-js/config';
 
 function isValidRNDependency(config: DependencyConfig) {
   return (

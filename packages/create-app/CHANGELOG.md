@@ -1,4 +1,15 @@
-# @rnef/create-app
+# create-rock
+
+## 0.9.0
+
+### Minor Changes
+
+- 47ec267: Let there be Rock
+
+### Patch Changes
+
+- Updated dependencies [47ec267]
+  - @rock-js/tools@0.9.0
 
 ## 0.8.13
 
@@ -319,7 +330,7 @@
 
 ### Patch Changes
 
-- 52fc186: fix: yarn create bugging on create-rnef-app bin
+- 52fc186: fix: yarn create bugging on create @rnef/app bin
   - @rnef/tools@0.5.3
 
 ## 0.5.2

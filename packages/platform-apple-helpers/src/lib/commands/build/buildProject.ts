@@ -1,6 +1,6 @@
 import path from 'node:path';
-import type { SubprocessError } from '@rnef/tools';
-import { color, logger, RnefError, spawn, spinner } from '@rnef/tools';
+import type { SubprocessError } from '@rock-js/tools';
+import { color, logger, RockError, spawn, spinner } from '@rock-js/tools';
 import type { ApplePlatform, XcodeProjectInfo } from '../../types/index.js';
 import { getBuildPaths } from '../../utils/getBuildPaths.js';
 import { supportedPlatforms } from '../../utils/supportedPlatforms.js';
@@ -82,7 +82,7 @@ export const buildProject = async ({
   args: RunFlags | BuildFlags;
 }) => {
   if (!supportedPlatforms[platformName]) {
-    throw new RnefError(
+    throw new RockError(
       `Unknown platform: ${platformName}. Please, use one of: ${Object.values(
         supportedPlatforms,
       ).join(', ')}.`,
@@ -154,11 +154,11 @@ Configuration   ${color.bold(configuration)}`);
     if (commandOutput) {
       // Use lightweight console.error instead of logger.error to avoid stack overflow issues when Xcode logs go crazy
       console.error(color.red(`xcodebuild output: ${commandOutput}`));
-      throw new RnefError(
+      throw new RockError(
         'Running xcodebuild failed. See error details above.',
       );
     }
-    throw new RnefError('Running xcodebuild failed', {
+    throw new RockError('Running xcodebuild failed', {
       cause:
         (error as SubprocessError).stderr || (error as SubprocessError).command,
     });

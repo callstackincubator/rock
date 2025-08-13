@@ -1,14 +1,14 @@
 import commands from '@callstack/repack/commands/rspack';
-import type { PluginApi, PluginOutput } from '@rnef/config';
+import type { PluginApi, PluginOutput } from '@rock-js/config';
 import {
   colorLink,
   findDevServerPort,
   intro,
   logger,
-  RnefError,
+  RockError,
   runHermes,
   spinner,
-} from '@rnef/tools';
+} from '@rock-js/tools';
 
 type PluginConfig = {
   platforms?: {
@@ -29,11 +29,11 @@ export const pluginRepack =
   (pluginConfig: PluginConfig = {}) =>
   (api: PluginApi): PluginOutput => {
     if (!startCommand) {
-      throw new RnefError('Re.Pack "start" command not found.');
+      throw new RockError('Re.Pack "start" command not found.');
     }
 
     if (!bundleCommand) {
-      throw new RnefError('Re.Pack "bundle" command not found.');
+      throw new RockError('Re.Pack "bundle" command not found.');
     }
 
     api.registerCommand({
@@ -67,8 +67,8 @@ export const pluginRepack =
       description: 'Bundles JavaScript with Re.Pack.',
       action: async (args: BundleArgs) => {
         if (!args.entryFile) {
-          throw new RnefError(
-            '"rnef bundle" command is missing "--entry-file" argument.',
+          throw new RockError(
+            '"rock bundle" command is missing "--entry-file" argument.',
           );
         }
         intro('Compiling JS bundle with Re.Pack');
@@ -83,7 +83,7 @@ export const pluginRepack =
 
         if (args.hermes) {
           if (!args.bundleOutput) {
-            throw new RnefError(
+            throw new RockError(
               'Missing "--bundle-output" argument to run "bundle --hermes".',
             );
           }
@@ -114,8 +114,8 @@ export const pluginRepack =
     });
 
     return {
-      name: '@rnef/plugin-repack',
-      description: 'RNEF plugin for Re.Pack toolkit with Rspack.',
+      name: '@rock-js/plugin-repack',
+      description: 'Rock plugin for Re.Pack toolkit with Rspack.',
     };
   };
 

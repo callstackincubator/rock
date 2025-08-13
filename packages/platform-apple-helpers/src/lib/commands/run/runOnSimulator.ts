@@ -1,6 +1,6 @@
 import path from 'node:path';
-import type { SubprocessError } from '@rnef/tools';
-import { color, logger, RnefError, spawn, spinner } from '@rnef/tools';
+import type { SubprocessError } from '@rock-js/tools';
+import { color, logger, RockError, spawn, spinner } from '@rock-js/tools';
 import type { Device } from '../../types/index.js';
 import { readKeyFromPlist } from '../../utils/plist.js';
 
@@ -66,7 +66,7 @@ async function bootSimulator(selectedSimulator: Device) {
       );
       return;
     }
-    throw new RnefError('Failed to boot Simulator', {
+    throw new RockError('Failed to boot Simulator', {
       cause: (error as SubprocessError).stderr,
     });
   }
@@ -80,7 +80,7 @@ export default async function installAppOnSimulator(
   try {
     await spawn('xcrun', ['simctl', 'install', udid, binaryPath]);
   } catch (error) {
-    throw new RnefError('Failed to install the app on Simulator', {
+    throw new RockError('Failed to install the app on Simulator', {
       cause: (error as SubprocessError).stderr,
     });
   }
@@ -100,7 +100,7 @@ export async function launchAppOnSimulator(
   try {
     await spawn('xcrun', ['simctl', 'launch', udid, bundleID]);
   } catch (error) {
-    throw new RnefError(`Failed to launch the app on Simulator`, {
+    throw new RockError(`Failed to launch the app on Simulator`, {
       cause: (error as SubprocessError).stderr,
     });
   }

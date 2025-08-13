@@ -1,8 +1,8 @@
 import { createRequire } from 'node:module';
 import { dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
-import { type CommandType, getConfig } from '@rnef/config';
-import { colorLink, logger, resolveFilenameUp, RnefError } from '@rnef/tools';
+import { type CommandType, getConfig } from '@rock-js/config';
+import { colorLink, logger, resolveFilenameUp, RockError } from '@rock-js/tools';
 import { Command } from 'commander';
 import { checkDeprecatedOptions } from './checkDeprecatedOptions.js';
 import { cleanPlugin } from './plugins/clean.js';
@@ -28,8 +28,8 @@ export const cli = async ({ cwd, argv }: CliOptions) => {
   const program = new Command();
 
   program
-    .name('rnef')
-    .description('React Native Enterprise Framework CLI.')
+    .name('rock')
+    .description('Rock CLI.')
     .option('--verbose', 'enable verbose logging')
     .version(version);
 
@@ -52,7 +52,7 @@ export const cli = async ({ cwd, argv }: CliOptions) => {
         try {
           await command.action(...args);
         } catch (error) {
-          if (error instanceof RnefError) {
+          if (error instanceof RockError) {
             if (logger.isVerbose()) {
               logger.error(error);
             } else {
@@ -104,12 +104,12 @@ function ensureUniqueCommands(commands: CommandType[] | undefined) {
           command.name
         }" registered twice by the same "${
           command.__origin
-        }" plugin in ${colorLink('rnef.config.mjs')} file.
+        }" plugin in ${colorLink('rock.config.mjs')} file.
 Please declare the plugin only once.`);
       } else {
         logger.error(`Found duplicated command "${
           command.name
-        }" registered by 2 plugins in ${colorLink('rnef.config.mjs')} file:
+        }" registered by 2 plugins in ${colorLink('rock.config.mjs')} file:
 1. Added by "${command.__origin}" plugin
 2. Added by "${duplicate.__origin}" plugin
 Command names must be unique. Please check if you import a plugin multiple times or use incompatible plugins.`);

@@ -2,8 +2,8 @@ import * as fs from 'node:fs';
 import { createRequire } from 'node:module';
 import * as path from 'node:path';
 import { pathToFileURL } from 'node:url';
-import type { FingerprintSources, RemoteBuildCache } from '@rnef/tools';
-import { colorLink, logger } from '@rnef/tools';
+import type { FingerprintSources, RemoteBuildCache } from '@rock-js/tools';
+import { colorLink, logger } from '@rock-js/tools';
 import type { ValidationError } from 'joi';
 import { ConfigTypeSchema } from './schema.js';
 import { formatValidationError } from './utils.js';
@@ -129,7 +129,7 @@ export async function getConfig(
 ): Promise<ConfigOutput> {
   const { config, filePathWithExt, configDir } = await importUp(
     dir,
-    'rnef.config',
+    'rock.config',
   );
 
   const { error, value: validatedConfig } = ConfigTypeSchema.validate(
@@ -171,7 +171,7 @@ export async function getConfig(
     getRemoteCacheProvider: async () => {
       // special case for github-actions
       if (validatedConfig.remoteCacheProvider === 'github-actions') {
-        const { providerGitHub } = await import('@rnef/provider-github');
+        const { providerGitHub } = await import('@rock-js/provider-github');
         return providerGitHub();
       }
       return validatedConfig.remoteCacheProvider;

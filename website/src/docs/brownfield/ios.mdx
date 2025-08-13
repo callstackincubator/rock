@@ -2,18 +2,18 @@ import { PackageManagerTabs } from 'rspress/theme';
 
 # Integrating with iOS Apps
 
-React Native Enterprise Framework helps you package your React Native code into files that your iOS and Android apps can use. For iOS, it creates a `.xcframework` file that you can easily add to your app.
+Rock helps you package your React Native code into files that your iOS and Android apps can use. For iOS, it creates a `.xcframework` file that you can easily add to your app.
 
 To add React Native to your iOS app, we'll package your React Native code into an XCFramework. This way, you don't need to set up Node.js or CocoaPods in your main app.
 
 To make the integration simpler and more powerful, we'll use the [React Native Brownfield](https://github.com/callstack/react-native-brownfield) library.
 
-## Creating a New RNEF Project (Automated)
+## Creating a New Rock Project (Automated)
 
-If you are creating a new RNEF project, you can select the `brownfield-ios` plugin:
+If you are creating a new Rock project, you can select the `brownfield-ios` plugin:
 
 ```
-> npm create @rnef/app
+> npm create @rock-js/app
 ...
 ◆  What plugins do you want to start with?
 │  ◼ brownfield-ios
@@ -23,9 +23,9 @@ to add brownfield capabilities, install dependencies. Then jump to:
 
 - [6. Create the XCFramework](#6-create-the-xcframework).
 
-## Integrating to An Existing RNEF Project (Manual)
+## Integrating to An Existing Rock Project (Manual)
 
-If you have an existing RNEF project, follow the instructions below.
+If you have an existing Rock project, follow the instructions below.
 
 ### 1. Create a New Framework in React Native app's Xcode:
 
@@ -88,14 +88,14 @@ If you have an existing RNEF project, follow the instructions below.
    class InternalClassForBundle {}
    ```
 
-### 5. Setup RNEF's brownfield plugin:
+### 5. Setup Rock's brownfield plugin:
 
-1. Add `@rnef/plugin-brownfield-ios` to your React Native project
-   <PackageManagerTabs command="install @rnef/plugin-brownfield-ios" />
-1. Add this to your `rnef.config.mjs`:
+1. Add `@rock-js/plugin-brownfield-ios` to your React Native project
+   <PackageManagerTabs command="install @rock-js/plugin-brownfield-ios" />
+1. Add this to your `rock.config.mjs`:
 
-   ```js title="rnef.config.mjs"
-   import { pluginBrownfieldIos } from '@rnef/plugin-brownfield-ios';
+   ```js title="rock.config.mjs"
+   import { pluginBrownfieldIos } from '@rock-js/plugin-brownfield-ios';
 
    export default {
      plugins: [
@@ -110,7 +110,7 @@ If you have an existing RNEF project, follow the instructions below.
 Run the following command in Terminal to compile frameworks for Hermes, React Native Brownfield library, and your app:
 
 ```sh title="Terminal"
-rnef package:ios --scheme <framework_target_name> --configuration Release
+rock package:ios --scheme <framework_target_name> --configuration Release
 ```
 
 :::warning
@@ -125,10 +125,10 @@ error: underlying Objective-C module 'ReactBrownfield' not found
 
 ### 7. Add the Framework to Your iOS App:
 
-1. Open the `.rnef/cache/ios/package` directory and drag the following files into your app's Xcode project (you can select all at once):
+1. Open the `.rock/cache/ios/package` directory and drag the following files into your app's Xcode project (you can select all at once):
 
    ```
-   .rnef/cache/ios/package
+   .rock/cache/ios/package
    ├── hermes.xcframework                  # JavaScript runtime
    ├── ReactBrownfield.xcframework         # React Native Brownfield library
    └── <framework_target_name>.xcframework # Your framework target
@@ -181,7 +181,7 @@ error: underlying Objective-C module 'ReactBrownfield' not found
    You can do so by running `start` command in your Terminal app:
 
    ```shell
-   npx rnef start
+   npx rock start
    ```
 
    #### Release configuration

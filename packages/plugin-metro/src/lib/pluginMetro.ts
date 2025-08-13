@@ -1,4 +1,4 @@
-import type { PluginApi, PluginOutput } from '@rnef/config';
+import type { PluginApi, PluginOutput } from '@rock-js/config';
 import { registerBundleCommand } from './bundle/command.js';
 import { registerStartCommand } from './start/command.js';
 
@@ -9,8 +9,8 @@ export const pluginMetro =
     registerBundleCommand(api);
 
     return {
-      name: '@rnef/plugin-metro',
-      description: 'RNEF plugin for Metro bundler.',
+      name: '@rock-js/plugin-metro',
+      description: 'Rock plugin for Metro bundler.',
     };
   };
 

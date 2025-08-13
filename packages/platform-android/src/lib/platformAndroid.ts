@@ -1,5 +1,5 @@
 import type { AndroidProjectConfig } from '@react-native-community/cli-types';
-import type { PlatformOutput, PluginApi } from '@rnef/config';
+import type { PlatformOutput, PluginApi } from '@rock-js/config';
 import { registerBuildCommand } from './commands/buildAndroid/command.js';
 import { registerCreateKeystoreCommand } from './commands/generateKeystore.js';
 import { getValidProjectConfig } from './commands/getValidProjectConfig.js';
@@ -17,8 +17,8 @@ export const platformAndroid =
     registerSignCommand(api);
 
     return {
-      name: '@rnef/platform-android',
-      description: 'RNEF plugin for everything Android.',
+      name: '@rock-js/platform-android',
+      description: 'Rock plugin for everything Android.',
       autolinkingConfig: {
         get project() {
           const androidConfig = getValidProjectConfig(

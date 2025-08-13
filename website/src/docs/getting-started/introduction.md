@@ -1,9 +1,9 @@
 # Introduction
 
-RNEF (React Native Enterprise Framework) is a toolkit designed to accelerate React Native app development for enterprise teams. It provides a CLI and Remote Cache system (currently integrated with GitHub Actions) to make your team's development workflow more efficient.
+Rock is a toolkit designed to accelerate React Native app development for enterprise teams. It provides a CLI and Remote Cache system (currently integrated with GitHub Actions) to make your team's development workflow more efficient.
 
 :::info OK I want to try it!
-If you feel like skipping this intro section and try it out in existing Community CLI project, feel free to head over to [Migrating from Community CLI](/docs/getting-started/migrating-from-community-cli) page. Or go to [Quick start](/docs/getting-started/index) to initialize a new project.
+If you feel like skipping this intro section and try it out in existing Community CLI project, head over to [Quick start](/docs/getting-started/index).
 :::
 
 ## Why We Exist
@@ -109,7 +109,7 @@ Out of the box we support storing artifacts on GitHub Actions and we're working 
    - Update scripts in package.json
 3. When you make JavaScript-only changes, the hash stays the same
 4. The CLI checks for matching builds in:
-   - Local cache (`.rnef/` directory)
+   - Local cache (`.rock/` directory)
    - Remote storage
    - Falls back to local build if no match is found
 

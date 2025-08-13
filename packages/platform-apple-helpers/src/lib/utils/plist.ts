@@ -1,6 +1,6 @@
 import { execFile } from 'node:child_process';
 import { promisify } from 'node:util';
-import { RnefError, spawn, SubprocessError } from '@rnef/tools';
+import { RockError, spawn, SubprocessError } from '@rock-js/tools';
 
 const execFileAsync = promisify(execFile);
 
@@ -17,7 +17,7 @@ export async function readKeyFromPlist(
     const result = await plistBuddy(plistPath, `Print:${key}`, options);
     return result.stdout.trim();
   } catch (error) {
-    throw new RnefError(`Error reading key ${key} from ${plistPath}`, {
+    throw new RockError(`Error reading key ${key} from ${plistPath}`, {
       cause: error instanceof SubprocessError ? error.stderr : error,
     });
   }
@@ -48,7 +48,7 @@ export async function readBufferFromPlist(
     const result = await binaryPlistBuddy(plistPath, `Print:${key}`);
     return Buffer.from(result.stdout, 'binary');
   } catch (error) {
-    throw new RnefError(`Error reading key ${key} from ${plistPath}`, {
+    throw new RockError(`Error reading key ${key} from ${plistPath}`, {
       cause: error instanceof SubprocessError ? error.stderr : error,
     });
   }

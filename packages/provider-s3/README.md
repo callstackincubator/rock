@@ -1,6 +1,6 @@
-# @rnef/provider-s3
+# @rock-js/provider-s3
 
-AWS S3 remote cache provider for React Native Enterprise Framework (RNEF). This package is part of the RNEF ecosystem.
+AWS S3 remote cache provider for Rock. This package is part of the Rock ecosystem.
 
 ## Features
 
@@ -54,8 +54,8 @@ type ProviderConfig = {
 ### AWS S3
 
 ```ts
-// rnef.config.mjs
-import { providerS3 } from '@rnef/provider-s3';
+// rock.config.mjs
+import { providerS3 } from '@rock-js/provider-s3';
 
 export default {
   // ...
@@ -71,8 +71,8 @@ export default {
 ### Cloudflare R2
 
 ```ts
-// rnef.config.mjs
-import { providerS3 } from '@rnef/provider-s3';
+// rock.config.mjs
+import { providerS3 } from '@rock-js/provider-s3';
 
 export default {
   // ...
@@ -89,4 +89,4 @@ export default {
 
 ## Documentation
 
-For detailed documentation about RNEF and its tools, visit [RNEF Documentation](https://rnef.dev)
+For detailed documentation about Rock and its tools, visit [Rock Documentation](https://rockjs.dev)

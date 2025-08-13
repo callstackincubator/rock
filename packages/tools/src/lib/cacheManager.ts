@@ -1,7 +1,7 @@
 import fs from 'node:fs';
 import path from 'node:path';
 import { colorLink } from './color.js';
-import { RnefError } from './error.js';
+import { RockError } from './error.js';
 import logger from './logger.js';
 import { getCacheRootPath } from './project.js';
 
@@ -43,7 +43,7 @@ function removeProjectCache() {
       fs.rmSync(cachePath, { recursive: true });
     }
   } catch (error) {
-    throw new RnefError(
+    throw new RockError(
       `Failed to remove cache for ${name}. If you experience any issues when running freshly initialized project, please remove the "${colorLink(
         path.join(getCacheFile()),
       )}" folder manually.`,

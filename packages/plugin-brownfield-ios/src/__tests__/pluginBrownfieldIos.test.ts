@@ -14,6 +14,6 @@ test('plugin is called with correct arguments and returns its name and descripti
 
   expect(plugin).toMatchObject({
     name: 'plugin-brownfield-ios',
-    description: 'RNEF plugin for brownfield iOS.',
+    description: 'Rock plugin for brownfield iOS.',
   });
 });

@@ -1,14 +1,14 @@
 import type { IOSProjectConfig } from '@react-native-community/cli-types';
-import type { PlatformOutput, PluginApi } from '@rnef/config';
-import type { BuildFlags, RunFlags } from '@rnef/platform-apple-helpers';
+import type { PlatformOutput, PluginApi } from '@rock-js/config';
+import type { BuildFlags, RunFlags } from '@rock-js/platform-apple-helpers';
 import {
   createBuild,
   createRun,
   getBuildOptions,
   getRunOptions,
   getValidProjectConfig,
-} from '@rnef/platform-apple-helpers';
-import { intro, outro } from '@rnef/tools';
+} from '@rock-js/platform-apple-helpers';
+import { intro, outro } from '@rock-js/tools';
 import { registerSignCommand } from './commands/signIos.js';
 
 const buildOptions = getBuildOptions({ platformName: 'ios' });
@@ -71,8 +71,8 @@ export const platformIOS =
     registerSignCommand(api);
 
     return {
-      name: '@rnef/platform-ios',
-      description: 'RNEF plugin for everything iOS.',
+      name: '@rock-js/platform-ios',
+      description: 'Rock plugin for everything iOS.',
       autolinkingConfig: {
         get project() {
           const iosConfig = getValidProjectConfig(

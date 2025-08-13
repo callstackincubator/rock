@@ -79,7 +79,7 @@ function WelcomeScreen() {
   };
 
   const onPress = () => {
-    openURLInBrowser('https://rnef.dev');
+    openURLInBrowser('https://rockjs.dev');
   };
 
   return (
@@ -93,7 +93,7 @@ function WelcomeScreen() {
           />
         </View>
         <Text style={[styles.title, { color: textColor }]}>
-          Welcome to React Native Enterprise Framework!
+          Welcome to Rock!
         </Text>
       </View>
 

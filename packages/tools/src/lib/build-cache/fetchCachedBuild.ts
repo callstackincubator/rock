@@ -3,7 +3,7 @@ import path from 'node:path';
 import AdmZip from 'adm-zip';
 import * as tar from 'tar';
 import { color, colorLink } from '../color.js';
-import { RnefError } from '../error.js';
+import { RockError } from '../error.js';
 import logger from '../logger.js';
 import { relativeToCwd } from '../path.js';
 import { spinner } from '../prompts.js';
@@ -29,10 +29,10 @@ export async function fetchCachedBuild({
   if (remoteCacheProvider === undefined) {
     logger.warn(`No remote cache provider set. You won't be able to access reusable builds from e.g. GitHub Actions. 
 To configure it, set the "remoteCacheProvider" key in ${colorLink(
-      'rnef.config.mjs',
+      'rock.config.mjs',
     )} file. For example:
 
-import { providerGitHub } from '@rnef/provider-github';
+import { providerGitHub } from '@rock-js/provider-github';
 export default {
   // ...
   remoteCacheProvider: providerGitHub()
@@ -135,7 +135,7 @@ export async function handleDownloadResponse(
     unzipFile(zipPath, localArtifactPath);
     fs.unlinkSync(zipPath);
   } catch (error) {
-    throw new RnefError(`Unexpected error`, { cause: error });
+    throw new RockError(`Unexpected error`, { cause: error });
   }
 }
 
@@ -155,7 +155,7 @@ export async function handleUploadResponse(
     );
     await responseWithProgress.arrayBuffer();
   } catch (error) {
-    throw new RnefError(`Unexpected error during upload`, { cause: error });
+    throw new RockError(`Unexpected error during upload`, { cause: error });
   }
 }
 

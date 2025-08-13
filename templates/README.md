@@ -1,6 +1,6 @@
 ## Templates
 
-This folder contains templates for the `create-rnef-app` CLI. It is not intended to be used within the monorepo.
+This folder contains templates for the `create-rock` CLI. It is not intended to be used within the monorepo.
 
 Each template is a separate directory with a `package.json` file.
 

@@ -14,11 +14,11 @@ echo "NPM: Publishing all packages"
 if [ -n "$NPM_TOKEN" ]; then
   pnpm -r run publish:npm
 else
-  pnpm -r run publish:npm -- --otp="$OTP"
+  pnpm -r run publish:npm --otp="$OTP"
 fi
 
 echo "NPM: Publishing template"
-cd templates/rnef-template-default
+cd templates/rock-template-default
 # If NPM_TOKEN is set (CI environment), use it
 if [ -n "$NPM_TOKEN" ]; then
   npm publish

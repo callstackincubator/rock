@@ -1,6 +1,6 @@
 import path from 'node:path';
 import type { IOSProjectConfig } from '@react-native-community/cli-types';
-import type { PluginApi, PluginOutput } from '@rnef/config';
+import type { PluginApi, PluginOutput } from '@rock-js/config';
 import {
   type BuildFlags,
   createBuild,
@@ -8,8 +8,8 @@ import {
   getBuildOptions,
   getBuildPaths,
   getValidProjectConfig,
-} from '@rnef/platform-apple-helpers';
-import { colorLink, intro, logger, outro, relativeToCwd } from '@rnef/tools';
+} from '@rock-js/platform-apple-helpers';
+import { colorLink, intro, logger, outro, relativeToCwd } from '@rock-js/tools';
 import { copyHermesXcframework } from './copyHermesXcframework.js';
 import { mergeFrameworks } from './mergeFrameworks.js';
 const buildOptions = getBuildOptions({ platformName: 'ios' });
@@ -120,7 +120,7 @@ export const pluginBrownfieldIos =
 
     return {
       name: 'plugin-brownfield-ios',
-      description: 'RNEF plugin for brownfield iOS.',
+      description: 'Rock plugin for brownfield iOS.',
     };
   };
 

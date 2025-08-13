@@ -7,7 +7,7 @@
 
 import { createRequire } from 'node:module';
 import path from 'node:path';
-import { logger, RnefError } from '@rnef/tools';
+import { logger, RockError } from '@rock-js/tools';
 import type { ConfigT, InputConfigT, YargArguments } from 'metro-config';
 import { loadConfig, mergeConfig, resolveConfig } from 'metro-config';
 import { reactNativePlatformResolver } from './metroPlatformResolver.js';
@@ -90,7 +90,7 @@ export default async function loadMetroConfig(
   const projectConfig = await resolveConfig(options.config, cwd);
 
   if (projectConfig.isEmpty) {
-    throw new RnefError(`No Metro config found in ${cwd}`);
+    throw new RockError(`No Metro config found in ${cwd}`);
   }
 
   logger.debug(`Reading Metro config from ${projectConfig.filepath}`);

@@ -2,7 +2,7 @@ import { vi } from 'vitest';
 
 vi.mock('node:fs');
 
-// Spawn mock for helpers inside @rnef/tools that don't get mock with following mock
+// Spawn mock for helpers inside @rock-js/tools that don't get mock with following mock
 vi.mock('nano-spawn', async (importOriginal) => {
   // eslint-disable-next-line @typescript-eslint/consistent-type-imports
   const actual = await importOriginal<typeof import('nano-spawn')>();
@@ -13,7 +13,7 @@ vi.mock('nano-spawn', async (importOriginal) => {
         kill: vi.fn(),
         finally: vi.fn(),
       };
-      if (file === 'rnef' && args.includes('config')) {
+      if (file === 'rock' && args.includes('config')) {
         return {
           output: '{"dependencies":[]}',
           nodeChildProcess,
@@ -27,9 +27,9 @@ vi.mock('nano-spawn', async (importOriginal) => {
   };
 });
 
-vi.mock('@rnef/tools', async (importOriginal) => {
+vi.mock('@rock-js/tools', async (importOriginal) => {
   // eslint-disable-next-line @typescript-eslint/consistent-type-imports
-  const actual = await importOriginal<typeof import('@rnef/tools')>();
+  const actual = await importOriginal<typeof import('@rock-js/tools')>();
   return {
     ...actual,
     // Logger
@@ -53,7 +53,7 @@ vi.mock('@rnef/tools', async (importOriginal) => {
     formatArtifactName: vi
       .fn()
       .mockResolvedValue(
-        'rnef-android-debug-089e8a9887099a309e8a7845e697bbf705353f45',
+        'rock-android-debug-089e8a9887099a309e8a7845e697bbf705353f45',
       ),
     spinner: vi.fn(() => ({
       start: vi.fn(),

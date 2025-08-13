@@ -1,6 +1,6 @@
 import os from 'node:os';
-import type { SubprocessError } from '@rnef/tools';
-import { color, RnefError, spawn, spinner } from '@rnef/tools';
+import type { SubprocessError } from '@rock-js/tools';
+import { color, RockError, spawn, spinner } from '@rock-js/tools';
 import { getAdbPath, getDevices } from './adb.js';
 
 const emulatorCommand = process.env['ANDROID_HOME']
@@ -89,7 +89,7 @@ async function getAvailableDevicePort(
    */
   const devices = await getDevices();
   if (port > 5682) {
-    throw new RnefError('Failed to launch emulator');
+    throw new RockError('Failed to launch emulator');
   }
   if (devices.some((d) => d.includes(port.toString()))) {
     return await getAvailableDevicePort(port + 2);

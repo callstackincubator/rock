@@ -6,7 +6,7 @@ hero:
     src:
       light: /logo-light.svg
       dark: /logo-dark.svg
-    alt: React Native Enterprise Framework logo
+    alt: Rock logo
   name: React Native framework for Enterprise scale
   tagline: Easy to adopt. Simple to scale. Built for flexibility from day one
   actions:
@@ -30,9 +30,9 @@ features:
     details: Package your React Native app as a framework and add to your iOS and Android apps as you would any other library
     icon: <img src="/radio-handheld.svg" />
   - title: Bundler of Choice
-    details: RNEF supports both Metro and Re.Pack to bundle JS. With Re.Pack you can build Super Apps and Mobile Microfrontends
+    details: Rock supports both Metro and Re.Pack to bundle JS. With Re.Pack you can build Super Apps and Mobile Microfrontends
     icon: <img src="/arrow-up-box.svg" />
   - title: Plugins
-    details: Built in a modular way, RNEF allows you to extend its capabilities via plugins that integrate with CLI and native templates
+    details: Built in a modular way, Rock allows you to extend its capabilities via plugins that integrate with CLI and native templates
     icon: <img src="/add-grid.svg" />
 ---

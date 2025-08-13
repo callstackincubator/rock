@@ -1,10 +1,10 @@
 import {
   color,
   logger,
-  RnefError,
+  RockError,
   spawn,
   type SubprocessError,
-} from '@rnef/tools';
+} from '@rock-js/tools';
 import { getAdbPath } from './adb.js';
 import { findOutputFile } from './findOutputFile.js';
 import type { DeviceData } from './listAndroidDevices.js';
@@ -83,10 +83,10 @@ export async function tryInstallAppOnDevice(
         const errorMessage =
           (error as SubprocessError).stderr ||
           (error as SubprocessError).stdout;
-        throw new RnefError(`The "adb" command failed with: ${errorMessage}.`);
+        throw new RockError(`The "adb" command failed with: ${errorMessage}.`);
       }
     }
 
-    throw new RnefError(`The "adb" command failed with: ${errorMessage}.`);
+    throw new RockError(`The "adb" command failed with: ${errorMessage}.`);
   }
 }

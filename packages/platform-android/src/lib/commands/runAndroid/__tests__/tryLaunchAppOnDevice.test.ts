@@ -1,13 +1,13 @@
 import type { AndroidProjectConfig } from '@react-native-community/cli-types';
-import { spawn } from '@rnef/tools';
+import { spawn } from '@rock-js/tools';
 import { test, vi } from 'vitest';
 import type { DeviceData } from '../listAndroidDevices.js';
 import type { Flags } from '../runAndroid.js';
 import { tryLaunchAppOnDevice } from '../tryLaunchAppOnDevice.js';
 
-vi.mock('@rnef/tools', async () => {
+vi.mock('@rock-js/tools', async () => {
   return {
-    ...(await vi.importActual('@rnef/tools')),
+    ...(await vi.importActual('@rock-js/tools')),
     spawn: vi.fn(() => Promise.resolve({ stdout: '', stderr: '' })),
   };
 });

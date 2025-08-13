@@ -1,7 +1,7 @@
 import path from 'node:path';
 import type { AndroidProjectConfig } from '@react-native-community/cli-types';
-import type { PluginApi } from '@rnef/config';
-import type { SubprocessError } from '@rnef/tools';
+import type { PluginApi } from '@rock-js/config';
+import type { SubprocessError } from '@rock-js/tools';
 import {
   color,
   colorLink,
@@ -10,9 +10,9 @@ import {
   outro,
   promptGroup,
   promptText,
-  RnefError,
+  RockError,
   spawn,
-} from '@rnef/tools';
+} from '@rock-js/tools';
 import { getValidProjectConfig } from './getValidProjectConfig.js';
 
 export function registerCreateKeystoreCommand(
@@ -59,7 +59,7 @@ async function runKeytool(androidProject: AndroidProjectConfig, args: Flags) {
   );
   logger.log('');
   try {
-    // keytool -genkey -v -keystore release.keystore -alias rnef-alias -keyalg RSA -keysize 2048 -validity 10000
+    // keytool -genkey -v -keystore release.keystore -alias rock-alias -keyalg RSA -keysize 2048 -validity 10000
     await spawn(
       'keytool',
       [
@@ -88,13 +88,13 @@ async function runKeytool(androidProject: AndroidProjectConfig, args: Flags) {
     // use console log to make it easy to copy-paste without messing with "|" characters injected by `logger.log`
     console.log(
       color.yellow(`
-   RNEF_UPLOAD_STORE_FILE=release.keystore
-   RNEF_UPLOAD_KEY_ALIAS=rnef-alias
-   RNEF_UPLOAD_STORE_PASSWORD=*****
-   RNEF_UPLOAD_KEY_PASSWORD=*****`),
+   ROCK_UPLOAD_STORE_FILE=release.keystore
+   ROCK_UPLOAD_KEY_ALIAS=rock-alias
+   ROCK_UPLOAD_STORE_PASSWORD=*****
+   ROCK_UPLOAD_KEY_PASSWORD=*****`),
     );
   } catch (error) {
-    throw new RnefError(
+    throw new RockError(
       `Failed to generate keystore. Please try manually by following instructions at: ${colorLink(
         'https://reactnative.dev/docs/signed-apk-android',
       )}`,
@@ -117,7 +117,7 @@ async function prompts({ name, alias }: Flags) {
         ? Promise.resolve(alias)
         : promptText({
             message: 'Provide keystore alias',
-            initialValue: 'rnef-alias',
+            initialValue: 'rock-alias',
           }),
   });
 }

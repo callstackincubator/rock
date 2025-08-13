@@ -1,14 +1,14 @@
 import { projectConfig } from '@react-native-community/cli-config-android';
 import type { AndroidProjectConfig } from '@react-native-community/cli-types';
-import type { PluginApi, PluginOutput } from '@rnef/config';
+import type { PluginApi, PluginOutput } from '@rock-js/config';
 import {
   packageAar,
   type PackageAarFlags,
   packageAarOptions,
   publishLocalAar,
   publishLocalAarOptions,
-} from '@rnef/platform-android';
-import { intro, RnefError } from '@rnef/tools';
+} from '@rock-js/platform-android';
+import { intro, RockError } from '@rock-js/tools';
 
 const getAarConfig = (
   args: PackageAarFlags,
@@ -38,7 +38,7 @@ export const pluginBrownfieldAndroid =
           const config = getAarConfig(args, androidConfig);
           await packageAar(config, args);
         } else {
-          throw new RnefError('Android project not found.');
+          throw new RockError('Android project not found.');
         }
       },
       options: packageAarOptions,
@@ -56,7 +56,7 @@ export const pluginBrownfieldAndroid =
           const config = getAarConfig(args, androidConfig);
           await publishLocalAar(config);
         } else {
-          throw new RnefError('Android project not found.');
+          throw new RockError('Android project not found.');
         }
       },
       options: publishLocalAarOptions,
@@ -64,6 +64,6 @@ export const pluginBrownfieldAndroid =
 
     return {
       name: 'plugin-brownfield-android',
-      description: 'RNEF plugin for brownfield Android.',
+      description: 'Rock plugin for brownfield Android.',
     };
   };

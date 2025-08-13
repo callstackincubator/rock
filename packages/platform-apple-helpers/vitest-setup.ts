@@ -2,9 +2,9 @@ import { vi } from 'vitest';
 
 vi.mock('node:fs');
 
-vi.mock('@rnef/tools', async (importOriginal) => {
+vi.mock('@rock-js/tools', async (importOriginal) => {
   // eslint-disable-next-line @typescript-eslint/consistent-type-imports
-  const actual = await importOriginal<typeof import('@rnef/tools')>();
+  const actual = await importOriginal<typeof import('@rock-js/tools')>();
   return {
     ...actual,
     isInteractive: vi.fn(),
@@ -29,7 +29,7 @@ vi.mock('@rnef/tools', async (importOriginal) => {
     formatArtifactName: vi
       .fn()
       .mockResolvedValue(
-        'rnef-ios-simulator-Debug-089e8a9887099a309e8a7845e697bbf705353f45',
+        'rock-ios-simulator-Debug-089e8a9887099a309e8a7845e697bbf705353f45',
       ),
     spinner: vi.fn(() => ({
       start: vi.fn(),

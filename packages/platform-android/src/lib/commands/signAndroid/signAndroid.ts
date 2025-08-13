@@ -1,16 +1,16 @@
 import fs from 'node:fs';
 import path from 'node:path';
-import type { SubprocessError } from '@rnef/tools';
+import type { SubprocessError } from '@rock-js/tools';
 import {
   colorLink,
-  getDotRnefPath,
+  getDotRockPath,
   intro,
   outro,
   relativeToCwd,
-  RnefError,
+  RockError,
   spawn,
   spinner,
-} from '@rnef/tools';
+} from '@rock-js/tools';
 import AdmZip from 'adm-zip';
 import { findAndroidBuildTool, getAndroidBuildToolsPath } from '../../paths.js';
 import { buildJsBundle } from './bundle.js';
@@ -70,7 +70,7 @@ export async function signAndroid(options: SignAndroidOptions) {
     zip.deleteFile('META-INF/*');
     zip.writeZip(tempApkPath);
   } catch (error) {
-    throw new RnefError(
+    throw new RockError(
       `Failed to initialize output APK file: ${options.outputPath}`,
       { cause: (error as SubprocessError).stderr },
     );
@@ -116,17 +116,17 @@ export async function signAndroid(options: SignAndroidOptions) {
 
 function validateOptions(options: SignAndroidOptions) {
   if (!fs.existsSync(options.apkPath)) {
-    throw new RnefError(`APK file not found "${options.apkPath}"`);
+    throw new RockError(`APK file not found "${options.apkPath}"`);
   }
 
   if (options.buildJsBundle && options.jsBundlePath) {
-    throw new RnefError(
+    throw new RockError(
       'The "--build-jsbundle" flag is incompatible with "--jsbundle". Pick one.',
     );
   }
 
   if (options.jsBundlePath && !fs.existsSync(options.jsBundlePath)) {
-    throw new RnefError(`JS bundle file not found "${options.jsBundlePath}"`);
+    throw new RockError(`JS bundle file not found "${options.jsBundlePath}"`);
   }
 }
 
@@ -145,7 +145,7 @@ async function replaceJsBundle({
     zip.addLocalFile(jsBundlePath, 'assets', 'index.android.bundle');
     zip.writeZip(apkPath);
   } catch (error) {
-    throw new RnefError(
+    throw new RockError(
       `Failed to replace JS bundle in destination file: ${apkPath}}`,
       { cause: error },
     );
@@ -162,7 +162,7 @@ function isSdkGTE35(versionString: string) {
 async function alignApkFile(inputApkPath: string, outputApkPath: string) {
   const zipAlignPath = findAndroidBuildTool('zipalign');
   if (!zipAlignPath) {
-    throw new RnefError(
+    throw new RockError(
       `"zipalign" not found in Android Build-Tools directory: ${colorLink(
         getAndroidBuildToolsPath(),
       )}
@@ -183,7 +183,7 @@ Please follow instructions at: https://reactnative.dev/docs/set-up-your-environm
   try {
     await spawn(zipAlignPath, zipalignArgs);
   } catch (error) {
-    throw new RnefError(
+    throw new RockError(
       `Failed to align APK file: ${zipAlignPath} ${zipalignArgs.join(' ')}`,
       { cause: (error as SubprocessError).stderr },
     );
@@ -206,14 +206,14 @@ async function signApkFile({
   keyPassword,
 }: SignApkOptions) {
   if (!fs.existsSync(keystorePath)) {
-    throw new RnefError(
+    throw new RockError(
       `Keystore file not found "${keystorePath}". Provide a valid keystore path using the "--keystore" option.`,
     );
   }
 
   const apksignerPath = findAndroidBuildTool('apksigner');
   if (!apksignerPath) {
-    throw new RnefError(
+    throw new RockError(
       `"apksigner" not found in Android Build-Tools directory: ${colorLink(
         getAndroidBuildToolsPath(),
       )}
@@ -236,7 +236,7 @@ Please follow instructions at: https://reactnative.dev/docs/set-up-your-environm
   try {
     await spawn(apksignerPath, apksignerArgs);
   } catch (error) {
-    throw new RnefError(
+    throw new RockError(
       `Failed to sign APK file: ${apksignerPath} ${apksignerArgs.join(' ')}`,
       { cause: (error as SubprocessError).stderr },
     );
@@ -262,5 +262,5 @@ function formatPassword(password: string) {
 }
 
 function getSignOutputPath() {
-  return path.join(getDotRnefPath(), 'android/sign');
+  return path.join(getDotRockPath(), 'android/sign');
 }

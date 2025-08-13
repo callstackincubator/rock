@@ -1,4 +1,4 @@
-import { isInteractive, promptSelect } from '@rnef/tools';
+import { isInteractive, promptSelect } from '@rock-js/tools';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { getConfiguration } from '../getConfiguration.js';
 

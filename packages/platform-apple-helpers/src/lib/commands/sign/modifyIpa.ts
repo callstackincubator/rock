@@ -1,5 +1,5 @@
 import fs from 'node:fs';
-import type { SubprocessError } from '@rnef/tools';
+import type { SubprocessError } from '@rock-js/tools';
 import {
   color,
   colorLink,
@@ -8,10 +8,10 @@ import {
   logger,
   outro,
   relativeToCwd,
-  RnefError,
+  RockError,
   spawn,
   spinner,
-} from '@rnef/tools';
+} from '@rock-js/tools';
 import { promptSigningIdentity } from '../../utils/signingIdentities.js';
 import { buildJsBundle } from './bundle.js';
 import {
@@ -102,7 +102,7 @@ export const modifyIpa = async (options: ModifyIpaOptions) => {
   try {
     await spawn('codesign', codeSignArgs, { cwd: tempPaths.content });
   } catch (error) {
-    throw new RnefError('Codesign failed', {
+    throw new RockError('Codesign failed', {
       cause: (error as SubprocessError).stderr,
     });
   }
@@ -120,25 +120,25 @@ export const modifyIpa = async (options: ModifyIpaOptions) => {
 
 function validateOptions(options: ModifyIpaOptions) {
   if (!fs.existsSync(options.ipaPath)) {
-    throw new RnefError(
+    throw new RockError(
       `IPA file not found at "${options.ipaPath}". Please provide a correct path.`,
     );
   }
 
   if (!options.identity && !isInteractive()) {
-    throw new RnefError(
+    throw new RockError(
       'The "--identity" flag is required in non-interactive environments, such as CI. Please pass one.',
     );
   }
 
   if (options.buildJsBundle && options.jsBundlePath) {
-    throw new RnefError(
+    throw new RockError(
       'The "--build-jsbundle" flag is incompatible with "--jsbundle". Pick one.',
     );
   }
 
   if (options.jsBundlePath && !fs.existsSync(options.jsBundlePath)) {
-    throw new RnefError(
+    throw new RockError(
       `JS bundle file not found at "${options.jsBundlePath}". Please provide a correct path.`,
     );
   }

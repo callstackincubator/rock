@@ -69,7 +69,7 @@ jobs:
       - name: Deploy template
         run: |
           cd ..
-          NPM_CONFIG_REGISTRY=http://localhost:4873 pnpm create @rnef/app \
+          NPM_CONFIG_REGISTRY=http://localhost:4873 pnpm create @rock-js/app \
             --registry http://localhost:4873 \
             NightlyDeploy \
             --template=default \
@@ -85,7 +85,7 @@ jobs:
       - name: Build Android template
         run: |
           cd ../NightlyDeploy
-          pnpm rnef build:android
+          pnpm rock build:android
 
   build-ios:
     runs-on: macos-latest
@@ -110,7 +110,7 @@ jobs:
       - name: Deploy template
         run: |
           cd ..
-          NPM_CONFIG_REGISTRY=http://localhost:4873 pnpm create @rnef/app \
+          NPM_CONFIG_REGISTRY=http://localhost:4873 pnpm create @rock-js/app \
             --registry http://localhost:4873 \
             NightlyDeploy \
             --template=default \
@@ -126,5 +126,5 @@ jobs:
       - name: Build iOS template
         run: |
           cd ../NightlyDeploy
-          pnpm rnef build:ios --verbose \
+          pnpm rock build:ios --verbose \
             --destination=simulator

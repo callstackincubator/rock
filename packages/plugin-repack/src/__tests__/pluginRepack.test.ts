@@ -18,7 +18,7 @@ test('plugin is called with correct arguments and returns its name and descripti
   })(pluginApi);
 
   expect(plugin).toMatchObject({
-    name: '@rnef/plugin-repack',
-    description: 'RNEF plugin for Re.Pack toolkit with Rspack.',
+    name: '@rock-js/plugin-repack',
+    description: 'Rock plugin for Re.Pack toolkit with Rspack.',
   });
 });

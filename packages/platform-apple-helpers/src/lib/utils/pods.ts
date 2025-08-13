@@ -2,16 +2,16 @@ import { createHash } from 'node:crypto';
 import fs from 'node:fs';
 import path from 'node:path';
 import type { IOSDependencyConfig } from '@react-native-community/cli-types';
-import type { SubprocessError } from '@rnef/tools';
+import type { SubprocessError } from '@rock-js/tools';
 import {
   cacheManager,
   color,
   colorLink,
   logger,
-  RnefError,
+  RockError,
   spawn,
   spinner,
-} from '@rnef/tools';
+} from '@rock-js/tools';
 import type { ApplePlatform } from '../types/index.js';
 import runCodegen from './codegen.js';
 
@@ -74,7 +74,7 @@ const calculateCurrentHash = ({
   try {
     podfile = fs.readFileSync(podfilePath, 'utf-8');
   } catch {
-    throw new RnefError(
+    throw new RockError(
       `No Podfile found at: ${podfilePath}.
 ${podErrorHelpMessage}`,
     );
@@ -156,7 +156,7 @@ async function runPodInstall(options: {
         brownfield: options.brownfield,
       });
     } else {
-      throw new RnefError(
+      throw new RockError(
         `CocoaPods installation failed. 
 ${podErrorHelpMessage}`,
         { cause: stderr },
@@ -181,7 +181,7 @@ async function runPodUpdate(cwd: string, useBundler: boolean) {
       (error as SubprocessError).stderr || (error as SubprocessError).stdout;
     loader.stop('Failed: Updating CocoaPods repositories', 1);
 
-    throw new RnefError(
+    throw new RockError(
       `Failed to update CocoaPods repositories for iOS project.
 ${podErrorHelpMessage}`,
       { cause: stderr },
@@ -228,14 +228,14 @@ async function validatePodCommand(sourceDir: string) {
   } catch (error) {
     const cause = (error as SubprocessError).cause;
     if (cause instanceof Error && cause.message.includes('ENOENT')) {
-      throw new RnefError(
+      throw new RockError(
         `The "pod" command is not available.
 ${podErrorHelpMessage}`,
       );
     }
     const stderr =
       (error as SubprocessError).stderr || (error as SubprocessError).stdout;
-    throw new RnefError(
+    throw new RockError(
       `CocoaPods "pod" command failed.
 ${podErrorHelpMessage}`,
       { cause: stderr },
@@ -285,7 +285,7 @@ skipping Ruby Gems installation.`,
     const stderr =
       (error as SubprocessError).stderr || (error as SubprocessError).stdout;
     loader.stop('Failed: Installing Ruby Gems', 1);
-    throw new RnefError(
+    throw new RockError(
       `Failed to install Ruby Gems with "bundle install".
 ${podErrorHelpMessage}`,
       { cause: stderr },

@@ -1,5 +1,5 @@
 import fs from 'node:fs';
-import { logger, runHermes, spawn } from '@rnef/tools';
+import { logger, runHermes, spawn } from '@rock-js/tools';
 
 type BuildJsBundleOptions = {
   bundleOutputPath: string;
@@ -37,9 +37,9 @@ export async function buildJsBundle(options: BuildJsBundleOptions) {
   //   --verbose
 
   // Reasonable defaults
-  // If user wants to build bundle differently, they should use `rnef bundle` command directly
+  // If user wants to build bundle differently, they should use `rock bundle` command directly
   // and provide the JS bundle path to `--jsbundle` flag
-  const rnefBundleArgs = [
+  const rockBundleArgs = [
     'bundle',
     '--platform',
     'android',
@@ -58,7 +58,7 @@ export async function buildJsBundle(options: BuildJsBundleOptions) {
     'false',
     '--verbose',
   ];
-  await spawn('rnef', rnefBundleArgs, { preferLocal: true });
+  await spawn('rock', rockBundleArgs, { preferLocal: true });
 
   if (!options.useHermes) {
     return;

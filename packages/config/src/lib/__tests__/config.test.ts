@@ -1,6 +1,6 @@
 import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
-import { cleanup, getTempDirectory, writeFiles } from '@rnef/test-helpers';
+import { cleanup, getTempDirectory, writeFiles } from '@rock-js/test-helpers';
 import { afterEach, beforeEach, expect, test, vi } from 'vitest';
 import { getConfig } from '../config.js';
 
@@ -23,7 +23,7 @@ test.each([['.js'], ['.mjs'], ['.ts']])(
   async (ext) => {
     DIR = getTempDirectory('test_config');
     writeFiles(DIR, {
-      [`rnef.config${ext}`]: `module.exports = {
+      [`rock.config${ext}`]: `module.exports = {
   plugins: [],
 }`,
     });
@@ -35,7 +35,7 @@ test.each([['.js'], ['.mjs'], ['.ts']])(
 test('should load plugin that registers a command', async () => {
   DIR = getTempDirectory('test_config_plugins');
   writeFiles(DIR, {
-    'rnef.config.js': `const TestPlugin = (config) => (api) => {
+    'rock.config.js': `const TestPlugin = (config) => (api) => {
   api.registerCommand({
     name: "test-command",
     description: "Test command",

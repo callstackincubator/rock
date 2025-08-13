@@ -3,9 +3,9 @@ import {
   colorLink,
   logger,
   promptPassword,
-  RnefError,
+  RockError,
   spawn,
-} from '@rnef/tools';
+} from '@rock-js/tools';
 import * as r from 'ts-regex-builder';
 import { getGitRemote } from './getGitRemote.js';
 
@@ -52,7 +52,7 @@ export async function detectGitHubRepoDetails(): Promise<GitHubRepoDetails> {
 
     const match = url.match(GITHUB_REPO_REGEX);
     if (!match) {
-      throw new RnefError(
+      throw new RockError(
         `The remote URL "${url}" doesn't look like a GitHub repo.`,
       );
     }
@@ -72,7 +72,7 @@ Include "repo", "workflow", and "read:org" permissions.`,
       token,
     };
   } catch (error) {
-    throw new RnefError('Unable to detect GitHub repository details.', {
+    throw new RockError('Unable to detect GitHub repository details.', {
       cause: error,
     });
   }

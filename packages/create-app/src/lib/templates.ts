@@ -1,5 +1,5 @@
 import * as path from 'node:path';
-import { resolveAbsolutePath } from '@rnef/tools';
+import { resolveAbsolutePath } from '@rock-js/tools';
 
 export type TemplateInfo = NpmTemplateInfo | LocalTemplateInfo;
 
@@ -26,7 +26,7 @@ export const TEMPLATES: TemplateInfo[] = [
   {
     type: 'npm',
     name: 'default',
-    packageName: '@rnef/template-default',
+    packageName: '@rock-js/template-default',
     version: 'latest',
     directory: '.',
   },
@@ -36,7 +36,7 @@ export const PLUGINS: TemplateInfo[] = [
   {
     type: 'npm',
     name: 'brownfield-ios',
-    packageName: '@rnef/plugin-brownfield-ios',
+    packageName: '@rock-js/plugin-brownfield-ios',
     version: 'latest',
     directory: 'template',
     importName: 'pluginBrownfieldIos',
@@ -44,7 +44,7 @@ export const PLUGINS: TemplateInfo[] = [
   {
     type: 'npm',
     name: 'brownfield-android',
-    packageName: '@rnef/plugin-brownfield-android',
+    packageName: '@rock-js/plugin-brownfield-android',
     version: 'latest',
     directory: 'template',
     importName: 'pluginBrownfieldAndroid',
@@ -55,7 +55,7 @@ export const BUNDLERS: TemplateInfo[] = [
   {
     type: 'npm',
     name: 'metro',
-    packageName: '@rnef/plugin-metro',
+    packageName: '@rock-js/plugin-metro',
     version: 'latest',
     directory: 'template',
     importName: 'pluginMetro',
@@ -63,7 +63,7 @@ export const BUNDLERS: TemplateInfo[] = [
   {
     type: 'npm',
     name: 'repack',
-    packageName: '@rnef/plugin-repack',
+    packageName: '@rock-js/plugin-repack',
     version: 'latest',
     directory: 'template',
     importName: 'pluginRepack',
@@ -74,7 +74,7 @@ export const PLATFORMS: TemplateInfo[] = [
   {
     type: 'npm',
     name: 'ios',
-    packageName: '@rnef/platform-ios',
+    packageName: '@rock-js/platform-ios',
     version: 'latest',
     directory: 'template',
     importName: 'platformIOS',
@@ -82,7 +82,7 @@ export const PLATFORMS: TemplateInfo[] = [
   {
     type: 'npm',
     name: 'android',
-    packageName: '@rnef/platform-android',
+    packageName: '@rock-js/platform-android',
     version: 'latest',
     directory: 'template',
     importName: 'platformAndroid',

@@ -1,2 +1,2 @@
 export * from './lib/cli.js';
-export type { Config } from '@rnef/config';
+export type { Config } from '@rock-js/config';

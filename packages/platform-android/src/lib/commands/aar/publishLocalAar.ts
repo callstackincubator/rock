@@ -1,4 +1,4 @@
-import { outro } from '@rnef/tools';
+import { outro } from '@rock-js/tools';
 import { runGradleAar } from '../runGradle.js';
 import type { AarProject } from './packageAar.js';
 

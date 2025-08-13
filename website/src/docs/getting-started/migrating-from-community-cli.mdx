@@ -4,27 +4,27 @@ import { PackageManagerTabs } from 'rspress/theme';
 
 1. Install dev dependencies:
 
-   <PackageManagerTabs command="install -D @rnef/cli @rnef/plugin-metro @rnef/platform-android @rnef/platform-ios" />
+   <PackageManagerTabs command="install -D rock @rock-js/plugin-metro @rock-js/platform-android @rock-js/platform-ios" />
 
 1. Remove `@react-native-community/cli` and related packages.
 
    <PackageManagerTabs command="remove @react-native-community/cli @react-native-community/cli-platform-ios @react-native-community/cli-platform-android" />
 
-1. Add `.rnef/` folder with caches to `.gitignore`:
+1. Add `.rock/` folder with caches to `.gitignore`:
 
    ```txt title=".gitignore"
-   .rnef/
+   .rock/
    ```
 
-1. Add `rnef.config.mjs` file:
+1. Add `rock.config.mjs` file:
 
-   ```js title="rnef.config.mjs"
+   ```js title="rock.config.mjs"
    // @ts-check
-   import { platformIOS } from '@rnef/platform-ios';
-   import { platformAndroid } from '@rnef/platform-android';
-   import { pluginMetro } from '@rnef/plugin-metro';
+   import { platformIOS } from '@rock-js/platform-ios';
+   import { platformAndroid } from '@rock-js/platform-android';
+   import { pluginMetro } from '@rock-js/plugin-metro';
 
-   /** @type {import('@rnef/cli').Config} */
+   /** @type {import('rock').Config} */
    export default {
      bundler: pluginMetro(),
      platforms: {
@@ -35,7 +35,7 @@ import { PackageManagerTabs } from 'rspress/theme';
    };
    ```
 
-   Move any `project` config from `react-native.config.js` to platform arguments in `rnef.config.mjs`, for example:
+   Move any `project` config from `react-native.config.js` to platform arguments in `rock.config.mjs`, for example:
 
    ```js title="react-native.config.js
    module.exports = {
@@ -52,7 +52,7 @@ import { PackageManagerTabs } from 'rspress/theme';
 
    translates to:
 
-   ```js title="rnef.config.mjs"
+   ```js title="rock.config.mjs"
    export default {
      platforms: {
        ios: platformIOS({ sourceDir: 'custom-source' }),
@@ -67,14 +67,14 @@ import { PackageManagerTabs } from 'rspress/theme';
 
    ```groovy title="android/app/build.gradle" {2}
    // cliFile = file("../../node_modules/react-native/cli.js")
-   cliFile = file("../../node_modules/@rnef/cli/dist/src/bin.js")
+   cliFile = file("../../node_modules/rock/dist/src/bin.js")
    ```
 
    In `android/settings.gradle` change:
 
    ```groovy title="android/settings.gradle" {2}
    // extensions.configure(com.facebook.react.ReactSettingsExtension){ ex -> ex.autolinkLibrariesFromCommand() }
-   extensions.configure(com.facebook.react.ReactSettingsExtension){ ex -> ex.autolinkLibrariesFromCommand(['npx', 'rnef', 'config', '-p', 'android']) }
+   extensions.configure(com.facebook.react.ReactSettingsExtension){ ex -> ex.autolinkLibrariesFromCommand(['npx', 'rock', 'config', '-p', 'android']) }
    ```
 
 1. Update iOS files:
@@ -83,7 +83,7 @@ import { PackageManagerTabs } from 'rspress/theme';
 
    ```ruby title="ios/Podfile" {2}
    # config = use_native_modules!
-   config = use_native_modules!(['npx', 'rnef', 'config', '-p', 'ios'])
+   config = use_native_modules!(['npx', 'rock', 'config', '-p', 'ios'])
    ```
 
    In "Bundle React Native code and images" Build Phase in Xcode add:
@@ -97,7 +97,7 @@ import { PackageManagerTabs } from 'rspress/theme';
    source "$PODS_ROOT/../.xcode.env.local"
    fi
    export CONFIG_CMD="dummy-workaround-value"
-   export CLI_PATH="$("$NODE_BINARY" --print "require('path').dirname(require.resolve('@rnef/cli/package.json')) + '/dist/src/bin.js'")"
+   export CLI_PATH="$("$NODE_BINARY" --print "require('path').dirname(require.resolve('rock/package.json')) + '/dist/src/bin.js'")"
    WITH_ENVIRONMENT="$REACT_NATIVE_PATH/scripts/xcode/with-environment.sh"
    ```
 
@@ -112,9 +112,9 @@ import { PackageManagerTabs } from 'rspress/theme';
    ```json title="package.json"
    {
      "scripts": {
-       "start": "rnef start",
-       "android": "rnef run:android",
-       "ios": "rnef run:ios"
+       "start": "rock start",
+       "android": "rock run:android",
+       "ios": "rock run:ios"
      }
    }
    ```
@@ -122,8 +122,8 @@ import { PackageManagerTabs } from 'rspress/theme';
 1. Run new commands:
 
    ```sh
-   npx rnef run:android
-   npx rnef run:ios
+   npx rock run:android
+   npx rock run:ios
    ```
 
    Additionally rename flags:
@@ -142,8 +142,8 @@ import { PackageManagerTabs } from 'rspress/theme';
    iOS:
 
    ```yaml title=".github/workflows/build-ios"
-   - name: RNEF Remote Build - iOS simulator
-     id: rnef-remote-build-ios
+   - name: Rock Remote Build - iOS simulator
+     id: rock-remote-build-ios
      uses: callstackincubator/ios@v2
      with:
        destination: simulator
@@ -154,8 +154,8 @@ import { PackageManagerTabs } from 'rspress/theme';
    Android:
 
    ```yaml title=".github/workflows/build-android"
-   - name: RNEF Remote Build - Android
-     id: rnef-remote-build-android
+   - name: Rock Remote Build - Android
+     id: rock-remote-build-android
      uses: callstackincubator/android@v2
      with:
        variant: debug

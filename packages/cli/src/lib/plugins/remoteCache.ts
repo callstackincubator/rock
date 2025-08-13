@@ -1,8 +1,8 @@
 import fs from 'node:fs';
 import os from 'node:os';
 import path from 'node:path';
-import type { PluginApi, PluginOutput } from '@rnef/config';
-import type { FingerprintSources, RemoteBuildCache } from '@rnef/tools';
+import type { PluginApi, PluginOutput } from '@rock-js/config';
+import type { FingerprintSources, RemoteBuildCache } from '@rock-js/tools';
 import {
   color,
   colorLink,
@@ -13,10 +13,10 @@ import {
   handleUploadResponse,
   logger,
   relativeToCwd,
-  RnefError,
+  RockError,
   spawn,
   spinner,
-} from '@rnef/tools';
+} from '@rock-js/tools';
 import AdmZip from 'adm-zip';
 import * as tar from 'tar';
 import { templateIndexHtml, templateManifestPlist } from '../adHocTemplates.js';
@@ -99,7 +99,7 @@ async function remoteCache({
       const output =
         platform && traits
           ? artifacts.filter((artifact) =>
-              artifact.name.startsWith(`rnef-${platform}-${traits.join('-')}`),
+              artifact.name.startsWith(`rock-${platform}-${traits.join('-')}`),
             )
           : artifacts;
       if (isJsonOutput) {
@@ -141,7 +141,7 @@ ${output
         `Downloaded cached build from ${color.bold(remoteBuildCache.name)}`,
       );
       if (!binaryPath) {
-        throw new RnefError(`Failed to save binary for "${artifactName}".`);
+        throw new RockError(`Failed to save binary for "${artifactName}".`);
       }
       if (isJsonOutput) {
         console.log(
@@ -161,7 +161,7 @@ ${output
       const binaryPath =
         args.binaryPath ?? getLocalBinaryPath(localArtifactPath);
       if (!binaryPath) {
-        throw new RnefError(`No binary found for "${artifactName}".`);
+        throw new RockError(`No binary found for "${artifactName}".`);
       }
       const buffer = await getBinaryBuffer(
         binaryPath,
@@ -240,7 +240,7 @@ ${output
 - url: ${colorLink(uploadedArtifact.url)}`);
         }
       } catch (error) {
-        throw new RnefError(
+        throw new RockError(
           `Failed to upload build to ${color.bold(remoteBuildCache.name)}`,
           { cause: error },
         );
@@ -288,12 +288,12 @@ async function getInfoPlist(binaryPath: string) {
   const infoPlistEntry = zip.getEntry(infoPlistPath);
 
   if (!infoPlistEntry) {
-    throw new RnefError(
+    throw new RockError(
       `Info.plist not found at ${infoPlistPath} in ${ipaFileName}`,
     );
   }
   const infoPlistBuffer = infoPlistEntry.getData();
-  const tempPlistPath = path.join(os.tmpdir(), 'rnef-temp-info.plist');
+  const tempPlistPath = path.join(os.tmpdir(), 'rock-temp-info.plist');
   fs.writeFileSync(tempPlistPath, infoPlistBuffer);
 
   let version = 'unknown';
@@ -343,7 +343,7 @@ async function getBinaryBuffer(
   if (isAppDirectory) {
     const appDirectoryName = path.basename(binaryPath);
     if (args.binaryPath && !fs.existsSync(absoluteTarballPath)) {
-      throw new RnefError(
+      throw new RockError(
         `No tarball found for "${artifactName}" in "${localArtifactPath}".`,
       );
     }
@@ -372,7 +372,7 @@ async function getBinaryBuffer(
 function validateArgs(args: Flags, action: string) {
   if (!action) {
     // @todo make Commander handle this
-    throw new RnefError(
+    throw new RockError(
       'Action is required. Available actions: list, list-all, download, upload, delete',
     );
   }
@@ -382,18 +382,18 @@ function validateArgs(args: Flags, action: string) {
     return;
   }
   if (args.name && (args.platform || args.traits)) {
-    throw new RnefError(
+    throw new RockError(
       'Cannot use "--name" together with "--platform" or "--traits". Use either name or platform with traits',
     );
   }
   if (!args.name) {
     if ((args.platform && !args.traits) || (!args.platform && args.traits)) {
-      throw new RnefError(
+      throw new RockError(
         'Either "--platform" and "--traits" must be provided together',
       );
     }
     if (!args.platform || !args.traits) {
-      throw new RnefError(
+      throw new RockError(
         'Either "--name" or "--platform" and "--traits" must be provided',
       );
     }

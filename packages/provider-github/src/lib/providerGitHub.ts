@@ -1,4 +1,4 @@
-import type { RemoteArtifact, RemoteBuildCache } from '@rnef/tools';
+import type { RemoteArtifact, RemoteBuildCache } from '@rock-js/tools';
 import {
   deleteGitHubArtifacts,
   fetchGitHubArtifactsByName,

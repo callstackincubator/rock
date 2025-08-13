@@ -1,11 +1,11 @@
-# @rnef/create-app
+# create-rock
 
-A CLI tool for creating new React Native Enterprise Framework projects with customizable templates, platforms, and plugins.
+A CLI tool for creating new Rock projects with customizable templates, platforms, and plugins.
 
 ## Usage
 
 ```bash
-npx @rnef/create-app my-app
+npm create rock-app my-app
 ```
 
 ## Features
@@ -32,19 +32,19 @@ npx @rnef/create-app my-app
 
 ```bash
 # Create a basic project
-npx @rnef/create-app my-app
+npm create rock-app my-app
 
 # Create with specific platforms
-npx @rnef/create-app my-app --platforms ios android
+npm create rock-app my-app --platforms ios android
 
 # Create with brownfield plugins
-npx @rnef/create-app my-app --plugins brownfield-ios brownfield-android
+npm create rock-app my-app --plugins brownfield-ios brownfield-android
 
 # Create with Re.Pack bundler
-npx @rnef/create-app my-app --bundler repack
+npm create rock-app my-app --bundler repack
 
 # Create and install dependencies
-npx @rnef/create-app my-app --install
+npm create rock-app my-app --install
 ```
 
 ## Available Templates

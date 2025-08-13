@@ -34,11 +34,11 @@ test('dummy remote cache provider lists artifacts', async () => {
     new DummyRemoteCacheProvider(options);
   const remoteBuildCache = pluginDummyRemoteCacheProvider()();
   const artifacts = await remoteBuildCache.list({
-    artifactName: 'rnef-android-debug-7af554b93cd696ca95308fdebe3a4484001bb7b4',
+    artifactName: 'rock-android-debug-7af554b93cd696ca95308fdebe3a4484001bb7b4',
   });
   expect(artifacts).toEqual([
     {
-      name: 'rnef-android-debug-7af554b93cd696ca95308fdebe3a4484001bb7b4',
+      name: 'rock-android-debug-7af554b93cd696ca95308fdebe3a4484001bb7b4',
       url: '/path/to/dummy',
     },
   ]);
@@ -49,11 +49,11 @@ test('dummy remote cache provider downloads artifacts', async () => {
     new DummyRemoteCacheProvider(options);
   const remoteBuildCache = pluginDummyRemoteCacheProvider()();
   const artifact = await remoteBuildCache?.download({
-    artifactName: 'rnef-android-debug-7af554b93cd696ca95308fdebe3a4484001bb7b4',
+    artifactName: 'rock-android-debug-7af554b93cd696ca95308fdebe3a4484001bb7b4',
   });
   const response = await artifact?.text();
   expect(response).toEqual(
-    'rnef-android-debug-7af554b93cd696ca95308fdebe3a4484001bb7b4',
+    'rock-android-debug-7af554b93cd696ca95308fdebe3a4484001bb7b4',
   );
 });
 

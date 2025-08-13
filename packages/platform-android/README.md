@@ -1,7 +1,7 @@
-# @rnef/platform-android
+# @rock-js/platform-android
 
-Android platform integration for React Native Enterprise Framework (RNEF). This package is part of the RNEF ecosystem and provides Android-specific build and development tools.
+Android platform integration for Rock. This package is part of the Rock ecosystem and provides Android-specific build and development tools.
 
 ## Documentation
 
-For detailed documentation about RNEF and its tools, visit [RNEF Documentation](https://rnef.dev)
+For detailed documentation about Rock and its tools, visit [Rock Documentation](https://rockjs.dev)

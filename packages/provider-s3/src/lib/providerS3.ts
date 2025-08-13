@@ -4,7 +4,7 @@ import { fromIni } from '@aws-sdk/credential-provider-ini';
 import { fromTemporaryCredentials } from '@aws-sdk/credential-providers';
 import { Upload } from '@aws-sdk/lib-storage';
 import { getSignedUrl } from '@aws-sdk/s3-request-presigner';
-import type { RemoteArtifact, RemoteBuildCache } from '@rnef/tools';
+import type { RemoteArtifact, RemoteBuildCache } from '@rock-js/tools';
 
 function toWebStream(stream: Readable): ReadableStream {
   return new ReadableStream({
@@ -69,7 +69,7 @@ type ProviderConfig = {
 
 export class S3BuildCache implements RemoteBuildCache {
   name = 'S3';
-  directory = 'rnef-artifacts';
+  directory = 'rock-artifacts';
   s3: clientS3.S3Client;
   bucket: string;
   config: ProviderConfig;

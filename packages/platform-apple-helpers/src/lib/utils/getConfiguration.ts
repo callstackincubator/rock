@@ -1,4 +1,4 @@
-import { isInteractive, logger, promptSelect, RnefError } from '@rnef/tools';
+import { isInteractive, logger, promptSelect, RockError } from '@rock-js/tools';
 import type { Info } from '../types/index.js';
 
 export async function getConfiguration(
@@ -46,7 +46,7 @@ function invalidateConfiguration(
   }
 
   if (!configurations.includes(configuration)) {
-    throw new RnefError(
+    throw new RockError(
       `Configuration "${configuration}" doesn't exist. Please use one of the existing configurations: ${configurations
         .map((configuration) => `\n- ${configuration}`)
         .join('')}`,

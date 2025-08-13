@@ -1,6 +1,6 @@
 import { getProjectConfig } from '@react-native-community/cli-config-apple';
 import type { IOSProjectParams } from '@react-native-community/cli-types';
-import { RnefError } from '@rnef/tools';
+import { RockError } from '@rock-js/tools';
 import type { ApplePlatform, ProjectConfig } from '../types/index.js';
 
 /**
@@ -17,7 +17,7 @@ export function getValidProjectConfig(
     userConfig,
   );
   if (!newProjectConfig || newProjectConfig.xcodeProject === null) {
-    throw new RnefError('Failed to get Xcode project information');
+    throw new RockError('Failed to get Xcode project information');
   }
   return {
     sourceDir: newProjectConfig.sourceDir,

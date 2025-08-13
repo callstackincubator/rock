@@ -1,5 +1,5 @@
-import type { SubprocessError } from '@rnef/tools';
-import { color, logger, RnefError, spawn } from '@rnef/tools';
+import type { SubprocessError } from '@rock-js/tools';
+import { color, logger, RockError, spawn } from '@rock-js/tools';
 
 export async function runOnMac(binaryPath: string) {
   logger.debug(`Opening "${color.bold(binaryPath)}"`);
@@ -7,7 +7,7 @@ export async function runOnMac(binaryPath: string) {
   try {
     await spawn('open', [binaryPath]);
   } catch (error) {
-    throw new RnefError('Failed to launch the app', {
+    throw new RockError('Failed to launch the app', {
       cause: (error as SubprocessError).stderr,
     });
   }

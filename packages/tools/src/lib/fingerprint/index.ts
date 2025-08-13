@@ -2,7 +2,7 @@ import crypto from 'node:crypto';
 import path from 'node:path';
 import type { FingerprintSource, HashSource } from '@expo/fingerprint';
 import { createFingerprintAsync } from '@expo/fingerprint';
-import { RnefError } from '../error.js';
+import { RockError } from '../error.js';
 import logger from '../logger.js';
 import { spawn } from '../spawn.js';
 import { processExtraSources } from './processExtraSources.js';
@@ -54,7 +54,7 @@ export async function nativeFingerprint(
   const platform = options.platform;
   // Use stdout to avoid deprecation warnings
   const { stdout: autolinkingConfigString } = await spawn(
-    'rnef',
+    'rock',
     ['config', '-p', options.platform],
     { cwd: path, stdio: 'pipe', preferLocal: true },
   );
@@ -107,7 +107,7 @@ function createSourceId(source: FingerprintSource) {
       return source.filePath;
     default:
       // @ts-expect-error: we intentionally want to detect invalid types
-      throw new RnefError(`Unsupported source type: ${source.type}`);
+      throw new RockError(`Unsupported source type: ${source.type}`);
   }
 }
 

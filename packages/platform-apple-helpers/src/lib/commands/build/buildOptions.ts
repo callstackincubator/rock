@@ -1,4 +1,4 @@
-import { parseArgs } from '@rnef/tools';
+import { parseArgs } from '@rock-js/tools';
 import type { BuilderCommand } from '../../types/index.js';
 import { getPlatformInfo } from '../../utils/getPlatformInfo.js';
 

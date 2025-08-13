@@ -1,5 +1,5 @@
 import { color, colorLink } from '../color.js';
-import type { RnefError } from '../error.js';
+import type { RockError } from '../error.js';
 import {
   DEFAULT_IGNORE_PATHS,
   EXPO_DEFAULT_IGNORE_PATHS,
@@ -45,8 +45,8 @@ export async function getBinaryPath({
         binaryPath = cachedBuild.binaryPath;
       }
     } catch (error) {
-      const message = (error as RnefError).message;
-      const cause = (error as RnefError).cause;
+      const message = (error as RockError).message;
+      const cause = (error as RockError).cause;
       logger.warn(
         `Failed to fetch cached build for ${artifactName}: \n${message}`,
         cause ? `\nCause: ${cause.toString()}` : '',
@@ -86,9 +86,9 @@ async function warnIgnoredFiles(
 ${ignoredFiles.map((file) => `- ${color.bold(file)}`).join('\n')}
 Consider removing them or update ${color.bold(
       'fingerprint.ignorePaths',
-    )} in ${colorLink('rnef.config.mjs')}:
+    )} in ${colorLink('rock.config.mjs')}:
 Read more: ${colorLink(
-      'https://www.rnef.dev/docs/configuration#fingerprint-configuration',
+      'https://www.rockjs.dev/docs/configuration#fingerprint-configuration',
     )}`);
   }
 }

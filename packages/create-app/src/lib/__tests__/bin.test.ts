@@ -5,9 +5,9 @@ import { BUNDLERS, PLATFORMS } from '../templates.js';
 test('should format config without plugins', () => {
   expect(formatConfig(PLATFORMS, null, BUNDLERS[0], null))
     .toMatchInlineSnapshot(`
-      "import { platformIOS } from '@rnef/platform-ios';
-      import { platformAndroid } from '@rnef/platform-android';
-      import { pluginMetro } from '@rnef/plugin-metro';
+      "import { platformIOS } from '@rock-js/platform-ios';
+      import { platformAndroid } from '@rock-js/platform-android';
+      import { pluginMetro } from '@rock-js/plugin-metro';
 
       export default {
         bundler: pluginMetro(),
@@ -26,7 +26,7 @@ test('should format config with plugins', () => {
     {
       type: 'npm',
       name: 'test',
-      packageName: '@rnef/plugin-test',
+      packageName: '@rock-js/plugin-test',
       version: 'latest',
       directory: 'template',
       importName: 'pluginTest',
@@ -35,9 +35,9 @@ test('should format config with plugins', () => {
 
   expect(formatConfig([PLATFORMS[0]], plugins, BUNDLERS[1], 'github-actions'))
     .toMatchInlineSnapshot(`
-      "import { platformIOS } from '@rnef/platform-ios';
-      import { pluginTest } from '@rnef/plugin-test';
-      import { pluginRepack } from '@rnef/plugin-repack';
+      "import { platformIOS } from '@rock-js/platform-ios';
+      import { pluginTest } from '@rock-js/plugin-test';
+      import { pluginRepack } from '@rock-js/plugin-repack';
 
       export default {
         plugins: [

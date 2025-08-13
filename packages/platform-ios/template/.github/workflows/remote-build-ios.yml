@@ -29,7 +29,7 @@ jobs:
       - name: Install dependencies
         run: npm install
 
-      - name: RNEF Remote Build - iOS device
+      - name: Rock Remote Build - iOS device
         uses: callstackincubator/ios@v2
         with:
           destination: device
@@ -58,7 +58,7 @@ jobs:
       - name: Install dependencies
         run: npm install
 
-      - name: RNEF Remote Build - iOS simulator
+      - name: Rock Remote Build - iOS simulator
         uses: callstackincubator/ios@v2
         with:
           destination: simulator

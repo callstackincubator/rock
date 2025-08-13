@@ -1,6 +1,6 @@
 # iOS GitHub Action
 
-This GitHub Action allows you to build iOS apps using RNEF's remote build system. It supports both simulator builds for development and signed device builds for testing and release. If you haven't yet, please check the [configuration guide](./configuration.md) where you can find information on optimal workflow setup, permissions, optimizations and GitHub Personal Access Tokens.
+This GitHub Action allows you to build iOS apps using Rock's remote build system. It supports both simulator builds for development and signed device builds for testing and release. If you haven't yet, please check the [configuration guide](./configuration.md) where you can find information on optimal workflow setup, permissions, optimizations and GitHub Personal Access Tokens.
 
 ## Development Builds For Simulators
 
@@ -9,8 +9,8 @@ Builds an APP (`.app`) file in debug configuration suitable for development. Doe
 Use in the GitHub Workflow file like this:
 
 ```yaml
-- name: RNEF Remote Build - iOS simulator
-  id: rnef-remote-build-ios
+- name: Rock Remote Build - iOS simulator
+  id: rock-remote-build-ios
   uses: callstackincubator/ios@v2
   with:
     destination: simulator
@@ -81,7 +81,7 @@ In order to install the provisioning profile on GitHub Actions, you need to expo
 base64 -i PROVISIONING_PROFILE.mobileprovision | pbcopy
 ```
 
-Once created, store it as `RNEF_APPLE_PROVISIONING_PROFILE_BASE64` secret on your GitHub repository.
+Once created, store it as `ROCK_APPLE_PROVISIONING_PROFILE_BASE64` secret on your GitHub repository.
 
 #### Certificate
 
@@ -99,7 +99,7 @@ In order to install the certificate on GitHub Actions, you need to export the ce
 base64 -i BUILD_CERTIFICATE.p12 | pbcopy
 ```
 
-Once created, store it as `RNEF_APPLE_CERTIFICATE_BASE64` secret on your GitHub repository.
+Once created, store it as `ROCK_APPLE_CERTIFICATE_BASE64` secret on your GitHub repository.
 
 :::note
 A modern alternative to the Distribution certificate is the "Distributed Managed" certificate, which is a managed certificate where the private part is stored on Apple’s servers, and Apple actually handles the signing operation.
@@ -109,18 +109,18 @@ A modern alternative to the Distribution certificate is the "Distributed Managed
 
 In order to build signed iOS device builds, you need to set up the following secrets on your GitHub repository:
 
-- `RNEF_APPLE_CERTIFICATE_BASE64` – Base64 version of the certificate
-- `RNEF_APPLE_CERTIFICATE_PASSWORD` – Certificate password
-- `RNEF_APPLE_PROVISIONING_PROFILE_BASE64` – Base64 version of the provisioning profile
-- `RNEF_APPLE_KEYCHAIN_PASSWORD` – Password to keychain (created temporarily by the GitHub Action)
+- `ROCK_APPLE_CERTIFICATE_BASE64` – Base64 version of the certificate
+- `ROCK_APPLE_CERTIFICATE_PASSWORD` – Certificate password
+- `ROCK_APPLE_PROVISIONING_PROFILE_BASE64` – Base64 version of the provisioning profile
+- `ROCK_APPLE_KEYCHAIN_PASSWORD` – Password to keychain (created temporarily by the GitHub Action)
 
 ### Running on GitHub Actions
 
 Use in the GitHub Workflow file like this:
 
 ```yaml
-- name: RNEF Remote Build - iOS device
-  id: rnef-remote-build-ios
+- name: Rock Remote Build - iOS device
+  id: rock-remote-build-ios
   uses: callstackincubator/ios@v2
   with:
     destination: device
@@ -137,33 +137,33 @@ Make sure that the `provisioning-profile-name` is the same as the one in your pr
 
 ### Other Action Inputs
 
-#### `rnef-build-extra-params`
+#### `rock-build-extra-params`
 
 Default: ""
 
-Pass extra parameters to the `rnef build:ios` command, in order to apply custom code signing settings to the `xcodebuild archive` and `xcodebuild -exportArchive` commands.
+Pass extra parameters to the `rock build:ios` command, in order to apply custom code signing settings to the `xcodebuild archive` and `xcodebuild -exportArchive` commands.
 
 ```yaml
-- name: RNEF Remote Build - iOS device
-  id: rnef-remote-build-ios
+- name: Rock Remote Build - iOS device
+  id: rock-remote-build-ios
   uses: callstackincubator/ios@v2
   with:
     destination: device
     github-token: ${{ secrets.GITHUB_TOKEN }}
-    rnef-build-extra-params: 'CUSTOM FLAGS AND ENVIRONMENT VARIABLES'
+    rock-build-extra-params: 'CUSTOM FLAGS AND ENVIRONMENT VARIABLES'
 ```
 
 #### `re-sign`
 
 Default: `false`
 
-Re-sign the IPA with latest JS bytecode bundle with `rnef sign:ios`. Necessary for tester device builds.
-When `true`, it will produce new artifact for every commit in a Pull Request, with a PR number appended to the original artifact name associated with native state of the app, e.g. `rnef-ios-device-Release-94a82df39e12-1337`, where `1337` is the unique PR number.
+Re-sign the IPA with latest JS bytecode bundle with `rock sign:ios`. Necessary for tester device builds.
+When `true`, it will produce new artifact for every commit in a Pull Request, with a PR number appended to the original artifact name associated with native state of the app, e.g. `rock-ios-device-Release-94a82df39e12-1337`, where `1337` is the unique PR number.
 To avoid polluting artifact storage it will also handle removal of old artifacts associated with older commits.
 
 ```yaml
-- name: RNEF Remote Build - iOS device
-  id: rnef-remote-build-ios
+- name: Rock Remote Build - iOS device
+  id: rock-remote-build-ios
   uses: callstackincubator/ios@v2
   with:
     destination: device
@@ -185,14 +185,14 @@ packages/
   mobile/
     ios/
     android/
-    rnef.config.mjs
+    rock.config.mjs
 ```
 
 You'll need to set `working-directory: ./packages/mobile`:
 
 ```yaml
-- name: RNEF Remote Build - iOS device
-  id: rnef-remote-build-ios
+- name: Rock Remote Build - iOS device
+  id: rock-remote-build-ios
   uses: callstackincubator/ios@v2
   with:
     destination: device
@@ -213,8 +213,8 @@ ID of the relevant iOS build artifact. Suitable for retrieving artifacts for reu
 ```yaml
 build-release:
   outputs:
-    artifact-id: ${{ steps.rnef-remote-build-ios.outputs.artifact-id }}
-  # ...steps running action with `rnef-remote-build-ios` id
+    artifact-id: ${{ steps.rock-remote-build-ios.outputs.artifact-id }}
+  # ...steps running action with `rock-remote-build-ios` id
 
 run-e2e-tests:
   runs-on: ubuntu-latest

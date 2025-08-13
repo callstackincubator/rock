@@ -1,7 +1,7 @@
 import * as fs from 'node:fs';
 import * as path from 'node:path';
 
-const PROJECT_CONFIG_BASE_NAME = 'rnef.config';
+const PROJECT_CONFIG_BASE_NAME = 'rock.config';
 const PROJECT_CONFIG_FILE_EXTENSIONS = ['js', 'ts', 'mjs', 'mts', 'cjs', `cts`];
 
 export function getProjectConfig(dir: string = process.cwd()) {
@@ -25,15 +25,15 @@ export function getProjectRoot(dir?: string) {
   return path.dirname(configPath);
 }
 
-export function getDotRnefPath() {
-  return path.join(getProjectRoot(), '.rnef');
+export function getDotRockPath() {
+  return path.join(getProjectRoot(), '.rock');
 }
 
 /**
  * Returns path to cache root.
  *
- * Cache is stored in: `.rnef/cache` directory in the project root.
+ * Cache is stored in: `.rock/cache` directory in the project root.
  */
 export function getCacheRootPath() {
-  return path.join(getProjectRoot(), '.rnef/cache');
+  return path.join(getProjectRoot(), '.rock/cache');
 }

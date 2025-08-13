@@ -1,6 +1,6 @@
-import type { SubprocessError } from '@rnef/tools';
-import { spawn } from '@rnef/tools';
-import { RnefError } from '@rnef/tools';
+import type { SubprocessError } from '@rock-js/tools';
+import { spawn } from '@rock-js/tools';
+import { RockError } from '@rock-js/tools';
 import fs from 'fs';
 import path from 'path';
 import type { ApplePlatform } from '../types/index.js';
@@ -34,7 +34,7 @@ async function runCodegen(options: CodegenOptions) {
       options.platformName,
     ]);
   } catch (error) {
-    throw new RnefError('Failed to run React Native codegen script', {
+    throw new RockError('Failed to run React Native codegen script', {
       cause: (error as SubprocessError).output,
     });
   }

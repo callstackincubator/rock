@@ -1,5 +1,5 @@
 import type { AndroidProjectConfig } from '@react-native-community/cli-types';
-import { spawn } from '@rnef/tools';
+import { spawn } from '@rock-js/tools';
 import type { Mock } from 'vitest';
 import { vi } from 'vitest';
 import { runGradle } from '../../runGradle.js';
@@ -69,7 +69,7 @@ describe('--appFolder', () => {
       tasks: ['installDebug'],
       args: { ...args },
       androidProject,
-      artifactName: 'rnef-android-debug-123456abcdef',
+      artifactName: 'rock-android-debug-123456abcdef',
     });
     expect((spawn as Mock).mock.calls[0][1]).toContain('app:installDebug');
   });
@@ -79,7 +79,7 @@ describe('--appFolder', () => {
       tasks: ['installDebug'],
       args: { ...args },
       androidProject: { ...androidProject, appName: 'someApp' },
-      artifactName: 'rnef-android-debug-123456abcdef',
+      artifactName: 'rock-android-debug-123456abcdef',
     });
 
     expect((spawn as Mock).mock.calls[0][1]).toContain('someApp:installDebug');
@@ -90,7 +90,7 @@ describe('--appFolder', () => {
       tasks: ['installRelease'],
       args: { ...args },
       androidProject: { ...androidProject, appName: 'anotherApp' },
-      artifactName: 'rnef-android-release-123456abcdef',
+      artifactName: 'rock-android-release-123456abcdef',
     });
 
     expect((spawn as Mock).mock.calls[0][1]).toContain(
@@ -103,7 +103,7 @@ describe('--appFolder', () => {
       tasks: ['installDebug', 'someTask'],
       args: { ...args },
       androidProject,
-      artifactName: 'rnef-android-debug-123456abcdef',
+      artifactName: 'rock-android-debug-123456abcdef',
     });
 
     expect((spawn as Mock).mock.calls[0][1]).toContain('app:someTask');
@@ -114,7 +114,7 @@ describe('--appFolder', () => {
       tasks: ['someTask', 'installDebug'],
       args: { ...args },
       androidProject: { ...androidProject, appName: 'anotherApp' },
-      artifactName: 'rnef-android-debug-123456abcdef',
+      artifactName: 'rock-android-debug-123456abcdef',
     });
 
     expect((spawn as Mock).mock.calls[0][1]).toContain('anotherApp:someTask');
@@ -125,7 +125,7 @@ describe('--appFolder', () => {
       tasks: ['clean', 'someTask'],
       args: { ...args },
       androidProject,
-      artifactName: 'rnef-android-debug-123456abcdef',
+      artifactName: 'rock-android-debug-123456abcdef',
     });
 
     expect((spawn as Mock).mock.calls[0][1]).toEqual([

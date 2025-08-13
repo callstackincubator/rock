@@ -1,6 +1,6 @@
 import fs from 'node:fs';
 import path from 'node:path';
-import { RnefError } from '@rnef/tools';
+import { RockError } from '@rock-js/tools';
 import packageJson from 'package-json';
 import * as tar from 'tar';
 import { getNameWithoutExtension } from './fs.js';
@@ -15,12 +15,12 @@ export async function downloadTarballFromNpm(
 
     const tarballUrl = metadata['dist']?.tarball;
     if (!tarballUrl) {
-      throw new RnefError('Tarball URL not found.');
+      throw new RockError('Tarball URL not found.');
     }
 
     const response = await fetch(tarballUrl);
     if (!response.ok) {
-      throw new RnefError(
+      throw new RockError(
         `Failed to fetch package ${packageName}: ${response.statusText}`,
       );
     }
@@ -35,7 +35,7 @@ export async function downloadTarballFromNpm(
 
     return tarballPath;
   } catch (error) {
-    throw new RnefError(`Error downloading package ${packageName}`, {
+    throw new RockError(`Error downloading package ${packageName}`, {
       cause: error,
     });
   }

@@ -1,5 +1,17 @@
 # @rnef/plugin-brownfield-ios
 
+## 0.9.0
+
+### Minor Changes
+
+- 47ec267: Let there be Rock
+
+### Patch Changes
+
+- Updated dependencies [47ec267]
+  - @rock-js/platform-apple-helpers@0.9.0
+  - @rock-js/tools@0.9.0
+
 ## 0.8.13
 
 ### Patch Changes

@@ -1,6 +1,6 @@
 import path from 'node:path';
 import type { IOSProjectConfig } from '@react-native-community/cli-types';
-import { RnefError } from '@rnef/tools';
+import { RockError } from '@rock-js/tools';
 import type { BuildFlags } from '../commands/build/buildOptions.js';
 import { buildProject } from '../commands/build/buildProject.js';
 import { getBuildSettings } from '../commands/run/getBuildSettings.js';
@@ -74,7 +74,7 @@ export async function buildApp({
 
   const info = await getInfo(xcodeProject, sourceDir);
   if (!info) {
-    throw new RnefError('Failed to get Xcode project information');
+    throw new RockError('Failed to get Xcode project information');
   }
 
   const scheme = await getScheme(info.schemes, args.scheme, xcodeProject.name);

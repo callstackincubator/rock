@@ -1,8 +1,8 @@
-import { RnefError } from '../error.js';
+import { RockError } from '../error.js';
 
-test('RnefError basic features', () => {
-  const error = new RnefError('test');
-  expect(error.name).toBe('RnefError');
+test('RockError basic features', () => {
+  const error = new RockError('test');
+  expect(error.name).toBe('RockError');
   expect(error instanceof Error).toBe(true);
   expect(error.stack).toBeDefined();
 });

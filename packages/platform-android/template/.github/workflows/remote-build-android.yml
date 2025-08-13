@@ -29,17 +29,17 @@ jobs:
       - name: Install dependencies
         run: npm install
 
-      - name: RNEF Remote Build - Android device
+      - name: Rock Remote Build - Android device
         uses: callstackincubator/android@v2
         with:
           sign: true
           variant: release
           github-token: ${{ secrets.GITHUB_TOKEN }}
           keystore-base64: ${{ secrets.KEYSTORE_BASE64 }}
-          keystore-store-file: ${{ secrets.RNEF_UPLOAD_STORE_FILE }}
-          keystore-store-password: ${{ secrets.RNEF_UPLOAD_STORE_PASSWORD }}
-          keystore-key-alias: ${{ secrets.RNEF_UPLOAD_KEY_ALIAS }}
-          keystore-key-password: ${{ secrets.RNEF_UPLOAD_KEY_PASSWORD }}
+          keystore-store-file: ${{ secrets.ROCK_UPLOAD_STORE_FILE }}
+          keystore-store-password: ${{ secrets.ROCK_UPLOAD_STORE_PASSWORD }}
+          keystore-key-alias: ${{ secrets.ROCK_UPLOAD_KEY_ALIAS }}
+          keystore-key-password: ${{ secrets.ROCK_UPLOAD_KEY_PASSWORD }}
 
   build-debug:
     runs-on: ubuntu-latest
@@ -57,7 +57,7 @@ jobs:
       - name: Install dependencies
         run: npm install
 
-      - name: RNEF Remote Build - Android
+      - name: Rock Remote Build - Android
         uses: callstackincubator/android@v2
         with:
           variant: debug

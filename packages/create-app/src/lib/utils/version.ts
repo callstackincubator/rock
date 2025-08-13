@@ -1,9 +1,9 @@
 import * as fs from 'node:fs';
 import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
-import { logger } from '@rnef/tools';
+import { logger } from '@rock-js/tools';
 
-export function getRnefVersion() {
+export function getRockVersion() {
   try {
     const __dirname = dirname(fileURLToPath(import.meta.url));
 
@@ -12,7 +12,7 @@ export function getRnefVersion() {
     const packageJson = JSON.parse(fs.readFileSync(packageJsonPath, 'utf-8'));
     return packageJson.version;
   } catch (error) {
-    logger.warn('Failed to get RNEF version', error);
+    logger.warn('Failed to get Rock version', error);
     return null;
   }
 }

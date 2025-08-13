@@ -1,9 +1,9 @@
 {
-  "name": "rnef-platform-android-template",
+  "name": "rock-platform-android-template",
   "scripts": {
-    "android": "rnef run:android"
+    "android": "rock run:android"
   },
   "devDependencies": {
-    "@rnef/platform-android": "^0.8.13"
+    "@rock-js/platform-android": "^0.9.0"
   }
 }

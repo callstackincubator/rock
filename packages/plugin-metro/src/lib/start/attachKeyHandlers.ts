@@ -7,7 +7,7 @@
 
 import readline from 'node:readline';
 import { ReadStream } from 'node:tty';
-import { color, RnefError } from '@rnef/tools';
+import { color, RockError } from '@rock-js/tools';
 import type { TerminalReporter } from 'metro/src/lib/TerminalReporter';
 import OpenDebuggerKeyboardHandler from './OpenDebuggerKeyboardHandler.js';
 
@@ -130,7 +130,7 @@ export default function attachKeyHandlers({
 
 function setRawMode(enable: boolean) {
   if (!(process.stdin instanceof ReadStream)) {
-    throw new RnefError(
+    throw new RockError(
       'process.stdin must be a readable stream to modify raw mode',
     );
   }

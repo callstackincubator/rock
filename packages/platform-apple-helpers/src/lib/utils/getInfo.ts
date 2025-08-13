@@ -1,6 +1,6 @@
 import * as fs from 'node:fs';
 import * as path from 'node:path';
-import { logger, RnefError, spawn, type SubprocessError } from '@rnef/tools';
+import { logger, RockError, spawn, type SubprocessError } from '@rock-js/tools';
 import { XMLParser } from 'fast-xml-parser';
 import type { Info, XcodeProjectInfo } from '../types/index.js';
 
@@ -16,7 +16,7 @@ function parseTargetList(json: string): Info | undefined {
 
     return undefined;
   } catch (error) {
-    throw new RnefError('Failed to parse target list', { cause: error });
+    throw new RockError('Failed to parse target list', { cause: error });
   }
 }
 
@@ -33,12 +33,12 @@ export async function getInfo(
       const info = parseTargetList(stdout);
 
       if (!info) {
-        throw new RnefError('Failed to get Xcode project information');
+        throw new RockError('Failed to get Xcode project information');
       }
 
       return info;
     } catch (error) {
-      throw new RnefError('Failed to get a target list.', {
+      throw new RockError('Failed to get a target list.', {
         cause: error,
       });
     }
@@ -75,7 +75,7 @@ export async function getInfo(
       logger.debug(stdout);
       logger.debug(buildOutput.stderr);
     } catch (error) {
-      throw new RnefError('Failed to get project info', {
+      throw new RockError('Failed to get project info', {
         cause: (error as SubprocessError).stderr,
       });
     }
@@ -96,7 +96,7 @@ export async function getInfo(
     }
 
     if (!Array.isArray(info.schemes)) {
-      throw new RnefError("This shouldn't happen since we set it earlier");
+      throw new RockError("This shouldn't happen since we set it earlier");
     }
 
     // For subsequent projects, merge schemes list

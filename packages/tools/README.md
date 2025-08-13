@@ -1,7 +1,7 @@
-# @rnef/tools
+# @rock-js/tools
 
-Development tools and utilities for React Native Enterprise Framework (RNEF). This package is part of the RNEF ecosystem.
+Development tools and utilities for Rock. This package is part of the Rock ecosystem.
 
 ## Documentation
 
-For detailed documentation about RNEF and its tools, visit [RNEF Documentation](https://rnef.dev)
+For detailed documentation about Rock and its tools, visit [Rock Documentation](https://rockjs.dev)

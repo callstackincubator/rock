@@ -1,6 +1,6 @@
 import fs from 'node:fs';
 import path from 'node:path';
-import type { FingerprintSources, RemoteBuildCache } from '@rnef/tools';
+import type { FingerprintSources, RemoteBuildCache } from '@rock-js/tools';
 import {
   color,
   formatArtifactName,
@@ -8,9 +8,9 @@ import {
   isInteractive,
   logger,
   promptSelect,
-  RnefError,
+  RockError,
   saveLocalBuildCache,
-} from '@rnef/tools';
+} from '@rock-js/tools';
 import type {
   ApplePlatform,
   Device,
@@ -104,14 +104,14 @@ export const createRun = async ({
       await runOnMacCatalyst(appPath, scheme);
       return;
     } else {
-      throw new RnefError('Failed to get project scheme');
+      throw new RockError('Failed to get project scheme');
     }
   }
 
   const devices = await listDevicesAndSimulators(platformName);
   if (devices.length === 0) {
     const { readableName } = getPlatformInfo(platformName);
-    throw new RnefError(
+    throw new RockError(
       `No devices or simulators detected. Install simulators via Xcode or connect a physical ${readableName} device.`,
     );
   }
@@ -119,7 +119,7 @@ export const createRun = async ({
 
   if (device) {
     if (device.type !== deviceOrSimulator) {
-      throw new RnefError(
+      throw new RockError(
         `Selected device "${device.name}" is not a ${deviceOrSimulator}. 
 Please either use "--destination ${
           deviceOrSimulator === 'simulator' ? 'device' : 'simulator'
@@ -182,7 +182,7 @@ ${devices
         if (simulator) {
           bootedDevices.push(simulator);
         } else {
-          throw new RnefError(
+          throw new RockError(
             'No Apple simulators found. Install simulators via Xcode.',
           );
         }

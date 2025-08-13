@@ -1,8 +1,8 @@
 import fs from 'node:fs';
 import os from 'node:os';
 import path from 'node:path';
-import type { SubprocessError } from '@rnef/tools';
-import { RnefError, spawn } from '@rnef/tools';
+import type { SubprocessError } from '@rock-js/tools';
+import { RockError, spawn } from '@rock-js/tools';
 import type { ApplePlatform, Device } from '../types/index.js';
 
 type DevicectlOutput = {
@@ -63,7 +63,7 @@ async function getDevices() {
     const output = JSON.parse(fs.readFileSync(tmpPath, 'utf8'));
     return parseDevicectlList(output.result.devices);
   } catch (error) {
-    throw new RnefError('Failed to get devices', {
+    throw new RockError('Failed to get devices', {
       cause: (error as SubprocessError).stderr,
     });
   }

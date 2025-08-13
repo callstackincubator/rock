@@ -1,4 +1,4 @@
-import type { PluginApi } from '@rnef/config';
+import type { PluginApi } from '@rock-js/config';
 import { signAndroid } from './signAndroid.js';
 
 export type SignFlags = {

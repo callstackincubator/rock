@@ -15,7 +15,7 @@ react {
     //   The folder where the react-native Codegen package is. Default is ../../node_modules/@react-native/codegen
     // codegenDir = file("../../node_modules/@react-native/codegen")
     //   The cli.js file which is the React Native CLI entrypoint. Default is ../../node_modules/react-native/cli.js
-    cliFile = file("../../node_modules/@rnef/cli/dist/src/bin.js")
+    cliFile = file("../../node_modules/rock/dist/src/bin.js")
 
     /* Variants */
     //   The list of variants to that are debuggable. For those we're going to
@@ -93,11 +93,11 @@ android {
             keyPassword 'android'
         }
         release {
-            if (project.hasProperty('RNEF_UPLOAD_STORE_FILE')) {
-                storeFile file(RNEF_UPLOAD_STORE_FILE)
-                storePassword RNEF_UPLOAD_STORE_PASSWORD
-                keyAlias RNEF_UPLOAD_KEY_ALIAS
-                keyPassword RNEF_UPLOAD_KEY_PASSWORD
+            if (project.hasProperty('ROCK_UPLOAD_STORE_FILE')) {
+                storeFile file(ROCK_UPLOAD_STORE_FILE)
+                storePassword ROCK_UPLOAD_STORE_PASSWORD
+                keyAlias ROCK_UPLOAD_KEY_ALIAS
+                keyPassword ROCK_UPLOAD_KEY_PASSWORD
             }
         }
     }

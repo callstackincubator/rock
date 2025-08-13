@@ -74,5 +74,5 @@ yarn-error.log
 !.yarn/sdks
 !.yarn/versions
 
-# RNEF
-.rnef/
+# Rock
+.rock/

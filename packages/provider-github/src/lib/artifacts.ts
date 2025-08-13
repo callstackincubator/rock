@@ -4,8 +4,8 @@ import {
   colorLink,
   logger,
   type RemoteArtifact,
-  RnefError,
-} from '@rnef/tools';
+  RockError,
+} from '@rock-js/tools';
 import { type GitHubRepoDetails } from './config.js';
 
 const PAGE_SIZE = 100; // Maximum allowed by GitHub API
@@ -85,19 +85,19 @@ export async function fetchGitHubArtifactsByName(
   } catch (error) {
     if ((error as { message: string }).message.includes('401 Unauthorized')) {
       cacheManager.remove('githubToken');
-      throw new RnefError(
+      throw new RockError(
         `Failed to fetch GitHub artifacts due to invalid or expired GitHub Personal Access Token provided.
 Update the token under "${color.bold(
           'remoteCacheProvider',
-        )}" key in ${colorLink('rnef.config.mjs')} config file.
+        )}" key in ${colorLink('rock.config.mjs')} config file.
 
 📘 Read more about generating a new token: ${colorLink(
-          'https://rnef.dev/docs/github-actions/configuration#generate-github-personal-access-token-for-downloading-cached-builds',
+          'https://rockjs.dev/docs/github-actions/configuration#generate-github-personal-access-token-for-downloading-cached-builds',
         )}`,
       );
     }
     if ((error as { message: string }).message.includes('404 Not Found')) {
-      throw new RnefError(
+      throw new RockError(
         `Failed to fetch GitHub artifacts due to "404 Not Found" error. This can happen for the following reasons:
 - permission mismatch between your GitHub Personal Access Token and the repository
 - you're blocked by the owner of the repository
@@ -105,14 +105,14 @@ Update the token under "${color.bold(
 
 Make sure the repository information and token under "${color.bold(
           'remoteCacheProvider',
-        )}" key in ${colorLink('rnef.config.mjs')} config file is valid.
+        )}" key in ${colorLink('rock.config.mjs')} config file is valid.
 
 📘 Read more about generating a new token: ${colorLink(
-          'https://rnef.dev/docs/github-actions/configuration#generate-github-personal-access-token-for-downloading-cached-builds',
+          'https://rockjs.dev/docs/github-actions/configuration#generate-github-personal-access-token-for-downloading-cached-builds',
         )}`,
       );
     }
-    throw new RnefError(`Failed to fetch GitHub artifacts`, { cause: error });
+    throw new RockError(`Failed to fetch GitHub artifacts`, { cause: error });
   }
 
   result.sort((a, b) => {
@@ -158,7 +158,7 @@ export async function deleteGitHubArtifacts(
     }
     return deletedArtifacts;
   } catch (error) {
-    throw new RnefError(`Failed to delete artifacts named "${artifactName}"`, {
+    throw new RockError(`Failed to delete artifacts named "${artifactName}"`, {
       cause: error,
     });
   }

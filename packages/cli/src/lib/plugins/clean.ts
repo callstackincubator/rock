@@ -1,17 +1,17 @@
 import fs from 'node:fs';
 import os from 'node:os';
 import path from 'node:path';
-import type { PluginApi, PluginOutput } from '@rnef/config';
+import type { PluginApi, PluginOutput } from '@rock-js/config';
 import {
   getProjectRoot,
   intro,
   logger,
   outro,
   promptMultiselect,
-  RnefError,
+  RockError,
   spawn,
   spinner,
-} from '@rnef/tools';
+} from '@rock-js/tools';
 
 type CleanOptions = {
   include?: string[];
@@ -38,20 +38,20 @@ const CLEANUP_TASK_NAMES = [
   'yarn',
   'bun',
   'pnpm',
-  'rnef',
+  'rock',
 ] as const;
 
 /**
  * Validates that the provided task names are valid cleanup tasks.
  * @param taskNames - Array of task names to validate
- * @throws {RnefError} If any task names are invalid
+ * @throws {RockError} If any task names are invalid
  */
 function validateCleanupTasks(taskNames: string[]): void {
   const invalidTasks = taskNames.filter(
     (name) => !CLEANUP_TASK_NAMES.includes(name as any),
   );
   if (invalidTasks.length > 0) {
-    throw new RnefError(
+    throw new RockError(
       `Invalid cleanup task(s): ${invalidTasks.join(', ')}. ` +
         `Valid options are: ${CLEANUP_TASK_NAMES.join(', ')}`,
     );
@@ -270,26 +270,26 @@ function createCleanupTasks(
     },
   });
 
-  // RNEF cleanup
+  // Rock cleanup
   tasks.push({
-    name: 'rnef',
-    description: '[RNEF] project cache and build artifacts (iOS/Android)',
+    name: 'rock',
+    description: '[Rock] project cache and build artifacts (iOS/Android)',
     enabled: true,
     action: async () => {
-      const rnefCacheDir = path.join(projectRoot, '.rnef', 'cache');
+      const rockCacheDir = path.join(projectRoot, '.rock', 'cache');
 
       // Clean project cache file
-      const projectCacheFile = path.join(rnefCacheDir, 'project.json');
+      const projectCacheFile = path.join(rockCacheDir, 'project.json');
       removeDirectorySync(projectCacheFile);
 
       // Clean remote build cache directory
-      cleanDirectories(['remote-build'], rnefCacheDir);
+      cleanDirectories(['remote-build'], rockCacheDir);
 
       // Clean iOS archive and export cache directory
-      cleanDirectories(['ios'], rnefCacheDir);
+      cleanDirectories(['ios'], rockCacheDir);
 
       // Clean Android build cache directory
-      cleanDirectories(['android'], rnefCacheDir);
+      cleanDirectories(['android'], rockCacheDir);
     },
   });
 
@@ -344,7 +344,7 @@ async function cleanProject(projectRoot: string, options: CleanOptions) {
  * @param options - Clean options that control the cleanup behavior
  */
 async function cleanCommand(options: CleanOptions) {
-  intro('🧹 RNEF Clean');
+  intro('🧹 Rock Clean');
 
   const projectRoot = getProjectRoot();
   await cleanProject(projectRoot, options);
@@ -356,7 +356,7 @@ export const cleanPlugin =
   (api: PluginApi): PluginOutput => {
     api.registerCommand({
       name: 'clean',
-      description: 'Clean caches and build artifacts for RNEF projects',
+      description: 'Clean caches and build artifacts for Rock projects',
       action: async (options: CleanOptions) => {
         await cleanCommand(options);
       },
@@ -383,6 +383,6 @@ export const cleanPlugin =
 
     return {
       name: 'internal_clean',
-      description: 'Clean plugin for RNEF projects',
+      description: 'Clean plugin for Rock projects',
     };
   };

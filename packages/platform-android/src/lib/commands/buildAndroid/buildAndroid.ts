@@ -1,5 +1,5 @@
 import type { AndroidProjectConfig } from '@react-native-community/cli-types';
-import type { RemoteBuildCache } from '@rnef/tools';
+import type { RemoteBuildCache } from '@rock-js/tools';
 import {
   colorLink,
   type FingerprintSources,
@@ -9,7 +9,7 @@ import {
   outro,
   parseArgs,
   relativeToCwd,
-} from '@rnef/tools';
+} from '@rock-js/tools';
 import { findOutputFile } from '../runAndroid/findOutputFile.js';
 import { runGradle } from '../runGradle.js';
 import { toPascalCase } from '../toPascalCase.js';

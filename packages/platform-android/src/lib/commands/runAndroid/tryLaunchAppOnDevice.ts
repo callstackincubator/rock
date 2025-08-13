@@ -1,4 +1,4 @@
-import { logger, RnefError, spawn, type SubprocessError } from '@rnef/tools';
+import { logger, RockError, spawn, type SubprocessError } from '@rock-js/tools';
 import { getAdbPath } from './adb.js';
 import type { DeviceData } from './listAndroidDevices.js';
 import type { AndroidProject, Flags } from './runAndroid.js';
@@ -56,7 +56,7 @@ export async function tryLaunchAppOnDevice(
   try {
     await spawn(adbPath, adbArgs);
   } catch (error) {
-    throw new RnefError(`Failed to launch the app on ${device.readableName}`, {
+    throw new RockError(`Failed to launch the app on ${device.readableName}`, {
       cause: (error as SubprocessError).stderr,
     });
   }

@@ -1,5 +1,5 @@
 import fs from 'node:fs';
-import { spawn } from '@rnef/tools';
+import { spawn } from '@rock-js/tools';
 import type { Mock } from 'vitest';
 import { vi } from 'vitest';
 import { listDevicesAndSimulators } from '../listDevices.js';

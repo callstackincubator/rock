@@ -1,5 +1,5 @@
 import path from 'node:path';
-import { getCacheRootPath } from '@rnef/tools';
+import { getCacheRootPath } from '@rock-js/tools';
 
 export const getBuildPaths = (platformName: string) => {
   const buildDir = path.join(getCacheRootPath(), platformName);

@@ -1,5 +1,5 @@
 import path from 'node:path';
-import { color, logger, RnefError, spawn } from '@rnef/tools';
+import { color, logger, RockError, spawn } from '@rock-js/tools';
 import type { ApplePlatform, XcodeProjectInfo } from '../../types/index.js';
 
 type BuildSettings = {
@@ -92,7 +92,7 @@ export async function getBuildSettings({
     const buildSettings = settings[targetIndex].buildSettings;
 
     if (!buildSettings) {
-      throw new RnefError('Failed to get build settings for your project');
+      throw new RockError('Failed to get build settings for your project');
     }
 
     const appPath = getBuildPath(buildSettings, platformName);
@@ -105,7 +105,7 @@ export async function getBuildSettings({
     };
   }
 
-  throw new RnefError(
+  throw new RockError(
     `Failed to get build settings for your project. Looking for "app" or "framework" wrapper extension but found: ${wrapperExtension}`,
   );
 }

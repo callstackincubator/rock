@@ -1,5 +1,5 @@
-import type { SubprocessError } from '@rnef/tools';
-import { color, RnefError, spawn, spinner } from '@rnef/tools';
+import type { SubprocessError } from '@rock-js/tools';
+import { color, RockError, spawn, spinner } from '@rock-js/tools';
 import type { Device } from '../../types/index.js';
 
 export async function runOnDevice(
@@ -28,7 +28,7 @@ export async function runOnDevice(
         selectedDevice.name,
       )}`,
     );
-    throw new RnefError((error as SubprocessError).stderr);
+    throw new RockError((error as SubprocessError).stderr);
   }
 
   loader.stop(`Installed the app on ${color.bold(selectedDevice.name)}.`);

@@ -1,6 +1,6 @@
 import fs from 'node:fs';
 import path from 'node:path';
-import { cleanup, getTempDirectory } from '@rnef/test-helpers';
+import { cleanup, getTempDirectory } from '@rock-js/test-helpers';
 import { afterEach, beforeEach, describe, vi } from 'vitest';
 import cacheManager, { getCacheFile } from '../cacheManager.js';
 

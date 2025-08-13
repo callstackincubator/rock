@@ -1,4 +1,4 @@
-import { spawn } from '@rnef/tools';
+import { spawn } from '@rock-js/tools';
 
 export async function runOnMacCatalyst(binaryPath: string, scheme: string) {
   const appProcess = spawn(`${binaryPath}/${scheme}`, [], {

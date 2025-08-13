@@ -5,7 +5,7 @@
  * LICENSE file in the root directory of this source tree.
  */
 
-import { color } from '@rnef/tools';
+import { color } from '@rock-js/tools';
 import type { TerminalReporter } from 'metro/src/lib/TerminalReporter';
 
 type PageDescription = Readonly<{

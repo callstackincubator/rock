@@ -9,20 +9,20 @@ import {
   promptSelect,
   promptText,
   relativeToCwd,
-  RnefError,
+  RockError,
   type SupportedRemoteCacheProviders,
-} from '@rnef/tools';
+} from '@rock-js/tools';
 import { vice } from 'gradient-string';
 import type { TemplateInfo } from '../templates.js';
 import { validateProjectName } from './project-name.js';
-import { getRnefVersion } from './version.js';
+import { getRockVersion } from './version.js';
 
 export function printHelpMessage(
   templates: TemplateInfo[],
   platforms: TemplateInfo[],
 ) {
   console.log(`
-     Usage: create-rnef [options]
+     Usage: create-rock [options]
   
      Options:
      
@@ -46,12 +46,12 @@ export function printHelpMessage(
 }
 
 export function printVersionMessage() {
-  console.log(`${getRnefVersion()}`);
+  console.log(`${getRockVersion()}`);
 }
 
 export function printWelcomeMessage() {
   console.log('');
-  intro(`Welcome to ${color.bold(vice('React Native Enterprise Framework'))}!`);
+  intro(`Welcome to ${color.bold(vice('Rock'))}!`);
 }
 
 export function printByeMessage(
@@ -87,7 +87,7 @@ export async function promptTemplate(
   templates: TemplateInfo[],
 ): Promise<TemplateInfo> {
   if (templates.length === 0) {
-    throw new RnefError('No templates found');
+    throw new RockError('No templates found');
   }
 
   return promptSelect({
@@ -104,7 +104,7 @@ export function promptPlatforms(
   platforms: TemplateInfo[],
 ): Promise<TemplateInfo[]> {
   if (platforms.length === 0) {
-    throw new RnefError('No platforms found');
+    throw new RockError('No platforms found');
   }
 
   const defaultPlatforms = platforms.filter(
@@ -144,7 +144,7 @@ export function promptBundlers(
   bundlers: TemplateInfo[],
 ): Promise<TemplateInfo> {
   if (bundlers.length === 0) {
-    throw new RnefError('No bundlers found');
+    throw new RockError('No bundlers found');
   }
 
   return promptSelect({

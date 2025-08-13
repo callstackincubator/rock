@@ -1,11 +1,11 @@
 # Configuration
 
-React Native Enterprise Framework ships with a ready-to-use GitHub Actions:
+Rock ships with a ready-to-use GitHub Actions:
 
 - [`callstackincubator/ios`](https://github.com/callstackincubator/ios)
 - [`callstackincubator/android`](https://github.com/callstackincubator/android)
 
-which you can include in your GHA workflows to build iOS and Android apps and store native artifacts to reuse across CI jobs and local dev environment through RNEF CLI.
+which you can include in your GHA workflows to build iOS and Android apps and store native artifacts to reuse across CI jobs and local dev environment through Rock CLI.
 
 ## Workflow permissions
 
@@ -37,7 +37,7 @@ This configuration:
 
 ## Optimizing CI/CD Performance with paths-ignore
 
-When using GitHub Actions workflows with RNEF, you can optimize your CI/CD pipelines by using `paths-ignore` to skip unnecessary workflow runs. This can significantly reduce CI time and costs, especially in large repositories where not all changes require rebuilding the mobile applications.
+When using GitHub Actions workflows with Rock, you can optimize your CI/CD pipelines by using `paths-ignore` to skip unnecessary workflow runs. This can significantly reduce CI time and costs, especially in large repositories where not all changes require rebuilding the mobile applications.
 
 ### How to implement paths-ignore
 
@@ -62,7 +62,7 @@ on:
 
 ## Generate GitHub Personal Access Token for downloading cached builds
 
-You'll be asked about this token when cached build is available while running the `npx rnef run:` command.
+You'll be asked about this token when cached build is available while running the `npx rock run:` command.
 
 ### Fine-grained tokens for organizations
 

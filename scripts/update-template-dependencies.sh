@@ -1,7 +1,7 @@
 #!/bin/bash
 set -e
 
-echo "Updating all @rnef/* dependencies to match CLI version..."
+echo "Updating all @rock-js/* dependencies to match CLI version..."
 
 # Get the version from packages/cli/package.json
 CLI_VERSION=$(jq -r '.version' packages/cli/package.json)
@@ -15,14 +15,14 @@ update_package_json() {
     # Create a temporary file
     temp_file=$(mktemp)
     
-    # Update all @rnef/* dependencies to match CLI version
+    # Update all @rock-js/* dependencies to match CLI version
     jq --arg version "^$CLI_VERSION" '
         # Only update if the field exists
         if has("dependencies") then
             .dependencies = (
                 .dependencies | 
                 to_entries | 
-                map(if .key | startswith("@rnef/") then .value = $version else . end) |
+                map(if .key | startswith("@rock-js/") then .value = $version else . end) |
                 from_entries
             )
         else . end |
@@ -31,7 +31,7 @@ update_package_json() {
             .devDependencies = (
                 .devDependencies | 
                 to_entries | 
-                map(if .key | startswith("@rnef/") then .value = $version else . end) |
+                map(if .key | startswith("@rock-js/") then .value = $version else . end) |
                 from_entries
             )
 
@@ -41,7 +41,7 @@ update_package_json() {
             .optionalDependencies = (
                 .optionalDependencies | 
                 to_entries | 
-                map(if .key | startswith("@rnef/") then .value = $version else . end) |
+                map(if .key | startswith("@rock-js/") then .value = $version else . end) |
                 from_entries
             )
         
@@ -51,7 +51,7 @@ update_package_json() {
             .peerDependencies = (
                 .peerDependencies | 
                 to_entries | 
-                map(if .key | startswith("@rnef/") then .value = $version else . end) |
+                map(if .key | startswith("@rock-js/") then .value = $version else . end) |
                 from_entries
             )
         else . end
@@ -87,4 +87,4 @@ find ./packages -path "*/template/*" -name "package.json" -not -path "*/node_mod
     update_package_json "$file"
 done
 
-echo "Done! All @rnef/* dependencies have been updated to version ^$CLI_VERSION." 
+echo "Done! All @rock-js/* dependencies have been updated to version ^$CLI_VERSION." 

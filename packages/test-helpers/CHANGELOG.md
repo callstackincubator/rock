@@ -1,5 +1,11 @@
 # @rnef/test-helpers
 
+## 0.9.0
+
+### Minor Changes
+
+- 47ec267: Let there be Rock
+
 ## 0.8.13
 
 ## 0.8.12

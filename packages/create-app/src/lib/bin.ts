@@ -6,11 +6,11 @@ import {
   logger,
   promptConfirm,
   resolveAbsolutePath,
-  RnefError,
+  RockError,
   spawn,
   spinner,
   type SupportedRemoteCacheProviders,
-} from '@rnef/tools';
+} from '@rock-js/tools';
 import { gitInitStep, hasGitClient, isGitRepo } from './steps/git-init.js';
 import type { TemplateInfo } from './templates.js';
 import {
@@ -27,6 +27,7 @@ import {
 import { copyDirSync, isEmptyDirSync, removeDirSync } from './utils/fs.js';
 import { getPkgManager } from './utils/getPkgManager.js';
 import { initInExistingProject } from './utils/initInExistingProject.js';
+import { migrateRnefProject } from './utils/migrateRnefProject.js';
 import { rewritePackageJson } from './utils/package-json.js';
 import { parseCliOptions } from './utils/parse-cli-options.js';
 import { parsePackageInfo } from './utils/parsers.js';
@@ -52,11 +53,11 @@ import {
   downloadTarballFromNpm,
   extractTarballToTempDirectory,
 } from './utils/tarball.js';
-import { getRnefVersion } from './utils/version.js';
+import { getRockVersion } from './utils/version.js';
 
 export async function run() {
   const options = parseCliOptions(process.argv.slice(2));
-  const version = getRnefVersion();
+  const version = getRockVersion();
 
   if (options.help) {
     printHelpMessage(TEMPLATES, PLATFORMS);
@@ -70,23 +71,27 @@ export async function run() {
 
   printWelcomeMessage();
 
-  if (isReactNativeProject(options.dir || process.cwd())) {
-    const projectRoot = resolveAbsolutePath(options.dir || process.cwd());
-    if ((await isGitRepo(projectRoot)) && (await hasGitClient())) {
-      const { output } = await spawn('git', ['status', '--porcelain'], {
-        cwd: projectRoot,
-      });
+  const projectRoot = resolveAbsolutePath(options.dir || process.cwd());
 
-      if (output.trim() !== '') {
-        logger.error(
-          'Git has uncommitted changes. Please commit or stash your changes before continuing with initializing RNEF in existing project.',
-        );
-        process.exit(1);
-      }
+  if (isRnefProject(projectRoot)) {
+    await validateGitStatus(projectRoot);
+    const shouldMigrate = await promptConfirm({
+      message: `Detected existing RNEF project. Would you like to migrate it to Rock?`,
+      confirmLabel: 'Yes',
+      cancelLabel: 'No',
+    });
+    if (!shouldMigrate) {
+      cancelPromptAndExit();
     }
+    await migrateRnefProject(projectRoot);
+    return;
+  }
+
+  if (isReactNativeProject(projectRoot)) {
+    await validateGitStatus(projectRoot);
 
     const shouldInit = await promptConfirm({
-      message: `Detected existing React Native project. Would you like to initialize RNEF in this project?`,
+      message: `Detected existing React Native project. Would you like to initialize Rock in this project?`,
       confirmLabel: 'Yes',
       cancelLabel: 'No',
     });
@@ -195,6 +200,33 @@ function isReactNativeProject(dir: string) {
   );
 }
 
+function isRnefProject(dir: string) {
+  const packageJson = path.join(dir, 'package.json');
+  if (!fs.existsSync(packageJson)) {
+    return false;
+  }
+  const packageJsonContent = JSON.parse(fs.readFileSync(packageJson, 'utf8'));
+  return (
+    packageJsonContent.dependencies?.['@rnef/cli'] !== undefined ||
+    packageJsonContent.devDependencies?.['@rnef/cli'] !== undefined
+  );
+}
+
+async function validateGitStatus(dir: string) {
+  if ((await isGitRepo(dir)) && (await hasGitClient())) {
+    const { output } = await spawn('git', ['status', '--porcelain'], {
+      cwd: dir,
+    });
+
+    if (output.trim() !== '') {
+      logger.error(
+        'Git has uncommitted changes. Please commit or stash your changes before continuing with initializing Rock in existing project.',
+      );
+      process.exit(1);
+    }
+  }
+}
+
 async function installDependencies(
   absoluteTargetDir: string,
   pkgManager: string,
@@ -251,7 +283,7 @@ async function extractPackage(absoluteTargetDir: string, pkg: TemplateInfo) {
   }
 
   // This should never happen as we have either NPM package or local path (tarball or directory).
-  throw new RnefError(
+  throw new RockError(
     `Invalid state: template not found: ${JSON.stringify(pkg, null, 2)}`,
   );
 }
@@ -263,9 +295,9 @@ function createConfig(
   bundler: TemplateInfo,
   remoteCacheProvider: SupportedRemoteCacheProviders | null,
 ) {
-  const rnefConfig = path.join(absoluteTargetDir, 'rnef.config.mjs');
+  const rockConfig = path.join(absoluteTargetDir, 'rock.config.mjs');
   fs.writeFileSync(
-    rnefConfig,
+    rockConfig,
     formatConfig(platforms, plugins, bundler, remoteCacheProvider),
   );
 }

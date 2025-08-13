@@ -2,9 +2,9 @@ import { existsSync, mkdirSync, rmSync } from 'node:fs';
 import path from 'node:path';
 import {
   findDirectoriesWithPattern,
-  getDotRnefPath,
-  RnefError,
-} from '@rnef/tools';
+  getDotRockPath,
+  RockError,
+} from '@rock-js/tools';
 import AdmZip from 'adm-zip';
 
 /**
@@ -12,7 +12,7 @@ import AdmZip from 'adm-zip';
  * @param platformName - Platform name.
  */
 export function getTempPaths(platformName: string) {
-  const root = path.join(getDotRnefPath(), platformName, 'sign');
+  const root = path.join(getDotRockPath(), platformName, 'sign');
   return {
     /** Root path for sign operation. */
     root,
@@ -63,7 +63,7 @@ export const unpackIpa = (ipaPath: string, destination: string): string => {
 
   const appPath = findDirectoriesWithPattern(payloadPath, /\.app$/)[0];
   if (!appPath) {
-    throw new RnefError(
+    throw new RockError(
       `.app package not found in the extracted IPA file ${payloadPath}`,
     );
   }

@@ -4,7 +4,7 @@ import {
   execAsync,
   getRandomString,
   getTempDirectory,
-} from '@rnef/test-helpers';
+} from '@rock-js/test-helpers';
 import { beforeEach, describe, expect, it } from 'vitest';
 
 /**
@@ -16,7 +16,7 @@ import { beforeEach, describe, expect, it } from 'vitest';
  */
 
 const VERDACCIO_REGISTRY_URL = 'http://localhost:4873';
-const CREATE_APP_COMMAND = `pnpm create @rnef/app`;
+const CREATE_APP_COMMAND = `pnpm create @rock-js/app`;
 
 const ROOT_DIR = path.resolve(__dirname, '../../..');
 const TEMP_DIR = getTempDirectory('e2e-deploys');
@@ -76,7 +76,7 @@ describe('create-app command', { timeout: 30_000 }, () => {
     }
 
     await execAsync(
-      `${CREATE_APP_COMMAND} ${projectName} --template=@rnef/template-default --platform=ios --platform=android --bundler=metro --remote-cache-provider=github-actions`,
+      `${CREATE_APP_COMMAND} ${projectName} --template=@rock-js/template-default --platform=ios --platform=android --bundler=metro --remote-cache-provider=github-actions`,
       execArgs,
     );
 
@@ -110,7 +110,7 @@ describe('create-app command', { timeout: 30_000 }, () => {
         rmSync(projectPath, { recursive: true, force: true });
       }
 
-      const templatePath = `${ROOT_DIR}/templates/rnef-template-default`;
+      const templatePath = `${ROOT_DIR}/templates/rock-template-default`;
       await execAsync(
         `${CREATE_APP_COMMAND} ${projectName} --template="${templatePath}" --platform=ios --platform=android --bundler=metro --remote-cache-provider=github-actions`,
         execArgs,

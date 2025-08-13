@@ -1,7 +1,7 @@
 import fs from 'node:fs';
 import { createRequire } from 'node:module';
 import path from 'node:path';
-import type { SubprocessError } from '@rnef/tools';
+import type { SubprocessError } from '@rock-js/tools';
 import {
   color,
   colorLink,
@@ -10,7 +10,7 @@ import {
   outro,
   spawn,
   spinner,
-} from '@rnef/tools';
+} from '@rock-js/tools';
 import { getPkgManager } from './getPkgManager.js';
 
 export async function initInExistingProject(projectRoot: string) {
@@ -18,17 +18,17 @@ export async function initInExistingProject(projectRoot: string) {
 
   const loader = spinner();
 
-  // 1) Install RNEF dev dependencies
-  const rnefPackages = [
-    '@rnef/cli',
-    '@rnef/plugin-metro',
-    '@rnef/platform-android',
-    '@rnef/platform-ios',
+  // 1) Install Rock dev dependencies
+  const rockPackages = [
+    'rock',
+    '@rock-js/plugin-metro',
+    '@rock-js/platform-android',
+    '@rock-js/platform-ios',
   ];
 
-  loader.start(`Adding ${color.bold('RNEF')} dependencies`);
-  await addDevDependencies(projectRoot, pkgManager, rnefPackages);
-  loader.stop(`Added ${color.bold('RNEF')} dependencies`);
+  loader.start(`Adding ${color.bold('Rock')} dependencies with ${color.bold(pkgManager)}`);
+  await addDevDependencies(projectRoot, pkgManager, rockPackages);
+  loader.stop(`Added ${color.bold('Rock')} dependencies`);
 
   // 2) Remove community CLI deps
   const rnCliPackages = [
@@ -40,16 +40,16 @@ export async function initInExistingProject(projectRoot: string) {
   await removeDependencies(projectRoot, pkgManager, rnCliPackages);
   loader.stop(`Removed ${color.bold('React Native Community CLI')} packages`);
 
-  // 3) Ensure .gitignore includes .rnef/
-  loader.start(`Adding ${color.bold('.gitignore')} entry for .rnef/`);
-  ensureGitignoreEntry(projectRoot, '.rnef/');
-  loader.stop(`Added ${color.bold('.gitignore')} entry for .rnef/`);
+  // 3) Ensure .gitignore includes .rock/
+  loader.start(`Adding ${color.bold('.gitignore')} entry for .rock/`);
+  ensureGitignoreEntry(projectRoot, '.rock/');
+  loader.stop(`Added ${color.bold('.gitignore')} entry for .rock/`);
 
-  // 4) Generate rnef.config.mjs (optionally migrate a bit from react-native.config.js)
-  loader.start(`Generating ${color.bold('rnef.config.mjs')}`);
+  // 4) Generate rock.config.mjs (optionally migrate a bit from react-native.config.js)
+  loader.start(`Generating ${color.bold('rock.config.mjs')}`);
   const platformArgs = readPlatformArgsFromReactNativeConfig(projectRoot);
   createMigrationConfig(projectRoot, platformArgs);
-  loader.stop(`Generated ${color.bold('rnef.config.mjs')}`);
+  loader.stop(`Generated ${color.bold('rock.config.mjs')}`);
 
   const iosSourceDir = platformArgs.ios?.sourceDir ?? 'ios';
   const androidSourceDir = platformArgs.android?.sourceDir ?? 'android';
@@ -87,7 +87,7 @@ export async function initInExistingProject(projectRoot: string) {
       `  - commands in CI workflows`,
       `2. Run the dev server as you would normally do`,
       `3. Run iOS and Android apps as you would normally do`,
-      `4. Setup Remote Cache: ${colorLink('https://rnef.dev/docs/configuration#remote-cache-configuration')}`,
+      `4. Setup Remote Cache: ${colorLink('https://rockjs.dev/docs/configuration#remote-cache-configuration')}`,
     ].join('\n'),
     'Next steps',
   );
@@ -100,7 +100,7 @@ function ensureGitignoreEntry(projectRoot: string, entry: string) {
     fs.existsSync(gitignorePath) &&
     !fs.readFileSync(gitignorePath, 'utf8').includes(entry)
   ) {
-    fs.appendFileSync(gitignorePath, `\n# RNEF\n${entry}\n`);
+    fs.appendFileSync(gitignorePath, `\n# Rock\n${entry}\n`);
     return;
   }
 }
@@ -129,7 +129,7 @@ function createMigrationConfig(
     android?: { sourceDir?: string };
   },
 ) {
-  const rnefConfigPath = path.join(projectRoot, 'rnef.config.mjs');
+  const rockConfigPath = path.join(projectRoot, 'rock.config.mjs');
   const iosArgs = platformArgs.ios
     ? `({
       ${Object.entries(platformArgs.ios)
@@ -146,11 +146,11 @@ function createMigrationConfig(
     : '()';
 
   const content = `// @ts-check
-import { platformIOS } from '@rnef/platform-ios';
-import { platformAndroid } from '@rnef/platform-android';
-import { pluginMetro } from '@rnef/plugin-metro';
+import { platformIOS } from '@rock-js/platform-ios';
+import { platformAndroid } from '@rock-js/platform-android';
+import { pluginMetro } from '@rock-js/plugin-metro';
 
-/** @type {import('@rnef/cli').Config} */
+/** @type {import('rock').Config} */
 export default {
   bundler: pluginMetro(),
   platforms: {
@@ -161,7 +161,7 @@ export default {
 };
 `;
 
-  fs.writeFileSync(rnefConfigPath, content);
+  fs.writeFileSync(rockConfigPath, content);
 }
 
 function updateAndroidBuildGradle(projectRoot: string, sourceDir: string) {
@@ -170,7 +170,7 @@ function updateAndroidBuildGradle(projectRoot: string, sourceDir: string) {
     return;
   }
   const desired =
-    'cliFile = file("../../node_modules/@rnef/cli/dist/src/bin.js")';
+    'cliFile = file("../../node_modules/rock/dist/src/bin.js")';
   const content = fs.readFileSync(filePath, 'utf8');
   const replaced = content.replace(
     /\/\/\s+cliFile\s*=\s*file\([^)]*\)/g,
@@ -190,7 +190,7 @@ function updateAndroidSettingsGradle(projectRoot: string, sourceDir: string) {
   }
   const content = fs.readFileSync(filePath, 'utf8');
   const target =
-    "extensions.configure(com.facebook.react.ReactSettingsExtension){ ex -> ex.autolinkLibrariesFromCommand(['npx', 'rnef', 'config', '-p', 'android']) }";
+    "extensions.configure(com.facebook.react.ReactSettingsExtension){ ex -> ex.autolinkLibrariesFromCommand(['npx', 'rock', 'config', '-p', 'android']) }";
   let replaced = content.replace(
     /extensions\.configure\(com\.facebook\.react\.ReactSettingsExtension\)\{[^}]*autolinkLibrariesFromCommand\([^)]*\)[^}]*\}/gs,
     target,
@@ -199,7 +199,7 @@ function updateAndroidSettingsGradle(projectRoot: string, sourceDir: string) {
     // Try to replace only the inner call if block structure differs
     replaced = content.replace(
       /autolinkLibrariesFromCommand\([^)]*\)/g,
-      "autolinkLibrariesFromCommand(['npx', 'rnef', 'config', '-p', 'android'])",
+      "autolinkLibrariesFromCommand(['npx', 'rock', 'config', '-p', 'android'])",
     );
   }
   if (replaced !== content) {
@@ -211,7 +211,7 @@ function updateXcodeProject(projectRoot: string, sourceDir: string) {
   const toReplace =
     'shellScript = "set -e\\n\\nWITH_ENVIRONMENT=\\"$REACT_NATIVE_PATH/scripts/xcode/with-environment.sh\\"\\nREACT_NATIVE_XCODE=\\"$REACT_NATIVE_PATH/scripts/react-native-xcode.sh\\"\\n\\n/bin/sh -c \\"$WITH_ENVIRONMENT $REACT_NATIVE_XCODE\\"\\n";';
   const expected =
-    'shellScript = "set -e\\nif [[ -f \\"$PODS_ROOT/../.xcode.env\\" ]]; then\\nsource \\"$PODS_ROOT/../.xcode.env\\"\\nfi\\nif [[ -f \\"$PODS_ROOT/../.xcode.env.local\\" ]]; then\\nsource \\"$PODS_ROOT/../.xcode.env.local\\"\\nfi\\nexport CONFIG_CMD=\\"dummy-workaround-value\\"\\nexport CLI_PATH=\\"$(\\"$NODE_BINARY\\" --print \\"require(\'path\').dirname(require.resolve(\'@rnef/cli/package.json\')) + \'/dist/src/bin.js\'\\")\\"\\nWITH_ENVIRONMENT=\\"$REACT_NATIVE_PATH/scripts/xcode/with-environment.sh\\"\\n";';
+    'shellScript = "set -e\\nif [[ -f \\"$PODS_ROOT/../.xcode.env\\" ]]; then\\nsource \\"$PODS_ROOT/../.xcode.env\\"\\nfi\\nif [[ -f \\"$PODS_ROOT/../.xcode.env.local\\" ]]; then\\nsource \\"$PODS_ROOT/../.xcode.env.local\\"\\nfi\\nexport CONFIG_CMD=\\"dummy-workaround-value\\"\\nexport CLI_PATH=\\"$(\\"$NODE_BINARY\\" --print \\"require(\'path\').dirname(require.resolve(\'rock/package.json\')) + \'/dist/src/bin.js\'\\")\\"\\nWITH_ENVIRONMENT=\\"$REACT_NATIVE_PATH/scripts/xcode/with-environment.sh\\"\\n";';
 
   const xcodeProjectFolder = fs
     .readdirSync(path.join(projectRoot, sourceDir))
@@ -240,7 +240,7 @@ Please update the "Bundle React Native code and images" build phase manually wit
   source "$PODS_ROOT/../.xcode.env.local"
   fi
   export CONFIG_CMD="dummy-workaround-value"
-  export CLI_PATH="$("$NODE_BINARY" --print "require('path').dirname(require.resolve('@rnef/cli/package.json')) + '/dist/src/bin.js'")"
+  export CLI_PATH="$("$NODE_BINARY" --print "require('path').dirname(require.resolve('rock/package.json')) + '/dist/src/bin.js'")"
   WITH_ENVIRONMENT="$REACT_NATIVE_PATH/scripts/xcode/with-environment.sh"
 `,
     );
@@ -255,10 +255,10 @@ function updatePodfile(projectRoot: string, sourceDir: string) {
   const content = fs.readFileSync(filePath, 'utf8');
   const replaced = content.replace(
     /(config\s*=\s*use_native_modules!)(\s*)/g,
-    "$1(['npx', 'rnef', 'config', '-p', 'ios'])$2",
+    "$1(['npx', 'rock', 'config', '-p', 'ios'])$2",
   );
   if (
-    !content.includes(`(['npx', 'rnef', 'config', '-p', 'ios'])`) &&
+    !content.includes(`(['npx', 'rock', 'config', '-p', 'ios'])`) &&
     replaced !== content
   ) {
     fs.writeFileSync(filePath, replaced);
@@ -272,11 +272,11 @@ function updatePackageJsonScripts(projectRoot: string) {
   }
   const content = fs.readFileSync(packageJsonPath, 'utf8');
   const replaced = content
-    .replaceAll('react-native start', 'rnef start')
-    .replaceAll('react-native run-android', 'rnef run:android')
-    .replaceAll('react-native build-android', 'rnef build:android')
-    .replaceAll('react-native run-ios', 'rnef run:ios')
-    .replaceAll('react-native build-ios', 'rnef build:ios')
+    .replaceAll('react-native start', 'rock start')
+    .replaceAll('react-native run-android', 'rock run:android')
+    .replaceAll('react-native build-android', 'rock build:android')
+    .replaceAll('react-native run-ios', 'rock run:ios')
+    .replaceAll('react-native build-ios', 'rock build:ios')
     .replaceAll(/run:android(.*)--mode(.*)/g, 'run:android$1--variant$2')
     .replaceAll(/run:ios(.*)--mode(.*)/g, 'run:ios$1--configuration$2')
     .replaceAll(/build:android(.*)--mode(.*)/g, 'build:android$1--variant$2')
@@ -297,6 +297,7 @@ async function addDevDependencies(
     npm: ['install', '-D', ...packages],
     pnpm: ['add', '-D', ...packages],
     yarn: ['add', '-D', ...packages],
+    bun: ['add', '-D', ...packages],
   };
   const args = argsByManager[pkgManager] ?? ['install', '-D', ...packages];
   await spawn(pkgManager, args, { cwd: projectRoot });
@@ -311,6 +312,7 @@ async function removeDependencies(
     npm: ['remove', ...packages],
     pnpm: ['remove', ...packages],
     yarn: ['remove', ...packages],
+    bun: ['remove', ...packages],
   };
   const args = argsByManager[pkgManager] ?? ['remove', ...packages];
   try {

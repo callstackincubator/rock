@@ -1,5 +1,5 @@
 import path from 'node:path';
-import { spawn } from '@rnef/tools';
+import { spawn } from '@rock-js/tools';
 
 export function getAdbPath() {
   return process.env['ANDROID_HOME']

@@ -1,6 +1,6 @@
 # Integrating with Native Apps
 
-React Native Enterprise Framework, when extended with `@rnef/plugin-brownfield-ios` and `@rnef/plugin-brownfield-android` plugins and the [React Native Brownfield](https://github.com/callstack/react-native-brownfield) library, allows you to package all of your React Native code into native libraries (XCFramework for iOS, AAR for Android) that you can easily integrate into your existing iOS and Android apps. This "packaging approach," as we call it, allows us to achieve a radically simpler experience for native iOS and Android developers who want to integrate React Native into their apps.
+Rock, when extended with `@rock-js/plugin-brownfield-ios` and `@rock-js/plugin-brownfield-android` plugins and the [React Native Brownfield](https://github.com/callstack/react-native-brownfield) library, allows you to package all of your React Native code into native libraries (XCFramework for iOS, AAR for Android) that you can easily integrate into your existing iOS and Android apps. This "packaging approach," as we call it, allows us to achieve a radically simpler experience for native iOS and Android developers who want to integrate React Native into their apps.
 
 ![Packaging approach](./assets/packaging-approach.png)
 

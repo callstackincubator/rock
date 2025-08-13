@@ -1,11 +1,11 @@
-# `rnef` CLI
+# `rock` CLI
 
-The RNEF CLI is a command-line tool that helps you develop, build, and run React Native applications.
+The Rock CLI is a command-line tool that helps you develop, build, and run React Native applications.
 
 Basic usage:
 
 ```shell title="Terminal"
-npx rnef [command] [options]
+npx rock [command] [options]
 ```
 
 ![](/cli.png)
@@ -17,12 +17,12 @@ The following options are available for all commands:
 | Options             | Description                     |
 | ------------------- | ------------------------------- |
 | `-h` or `--help`    | Shows all available options     |
-| `-V` or `--version` | Outputs the RNEF version number |
+| `-V` or `--version` | Outputs the Rock version number |
 | `--verbose`         | Sets verbose logging            |
 
 ## Available Commands
 
-RNEF CLI uses a modular design where available commands depend on your configuration. The following commands are available by default for all configurations (these are internal commands that you typically won't need to run):
+Rock CLI uses a modular design where available commands depend on your configuration. The following commands are available by default for all configurations (these are internal commands that you typically won't need to run):
 
 | Command        | Description                                     |
 | :------------- | :---------------------------------------------- |
@@ -38,14 +38,14 @@ Additional commands for development, building, and running apps are provided by 
 
 Bundler plugins are configured through the [`bundler`](/docs/configuration/index#bundler) property in your configuration. Available bundlers include:
 
-- `@rnef/plugin-metro` – Metro bundler plugin with the following commands:
+- `@rock-js/plugin-metro` – Metro bundler plugin with the following commands:
 
   | Command  | Description                   |
   | :------- | :---------------------------- |
   | `start`  | Starts Metro dev server       |
   | `bundle` | Bundles JavaScript with Metro |
 
-- `@rnef/plugin-repack` – Re.Pack bundler plugin with the following commands:
+- `@rock-js/plugin-repack` – Re.Pack bundler plugin with the following commands:
 
   | Command  | Description                     |
   | :------- | :------------------------------ |
@@ -56,7 +56,7 @@ Bundler plugins are configured through the [`bundler`](/docs/configuration/index
 
 Platform plugins are configured through the [`platform`](/docs/configuration/index#platforms) property in your configuration. Available platforms include:
 
-- `@rnef/platform-android` – Android platform plugin with the following commands:
+- `@rock-js/platform-android` – Android platform plugin with the following commands:
 
   | Command         | Description                                                     |
   | :-------------- | :-------------------------------------------------------------- |
@@ -64,7 +64,7 @@ Platform plugins are configured through the [`platform`](/docs/configuration/ind
   | `build:android` | Builds Android app for generic emulator, device or distribution |
   | `sign:android`  | Signs Android app with keystore                                 |
 
-- `@rnef/platform-ios` – iOS platform plugin with the following commands:
+- `@rock-js/platform-ios` – iOS platform plugin with the following commands:
 
   | Command     | Description                                                  |
   | :---------- | :----------------------------------------------------------- |
@@ -74,7 +74,7 @@ Platform plugins are configured through the [`platform`](/docs/configuration/ind
 
 ## Command Options
 
-### `rnef start` Options
+### `rock start` Options
 
 The `start` command launches a development server (either Re.Pack or Metro, depending on your bundler plugin) that connects to your apps through port 8081 by default. It provides features like Hot Module Reloading (HMR) and error reporting.
 
@@ -97,7 +97,7 @@ The `start` command launches a development server (either Re.Pack or Metro, depe
 | `--no-interactive`                                | Disables interactive mode                                                                   |
 | `--client-logs`                                   | [Deprecated] Enable plain text JavaScript log streaming for all connected apps              |
 
-### `rnef bundle` Options
+### `rock bundle` Options
 
 The `bundle` command creates an optimized JavaScript bundle for your application, optionally using Hermes bytecode.
 
@@ -124,7 +124,7 @@ The `bundle` command creates an optimized JavaScript bundle for your application
 | `--config-cmd [string]`                 | [Internal] A hack for Xcode build script pointing to wrong bundle command                            |
 | `--hermes`                              | Passes the output JS bundle to Hermes compiler and outputs a bytecode file                           |
 
-### `rnef build:ios` Options
+### `rock build:ios` Options
 
 The `build:ios` command builds your iOS app for simulators, devices, or distribution, producing either an APP directory (for simulators) or an IPA file (for devices and distribution).
 
@@ -142,13 +142,13 @@ The `build:ios` command builds your iOS app for simulators, devices, or distribu
 | `--no-install-pods`               | Skip CocoaPods installation                                                                                                                                                                                                                                  |
 | `--no-new-arch`                   | Build in legacy async architecture                                                                                                                                                                                                                           |
 
-### `rnef run:ios` Options
+### `rock run:ios` Options
 
 The `run:ios` command runs your iOS app on a simulator or device. It follows this build strategy:
 
 1. Use the provided binary if specified with `--binary-path`
 1. Build locally if `--local` flag is set
-1. Otherwise, try to use a cached build from cache (in `.rnef` folder)
+1. Otherwise, try to use a cached build from cache (in `.rock` folder)
 
 The build cache is populated either by a local build or when downloaded frome remote storage with [`remoteCacheProvider`](./configuration.md#remote-cache-configuration).
 
@@ -162,7 +162,7 @@ The build cache is populated either by a local build or when downloaded frome re
 | `--catalyst`             | Run on Mac Catalyst                       |
 | `--local`                | Force local build with xcodebuild         |
 
-### `rnef sign:ios` Options
+### `rock sign:ios` Options
 
 The `sign:ios` command either signs your iOS app with certificates and provisioning profiles, producing a signed IPA file ready for distribution, or modifies APP file without signing. It allows for replacing the JS bundle with a new version.
 
@@ -179,13 +179,13 @@ The `sign:ios` command either signs your iOS app with certificates and provision
 | `--jsbundle <string>` | Path to JS bundle to apply before signing                           |
 | `--no-hermes`         | Don't use Hermes for JS bundle                                      |
 
-### `rnef build:android` Options
+### `rock build:android` Options
 
 The `build:android` command builds your Android app for emulators, devices, or distribution, producing either APK or AAB files. It follows this build strategy:
 
 1. Use the provided binary if specified with `--binary-path`
 1. Build locally if `--local` flag is set
-1. Otherwise, try to use a cached build from cache (in `.rnef` folder)
+1. Otherwise, try to use a cached build from cache (in `.rock` folder)
 
 The build cache is populated either by a local build or when downloaded frome remote storage with [`remoteCacheProvider`](./configuration.md#remote-cache-configuration).
 
@@ -197,7 +197,7 @@ The build cache is populated either by a local build or when downloaded frome re
 | `--tasks <array>`        | Custom Gradle tasks                     |
 | `--extra-params <array>` | Extra parameters for Gradle             |
 
-### `rnef run:android` Options
+### `rock run:android` Options
 
 The `run:android` command runs your Android app on an emulator or device. It extends the functionality of `build:android` with additional runtime options.
 
@@ -210,7 +210,7 @@ Same as for `build:android` and:
 | `--binary-path <string>`   | Path to pre-built APK                 |
 | `--local`                  | Force local build with Gradle wrapper |
 
-### `rnef sign:android` Options
+### `rock sign:android` Options
 
 The `sign:android <binaryPath>` command signs your Android app with a keystore, producing a signed APK file ready for distribution. It allows for replacing the JS bundle with a new version.
 
@@ -227,17 +227,17 @@ The `sign:android <binaryPath>` command signs your Android app with a keystore, 
 | `--jsbundle <string>`          | Path to JS bundle to apply before signing |
 | `--no-hermes`                  | Don't use Hermes for JS bundle            |
 
-### `rnef clean` Options
+### `rock clean` Options
 
-The `clean` command helps you free up disk space by removing various caches and temporary files from your React Native project. It can clean Android (Gradle), iOS (CocoaPods), Metro, Watchman, RNEF's own project caches, and package manager caches.
+The `clean` command helps you free up disk space by removing various caches and temporary files from your React Native project. It can clean Android (Gradle), iOS (CocoaPods), Metro, Watchman, Rock's own project caches, and package manager caches.
 
 | Option               | Description                                                                                                                                             |
 | :------------------- | :------------------------------------------------------------------------------------------------------------------------------------------------------ |
-| `--include <string>` | Comma-separated list of caches to clean. Available options: `android`, `gradle`, `cocoapods`, `metro`, `watchman`, `npm`, `yarn`, `bun`, `pnpm`, `rnef` |
+| `--include <string>` | Comma-separated list of caches to clean. Available options: `android`, `gradle`, `cocoapods`, `metro`, `watchman`, `npm`, `yarn`, `bun`, `pnpm`, `rock` |
 | `--verify-cache`     | Whether to verify the cache (currently only applies to npm cache)                                                                                       |
 | `--all`              | Clean all available caches without interactive prompt                                                                                                   |
 
-### `rnef remote-cache` Actions and Options
+### `rock remote-cache` Actions and Options
 
 The `remote-cache <action>` command provides utilities to interact with the remote build cache configured via your `remoteCacheProvider`. This is useful for inspecting, downloading, uploading, or deleting build artifacts stored remotely.
 
@@ -268,13 +268,13 @@ Actions have different options available:
 For example, to download remote cache for iOS simulator with Release configuration, you can use `remote-cache download` with `--name` option
 
 ```shell
-npx rnef remote-cache download --name rnef-ios-simulator-Release-abc123fbd28298
+npx rock remote-cache download --name rock-ios-simulator-Release-abc123fbd28298
 ```
 
 or pass `--traits`, so you don't need to pass the fingerprint:
 
 ```shell
-npx rnef remote-cache download --platform ios --traits simulator,Release
+npx rock remote-cache download --platform ios --traits simulator,Release
 ```
 
 #### Ad-hoc distribution
@@ -289,11 +289,11 @@ Ad-hoc distribution is a method for sharing iOS apps with testers without going 
 
 1. Build your app with a valid provisioning profile that includes your testers' devices
    ```shell
-   npx rnef build:ios --archive # ...other required flags
+   npx rock build:ios --archive # ...other required flags
    ```
 2. Use `upload --ad-hoc` to upload the app for ad-hoc distribution
    ```shell
-   npx rnef remote-cache upload --ad-hoc --platform ios --traits device,Release
+   npx rock remote-cache upload --ad-hoc --platform ios --traits device,Release
    ```
 3. Share the generated URL with your testers
 4. Testers visit the URL and tap "Install App" to install directly on their device

@@ -22,7 +22,7 @@ vi.mock('@aws-sdk/s3-request-presigner', () => {
   return {
     getSignedUrl: vi.fn(
       () =>
-        'https://test-bucket.s3.amazonaws.com/rnef-artifacts/rnef-android-debug-1234567890.zip',
+        'https://test-bucket.s3.amazonaws.com/rock-artifacts/rock-android-debug-1234567890.zip',
     ),
   };
 });
@@ -50,7 +50,7 @@ test('providerS3 implements list method returning an array of artifacts', async 
   mockSend.mockResolvedValueOnce({
     Contents: [
       {
-        Key: 'rnef-artifacts/rnef-android-debug-1234567890.zip',
+        Key: 'rock-artifacts/rock-android-debug-1234567890.zip',
         Size: 10000,
         LastModified: new Date(),
       },
@@ -65,18 +65,18 @@ test('providerS3 implements list method returning an array of artifacts', async 
   })();
 
   const result = await cacheProvider.list({
-    artifactName: 'rnef-android-debug-1234567890',
+    artifactName: 'rock-android-debug-1234567890',
   });
 
   expect(clientS3.ListObjectsV2Command).toHaveBeenCalledWith({
     Bucket: 'test-bucket',
-    Prefix: 'rnef-artifacts/rnef-android-debug-1234567890.zip',
+    Prefix: 'rock-artifacts/rock-android-debug-1234567890.zip',
   });
   expect(mockSend).toHaveBeenCalled();
   expect(result).toEqual([
     {
-      name: 'rnef-android-debug-1234567890',
-      url: 'https://test-bucket.s3.amazonaws.com/rnef-artifacts/rnef-android-debug-1234567890.zip',
+      name: 'rock-android-debug-1234567890',
+      url: 'https://test-bucket.s3.amazonaws.com/rock-artifacts/rock-android-debug-1234567890.zip',
     },
   ]);
 });
@@ -103,12 +103,12 @@ test('providerS3 implements download method returning a stream with artifact zip
   })();
 
   const response = await cacheProvider.download({
-    artifactName: 'rnef-android-debug-1234567890',
+    artifactName: 'rock-android-debug-1234567890',
   });
 
   expect(clientS3.GetObjectCommand).toHaveBeenCalledWith({
     Bucket: 'test-bucket',
-    Key: 'rnef-artifacts/rnef-android-debug-1234567890.zip',
+    Key: 'rock-artifacts/rock-android-debug-1234567890.zip',
   });
   expect(mockSend).toHaveBeenCalled();
   expect(response.headers.get('content-length')).toBe('9');
@@ -126,18 +126,18 @@ test('providerS3 implements delete method', async () => {
   })();
 
   const result = await cacheProvider.delete({
-    artifactName: 'rnef-android-debug-1234567890',
+    artifactName: 'rock-android-debug-1234567890',
   });
 
   expect(clientS3.DeleteObjectCommand).toHaveBeenCalledWith({
     Bucket: 'test-bucket',
-    Key: 'rnef-artifacts/rnef-android-debug-1234567890.zip',
+    Key: 'rock-artifacts/rock-android-debug-1234567890.zip',
   });
   expect(mockSend).toHaveBeenCalled();
   expect(result).toEqual([
     {
-      name: 'rnef-android-debug-1234567890',
-      url: 'test-bucket/rnef-artifacts/rnef-android-debug-1234567890.zip',
+      name: 'rock-android-debug-1234567890',
+      url: 'test-bucket/rock-artifacts/rock-android-debug-1234567890.zip',
     },
   ]);
 });
@@ -152,7 +152,7 @@ test('providerS3 implements upload method', async () => {
 
   const buffer = Buffer.from('test data');
   const { name, url, getResponse } = await cacheProvider.upload({
-    artifactName: 'rnef-android-debug-1234567890',
+    artifactName: 'rock-android-debug-1234567890',
   });
 
   const arrayBuffer = await getResponse(buffer).arrayBuffer();
@@ -164,15 +164,15 @@ test('providerS3 implements upload method', async () => {
       client: expect.any(Object),
       params: expect.objectContaining({
         Bucket: 'test-bucket',
-        Key: 'rnef-artifacts/rnef-android-debug-1234567890.zip',
+        Key: 'rock-artifacts/rock-android-debug-1234567890.zip',
         Body: buffer,
       }),
     }),
   );
 
   expect({ name, url }).toEqual({
-    name: 'rnef-android-debug-1234567890',
-    url: 'https://test-bucket.s3.amazonaws.com/rnef-artifacts/rnef-android-debug-1234567890.zip',
+    name: 'rock-android-debug-1234567890',
+    url: 'https://test-bucket.s3.amazonaws.com/rock-artifacts/rock-android-debug-1234567890.zip',
   });
 });
 
@@ -181,7 +181,7 @@ test('providerS3 supports R2', async () => {
   mockSend.mockResolvedValueOnce({
     Contents: [
       {
-        Key: 'rnef-artifacts-r2/rnef-android-debug-1234567890.zip',
+        Key: 'rock-artifacts-r2/rock-android-debug-1234567890.zip',
         Size: 10000,
         LastModified: new Date(),
       },
@@ -189,7 +189,7 @@ test('providerS3 supports R2', async () => {
   });
   const cacheProvider = providerS3({
     name: 'R2',
-    directory: 'rnef-artifacts-r2',
+    directory: 'rock-artifacts-r2',
     endpoint: 'https://test-bucket.r2.cloudflarestorage.com',
     bucket: 'test-bucket',
     region: 'test-region',
@@ -198,18 +198,18 @@ test('providerS3 supports R2', async () => {
   })();
 
   const result = await cacheProvider.list({
-    artifactName: 'rnef-android-debug-1234567890',
+    artifactName: 'rock-android-debug-1234567890',
   });
   expect(cacheProvider.name).toBe('R2');
   expect(clientS3.ListObjectsV2Command).toHaveBeenCalledWith({
     Bucket: 'test-bucket',
-    Prefix: 'rnef-artifacts-r2/rnef-android-debug-1234567890.zip',
+    Prefix: 'rock-artifacts-r2/rock-android-debug-1234567890.zip',
   });
   expect(mockSend).toHaveBeenCalled();
   expect(result).toEqual([
     {
-      name: 'rnef-android-debug-1234567890',
-      url: 'https://test-bucket.s3.amazonaws.com/rnef-artifacts/rnef-android-debug-1234567890.zip',
+      name: 'rock-android-debug-1234567890',
+      url: 'https://test-bucket.s3.amazonaws.com/rock-artifacts/rock-android-debug-1234567890.zip',
     },
   ]);
 });

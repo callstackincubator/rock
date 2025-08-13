@@ -1,4 +1,16 @@
-# @rnef/cli
+# rock
+
+## 0.9.0
+
+### Minor Changes
+
+- 47ec267: Let there be Rock
+
+### Patch Changes
+
+- Updated dependencies [47ec267]
+  - @rock-js/config@0.9.0
+  - @rock-js/tools@0.9.0
 
 ## 0.8.13
 
@@ -136,7 +148,7 @@
 
 ### Patch Changes
 
-- 778a11f: fix: export Config type from @rnef/cli
+- 778a11f: fix: export Config type from rnef
   - @rnef/config@0.7.26
   - @rnef/tools@0.7.26
 

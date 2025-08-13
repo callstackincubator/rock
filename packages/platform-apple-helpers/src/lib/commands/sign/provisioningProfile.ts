@@ -1,7 +1,7 @@
 import crypto from 'node:crypto';
 import fs from 'node:fs';
-import type { SubprocessError } from '@rnef/tools';
-import { logger, relativeToCwd, RnefError, spawn } from '@rnef/tools';
+import type { SubprocessError } from '@rock-js/tools';
+import { logger, relativeToCwd, RockError, spawn } from '@rock-js/tools';
 import { readBufferFromPlist, readKeyFromPlist } from '../../utils/plist.js';
 
 /**
@@ -19,7 +19,7 @@ export async function decodeProvisioningProfileToPlist(
       `Decoded provisioning profile to plist: ${relativeToCwd(outputPath)}`,
     );
   } catch (error) {
-    throw new RnefError(
+    throw new RockError(
       `Failed to decode provisioning profile: ${profilePath}`,
       { cause: (error as SubprocessError).stderr },
     );

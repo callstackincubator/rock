@@ -8,7 +8,7 @@ import vercelPluginAnalytics from 'rspress-plugin-vercel-analytics';
 
 export default defineConfig({
   root: path.join(__dirname, 'src'),
-  title: 'React Native Enterprise Framework',
+  title: 'Rock',
   icon: '/logo.svg',
   outDir: 'build',
   route: {
@@ -21,14 +21,14 @@ export default defineConfig({
   builderConfig: {
     plugins: [
       pluginOpenGraph({
-        title: 'React Native Enterprise Framework',
+        title: 'Rock',
         type: 'website',
-        url: 'https://rnef.dev',
-        image: 'https://rnef.dev/og-image.jpg',
+        url: 'https://rockjs.dev',
+        image: 'https://rockjs.dev/og-image.jpg',
         description:
           'Easy to adopt. Simple to scale. Built for flexibility from day one',
         twitter: {
-          site: '@rnef_dev',
+          site: '@rockjs_dev',
           card: 'summary_large_image',
         },
       }),
@@ -39,7 +39,7 @@ export default defineConfig({
       {
         icon: 'github',
         mode: 'link',
-        content: 'https://github.com/callstack/rnef',
+        content: 'https://github.com/callstack/rock',
       },
     ],
   },
@@ -52,6 +52,6 @@ export default defineConfig({
       exclude: ({ page }) => page.routePath.includes('404'),
     }),
     // @ts-expect-error outdated @rspress/shared declared as dependency
-    pluginSitemap({ domain: 'https://rnef.dev' }),
+    pluginSitemap({ domain: 'https://rockjs.dev' }),
   ],
 });

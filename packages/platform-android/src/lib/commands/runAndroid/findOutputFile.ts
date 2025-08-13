@@ -1,5 +1,5 @@
 import { existsSync } from 'node:fs';
-import { logger, spawn } from '@rnef/tools';
+import { logger, spawn } from '@rock-js/tools';
 import { getAdbPath } from './adb.js';
 import type { AndroidProject } from './runAndroid.js';
 

@@ -1,6 +1,6 @@
 import { performance } from 'node:perf_hooks';
-import type { PluginApi } from '@rnef/config';
-import type { FingerprintSources } from '@rnef/tools';
+import type { PluginApi } from '@rock-js/config';
+import type { FingerprintSources } from '@rock-js/tools';
 import {
   color,
   intro,
@@ -8,9 +8,9 @@ import {
   logger,
   nativeFingerprint,
   outro,
-  RnefError,
+  RockError,
   spinner,
-} from '@rnef/tools';
+} from '@rock-js/tools';
 
 type NativeFingerprintCommandOptions = {
   platform: 'ios' | 'android';
@@ -79,12 +79,12 @@ export async function nativeFingerprintCommand(
 
 function validateOptions(options: NativeFingerprintCommandOptions) {
   if (!options.platform) {
-    throw new RnefError(
+    throw new RockError(
       'The --platform flag is required. Please specify either "ios" or "android".',
     );
   }
   if (options.platform !== 'ios' && options.platform !== 'android') {
-    throw new RnefError(
+    throw new RockError(
       `Unsupported platform "${options.platform}". Please specify either "ios" or "android".`,
     );
   }

@@ -1,6 +1,6 @@
 import fs, { existsSync } from 'node:fs';
 import path from 'node:path';
-import { color, logger, spinner } from '@rnef/tools';
+import { color, logger, spinner } from '@rock-js/tools';
 
 export function copyHermesXcframework({
   sourceDir,

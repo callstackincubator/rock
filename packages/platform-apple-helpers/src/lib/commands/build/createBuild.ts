@@ -1,6 +1,6 @@
 import fs from 'node:fs';
 import path from 'node:path';
-import type { FingerprintSources, RemoteBuildCache } from '@rnef/tools';
+import type { FingerprintSources, RemoteBuildCache } from '@rock-js/tools';
 import {
   colorLink,
   formatArtifactName,
@@ -9,9 +9,9 @@ import {
   logger,
   promptSelect,
   relativeToCwd,
-  RnefError,
+  RockError,
   saveLocalBuildCache,
-} from '@rnef/tools';
+} from '@rock-js/tools';
 import type {
   BuilderCommand,
   ProjectConfig,
@@ -98,7 +98,7 @@ export const createBuild = async ({
     saveLocalBuildCache(artifactName, appPath);
   } catch (error) {
     const message = `Failed to create ${args.archive ? 'archive' : 'build'}`;
-    throw new RnefError(message, { cause: error });
+    throw new RockError(message, { cause: error });
   }
 
   if (args.archive) {

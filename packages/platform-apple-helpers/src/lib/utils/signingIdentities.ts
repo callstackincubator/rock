@@ -1,4 +1,4 @@
-import { promptSelect, RnefError, spawn } from '@rnef/tools';
+import { promptSelect, RockError, spawn } from '@rock-js/tools';
 
 export type SigningIdentity = {
   hash: string;
@@ -42,7 +42,7 @@ export async function getValidSigningIdentities(): Promise<SigningIdentity[]> {
 
     return parseSigningIdentities(output);
   } catch (error) {
-    throw new RnefError('Failed to load signing identities', {
+    throw new RockError('Failed to load signing identities', {
       cause: error,
     });
   }

@@ -1,15 +1,15 @@
 # Configuration
 
-RNEF can be configured through a configuration object that defines various aspects of your project setup.
+Rock can be configured through a configuration object that defines various aspects of your project setup.
 
 The most basic configuration would, assuming you only support iOS platform and choose Metro as our bundler, would look like this:
 
-```js title="rnef.config.mjs"
+```js title="rock.config.mjs"
 // @ts-check
-import { platformIOS } from '@rnef/platform-ios';
-import { pluginMetro } from '@rnef/plugin-metro';
+import { platformIOS } from '@rock-js/platform-ios';
+import { pluginMetro } from '@rock-js/plugin-metro';
 
-/** @type {import('@rnef/cli').Config} */
+/** @type {import('rock').Config} */
 export default {
   bundler: pluginMetro(),
   platforms: {
@@ -83,7 +83,7 @@ The following configuration options accept plugins: [`plugins`](#plugins), [`pla
 
 A plugin that registers `my-command` command outputing a hello world would look like this:
 
-```ts title="rnef.config.mjs"
+```ts title="rock.config.mjs"
 const simplePlugin =
   (pluginConfig: SamplePluginConfig) =>
   (api: PluginApi): PluginOutput => {
@@ -105,12 +105,12 @@ export default {
 
 Bundler is a plugin that registers commands for running a dev server and bundling final JavaScript or Hermes bytecode.
 
-By default, RNEF ships with two bundler: Metro (`@rnef/plugin-metro`) and Re.Pack (`@rnef/plugin-repack`).
+By default, Rock ships with two bundler: Metro (`@rock-js/plugin-metro`) and Re.Pack (`@rock-js/plugin-repack`).
 
 You can configure the bundler like this:
 
-```js title="rnef.config.mjs"
-import { pluginMetro } from '@rnef/plugin-metro';
+```js title="rock.config.mjs"
+import { pluginMetro } from '@rock-js/plugin-metro';
 
 export default {
   // ...
@@ -122,12 +122,12 @@ export default {
 
 Platform is a plugin that registers platform-specific functionality such as commands to build the project and run it on a device or simulator.
 
-By default, RNEF ships with two platforms: iOS (`@rnef/platform-ios`) and Android (`@rnef/platform-android`).
+By default, Rock ships with two platforms: iOS (`@rock-js/platform-ios`) and Android (`@rock-js/platform-android`).
 
 You can configure the platform like this:
 
-```js title="rnef.config.mjs"
-import { platformIOS } from '@rnef/platform-ios';
+```js title="rock.config.mjs"
+import { platformIOS } from '@rock-js/platform-ios';
 
 export default {
   // ...
@@ -140,18 +140,18 @@ export default {
 
 ## Remote Cache Configuration
 
-One of the key features of RNEF is remote build caching to speed up your development workflow. By remote cache we mean native build artifacts (e.g. APK, or IPA binaries), which are discoverable by the user and available for download. Remote cache can live on any static storage provider, such as S3, R2, or GitHub Artifacts. For RNEF to know how and where to access this cache, you'll need to define `remoteCacheProvider`, which can be either bundled with the framework (such as the one for GitHub Actions) or a custom one that you can provide.
+One of the key features of Rock is remote build caching to speed up your development workflow. By remote cache we mean native build artifacts (e.g. APK, or IPA binaries), which are discoverable by the user and available for download. Remote cache can live on any static storage provider, such as S3, R2, or GitHub Artifacts. For Rock to know how and where to access this cache, you'll need to define `remoteCacheProvider`, which can be either bundled with the framework (such as the one for GitHub Actions) or a custom one that you can provide.
 
 When `remoteCacheProvider` is set, the CLI will:
 
-1. Look at local cache under `.rnef/` directory for builds downloaded from a remote cache.
+1. Look at local cache under `.rock/` directory for builds downloaded from a remote cache.
 1. If not found, it will look for a remote build matching your local native project state (a fingerprint).
 1. If not found, it will fall back to local build.
 
 Available providers you can use:
 
-- [@rnef/provider-github](#github-actions-provider): store artifacts on GitHub Workflow Artifacts
-- [@rnef/provider-s3](#aws-s3-provider): store artifacts on S3 (or Cloudflare R2)
+- [@rock-js/provider-github](#github-actions-provider): store artifacts on GitHub Workflow Artifacts
+- [@rock-js/provider-s3](#aws-s3-provider): store artifacts on S3 (or Cloudflare R2)
 
 In case you would like to store native build artifacts in a different kind of remote storage, you can implement your own [custom provider](#custom-remote-cache-provider).
 
@@ -159,21 +159,21 @@ In case you would like to store native build artifacts in a different kind of re
 
 Regardless of remote cache provider set, to download native build artifats from a remote storage, you'll need to upload them first, ideally in a continuous manner. That's why the best place to put the upload logic would be your Continuous Integration server.
 
-RNEF provides out-of-the-box GitHub Actions for:
+Rock provides out-of-the-box GitHub Actions for:
 
-- [`callstackincubator/ios`](https://github.com/callstackincubator/ios): action for iOS compatible with `@rnef/provider-github`
-- [`callstackincubator/android`](https://github.com/callstackincubator/android): action for Android compatible with `@rnef/provider-github`
+- [`callstackincubator/ios`](https://github.com/callstackincubator/ios): action for iOS compatible with `@rock-js/provider-github`
+- [`callstackincubator/android`](https://github.com/callstackincubator/android): action for Android compatible with `@rock-js/provider-github`
 
 For other CI providers you'll need to manage artifacts yourself. We recommend mimicking the GitHub Actions setup on your CI server.
 
 ### GitHub Actions provider
 
-If you store your code on GitHub, one of the easiest way to setup remote cache is through `@rnef/provider-github` and our GitHub Actions, which will manage building, uploading and downloading your native artifacts for iOS and Android.
+If you store your code on GitHub, one of the easiest way to setup remote cache is through `@rock-js/provider-github` and our GitHub Actions, which will manage building, uploading and downloading your native artifacts for iOS and Android.
 
 You can configure it as follows:
 
-```ts title="rnef.config.mjs"
-import { providerGitHub } from '@rnef/provider-github';
+```ts title="rock.config.mjs"
+import { providerGitHub } from '@rock-js/provider-github';
 
 export default {
   // ...
@@ -187,10 +187,10 @@ export default {
 
 ### AWS S3 provider
 
-If you prefer to store native build artifacts on AWS S3 or Cloudflare R2, you can use `@rnef/provider-s3`. You can configure it as follows.
+If you prefer to store native build artifacts on AWS S3 or Cloudflare R2, you can use `@rock-js/provider-s3`. You can configure it as follows.
 
-```ts title="rnef.config.mjs"
-import { providerS3 } from '@rnef/provider-s3';
+```ts title="rock.config.mjs"
+import { providerS3 } from '@rock-js/provider-s3';
 
 export default {
   // ...
@@ -210,8 +210,8 @@ AWS_ACCESS_KEY_ID=...
 AWS_SECRET_ACCESS_KEY=...
 ```
 
-```ts title="rnef.config.mjs"
-import { providerS3 } from '@rnef/provider-s3';
+```ts title="rock.config.mjs"
+import { providerS3 } from '@rock-js/provider-s3';
 import { config } from 'dotenv';
 
 config(); // load .env
@@ -238,7 +238,7 @@ export default {
 | `roleArn`            | `string` | No       | Role ARN to assume for authentication. Useful for cross-account access.                          |
 | `roleSessionName`    | `string` | No       | Session name when assuming a role.                                                               |
 | `externalId`         | `string` | No       | External ID when assuming a role (for additional security).                                      |
-| `directory`          | `string` | No       | The directory to store artifacts in the S3 server (defaults to `rnef-artifacts`)                 |
+| `directory`          | `string` | No       | The directory to store artifacts in the S3 server (defaults to `rock-artifacts`)                 |
 | `name`               | `string` | No       | The display name of the provider (defaults to `S3`)                                              |
 | `linkExpirationTime` | `number` | No       | The time in seconds for presigned URLs to expire (defaults to 24 hours)                          |
 
@@ -256,8 +256,8 @@ The S3 provider supports multiple authentication methods through the underlying 
 
 Thanks to R2 interface being compatible with S3, you can store and retrieve your native build artifacts from Cloudflare R2 storage using S3 provider. Set the `endpoint` option to point to your account storage.
 
-```ts title="rnef.config.mjs"
-import { providerS3 } from '@rnef/provider-s3';
+```ts title="rock.config.mjs"
+import { providerS3 } from '@rock-js/provider-s3';
 
 export default {
   // ...
@@ -273,7 +273,7 @@ export default {
 
 ### Custom remote cache provider
 
-You can plug in any remote storage by implementing the `RemoteBuildCache` interface. This section explains how to implement each method and handle the complexity that RNEF manages for you.
+You can plug in any remote storage by implementing the `RemoteBuildCache` interface. This section explains how to implement each method and handle the complexity that Rock manages for you.
 
 #### Interface
 
@@ -358,7 +358,7 @@ async list({ artifactName, limit }) {
 
 #### download
 
-Return a Web `Response` whose `body` is a readable stream of the artifact and (if available) a `content-length` header. RNEF uses this to report download progress.
+Return a Web `Response` whose `body` is a readable stream of the artifact and (if available) a `content-length` header. Rock uses this to report download progress.
 
 :::info
 The artifacts are uploaded as ZIP archives (excluding ad-hoc scenario), so make sure to append the `.zip` suffix to the `artifactName`.
@@ -426,15 +426,15 @@ async delete({ artifactName, skipLatest }) {
 
 #### upload
 
-RNEF expects `upload()` to return metadata and a `getResponse` function:
+Rock expects `upload()` to return metadata and a `getResponse` function:
 
 - `getResponse(buffer, contentType?) => Response`:
-  - RNEF calls this to initiate the upload and to surface upload progress
+  - Rock calls this to initiate the upload and to surface upload progress
   - It passes either:
     - a `Buffer` (for normal builds), or
     - a function `(baseUrl) => Buffer` (for ad‑hoc pages) so you can inject absolute URLs into HTML/plist before upload
   - You should start the actual upload here and return a `Response` object
-  - RNEF will read that stream to display progress
+  - Rock will read that stream to display progress
 - for ad-hoc scenario `upload` will pass the `uploadArtifactName` variable, so use that instead of `artifactName`
 
 **For progress signaling, you can:**
@@ -494,10 +494,10 @@ async upload({ artifactName, uploadArtifactName }) {
 
 #### What ends up on the provider
 
-- **Normal builds:** RNEF uploads a single build artifact (a ZIP archive). Your provider stores it at a path like `<directory>/<artifactName>.zip`.
-  - For iOS simulator builds (APP directory), RNEF creates a temporary `app.tar.gz` to preserve permissions and includes it in the artifact; you just receive the buffer via `getResponse`. You don't need to create the tarball yourself.
+- **Normal builds:** Rock uploads a single build artifact (a ZIP archive). Your provider stores it at a path like `<directory>/<artifactName>.zip`.
+  - For iOS simulator builds (APP directory), Rock creates a temporary `app.tar.gz` to preserve permissions and includes it in the artifact; you just receive the buffer via `getResponse`. You don't need to create the tarball yourself.
 - **Ad-hoc distribution:**
-  - with `--ad-hoc` flag passed to `remote-cache upload` RNEF uploads:
+  - with `--ad-hoc` flag passed to `remote-cache upload` Rock uploads:
     - The signed IPA at `<directory>/ad-hoc/<artifactName>/<AppName>.ipa`
     - An `index.html` landing page (make sure it's accessible for testers)
     - A `manifest.plist`
@@ -514,13 +514,13 @@ async upload({ artifactName, uploadArtifactName }) {
 
 - If your backend cannot support uploads, throw in `upload()` with a link to docs (as GitHub provider does).
 - Always return valid, downloadable `url`s from `list()`; signed URLs are OK.
-- Prefer setting `content-length` on both download and upload `Response` objects so RNEF can display progress.
-- For uploads, it's fine to start the SDK upload in the background; RNEF drains the returned `Response` to show progress, and your SDK promise resolves independently. In tests, mock your SDK's upload to resolve quickly.
+- Prefer setting `content-length` on both download and upload `Response` objects so Rock can display progress.
+- For uploads, it's fine to start the SDK upload in the background; Rock drains the returned `Response` to show progress, and your SDK promise resolves independently. In tests, mock your SDK's upload to resolve quickly.
 
 **Example provider:**
 
 ```ts
-import type { RemoteBuildCache } from '@rnef/tools';
+import type { RemoteBuildCache } from '@rock-js/tools';
 
 class DummyLocalCacheProvider implements RemoteBuildCache {
   name = 'dummy';
@@ -552,7 +552,7 @@ const pluginDummyLocalCacheProvider = (options) => () =>
 
 Then use it in your config:
 
-```ts title="rnef.config.mjs"
+```ts title="rock.config.mjs"
 export default {
   // ...
   remoteCacheProvider: pluginDummyLocalCacheProvider(options),

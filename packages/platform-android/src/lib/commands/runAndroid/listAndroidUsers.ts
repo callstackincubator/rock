@@ -1,4 +1,4 @@
-import { logger, promptSelect, spawn } from '@rnef/tools';
+import { logger, promptSelect, spawn } from '@rock-js/tools';
 import { getAdbPath } from './adb.js';
 
 type User = {

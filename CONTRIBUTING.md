@@ -1,8 +1,8 @@
-# Contributing to RNEF
+# Contributing to Rock
 
 ## Development Process
 
-All work on RNEF happens directly on GitHub. Contributors send pull requests which go through review process.
+All work on Rock happens directly on GitHub. Contributors send pull requests which go through review process.
 
 > **Working on your first pull request?** You can learn how from this _free_ series: [How to Contribute to an Open Source Project on GitHub](https://egghead.io/series/how-to-contribute-to-an-open-source-project-on-github).
 
@@ -13,14 +13,14 @@ All work on RNEF happens directly on GitHub. Contributors send pull requests whi
 
 ## Testing your changes
 
-> Please make sure the version of React Native matches the one present in devDependencies of RNEF. Otherwise, you may get unexpected errors.
+> Please make sure the version of React Native matches the one present in devDependencies of Rock. Otherwise, you may get unexpected errors.
 
 ### Setup
 
-Because of a modular design of the RNEF, we recommend developing using symbolic links to its packages. This way you can use it seamlessly in the tested project, as you'd use the locally installed RNEF CLI. Here's what you need to run in the terminal:
+Because of a modular design of the Rock, we recommend developing using symbolic links to its packages. This way you can use it seamlessly in the tested project, as you'd use the locally installed Rock CLI. Here's what you need to run in the terminal:
 
 ```sh
-cd /path/to/cloned/rnef/
+cd /path/to/cloned/rock/
 pnpm link-packages
 ```
 
@@ -28,7 +28,7 @@ And then in your test project link dependencies you're using, e.g.:
 
 ```sh
 cd /my/test/project/
-pnpm link @rnef/cli @rnef/platform-android @rnef/platform-ios @rnef/plugin-metro
+pnpm link rock @rock-js/platform-android @rock-js/platform-ios @rock-js/plugin-metro
 ```
 
 #### Hoist pnpm dependencies
@@ -41,11 +41,11 @@ node-linker=hoisted
 
 #### Update Metro configuration
 
-When using Metro plugin, you'll need to update the `watchFolders` to hint Metro to look for symlinks in RNEF project. You can do this by adding the following to your `metro.config.js`:
+When using Metro plugin, you'll need to update the `watchFolders` to hint Metro to look for symlinks in Rock project. You can do this by adding the following to your `metro.config.js`:
 
 ```js
 {
-  watchFolders: [path.resolve(__dirname, '../path/to/rnef')],
+  watchFolders: [path.resolve(__dirname, '../path/to/rock')],
 }
 ```
 
@@ -54,11 +54,11 @@ This configuration is not necessary when using Re.Pack plugin.
 ### Run in your test project
 
 ```sh
-pnpm rnef start
-pnpm rnef run:android
+pnpm rock start
+pnpm rock run:android
 ```
 
-### Testing Create RNEF App project
+### Testing Create Rock App project
 
 In order to test changes to `create-app` package, you need to run the following commands:
 
@@ -78,8 +78,8 @@ rm -rf ~/Library/Caches/pnpm/dlx/
 # Run tests
 pnpm e2e
 
-# Or Create RNEF app
-NPM_CONFIG_REGISTRY=http://localhost:4873 pnpm create @rnef/app --registry http://localhost:4873
+# Or Create Rock app
+NPM_CONFIG_REGISTRY=http://localhost:4873 pnpm create @rock-js/app --registry http://localhost:4873
 # Then use pnpm install with registry
 echo "node-linker=hoisted" > .npmrc
 NPM_CONFIG_REGISTRY=http://localhost:4873 pnpm install
@@ -147,7 +147,7 @@ This part is for maintainers only, documenting steps to manually publish the pac
 
 ## Reporting issues
 
-You can report issues on our [bug tracker](https://github.com/callstack/rnef/issues). Please follow the issue template when opening an issue.
+You can report issues on our [bug tracker](https://github.com/callstack/rock/issues). Please follow the issue template when opening an issue.
 
 ## Stale Bot
 
@@ -155,4 +155,4 @@ This repository is using bot to automatically mark issues and PRs as stale and c
 
 ## License
 
-By contributing to RNEF, you agree that your contributions will be licensed under its **MIT** license.
+By contributing to Rock, you agree that your contributions will be licensed under its **MIT** license.

@@ -1,15 +1,15 @@
 import fs from 'node:fs';
 import path from 'node:path';
-import type { PluginApi } from '@rnef/config';
+import type { PluginApi } from '@rock-js/config';
 import {
   colorLink,
   intro,
   logger,
   outro,
-  RnefError,
+  RockError,
   runHermes,
   spinner,
-} from '@rnef/tools';
+} from '@rock-js/tools';
 import { getReactNativeCommunityCliPlugin } from '../getReactNativeDeps.js';
 
 type BundleCommandArgs = {
@@ -44,8 +44,8 @@ export function registerBundleCommand(api: PluginApi) {
       'Build the bundle for the provided JavaScript entry file with Metro.',
     action: async (args: BundleCommandArgs) => {
       if (!args.platform || !args.bundleOutput || !args.entryFile) {
-        throw new RnefError(
-          '"rnef bundle" command requires all of these flags to bundle JavaScript with Metro: \n  "--platform", "--bundle-output", "--entry-file"',
+        throw new RockError(
+          '"rock bundle" command requires all of these flags to bundle JavaScript with Metro: \n  "--platform", "--bundle-output", "--entry-file"',
         );
       }
       intro('Compiling JS bundle with Metro');

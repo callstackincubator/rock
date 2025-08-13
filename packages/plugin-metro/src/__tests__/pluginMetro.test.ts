@@ -14,7 +14,7 @@ test('plugin is called with correct arguments and returns its name and descripti
   const plugin = pluginMetro()(pluginApi);
 
   expect(plugin).toMatchObject({
-    name: '@rnef/plugin-metro',
-    description: 'RNEF plugin for Metro bundler.',
+    name: '@rock-js/plugin-metro',
+    description: 'Rock plugin for Metro bundler.',
   });
 });

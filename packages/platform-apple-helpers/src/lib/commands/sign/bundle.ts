@@ -1,6 +1,6 @@
 import fs from 'node:fs';
-import type { SubprocessError } from '@rnef/tools';
-import { logger, RnefError, runHermes, spawn } from '@rnef/tools';
+import type { SubprocessError } from '@rock-js/tools';
+import { logger, RockError, runHermes, spawn } from '@rock-js/tools';
 
 type BuildJsBundleOptions = {
   bundleOutputPath: string;
@@ -19,9 +19,9 @@ export async function buildJsBundle(options: BuildJsBundleOptions) {
   }
 
   // Reasonable defaults
-  // If user wants to build bundle differently, they should use `rnef bundle` command directly
+  // If user wants to build bundle differently, they should use `rock bundle` command directly
   // and provide the JS bundle path to `--jsbundle` flag
-  const rnefBundleArgs = [
+  const rockBundleArgs = [
     'bundle',
     `--entry-file`,
     `index.js`,
@@ -41,9 +41,9 @@ export async function buildJsBundle(options: BuildJsBundleOptions) {
       : []),
   ];
   try {
-    await spawn('rnef', rnefBundleArgs, { preferLocal: true });
+    await spawn('rock', rockBundleArgs, { preferLocal: true });
   } catch (error) {
-    throw new RnefError('Failed to build JS bundle', {
+    throw new RockError('Failed to build JS bundle', {
       cause: (error as SubprocessError).stderr,
     });
   }

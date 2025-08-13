@@ -1,8 +1,8 @@
 import type { PathLike } from 'node:fs';
 import fs from 'node:fs';
 import type { AndroidProjectConfig } from '@react-native-community/cli-types';
-import * as tools from '@rnef/tools';
-import { spawn } from '@rnef/tools';
+import * as tools from '@rock-js/tools';
+import { spawn } from '@rock-js/tools';
 import type { Mock } from 'vitest';
 import { test, vi } from 'vitest';
 import { buildAndroid, type BuildFlags } from '../buildAndroid.js';
@@ -90,7 +90,7 @@ test('buildAndroid fails gracefully when gradle errors', async () => {
   await expect(
     buildAndroid(androidProject, args, '/root', null, fingerprintOptions),
   ).rejects.toThrowErrorMatchingInlineSnapshot(
-    `[RnefError: Failed to build the app. See the error above for details from Gradle.]`,
+    `[RockError: Failed to build the app. See the error above for details from Gradle.]`,
   );
 
   expect(spawn).toBeCalledWith(

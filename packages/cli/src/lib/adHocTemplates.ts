@@ -322,12 +322,12 @@ export function templateIndexHtml({
             This app is distributed via ad-hoc distribution for testing purposes. 
             Your device must either be enrolled in enterprise distribution or have its UDID added to the app's provisioning profile.
             <br><br>
-            Learn more at <a class="link" href="https://rnef.dev/docs/cli#ad-hoc-distribution">RNEF Ad-hoc documentation</a>.
+            Learn more at <a class="link" href="https://rockjs.dev/docs/cli#ad-hoc-distribution">Rock Ad-hoc documentation</a>.
           </p>
         </div>
         <div class="footer">
           <p>
-            Generated with <a class="link" href="https://rnef.dev">RNEF</a> by
+            Generated with <a class="link" href="https://rockjs.dev">Rock</a> by
             <a class="link" href="https://callstack.com">Callstack</a>
           </p>
         </div>

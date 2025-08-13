@@ -1,4 +1,4 @@
-import { cacheManager, logger } from '@rnef/tools';
+import { cacheManager, logger } from '@rock-js/tools';
 import type { ApplePlatform, Device } from '../../types/index.js';
 
 export function cacheRecentDevice(device: Device, platform: ApplePlatform) {

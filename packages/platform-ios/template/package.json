@@ -1,9 +1,9 @@
 {
-  "name": "rnef-platform-ios-template",
+  "name": "rock-platform-ios-template",
   "scripts": {
-    "ios": "rnef run:ios"
+    "ios": "rock run:ios"
   },
   "devDependencies": {
-    "@rnef/platform-ios": "^0.8.13"
+    "@rock-js/platform-ios": "^0.9.0"
   }
 }

@@ -1,6 +1,6 @@
 import { projectConfig } from '@react-native-community/cli-config-android';
 import type { AndroidProjectConfig } from '@react-native-community/cli-types';
-import { RnefError } from '@rnef/tools';
+import { RockError } from '@rock-js/tools';
 
 export function getValidProjectConfig(
   projectRoot: string,
@@ -8,7 +8,7 @@ export function getValidProjectConfig(
 ) {
   const androidConfig = projectConfig(projectRoot, pluginConfig);
   if (!androidConfig) {
-    throw new RnefError('Android project not found.');
+    throw new RockError('Android project not found.');
   }
   return androidConfig;
 }

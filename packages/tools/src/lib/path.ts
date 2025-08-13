@@ -1,6 +1,6 @@
 import * as fs from 'node:fs';
 import * as nodePath from 'node:path';
-import { RnefError } from './error.js';
+import { RockError } from './error.js';
 
 export function relativeToCwd(path: string) {
   return nodePath.relative(process.cwd(), path);
@@ -17,7 +17,7 @@ export function resolveFilenameUp(path: string, filename: string) {
   }
   const parentDir = nodePath.dirname(path);
   if (parentDir === path) {
-    throw new RnefError(
+    throw new RockError(
       `${filename} not found in any parent directory of ${path}`,
     );
   }

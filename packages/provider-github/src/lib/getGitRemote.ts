@@ -1,4 +1,4 @@
-import { cacheManager, promptSelect, spawn } from '@rnef/tools';
+import { cacheManager, promptSelect, spawn } from '@rock-js/tools';
 
 export async function getGitRemote() {
   let gitRemote = cacheManager.get('gitRemote');

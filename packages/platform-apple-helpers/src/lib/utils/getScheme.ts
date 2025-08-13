@@ -1,4 +1,4 @@
-import { isInteractive, logger, promptSelect, RnefError } from '@rnef/tools';
+import { isInteractive, logger, promptSelect, RockError } from '@rock-js/tools';
 import path from 'path';
 import type { Info } from '../types/index.js';
 
@@ -31,7 +31,7 @@ function invalidateScheme(schemes: Info['schemes'], scheme: string) {
     return;
   }
   if (!schemes.includes(scheme)) {
-    throw new RnefError(
+    throw new RockError(
       `Scheme "${scheme}" doesn't exist. Please use one of the existing schemes: ${schemes
         .map((scheme) => `\n- ${scheme}`)
         .join('')}`,

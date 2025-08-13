@@ -6,7 +6,7 @@ test('resolveTemplateName with built-in templates', () => {
   expect(resolveTemplate(TEMPLATES, 'default')).toEqual({
     type: 'npm',
     name: 'default',
-    packageName: '@rnef/template-default',
+    packageName: '@rock-js/template-default',
     version: 'latest',
     directory: '.',
   });

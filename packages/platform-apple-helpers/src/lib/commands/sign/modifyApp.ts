@@ -5,9 +5,9 @@ import {
   logger,
   outro,
   relativeToCwd,
-  RnefError,
+  RockError,
   spinner,
-} from '@rnef/tools';
+} from '@rock-js/tools';
 import { buildJsBundle } from './bundle.js';
 import { getAppPaths } from './utils.js';
 
@@ -31,7 +31,7 @@ export const modifyApp = async (options: ModifyAppOptions) => {
     try {
       fs.cpSync(options.appPath, options.outputPath, { recursive: true });
     } catch (error) {
-      throw new RnefError(
+      throw new RockError(
         `Failed to copy APP file to ${colorLink(
           relativeToCwd(options.outputPath),
         )}.`,
@@ -73,19 +73,19 @@ export const modifyApp = async (options: ModifyAppOptions) => {
 
 function validateOptions(options: ModifyAppOptions) {
   if (!fs.existsSync(options.appPath)) {
-    throw new RnefError(
+    throw new RockError(
       `APP file (directory) not found at "${options.appPath}". Please provide a correct path.`,
     );
   }
 
   if (options.buildJsBundle && options.jsBundlePath) {
-    throw new RnefError(
+    throw new RockError(
       'The "--build-jsbundle" flag is incompatible with "--jsbundle". Pick one.',
     );
   }
 
   if (options.jsBundlePath && !fs.existsSync(options.jsBundlePath)) {
-    throw new RnefError(
+    throw new RockError(
       `JS bundle file not found at "${options.jsBundlePath}". Please provide a correct path.`,
     );
   }

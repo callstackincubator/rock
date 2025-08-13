@@ -1,5 +1,5 @@
 import os from 'node:os';
-import { spawn } from '@rnef/tools';
+import { spawn } from '@rock-js/tools';
 import { getAdbPath, getDevices } from './adb.js';
 import { getEmulators } from './tryLaunchEmulator.js';
 

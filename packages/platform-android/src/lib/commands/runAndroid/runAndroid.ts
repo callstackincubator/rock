@@ -4,7 +4,7 @@ import type {
   AndroidProjectConfig,
   Config,
 } from '@react-native-community/cli-types';
-import type { FingerprintSources, RemoteBuildCache } from '@rnef/tools';
+import type { FingerprintSources, RemoteBuildCache } from '@rock-js/tools';
 import {
   color,
   formatArtifactName,
@@ -13,10 +13,10 @@ import {
   logger,
   outro,
   promptSelect,
-  RnefError,
+  RockError,
   spinner,
-} from '@rnef/tools';
-import { getBinaryPath } from '@rnef/tools';
+} from '@rock-js/tools';
+import { getBinaryPath } from '@rock-js/tools';
 import type { BuildFlags } from '../buildAndroid/buildAndroid.js';
 import { options } from '../buildAndroid/buildAndroid.js';
 import { runGradle } from '../runGradle.js';
@@ -167,7 +167,7 @@ function normalizeArgs(args: Flags, projectRoot: string) {
 
   if (args.binaryPath) {
     if (args.tasks) {
-      throw new RnefError(
+      throw new RockError(
         'Both "--binary-path" and "--tasks" flags were specified, which are incompatible. Please specify only one.',
       );
     }
@@ -177,7 +177,7 @@ function normalizeArgs(args: Flags, projectRoot: string) {
       : path.join(projectRoot, args.binaryPath);
 
     if (args.binaryPath && !fs.existsSync(args.binaryPath)) {
-      throw new RnefError(
+      throw new RockError(
         `"--binary-path" was specified, but the file was not found at "${args.binaryPath}".`,
       );
     }
@@ -188,7 +188,7 @@ async function promptForDeviceSelection(
   allDevices: Array<DeviceData>,
 ): Promise<DeviceData> {
   if (!allDevices.length) {
-    throw new RnefError(
+    throw new RockError(
       'No devices and/or emulators connected. Please create emulator with Android Studio or connect Android device.',
     );
   }

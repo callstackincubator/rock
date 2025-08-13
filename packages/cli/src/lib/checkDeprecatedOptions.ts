@@ -1,6 +1,6 @@
-import { color, logger } from '@rnef/tools';
+import { color, logger } from '@rock-js/tools';
 
-const npxBin = 'npx rnef';
+const npxBin = 'npx rock';
 
 const checkDeprecatedCommand = (
   argv: string[],

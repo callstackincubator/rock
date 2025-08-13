@@ -1,7 +1,7 @@
 import fs, { existsSync } from 'node:fs';
 import path from 'node:path';
-import type { SubprocessError } from '@rnef/tools';
-import { color, logger, spawn, spinner } from '@rnef/tools';
+import type { SubprocessError } from '@rock-js/tools';
+import { color, logger, spawn, spinner } from '@rock-js/tools';
 
 /**
  * Xcode emits different `.framework` file based on the destination (simulator arm64/x86_64, iphone arm64 etc.)

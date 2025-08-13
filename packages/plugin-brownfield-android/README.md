@@ -1,7 +1,7 @@
-# @rnef/plugin-brownfield-android
+# @rock-js/plugin-brownfield-android
 
-Android brownfield integration plugin for React Native Enterprise Framework (RNEF). This package is part of the RNEF ecosystem and provides tools for integrating React Native into existing Android applications.
+Android brownfield integration plugin for Rock. This package is part of the Rock ecosystem and provides tools for integrating React Native into existing Android applications.
 
 ## Documentation
 
-For detailed documentation about RNEF and its tools, visit [RNEF Documentation](https://rnef.dev)
+For detailed documentation about Rock and its tools, visit [Rock Documentation](https://rockjs.dev)

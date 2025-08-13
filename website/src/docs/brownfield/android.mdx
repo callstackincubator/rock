@@ -2,16 +2,16 @@ import { PackageManagerTabs } from 'rspress/theme';
 
 # Integrating with Android Apps
 
-React Native Enterprise Framework helps you package your React Native code into files that your iOS and Android apps can use. For Android, it creates an `.aar` file that you can easily add to your app.
+Rock helps you package your React Native code into files that your iOS and Android apps can use. For Android, it creates an `.aar` file that you can easily add to your app.
 
 To add React Native to your Android app, we'll package your React Native code into an AAR. This way, you don't need to set up Node.js in your main app. Here's how to do it:
 
-## Creating a New RNEF Project (Automated)
+## Creating a New Rock Project (Automated)
 
-If you are creating a new RNEF project, you can select the `brownfield-android` plugin:
+If you are creating a new Rock project, you can select the `brownfield-android` plugin:
 
 ```
-> npm create @rnef/app
+> npm create @rock-js/app
 ...
 ◆  What plugins do you want to start with?
 │  ◼ brownfield-android
@@ -21,9 +21,9 @@ to add brownfield capabilities, install dependencies. Then jump to:
 
 - [9. Create the AAR](#9-create-the-aar)
 
-## Integrating to An Existing RNEF Project (Manual)
+## Integrating to An Existing Rock Project (Manual)
 
-If you have an existing RNEF project, follow the instructions below.
+If you have an existing Rock project, follow the instructions below.
 
 ### 1. Create a New Android Library Module
 
@@ -223,17 +223,17 @@ tasks.named("generateMetadataFileForMavenAarPublication") {
 }
 ```
 
-### 8. Set up RNEF for AAR generation
+### 8. Set up Rock for AAR generation
 
 :::warning
-If you're integrating an Expo app with Expo CLI instead of RNEF, skip this step.
+If you're integrating an Expo app with Expo CLI instead of Rock, skip this step.
 :::
 
-1. Add `@rnef/plugin-brownfield-android` to your dependencies
-1. Update your `rnef.config.mjs`:
+1. Add `@rock-js/plugin-brownfield-android` to your dependencies
+1. Update your `rock.config.mjs`:
 
-   ```js title="rnef.config.mjs"
-   import { pluginBrownfieldAndroid } from '@rnef/plugin-brownfield-android';
+   ```js title="rock.config.mjs"
+   import { pluginBrownfieldAndroid } from '@rock-js/plugin-brownfield-android';
 
    export default {
      plugins: [pluginBrownfieldAndroid()],
@@ -243,19 +243,19 @@ If you're integrating an Expo app with Expo CLI instead of RNEF, skip this step.
 ### 9. Create the AAR
 
 :::warning
-If you're integrating an Expo app with Expo CLI instead of RNEF, skip this step.
+If you're integrating an Expo app with Expo CLI instead of Rock, skip this step.
 :::
 
 1. Run this command to generate the final AAR:
 
    ```sh title="Terminal"
-   rnef package:aar --variant Release --module-name reactnativeapp
+   rock package:aar --variant Release --module-name reactnativeapp
    ```
 
 1. Once the AAR is created, publish it to local Maven registry to be consumable by the native app:
 
    ```sh title="Terminal"
-   rnef publish-local:aar --module-name reactnativeapp
+   rock publish-local:aar --module-name reactnativeapp
    ```
 
 ### 10. Extra steps for Expo CLI and Expo Modules

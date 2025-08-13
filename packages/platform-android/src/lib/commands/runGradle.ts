@@ -1,12 +1,12 @@
 import {
   color,
   logger,
-  RnefError,
+  RockError,
   saveLocalBuildCache,
   spawn,
   spinner,
   type SubprocessError,
-} from '@rnef/tools';
+} from '@rock-js/tools';
 import type { AarProject } from './aar/packageAar.js';
 import type { BuildFlags } from './buildAndroid/buildAndroid.js';
 import { getAdbPath, getDevices } from './runAndroid/adb.js';
@@ -97,7 +97,7 @@ Tasks     ${color.bold(humanReadableTasks)}`);
     }
 
     const hints = getErrorHints((error as SubprocessError).stdout ?? '');
-    throw new RnefError(
+    throw new RockError(
       hints ||
         'Failed to build the app. See the error above for details from Gradle.',
     );
@@ -145,7 +145,7 @@ export async function runGradleAar({
     }
 
     const hints = getErrorHints((error as SubprocessError).stdout ?? '');
-    throw new RnefError(
+    throw new RockError(
       hints ||
         `Failed to ${
           variant ? 'build' : 'publish'
@@ -158,7 +158,7 @@ export async function runGradleAar({
 function getErrorHints(output: string) {
   const signingMessage = output.includes('validateSigningRelease FAILED')
     ? `Hint: You can run "${color.bold(
-        'rnef create-keystore:android',
+        'rock create-keystore:android',
       )}" to create a keystore file.`
     : '';
   return signingMessage;

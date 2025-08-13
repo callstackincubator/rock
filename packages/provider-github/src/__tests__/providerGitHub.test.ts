@@ -9,18 +9,18 @@ const ARTIFACTS = [
   {
     workflow_run: { id: 2 },
     id: 123,
-    name: 'rnef-android-debug-1234567890',
+    name: 'rock-android-debug-1234567890',
     archive_download_url:
-      'https://api.github.com/repos/callstack/rnef/actions/artifacts/123',
+      'https://api.github.com/repos/callstack/rock/actions/artifacts/123',
     size_in_bytes: 10000,
     expires_at: '2025-05-20T12:00:00Z',
   },
   {
     workflow_run: { id: 3 },
     id: 124,
-    name: 'rnef-android-debug-1234567890',
+    name: 'rock-android-debug-1234567890',
     archive_download_url:
-      'https://api.github.com/repos/callstack/rnef/actions/artifacts/124',
+      'https://api.github.com/repos/callstack/rock/actions/artifacts/124',
     size_in_bytes: 10000,
     expires_at: '2025-05-20T12:00:00Z',
   },
@@ -33,15 +33,15 @@ test('providerGitHub implements list method returning an array of artifacts', as
   );
   const cacheProvider = providerGitHub({
     owner: 'callstack',
-    repository: 'rnef',
+    repository: 'rock',
     token: 'TEST_TOKEN',
   })();
   const result = await cacheProvider.list({
-    artifactName: 'rnef-android-debug-1234567890',
+    artifactName: 'rock-android-debug-1234567890',
     limit,
   });
   expect(fetch).toHaveBeenCalledWith(
-    `https://api.github.com/repos/callstack/rnef/actions/artifacts?per_page=${limit}&page=1&name=rnef-android-debug-1234567890`,
+    `https://api.github.com/repos/callstack/rock/actions/artifacts?per_page=${limit}&page=1&name=rock-android-debug-1234567890`,
     {
       headers: {
         Authorization: 'token TEST_TOKEN',
@@ -51,8 +51,8 @@ test('providerGitHub implements list method returning an array of artifacts', as
   expect(result).toEqual([
     {
       id: '123',
-      name: 'rnef-android-debug-1234567890',
-      url: 'https://api.github.com/repos/callstack/rnef/actions/artifacts/123',
+      name: 'rock-android-debug-1234567890',
+      url: 'https://api.github.com/repos/callstack/rock/actions/artifacts/123',
     },
   ]);
 });
@@ -64,7 +64,7 @@ test('providerGitHub implements download method returning a stream with artifact
   global.fetch = vi.fn((url) => {
     if (
       url ===
-      'https://api.github.com/repos/callstack/rnef/actions/artifacts?per_page=100&page=1&name=rnef-android-debug-1234567890'
+      'https://api.github.com/repos/callstack/rock/actions/artifacts?per_page=100&page=1&name=rock-android-debug-1234567890'
     ) {
       return Promise.resolve(
         new Response(JSON.stringify({ artifacts: ARTIFACTS.slice(0, limit) })),
@@ -72,7 +72,7 @@ test('providerGitHub implements download method returning a stream with artifact
     }
     if (
       url ===
-      'https://api.github.com/repos/callstack/rnef/actions/artifacts/123'
+      'https://api.github.com/repos/callstack/rock/actions/artifacts/123'
     ) {
       return Promise.resolve(downloadResponse);
     }
@@ -80,11 +80,11 @@ test('providerGitHub implements download method returning a stream with artifact
   });
   const cacheProvider = providerGitHub({
     owner: 'callstack',
-    repository: 'rnef',
+    repository: 'rock',
     token: 'TEST_TOKEN',
   })();
   const response = await cacheProvider.download({
-    artifactName: 'rnef-android-debug-1234567890',
+    artifactName: 'rock-android-debug-1234567890',
   });
   const result = await response.arrayBuffer();
   expect(result).toBeInstanceOf(ArrayBuffer);
@@ -97,7 +97,7 @@ test('providerGitHub implements delete method', async () => {
   global.fetch = vi.fn((url, options) => {
     if (
       url ===
-      'https://api.github.com/repos/callstack/rnef/actions/artifacts?per_page=100&page=1&name=rnef-android-debug-1234567890'
+      'https://api.github.com/repos/callstack/rock/actions/artifacts?per_page=100&page=1&name=rock-android-debug-1234567890'
     ) {
       return Promise.resolve(
         new Response(JSON.stringify({ artifacts: ARTIFACTS })),
@@ -105,14 +105,14 @@ test('providerGitHub implements delete method', async () => {
     }
     if (
       url ===
-        'https://api.github.com/repos/callstack/rnef/actions/artifacts/123' &&
+        'https://api.github.com/repos/callstack/rock/actions/artifacts/123' &&
       options.method === 'DELETE'
     ) {
       return Promise.resolve(new Response());
     }
     if (
       url ===
-        'https://api.github.com/repos/callstack/rnef/actions/artifacts/124' &&
+        'https://api.github.com/repos/callstack/rock/actions/artifacts/124' &&
       options.method === 'DELETE'
     ) {
       return Promise.resolve(new Response());
@@ -121,21 +121,21 @@ test('providerGitHub implements delete method', async () => {
   });
   const cacheProvider = providerGitHub({
     owner: 'callstack',
-    repository: 'rnef',
+    repository: 'rock',
     token: 'TEST_TOKEN',
   })();
   const response = await cacheProvider.delete({
-    artifactName: 'rnef-android-debug-1234567890',
+    artifactName: 'rock-android-debug-1234567890',
     limit,
   });
   expect(response).toEqual([
     {
-      name: 'rnef-android-debug-1234567890',
-      url: 'https://api.github.com/repos/callstack/rnef/actions/artifacts/123',
+      name: 'rock-android-debug-1234567890',
+      url: 'https://api.github.com/repos/callstack/rock/actions/artifacts/123',
     },
     {
-      name: 'rnef-android-debug-1234567890',
-      url: 'https://api.github.com/repos/callstack/rnef/actions/artifacts/124',
+      name: 'rock-android-debug-1234567890',
+      url: 'https://api.github.com/repos/callstack/rock/actions/artifacts/124',
     },
   ]);
 });
@@ -143,11 +143,11 @@ test('providerGitHub implements delete method', async () => {
 test('providerGitHub does not implement upload method', async () => {
   const cacheProvider = providerGitHub({
     owner: 'callstack',
-    repository: 'rnef',
+    repository: 'rock',
     token: 'TEST_TOKEN',
   })();
   await expect(
-    cacheProvider.upload({ artifactName: 'rnef-android-debug-1234567890' }),
+    cacheProvider.upload({ artifactName: 'rock-android-debug-1234567890' }),
   ).rejects.toThrow(
     'Uploading artifacts to GitHub is not supported through GitHub API. See: https://docs.github.com/en/rest/actions/artifacts?apiVersion=2022-11-28',
   );

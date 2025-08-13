@@ -16,27 +16,27 @@
     "jsx": "preserve",
     "baseUrl": ".",
     "paths": {
-      "@rnef/cli": ["packages/cli/dist/src/index"],
-      "@rnef/config": ["packages/config/dist/src/index"],
-      "@rnef/create-app": ["packages/create-app/dist/src/index"],
-      "@rnef/plugin-metro": ["packages/plugin-metro/dist/src/index"],
-      "@rnef/plugin-repack": ["packages/plugin-repack/dist/src/index"],
-      "@rnef/platform-android": ["packages/platform-android/dist/src/index"],
-      "@rnef/platform-ios": ["packages/platform-ios/dist/src/index"],
-      "@rnef/test-helpers": ["packages/test-helpers/dist/src/index"],
-      "@rnef/tools": ["packages/tools/dist/src/index"],
-      "@rnef/platform-apple-helpers": [
+      "rock": ["packages/cli/dist/src/index"],
+      "@rock-js/config": ["packages/config/dist/src/index"],
+      "create-rock": ["packages/create-app/dist/src/index"],
+      "@rock-js/plugin-metro": ["packages/plugin-metro/dist/src/index"],
+      "@rock-js/plugin-repack": ["packages/plugin-repack/dist/src/index"],
+      "@rock-js/platform-android": ["packages/platform-android/dist/src/index"],
+      "@rock-js/platform-ios": ["packages/platform-ios/dist/src/index"],
+      "@rock-js/test-helpers": ["packages/test-helpers/dist/src/index"],
+      "@rock-js/tools": ["packages/tools/dist/src/index"],
+      "@rock-js/platform-apple-helpers": [
         "packages/platform-apple-helpers/dist/src/index"
       ],
-      "@rnef/plugin-brownfield-android": [
+      "@rock-js/plugin-brownfield-android": [
         "packages/plugin-brownfield-android/dist/src/index"
       ],
-      "@rnef/platform-brownfield-ios": [
+      "@rock-js/platform-brownfield-ios": [
         "packages/plugin-brownfield-ios/dist/src/index"
       ],
-      "@rnef/provider-github": ["packages/provider-github/dist/src/index"],
-      "@rnef/provider-s3": ["packages/provider-s3/dist/src/index"],
-      "@rnef/welcome-screen": ["packages/welcome-screen/dist/src/index"]
+      "@rock-js/provider-github": ["packages/provider-github/dist/src/index"],
+      "@rock-js/provider-s3": ["packages/provider-s3/dist/src/index"],
+      "@rock-js/welcome-screen": ["packages/welcome-screen/dist/src/index"]
     }
   },
   "exclude": ["node_modules", "tmp"]

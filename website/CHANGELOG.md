@@ -1,4 +1,10 @@
-# rnef-docs
+# rock-docs
+
+## 1.1.0
+
+### Minor Changes
+
+- 47ec267: Let there be Rock
 
 ## 1.0.13
 
@@ -41,7 +47,7 @@
 
 ### Patch Changes
 
-- 778a11f: fix: export Config type from @rnef/cli
+- 778a11f: fix: export Config type from RNEF
 - 4d4dce0: feat: support presigned links in s3 provider
 
 ## 1.0.6
