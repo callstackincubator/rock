@@ -152,6 +152,7 @@ Configuration   ${color.bold(configuration)}`);
       );
     }
     if (commandOutput) {
+      // Use lightweight console.error instead of logger.error to avoid stack overflow issues when Xcode logs go crazy
       console.error(color.red(`xcodebuild output: ${commandOutput}`));
       throw new RnefError(
         'Running xcodebuild failed. See error details above.',
