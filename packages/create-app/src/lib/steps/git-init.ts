@@ -35,7 +35,7 @@ async function initGitRepo(path: string, message: string) {
   }
 }
 
-async function hasGitClient(): Promise<boolean> {
+export async function hasGitClient(): Promise<boolean> {
   try {
     await spawn('git', ['--version'], { stdio: 'ignore' });
     return true;
@@ -44,7 +44,7 @@ async function hasGitClient(): Promise<boolean> {
   }
 }
 
-async function isGitRepo(path: string): Promise<boolean> {
+export async function isGitRepo(path: string): Promise<boolean> {
   try {
     await spawn('git', ['rev-parse', '--is-inside-work-tree'], {
       stdio: 'ignore',

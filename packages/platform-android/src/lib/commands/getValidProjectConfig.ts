@@ -4,7 +4,7 @@ import { RnefError } from '@rnef/tools';
 
 export function getValidProjectConfig(
   projectRoot: string,
-  pluginConfig?: AndroidProjectConfig,
+  pluginConfig?: Partial<AndroidProjectConfig>,
 ) {
   const androidConfig = projectConfig(projectRoot, pluginConfig);
   if (!androidConfig) {

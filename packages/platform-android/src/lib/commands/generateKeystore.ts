@@ -17,7 +17,7 @@ import { getValidProjectConfig } from './getValidProjectConfig.js';
 
 export function registerCreateKeystoreCommand(
   api: PluginApi,
-  pluginConfig: AndroidProjectConfig | undefined,
+  pluginConfig: Partial<AndroidProjectConfig> | undefined,
 ) {
   api.registerCommand({
     name: 'create-keystore:android',
