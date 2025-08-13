@@ -7,6 +7,7 @@ type BuildSettings = {
   INFOPLIST_PATH: string;
   EXECUTABLE_FOLDER_PATH: string;
   FULL_PRODUCT_NAME: string;
+  WRAPPER_EXTENSION: string;
 };
 
 export async function getBuildSettings({
@@ -54,13 +55,17 @@ export async function getBuildSettings({
     { cwd: sourceDir, stdio: 'pipe' },
   );
 
-  const settings = JSON.parse(buildSettings);
-
-  const targets = settings
-    // skip React target if present; may happen in some older projects; @todo revisit
-    .filter(({ target }: { target: string }) => target !== 'React')
-    .map(({ target: settingsTarget }: { target: string }) => settingsTarget);
-
+  const settings: {
+    action: string;
+    buildSettings: BuildSettings;
+    target: string;
+  }[] = JSON.parse(buildSettings).filter(
+    ({ target }: { target: string }) =>
+      target !== 'React' && target !== 'React-Core',
+  );
+  const targets = settings.map(
+    ({ target: settingsTarget }: { target: string }) => settingsTarget,
+  );
   let selectedTarget = targets[0];
 
   if (target) {
@@ -84,7 +89,7 @@ export async function getBuildSettings({
   const wrapperExtension = targetSettings.WRAPPER_EXTENSION;
 
   if (wrapperExtension === 'app' || wrapperExtension === 'framework') {
-    const buildSettings = settings[targetIndex].buildSettings as BuildSettings;
+    const buildSettings = settings[targetIndex].buildSettings;
 
     if (!buildSettings) {
       throw new RnefError('Failed to get build settings for your project');
