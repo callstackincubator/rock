@@ -1,5 +1,14 @@
 # @rnef/plugin-brownfield-ios
 
+## 0.8.11
+
+### Patch Changes
+
+- Updated dependencies [cb43201]
+- Updated dependencies [b1f8d85]
+  - @rnef/tools@0.8.11
+  - @rnef/platform-apple-helpers@0.8.11
+
 ## 0.8.10
 
 ### Patch Changes

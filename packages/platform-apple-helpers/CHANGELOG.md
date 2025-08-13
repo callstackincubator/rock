@@ -1,5 +1,13 @@
 # @rnef/platform-apple-helpers
 
+## 0.8.11
+
+### Patch Changes
+
+- b1f8d85: fix: build settings when React / React-Core is in targets
+- Updated dependencies [cb43201]
+  - @rnef/tools@0.8.11
+
 ## 0.8.10
 
 ### Patch Changes
