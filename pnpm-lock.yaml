@@ -306,6 +306,9 @@ importers:
         specifier: ^2.3.0
         version: 2.8.1
     devDependencies:
+      '@react-native/dev-middleware':
+        specifier: ^0.80.1
+        version: 0.80.1
       '@rnef/config':
         specifier: ^0.8.12
         version: link:../config
@@ -10011,7 +10014,7 @@ snapshots:
 
   chrome-launcher@0.15.2:
     dependencies:
-      '@types/node': 24.2.1
+      '@types/node': 18.19.122
       escape-string-regexp: 4.0.0
       is-wsl: 2.2.0
       lighthouse-logger: 1.4.2
@@ -10022,7 +10025,7 @@ snapshots:
 
   chromium-edge-launcher@0.2.0:
     dependencies:
-      '@types/node': 24.2.1
+      '@types/node': 18.19.122
       escape-string-regexp: 4.0.0
       is-wsl: 2.2.0
       lighthouse-logger: 1.4.2
