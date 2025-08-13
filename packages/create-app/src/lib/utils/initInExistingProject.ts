@@ -83,8 +83,8 @@ export async function initInExistingProject(projectRoot: string) {
     [
       `1. Run ${color.bold('git diff')} to see the changes. Adjust as necessary e.g.:`,
       `  - paths in monorepo`,
-      `  - shell scripts`,
-      `  - CI workflows`,
+      `  - commands in shell scripts`,
+      `  - commands in CI workflows`,
       `2. Run the dev server as you would normally do`,
       `3. Run iOS and Android apps as you would normally do`,
       `4. Setup Remote Cache: ${colorLink('https://rnef.dev/docs/configuration#remote-cache-configuration')}`,
