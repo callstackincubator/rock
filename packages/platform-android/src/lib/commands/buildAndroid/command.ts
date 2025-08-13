@@ -6,7 +6,7 @@ import { buildAndroid, options } from './buildAndroid.js';
 
 export function registerBuildCommand(
   api: PluginApi,
-  pluginConfig: AndroidProjectConfig | undefined,
+  pluginConfig: Partial<AndroidProjectConfig> | undefined,
 ) {
   api.registerCommand({
     name: 'build:android',

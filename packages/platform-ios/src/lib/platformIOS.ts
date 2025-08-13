@@ -15,7 +15,7 @@ const buildOptions = getBuildOptions({ platformName: 'ios' });
 const runOptions = getRunOptions({ platformName: 'ios' });
 
 export const platformIOS =
-  (pluginConfig?: IOSProjectConfig) =>
+  (pluginConfig?: Partial<IOSProjectConfig>) =>
   (api: PluginApi): PlatformOutput => {
     api.registerCommand({
       name: 'build:ios',

@@ -3,6 +3,7 @@ import path from 'node:path';
 import {
   cancelPromptAndExit,
   isInteractive,
+  logger,
   promptConfirm,
   resolveAbsolutePath,
   RnefError,
@@ -10,7 +11,7 @@ import {
   spinner,
   type SupportedRemoteCacheProviders,
 } from '@rnef/tools';
-import { gitInitStep } from './steps/git-init.js';
+import { gitInitStep, hasGitClient, isGitRepo } from './steps/git-init.js';
 import type { TemplateInfo } from './templates.js';
 import {
   BUNDLERS,
@@ -71,6 +72,19 @@ export async function run() {
 
   if (isReactNativeProject(options.dir || process.cwd())) {
     const projectRoot = resolveAbsolutePath(options.dir || process.cwd());
+    if ((await isGitRepo(projectRoot)) && (await hasGitClient())) {
+      const { output } = await spawn('git', ['status', '--porcelain'], {
+        cwd: projectRoot,
+      });
+
+      if (output.trim() !== '') {
+        logger.error(
+          'Git has uncommitted changes. Please commit or stash your changes before continuing with initializing RNEF in existing project.',
+        );
+        process.exit(1);
+      }
+    }
+
     const shouldInit = await promptConfirm({
       message: `Detected existing React Native project. Would you like to initialize RNEF in this project?`,
       confirmLabel: 'Yes',

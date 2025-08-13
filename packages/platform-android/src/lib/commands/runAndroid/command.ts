@@ -6,7 +6,7 @@ import { runAndroid, runOptions } from './runAndroid.js';
 
 export function registerRunCommand(
   api: PluginApi,
-  pluginConfig: AndroidProjectConfig | undefined,
+  pluginConfig: Partial<AndroidProjectConfig> | undefined,
 ) {
   api.registerCommand({
     name: 'run:android',

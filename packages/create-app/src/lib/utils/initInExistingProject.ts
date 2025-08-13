@@ -4,11 +4,10 @@ import path from 'node:path';
 import type { SubprocessError } from '@rnef/tools';
 import {
   color,
-  isInteractive,
+  colorLink,
   logger,
   note,
   outro,
-  promptConfirm,
   spawn,
   spinner,
 } from '@rnef/tools';
@@ -52,53 +51,38 @@ export async function initInExistingProject(projectRoot: string) {
   createMigrationConfig(projectRoot, platformArgs);
   loader.stop(`Generated ${color.bold('rnef.config.mjs')}`);
 
+  const iosSourceDir = platformArgs.ios?.sourceDir ?? 'ios';
+  const androidSourceDir = platformArgs.android?.sourceDir ?? 'android';
+
   // 5) Android file changes
   loader.start(
-    `Updating ${color.bold('android/app/build.gradle')} and ${color.bold('android/settings.gradle')}`,
+    `Updating ${color.bold(`${androidSourceDir}/app/build.gradle`)} and ${color.bold(`${androidSourceDir}/settings.gradle`)}`,
   );
-  updateAndroidBuildGradle(projectRoot);
-  updateAndroidSettingsGradle(projectRoot);
+  updateAndroidBuildGradle(projectRoot, androidSourceDir);
+  updateAndroidSettingsGradle(projectRoot, androidSourceDir);
   loader.stop(
-    `Updated ${color.bold('android/app/build.gradle')} and ${color.bold('android/settings.gradle')}`,
+    `Updated ${color.bold(`${androidSourceDir}/app/build.gradle`)} and ${color.bold(`${androidSourceDir}/settings.gradle`)}`,
   );
 
   // 6) iOS file changes
-  loader.start(`Updating ${color.bold('ios/Podfile')}`);
-  updatePodfile(projectRoot);
-  loader.stop(`Updated ${color.bold('ios/Podfile')}`);
+  loader.start(`Updating ${color.bold(`${iosSourceDir}/Podfile`)}`);
+  updatePodfile(projectRoot, iosSourceDir);
+  loader.stop(`Updated ${color.bold(`${iosSourceDir}/Podfile`)}`);
 
   // 7) Update package.json scripts
   loader.start(`Updating ${color.bold('package.json')} scripts`);
   updatePackageJsonScripts(projectRoot);
   loader.stop(`Updated ${color.bold('package.json')} scripts`);
 
-  // 8) Optionally clean native build artifacts
-  if (isInteractive()) {
-    const shouldClean = await promptConfirm({
-      message: 'Clean native build artifacts (git clean -fdx ios/ android/)?',
-      confirmLabel: 'Yes',
-      cancelLabel: 'No',
-    });
-    if (shouldClean) {
-      loader.start('Cleaning native build artifacts');
-      try {
-        await spawn('git', ['clean', '-fdx', 'ios/', 'android/'], {
-          cwd: projectRoot,
-        });
-      } catch {
-        // ignore if git not available or directories missing
-      }
-      loader.stop('Cleaned native build artifacts');
-    }
-  }
-
   note(
     [
-      `1. Run \`git diff\` to see the changes. Adjust as necessary e.g.:`,
+      `1. Run ${color.bold('git diff')} to see the changes. Adjust as necessary e.g.:`,
       `  - paths in monorepo`,
       `  - shell scripts`,
+      `  - CI workflows`,
       `2. Run the dev server as you would normally do`,
       `3. Run iOS and Android apps as you would normally do`,
+      `4. Setup Remote Cache: ${colorLink('https://rnef.dev/docs/configuration#remote-cache-configuration')}`,
     ].join('\n'),
     'Next steps',
   );
@@ -111,35 +95,23 @@ function ensureGitignoreEntry(projectRoot: string, entry: string) {
     fs.existsSync(gitignorePath) &&
     !fs.readFileSync(gitignorePath, 'utf8').includes(entry)
   ) {
-    fs.appendFileSync(
-      gitignorePath,
-      `
-  # RNEF
-  ${entry}
-  `,
-    );
+    fs.appendFileSync(gitignorePath, `\n# RNEF\n${entry}\n`);
     return;
   }
 }
 
 function readPlatformArgsFromReactNativeConfig(projectRoot: string): {
   ios?: { sourceDir?: string };
-  android?: { appName?: string };
+  android?: { sourceDir?: string };
 } {
   const rnConfigPath = path.join(projectRoot, 'react-native.config.js');
   if (!fs.existsSync(rnConfigPath)) {
     return {};
   }
   try {
-    const requireFn = createRequire(import.meta.url);
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const rnConfig: any = requireFn(rnConfigPath);
-    const project = rnConfig?.project ?? rnConfig?.default?.project;
-    const ios = project?.ios ? { sourceDir: project.ios.sourceDir } : undefined;
-    const android = project?.android
-      ? { appName: project.android.appName }
-      : undefined;
-    return { ios, android };
+    const require = createRequire(import.meta.url);
+    const rnConfig = require(rnConfigPath);
+    return { ios: rnConfig.project?.ios, android: rnConfig.project?.android };
   } catch {
     return {};
   }
@@ -149,38 +121,46 @@ function createMigrationConfig(
   projectRoot: string,
   platformArgs: {
     ios?: { sourceDir?: string };
-    android?: { appName?: string };
+    android?: { sourceDir?: string };
   },
 ) {
   const rnefConfigPath = path.join(projectRoot, 'rnef.config.mjs');
-  const iosArgs = platformArgs.ios?.sourceDir
-    ? `( { sourceDir: '${platformArgs.ios.sourceDir}' } )`
+  const iosArgs = platformArgs.ios
+    ? `({
+      ${Object.entries(platformArgs.ios)
+        .map(([key, value]) => `${key}: '${value}'`)
+        .join(',\n      ')},
+    })`
     : '()';
-  const androidArgs = platformArgs.android?.appName
-    ? `( { appName: '${platformArgs.android.appName}' } )`
+  const androidArgs = platformArgs.android
+    ? `({
+      ${Object.entries(platformArgs.android)
+        .map(([key, value]) => `${key}: '${value}'`)
+        .join(',\n      ')},
+    })`
     : '()';
 
   const content = `// @ts-check
-  import { platformIOS } from '@rnef/platform-ios';
-  import { platformAndroid } from '@rnef/platform-android';
-  import { pluginMetro } from '@rnef/plugin-metro';
-  
-  /** @type {import('@rnef/cli').Config} */
-  export default {
-    bundler: pluginMetro(),
-    platforms: {
-      ios: platformIOS${iosArgs},
-      android: platformAndroid${androidArgs},
-    },
-    remoteCacheProvider: null,
-  };
-  `;
+import { platformIOS } from '@rnef/platform-ios';
+import { platformAndroid } from '@rnef/platform-android';
+import { pluginMetro } from '@rnef/plugin-metro';
+
+/** @type {import('@rnef/cli').Config} */
+export default {
+  bundler: pluginMetro(),
+  platforms: {
+    ios: platformIOS${iosArgs},
+    android: platformAndroid${androidArgs},
+  },
+  remoteCacheProvider: null,
+};
+`;
 
   fs.writeFileSync(rnefConfigPath, content);
 }
 
-function updateAndroidBuildGradle(projectRoot: string) {
-  const filePath = path.join(projectRoot, 'android', 'app', 'build.gradle');
+function updateAndroidBuildGradle(projectRoot: string, sourceDir: string) {
+  const filePath = path.join(projectRoot, sourceDir, 'app', 'build.gradle');
   if (!fs.existsSync(filePath)) {
     return;
   }
@@ -198,8 +178,8 @@ function updateAndroidBuildGradle(projectRoot: string) {
   }
 }
 
-function updateAndroidSettingsGradle(projectRoot: string) {
-  const filePath = path.join(projectRoot, 'android', 'settings.gradle');
+function updateAndroidSettingsGradle(projectRoot: string, sourceDir: string) {
+  const filePath = path.join(projectRoot, sourceDir, 'settings.gradle');
   if (!fs.existsSync(filePath)) {
     return;
   }
@@ -222,8 +202,8 @@ function updateAndroidSettingsGradle(projectRoot: string) {
   }
 }
 
-function updatePodfile(projectRoot: string) {
-  const filePath = path.join(projectRoot, 'ios', 'Podfile');
+function updatePodfile(projectRoot: string, sourceDir: string) {
+  const filePath = path.join(projectRoot, sourceDir, 'Podfile');
   if (!fs.existsSync(filePath)) {
     return;
   }
