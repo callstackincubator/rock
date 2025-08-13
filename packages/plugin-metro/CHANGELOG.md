@@ -1,5 +1,12 @@
 # @rnef/plugin-metro
 
+## 0.8.13
+
+### Patch Changes
+
+- b365b67: fix: @react-native/\* packages misalignemnt
+  - @rnef/tools@0.8.13
+
 ## 0.8.12
 
 ### Patch Changes
