@@ -1,0 +1,9 @@
+overrides:
+  plugin-expo-config-plugins: link:../../Library/pnpm/global/5/node_modules/@rnef/plugin-expo-config-plugins
+  '@rnef/platform-ios': link:../../Library/pnpm/global/5/node_modules/@rnef/platform-ios
+  '@rnef/plugin-metro': link:../../Library/pnpm/global/5/node_modules/@rnef/plugin-metro
+  '@rnef/platform-android': link:../../Library/pnpm/global/5/node_modules/@rnef/platform-android
+  '@rnef/cli': link:../../Library/pnpm/global/5/node_modules/@rnef/cli
+  '@rnef/provider-github': link:../../Library/pnpm/global/5/node_modules/@rnef/provider-github
+  '@rnef/provider-s3': link:../../Library/pnpm/global/5/node_modules/@rnef/provider-s3
+  '@rnef/plugin-expo-config-plugins': link:../../Library/pnpm/global/5/node_modules/@rnef/plugin-expo-config-plugins

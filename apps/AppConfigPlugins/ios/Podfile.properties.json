@@ -1,0 +1,9 @@
+{
+  "expo.jsEngine": "jsc",
+  "ios.deploymentTarget": "15.2",
+  "ios.useFrameworks": "static",
+  "EX_DEV_CLIENT_NETWORK_INSPECTOR": "true",
+  "apple.extraPods": "[{\"name\":\"SDWebImage\",\"modular_headers\":true},{\"name\":\"SDWebImageSVGCoder\",\"modular_headers\":true}]",
+  "apple.privacyManifestAggregationEnabled": "true",
+  "newArchEnabled": "true"
+}
