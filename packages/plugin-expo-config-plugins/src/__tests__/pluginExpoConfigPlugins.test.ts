@@ -92,7 +92,6 @@ describe('plugin applies default iOS config plugins correctly', () => {
 
     // Check the initial bundle identifier
     const projectContent = await fs.readFile(projectPbxprojPath, 'utf8');
-    console.log('projectContent', projectContent);
     expect(projectContent).toContain(
       'PRODUCT_BUNDLE_IDENTIFIER = "org.reactjs.native.example'
     );
