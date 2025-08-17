@@ -297,6 +297,9 @@ importers:
       '@rnef/config':
         specifier: ^0.8.2
         version: 0.8.3
+      '@rnef/test-helpers':
+        specifier: ^0.8.2
+        version: link:../test-helpers
 
   packages/plugin-metro:
     dependencies:
