@@ -8,6 +8,12 @@ packages:
   '@rock-js/*':
     access: $all
     publish: $all
+  'rock':
+    access: $all
+    publish: $all
+  'create-rock':
+    access: $all
+    publish: $all
   '**':
     access: $all
     proxy: npmjs
