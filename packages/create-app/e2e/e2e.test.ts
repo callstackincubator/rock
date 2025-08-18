@@ -16,7 +16,7 @@ import { beforeEach, describe, expect, it } from 'vitest';
  */
 
 const VERDACCIO_REGISTRY_URL = 'http://localhost:4873';
-const CREATE_APP_COMMAND = `pnpm create @rock-js/app`;
+const CREATE_APP_COMMAND = `pnpm create rock`;
 
 const ROOT_DIR = path.resolve(__dirname, '../../..');
 const TEMP_DIR = getTempDirectory('e2e-deploys');

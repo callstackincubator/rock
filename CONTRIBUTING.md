@@ -79,7 +79,7 @@ rm -rf ~/Library/Caches/pnpm/dlx/
 pnpm e2e
 
 # Or Create Rock app
-NPM_CONFIG_REGISTRY=http://localhost:4873 pnpm create @rock-js/app --registry http://localhost:4873
+NPM_CONFIG_REGISTRY=http://localhost:4873 pnpm create rock --registry http://localhost:4873
 # Then use pnpm install with registry
 echo "node-linker=hoisted" > .npmrc
 NPM_CONFIG_REGISTRY=http://localhost:4873 pnpm install
