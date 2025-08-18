@@ -20,7 +20,7 @@ Rock leverages this insight by providing intelligent caching in your cloud infra
 ## Features
 
 **🖥️ Brand New CLI**  
-A familiar CLI experience with end-to-end development and build workflows. Migrate in just 10 minutes.
+A familiar CLI experience with end-to-end development and build workflows. Migrate in seconds with `npm create rock`.
 
 **☁️ Reusable Cloud Builds**  
 Reliable caching of native artifacts (APK, IPA) that you can store wherever you prefer, or use our out-of-the-box integrations with GitHub, S3, and R2.
