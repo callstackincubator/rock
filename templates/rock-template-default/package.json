@@ -14,7 +14,7 @@
     "@babel/core": "^7.25.2",
     "@babel/preset-env": "^7.25.3",
     "@babel/runtime": "^7.25.0",
-    "rock": "^0.8.13",
+    "rock": "^0.9.0",
     "@rock-js/welcome-screen": "^0.9.0",
     "@expo/fingerprint": "^0.11.6",
     "@react-native/babel-preset": "0.80.1",
