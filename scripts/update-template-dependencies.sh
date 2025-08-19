@@ -1,7 +1,7 @@
 #!/bin/bash
 set -e
 
-echo "Updating all @rock-js/* dependencies to match CLI version..."
+echo "Updating all @rock-js/* and rock dependencies to match CLI version..."
 
 # Get the version from packages/cli/package.json
 CLI_VERSION=$(jq -r '.version' packages/cli/package.json)
@@ -15,59 +15,43 @@ update_package_json() {
     # Create a temporary file
     temp_file=$(mktemp)
     
-    # Update all @rock-js/* dependencies to match CLI version
+    # Update all @rock-js/* and rock dependencies to match CLI version
     jq --arg version "^$CLI_VERSION" '
-        # Only update if the field exists
-        if has("dependencies") then
-            .dependencies = (
-                .dependencies | 
-                to_entries | 
-                map(if .key | startswith("@rock-js/") then .value = $version else . end) |
+        # Helper function to update dependencies
+        def update_deps(deps):
+            if deps then
+                deps |
+                to_entries |
+                map(
+                    if (.key | startswith("@rock-js/")) or (.key == "rock") then
+                        .value = $version
+                    else
+                        .
+                    end
+                ) |
                 from_entries
-            )
-        else . end |
-
-        if has("devDependencies") then
-            .devDependencies = (
-                .devDependencies | 
-                to_entries | 
-                map(if .key | startswith("@rock-js/") then .value = $version else . end) |
-                from_entries
-            )
-
-        else . end |
+            else
+                deps
+            end;
         
-        if has("optionalDependencies") then
-            .optionalDependencies = (
-                .optionalDependencies | 
-                to_entries | 
-                map(if .key | startswith("@rock-js/") then .value = $version else . end) |
-                from_entries
-            )
-        
-        else . end |
-        
-        if has("peerDependencies") then
-            .peerDependencies = (
-                .peerDependencies | 
-                to_entries | 
-                map(if .key | startswith("@rock-js/") then .value = $version else . end) |
-                from_entries
-            )
-        else . end
+        # Update only existing dependency types
+        if has("dependencies") then .dependencies = update_deps(.dependencies) else . end |
+        if has("devDependencies") then .devDependencies = update_deps(.devDependencies) else . end |
+        if has("optionalDependencies") then .optionalDependencies = update_deps(.optionalDependencies) else . end |
+        if has("peerDependencies") then .peerDependencies = update_deps(.peerDependencies) else . end
     ' "$file" > "$temp_file"
     
     # Replace the original file with the updated one
     mv "$temp_file" "$file"
 }
 
+# Function to update package.json version
 update_package_json_version() {
     local file=$1
     echo "Updating version in $file..."
 
-    # Get the version from packages/cli/package.json
-    CLI_VERSION=$(jq -r '.version' packages/cli/package.json)
-    echo "Using CLI version: $CLI_VERSION"
+    # Create a temporary file
+    temp_file=$(mktemp)
 
     # Update the version in the package.json file
     jq --arg version "$CLI_VERSION" '.version = $version' "$file" > "$temp_file"
@@ -87,4 +71,4 @@ find ./packages -path "*/template/*" -name "package.json" -not -path "*/node_mod
     update_package_json "$file"
 done
 
-echo "Done! All @rock-js/* dependencies have been updated to version ^$CLI_VERSION." 
+echo "Done! All @rock-js/* and rock dependencies have been updated to version ^$CLI_VERSION." 
