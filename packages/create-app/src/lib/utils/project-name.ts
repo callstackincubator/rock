@@ -60,7 +60,11 @@ const javaKeywords = [
 
 const reservedNames = ['react', 'react-native', ...javaKeywords];
 
-export function validateProjectName(name: string) {
+export function validateProjectName(name?: string) {
+  if (!name) {
+    return 'Project name cannot be empty.';
+  }
+
   if (name.length === 0) {
     return 'Project name cannot be empty.';
   }

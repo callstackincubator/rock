@@ -17,7 +17,7 @@
     "publish:verdaccio": "npm publish --registry http://localhost:4873 --userconfig ../../.npmrc"
   },
   "dependencies": {
-    "@clack/prompts": "1.0.0-alpha.3",
+    "@clack/prompts": "1.0.0-alpha.4",
     "@expo/fingerprint": "^0.11.6",
     "@types/adm-zip": "^0.5.7",
     "adm-zip": "^0.5.16",

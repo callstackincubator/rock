@@ -29,7 +29,7 @@ export async function promptForGitHubToken() {
   const githubToken = (await promptPassword({
     message: 'Paste your GitHub Personal Access Token',
     validate: (value) =>
-      value.length === 0 ? 'Value is required.' : undefined,
+      value?.length === 0 ? 'Value is required.' : undefined,
   })) as string;
   cacheManager.set('githubToken', githubToken);
   return githubToken;
