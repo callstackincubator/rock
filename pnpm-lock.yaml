@@ -287,9 +287,6 @@ importers:
       '@react-native-community/cli-server-api':
         specifier: ^19.1.0
         version: 19.1.1
-      '@react-native/dev-middleware':
-        specifier: ^0.80.1
-        version: 0.80.1
       '@rock-js/tools':
         specifier: ^0.9.0
         version: link:../tools
@@ -311,6 +308,9 @@ importers:
     devDependencies:
       '@react-native/community-cli-plugin':
         specifier: 0.80.1
+        version: 0.80.1
+      '@react-native/dev-middleware':
+        specifier: ^0.80.1
         version: 0.80.1
       '@rock-js/config':
         specifier: ^0.9.0
