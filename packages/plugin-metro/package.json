@@ -19,7 +19,6 @@
   },
   "dependencies": {
     "@react-native-community/cli-server-api": "^19.1.0",
-    "@react-native/dev-middleware": "^0.80.1",
     "@rock-js/tools": "^0.9.0",
     "metro": "^0.82.2",
     "metro-config": "^0.82.2",
