@@ -1,5 +1,12 @@
 # @rnef/plugin-metro
 
+## 0.9.1
+
+### Patch Changes
+
+- 4018e5f: chore: remove @react-native/dev-middleware dep
+  - @rock-js/tools@0.9.1
+
 ## 0.9.0
 
 ### Minor Changes

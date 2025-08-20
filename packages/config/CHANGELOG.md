@@ -1,5 +1,12 @@
 # @rnef/config
 
+## 0.9.1
+
+### Patch Changes
+
+- @rock-js/provider-github@0.9.1
+- @rock-js/tools@0.9.1
+
 ## 0.9.0
 
 ### Minor Changes

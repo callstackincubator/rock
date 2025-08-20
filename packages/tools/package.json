@@ -1,6 +1,6 @@
 {
   "name": "@rock-js/tools",
-  "version": "0.9.0",
+  "version": "0.9.1",
   "type": "module",
   "types": "./dist/src/index.d.ts",
   "exports": {
@@ -31,7 +31,7 @@
     "tslib": "^2.3.0"
   },
   "devDependencies": {
-    "@rock-js/test-helpers": "^0.9.0"
+    "@rock-js/test-helpers": "^0.9.1"
   },
   "publishConfig": {
     "access": "public"
