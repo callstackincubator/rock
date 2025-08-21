@@ -97,12 +97,25 @@ describe('plugin applies default iOS config plugins correctly', () => {
     );
 
     // Apply the plugin
-    evalModsAsync(config, info);
+    await evalModsAsync(config, info);
 
     // Check the changed bundle identifier
     const changedProjectContent = await fs.readFile(projectPbxprojPath, 'utf8');
     expect(changedProjectContent).toContain(
       `PRODUCT_BUNDLE_IDENTIFIER = "${bundleIdentifier}";`
     );
+  });
+
+  test.skip('plugin applies withGoogle correctly', async () => {
+    let { config, info } = await getTestConfig();
+
+    config = withPlugins(config, [IOSConfig.Google.withGoogle]);
+
+    config = withDefaultBaseMods(config);
+
+    // Check something
+
+    // Apply the plugin
+    await evalModsAsync(config, info);
   });
 });

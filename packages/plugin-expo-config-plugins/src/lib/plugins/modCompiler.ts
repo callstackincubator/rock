@@ -11,7 +11,7 @@ import { getIosModFileProviders } from './withIosBaseMods.js';
 const withDefaultBaseMods: typeof expoWithDefaultBaseMods = (config, props) => {
   config = BaseMods.withIosBaseMods(config, {
     ...props,
-    providers: getIosModFileProviders(),
+    providers: getIosModFileProviders(config),
   });
   config = BaseMods.withAndroidBaseMods(config, {
     ...props,
@@ -100,7 +100,6 @@ export const withAndroidExpoPlugins: ConfigPlugin<{
 
     // strings.xml
     AndroidConfig.Name.withName,
-    // @ts-expect-error todo fix
     AndroidConfig.Locales.withLocales,
 
     // Dangerous -- these plugins run in reverse order.
