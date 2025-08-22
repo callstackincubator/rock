@@ -1,32 +1,3 @@
 {
-  "name": "ExpoConfigPluginsTestApp",
-  "ios": {
-    "infoPlist": {
-      "NSCameraUsageDescription": "[REASON]",
-      "NSMicrophoneUsageDescription": "[REASON]"
-    },
-    "config": {
-      "googleMapsApiKey": "my-google-maps-api-key",
-      "googleMobileAdsAppId": "my-google-mobile-ads-app-id",
-      "googleMobileAdsAutoInit": true,
-      "usesNonExemptEncryption": true
-    },
-    "googleServicesFile": "./GoogleService-Info.plist",
-    "requireFullScreen": true,
-    "buildNumber": "2",
-    "version": "1.2.3",
-    "jsEngine": "jsc",
-    "newArchEnabled": true
-  },
-  "android": {
-    "permissions": [
-      "android.permission.CAMERA",
-      "android.permission.RECORD_AUDIO"
-    ]
-  },
-  "orientation": "landscape",
-  "scheme": "dev.rnef.expo-config-plugins-test-app",
-  "version": "1.0.0",
-  "jsEngine": "jsc",
-  "newArchEnabled": true
+  "name": "ExpoConfigPluginsTestApp"
 }

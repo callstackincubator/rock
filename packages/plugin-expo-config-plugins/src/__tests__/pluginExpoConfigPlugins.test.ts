@@ -89,7 +89,7 @@ describe('plugin applies default iOS config plugins correctly', () => {
   test('plugin applies withBundleIdentifier correctly', async () => {
     let { config, info } = await getTestConfig();
 
-    const bundleIdentifier = config.scheme as string;
+    const bundleIdentifier = 'dev.rockjs.test';
     if (!config.ios) config.ios = {};
     config.ios.bundleIdentifier = bundleIdentifier;
 
@@ -184,5 +184,37 @@ describe('plugin applies default iOS config plugins correctly', () => {
     // Check that product name was updated
     const changedProjectContent = await fs.readFile(projectPbxprojPath, 'utf8');
     expect(changedProjectContent).toContain(`PRODUCT_NAME = "${config.name}"`);
+  });
+
+  test('plugin applies withOrientation correctly', async () => {
+    let { config, info } = await getTestConfig();
+
+    // Add orientation configuration to the config
+    config.orientation = 'landscape';
+
+    config = withPlugins(config, [IOSConfig.Orientation.withOrientation]);
+
+    config = withDefaultBaseMods(config);
+
+    const infoPlistPath = `${TEMP_DIR}/ios/${info.iosProjectName}/Info.plist`;
+
+    // Check initial state
+    const infoPlistContent = await fs.readFile(infoPlistPath, 'utf8');
+    expect(infoPlistContent).toMatch(
+      new RegExp(
+        '<key>UISupportedInterfaceOrientations</key>\\s*<array>\\s*<string>UIInterfaceOrientationPortrait</string>\\s*<string>UIInterfaceOrientationLandscapeLeft</string>\\s*<string>UIInterfaceOrientationLandscapeRight</string>\\s*</array>'
+      )
+    );
+
+    // Apply the plugin
+    await evalModsAsync(config, info);
+
+    // Check that orientation was updated
+    const changedInfoPlistContent = await fs.readFile(infoPlistPath, 'utf8');
+    expect(changedInfoPlistContent).toMatch(
+      new RegExp(
+        '<key>UISupportedInterfaceOrientations</key>\\s*<array>\\s*<string>UIInterfaceOrientationLandscapeLeft</string>\\s*<string>UIInterfaceOrientationLandscapeRight</string>\\s*</array>'
+      )
+    );
   });
 });
