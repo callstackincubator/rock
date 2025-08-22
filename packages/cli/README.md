@@ -46,7 +46,7 @@ Rock is designed for incremental adoption. Whether you're just starting with Rea
 To migrate an existing project, open a terminal in your project root and run:
 
 ```shell
-npm create rock-app
+npm create rock
 ```
 
 ### Creating a new project
@@ -54,7 +54,7 @@ npm create rock-app
 To create a fresh React Native app with Rock, open a terminal and run:
 
 ```shell
-npm create rock-app
+npm create rock
 ```
 
 ### Adding to an existing native project
@@ -62,7 +62,7 @@ npm create rock-app
 To add React Native to an existing iOS or Android app with Rock, use our Brownfield plugins:
 
 ```shell
-npm create rock-app
+npm create rock
 # ...
 ◆  What plugins do you want to start with?
 │  ◼ brownfield-ios

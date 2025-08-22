@@ -5,7 +5,7 @@ A CLI tool for creating new Rock projects with customizable templates, platforms
 ## Usage
 
 ```bash
-npm create rock-app my-app
+npm create rock
 ```
 
 ## Features
@@ -32,19 +32,19 @@ npm create rock-app my-app
 
 ```bash
 # Create a basic project
-npm create rock-app my-app
+npm create rock
 
 # Create with specific platforms
-npm create rock-app my-app --platforms ios android
+npm create rock --platforms ios android
 
 # Create with brownfield plugins
-npm create rock-app my-app --plugins brownfield-ios brownfield-android
+npm create rock --plugins @rock-js/plugin-brownfield-ios @rock-js/plugin-brownfield-android
 
 # Create with Re.Pack bundler
-npm create rock-app my-app --bundler repack
+npm create rock --bundler repack
 
 # Create and install dependencies
-npm create rock-app my-app --install
+npm create rock --install
 ```
 
 ## Available Templates
@@ -58,8 +58,8 @@ npm create rock-app my-app --install
 
 ## Available Plugins
 
-- **brownfield-ios** - iOS brownfield integration
-- **brownfield-android** - Android brownfield integration
+- **@rock-js/plugin-brownfield-ios** - iOS brownfield integration
+- **@rock-js/plugin-brownfield-android** - Android brownfield integration
 
 ## Available Bundlers
 
