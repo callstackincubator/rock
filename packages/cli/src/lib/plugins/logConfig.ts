@@ -51,7 +51,11 @@ export const logConfig = async (
       : ownConfig.platforms;
 
   for (const platform in platforms) {
-    if (platforms[platform] && platforms[platform].autolinkingConfig && platforms[platform].autolinkingConfig.project) {
+    if (
+      platforms[platform] &&
+      platforms[platform].autolinkingConfig &&
+      platforms[platform].autolinkingConfig.project
+    ) {
       config.project[platform] = platforms[platform].autolinkingConfig.project;
     }
   }

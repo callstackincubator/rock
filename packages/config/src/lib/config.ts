@@ -17,16 +17,6 @@ export type PlatformOutput = PluginOutput & {
   autolinkingConfig: { project: Record<string, unknown> | undefined };
 };
 
-export type EnvConfig = {
-  common?: string[];
-  ios?: string[];
-  android?: string[];
-};
-
-export type ExtendedFingerprintSources = FingerprintSources & {
-  env?: EnvConfig;
-};
-
 export type PluginApi = {
   registerCommand: (command: CommandType) => void;
   getProjectRoot: () => string;
@@ -36,7 +26,7 @@ export type PluginApi = {
   getRemoteCacheProvider: () => Promise<
     null | undefined | (() => RemoteBuildCache)
   >;
-  getFingerprintOptions: () => ExtendedFingerprintSources;
+  getFingerprintOptions: () => FingerprintSources & { env?: string[] };
 };
 
 type PluginType = (args: PluginApi) => PluginOutput;
@@ -52,21 +42,21 @@ export type CommandType = {
   name: string;
   description: string;
   action: ActionType;
-    /** Positional arguments */
-args?: Array<{
+  /** Positional arguments */
+  args?: Array<{
     name: string;
     description: string;
     default?: ArgValue | undefined;
   }>;
-    /** Flags */
-options?: Array<{
+  /** Flags */
+  options?: Array<{
     name: string;
     description: string;
     default?: ArgValue | undefined;
     parse?: (value: string, previous: ArgValue) => ArgValue;
   }>;
-    /** Internal property to assign plugin name to particualr commands  */
-__origin?: string;
+  /** Internal property to assign plugin name to particualr commands  */
+  __origin?: string;
 };
 
 export type ConfigType = {
@@ -81,7 +71,7 @@ export type ConfigType = {
   fingerprint?: {
     extraSources?: string[];
     ignorePaths?: string[];
-    env?: EnvConfig;
+    env?: string[];
   };
 };
 
@@ -188,7 +178,7 @@ export async function getConfig(
       return validatedConfig.remoteCacheProvider;
     },
     getFingerprintOptions: () =>
-      validatedConfig.fingerprint as ExtendedFingerprintSources,
+      validatedConfig.fingerprint as FingerprintSources & { env?: string[] },
   };
 
   const platforms: Record<string, PlatformOutput> = {};
@@ -255,7 +245,8 @@ function resolveReactNativePath(root: string) {
 /**
  *
  * Assigns __origin property to each command in the config for later use in error handling.
- */function assignOriginToCommand(
+ */
+function assignOriginToCommand(
   plugin: PluginType,
   api: PluginApi,
   config: ConfigType,

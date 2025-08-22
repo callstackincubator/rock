@@ -32,12 +32,6 @@ const CommandTypeSchema = Joi.object({
     .optional(),
 }).unknown(false);
 
-const EnvConfigSchema = Joi.object({
-  common: Joi.array().items(Joi.string()).optional(),
-  ios: Joi.array().items(Joi.string()).optional(),
-  android: Joi.array().items(Joi.string()).optional(),
-}).optional();
-
 const ConfigTypeSchema = Joi.object({
   root: Joi.string().optional(),
   reactNativeVersion: Joi.string().optional(),
@@ -56,7 +50,7 @@ const ConfigTypeSchema = Joi.object({
   fingerprint: Joi.object({
     extraSources: Joi.array().items(Joi.string()).default([]),
     ignorePaths: Joi.array().items(Joi.string()).default([]),
-    env: EnvConfigSchema,
+    env: Joi.array().items(Joi.string()).optional(),
   })
     .default({
       extraSources: [],
