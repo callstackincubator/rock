@@ -130,7 +130,7 @@ describe('plugin applies default iOS config plugins correctly', () => {
     await evalModsAsync(config, info);
   });
 
-  test.only('plugin applies withDisplayName correctly', async () => {
+  test('plugin applies withDisplayName correctly', async () => {
     let { config, info } = await getTestConfig();
 
     // Edit the display name
@@ -160,5 +160,29 @@ describe('plugin applies default iOS config plugins correctly', () => {
         `<key>CFBundleDisplayName</key>\\s*<string>${config.name}</string>`
       )
     );
+  });
+
+  test('plugin applies withProductName correctly', async () => {
+    let { config, info } = await getTestConfig();
+
+    // Edit the product name
+    config.name = 'TestProductName';
+
+    config = withPlugins(config, [IOSConfig.Name.withProductName]);
+
+    config = withDefaultBaseMods(config);
+
+    const projectPbxprojPath = `${TEMP_DIR}/ios/${info.iosProjectName}.xcodeproj/project.pbxproj`;
+
+    // Check initial state
+    const projectContent = await fs.readFile(projectPbxprojPath, 'utf8');
+    expect(projectContent).toContain(`PRODUCT_NAME = ${info.iosProjectName}`);
+
+    // Apply the plugin
+    await evalModsAsync(config, info);
+
+    // Check that product name was updated
+    const changedProjectContent = await fs.readFile(projectPbxprojPath, 'utf8');
+    expect(changedProjectContent).toContain(`PRODUCT_NAME = "${config.name}"`);
   });
 });
