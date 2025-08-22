@@ -29,4 +29,5 @@ export type ProjectInfo = {
   platforms: ModPlatform[];
   packageJsonPath: string;
   appJsonPath: string;
+  iosProjectName: string;
 };

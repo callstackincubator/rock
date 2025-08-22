@@ -1,4 +1,4 @@
-import fs from 'node:fs';
+import fs from 'node:fs/promises';
 import path from 'node:path';
 import type { PluginApi, PluginOutput } from '@rnef/config';
 import { applyConfigPlugins } from './apply.js';
@@ -16,10 +16,21 @@ export const pluginExpoConfigPlugins =
       description: 'Applies config plugins to the project.',
       action: async (args: ConfigPluginsArgs) => {
         const packageJsonPath = path.join(api.getProjectRoot(), 'package.json');
-        const content = fs.readFileSync(packageJsonPath, 'utf-8');
-        if (!content.includes('"@expo/config-plugins"')) {
+        const iosDirPath = path.join(api.getProjectRoot(), 'ios');
+
+        const [packageJsonContent, iosDirContent] = await Promise.all([
+          fs.readFile(packageJsonPath, 'utf-8'),
+          fs.readdir(iosDirPath),
+        ]);
+
+        if (!packageJsonContent.includes('"@expo/config-plugins"')) {
           return;
         }
+
+        const iosProjectName =
+          iosDirContent
+            .find((dir) => dir.includes('.xcodeproj'))
+            ?.split('.')[0] ?? '';
 
         const platforms = args.platforms || Object.keys(api.getPlatforms());
 
@@ -28,6 +39,7 @@ export const pluginExpoConfigPlugins =
           platforms: platforms as ProjectInfo['platforms'],
           packageJsonPath,
           appJsonPath: path.join(api.getProjectRoot(), 'app.json'),
+          iosProjectName,
         });
       },
       options: [

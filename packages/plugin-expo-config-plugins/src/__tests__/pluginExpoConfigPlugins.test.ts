@@ -49,15 +49,26 @@ afterEach(() => {
 
 async function getTestConfig() {
   const appJsonPath = path.join(pluginApi.getProjectRoot(), 'app.json');
+  const iosDirPath = path.join(pluginApi.getProjectRoot(), 'ios');
 
-  const content = await fs.readFile(appJsonPath, 'utf-8');
-  const { expo, ...rest } = JSON.parse(content);
+  const [appJsonContent, iosDirContent] = await Promise.all([
+    fs.readFile(appJsonPath, 'utf-8'),
+    fs.readdir(iosDirPath),
+  ]);
+
+  const { expo, ...rest } = JSON.parse(appJsonContent);
   const appJsonConfig = expo || rest;
+
+  const iosProjectName =
+    iosDirContent.find((dir) => dir.includes('.xcodeproj'))?.split('.')[0] ??
+    '';
 
   const info = {
     projectRoot: pluginApi.getProjectRoot(),
     platforms: ['ios'] as ProjectInfo['platforms'],
     packageJsonPath: path.join(pluginApi.getProjectRoot(), 'package.json'),
+    appJsonPath,
+    iosProjectName,
   };
 
   let config = withInternal(appJsonConfig, info);
@@ -88,7 +99,7 @@ describe('plugin applies default iOS config plugins correctly', () => {
 
     config = withDefaultBaseMods(config);
 
-    const projectPbxprojPath = `${TEMP_DIR}/ios/ExpoConfigPluginsTestApp.xcodeproj/project.pbxproj`;
+    const projectPbxprojPath = `${TEMP_DIR}/ios/${info.iosProjectName}.xcodeproj/project.pbxproj`;
 
     // Check the initial bundle identifier
     const projectContent = await fs.readFile(projectPbxprojPath, 'utf8');
@@ -117,5 +128,37 @@ describe('plugin applies default iOS config plugins correctly', () => {
 
     // Apply the plugin
     await evalModsAsync(config, info);
+  });
+
+  test.only('plugin applies withDisplayName correctly', async () => {
+    let { config, info } = await getTestConfig();
+
+    // Edit the display name
+    config.name = 'TestAppEditedName';
+
+    config = withPlugins(config, [IOSConfig.Name.withDisplayName]);
+
+    config = withDefaultBaseMods(config);
+
+    const infoPlistPath = `${TEMP_DIR}/ios/${info.iosProjectName}/Info.plist`;
+
+    // Check initial state
+    const infoPlistContent = await fs.readFile(infoPlistPath, 'utf8');
+    expect(infoPlistContent).toMatch(
+      new RegExp(
+        `<key>CFBundleDisplayName</key>\\s*<string>${info.iosProjectName}</string>`
+      )
+    );
+
+    // Apply the plugin
+    await evalModsAsync(config, info);
+
+    // Check that display name was updated
+    const changedInfoPlistContent = await fs.readFile(infoPlistPath, 'utf8');
+    expect(changedInfoPlistContent).toMatch(
+      new RegExp(
+        `<key>CFBundleDisplayName</key>\\s*<string>${config.name}</string>`
+      )
+    );
   });
 });

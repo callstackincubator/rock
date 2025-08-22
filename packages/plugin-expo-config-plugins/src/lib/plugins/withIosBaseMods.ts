@@ -19,17 +19,17 @@ export function getIosModFileProviders(
     finalized: expoProviders.finalized,
     appDelegate: modifyFilePath(
       expoProviders.appDelegate,
-      `${config.name}/AppDelegate.swift`
+      `${config._internal?.['iosProjectName']}/AppDelegate.swift`
     ),
     // @ts-expect-error todo fix
     expoPlist: nullProvider,
     xcodeproj: modifyFilePath(
       expoProviders.xcodeproj,
-      `${config.name}.xcodeproj/project.pbxproj`
+      `${config._internal?.['iosProjectName']}.xcodeproj/project.pbxproj`
     ),
     infoPlist: modifyFilePath(
       expoProviders.infoPlist,
-      `${config.name}/Info.plist`
+      `${config._internal?.['iosProjectName']}/Info.plist`
     ),
     // @ts-expect-error todo fix
     entitlements: nullProvider,
