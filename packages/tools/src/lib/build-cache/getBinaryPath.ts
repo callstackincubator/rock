@@ -64,6 +64,13 @@ async function warnIgnoredFiles(
   fingerprintOptions: FingerprintSources,
   sourceDir: string,
 ) {
+  try {
+    await spawn('git', ['rev-parse', '--git-dir'], { cwd: sourceDir });
+  } catch {
+    // Not a git repository, skip the git clean check
+    return;
+  }
+
   const ignorePaths = [
     ...(fingerprintOptions?.ignorePaths ?? []),
     ...EXPO_DEFAULT_IGNORE_PATHS,
