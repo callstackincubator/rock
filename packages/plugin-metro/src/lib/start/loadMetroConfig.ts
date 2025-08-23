@@ -27,7 +27,7 @@ function getOverrideConfig(
 ): InputConfigT {
   const outOfTreePlatforms = Object.keys(ctx.platforms).filter(
     // @ts-expect-error - TBD
-    (platform) => ctx.platforms[platform].npmPackageName,
+    (platform) => ctx.platforms[platform].autolinkingConfig?.project.npmPackageName,
   );
   const resolver: Partial<ConfigT['resolver']> = {
     platforms: [...Object.keys(ctx.platforms), 'native'],
@@ -39,7 +39,7 @@ function getOverrideConfig(
       outOfTreePlatforms.reduce<{ [platform: string]: string }>(
         (result, platform) => {
           // @ts-expect-error - TBD
-          result[platform] = ctx.platforms[platform].npmPackageName;
+          result[platform] = ctx.platforms[platform].autolinkingConfig?.project.npmPackageName;
           return result;
         },
         {},
@@ -62,7 +62,7 @@ function getOverrideConfig(
         ...outOfTreePlatforms.map((platform) =>
           require.resolve(
             // @ts-expect-error - TBD
-            `${ctx.platforms[platform].npmPackageName}/Libraries/Core/InitializeCore`,
+            `${ctx.platforms[platform].autolinkingConfig?.project.npmPackageName}/Libraries/Core/InitializeCore`,
             { paths: [ctx.root] },
           ),
         ),

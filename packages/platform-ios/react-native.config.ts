@@ -9,5 +9,10 @@ export default {
       projectConfig: getProjectConfig({ platformName: 'ios' }),
       dependencyConfig: getDependencyConfig({ platformName: 'ios' }),
     },
+    macos: {
+      projectConfig: getProjectConfig({ platformName: 'macos' }),
+      dependencyConfig: getDependencyConfig({ platformName: 'macos' }),
+      npmPackageName: 'react-native-macos'
+    },
   },
 };

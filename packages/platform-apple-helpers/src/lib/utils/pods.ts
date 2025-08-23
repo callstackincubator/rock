@@ -44,7 +44,14 @@ export async function installPodsIfNeeded(
     : true;
 
   if (!podsDirExists || hashChanged) {
-    await runCodegen({ projectRoot, platformName, reactNativePath, sourceDir });
+    if (platformName !== 'macos') {
+      await runCodegen({
+        projectRoot,
+        platformName,
+        reactNativePath,
+        sourceDir,
+      });
+    }
     await installPods({
       projectRoot,
       sourceDir,

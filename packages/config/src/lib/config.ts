@@ -166,8 +166,7 @@ export async function getConfig(
     getProjectRoot: () => projectRoot,
     getReactNativeVersion: () => getReactNativeVersion(projectRoot),
     getReactNativePath: () => resolveReactNativePath(projectRoot),
-    getPlatforms: () =>
-      validatedConfig.platforms as { [platform: string]: object },
+    getPlatforms: () => platforms,
     getRemoteCacheProvider: async () => {
       // special case for github-actions
       if (validatedConfig.remoteCacheProvider === 'github-actions') {
