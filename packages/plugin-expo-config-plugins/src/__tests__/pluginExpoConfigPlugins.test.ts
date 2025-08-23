@@ -11,6 +11,7 @@ import {
   withDefaultBaseMods,
   withPlugins,
 } from '@expo/config-plugins';
+import * as plist from 'plist';
 
 let TEMP_DIR: string;
 
@@ -76,6 +77,15 @@ async function getTestConfig() {
   return { config, info };
 }
 
+async function parsePlistForKey(path: string, key: string) {
+  const infoPlistContent = await fs.readFile(path, 'utf8');
+  const parsed = plist.parse(infoPlistContent) as Record<
+    string,
+    plist.PlistValue
+  >;
+  return parsed[key];
+}
+
 test('plugin is called with correct arguments and returns its name and description', () => {
   const plugin = pluginExpoConfigPlugins()(pluginApi);
 
@@ -137,29 +147,28 @@ describe('plugin applies default iOS config plugins correctly', () => {
     config.name = 'TestAppEditedName';
 
     config = withPlugins(config, [IOSConfig.Name.withDisplayName]);
-
     config = withDefaultBaseMods(config);
 
     const infoPlistPath = `${TEMP_DIR}/ios/${info.iosProjectName}/Info.plist`;
 
     // Check initial state
-    const infoPlistContent = await fs.readFile(infoPlistPath, 'utf8');
-    expect(infoPlistContent).toMatch(
-      new RegExp(
-        `<key>CFBundleDisplayName</key>\\s*<string>${info.iosProjectName}</string>`
-      )
+    const initialDisplayName = await parsePlistForKey(
+      infoPlistPath,
+      'CFBundleDisplayName'
     );
+
+    expect(initialDisplayName).toBe(info.iosProjectName);
 
     // Apply the plugin
     await evalModsAsync(config, info);
 
     // Check that display name was updated
-    const changedInfoPlistContent = await fs.readFile(infoPlistPath, 'utf8');
-    expect(changedInfoPlistContent).toMatch(
-      new RegExp(
-        `<key>CFBundleDisplayName</key>\\s*<string>${config.name}</string>`
-      )
+    const changedDisplayName = await parsePlistForKey(
+      infoPlistPath,
+      'CFBundleDisplayName'
     );
+
+    expect(changedDisplayName).toBe(config.name);
   });
 
   test('plugin applies withProductName correctly', async () => {
@@ -198,23 +207,30 @@ describe('plugin applies default iOS config plugins correctly', () => {
 
     const infoPlistPath = `${TEMP_DIR}/ios/${info.iosProjectName}/Info.plist`;
 
-    // Check initial state
-    const infoPlistContent = await fs.readFile(infoPlistPath, 'utf8');
-    expect(infoPlistContent).toMatch(
-      new RegExp(
-        '<key>UISupportedInterfaceOrientations</key>\\s*<array>\\s*<string>UIInterfaceOrientationPortrait</string>\\s*<string>UIInterfaceOrientationLandscapeLeft</string>\\s*<string>UIInterfaceOrientationLandscapeRight</string>\\s*</array>'
-      )
+    const initialOrientation = await parsePlistForKey(
+      infoPlistPath,
+      'UISupportedInterfaceOrientations'
+    );
+
+    expect(initialOrientation).toContain('UIInterfaceOrientationPortrait');
+    expect(initialOrientation).toContain('UIInterfaceOrientationLandscapeLeft');
+    expect(initialOrientation).toContain(
+      'UIInterfaceOrientationLandscapeRight'
     );
 
     // Apply the plugin
     await evalModsAsync(config, info);
 
     // Check that orientation was updated
-    const changedInfoPlistContent = await fs.readFile(infoPlistPath, 'utf8');
-    expect(changedInfoPlistContent).toMatch(
-      new RegExp(
-        '<key>UISupportedInterfaceOrientations</key>\\s*<array>\\s*<string>UIInterfaceOrientationLandscapeLeft</string>\\s*<string>UIInterfaceOrientationLandscapeRight</string>\\s*</array>'
-      )
+    const changedOrientation = await parsePlistForKey(
+      infoPlistPath,
+      'UISupportedInterfaceOrientations'
+    );
+
+    expect(changedOrientation).not.toContain('UIInterfaceOrientationPortrait');
+    expect(changedOrientation).toContain('UIInterfaceOrientationLandscapeLeft');
+    expect(changedOrientation).toContain(
+      'UIInterfaceOrientationLandscapeRight'
     );
   });
 });
