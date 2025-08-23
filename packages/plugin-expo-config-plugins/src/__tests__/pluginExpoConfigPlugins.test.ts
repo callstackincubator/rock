@@ -304,4 +304,42 @@ describe('plugin applies default iOS config plugins correctly', () => {
 
     expect(changedScheme).toContain(config.scheme);
   });
+
+  test('plugin applies withUsesNonExemptEncryption correctly', async () => {
+    let { config, info } = await getTestConfig();
+
+    // Add uses non exempt encryption to the config
+    if (!config.ios) {
+      config.ios = {
+        config: {
+          usesNonExemptEncryption: true,
+        },
+      };
+    }
+
+    config = withPlugins(config, [
+      IOSConfig.UsesNonExemptEncryption.withUsesNonExemptEncryption,
+    ]);
+
+    config = withDefaultBaseMods(config);
+
+    const infoPlistPath = `${TEMP_DIR}/ios/${info.iosProjectName}/Info.plist`;
+
+    // Check initial state
+    const initialUsesNonExemptEncryption = await parsePlistForKey(
+      infoPlistPath,
+      'ITSAppUsesNonExemptEncryption'
+    );
+    expect(initialUsesNonExemptEncryption).toBeUndefined();
+
+    // Apply the plugin
+    await evalModsAsync(config, info);
+
+    // Check that uses non exempt encryption was added
+    const changedUsesNonExemptEncryption = await parsePlistForKey(
+      infoPlistPath,
+      'ITSAppUsesNonExemptEncryption'
+    );
+    expect(changedUsesNonExemptEncryption).toBe(true);
+  });
 });
