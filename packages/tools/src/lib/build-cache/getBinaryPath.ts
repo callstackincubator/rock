@@ -79,6 +79,7 @@ async function warnIgnoredFiles(
     ...(fingerprintOptions?.ignorePaths ?? []),
     ...EXPO_DEFAULT_IGNORE_PATHS,
     ...DEFAULT_IGNORE_PATHS,
+    // TODO: add here ios workspace path
   ];
   const { output } = await spawn('git', [
     'clean',

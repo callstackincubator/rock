@@ -1,7 +1,7 @@
-import crypto from 'node:crypto';
-import path from 'node:path';
-import type { FingerprintSource, HashSource } from '@expo/fingerprint';
 import { createFingerprintAsync } from '@expo/fingerprint';
+import type { FingerprintSource, HashSource } from '@expo/fingerprint';
+import crypto from 'node:crypto';
+import { isAbsolute, join, relative } from 'node:path';
 import { RockError } from '../error.js';
 import logger from '../logger.js';
 import { spawn } from '../spawn.js';
@@ -26,6 +26,7 @@ export const DEFAULT_IGNORE_PATHS = [
   'android/local.properties',
   'android/.idea',
   'android/.gradle',
+  'ios/Podfile.lock',
 ];
 
 export type FingerprintSources = {
@@ -59,15 +60,27 @@ export async function nativeFingerprint(
     { cwd: path, stdio: 'pipe', preferLocal: true },
   );
 
+  const config = JSON.parse(autolinkingConfigString); // FIXME: it should be typed
+
   const autolinkingSources = parseAutolinkingSources({
-    config: JSON.parse(autolinkingConfigString),
+    config,
     reasons: ['rncoreAutolinking'],
     contentsId: 'rncoreAutolinkingConfig',
   });
+  const root = config.root;
+  const iosWorkspacePath = config.project.ios
+    ? relative(
+        root,
+        join(
+          config.project.ios.sourceDir,
+          config.project.ios.xcodeProject.name,
+        ),
+      )
+    : '';
 
   const fingerprint = await createFingerprintAsync(path, {
     platforms: [platform],
-    dirExcludes: DEFAULT_IGNORE_PATHS,
+    dirExcludes: [...DEFAULT_IGNORE_PATHS, iosWorkspacePath],
     extraSources: [
       ...autolinkingSources,
       ...processExtraSources(options.extraSources, path, options.ignorePaths),
@@ -154,7 +167,7 @@ function stripAutolinkingAbsolutePaths(dependency: any, root: string): void {
   const cmakeDepRoot =
     process.platform === 'win32' ? toPosixPath(dependencyRoot) : dependencyRoot;
 
-  dependency.root = toPosixPath(path.relative(root, dependencyRoot));
+  dependency.root = toPosixPath(relative(root, dependencyRoot));
   for (const platformData of Object.values<any>(dependency.platforms)) {
     for (const [key, value] of Object.entries<any>(platformData ?? {})) {
       let newValue;
@@ -166,11 +179,11 @@ function stripAutolinkingAbsolutePaths(dependency: any, root: string): void {
         // we have to check startsWith with the same slashes.
         // @todo revisit windows logic
         newValue = value?.startsWith?.(cmakeDepRoot)
-          ? toPosixPath(path.relative(root, value))
+          ? toPosixPath(relative(root, value))
           : value;
       } else {
         newValue = value?.startsWith?.(dependencyRoot)
-          ? toPosixPath(path.relative(root, value))
+          ? toPosixPath(relative(root, value))
           : value;
       }
       platformData[key] = newValue;
