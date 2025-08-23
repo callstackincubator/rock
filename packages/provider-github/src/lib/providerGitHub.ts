@@ -34,6 +34,10 @@ export class GitHubBuildCache implements RemoteBuildCache {
     limit?: number;
   }): Promise<RemoteArtifact[]> {
     const repoDetails = await this.getRepoDetails();
+    if (!repoDetails) {
+      return [];
+    }
+
     const artifacts = await fetchGitHubArtifactsByName(
       artifactName,
       repoDetails,
@@ -52,6 +56,9 @@ export class GitHubBuildCache implements RemoteBuildCache {
     artifactName: string;
   }): Promise<Response> {
     const repoDetails = await this.getRepoDetails();
+    if (!repoDetails) {
+      return new Response(null, { status: 204, statusText: 'No Content' });
+    }
     const artifacts = await this.list({ artifactName });
     if (artifacts.length === 0) {
       throw new Error(`No artifact found with name "${artifactName}"`);
@@ -74,6 +81,10 @@ export class GitHubBuildCache implements RemoteBuildCache {
     skipLatest?: boolean;
   }): Promise<RemoteArtifact[]> {
     const repoDetails = await this.getRepoDetails();
+    if (!repoDetails) {
+      return [];
+    }
+
     const artifacts = await fetchGitHubArtifactsByName(
       artifactName,
       repoDetails,

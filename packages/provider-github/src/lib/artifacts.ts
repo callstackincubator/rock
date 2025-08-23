@@ -34,9 +34,13 @@ type GitHubArtifactResponse = {
 
 export async function fetchGitHubArtifactsByName(
   name: string | undefined,
-  repoDetails: GitHubRepoDetails,
+  repoDetails: GitHubRepoDetails | null,
   limit?: number,
 ): Promise<GitHubArtifact[] | []> {
+  if (!repoDetails) {
+    return [];
+  }
+
   let page = 1;
   const result: GitHubArtifact[] = [];
   const owner = repoDetails.owner;

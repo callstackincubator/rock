@@ -41,8 +41,13 @@ export type GitHubRepoDetails = {
   token: string;
 };
 
-export async function detectGitHubRepoDetails(): Promise<GitHubRepoDetails> {
+export async function detectGitHubRepoDetails(): Promise<GitHubRepoDetails | null> {
   const gitRemote = await getGitRemote();
+
+  if (!gitRemote) {
+    return null;
+  }
+
   try {
     const { output: url } = await spawn(
       'git',
