@@ -233,4 +233,38 @@ describe('plugin applies default iOS config plugins correctly', () => {
       'UIInterfaceOrientationLandscapeRight'
     );
   });
+
+  test('plugin applies withRequiresFullScreen correctly', async () => {
+    let { config, info } = await getTestConfig();
+
+    // Add requires full screen configuration to the config
+    if (!config.ios) config.ios = {};
+    config.ios.requireFullScreen = true;
+
+    config = withPlugins(config, [
+      IOSConfig.RequiresFullScreen.withRequiresFullScreen,
+    ]);
+
+    config = withDefaultBaseMods(config);
+
+    const infoPlistPath = `${TEMP_DIR}/ios/${info.iosProjectName}/Info.plist`;
+
+    // Check initial state
+    const initialRequiresFullScreen = await parsePlistForKey(
+      infoPlistPath,
+      'UIRequiresFullScreen'
+    );
+
+    expect(initialRequiresFullScreen).toBeUndefined();
+
+    // Apply the plugin
+    await evalModsAsync(config, info);
+
+    // Check that requires full screen was added
+    const changedRequiresFullScreen = await parsePlistForKey(
+      infoPlistPath,
+      'UIRequiresFullScreen'
+    );
+    expect(changedRequiresFullScreen).toBe(true);
+  });
 });
