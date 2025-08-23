@@ -83,6 +83,9 @@ async function parsePlistForKey(path: string, key: string) {
     string,
     plist.PlistValue
   >;
+
+  console.log('parsed', parsed);
+
   return parsed[key];
 }
 
@@ -266,5 +269,39 @@ describe('plugin applies default iOS config plugins correctly', () => {
       'UIRequiresFullScreen'
     );
     expect(changedRequiresFullScreen).toBe(true);
+  });
+
+  test('plugin applies withScheme correctly', async () => {
+    let { config, info } = await getTestConfig();
+
+    // Add scheme to the config
+    config.scheme = 'dev.rockjs.test';
+
+    config = withPlugins(config, [IOSConfig.Scheme.withScheme]);
+
+    config = withDefaultBaseMods(config);
+
+    const infoPlistPath = `${TEMP_DIR}/ios/${info.iosProjectName}/Info.plist`;
+
+    // Check initial state
+    const initialScheme = await parsePlistForKey(
+      infoPlistPath,
+      'CFBundleURLTypes'
+    );
+
+    expect(initialScheme).toBeUndefined();
+
+    // Apply the plugin
+    await evalModsAsync(config, info);
+
+    // Check that scheme was added
+    const urlTypes = (await parsePlistForKey(
+      infoPlistPath,
+      'CFBundleURLTypes'
+    )) as plist.PlistObject[];
+
+    const changedScheme = urlTypes[0]['CFBundleURLSchemes'];
+
+    expect(changedScheme).toContain(config.scheme);
   });
 });
