@@ -17,9 +17,7 @@
     "publish:verdaccio": "npm publish --registry http://localhost:4873 --userconfig ../../.npmrc",
     "e2e": "CI=true vitest --config vite.e2e.config.js"
   },
-  "bin": {
-    "create-rock": "./dist/src/bin.js"
-  },
+  "bin": "./dist/src/bin.js",
   "dependencies": {
     "@rock-js/tools": "^0.9.1",
     "gradient-string": "^3.0.0",
