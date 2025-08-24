@@ -404,4 +404,36 @@ describe('plugin applies default iOS config plugins correctly', () => {
     );
     expect(changedVersion).toBe(config.ios?.version);
   });
+
+  test.only('plugin applies withGoogleServicesFile correctly', async () => {
+    let { config, info } = await getTestConfig();
+
+    // Add Google services file to the config
+    if (!config.ios) config.ios = {};
+    config.ios.googleServicesFile = './GoogleService-Info.plist';
+
+    config = withPlugins(config, [IOSConfig.Google.withGoogleServicesFile]);
+
+    config = withDefaultBaseMods(config);
+
+    const projectPbxprojPath = `${TEMP_DIR}/ios/${info.iosProjectName}.xcodeproj/project.pbxproj`;
+
+    // Check initial state
+    const projectContent = await fs.readFile(projectPbxprojPath, 'utf8');
+    expect(projectContent).not.toContain('GoogleService-Info.plist');
+
+    // Apply the plugin
+    await evalModsAsync(config, info);
+
+    // Check that Google services file was added
+    const changedProjectContent = await fs.readFile(projectPbxprojPath, 'utf8');
+    expect(changedProjectContent).toContain('GoogleService-Info.plist');
+
+    const googleServicePath = `${TEMP_DIR}/ios/${info.iosProjectName}/GoogleService-Info.plist`;
+    const googleServiceFileExists = await fs
+      .access(googleServicePath)
+      .then(() => true)
+      .catch(() => false);
+    expect(googleServiceFileExists).toBe(true);
+  });
 });
