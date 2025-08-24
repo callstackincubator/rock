@@ -7,6 +7,7 @@ import {
   color,
   colorLink,
   formatArtifactName,
+  getInfoPlist,
   getLocalArtifactPath,
   getLocalBinaryPath,
   handleDownloadResponse,
@@ -14,7 +15,6 @@ import {
   logger,
   relativeToCwd,
   RockError,
-  spawn,
   spinner,
 } from '@rock-js/tools';
 import AdmZip from 'adm-zip';
@@ -195,7 +195,8 @@ ${output
 
         // Upload index.html and manifest.plist for ad-hoc distribution
         if (args.adHoc) {
-          const { version, bundleIdentifier } = await getInfoPlist(binaryPath);
+          const { version, bundleIdentifier } =
+            await getInfoPlistFromIpa(binaryPath);
           const { url: urlIndexHtml, getResponse: getResponseIndexHtml } =
             await remoteBuildCache.upload({
               artifactName,
@@ -279,7 +280,7 @@ ${deletedArtifacts
   return null;
 }
 
-async function getInfoPlist(binaryPath: string) {
+async function getInfoPlistFromIpa(binaryPath: string) {
   const ipaFileName = path.basename(binaryPath);
   const appName = path.basename(ipaFileName, '.ipa');
   const ipaPath = binaryPath;
@@ -295,33 +296,15 @@ async function getInfoPlist(binaryPath: string) {
   const infoPlistBuffer = infoPlistEntry.getData();
   const tempPlistPath = path.join(os.tmpdir(), 'rock-temp-info.plist');
   fs.writeFileSync(tempPlistPath, infoPlistBuffer);
-
-  let version = 'unknown';
-  let bundleIdentifier = 'unknown';
-  try {
-    await spawn('plutil', [
-      '-convert',
-      'json',
-      '-o',
-      tempPlistPath,
-      tempPlistPath,
-    ]);
-
-    const jsonContent = fs.readFileSync(tempPlistPath, 'utf8');
-    const infoPlistJson = JSON.parse(jsonContent) as Record<string, any>;
-
-    version =
-      infoPlistJson['CFBundleShortVersionString'] ||
-      infoPlistJson['CFBundleVersion'] ||
-      'unknown';
-    bundleIdentifier = infoPlistJson['CFBundleIdentifier'];
-  } finally {
-    if (fs.existsSync(tempPlistPath)) {
-      fs.unlinkSync(tempPlistPath);
-    }
-  }
-
-  return { version, bundleIdentifier };
+  const infoPlistJson = await getInfoPlist(tempPlistPath);
+  fs.unlinkSync(tempPlistPath);
+  return {
+    version:
+      infoPlistJson?.['CFBundleShortVersionString'] ||
+      infoPlistJson?.['CFBundleVersion'] ||
+      'unknown',
+    bundleIdentifier: infoPlistJson?.['CFBundleIdentifier'] || 'unknown',
+  };
 }
 
 async function getBinaryBuffer(

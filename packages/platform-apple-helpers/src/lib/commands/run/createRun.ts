@@ -147,7 +147,7 @@ ${devices
       saveLocalBuildCache(artifactName, appPath);
       await runOnSimulator(device, appPath, infoPlistPath);
     } else if (device.type === 'device') {
-      const { appPath } = await buildApp({
+      const { appPath, bundleIdentifier } = await buildApp({
         args,
         projectConfig,
         platformName,
@@ -156,7 +156,12 @@ ${devices
         reactNativePath,
         binaryPath,
       });
-      await runOnDevice(device, appPath, projectConfig.sourceDir);
+      await runOnDevice(
+        device,
+        appPath,
+        projectConfig.sourceDir,
+        bundleIdentifier,
+      );
     }
     return;
   } else {
@@ -189,23 +194,29 @@ ${devices
       }
     }
     for (const bootedDevice of bootedDevices) {
-      const [, { appPath, infoPlistPath }] = await Promise.all([
-        launchSimulator(bootedDevice),
-        buildApp({
-          args,
-          projectConfig,
-          platformName,
-          udid: bootedDevice.udid,
-          projectRoot,
-          reactNativePath,
-          binaryPath,
-        }),
-      ]);
+      const [, { appPath, infoPlistPath, bundleIdentifier }] =
+        await Promise.all([
+          launchSimulator(bootedDevice),
+          buildApp({
+            args,
+            projectConfig,
+            platformName,
+            udid: bootedDevice.udid,
+            projectRoot,
+            reactNativePath,
+            binaryPath,
+          }),
+        ]);
       saveLocalBuildCache(artifactName, appPath);
       if (bootedDevice.type === 'simulator') {
         await runOnSimulator(bootedDevice, appPath, infoPlistPath);
       } else {
-        await runOnDevice(bootedDevice, appPath, projectConfig.sourceDir);
+        await runOnDevice(
+          bootedDevice,
+          appPath,
+          projectConfig.sourceDir,
+          bundleIdentifier,
+        );
       }
     }
   }
