@@ -43,6 +43,11 @@ export type GitHubRepoDetails = {
 
 export async function detectGitHubRepoDetails(): Promise<GitHubRepoDetails> {
   const gitRemote = await getGitRemote();
+
+  if (!gitRemote) {
+    throw new RockError(`No git remote found for GitHub repository.`);
+  }
+
   try {
     const { output: url } = await spawn(
       'git',
