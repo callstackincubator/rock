@@ -21,3 +21,4 @@ export {
   handleDownloadResponse,
   handleUploadResponse,
 } from './lib/build-cache/fetchCachedBuild.js';
+export { getInfoPlist } from './lib/getInfoPlist.js';

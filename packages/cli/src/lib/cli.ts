@@ -2,7 +2,12 @@ import { createRequire } from 'node:module';
 import { dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { type CommandType, getConfig } from '@rock-js/config';
-import { colorLink, logger, resolveFilenameUp, RockError } from '@rock-js/tools';
+import {
+  colorLink,
+  logger,
+  resolveFilenameUp,
+  RockError,
+} from '@rock-js/tools';
 import { Command } from 'commander';
 import { checkDeprecatedOptions } from './checkDeprecatedOptions.js';
 import { cleanPlugin } from './plugins/clean.js';

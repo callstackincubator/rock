@@ -26,7 +26,9 @@ export async function initInExistingProject(projectRoot: string) {
     '@rock-js/platform-ios',
   ];
 
-  loader.start(`Adding ${color.bold('Rock')} dependencies with ${color.bold(pkgManager)}`);
+  loader.start(
+    `Adding ${color.bold('Rock')} dependencies with ${color.bold(pkgManager)}`,
+  );
   await addDevDependencies(projectRoot, pkgManager, rockPackages);
   loader.stop(`Added ${color.bold('Rock')} dependencies`);
 
@@ -169,8 +171,7 @@ function updateAndroidBuildGradle(projectRoot: string, sourceDir: string) {
   if (!fs.existsSync(filePath)) {
     return;
   }
-  const desired =
-    'cliFile = file("../../node_modules/rock/dist/src/bin.js")';
+  const desired = 'cliFile = file("../../node_modules/rock/dist/src/bin.js")';
   const content = fs.readFileSync(filePath, 'utf8');
   const replaced = content.replace(
     /\/\/\s+cliFile\s*=\s*file\([^)]*\)/g,
