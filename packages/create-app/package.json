@@ -18,7 +18,7 @@
     "e2e": "CI=true vitest --config vite.e2e.config.js"
   },
   "bin": {
-    "create-app": "./dist/src/bin.js"
+    "create-rock": "./dist/src/bin.js"
   },
   "dependencies": {
     "@rock-js/tools": "^0.9.1",
