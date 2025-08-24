@@ -1,7 +1,7 @@
-import { createFingerprintAsync } from '@expo/fingerprint';
-import type { FingerprintSource, HashSource } from '@expo/fingerprint';
 import crypto from 'node:crypto';
-import { isAbsolute, join, relative } from 'node:path';
+import path from 'node:path';
+import type { FingerprintSource, HashSource } from '@expo/fingerprint';
+import { createFingerprintAsync } from '@expo/fingerprint';
 import { RockError } from '../error.js';
 import logger from '../logger.js';
 import { spawn } from '../spawn.js';
@@ -22,11 +22,11 @@ export const DEFAULT_IGNORE_PATHS = [
   'ios/DerivedData',
   'ios/Pods',
   'ios/tmp.xcconfig', // added by react-native-config
+  'ios/**/*.xcworkspace',
   'node_modules',
   'android/local.properties',
   'android/.idea',
   'android/.gradle',
-  'ios/Podfile.lock',
 ];
 
 export type FingerprintSources = {
@@ -49,7 +49,7 @@ export type FingerprintResult = {
  * Calculates the fingerprint of the native parts project of the project.
  */
 export async function nativeFingerprint(
-  path: string,
+  projectRoot: string,
   options: FingerprintOptions,
 ): Promise<FingerprintResult> {
   const platform = options.platform;
@@ -57,35 +57,26 @@ export async function nativeFingerprint(
   const { stdout: autolinkingConfigString } = await spawn(
     'rock',
     ['config', '-p', options.platform],
-    { cwd: path, stdio: 'pipe', preferLocal: true },
+    { cwd: projectRoot, stdio: 'pipe', preferLocal: true },
   );
 
-  const config = JSON.parse(autolinkingConfigString); // FIXME: it should be typed
-
   const autolinkingSources = parseAutolinkingSources({
-    config,
+    config: JSON.parse(autolinkingConfigString),
     reasons: ['rncoreAutolinking'],
     contentsId: 'rncoreAutolinkingConfig',
   });
-  const root = config.root;
-  const iosWorkspacePath = config.project.ios
-    ? relative(
-        root,
-        join(
-          config.project.ios.sourceDir,
-          config.project.ios.xcodeProject.name,
-        ),
-      )
-    : '';
 
-  const fingerprint = await createFingerprintAsync(path, {
+  const fingerprint = await createFingerprintAsync(projectRoot, {
     platforms: [platform],
-    dirExcludes: [...DEFAULT_IGNORE_PATHS, iosWorkspacePath],
     extraSources: [
       ...autolinkingSources,
-      ...processExtraSources(options.extraSources, path, options.ignorePaths),
+      ...processExtraSources(
+        options.extraSources,
+        projectRoot,
+        options.ignorePaths,
+      ),
     ],
-    ignorePaths: options.ignorePaths,
+    ignorePaths: [...DEFAULT_IGNORE_PATHS, ...(options.ignorePaths ?? [])],
   });
 
   // Filter out un-relevant sources as these caused hash mismatch between local and remote builds
@@ -167,7 +158,7 @@ function stripAutolinkingAbsolutePaths(dependency: any, root: string): void {
   const cmakeDepRoot =
     process.platform === 'win32' ? toPosixPath(dependencyRoot) : dependencyRoot;
 
-  dependency.root = toPosixPath(relative(root, dependencyRoot));
+  dependency.root = toPosixPath(path.relative(root, dependencyRoot));
   for (const platformData of Object.values<any>(dependency.platforms)) {
     for (const [key, value] of Object.entries<any>(platformData ?? {})) {
       let newValue;
@@ -179,11 +170,11 @@ function stripAutolinkingAbsolutePaths(dependency: any, root: string): void {
         // we have to check startsWith with the same slashes.
         // @todo revisit windows logic
         newValue = value?.startsWith?.(cmakeDepRoot)
-          ? toPosixPath(relative(root, value))
+          ? toPosixPath(path.relative(root, value))
           : value;
       } else {
         newValue = value?.startsWith?.(dependencyRoot)
-          ? toPosixPath(relative(root, value))
+          ? toPosixPath(path.relative(root, value))
           : value;
       }
       platformData[key] = newValue;
