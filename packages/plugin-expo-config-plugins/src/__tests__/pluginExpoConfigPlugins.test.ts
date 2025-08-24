@@ -342,4 +342,35 @@ describe('plugin applies default iOS config plugins correctly', () => {
     );
     expect(changedUsesNonExemptEncryption).toBe(true);
   });
+
+  test('plugin applies withBuildNumber correctly', async () => {
+    let { config, info } = await getTestConfig();
+
+    // Add build number to the config
+    if (!config.ios) config.ios = {};
+    config.ios.buildNumber = '123';
+
+    config = withPlugins(config, [IOSConfig.Version.withBuildNumber]);
+
+    config = withDefaultBaseMods(config);
+
+    const infoPlistPath = `${TEMP_DIR}/ios/${info.iosProjectName}/Info.plist`;
+
+    // Check initial state
+    const initialBuildNumber = await parsePlistForKey(
+      infoPlistPath,
+      'CFBundleVersion'
+    );
+    expect(initialBuildNumber).toBe('$(CURRENT_PROJECT_VERSION)');
+
+    // Apply the plugin
+    await evalModsAsync(config, info);
+
+    // Check that build number was updated
+    const changedBuildNumber = await parsePlistForKey(
+      infoPlistPath,
+      'CFBundleVersion'
+    );
+    expect(changedBuildNumber).toBe(config.ios?.buildNumber);
+  });
 });
