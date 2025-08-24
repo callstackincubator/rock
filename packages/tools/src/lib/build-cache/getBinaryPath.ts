@@ -64,6 +64,17 @@ async function warnIgnoredFiles(
   fingerprintOptions: FingerprintSources,
   sourceDir: string,
 ) {
+  // @todo unify git helpers from create-app
+  try {
+    await spawn('git', ['rev-parse', '--is-inside-work-tree'], {
+      stdio: 'ignore',
+      cwd: sourceDir,
+    });
+  } catch {
+    // Not a git repository, skip the git clean check
+    return;
+  }
+
   const ignorePaths = [
     ...(fingerprintOptions?.ignorePaths ?? []),
     ...EXPO_DEFAULT_IGNORE_PATHS,
