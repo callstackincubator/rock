@@ -373,4 +373,35 @@ describe('plugin applies default iOS config plugins correctly', () => {
     );
     expect(changedBuildNumber).toBe(config.ios?.buildNumber);
   });
+
+  test('plugin applies withVersion correctly', async () => {
+    let { config, info } = await getTestConfig();
+
+    // Add version to the config
+    if (!config.ios) config.ios = {};
+    config.ios.version = '2.0.0';
+
+    config = withPlugins(config, [IOSConfig.Version.withVersion]);
+
+    config = withDefaultBaseMods(config);
+
+    const infoPlistPath = `${TEMP_DIR}/ios/${info.iosProjectName}/Info.plist`;
+
+    // Check initial state
+    const initialVersion = await parsePlistForKey(
+      infoPlistPath,
+      'CFBundleShortVersionString'
+    );
+    expect(initialVersion).toBe('$(MARKETING_VERSION)');
+
+    // Apply the plugin
+    await evalModsAsync(config, info);
+
+    // Check that version was updated
+    const changedVersion = await parsePlistForKey(
+      infoPlistPath,
+      'CFBundleShortVersionString'
+    );
+    expect(changedVersion).toBe(config.ios?.version);
+  });
 });
