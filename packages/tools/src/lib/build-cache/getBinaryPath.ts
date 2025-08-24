@@ -48,8 +48,13 @@ export async function getBinaryPath({
       const message = (error as RockError).message;
       const cause = (error as RockError).cause;
       logger.warn(
-        `Failed to fetch cached build for ${artifactName}: \n${message}`,
-        cause ? `\nCause: ${cause.toString()}` : '',
+        `Remote Cache: Failed to fetch cached build for ${color.bold(
+          artifactName,
+        )}.
+Cause: ${message}${cause ? `\n${cause.toString()}` : ''}
+Read more: ${colorLink(
+          'https://rockjs.dev/docs/configuration#remote-cache-configuration',
+        )}`,
       );
       await warnIgnoredFiles(fingerprintOptions, sourceDir);
       logger.debug('Remote cache failure error:', error);
