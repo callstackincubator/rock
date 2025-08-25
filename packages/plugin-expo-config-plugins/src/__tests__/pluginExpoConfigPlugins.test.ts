@@ -405,7 +405,7 @@ describe('plugin applies default iOS config plugins correctly', () => {
     expect(changedVersion).toBe(config.ios?.version);
   });
 
-  test.only('plugin applies withGoogleServicesFile correctly', async () => {
+  test('plugin applies withGoogleServicesFile correctly', async () => {
     let { config, info } = await getTestConfig();
 
     // Add Google services file to the config
@@ -435,5 +435,38 @@ describe('plugin applies default iOS config plugins correctly', () => {
       .then(() => true)
       .catch(() => false);
     expect(googleServiceFileExists).toBe(true);
+  });
+
+  test('plugin applies withJsEnginePodfileProps correctly', async () => {
+    let { config, info } = await getTestConfig();
+
+    // Add JS engine configuration to the config
+    config.jsEngine = 'jsc';
+
+    config = withPlugins(config, [
+      IOSConfig.BuildProperties.withJsEnginePodfileProps,
+    ]);
+
+    config = withDefaultBaseMods(config);
+
+    const podfilePath = `${TEMP_DIR}/ios/Podfile`;
+
+    // @todo: check that the property is not already set in the Podfile
+
+    // Apply the plugin
+    await evalModsAsync(config, info);
+
+    // Expect Podfile.properties.json to be created
+    const podfilePropertiesPath = `${TEMP_DIR}/ios/Podfile.properties.json`;
+
+    // Expect the property to exist in Podfile.properties.json
+    const podfilePropertiesContent = await fs.readFile(
+      podfilePropertiesPath,
+      'utf8'
+    );
+    const podfileProperties = JSON.parse(podfilePropertiesContent);
+    expect(podfileProperties['expo.jsEngine']).toBe('jsc');
+
+    // @todo: check that the property is actually used in the Podfile
   });
 });
