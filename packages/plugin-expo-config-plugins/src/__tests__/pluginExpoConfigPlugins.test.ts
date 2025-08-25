@@ -84,8 +84,6 @@ async function parsePlistForKey(path: string, key: string) {
     plist.PlistValue
   >;
 
-  console.log('parsed', parsed);
-
   return parsed[key];
 }
 
@@ -468,5 +466,246 @@ describe('plugin applies default iOS config plugins correctly', () => {
     expect(podfileProperties['expo.jsEngine']).toBe('jsc');
 
     // @todo: check that the property is actually used in the Podfile
+  });
+
+  test('plugin applies withNewArchEnabledPodfileProps correctly', async () => {
+    let { config, info } = await getTestConfig();
+
+    // Add new arch configuration to the config
+    if (!config.ios) config.ios = {};
+    config.ios.newArchEnabled = true;
+
+    config = withPlugins(config, [
+      IOSConfig.BuildProperties.withNewArchEnabledPodfileProps,
+    ]);
+
+    config = withDefaultBaseMods(config);
+
+    // Apply the plugin
+    await evalModsAsync(config, info);
+
+    // Expect Podfile.properties.json to be created
+    const podfilePropertiesPath = `${TEMP_DIR}/ios/Podfile.properties.json`;
+
+    // Expect the property to exist in Podfile.properties.json
+    const podfilePropertiesContent = await fs.readFile(
+      podfilePropertiesPath,
+      'utf8'
+    );
+    const podfileProperties = JSON.parse(podfilePropertiesContent);
+    expect(podfileProperties['newArchEnabled']).toBe('true');
+  });
+
+  test('plugin applies withAssociatedDomains correctly', async () => {
+    let { config, info } = await getTestConfig();
+
+    // Add associated domains to the config
+    if (!config.ios) config.ios = {};
+    config.ios.associatedDomains = ['applinks:rock-js.dev'];
+
+    config = withPlugins(config, [
+      IOSConfig.Entitlements.withAssociatedDomains,
+    ]);
+
+    config = withDefaultBaseMods(config);
+
+    // Apply the plugin
+    await evalModsAsync(config, info);
+
+    // Check that entitlements file was created with associated domains
+    const entitlementsPath = `${TEMP_DIR}/ios/${info.iosProjectName}/${info.iosProjectName}.entitlements`;
+    const entitlementsContent = await parsePlistForKey(
+      entitlementsPath,
+      'com.apple.developer.associated-domains'
+    );
+
+    expect(entitlementsContent).toEqual(['applinks:rock-js.dev']);
+  });
+
+  test('withDeviceFamily - isTabletOnly', async () => {
+    let { config, info } = await getTestConfig();
+
+    // Add device family configuration to the config
+    if (!config.ios) config.ios = {};
+    config.ios.isTabletOnly = true;
+
+    config = withPlugins(config, [IOSConfig.DeviceFamily.withDeviceFamily]);
+
+    config = withDefaultBaseMods(config);
+
+    const projectPbxprojPath = `${TEMP_DIR}/ios/${info.iosProjectName}.xcodeproj/project.pbxproj`;
+
+    // Check initial state
+    const projectContent = await fs.readFile(projectPbxprojPath, 'utf8');
+    expect(projectContent).not.toContain('TARGETED_DEVICE_FAMILY');
+
+    // Apply the plugin
+    await evalModsAsync(config, info);
+
+    // Check that device family was updated
+    const changedProjectContent = await fs.readFile(projectPbxprojPath, 'utf8');
+
+    expect(changedProjectContent).toContain('TARGETED_DEVICE_FAMILY = "2"');
+  });
+
+  test('withDeviceFamily - supportsTablet', async () => {
+    let { config, info } = await getTestConfig();
+
+    // Add device family configuration to the config
+    if (!config.ios) config.ios = {};
+    config.ios.supportsTablet = true;
+
+    config = withPlugins(config, [IOSConfig.DeviceFamily.withDeviceFamily]);
+
+    config = withDefaultBaseMods(config);
+
+    const projectPbxprojPath = `${TEMP_DIR}/ios/${info.iosProjectName}.xcodeproj/project.pbxproj`;
+
+    // Check initial state
+    const projectContent = await fs.readFile(projectPbxprojPath, 'utf8');
+    expect(projectContent).not.toContain('TARGETED_DEVICE_FAMILY');
+
+    // Apply the plugin
+    await evalModsAsync(config, info);
+
+    // Check that device family was updated
+    const changedProjectContent = await fs.readFile(projectPbxprojPath, 'utf8');
+
+    expect(changedProjectContent).toContain('TARGETED_DEVICE_FAMILY = "1,2"');
+  });
+
+  test('withBitcode', async () => {
+    let { config, info } = await getTestConfig();
+
+    // Add bitcode configuration to the config
+    if (!config.ios) config.ios = {};
+    config.ios.bitcode = true;
+
+    config = withPlugins(config, [IOSConfig.Bitcode.withBitcode]);
+
+    config = withDefaultBaseMods(config);
+
+    const projectPbxprojPath = `${TEMP_DIR}/ios/${info.iosProjectName}.xcodeproj/project.pbxproj`;
+
+    // Check initial state
+    const projectContent = await fs.readFile(projectPbxprojPath, 'utf8');
+    expect(projectContent).toContain('ENABLE_BITCODE = NO');
+
+    // Apply the plugin
+    await evalModsAsync(config, info);
+
+    // Check that bitcode was updated
+    const changedProjectContent = await fs.readFile(projectPbxprojPath, 'utf8');
+    expect(changedProjectContent).toContain('ENABLE_BITCODE = YES');
+  });
+
+  test('plugin applies withLocales correctly', async () => {
+    let { config, info } = await getTestConfig();
+
+    // Add locales configuration to the config
+    config.locales = {
+      en: './locale/en.json',
+      pl: './locale/pl.json',
+    };
+
+    config = withPlugins(config, [IOSConfig.Locales.withLocales]);
+
+    config = withDefaultBaseMods(config);
+
+    const supportingDirectory = path.join(
+      TEMP_DIR,
+      'ios',
+      info.iosProjectName,
+      'Supporting'
+    );
+
+    // Supporting directory should not exist
+    const supportingDirectoryExists = await fs
+      .access(supportingDirectory)
+      .then(() => true)
+      .catch(() => false);
+    expect(supportingDirectoryExists).toBe(false);
+
+    // Apply the plugin
+    await evalModsAsync(config, info);
+
+    // Supporting directory for each locale should exist
+    const enDirectory = path.join(supportingDirectory, 'en.lproj');
+    const plDirectory = path.join(supportingDirectory, 'pl.lproj');
+
+    const [enDirectoryExists, plDirectoryExists] = await Promise.all([
+      fs
+        .access(enDirectory)
+        .then(() => true)
+        .catch(() => false),
+      fs
+        .access(plDirectory)
+        .then(() => true)
+        .catch(() => false),
+    ]);
+
+    expect(enDirectoryExists).toBe(true);
+    expect(plDirectoryExists).toBe(true);
+  });
+
+  test('plugin applies withDevelopmentTeam correctly', async () => {
+    let { config, info } = await getTestConfig();
+
+    // Add development team configuration to the config
+    if (!config.ios) config.ios = {};
+    config.ios.appleTeamId = 'ABC123DEF4';
+
+    config = withPlugins(config, [
+      IOSConfig.DevelopmentTeam.withDevelopmentTeam,
+    ]);
+
+    config = withDefaultBaseMods(config);
+
+    const projectPbxprojPath = `${TEMP_DIR}/ios/${info.iosProjectName}.xcodeproj/project.pbxproj`;
+
+    // Project should not have DEVELOPMENT_TEAM set initially
+    const projectContent = await fs.readFile(projectPbxprojPath, 'utf8');
+    expect(projectContent).not.toContain('DEVELOPMENT_TEAM');
+
+    // Apply the plugin
+    await evalModsAsync(config, info);
+
+    // Check that development team was updated
+    const changedProjectContent = await fs.readFile(projectPbxprojPath, 'utf8');
+    expect(changedProjectContent).toContain(config.ios?.appleTeamId);
+  });
+
+  test('plugin applies withPrivacyInfo correctly', async () => {
+    let { config, info } = await getTestConfig();
+
+    // Add privacy info configuration to the config
+    if (!config.ios) config.ios = {};
+    config.ios.privacyManifests = {
+      NSPrivacyAccessedAPITypes: [
+        {
+          NSPrivacyAccessedAPIType: 'NSPrivacyAccessedAPICategoryFileTimestamp',
+          NSPrivacyAccessedAPITypeReasons: ['0A2A.1'],
+        },
+      ],
+    };
+
+    config = withPlugins(config, [IOSConfig.PrivacyInfo.withPrivacyInfo]);
+
+    config = withDefaultBaseMods(config);
+
+    // Check that 0A2A.1 is not in the PrivacyInfo.xcprivacy file
+    const privacyInfoPath = `${TEMP_DIR}/ios/${info.iosProjectName}/PrivacyInfo.xcprivacy`;
+    const privacyInfoContent = await fs.readFile(privacyInfoPath, 'utf8');
+    expect(privacyInfoContent).not.toContain('0A2A.1');
+
+    // Apply the plugin
+    await evalModsAsync(config, info);
+
+    // Check that 0A2A.1 was added to the PrivacyInfo.xcprivacy file
+    const changedPrivacyInfoContent = await fs.readFile(
+      privacyInfoPath,
+      'utf8'
+    );
+    expect(changedPrivacyInfoContent).toContain('0A2A.1');
   });
 });
