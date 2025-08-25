@@ -1,5 +1,11 @@
 # rock-docs
 
+## 1.1.1
+
+### Patch Changes
+
+- 8180d73: fix: launch iOS app on device
+
 ## 1.1.0
 
 ### Minor Changes
