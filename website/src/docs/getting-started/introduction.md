@@ -105,6 +105,7 @@ Out of the box we support storing artifacts on GitHub Actions and we're working 
 2. This hash remains stable across builds unless you:
    - Modify native files
    - Change dependencies with native code
+   - Update scripts in package.json
 3. When you make JavaScript-only changes, the hash stays the same
 4. The CLI checks for matching builds in:
    - Local cache (`.rock/` directory)
