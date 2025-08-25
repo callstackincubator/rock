@@ -1,5 +1,5 @@
 import { expect, test, beforeEach, afterEach } from 'vitest';
-import { cleanup, getTempDirectory } from '@rnef/test-helpers';
+import { cleanup, getTempDirectory } from '@rock-js/test-helpers';
 import { pluginExpoConfigPlugins } from '../lib/pluginExpoConfigPlugins.js';
 import path from 'node:path';
 import * as fs from 'node:fs/promises';
@@ -94,7 +94,7 @@ test('plugin is called with correct arguments and returns its name and descripti
 
   expect(plugin).toMatchObject({
     name: 'plugin-expo-config-plugins',
-    description: 'RNEF plugin for Expo Config Plugins.',
+    description: 'Rock plugin for Expo Config Plugins.',
   });
 });
 

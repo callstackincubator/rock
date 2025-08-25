@@ -1,5 +1,5 @@
 {
-  "name": "@rnef/plugin-expo-config-plugins",
+  "name": "@rock-js/plugin-expo-config-plugins",
   "version": "0.8.2",
   "type": "module",
   "exports": {
@@ -19,12 +19,12 @@
   },
   "dependencies": {
     "@expo/config-plugins": "^10.1.2",
-    "@rnef/tools": "^0.8.2",
+    "@rock-js/tools": "^0.8.2",
     "tslib": "^2.3.0"
   },
   "devDependencies": {
-    "@rnef/config": "^0.8.2",
-    "@rnef/test-helpers": "^0.8.2",
+    "@rock-js/config": "^0.8.2",
+    "@rock-js/test-helpers": "^0.8.2",
     "@types/plist": "^3.0.5",
     "plist": "^3.1.0"
   },

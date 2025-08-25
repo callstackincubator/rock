@@ -1,6 +1,6 @@
 import fs from 'node:fs/promises';
 import path from 'node:path';
-import type { PluginApi, PluginOutput } from '@rnef/config';
+import type { PluginApi, PluginOutput } from '@rock-js/config';
 import { applyConfigPlugins } from './apply.js';
 import type { ProjectInfo } from './types.js';
 
@@ -53,7 +53,7 @@ export const pluginExpoConfigPlugins =
 
     return {
       name: 'plugin-expo-config-plugins',
-      description: 'RNEF plugin for Expo Config Plugins.',
+      description: 'Rock plugin for Expo Config Plugins.',
     };
   };
 
