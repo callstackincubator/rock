@@ -35,7 +35,7 @@ beforeEach(async () => {
     '..',
     '..',
     'apps',
-    'expo-config-plugins-test-app'
+    'expo-config-plugins-test-app',
   );
   await fs.cp(testAppPath, TEMP_DIR, { recursive: true });
 
@@ -100,22 +100,29 @@ describe('plugin applies default iOS config plugins correctly', () => {
   test('withBundleIdentifier', async () => {
     let { config, info } = await getTestConfig();
 
-    const bundleIdentifier = 'dev.rockjs.test';
     if (!config.ios) config.ios = {};
-    config.ios.bundleIdentifier = bundleIdentifier;
+    config.ios.bundleIdentifier = 'dev.rockjs.test';
 
     config = withPlugins(config, [
-      [IOSConfig.BundleIdentifier.withBundleIdentifier, { bundleIdentifier }],
+      [
+        IOSConfig.BundleIdentifier.withBundleIdentifier,
+        { bundleIdentifier: config.ios?.bundleIdentifier },
+      ],
     ]);
 
     config = withDefaultBaseMods(config);
 
-    const projectPbxprojPath = `${TEMP_DIR}/ios/${info.iosProjectName}.xcodeproj/project.pbxproj`;
+    const projectPbxprojPath = path.join(
+      TEMP_DIR,
+      'ios',
+      `${info.iosProjectName}.xcodeproj`,
+      'project.pbxproj',
+    );
 
     // Check the initial bundle identifier
     const projectContent = await fs.readFile(projectPbxprojPath, 'utf8');
     expect(projectContent).toContain(
-      'PRODUCT_BUNDLE_IDENTIFIER = "org.reactjs.native.example'
+      'PRODUCT_BUNDLE_IDENTIFIER = "org.reactjs.native.example',
     );
 
     // Apply the plugin
@@ -124,7 +131,7 @@ describe('plugin applies default iOS config plugins correctly', () => {
     // Check the changed bundle identifier
     const changedProjectContent = await fs.readFile(projectPbxprojPath, 'utf8');
     expect(changedProjectContent).toContain(
-      `PRODUCT_BUNDLE_IDENTIFIER = "${bundleIdentifier}";`
+      `PRODUCT_BUNDLE_IDENTIFIER = "${config.ios?.bundleIdentifier}";`,
     );
   });
 
@@ -150,12 +157,17 @@ describe('plugin applies default iOS config plugins correctly', () => {
     config = withPlugins(config, [IOSConfig.Name.withDisplayName]);
     config = withDefaultBaseMods(config);
 
-    const infoPlistPath = `${TEMP_DIR}/ios/${info.iosProjectName}/Info.plist`;
+    const infoPlistPath = path.join(
+      TEMP_DIR,
+      'ios',
+      info.iosProjectName,
+      'Info.plist',
+    );
 
     // Check initial state
     const initialDisplayName = await parsePlistForKey(
       infoPlistPath,
-      'CFBundleDisplayName'
+      'CFBundleDisplayName',
     );
 
     expect(initialDisplayName).toBe(info.iosProjectName);
@@ -166,7 +178,7 @@ describe('plugin applies default iOS config plugins correctly', () => {
     // Check that display name was updated
     const changedDisplayName = await parsePlistForKey(
       infoPlistPath,
-      'CFBundleDisplayName'
+      'CFBundleDisplayName',
     );
 
     expect(changedDisplayName).toBe(config.name);
@@ -182,7 +194,12 @@ describe('plugin applies default iOS config plugins correctly', () => {
 
     config = withDefaultBaseMods(config);
 
-    const projectPbxprojPath = `${TEMP_DIR}/ios/${info.iosProjectName}.xcodeproj/project.pbxproj`;
+    const projectPbxprojPath = path.join(
+      TEMP_DIR,
+      'ios',
+      `${info.iosProjectName}.xcodeproj`,
+      'project.pbxproj',
+    );
 
     // Check initial state
     const projectContent = await fs.readFile(projectPbxprojPath, 'utf8');
@@ -206,17 +223,22 @@ describe('plugin applies default iOS config plugins correctly', () => {
 
     config = withDefaultBaseMods(config);
 
-    const infoPlistPath = `${TEMP_DIR}/ios/${info.iosProjectName}/Info.plist`;
+    const infoPlistPath = path.join(
+      TEMP_DIR,
+      'ios',
+      info.iosProjectName,
+      'Info.plist',
+    );
 
     const initialOrientation = await parsePlistForKey(
       infoPlistPath,
-      'UISupportedInterfaceOrientations'
+      'UISupportedInterfaceOrientations',
     );
 
     expect(initialOrientation).toContain('UIInterfaceOrientationPortrait');
     expect(initialOrientation).toContain('UIInterfaceOrientationLandscapeLeft');
     expect(initialOrientation).toContain(
-      'UIInterfaceOrientationLandscapeRight'
+      'UIInterfaceOrientationLandscapeRight',
     );
 
     // Apply the plugin
@@ -225,13 +247,13 @@ describe('plugin applies default iOS config plugins correctly', () => {
     // Check that orientation was updated
     const changedOrientation = await parsePlistForKey(
       infoPlistPath,
-      'UISupportedInterfaceOrientations'
+      'UISupportedInterfaceOrientations',
     );
 
     expect(changedOrientation).not.toContain('UIInterfaceOrientationPortrait');
     expect(changedOrientation).toContain('UIInterfaceOrientationLandscapeLeft');
     expect(changedOrientation).toContain(
-      'UIInterfaceOrientationLandscapeRight'
+      'UIInterfaceOrientationLandscapeRight',
     );
   });
 
@@ -248,12 +270,17 @@ describe('plugin applies default iOS config plugins correctly', () => {
 
     config = withDefaultBaseMods(config);
 
-    const infoPlistPath = `${TEMP_DIR}/ios/${info.iosProjectName}/Info.plist`;
+    const infoPlistPath = path.join(
+      TEMP_DIR,
+      'ios',
+      info.iosProjectName,
+      'Info.plist',
+    );
 
     // Check initial state
     const initialRequiresFullScreen = await parsePlistForKey(
       infoPlistPath,
-      'UIRequiresFullScreen'
+      'UIRequiresFullScreen',
     );
 
     expect(initialRequiresFullScreen).toBeUndefined();
@@ -264,7 +291,7 @@ describe('plugin applies default iOS config plugins correctly', () => {
     // Check that requires full screen was added
     const changedRequiresFullScreen = await parsePlistForKey(
       infoPlistPath,
-      'UIRequiresFullScreen'
+      'UIRequiresFullScreen',
     );
     expect(changedRequiresFullScreen).toBe(true);
   });
@@ -279,12 +306,17 @@ describe('plugin applies default iOS config plugins correctly', () => {
 
     config = withDefaultBaseMods(config);
 
-    const infoPlistPath = `${TEMP_DIR}/ios/${info.iosProjectName}/Info.plist`;
+    const infoPlistPath = path.join(
+      TEMP_DIR,
+      'ios',
+      info.iosProjectName,
+      'Info.plist',
+    );
 
     // Check initial state
     const initialScheme = await parsePlistForKey(
       infoPlistPath,
-      'CFBundleURLTypes'
+      'CFBundleURLTypes',
     );
 
     expect(initialScheme).toBeUndefined();
@@ -295,7 +327,7 @@ describe('plugin applies default iOS config plugins correctly', () => {
     // Check that scheme was added
     const urlTypes = (await parsePlistForKey(
       infoPlistPath,
-      'CFBundleURLTypes'
+      'CFBundleURLTypes',
     )) as plist.PlistObject[];
 
     const changedScheme = urlTypes[0]['CFBundleURLSchemes'];
@@ -321,12 +353,17 @@ describe('plugin applies default iOS config plugins correctly', () => {
 
     config = withDefaultBaseMods(config);
 
-    const infoPlistPath = `${TEMP_DIR}/ios/${info.iosProjectName}/Info.plist`;
+    const infoPlistPath = path.join(
+      TEMP_DIR,
+      'ios',
+      info.iosProjectName,
+      'Info.plist',
+    );
 
     // Check initial state
     const initialUsesNonExemptEncryption = await parsePlistForKey(
       infoPlistPath,
-      'ITSAppUsesNonExemptEncryption'
+      'ITSAppUsesNonExemptEncryption',
     );
     expect(initialUsesNonExemptEncryption).toBeUndefined();
 
@@ -336,7 +373,7 @@ describe('plugin applies default iOS config plugins correctly', () => {
     // Check that uses non exempt encryption was added
     const changedUsesNonExemptEncryption = await parsePlistForKey(
       infoPlistPath,
-      'ITSAppUsesNonExemptEncryption'
+      'ITSAppUsesNonExemptEncryption',
     );
     expect(changedUsesNonExemptEncryption).toBe(true);
   });
@@ -352,12 +389,17 @@ describe('plugin applies default iOS config plugins correctly', () => {
 
     config = withDefaultBaseMods(config);
 
-    const infoPlistPath = `${TEMP_DIR}/ios/${info.iosProjectName}/Info.plist`;
+    const infoPlistPath = path.join(
+      TEMP_DIR,
+      'ios',
+      info.iosProjectName,
+      'Info.plist',
+    );
 
     // Check initial state
     const initialBuildNumber = await parsePlistForKey(
       infoPlistPath,
-      'CFBundleVersion'
+      'CFBundleVersion',
     );
     expect(initialBuildNumber).toBe('$(CURRENT_PROJECT_VERSION)');
 
@@ -367,7 +409,7 @@ describe('plugin applies default iOS config plugins correctly', () => {
     // Check that build number was updated
     const changedBuildNumber = await parsePlistForKey(
       infoPlistPath,
-      'CFBundleVersion'
+      'CFBundleVersion',
     );
     expect(changedBuildNumber).toBe(config.ios?.buildNumber);
   });
@@ -383,12 +425,17 @@ describe('plugin applies default iOS config plugins correctly', () => {
 
     config = withDefaultBaseMods(config);
 
-    const infoPlistPath = `${TEMP_DIR}/ios/${info.iosProjectName}/Info.plist`;
+    const infoPlistPath = path.join(
+      TEMP_DIR,
+      'ios',
+      info.iosProjectName,
+      'Info.plist',
+    );
 
     // Check initial state
     const initialVersion = await parsePlistForKey(
       infoPlistPath,
-      'CFBundleShortVersionString'
+      'CFBundleShortVersionString',
     );
     expect(initialVersion).toBe('$(MARKETING_VERSION)');
 
@@ -398,7 +445,7 @@ describe('plugin applies default iOS config plugins correctly', () => {
     // Check that version was updated
     const changedVersion = await parsePlistForKey(
       infoPlistPath,
-      'CFBundleShortVersionString'
+      'CFBundleShortVersionString',
     );
     expect(changedVersion).toBe(config.ios?.version);
   });
@@ -414,7 +461,12 @@ describe('plugin applies default iOS config plugins correctly', () => {
 
     config = withDefaultBaseMods(config);
 
-    const projectPbxprojPath = `${TEMP_DIR}/ios/${info.iosProjectName}.xcodeproj/project.pbxproj`;
+    const projectPbxprojPath = path.join(
+      TEMP_DIR,
+      'ios',
+      `${info.iosProjectName}.xcodeproj`,
+      'project.pbxproj',
+    );
 
     // Check initial state
     const projectContent = await fs.readFile(projectPbxprojPath, 'utf8');
@@ -427,7 +479,12 @@ describe('plugin applies default iOS config plugins correctly', () => {
     const changedProjectContent = await fs.readFile(projectPbxprojPath, 'utf8');
     expect(changedProjectContent).toContain('GoogleService-Info.plist');
 
-    const googleServicePath = `${TEMP_DIR}/ios/${info.iosProjectName}/GoogleService-Info.plist`;
+    const googleServicePath = path.join(
+      TEMP_DIR,
+      'ios',
+      info.iosProjectName,
+      'GoogleService-Info.plist',
+    );
     const googleServiceFileExists = await fs
       .access(googleServicePath)
       .then(() => true)
@@ -447,7 +504,7 @@ describe('plugin applies default iOS config plugins correctly', () => {
 
     config = withDefaultBaseMods(config);
 
-    const podfilePath = `${TEMP_DIR}/ios/Podfile`;
+    const podfilePath = path.join(TEMP_DIR, 'ios', 'Podfile');
 
     // @todo: check that the property is not already set in the Podfile
 
@@ -455,12 +512,16 @@ describe('plugin applies default iOS config plugins correctly', () => {
     await evalModsAsync(config, info);
 
     // Expect Podfile.properties.json to be created
-    const podfilePropertiesPath = `${TEMP_DIR}/ios/Podfile.properties.json`;
+    const podfilePropertiesPath = path.join(
+      TEMP_DIR,
+      'ios',
+      'Podfile.properties.json',
+    );
 
     // Expect the property to exist in Podfile.properties.json
     const podfilePropertiesContent = await fs.readFile(
       podfilePropertiesPath,
-      'utf8'
+      'utf8',
     );
     const podfileProperties = JSON.parse(podfilePropertiesContent);
     expect(podfileProperties['expo.jsEngine']).toBe('jsc');
@@ -485,12 +546,16 @@ describe('plugin applies default iOS config plugins correctly', () => {
     await evalModsAsync(config, info);
 
     // Expect Podfile.properties.json to be created
-    const podfilePropertiesPath = `${TEMP_DIR}/ios/Podfile.properties.json`;
+    const podfilePropertiesPath = path.join(
+      TEMP_DIR,
+      'ios',
+      'Podfile.properties.json',
+    );
 
     // Expect the property to exist in Podfile.properties.json
     const podfilePropertiesContent = await fs.readFile(
       podfilePropertiesPath,
-      'utf8'
+      'utf8',
     );
     const podfileProperties = JSON.parse(podfilePropertiesContent);
     expect(podfileProperties['newArchEnabled']).toBe('true');
@@ -513,10 +578,15 @@ describe('plugin applies default iOS config plugins correctly', () => {
     await evalModsAsync(config, info);
 
     // Check that entitlements file was created with associated domains
-    const entitlementsPath = `${TEMP_DIR}/ios/${info.iosProjectName}/${info.iosProjectName}.entitlements`;
+    const entitlementsPath = path.join(
+      TEMP_DIR,
+      'ios',
+      info.iosProjectName,
+      `${info.iosProjectName}.entitlements`,
+    );
     const entitlementsContent = await parsePlistForKey(
       entitlementsPath,
-      'com.apple.developer.associated-domains'
+      'com.apple.developer.associated-domains',
     );
 
     expect(entitlementsContent).toEqual(['applinks:rock-js.dev']);
@@ -533,7 +603,12 @@ describe('plugin applies default iOS config plugins correctly', () => {
 
     config = withDefaultBaseMods(config);
 
-    const projectPbxprojPath = `${TEMP_DIR}/ios/${info.iosProjectName}.xcodeproj/project.pbxproj`;
+    const projectPbxprojPath = path.join(
+      TEMP_DIR,
+      'ios',
+      `${info.iosProjectName}.xcodeproj`,
+      'project.pbxproj',
+    );
 
     // Check initial state
     const projectContent = await fs.readFile(projectPbxprojPath, 'utf8');
@@ -559,7 +634,12 @@ describe('plugin applies default iOS config plugins correctly', () => {
 
     config = withDefaultBaseMods(config);
 
-    const projectPbxprojPath = `${TEMP_DIR}/ios/${info.iosProjectName}.xcodeproj/project.pbxproj`;
+    const projectPbxprojPath = path.join(
+      TEMP_DIR,
+      'ios',
+      `${info.iosProjectName}.xcodeproj`,
+      'project.pbxproj',
+    );
 
     // Check initial state
     const projectContent = await fs.readFile(projectPbxprojPath, 'utf8');
@@ -585,7 +665,12 @@ describe('plugin applies default iOS config plugins correctly', () => {
 
     config = withDefaultBaseMods(config);
 
-    const projectPbxprojPath = `${TEMP_DIR}/ios/${info.iosProjectName}.xcodeproj/project.pbxproj`;
+    const projectPbxprojPath = path.join(
+      TEMP_DIR,
+      'ios',
+      `${info.iosProjectName}.xcodeproj`,
+      'project.pbxproj',
+    );
 
     // Check initial state
     const projectContent = await fs.readFile(projectPbxprojPath, 'utf8');
@@ -616,7 +701,7 @@ describe('plugin applies default iOS config plugins correctly', () => {
       TEMP_DIR,
       'ios',
       info.iosProjectName,
-      'Supporting'
+      'Supporting',
     );
 
     // Supporting directory should not exist
@@ -661,7 +746,12 @@ describe('plugin applies default iOS config plugins correctly', () => {
 
     config = withDefaultBaseMods(config);
 
-    const projectPbxprojPath = `${TEMP_DIR}/ios/${info.iosProjectName}.xcodeproj/project.pbxproj`;
+    const projectPbxprojPath = path.join(
+      TEMP_DIR,
+      'ios',
+      `${info.iosProjectName}.xcodeproj`,
+      'project.pbxproj',
+    );
 
     // Project should not have DEVELOPMENT_TEAM set initially
     const projectContent = await fs.readFile(projectPbxprojPath, 'utf8');
@@ -694,7 +784,12 @@ describe('plugin applies default iOS config plugins correctly', () => {
     config = withDefaultBaseMods(config);
 
     // Check that 0A2A.1 is not in the PrivacyInfo.xcprivacy file
-    const privacyInfoPath = `${TEMP_DIR}/ios/${info.iosProjectName}/PrivacyInfo.xcprivacy`;
+    const privacyInfoPath = path.join(
+      TEMP_DIR,
+      'ios',
+      info.iosProjectName,
+      'PrivacyInfo.xcprivacy',
+    );
     const privacyInfoContent = await fs.readFile(privacyInfoPath, 'utf8');
     expect(privacyInfoContent).not.toContain('0A2A.1');
 
@@ -704,7 +799,7 @@ describe('plugin applies default iOS config plugins correctly', () => {
     // Check that 0A2A.1 was added to the PrivacyInfo.xcprivacy file
     const changedPrivacyInfoContent = await fs.readFile(
       privacyInfoPath,
-      'utf8'
+      'utf8',
     );
     expect(changedPrivacyInfoContent).toContain('0A2A.1');
   });
