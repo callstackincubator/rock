@@ -47,8 +47,8 @@ It's intentional design decision to explicitly define platforms, bundlers etc, s
   // Optional: Additional commands
   commands?: Array<Command>;
 
-  // Optional: Configure remote cache provider. Currently supports: 'github-actions' or null
-  remoteCacheProvider?: 'github-actions' | null;
+  // Optional: Configure remote cache provider. Currently supports: 'github-actions' or custom provider (function).
+  remoteCacheProvider?: 'github-actions' | () => RemoteBuildCache |  null;
 
   fingerprint?: {
     // Additional source files/directories to include in fingerprint calculation
