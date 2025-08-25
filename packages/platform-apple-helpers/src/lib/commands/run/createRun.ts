@@ -46,33 +46,36 @@ export const createRun = async ({
 }) => {
   validateArgs(args, projectRoot);
 
-  const deviceOrSimulator = args.destination
+  const devices = await listDevicesAndSimulators(platformName);
+  if (devices.length === 0) {
+    const { readableName } = getPlatformInfo(platformName);
+    throw new RockError(
+      `No devices or simulators detected. Install simulators via Xcode or connect a physical ${readableName} device.`,
+    );
+  }
+  const device = await selectDevice(devices, args.device);
+  const destination = args.destination
     ? // there can be multiple destinations, so we'll pick the first one
       args.destination[0].match(/simulator/i)
       ? 'simulator'
       : 'device'
-    : 'simulator';
+    : undefined;
 
-  async function getArtifactName({ silent }: { silent?: boolean } = {}) {
+  async function getArtifactName({
+    silent,
+    deviceType,
+  }: {
+    silent?: boolean;
+    deviceType: string;
+  }) {
     return await formatArtifactName({
       platform: 'ios',
-      traits: [deviceOrSimulator, args.configuration ?? 'Debug'],
+      traits: [deviceType, args.configuration ?? 'Debug'],
       root: projectRoot,
       fingerprintOptions,
       silent,
     });
   }
-
-  let artifactName = await getArtifactName();
-
-  const binaryPath = await getBinaryPath({
-    artifactName,
-    binaryPathFlag: args.binaryPath,
-    localFlag: args.local,
-    remoteCacheProvider,
-    fingerprintOptions,
-    sourceDir: projectConfig.sourceDir,
-  });
 
   // Check if the device argument looks like a UDID
   // (assuming UDIDs are alphanumeric and have specific length)
@@ -84,6 +87,15 @@ export const createRun = async ({
   const deviceName = udid ? undefined : args.device;
 
   if (platformName === 'macos') {
+    const artifactName = await getArtifactName({ deviceType: 'macos' });
+    const binaryPath = await getBinaryPath({
+      artifactName,
+      binaryPathFlag: args.binaryPath,
+      localFlag: args.local,
+      remoteCacheProvider,
+      fingerprintOptions,
+      sourceDir: projectConfig.sourceDir,
+    });
     const { appPath } = await buildApp({
       args,
       projectConfig,
@@ -97,6 +109,15 @@ export const createRun = async ({
     await runOnMac(appPath);
     return;
   } else if (args.catalyst) {
+    const artifactName = await getArtifactName({ deviceType: 'catalyst' });
+    const binaryPath = await getBinaryPath({
+      artifactName,
+      binaryPathFlag: args.binaryPath,
+      localFlag: args.local,
+      remoteCacheProvider,
+      fingerprintOptions,
+      sourceDir: projectConfig.sourceDir,
+    });
     const { appPath, scheme } = await buildApp({
       args,
       projectConfig,
@@ -115,30 +136,30 @@ export const createRun = async ({
     }
   }
 
-  const devices = await listDevicesAndSimulators(platformName);
-  if (devices.length === 0) {
-    const { readableName } = getPlatformInfo(platformName);
-    throw new RockError(
-      `No devices or simulators detected. Install simulators via Xcode or connect a physical ${readableName} device.`,
-    );
-  }
-  const device = await selectDevice(devices, args);
-
   if (device) {
-    if (device.type !== deviceOrSimulator) {
-      throw new RockError(
-        `Selected device "${device.name}" is not a ${deviceOrSimulator}. 
-Please either use "--destination ${
-          deviceOrSimulator === 'simulator' ? 'device' : 'simulator'
-        }" flag or select available ${deviceOrSimulator}:
-${devices
-  .filter(({ type }) => type === deviceOrSimulator)
-  .map(({ name }) => `• ${name}`)
-  .join('\n')}`,
-      );
-    }
+    //     if (device.type !== deviceOrSimulator) {
+    //       throw new RockError(
+    //         `Selected device "${device.name}" is not a ${deviceOrSimulator}.
+    // Please either use "--destination ${
+    //           deviceOrSimulator === 'simulator' ? 'device' : 'simulator'
+    //         }" flag or select available ${deviceOrSimulator}:
+    // ${devices
+    //   .filter(({ type }) => type === deviceOrSimulator)
+    //   .map(({ name }) => `• ${name}`)
+    //   .join('\n')}`,
+    //       );
+    //     }
     cacheRecentDevice(device, platformName);
     if (device.type === 'simulator') {
+      let artifactName = await getArtifactName({ deviceType: device.type });
+      const binaryPath = await getBinaryPath({
+        artifactName,
+        binaryPathFlag: args.binaryPath,
+        localFlag: args.local,
+        remoteCacheProvider,
+        fingerprintOptions,
+        sourceDir: projectConfig.sourceDir,
+      });
       const [, { appPath, infoPlistPath, didInstallPods }] = await Promise.all([
         launchSimulator(device),
         buildApp({
@@ -154,11 +175,23 @@ ${devices
       // After installing pods the fingerprint likely changes.
       // We update the artifact name to reflect the new fingerprint and store proper entry in the local cache.
       if (didInstallPods) {
-        artifactName = await getArtifactName({ silent: true });
+        artifactName = await getArtifactName({
+          silent: true,
+          deviceType: device.type,
+        });
       }
       saveLocalBuildCache(artifactName, appPath);
       await runOnSimulator(device, appPath, infoPlistPath);
     } else if (device.type === 'device') {
+      const artifactName = await getArtifactName({ deviceType: device.type });
+      const binaryPath = await getBinaryPath({
+        artifactName,
+        binaryPathFlag: args.binaryPath,
+        localFlag: args.local,
+        remoteCacheProvider,
+        fingerprintOptions,
+        sourceDir: projectConfig.sourceDir,
+      });
       const { appPath, bundleIdentifier } = await buildApp({
         args,
         projectConfig,
@@ -178,17 +211,24 @@ ${devices
     return;
   } else {
     const bootedDevices = devices.filter(
-      ({ state, type }) => state === 'Booted' && type === deviceOrSimulator,
+      ({ state, platform, type }) =>
+        state === 'Booted' &&
+        platform === platformName &&
+        (destination ? destination === type : true),
     );
     if (bootedDevices.length === 0) {
       // fallback to present all devices when no device is selected
       if (isInteractive()) {
-        const simulator = await promptForDeviceSelection(
-          devices.filter(({ type }) => type === deviceOrSimulator),
+        const selectedDevice = await promptForDeviceSelection(
+          devices.filter(
+            ({ platform, type }) =>
+              platform === platformName &&
+              (destination ? destination === type : true),
+          ),
           platformName,
         );
-        bootedDevices.push(simulator);
-        cacheRecentDevice(simulator, platformName);
+        bootedDevices.push(selectedDevice);
+        cacheRecentDevice(selectedDevice, platformName);
       } else {
         logger.debug(
           'No booted devices or simulators found. Launching first available simulator...',
@@ -206,6 +246,17 @@ ${devices
       }
     }
     for (const bootedDevice of bootedDevices) {
+      let artifactName = await getArtifactName({
+        deviceType: bootedDevice.type,
+      });
+      const binaryPath = await getBinaryPath({
+        artifactName,
+        binaryPathFlag: args.binaryPath,
+        localFlag: args.local,
+        remoteCacheProvider,
+        fingerprintOptions,
+        sourceDir: projectConfig.sourceDir,
+      });
       const [, { appPath, infoPlistPath, bundleIdentifier, didInstallPods }] =
         await Promise.all([
           launchSimulator(bootedDevice),
@@ -222,7 +273,10 @@ ${devices
       // After installing pods the fingerprint likely changes.
       // We update the artifact name to reflect the new fingerprint and store proper entry in the local cache.
       if (didInstallPods) {
-        artifactName = await getArtifactName({ silent: true });
+        artifactName = await getArtifactName({
+          silent: true,
+          deviceType: bootedDevice.type,
+        });
       }
       saveLocalBuildCache(artifactName, appPath);
       if (bootedDevice.type === 'simulator') {
@@ -239,14 +293,17 @@ ${devices
   }
 };
 
-async function selectDevice(devices: Device[], args: RunFlags) {
+async function selectDevice(
+  devices: Device[],
+  selectedDevice: string | undefined,
+) {
   let device;
-  if (args.device) {
-    device = matchingDevice(devices, args.device);
+  if (selectedDevice) {
+    device = matchingDevice(devices, selectedDevice);
   }
-  if (!device && args.device) {
+  if (!device && selectedDevice) {
     logger.warn(
-      `No devices or simulators found matching "${args.device}". Falling back to default simulator.`,
+      `No devices or simulators found matching "${selectedDevice}". Falling back to default simulator.`,
     );
   }
   return device;
