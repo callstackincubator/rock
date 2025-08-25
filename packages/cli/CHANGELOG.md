@@ -1,5 +1,17 @@
 # rock
 
+## 0.9.2
+
+### Patch Changes
+
+- 8180d73: fix: launch iOS app on device
+- ffedb09: docs: update create-app readmes
+- Updated dependencies [b80451d]
+- Updated dependencies [1f0999d]
+- Updated dependencies [8180d73]
+  - @rock-js/tools@0.9.2
+  - @rock-js/config@0.9.2
+
 ## 0.9.0
 
 ### Minor Changes
