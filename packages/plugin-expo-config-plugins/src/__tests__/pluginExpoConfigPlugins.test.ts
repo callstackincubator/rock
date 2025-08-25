@@ -97,7 +97,7 @@ test('plugin is called with correct arguments and returns its name and descripti
 });
 
 describe('plugin applies default iOS config plugins correctly', () => {
-  test('plugin applies withBundleIdentifier correctly', async () => {
+  test('withBundleIdentifier', async () => {
     let { config, info } = await getTestConfig();
 
     const bundleIdentifier = 'dev.rockjs.test';
@@ -128,7 +128,7 @@ describe('plugin applies default iOS config plugins correctly', () => {
     );
   });
 
-  test.skip('plugin applies withGoogle correctly', async () => {
+  test.skip('withGoogle', async () => {
     let { config, info } = await getTestConfig();
 
     config = withPlugins(config, [IOSConfig.Google.withGoogle]);
@@ -141,7 +141,7 @@ describe('plugin applies default iOS config plugins correctly', () => {
     await evalModsAsync(config, info);
   });
 
-  test('plugin applies withDisplayName correctly', async () => {
+  test('withDisplayName', async () => {
     let { config, info } = await getTestConfig();
 
     // Edit the display name
@@ -172,7 +172,7 @@ describe('plugin applies default iOS config plugins correctly', () => {
     expect(changedDisplayName).toBe(config.name);
   });
 
-  test('plugin applies withProductName correctly', async () => {
+  test('withProductName', async () => {
     let { config, info } = await getTestConfig();
 
     // Edit the product name
@@ -196,7 +196,7 @@ describe('plugin applies default iOS config plugins correctly', () => {
     expect(changedProjectContent).toContain(`PRODUCT_NAME = "${config.name}"`);
   });
 
-  test('plugin applies withOrientation correctly', async () => {
+  test('withOrientation', async () => {
     let { config, info } = await getTestConfig();
 
     // Add orientation configuration to the config
@@ -235,7 +235,7 @@ describe('plugin applies default iOS config plugins correctly', () => {
     );
   });
 
-  test('plugin applies withRequiresFullScreen correctly', async () => {
+  test('withRequiresFullScreen', async () => {
     let { config, info } = await getTestConfig();
 
     // Add requires full screen configuration to the config
@@ -269,7 +269,7 @@ describe('plugin applies default iOS config plugins correctly', () => {
     expect(changedRequiresFullScreen).toBe(true);
   });
 
-  test('plugin applies withScheme correctly', async () => {
+  test('withScheme', async () => {
     let { config, info } = await getTestConfig();
 
     // Add scheme to the config
@@ -303,7 +303,7 @@ describe('plugin applies default iOS config plugins correctly', () => {
     expect(changedScheme).toContain(config.scheme);
   });
 
-  test('plugin applies withUsesNonExemptEncryption correctly', async () => {
+  test('withUsesNonExemptEncryption', async () => {
     let { config, info } = await getTestConfig();
 
     // Add uses non exempt encryption to the config
@@ -341,7 +341,7 @@ describe('plugin applies default iOS config plugins correctly', () => {
     expect(changedUsesNonExemptEncryption).toBe(true);
   });
 
-  test('plugin applies withBuildNumber correctly', async () => {
+  test('withBuildNumber', async () => {
     let { config, info } = await getTestConfig();
 
     // Add build number to the config
@@ -372,7 +372,7 @@ describe('plugin applies default iOS config plugins correctly', () => {
     expect(changedBuildNumber).toBe(config.ios?.buildNumber);
   });
 
-  test('plugin applies withVersion correctly', async () => {
+  test('withVersion', async () => {
     let { config, info } = await getTestConfig();
 
     // Add version to the config
@@ -403,7 +403,7 @@ describe('plugin applies default iOS config plugins correctly', () => {
     expect(changedVersion).toBe(config.ios?.version);
   });
 
-  test('plugin applies withGoogleServicesFile correctly', async () => {
+  test('withGoogleServicesFile', async () => {
     let { config, info } = await getTestConfig();
 
     // Add Google services file to the config
@@ -435,7 +435,7 @@ describe('plugin applies default iOS config plugins correctly', () => {
     expect(googleServiceFileExists).toBe(true);
   });
 
-  test('plugin applies withJsEnginePodfileProps correctly', async () => {
+  test('withJsEnginePodfileProps', async () => {
     let { config, info } = await getTestConfig();
 
     // Add JS engine configuration to the config
@@ -468,7 +468,7 @@ describe('plugin applies default iOS config plugins correctly', () => {
     // @todo: check that the property is actually used in the Podfile
   });
 
-  test('plugin applies withNewArchEnabledPodfileProps correctly', async () => {
+  test('withNewArchEnabledPodfileProps', async () => {
     let { config, info } = await getTestConfig();
 
     // Add new arch configuration to the config
@@ -496,7 +496,7 @@ describe('plugin applies default iOS config plugins correctly', () => {
     expect(podfileProperties['newArchEnabled']).toBe('true');
   });
 
-  test('plugin applies withAssociatedDomains correctly', async () => {
+  test('withAssociatedDomains', async () => {
     let { config, info } = await getTestConfig();
 
     // Add associated domains to the config
@@ -599,7 +599,7 @@ describe('plugin applies default iOS config plugins correctly', () => {
     expect(changedProjectContent).toContain('ENABLE_BITCODE = YES');
   });
 
-  test('plugin applies withLocales correctly', async () => {
+  test('withLocales', async () => {
     let { config, info } = await getTestConfig();
 
     // Add locales configuration to the config
@@ -648,7 +648,7 @@ describe('plugin applies default iOS config plugins correctly', () => {
     expect(plDirectoryExists).toBe(true);
   });
 
-  test('plugin applies withDevelopmentTeam correctly', async () => {
+  test('withDevelopmentTeam', async () => {
     let { config, info } = await getTestConfig();
 
     // Add development team configuration to the config
@@ -675,7 +675,7 @@ describe('plugin applies default iOS config plugins correctly', () => {
     expect(changedProjectContent).toContain(config.ios?.appleTeamId);
   });
 
-  test('plugin applies withPrivacyInfo correctly', async () => {
+  test('withPrivacyInfo', async () => {
     let { config, info } = await getTestConfig();
 
     // Add privacy info configuration to the config
