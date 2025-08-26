@@ -282,8 +282,8 @@ function updatePackageJsonScripts(projectRoot: string) {
     .replaceAll(/run:ios(.*)--mode(.*)/g, 'run:ios$1--configuration$2')
     .replaceAll(/build:android(.*)--mode(.*)/g, 'build:android$1--variant$2')
     .replaceAll(/build:ios(.*)--mode(.*)/g, 'build:ios$1--configuration$2')
-    .replaceAll('--appId', '--app-id')
     .replaceAll('--appIdSuffix', '--app-id-suffix')
+    .replaceAll('--appId', '--app-id')
     .replaceAll('--buildFolder', '--build-folder');
 
   fs.writeFileSync(packageJsonPath, replaced);
