@@ -11,10 +11,10 @@ import {
   spawn,
   spinner,
 } from '@rock-js/tools';
-import { getPkgManager } from './getPkgManager.js';
+import { getPkgManagerFromLockFile } from './getPkgManager.js';
 
 export async function initInExistingProject(projectRoot: string) {
-  const pkgManager = getPkgManager();
+  const pkgManager = getPkgManagerFromLockFile();
 
   const loader = spinner();
 
@@ -26,7 +26,9 @@ export async function initInExistingProject(projectRoot: string) {
     '@rock-js/platform-ios',
   ];
 
-  loader.start(`Adding ${color.bold('Rock')} dependencies with ${color.bold(pkgManager)}`);
+  loader.start(
+    `Adding ${color.bold('Rock')} dependencies with ${color.bold(pkgManager)}`,
+  );
   await addDevDependencies(projectRoot, pkgManager, rockPackages);
   loader.stop(`Added ${color.bold('Rock')} dependencies`);
 
@@ -169,8 +171,7 @@ function updateAndroidBuildGradle(projectRoot: string, sourceDir: string) {
   if (!fs.existsSync(filePath)) {
     return;
   }
-  const desired =
-    'cliFile = file("../../node_modules/rock/dist/src/bin.js")';
+  const desired = 'cliFile = file("../../node_modules/rock/dist/src/bin.js")';
   const content = fs.readFileSync(filePath, 'utf8');
   const replaced = content.replace(
     /\/\/\s+cliFile\s*=\s*file\([^)]*\)/g,
@@ -281,8 +282,8 @@ function updatePackageJsonScripts(projectRoot: string) {
     .replaceAll(/run:ios(.*)--mode(.*)/g, 'run:ios$1--configuration$2')
     .replaceAll(/build:android(.*)--mode(.*)/g, 'build:android$1--variant$2')
     .replaceAll(/build:ios(.*)--mode(.*)/g, 'build:ios$1--configuration$2')
-    .replaceAll('--appId', '--app-id')
     .replaceAll('--appIdSuffix', '--app-id-suffix')
+    .replaceAll('--appId', '--app-id')
     .replaceAll('--buildFolder', '--build-folder');
 
   fs.writeFileSync(packageJsonPath, replaced);

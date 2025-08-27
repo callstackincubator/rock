@@ -1,5 +1,13 @@
 # @rnef/tools
 
+## 0.9.2
+
+### Patch Changes
+
+- b80451d: chore: update no git remote warning
+- 1f0999d: fix: skip git clean -xdf --dry-run check if not git repo
+- 8180d73: fix: launch iOS app on device
+
 ## 0.9.1
 
 ## 0.9.0

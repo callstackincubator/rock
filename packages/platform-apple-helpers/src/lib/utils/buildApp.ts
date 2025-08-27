@@ -1,6 +1,6 @@
 import path from 'node:path';
 import type { IOSProjectConfig } from '@react-native-community/cli-types';
-import { RockError } from '@rock-js/tools';
+import { getInfoPlist, RockError } from '@rock-js/tools';
 import type { BuildFlags } from '../commands/build/buildOptions.js';
 import { buildProject } from '../commands/build/buildProject.js';
 import { getBuildSettings } from '../commands/run/getBuildSettings.js';
@@ -37,10 +37,15 @@ export async function buildApp({
   brownfield?: boolean;
 }) {
   if (binaryPath) {
+    // @todo Info.plist is hardcoded when reading from binaryPath
+    const infoPlistPath = path.join(binaryPath, 'Info.plist');
+    const infoPlistJson = await getInfoPlist(infoPlistPath);
+    const bundleIdentifier = infoPlistJson?.['CFBundleIdentifier'] ?? 'unknown';
+
     return {
       appPath: binaryPath,
-      // @todo Info.plist is hardcoded when reading from binaryPath
-      infoPlistPath: path.join(binaryPath, 'Info.plist'),
+      bundleIdentifier,
+      infoPlistPath,
       scheme: args.scheme,
       xcodeProject: projectConfig.xcodeProject,
       sourceDir: projectConfig.sourceDir,
@@ -117,6 +122,7 @@ export async function buildApp({
     scheme: scheme,
     xcodeProject,
     sourceDir,
+    bundleIdentifier: buildSettings.bundleIdentifier,
   };
 }
 

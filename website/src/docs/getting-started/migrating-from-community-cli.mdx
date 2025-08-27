@@ -2,6 +2,16 @@ import { PackageManagerTabs } from 'rspress/theme';
 
 # Migrating from Community CLI
 
+## Automatic Migration
+
+You can automate all the migration steps below by running the following command in your existing React Native project. The CLI will detect your project and guide you through the migration process interactively, automatically updating all necessary files and configurations.
+
+<PackageManagerTabs command="create rock" />
+
+## Manual Migration
+
+If you prefer to do it manually or encounter any issues, follow the steps below.
+
 1. Install dev dependencies:
 
    <PackageManagerTabs command="install -D rock @rock-js/plugin-metro @rock-js/platform-android @rock-js/platform-ios" />

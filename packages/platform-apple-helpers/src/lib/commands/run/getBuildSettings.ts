@@ -8,6 +8,7 @@ type BuildSettings = {
   EXECUTABLE_FOLDER_PATH: string;
   FULL_PRODUCT_NAME: string;
   WRAPPER_EXTENSION: string;
+  PRODUCT_BUNDLE_IDENTIFIER: string;
 };
 
 export async function getBuildSettings({
@@ -28,7 +29,11 @@ export async function getBuildSettings({
   scheme: string;
   target?: string;
   buildFolder?: string;
-}): Promise<{ appPath: string; infoPlistPath: string }> {
+}): Promise<{
+  appPath: string;
+  infoPlistPath: string;
+  bundleIdentifier: string;
+}> {
   const destination = destinations[0];
   const sdk = destination.match(/simulator/i)
     ? getSimulatorPlatformSDK(platformName)
@@ -102,6 +107,7 @@ export async function getBuildSettings({
     return {
       appPath,
       infoPlistPath: path.join(targetBuildDir, infoPlistPath),
+      bundleIdentifier: buildSettings.PRODUCT_BUNDLE_IDENTIFIER,
     };
   }
 
