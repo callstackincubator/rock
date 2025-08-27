@@ -16,7 +16,10 @@ export function getPkgManagerFromLockFile() {
   if (fs.existsSync(path.join(process.cwd(), 'pnpm-lock.yaml'))) {
     return 'pnpm';
   }
-  if (fs.existsSync(path.join(process.cwd(), 'yarn.lock'))) {
+  if (
+    fs.existsSync(path.join(process.cwd(), 'yarn.lock')) ||
+    fs.existsSync(path.join(process.cwd(), '.yarn'))
+  ) {
     return 'yarn';
   }
   if (
