@@ -9,6 +9,10 @@ export function getPkgManager() {
   if (fromUserAgent) {
     return fromUserAgent.name;
   }
+  return getPkgManagerFromLockFile();
+}
+
+export function getPkgManagerFromLockFile() {
   if (fs.existsSync(path.join(process.cwd(), 'pnpm-lock.yaml'))) {
     return 'pnpm';
   }

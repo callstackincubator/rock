@@ -2,10 +2,10 @@ import fs from 'node:fs';
 import path from 'node:path';
 import type { SubprocessError } from '@rock-js/tools';
 import { color, logger, note, outro, spawn, spinner } from '@rock-js/tools';
-import { getPkgManager } from './getPkgManager.js';
+import { getPkgManagerFromLockFile } from './getPkgManager.js';
 
 async function migrateRnefProject(projectRoot: string): Promise<void> {
-  const pkgManager = getPkgManager();
+  const pkgManager = getPkgManagerFromLockFile();
   const loader = spinner();
 
   const packagesMap: Record<string, string> = {
