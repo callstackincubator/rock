@@ -25,9 +25,9 @@
     "@rock-js/config": "^0.9.2"
   },
   "peerDependencies": {
-    "@callstack/repack": "^5.0.3",
-    "@rspack/core": "^1.2.8",
-    "@swc/helpers": "^0.5.15"
+    "@callstack/repack": ">=5",
+    "@rspack/core": ">=1.2.8",
+    "@swc/helpers": ">=0.5.15"
   },
   "publishConfig": {
     "access": "public"
