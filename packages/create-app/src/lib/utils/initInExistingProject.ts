@@ -11,10 +11,10 @@ import {
   spawn,
   spinner,
 } from '@rock-js/tools';
-import { getPkgManager } from './getPkgManager.js';
+import { getPkgManagerFromLockFile } from './getPkgManager.js';
 
 export async function initInExistingProject(projectRoot: string) {
-  const pkgManager = getPkgManager();
+  const pkgManager = getPkgManagerFromLockFile();
 
   const loader = spinner();
 
