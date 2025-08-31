@@ -11,7 +11,9 @@ import {
   withDefaultBaseMods,
   withPlugins,
 } from '@expo/config-plugins';
+import { withAndroidExpoPlugins } from '../lib/plugins/modCompiler.js';
 import * as plist from 'plist';
+import { AndroidConfig } from '@expo/config-plugins';
 
 let TEMP_DIR: string;
 
@@ -48,13 +50,15 @@ afterEach(() => {
   }
 });
 
-async function getTestConfig() {
+async function getTestConfig(platforms: ('ios' | 'android')[] = ['ios']) {
   const appJsonPath = path.join(pluginApi.getProjectRoot(), 'app.json');
   const iosDirPath = path.join(pluginApi.getProjectRoot(), 'ios');
+  const androidDirPath = path.join(pluginApi.getProjectRoot(), 'android');
 
-  const [appJsonContent, iosDirContent] = await Promise.all([
+  const [appJsonContent, iosDirContent, androidDirContent] = await Promise.all([
     fs.readFile(appJsonPath, 'utf-8'),
     fs.readdir(iosDirPath),
+    fs.readdir(androidDirPath),
   ]);
 
   const { expo, ...rest } = JSON.parse(appJsonContent);
@@ -64,12 +68,19 @@ async function getTestConfig() {
     iosDirContent.find((dir) => dir.includes('.xcodeproj'))?.split('.')[0] ??
     '';
 
+  const androidProjectName = androidDirContent.find((dir) =>
+    dir.includes('.gradle'),
+  )
+    ? 'android'
+    : '';
+
   const info = {
     projectRoot: pluginApi.getProjectRoot(),
-    platforms: ['ios'] as ProjectInfo['platforms'],
+    platforms: platforms as ProjectInfo['platforms'],
     packageJsonPath: path.join(pluginApi.getProjectRoot(), 'package.json'),
     appJsonPath,
     iosProjectName,
+    androidProjectName,
   };
 
   let config = withInternal(appJsonConfig, info);
@@ -802,5 +813,829 @@ describe('plugin applies default iOS config plugins correctly', () => {
       'utf8',
     );
     expect(changedPrivacyInfoContent).toContain('0A2A.1');
+  });
+});
+
+describe('plugin applies default Android config plugins correctly', () => {
+  test('withJsEngineGradleProps', async () => {
+    let { config, info } = await getTestConfig(['android']);
+
+    // Add JS engine configuration to the config
+    config.jsEngine = 'jsc';
+
+    // Use withAndroidExpoPlugins to apply all Android plugins
+    config = withAndroidExpoPlugins(config, {
+      package: 'com.testpackage.app',
+      projectRoot: info.projectRoot,
+    });
+
+    config = withDefaultBaseMods(config);
+
+    const gradlePropertiesPath = path.join(
+      TEMP_DIR,
+      'android',
+      'gradle.properties',
+    );
+
+    // Check initial state - hermesEnabled should be true by default
+    const initialGradleProperties = await fs.readFile(
+      gradlePropertiesPath,
+      'utf8',
+    );
+    expect(initialGradleProperties).toContain('hermesEnabled=true');
+
+    // Apply the plugin
+    await evalModsAsync(config, info);
+
+    // Check that hermesEnabled was updated to false (since jsEngine is 'jsc')
+    const changedGradleProperties = await fs.readFile(
+      gradlePropertiesPath,
+      'utf8',
+    );
+    expect(changedGradleProperties).toContain('hermesEnabled=false');
+  });
+
+  test('withNewArchEnabledGradleProps', async () => {
+    let { config, info } = await getTestConfig(['android']);
+
+    // Add new arch configuration to the config
+    if (!config.android) config.android = {};
+    config.android.newArchEnabled = false;
+
+    // Use withAndroidExpoPlugins to apply all Android plugins
+    config = withAndroidExpoPlugins(config, {
+      package: 'com.testpackage.app',
+      projectRoot: info.projectRoot,
+    });
+
+    config = withDefaultBaseMods(config);
+
+    const gradlePropertiesPath = path.join(
+      TEMP_DIR,
+      'android',
+      'gradle.properties',
+    );
+
+    // Check initial state - newArchEnabled should be true by default
+    const initialGradleProperties = await fs.readFile(
+      gradlePropertiesPath,
+      'utf8',
+    );
+    expect(initialGradleProperties).toContain('newArchEnabled=true');
+
+    // Apply the plugin
+    await evalModsAsync(config, info);
+
+    // Check that newArchEnabled was updated to false
+    const changedGradleProperties = await fs.readFile(
+      gradlePropertiesPath,
+      'utf8',
+    );
+    expect(changedGradleProperties).toContain('newArchEnabled=false');
+  });
+
+  test('withNameSettingsGradle', async () => {
+    let { config, info } = await getTestConfig(['android']);
+
+    // Add name configuration to the config
+    config.name = 'TestAppName';
+
+    // Use withAndroidExpoPlugins to apply all Android plugins
+    config = withAndroidExpoPlugins(config, {
+      package: 'com.testpackage.app',
+      projectRoot: info.projectRoot,
+    });
+
+    config = withDefaultBaseMods(config);
+
+    const settingsGradlePath = path.join(
+      TEMP_DIR,
+      'android',
+      'settings.gradle',
+    );
+
+    // Check initial state
+    const initialSettingsGradle = await fs.readFile(settingsGradlePath, 'utf8');
+    expect(initialSettingsGradle).toContain(
+      "rootProject.name = 'ExpoConfigPluginsTestApp'",
+    );
+
+    // Apply the plugin
+    await evalModsAsync(config, info);
+
+    // Check that rootProject.name was updated
+    const changedSettingsGradle = await fs.readFile(settingsGradlePath, 'utf8');
+    expect(changedSettingsGradle).toContain(
+      `rootProject.name = '${config.name}'`,
+    );
+  });
+
+  test('withClassPath', async () => {
+    let { config, info } = await getTestConfig(['android']);
+
+    // Add Google services configuration to the config
+    if (!config.android) config.android = {};
+    config.android.googleServicesFile = './google-services.json';
+
+    // Use withAndroidExpoPlugins to apply all Android plugins
+    config = withAndroidExpoPlugins(config, {
+      package: 'com.testpackage.app',
+      projectRoot: info.projectRoot,
+    });
+
+    config = withDefaultBaseMods(config);
+
+    const projectBuildGradlePath = path.join(
+      TEMP_DIR,
+      'android',
+      'build.gradle',
+    );
+
+    // Check initial state - should not have Google Services classpath
+    const initialBuildGradle = await fs.readFile(
+      projectBuildGradlePath,
+      'utf8',
+    );
+    expect(initialBuildGradle).not.toContain('com.google.gms:google-services');
+
+    // Apply the plugin
+    await evalModsAsync(config, info);
+
+    // Check that Google Services classpath was added
+    const changedBuildGradle = await fs.readFile(
+      projectBuildGradlePath,
+      'utf8',
+    );
+    expect(changedBuildGradle).toContain('com.google.gms:google-services');
+  });
+
+  test('withApplyPlugin', async () => {
+    let { config, info } = await getTestConfig(['android']);
+
+    // Add Google services configuration to the config
+    if (!config.android) config.android = {};
+    config.android.googleServicesFile = './google-services.json';
+
+    // Use withAndroidExpoPlugins to apply all Android plugins
+    config = withAndroidExpoPlugins(config, {
+      package: 'com.testpackage.app',
+      projectRoot: info.projectRoot,
+    });
+
+    config = withDefaultBaseMods(config);
+
+    const appBuildGradlePath = path.join(
+      TEMP_DIR,
+      'android',
+      'app',
+      'build.gradle',
+    );
+
+    // Check initial state - should not have Google Services plugin applied
+    const initialAppBuildGradle = await fs.readFile(appBuildGradlePath, 'utf8');
+    expect(initialAppBuildGradle).not.toContain(
+      "apply plugin: 'com.google.gms.google-services'",
+    );
+
+    // Apply the plugin
+    await evalModsAsync(config, info);
+
+    // Check that Google Services plugin was applied
+    const changedAppBuildGradle = await fs.readFile(appBuildGradlePath, 'utf8');
+    expect(changedAppBuildGradle).toContain(
+      "apply plugin: 'com.google.gms.google-services'",
+    );
+  });
+
+  test('withPackageGradle', async () => {
+    let { config, info } = await getTestConfig(['android']);
+
+    // Add package configuration to the config
+    if (!config.android) config.android = {};
+    config.android.package = 'com.testpackage.app';
+
+    config = withPlugins(config, [AndroidConfig.Package.withPackageGradle]);
+
+    config = withDefaultBaseMods(config);
+
+    const appBuildGradlePath = path.join(
+      TEMP_DIR,
+      'android',
+      'app',
+      'build.gradle',
+    );
+
+    // Check initial state
+    const initialAppBuildGradle = await fs.readFile(appBuildGradlePath, 'utf8');
+    expect(initialAppBuildGradle).toContain(
+      'namespace "com.expoconfigpluginstestapp"',
+    );
+    expect(initialAppBuildGradle).toContain(
+      'applicationId "com.expoconfigpluginstestapp"',
+    );
+
+    // Apply the plugin
+    await evalModsAsync(config, info);
+
+    // Check that package was updated
+    const changedAppBuildGradle = await fs.readFile(appBuildGradlePath, 'utf8');
+
+    expect(changedAppBuildGradle).toContain(
+      `namespace '${config.android?.package}'`,
+    );
+    expect(changedAppBuildGradle).toContain(
+      `applicationId '${config.android?.package}'`,
+    );
+  });
+
+  test('withVersion', async () => {
+    let { config, info } = await getTestConfig(['android']);
+
+    // Add version configuration to the config
+    if (!config.android) config.android = {};
+    config.android.version = '2.0.0';
+    config.android.versionCode = 123;
+
+    config = withPlugins(config, [AndroidConfig.Version.withVersion]);
+
+    config = withDefaultBaseMods(config);
+
+    const appBuildGradlePath = path.join(
+      TEMP_DIR,
+      'android',
+      'app',
+      'build.gradle',
+    );
+
+    // Check initial state
+    const initialAppBuildGradle = await fs.readFile(appBuildGradlePath, 'utf8');
+    expect(initialAppBuildGradle).toContain('versionCode 1');
+    expect(initialAppBuildGradle).toContain('versionName "1.0"');
+
+    // Apply the plugin
+    await evalModsAsync(config, info);
+
+    // Check that version was updated
+    const changedAppBuildGradle = await fs.readFile(appBuildGradlePath, 'utf8');
+    expect(changedAppBuildGradle).toContain(
+      `versionCode ${config.android?.versionCode}`,
+    );
+    expect(changedAppBuildGradle).toContain(
+      `versionName "${config.android?.version}"`,
+    );
+  });
+
+  test('withAllowBackup', async () => {
+    let { config, info } = await getTestConfig(['android']);
+
+    // Add allow backup configuration to the config
+    if (!config.android) config.android = {};
+    config.android.allowBackup = true;
+
+    // Use withAndroidExpoPlugins to apply all Android plugins
+    config = withAndroidExpoPlugins(config, {
+      package: 'com.testpackage.app',
+      projectRoot: info.projectRoot,
+    });
+
+    config = withDefaultBaseMods(config);
+
+    const manifestPath = path.join(
+      TEMP_DIR,
+      'android',
+      'app',
+      'src',
+      'main',
+      'AndroidManifest.xml',
+    );
+
+    // Check initial state
+    const initialManifest = await fs.readFile(manifestPath, 'utf8');
+    expect(initialManifest).toContain('android:allowBackup="false"');
+
+    // Apply the plugin
+    await evalModsAsync(config, info);
+
+    // Check that allowBackup was updated
+    const changedManifest = await fs.readFile(manifestPath, 'utf8');
+    expect(changedManifest).toContain('android:allowBackup="true"');
+  });
+
+  test('withWindowSoftInputMode', async () => {
+    let { config, info } = await getTestConfig(['android']);
+
+    // Add window soft input mode configuration to the config
+    if (!config.android) config.android = {};
+    config.android.softwareKeyboardLayoutMode = 'pan';
+
+    config = withPlugins(config, [
+      AndroidConfig.WindowSoftInputMode.withWindowSoftInputMode,
+    ]);
+
+    config = withDefaultBaseMods(config);
+
+    const manifestPath = path.join(
+      TEMP_DIR,
+      'android',
+      'app',
+      'src',
+      'main',
+      'AndroidManifest.xml',
+    );
+
+    // Check initial state
+    const initialManifest = await fs.readFile(manifestPath, 'utf8');
+
+    expect(initialManifest).toContain(
+      'android:windowSoftInputMode="adjustResize"',
+    );
+
+    // Apply the plugin
+    await evalModsAsync(config, info);
+
+    // Check that windowSoftInputMode was updated
+    const changedManifest = await fs.readFile(manifestPath, 'utf8');
+
+    expect(changedManifest).toContain(
+      'android:windowSoftInputMode="adjustPan"',
+    );
+  });
+
+  test('withAndroidIntentFilters', async () => {
+    let { config, info } = await getTestConfig(['android']);
+
+    // Add intent filters configuration to the config
+    if (!config.android) config.android = {};
+    config.android.intentFilters = [
+      {
+        action: 'android.intent.action.VIEW',
+        category: [
+          'android.intent.category.DEFAULT',
+          'android.intent.category.BROWSABLE',
+        ],
+        data: {
+          scheme: 'https',
+          host: 'example.com',
+        },
+      },
+    ];
+
+    // Use withAndroidExpoPlugins to apply all Android plugins
+    config = withAndroidExpoPlugins(config, {
+      package: 'com.testpackage.app',
+      projectRoot: info.projectRoot,
+    });
+
+    config = withDefaultBaseMods(config);
+
+    const manifestPath = path.join(
+      TEMP_DIR,
+      'android',
+      'app',
+      'src',
+      'main',
+      'AndroidManifest.xml',
+    );
+
+    // Check initial state - should only have the default MAIN intent filter
+    const initialManifest = await fs.readFile(manifestPath, 'utf8');
+    expect(initialManifest).toContain('android.intent.action.MAIN');
+    expect(initialManifest).not.toContain('android.intent.action.VIEW');
+
+    // Apply the plugin
+    await evalModsAsync(config, info);
+
+    // Check that intent filters were added
+    const changedManifest = await fs.readFile(manifestPath, 'utf8');
+    expect(changedManifest).toContain('android.intent.action.VIEW');
+    expect(changedManifest).toContain('android.intent.category.DEFAULT');
+    expect(changedManifest).toContain('android.intent.category.BROWSABLE');
+    expect(changedManifest).toContain('android:scheme="https"');
+    expect(changedManifest).toContain('android:host="example.com"');
+  });
+
+  test('withScheme', async () => {
+    let { config, info } = await getTestConfig(['android']);
+
+    // Add scheme configuration to the config
+    config.scheme = 'dev.rockjs.test';
+
+    // Use withAndroidExpoPlugins to apply all Android plugins
+    config = withAndroidExpoPlugins(config, {
+      package: 'com.testpackage.app',
+      projectRoot: info.projectRoot,
+    });
+
+    config = withDefaultBaseMods(config);
+
+    const manifestPath = path.join(
+      TEMP_DIR,
+      'android',
+      'app',
+      'src',
+      'main',
+      'AndroidManifest.xml',
+    );
+
+    // Check initial state - should not have the scheme intent filter
+    const initialManifest = await fs.readFile(manifestPath, 'utf8');
+    expect(initialManifest).not.toContain('android:scheme="dev.rockjs.test"');
+
+    // Apply the plugin
+    await evalModsAsync(config, info);
+
+    // Check that scheme was added
+    const changedManifest = await fs.readFile(manifestPath, 'utf8');
+    expect(changedManifest).toContain(`android:scheme="${config.scheme}"`);
+  });
+
+  test('withOrientation', async () => {
+    let { config, info } = await getTestConfig(['android']);
+
+    // Add orientation configuration to the config
+    config.orientation = 'landscape';
+
+    // Use withAndroidExpoPlugins to apply all Android plugins
+    config = withAndroidExpoPlugins(config, {
+      package: 'com.testpackage.app',
+      projectRoot: info.projectRoot,
+    });
+
+    config = withDefaultBaseMods(config);
+
+    const manifestPath = path.join(
+      TEMP_DIR,
+      'android',
+      'app',
+      'src',
+      'main',
+      'AndroidManifest.xml',
+    );
+
+    // Check initial state - should have configChanges but not screenOrientation
+    const initialManifest = await fs.readFile(manifestPath, 'utf8');
+    expect(initialManifest).toContain(
+      'android:configChanges="keyboard|keyboardHidden|orientation|screenLayout|screenSize|smallestScreenSize|uiMode"',
+    );
+    expect(initialManifest).not.toContain('android:screenOrientation');
+
+    // Apply the plugin
+    await evalModsAsync(config, info);
+
+    // Check that orientation was added
+    const changedManifest = await fs.readFile(manifestPath, 'utf8');
+    expect(changedManifest).toContain('android:screenOrientation="landscape"');
+  });
+
+  test('withInternalBlockedPermissions', async () => {
+    let { config, info } = await getTestConfig(['android']);
+
+    // Add internal blocked permissions configuration to the config
+    if (!config.android) config.android = {};
+    config.android.blockedPermissions = ['android.permission.CAMERA'];
+
+    config = withPlugins(config, [
+      AndroidConfig.Permissions.withInternalBlockedPermissions,
+    ]);
+
+    config = withDefaultBaseMods(config);
+
+    const manifestPath = path.join(
+      TEMP_DIR,
+      'android',
+      'app',
+      'src',
+      'main',
+      'AndroidManifest.xml',
+    );
+
+    // Check initial state - should not have the blocked permission
+    const initialManifest = await fs.readFile(manifestPath, 'utf8');
+    expect(initialManifest).not.toContain(
+      'android:name="android.permission.CAMERA"',
+    );
+
+    // Apply the plugin
+    await evalModsAsync(config, info);
+
+    // Check that blocked permission was added
+    const changedManifest = await fs.readFile(manifestPath, 'utf8');
+
+    expect(changedManifest).toContain(
+      'android:name="android.permission.CAMERA" tools:node="remove"',
+    );
+  });
+
+  test('withPermissions', async () => {
+    let { config, info } = await getTestConfig(['android']);
+
+    // Add permissions configuration to the config
+    if (!config.android) config.android = {};
+    config.android.permissions = [
+      'android.permission.CAMERA',
+      'android.permission.ACCESS_FINE_LOCATION',
+    ];
+
+    config = withPlugins(config, [AndroidConfig.Permissions.withPermissions]);
+
+    config = withDefaultBaseMods(config);
+
+    const manifestPath = path.join(
+      TEMP_DIR,
+      'android',
+      'app',
+      'src',
+      'main',
+      'AndroidManifest.xml',
+    );
+
+    // Check initial state - should only have INTERNET permission
+    const initialManifest = await fs.readFile(manifestPath, 'utf8');
+    expect(initialManifest).toContain('android.permission.INTERNET');
+    expect(initialManifest).not.toContain('android.permission.CAMERA');
+    expect(initialManifest).not.toContain(
+      'android.permission.ACCESS_FINE_LOCATION',
+    );
+
+    // Apply the plugin
+    await evalModsAsync(config, info);
+
+    // Check that permissions were added
+    const changedManifest = await fs.readFile(manifestPath, 'utf8');
+    expect(changedManifest).toContain('android.permission.CAMERA');
+    expect(changedManifest).toContain(
+      'android.permission.ACCESS_FINE_LOCATION',
+    );
+  });
+
+  test('withName', async () => {
+    let { config, info } = await getTestConfig(['android']);
+
+    // Add name configuration to the config
+    config.name = 'TestAppName';
+
+    config = withPlugins(config, [AndroidConfig.Name.withName]);
+
+    config = withDefaultBaseMods(config);
+
+    const stringsPath = path.join(
+      TEMP_DIR,
+      'android',
+      'app',
+      'src',
+      'main',
+      'res',
+      'values',
+      'strings.xml',
+    );
+
+    // Check initial state
+    const initialStrings = await fs.readFile(stringsPath, 'utf8');
+    expect(initialStrings).toContain('ExpoConfigPluginsTestApp');
+
+    // Apply the plugin
+    await evalModsAsync(config, info);
+
+    // Check that app name was updated
+    const changedStrings = await fs.readFile(stringsPath, 'utf8');
+    expect(changedStrings).toContain(config.name);
+  });
+
+  test('withLocales', async () => {
+    let { config, info } = await getTestConfig(['android']);
+
+    // Add locales configuration to the config
+    config.locales = {
+      en: './locale/en.json',
+      pl: './locale/pl.json',
+    };
+
+    config = withPlugins(config, [AndroidConfig.Locales.withLocales]);
+
+    config = withDefaultBaseMods(config);
+
+    const resDir = path.join(TEMP_DIR, 'android', 'app', 'src', 'main', 'res');
+
+    // Check initial state - should not have locale-specific directories
+    const initialResContents = await fs.readdir(resDir);
+    expect(initialResContents).not.toContain('values-b+en');
+    expect(initialResContents).not.toContain('values-b+pl');
+
+    // Apply the plugin
+    await evalModsAsync(config, info);
+
+    // Check that locale directories were created
+    const changedResContents = await fs.readdir(resDir);
+
+    expect(changedResContents).toContain('values-b+en');
+    expect(changedResContents).toContain('values-b+pl');
+
+    // Check that strings files were created
+    const enStringsPath = path.join(resDir, 'values-b+en', 'strings.xml');
+    const plStringsPath = path.join(resDir, 'values-b+pl', 'strings.xml');
+
+    const [enStringsExists, plStringsExists] = await Promise.all([
+      fs
+        .access(enStringsPath)
+        .then(() => true)
+        .catch(() => false),
+      fs
+        .access(plStringsPath)
+        .then(() => true)
+        .catch(() => false),
+    ]);
+
+    expect(enStringsExists).toBe(true);
+    expect(plStringsExists).toBe(true);
+  });
+
+  test('withGoogleServicesFile', async () => {
+    let { config, info } = await getTestConfig(['android']);
+
+    // Add Google services file configuration to the config
+    if (!config.android) config.android = {};
+    config.android.googleServicesFile = './google-services.json';
+
+    config = withPlugins(config, [
+      AndroidConfig.GoogleServices.withGoogleServicesFile,
+    ]);
+
+    config = withDefaultBaseMods(config);
+
+    const appDir = path.join(TEMP_DIR, 'android', 'app');
+
+    // Check initial state - should not have google-services.json
+    const initialAppContents = await fs.readdir(appDir);
+    expect(initialAppContents).not.toContain('google-services.json');
+
+    // Apply the plugin
+    await evalModsAsync(config, info);
+
+    // Check that google-services.json was copied
+    const changedAppContents = await fs.readdir(appDir);
+    expect(changedAppContents).toContain('google-services.json');
+
+    // Check that the file exists
+    const googleServicesPath = path.join(appDir, 'google-services.json');
+    const googleServicesExists = await fs
+      .access(googleServicesPath)
+      .then(() => true)
+      .catch(() => false);
+    expect(googleServicesExists).toBe(true);
+  });
+
+  test('withStatusBar', async () => {
+    let { config, info } = await getTestConfig(['android']);
+
+    // Add status bar configuration to the config
+    config.androidStatusBar = {
+      barStyle: 'light-content',
+      backgroundColor: '#000000',
+    };
+
+    config = withPlugins(config, [AndroidConfig.StatusBar.withStatusBar]);
+
+    config = withDefaultBaseMods(config);
+
+    const stylesPath = path.join(
+      TEMP_DIR,
+      'android',
+      'app',
+      'src',
+      'main',
+      'res',
+      'values',
+      'styles.xml',
+    );
+
+    // Check initial state - should not have status bar styles
+    const initialStyles = await fs.readFile(stylesPath, 'utf8');
+    expect(initialStyles).not.toContain('android:statusBarColor');
+
+    // Apply the plugin
+    await evalModsAsync(config, info);
+
+    // Check that status bar styles were added
+    const changedStyles = await fs.readFile(stylesPath, 'utf8');
+
+    expect(changedStyles).toContain('android:statusBarColor');
+    expect(changedStyles).toContain(config.androidStatusBar?.backgroundColor);
+  });
+
+  test('withPrimaryColor', async () => {
+    let { config, info } = await getTestConfig(['android']);
+
+    // Add primary color configuration to the config
+    config.primaryColor = '#FF0000';
+
+    config = withPlugins(config, [AndroidConfig.PrimaryColor.withPrimaryColor]);
+
+    config = withDefaultBaseMods(config);
+
+    const colorsPath = path.join(
+      TEMP_DIR,
+      'android',
+      'app',
+      'src',
+      'main',
+      'res',
+      'values',
+      'colors.xml',
+    );
+
+    // Check initial state - should not have primary color
+    const initialColors = await fs.readFile(colorsPath, 'utf8');
+    expect(initialColors).not.toContain('colorPrimary');
+
+    // Apply the plugin
+    await evalModsAsync(config, info);
+
+    // Check that primary color was added
+    const changedColors = await fs.readFile(colorsPath, 'utf8');
+    expect(changedColors).toContain('colorPrimary');
+    expect(changedColors).toContain(config.primaryColor);
+  });
+
+  test('withPackageRefactor', async () => {
+    let { config, info } = await getTestConfig(['android']);
+
+    // Add package configuration to the config
+    if (!config.android) config.android = {};
+    config.android.package = 'dev.rockjs.test';
+
+    config = withPlugins(config, [AndroidConfig.Package.withPackageRefactor]);
+
+    config = withDefaultBaseMods(config);
+
+    const mainActivityPath = path.join(
+      TEMP_DIR,
+      'android',
+      'app',
+      'src',
+      'main',
+      'java',
+      'com',
+      'expoconfigpluginstestapp',
+      'MainActivity.kt',
+    );
+    const mainApplicationPath = path.join(
+      TEMP_DIR,
+      'android',
+      'app',
+      'src',
+      'main',
+      'java',
+      'com',
+      'expoconfigpluginstestapp',
+      'MainApplication.kt',
+    );
+
+    // Check initial state - should have old package names
+    const [initialMainActivity, initialMainApplication] = await Promise.all([
+      fs.readFile(mainActivityPath, 'utf8'),
+      fs.readFile(mainApplicationPath, 'utf8'),
+    ]);
+    expect(initialMainActivity).toContain(
+      'package com.expoconfigpluginstestapp',
+    );
+    expect(initialMainApplication).toContain(
+      'package com.expoconfigpluginstestapp',
+    );
+
+    // Apply the plugin
+    await evalModsAsync(config, info);
+
+    const packageParts = config.android?.package?.split('.') ?? [];
+
+    const refactoredMainActivityPath = path.join(
+      TEMP_DIR,
+      'android',
+      'app',
+      'src',
+      'main',
+      'java',
+      ...packageParts,
+      'MainActivity.kt',
+    );
+    const refactoredMainApplicationPath = path.join(
+      TEMP_DIR,
+      'android',
+      'app',
+      'src',
+      'main',
+      'java',
+      ...packageParts,
+      'MainApplication.kt',
+    );
+
+    // Check that package names were updated
+    const [changedMainActivity, changedMainApplication] = await Promise.all([
+      fs.readFile(refactoredMainActivityPath, 'utf8'),
+      fs.readFile(refactoredMainApplicationPath, 'utf8'),
+    ]);
+    expect(changedMainActivity).toContain(`package ${config.android?.package}`);
+    expect(changedMainApplication).toContain(
+      `package ${config.android?.package}`,
+    );
   });
 });
