@@ -515,10 +515,6 @@ describe('plugin applies default iOS config plugins correctly', () => {
 
     config = withDefaultBaseMods(config);
 
-    const podfilePath = path.join(TEMP_DIR, 'ios', 'Podfile');
-
-    // @todo: check that the property is not already set in the Podfile
-
     // Apply the plugin
     await evalModsAsync(config, info);
 
@@ -536,8 +532,6 @@ describe('plugin applies default iOS config plugins correctly', () => {
     );
     const podfileProperties = JSON.parse(podfilePropertiesContent);
     expect(podfileProperties['expo.jsEngine']).toBe('jsc');
-
-    // @todo: check that the property is actually used in the Podfile
   });
 
   test('withNewArchEnabledPodfileProps', async () => {
