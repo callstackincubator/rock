@@ -1,5 +1,11 @@
 # @rnef/welcome-screen
 
+## 0.10.0
+
+### Minor Changes
+
+- 03dc80e: feat: upgrade templates to 0.81
+
 ## 0.9.2
 
 ## 0.9.1
