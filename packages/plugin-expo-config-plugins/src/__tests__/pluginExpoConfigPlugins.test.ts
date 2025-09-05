@@ -1161,6 +1161,8 @@ describe('plugin applies default Android config plugins correctly', () => {
     );
   });
 
+  test.skip('withPredictiveBackGesture', async () => {});
+
   test('withAndroidIntentFilters', async () => {
     let { config, info } = await getTestConfig(['android']);
 
@@ -1521,6 +1523,10 @@ describe('plugin applies default Android config plugins correctly', () => {
     expect(changedStyles).toContain('android:statusBarColor');
     expect(changedStyles).toContain(config.androidStatusBar?.backgroundColor);
   });
+
+  test.skip('withEdgeToEdge', async () => {});
+
+  test.skip('withAndroidIcons', async () => {});
 
   test('withPrimaryColor', async () => {
     let { config, info } = await getTestConfig(['android']);
