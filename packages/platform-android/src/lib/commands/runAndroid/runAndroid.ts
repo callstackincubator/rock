@@ -104,7 +104,9 @@ export async function runAndroid(
     }
 
     for (const device of await listAndroidDevices()) {
-      await runOnDevice({ device, androidProject, args, tasks, binaryPath });
+      if (device.connected) {
+        await runOnDevice({ device, androidProject, args, tasks, binaryPath });
+      }
     }
   }
 
