@@ -322,7 +322,7 @@ export function formatConfig(
     .join('\n')}
 
 export default {${
-    pluginsWithImports
+    pluginsWithImports && pluginsWithImports.length > 0
       ? `
   plugins: [
     ${pluginsWithImports
