@@ -10,10 +10,13 @@ import path from 'node:path';
 import url from 'node:url';
 import { createDevServerMiddleware } from '@react-native-community/cli-server-api';
 import { color } from '@rock-js/tools';
+import type {
+  Reporter,
+  // @ts-expect-error - https://github.com/facebook/metro/pull/1563
+  TerminalReportableEvent,
+  TerminalReporter,
+} from 'metro';
 import Metro from 'metro';
-import type { Reporter } from 'metro/src/lib/reporting';
-import type { TerminalReportableEvent } from 'metro/src/lib/TerminalReporter';
-import type { TerminalReporter } from 'metro/src/lib/TerminalReporter';
 import { Terminal } from 'metro-core';
 import { getDevMiddleware } from '../getReactNativeDeps.js';
 import attachKeyHandlers from './attachKeyHandlers.js';
@@ -123,7 +126,6 @@ async function runServer(
       if (reportEvent) {
         reportEvent(event);
       }
-      // @ts-expect-error - metro types are not updated
       if (args.interactive && event.type === 'initialize_done') {
         terminalReporter.update({
           type: 'unstable_server_log',
@@ -142,7 +144,7 @@ async function runServer(
   // @ts-expect-error Assigning to readonly property
   metroConfig.reporter = reporter;
 
-  const serverInstance = await Metro.runServer(metroConfig, {
+  const { httpServer: serverInstance } = await Metro.runServer(metroConfig, {
     host: args.host,
     secure: args.https,
     secureCert: args.cert,
@@ -173,7 +175,12 @@ const require = createRequire(import.meta.url);
 
 function getReporterImpl(customLogReporterPath?: string): TerminalReporter {
   if (customLogReporterPath == null) {
-    return require('metro/src/lib/TerminalReporter');
+    try {
+      return require('metro').TerminalReporter;
+    } catch {
+      // Fallback to legacy path for Metro < 0.83
+      return require('metro/src/lib/TerminalReporter');
+    }
   }
   try {
     // First we let require resolve it, so we can require packages in node_modules
