@@ -1,5 +1,11 @@
 # @rnef/welcome-screen
 
+## 0.10.1
+
+### Patch Changes
+
+- b10225e: fix: run only on connected Android devices
+
 ## 0.10.0
 
 ### Minor Changes

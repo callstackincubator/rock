@@ -1,5 +1,14 @@
 # rock
 
+## 0.10.1
+
+### Patch Changes
+
+- b10225e: fix: run only on connected Android devices
+- Updated dependencies [b10225e]
+  - @rock-js/config@0.10.1
+  - @rock-js/tools@0.10.1
+
 ## 0.10.0
 
 ### Minor Changes
