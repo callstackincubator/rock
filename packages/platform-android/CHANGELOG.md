@@ -1,5 +1,18 @@
 # @rnef/platform-android
 
+## 0.10.0
+
+### Minor Changes
+
+- 03dc80e: feat: upgrade templates to 0.81
+
+### Patch Changes
+
+- d6e1bb0: feat: change AppTheme parent to Material3
+- Updated dependencies [03dc80e]
+- Updated dependencies [fbbc26b]
+  - @rock-js/tools@0.10.0
+
 ## 0.9.2
 
 ### Patch Changes

@@ -1,5 +1,11 @@
 # rock-docs
 
+## 1.2.0
+
+### Minor Changes
+
+- 03dc80e: feat: upgrade templates to 0.81
+
 ## 1.1.1
 
 ### Patch Changes
