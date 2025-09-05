@@ -1,5 +1,11 @@
 # rock-docs
 
+## 1.2.1
+
+### Patch Changes
+
+- b10225e: fix: run only on connected Android devices
+
 ## 1.2.0
 
 ### Minor Changes
