@@ -29,6 +29,15 @@
     "@react-native-community/cli-types": "^20.0.0"
   },
   "publishConfig": {
-    "access": "restricted"
-  }
+    "access": "public"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/callstack/rock.git",
+    "directory": "packages/plugin-brownfield-android"
+  },
+  "homepage": "https://rockjs.dev",
+  "bugs": "https://github.com/callstack/rock/issues",
+  "license": "MIT",
+  "author": "Callstack <incubator@callstack.com>"
 }

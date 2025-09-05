@@ -23,11 +23,20 @@
     "joi": "^17.13.3",
     "tslib": "^2.3.0"
   },
-  "publishConfig": {
-    "access": "public"
-  },
   "devDependencies": {
     "@types/babel__code-frame": "^7.0.6",
     "@rock-js/test-helpers": "^0.10.1"
-  }
+  },
+  "publishConfig": {
+    "access": "public"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/callstack/rock.git",
+    "directory": "packages/config"
+  },
+  "homepage": "https://rockjs.dev",
+  "bugs": "https://github.com/callstack/rock/issues",
+  "license": "MIT",
+  "author": "Callstack <incubator@callstack.com>"
 }
