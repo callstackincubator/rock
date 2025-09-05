@@ -29,6 +29,15 @@
     "@rock-js/config": "^0.10.1"
   },
   "publishConfig": {
-    "access": "restricted"
-  }
+    "access": "public"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/callstack/rock.git",
+    "directory": "packages/plugin-brownfield-ios"
+  },
+  "homepage": "https://rockjs.dev",
+  "bugs": "https://github.com/callstack/rock/issues",
+  "license": "MIT",
+  "author": "Callstack <incubator@callstack.com>"
 }
