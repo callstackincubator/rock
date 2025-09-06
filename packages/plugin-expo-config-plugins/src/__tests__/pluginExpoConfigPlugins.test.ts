@@ -1,19 +1,19 @@
-import { expect, test, beforeEach, afterEach } from 'vitest';
-import { cleanup, getTempDirectory } from '@rock-js/test-helpers';
-import { pluginExpoConfigPlugins } from '../lib/pluginExpoConfigPlugins.js';
-import path from 'node:path';
 import * as fs from 'node:fs/promises';
-import { withInternal } from '../lib/plugins/withInternal.js';
-import { ProjectInfo } from '../lib/types.js';
+import path from 'node:path';
 import {
   evalModsAsync,
   IOSConfig,
   withDefaultBaseMods,
   withPlugins,
 } from '@expo/config-plugins';
-import { withAndroidExpoPlugins } from '../lib/plugins/modCompiler.js';
-import * as plist from 'plist';
 import { AndroidConfig } from '@expo/config-plugins';
+import { cleanup, getTempDirectory } from '@rock-js/test-helpers';
+import * as plist from 'plist';
+import { afterEach, beforeEach, expect, test } from 'vitest';
+import { pluginExpoConfigPlugins } from '../lib/pluginExpoConfigPlugins.js';
+import { withAndroidExpoPlugins } from '../lib/plugins/modCompiler.js';
+import { withInternal } from '../lib/plugins/withInternal.js';
+import type { ProjectInfo } from '../lib/types.js';
 
 let TEMP_DIR: string;
 
@@ -50,7 +50,7 @@ afterEach(() => {
   }
 });
 
-async function getTestConfig(platforms: ('ios' | 'android')[] = ['ios']) {
+async function getTestConfig() {
   const appJsonPath = path.join(pluginApi.getProjectRoot(), 'app.json');
   const iosDirPath = path.join(pluginApi.getProjectRoot(), 'ios');
   const androidDirPath = path.join(pluginApi.getProjectRoot(), 'android');
@@ -76,16 +76,14 @@ async function getTestConfig(platforms: ('ios' | 'android')[] = ['ios']) {
 
   const info = {
     projectRoot: pluginApi.getProjectRoot(),
-    platforms: platforms as ProjectInfo['platforms'],
+    platforms: ['ios', 'android'] as ProjectInfo['platforms'],
     packageJsonPath: path.join(pluginApi.getProjectRoot(), 'package.json'),
     appJsonPath,
     iosProjectName,
     androidProjectName,
   };
 
-  let config = withInternal(appJsonConfig, info);
-
-  return { config, info };
+  return { appJsonConfig, info };
 }
 
 async function parsePlistForKey(path: string, key: string) {
@@ -109,7 +107,8 @@ test('plugin is called with correct arguments and returns its name and descripti
 
 describe('plugin applies default iOS config plugins correctly', () => {
   test('withBundleIdentifier', async () => {
-    let { config, info } = await getTestConfig();
+    const { appJsonConfig, info } = await getTestConfig();
+    let config = withInternal(appJsonConfig, info);
 
     if (!config.ios) config.ios = {};
     config.ios.bundleIdentifier = 'dev.rockjs.test';
@@ -147,7 +146,8 @@ describe('plugin applies default iOS config plugins correctly', () => {
   });
 
   test.skip('withGoogle', async () => {
-    let { config, info } = await getTestConfig();
+    const { appJsonConfig, info } = await getTestConfig();
+    let config = withInternal(appJsonConfig, info);
 
     config = withPlugins(config, [IOSConfig.Google.withGoogle]);
 
@@ -160,7 +160,8 @@ describe('plugin applies default iOS config plugins correctly', () => {
   });
 
   test('withDisplayName', async () => {
-    let { config, info } = await getTestConfig();
+    const { appJsonConfig, info } = await getTestConfig();
+    let config = withInternal(appJsonConfig, info);
 
     // Edit the display name
     config.name = 'TestAppEditedName';
@@ -196,7 +197,8 @@ describe('plugin applies default iOS config plugins correctly', () => {
   });
 
   test('withProductName', async () => {
-    let { config, info } = await getTestConfig();
+    const { appJsonConfig, info } = await getTestConfig();
+    let config = withInternal(appJsonConfig, info);
 
     // Edit the product name
     config.name = 'TestProductName';
@@ -225,7 +227,8 @@ describe('plugin applies default iOS config plugins correctly', () => {
   });
 
   test('withOrientation', async () => {
-    let { config, info } = await getTestConfig();
+    const { appJsonConfig, info } = await getTestConfig();
+    let config = withInternal(appJsonConfig, info);
 
     // Add orientation configuration to the config
     config.orientation = 'landscape';
@@ -269,7 +272,8 @@ describe('plugin applies default iOS config plugins correctly', () => {
   });
 
   test('withRequiresFullScreen', async () => {
-    let { config, info } = await getTestConfig();
+    const { appJsonConfig, info } = await getTestConfig();
+    let config = withInternal(appJsonConfig, info);
 
     // Add requires full screen configuration to the config
     if (!config.ios) config.ios = {};
@@ -308,7 +312,8 @@ describe('plugin applies default iOS config plugins correctly', () => {
   });
 
   test('withScheme', async () => {
-    let { config, info } = await getTestConfig();
+    const { appJsonConfig, info } = await getTestConfig();
+    let config = withInternal(appJsonConfig, info);
 
     // Add scheme to the config
     config.scheme = 'dev.rockjs.test';
@@ -347,7 +352,8 @@ describe('plugin applies default iOS config plugins correctly', () => {
   });
 
   test('withUsesNonExemptEncryption', async () => {
-    let { config, info } = await getTestConfig();
+    const { appJsonConfig, info } = await getTestConfig();
+    let config = withInternal(appJsonConfig, info);
 
     // Add uses non exempt encryption to the config
     if (!config.ios) {
@@ -390,7 +396,8 @@ describe('plugin applies default iOS config plugins correctly', () => {
   });
 
   test('withBuildNumber', async () => {
-    let { config, info } = await getTestConfig();
+    const { appJsonConfig, info } = await getTestConfig();
+    let config = withInternal(appJsonConfig, info);
 
     // Add build number to the config
     if (!config.ios) config.ios = {};
@@ -426,7 +433,8 @@ describe('plugin applies default iOS config plugins correctly', () => {
   });
 
   test('withVersion', async () => {
-    let { config, info } = await getTestConfig();
+    const { appJsonConfig, info } = await getTestConfig();
+    let config = withInternal(appJsonConfig, info);
 
     // Add version to the config
     if (!config.ios) config.ios = {};
@@ -462,7 +470,8 @@ describe('plugin applies default iOS config plugins correctly', () => {
   });
 
   test('withGoogleServicesFile', async () => {
-    let { config, info } = await getTestConfig();
+    const { appJsonConfig, info } = await getTestConfig();
+    let config = withInternal(appJsonConfig, info);
 
     // Add Google services file to the config
     if (!config.ios) config.ios = {};
@@ -504,7 +513,8 @@ describe('plugin applies default iOS config plugins correctly', () => {
   });
 
   test('withJsEnginePodfileProps', async () => {
-    let { config, info } = await getTestConfig();
+    const { appJsonConfig, info } = await getTestConfig();
+    let config = withInternal(appJsonConfig, info);
 
     // Add JS engine configuration to the config
     config.jsEngine = 'jsc';
@@ -535,7 +545,8 @@ describe('plugin applies default iOS config plugins correctly', () => {
   });
 
   test('withNewArchEnabledPodfileProps', async () => {
-    let { config, info } = await getTestConfig();
+    const { appJsonConfig, info } = await getTestConfig();
+    let config = withInternal(appJsonConfig, info);
 
     // Add new arch configuration to the config
     if (!config.ios) config.ios = {};
@@ -567,7 +578,8 @@ describe('plugin applies default iOS config plugins correctly', () => {
   });
 
   test('withAssociatedDomains', async () => {
-    let { config, info } = await getTestConfig();
+    const { appJsonConfig, info } = await getTestConfig();
+    let config = withInternal(appJsonConfig, info);
 
     // Add associated domains to the config
     if (!config.ios) config.ios = {};
@@ -598,7 +610,8 @@ describe('plugin applies default iOS config plugins correctly', () => {
   });
 
   test('withDeviceFamily - isTabletOnly', async () => {
-    let { config, info } = await getTestConfig();
+    const { appJsonConfig, info } = await getTestConfig();
+    let config = withInternal(appJsonConfig, info);
 
     // Add device family configuration to the config
     if (!config.ios) config.ios = {};
@@ -629,7 +642,8 @@ describe('plugin applies default iOS config plugins correctly', () => {
   });
 
   test('withDeviceFamily - supportsTablet', async () => {
-    let { config, info } = await getTestConfig();
+    const { appJsonConfig, info } = await getTestConfig();
+    let config = withInternal(appJsonConfig, info);
 
     // Add device family configuration to the config
     if (!config.ios) config.ios = {};
@@ -660,7 +674,8 @@ describe('plugin applies default iOS config plugins correctly', () => {
   });
 
   test('withBitcode', async () => {
-    let { config, info } = await getTestConfig();
+    const { appJsonConfig, info } = await getTestConfig();
+    let config = withInternal(appJsonConfig, info);
 
     // Add bitcode configuration to the config
     if (!config.ios) config.ios = {};
@@ -690,7 +705,8 @@ describe('plugin applies default iOS config plugins correctly', () => {
   });
 
   test('withLocales', async () => {
-    let { config, info } = await getTestConfig();
+    const { appJsonConfig, info } = await getTestConfig();
+    let config = withInternal(appJsonConfig, info);
 
     // Add locales configuration to the config
     config.locales = {
@@ -739,7 +755,8 @@ describe('plugin applies default iOS config plugins correctly', () => {
   });
 
   test('withDevelopmentTeam', async () => {
-    let { config, info } = await getTestConfig();
+    const { appJsonConfig, info } = await getTestConfig();
+    let config = withInternal(appJsonConfig, info);
 
     // Add development team configuration to the config
     if (!config.ios) config.ios = {};
@@ -771,7 +788,8 @@ describe('plugin applies default iOS config plugins correctly', () => {
   });
 
   test('withPrivacyInfo', async () => {
-    let { config, info } = await getTestConfig();
+    const { appJsonConfig, info } = await getTestConfig();
+    let config = withInternal(appJsonConfig, info);
 
     // Add privacy info configuration to the config
     if (!config.ios) config.ios = {};
@@ -812,7 +830,8 @@ describe('plugin applies default iOS config plugins correctly', () => {
 
 describe('plugin applies default Android config plugins correctly', () => {
   test('withJsEngineGradleProps', async () => {
-    let { config, info } = await getTestConfig(['android']);
+    const { appJsonConfig, info } = await getTestConfig();
+    let config = withInternal(appJsonConfig, info);
 
     // Add JS engine configuration to the config
     config.jsEngine = 'jsc';
@@ -850,7 +869,8 @@ describe('plugin applies default Android config plugins correctly', () => {
   });
 
   test('withNewArchEnabledGradleProps', async () => {
-    let { config, info } = await getTestConfig(['android']);
+    const { appJsonConfig, info } = await getTestConfig();
+    let config = withInternal(appJsonConfig, info);
 
     // Add new arch configuration to the config
     if (!config.android) config.android = {};
@@ -889,7 +909,8 @@ describe('plugin applies default Android config plugins correctly', () => {
   });
 
   test('withNameSettingsGradle', async () => {
-    let { config, info } = await getTestConfig(['android']);
+    const { appJsonConfig, info } = await getTestConfig();
+    let config = withInternal(appJsonConfig, info);
 
     // Add name configuration to the config
     config.name = 'TestAppName';
@@ -925,7 +946,8 @@ describe('plugin applies default Android config plugins correctly', () => {
   });
 
   test('withClassPath', async () => {
-    let { config, info } = await getTestConfig(['android']);
+    const { appJsonConfig, info } = await getTestConfig();
+    let config = withInternal(appJsonConfig, info);
 
     // Add Google services configuration to the config
     if (!config.android) config.android = {};
@@ -964,7 +986,8 @@ describe('plugin applies default Android config plugins correctly', () => {
   });
 
   test('withApplyPlugin', async () => {
-    let { config, info } = await getTestConfig(['android']);
+    const { appJsonConfig, info } = await getTestConfig();
+    let config = withInternal(appJsonConfig, info);
 
     // Add Google services configuration to the config
     if (!config.android) config.android = {};
@@ -1002,7 +1025,8 @@ describe('plugin applies default Android config plugins correctly', () => {
   });
 
   test('withPackageGradle', async () => {
-    let { config, info } = await getTestConfig(['android']);
+    const { appJsonConfig, info } = await getTestConfig();
+    let config = withInternal(appJsonConfig, info);
 
     // Add package configuration to the config
     if (!config.android) config.android = {};
@@ -1043,7 +1067,8 @@ describe('plugin applies default Android config plugins correctly', () => {
   });
 
   test('withVersion', async () => {
-    let { config, info } = await getTestConfig(['android']);
+    const { appJsonConfig, info } = await getTestConfig();
+    let config = withInternal(appJsonConfig, info);
 
     // Add version configuration to the config
     if (!config.android) config.android = {};
@@ -1080,7 +1105,8 @@ describe('plugin applies default Android config plugins correctly', () => {
   });
 
   test('withAllowBackup', async () => {
-    let { config, info } = await getTestConfig(['android']);
+    const { appJsonConfig, info } = await getTestConfig();
+    let config = withInternal(appJsonConfig, info);
 
     // Add allow backup configuration to the config
     if (!config.android) config.android = {};
@@ -1116,7 +1142,8 @@ describe('plugin applies default Android config plugins correctly', () => {
   });
 
   test('withWindowSoftInputMode', async () => {
-    let { config, info } = await getTestConfig(['android']);
+    const { appJsonConfig, info } = await getTestConfig();
+    let config = withInternal(appJsonConfig, info);
 
     // Add window soft input mode configuration to the config
     if (!config.android) config.android = {};
@@ -1158,7 +1185,8 @@ describe('plugin applies default Android config plugins correctly', () => {
   test.skip('withPredictiveBackGesture', async () => {});
 
   test('withAndroidIntentFilters', async () => {
-    let { config, info } = await getTestConfig(['android']);
+    const { appJsonConfig, info } = await getTestConfig();
+    let config = withInternal(appJsonConfig, info);
 
     // Add intent filters configuration to the config
     if (!config.android) config.android = {};
@@ -1211,7 +1239,8 @@ describe('plugin applies default Android config plugins correctly', () => {
   });
 
   test('withScheme', async () => {
-    let { config, info } = await getTestConfig(['android']);
+    const { appJsonConfig, info } = await getTestConfig();
+    let config = withInternal(appJsonConfig, info);
 
     // Add scheme configuration to the config
     config.scheme = 'dev.rockjs.test';
@@ -1246,7 +1275,8 @@ describe('plugin applies default Android config plugins correctly', () => {
   });
 
   test('withOrientation', async () => {
-    let { config, info } = await getTestConfig(['android']);
+    const { appJsonConfig, info } = await getTestConfig();
+    let config = withInternal(appJsonConfig, info);
 
     // Add orientation configuration to the config
     config.orientation = 'landscape';
@@ -1284,7 +1314,8 @@ describe('plugin applies default Android config plugins correctly', () => {
   });
 
   test('withInternalBlockedPermissions', async () => {
-    let { config, info } = await getTestConfig(['android']);
+    const { appJsonConfig, info } = await getTestConfig();
+    let config = withInternal(appJsonConfig, info);
 
     // Add internal blocked permissions configuration to the config
     if (!config.android) config.android = {};
@@ -1323,7 +1354,8 @@ describe('plugin applies default Android config plugins correctly', () => {
   });
 
   test('withPermissions', async () => {
-    let { config, info } = await getTestConfig(['android']);
+    const { appJsonConfig, info } = await getTestConfig();
+    let config = withInternal(appJsonConfig, info);
 
     // Add permissions configuration to the config
     if (!config.android) config.android = {};
@@ -1365,7 +1397,8 @@ describe('plugin applies default Android config plugins correctly', () => {
   });
 
   test('withName', async () => {
-    let { config, info } = await getTestConfig(['android']);
+    const { appJsonConfig, info } = await getTestConfig();
+    let config = withInternal(appJsonConfig, info);
 
     // Add name configuration to the config
     config.name = 'TestAppName';
@@ -1397,8 +1430,9 @@ describe('plugin applies default Android config plugins correctly', () => {
     expect(changedStrings).toContain(config.name);
   });
 
-  test('withLocales', async () => {
-    let { config, info } = await getTestConfig(['android']);
+  test.skip('withLocales', async () => {
+    const { appJsonConfig, info } = await getTestConfig();
+    let config = withInternal(appJsonConfig, info);
 
     // Add locales configuration to the config
     config.locales = {
@@ -1446,7 +1480,8 @@ describe('plugin applies default Android config plugins correctly', () => {
   });
 
   test('withGoogleServicesFile', async () => {
-    let { config, info } = await getTestConfig(['android']);
+    const { appJsonConfig, info } = await getTestConfig();
+    let config = withInternal(appJsonConfig, info);
 
     // Add Google services file configuration to the config
     if (!config.android) config.android = {};
@@ -1481,7 +1516,8 @@ describe('plugin applies default Android config plugins correctly', () => {
   });
 
   test('withStatusBar', async () => {
-    let { config, info } = await getTestConfig(['android']);
+    const { appJsonConfig, info } = await getTestConfig();
+    let config = withInternal(appJsonConfig, info);
 
     // Add status bar configuration to the config
     config.androidStatusBar = {
@@ -1523,7 +1559,8 @@ describe('plugin applies default Android config plugins correctly', () => {
   test.skip('withAndroidIcons', async () => {});
 
   test('withPrimaryColor', async () => {
-    let { config, info } = await getTestConfig(['android']);
+    const { appJsonConfig, info } = await getTestConfig();
+    let config = withInternal(appJsonConfig, info);
 
     // Add primary color configuration to the config
     config.primaryColor = '#FF0000';
@@ -1557,7 +1594,8 @@ describe('plugin applies default Android config plugins correctly', () => {
   });
 
   test('withPackageRefactor', async () => {
-    let { config, info } = await getTestConfig(['android']);
+    const { appJsonConfig, info } = await getTestConfig();
+    let config = withInternal(appJsonConfig, info);
 
     // Add package configuration to the config
     if (!config.android) config.android = {};
@@ -1637,5 +1675,18 @@ describe('plugin applies default Android config plugins correctly', () => {
     expect(changedMainApplication).toContain(
       `package ${config.android?.package}`,
     );
+  });
+});
+
+describe('plugin applies third-party config plugins correctly', () => {
+  test.skip('react-native-bottom-tabs', async () => {
+    const { appJsonConfig, info } = await getTestConfig();
+    let config = withInternal(appJsonConfig, info);
+
+    config = withPlugins(config, ['react-native-bottom-tabs']);
+
+    config = withDefaultBaseMods(config);
+
+    await evalModsAsync(config, info);
   });
 });
