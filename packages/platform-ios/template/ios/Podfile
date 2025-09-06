@@ -1,4 +1,3 @@
-
 ENV['RCT_USE_RN_DEP'] = '1'
 ENV['RCT_USE_PREBUILT_RNCORE'] = '1'
 
