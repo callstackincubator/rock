@@ -41,6 +41,7 @@ export async function buildAndroid(
     fingerprintOptions,
   });
   const binaryPath = await getBinaryPath({
+    platformName: 'android',
     artifactName,
     localFlag: args.local,
     remoteCacheProvider,

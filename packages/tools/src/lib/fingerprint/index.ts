@@ -4,7 +4,7 @@ import path from 'node:path';
 import { calculateFingerprint, type FingerprintResult } from 'fs-fingerprint';
 import { logger } from '../../index.js';
 import { spawn } from '../spawn.js';
-import { IGNORE_PATHS } from './constants.js';
+import { getDefaultIgnorePaths, getPlatformDirIgnorePaths } from './ignorePaths.js';
 
 export type FingerprintSources = {
   extraSources: string[];
@@ -48,18 +48,24 @@ export async function nativeFingerprint(
     paths: [projectRoot],
   });
 
-  const folders = Object.keys(autolinkingConfig.project).map((key) => {
-    return autolinkingConfig.project[key].sourceDir;
+  const platforms = Object.keys(autolinkingConfig.project).map((key) => {
+    return {
+      platform: key,
+      sourceDir: path.relative(
+        projectRoot,
+        autolinkingConfig.project[key].sourceDir,
+      ),
+    };
   });
 
-  if (folders.length === 0) {
-    throw new Error('No folders found in autolinking config');
+  if (platforms.length === 0) {
+    throw new Error('No platforms found in autolinking project config');
   }
 
   const fingerprint = await calculateFingerprint(projectRoot, {
     include: [
       path.relative(projectRoot, rnPackageJSONPath),
-      ...folders.map((folder) => path.relative(projectRoot, folder)),
+      ...platforms.map((platform) => platform.sourceDir),
       ...options.extraSources.map((source) =>
         path.isAbsolute(source) ? path.relative(projectRoot, source) : source,
       ),
@@ -71,7 +77,13 @@ export async function nativeFingerprint(
         json: parseAutolinkingSources(autolinkingConfig),
       },
     ],
-    exclude: [...IGNORE_PATHS, ...(options.ignorePaths ?? [])],
+    exclude: [
+      ...getDefaultIgnorePaths(),
+      ...platforms.flatMap(({ platform, sourceDir }) =>
+        getPlatformDirIgnorePaths(platform, sourceDir),
+      ),
+      ...(options.ignorePaths ?? []),
+    ],
   });
 
   return fingerprint;
