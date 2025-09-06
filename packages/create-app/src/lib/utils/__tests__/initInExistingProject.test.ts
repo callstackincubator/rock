@@ -1,8 +1,8 @@
-import { updateAndroidBuildGradle } from "../initInExistingProject.js";
-import { cleanup, getTempDirectory, writeFiles } from '@rock-js/test-helpers';
 import * as fs from 'node:fs';
 import * as path from 'node:path';
+import { cleanup, getTempDirectory, writeFiles } from '@rock-js/test-helpers';
 import * as tools from '@rock-js/tools';
+import { updateAndroidBuildGradle } from "../initInExistingProject.js";
 
 const directory = getTempDirectory('test_updateAndroidBuildGradle');
 
