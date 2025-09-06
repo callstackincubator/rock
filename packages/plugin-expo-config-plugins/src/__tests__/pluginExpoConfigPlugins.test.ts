@@ -1679,7 +1679,7 @@ describe('plugin applies default Android config plugins correctly', () => {
 });
 
 describe('plugin applies third-party config plugins correctly', () => {
-  test.skip('react-native-bottom-tabs', async () => {
+  test('react-native-bottom-tabs', async () => {
     const { appJsonConfig, info } = await getTestConfig();
     let config = withInternal(appJsonConfig, info);
 
@@ -1687,6 +1687,69 @@ describe('plugin applies third-party config plugins correctly', () => {
 
     config = withDefaultBaseMods(config);
 
+    const stylesPath = path.join(
+      TEMP_DIR,
+      'android',
+      'app',
+      'src',
+      'main',
+      'res',
+      'values',
+      'styles.xml',
+    );
+
+    // Check initial state - should have AppCompat theme
+    const initialStyles = await fs.readFile(stylesPath, 'utf8');
+
+    expect(initialStyles).toContain(
+      'parent="Theme.AppCompat.DayNight.NoActionBar"',
+    );
+
+    // Apply the plugin
     await evalModsAsync(config, info);
+
+    const changedStyles = await fs.readFile(stylesPath, 'utf8');
+
+    // Check that theme was updated
+    expect(changedStyles).toContain(
+      'parent="Theme.Material3.DayNight.NoActionBar"',
+    );
+  });
+
+  test('expo-build-properties', async () => {
+    const { appJsonConfig, info } = await getTestConfig();
+    let config = withInternal(appJsonConfig, info);
+
+    config = withPlugins(config, [
+      [
+        'expo-build-properties',
+        {
+          ios: {
+            useFrameworks: 'static',
+          },
+        },
+      ],
+    ]);
+
+    config = withDefaultBaseMods(config);
+
+    // Apply the plugin
+    await evalModsAsync(config, info);
+
+    // Expect Podfile.properties.json to be created
+    const podfilePropertiesPath = path.join(
+      TEMP_DIR,
+      'ios',
+      'Podfile.properties.json',
+    );
+
+    // Expect the property to exist in Podfile.properties.json
+    const podfilePropertiesContent = await fs.readFile(
+      podfilePropertiesPath,
+      'utf8',
+    );
+    const podfileProperties = JSON.parse(podfilePropertiesContent);
+
+    expect(podfileProperties['ios.useFrameworks']).toBe('static');
   });
 });

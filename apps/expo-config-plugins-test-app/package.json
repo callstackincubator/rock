@@ -10,8 +10,11 @@
     "ios": "rnef run:ios"
   },
   "dependencies": {
+    "@bottom-tabs/react-navigation": "^0.11.1",
+    "expo-build-properties": "^0.14.8",
     "react": "19.1.0",
-    "react-native": "0.80.1"
+    "react-native": "0.80.1",
+    "react-native-bottom-tabs": "^0.11.1"
   },
   "devDependencies": {
     "@babel/core": "^7.25.2",
@@ -36,7 +39,6 @@
     "react-test-renderer": "19.1.0",
     "typescript": "5.0.4"
   },
-  "peerDependencies": {},
   "engines": {
     "node": ">=18"
   }
