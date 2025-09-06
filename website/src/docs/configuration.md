@@ -586,13 +586,3 @@ export default {
 };
 ```
 
-The fingerprint calculation uses [`@expo/fingerprint`](https://docs.expo.dev/versions/latest/sdk/fingerprint/) under the hood. This means that you can use advanced configuration through [`fingerprint.config.js` file](https://docs.expo.dev/versions/latest/sdk/fingerprint/#fingerprintconfigjs):
-
-```js
-const config = {
-  sourceSkips: [
-    'ExpoConfigVersions', // omits Android versionCode and iOS buildNumber in fingerprint calculation
-  ],
-};
-module.exports = config;
-```
