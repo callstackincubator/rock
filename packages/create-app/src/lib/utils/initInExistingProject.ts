@@ -166,22 +166,35 @@ export default {
   fs.writeFileSync(rockConfigPath, content);
 }
 
-function updateAndroidBuildGradle(projectRoot: string, sourceDir: string) {
+export function updateAndroidBuildGradle(projectRoot: string, sourceDir: string) {
   const filePath = path.join(projectRoot, sourceDir, 'app', 'build.gradle');
   if (!fs.existsSync(filePath)) {
     return;
   }
   const desired = 'cliFile = file("../../node_modules/rock/dist/src/bin.js")';
   const content = fs.readFileSync(filePath, 'utf8');
+
+  if (content.includes(desired)) {
+    logger.debug(`${filePath} already contains "${desired}"`);
+    return;
+  }
+
   const replaced = content.replace(
-    /\/\/\s+cliFile\s*=\s*file\([^)]*\)/g,
+    /(?:\/\/\s+)?cliFile\s*=\s*file\([^)]*\)/g,
     desired,
   );
 
-  if (!content.includes(desired) && replaced !== content) {
-    fs.writeFileSync(filePath, replaced);
+  if (replaced === content) {
+    logger.warn(
+      `Unable to update ${color.bold(filePath)}. 
+Please update the "CLI file" build phase manually with:
+  cliFile = file("../../node_modules/rock/dist/src/bin.js")
+`,
+    );
     return;
   }
+
+  fs.writeFileSync(filePath, replaced);
 }
 
 function updateAndroidSettingsGradle(projectRoot: string, sourceDir: string) {
