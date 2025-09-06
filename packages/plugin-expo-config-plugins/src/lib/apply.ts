@@ -7,15 +7,12 @@ import type { ProjectInfo } from './types.js';
 /**
  * Applies config plugins.
  */
-export async function applyConfigPlugins({
-  appJsonPath,
-  ...info
-}: ProjectInfo) {
-  if (!appJsonPath) {
+export async function applyConfigPlugins(info: ProjectInfo) {
+  if (!info.appJsonPath) {
     return;
   }
 
-  const content = await fs.readFile(appJsonPath, { encoding: 'utf-8' });
+  const content = await fs.readFile(info.appJsonPath, { encoding: 'utf-8' });
   const { expo, ...rest } = JSON.parse(content);
   const appJsonConfig = expo || rest;
 
@@ -28,6 +25,6 @@ export async function applyConfigPlugins({
 
   return compileModsAsync(
     withPlugins(withInternal(appJsonConfig, info), appJsonConfig.plugins),
-    info
+    info,
   );
 }

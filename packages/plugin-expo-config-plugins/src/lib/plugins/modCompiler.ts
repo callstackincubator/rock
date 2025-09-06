@@ -5,6 +5,7 @@ import type {
 } from '@expo/config-plugins';
 import configPlugins from '@expo/config-plugins';
 import { BaseMods, evalModsAsync } from '../ExpoConfigPlugins.js';
+import type { ProjectInfo } from '../types.js';
 import { getAndroidModFileProviders } from './withAndroidBaseMods.js';
 import { getIosModFileProviders } from './withIosBaseMods.js';
 
@@ -119,10 +120,10 @@ export const withAndroidExpoPlugins: ConfigPlugin<{
   ]);
 };
 
-export const compileModsAsync: typeof expoCompileModsAsync = async (
-  config,
-  props
-) => {
+export const compileModsAsync = async (
+  config: Parameters<typeof expoCompileModsAsync>[0],
+  props: ProjectInfo,
+): Promise<ReturnType<typeof expoCompileModsAsync>> => {
   if (props.introspect === true) {
     console.warn('`introspect` is not supported');
   }
@@ -133,10 +134,10 @@ export const compileModsAsync: typeof expoCompileModsAsync = async (
   config.ios.networkInspector = false;
 
   config = withIosExpoPlugins(config, {
-    bundleIdentifier: 'org.reactjs.native.example.AppConfigPlugins',
+    bundleIdentifier: props.iosBundleIdentifier,
   });
   config = withAndroidExpoPlugins(config, {
-    package: 'com.appconfigplugins',
+    package: props.androidPackageName,
     projectRoot: props.projectRoot,
   });
   config = withDefaultBaseMods(config);

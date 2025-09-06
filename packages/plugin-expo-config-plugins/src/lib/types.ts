@@ -6,10 +6,10 @@ import type {
 
 export type CustomModProvider = <
   ModType,
-  Props extends ForwardedBaseModOptions
+  Props extends ForwardedBaseModOptions,
 >(
   original: BaseModProviderMethods<ModType, Props>,
-  file: string
+  file: string,
 ) => BaseModProviderMethods<ModType, Props>;
 
 export type IosModFileProviders = ReturnType<
@@ -25,9 +25,12 @@ export type AndroidModFileProviders = ReturnType<
   Record<string, BaseModProviderMethods<any, any>>;
 
 export type ProjectInfo = {
+  introspect: boolean;
   projectRoot: string;
   platforms: ModPlatform[];
   packageJsonPath: string;
   appJsonPath: string;
   iosProjectName: string;
+  iosBundleIdentifier: string;
+  androidPackageName: string;
 };
