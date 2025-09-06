@@ -2,6 +2,7 @@ import fs from 'node:fs/promises';
 import { createRequire } from 'node:module';
 import path from 'node:path';
 import { calculateFingerprint, type FingerprintResult } from 'fs-fingerprint';
+import { logger } from '../../index.js';
 import { spawn } from '../spawn.js';
 import { IGNORE_PATHS } from './constants.js';
 
@@ -65,7 +66,10 @@ export async function nativeFingerprint(
     ],
     extraInputs: [
       { key: 'scripts', json: scripts },
-      { key: 'autolinkingSources', json: autolinkingConfig },
+      {
+        key: 'autolinkingSources',
+        json: parseAutolinkingSources(autolinkingConfig),
+      },
     ],
     exclude: [...IGNORE_PATHS, ...(options.ignorePaths ?? [])],
   });
@@ -81,3 +85,36 @@ const readPackageJSON = async (packageJSONPath: string) => {
     throw new Error(`Failed to read package.json at: ${packageJSONPath}`);
   }
 };
+
+function toPosixPath(filePath: string): string {
+  return filePath.replace(/\\/g, '/');
+}
+
+function parseAutolinkingSources(config: any): Record<string, any> {
+  const { root } = config;
+  for (const [depName, depData] of Object.entries<any>(config.dependencies)) {
+    try {
+      stripAutolinkingAbsolutePaths(depData, root);
+    } catch (e) {
+      logger.debug(
+        `Error adding react-native core autolinking - ${depName}.\n${e}`,
+      );
+    }
+  }
+  return config.dependencies;
+}
+
+function stripAutolinkingAbsolutePaths(dependency: any, root: string): void {
+  const dependencyRoot = dependency.root;
+  const posixDependencyRoot = toPosixPath(dependencyRoot);
+
+  dependency.root = toPosixPath(path.relative(root, dependencyRoot));
+  for (const platformData of Object.values<any>(dependency.platforms)) {
+    for (const [key, value] of Object.entries<any>(platformData ?? {})) {
+      const newValue = value?.startsWith?.(posixDependencyRoot)
+        ? toPosixPath(path.relative(root, value))
+        : value;
+      platformData[key] = newValue;
+    }
+  }
+}
