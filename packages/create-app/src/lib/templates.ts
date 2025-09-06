@@ -1,5 +1,5 @@
 import * as path from 'node:path';
-import { resolveAbsolutePath } from '@rock-js/tools';
+import { resolveAbsolutePath, type SupportedRemoteCacheProviders } from '@rock-js/tools';
 
 export type TemplateInfo = NpmTemplateInfo | LocalTemplateInfo;
 
@@ -21,6 +21,13 @@ export type LocalTemplateInfo = {
   directory: string | undefined;
   importName?: string;
 };
+
+export type RemoteCacheTemplateInfo = {
+  name: SupportedRemoteCacheProviders;
+  displayName: string;
+  packageName: string;
+  importName: string;
+}
 
 export const TEMPLATES: TemplateInfo[] = [
   {
@@ -86,6 +93,21 @@ export const PLATFORMS: TemplateInfo[] = [
     version: 'latest',
     directory: 'template',
     importName: 'platformAndroid',
+  },
+];
+
+export const REMOTE_CACHE_PROVIDERS: RemoteCacheTemplateInfo[] = [
+  {
+    name: 'github-actions',
+    displayName: 'GitHub Actions',
+    packageName: '@rock-js/provider-github-actions',
+    importName: 'providerGithubActions',
+  },
+  {
+    name: 's3',
+    displayName: 'S3',
+    packageName: '@rock-js/provider-s3',
+    importName: 'providerS3',
   },
 ];
 

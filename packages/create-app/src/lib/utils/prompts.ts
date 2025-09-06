@@ -5,7 +5,9 @@ import {
   note,
   outro,
   promptConfirm,
+  promptGroup,
   promptMultiselect,
+  promptPassword,
   promptSelect,
   promptText,
   relativeToCwd,
@@ -13,7 +15,7 @@ import {
   type SupportedRemoteCacheProviders,
 } from '@rock-js/tools';
 import { vice } from 'gradient-string';
-import type { TemplateInfo } from '../templates.js';
+import type { RemoteCacheTemplateInfo, TemplateInfo } from '../templates.js';
 import { validateProjectName } from './project-name.js';
 import { getRockVersion } from './version.js';
 
@@ -23,9 +25,9 @@ export function printHelpMessage(
 ) {
   console.log(`
      Usage: create-rock [options]
-  
+
      Options:
-     
+
        -h, --help                 Display help for command
        -v, --version              Output the version number
        -d, --dir                  Create project in specified directory
@@ -36,7 +38,7 @@ export function printHelpMessage(
        --remote-cache-provider    Specify remote cache provider
        --override                 Override files in target directory
        --install                  Install Node.js dependencies
-     
+
      Available templates:
        ${templates.map((t) => t.name).join(', ')}
 
@@ -158,19 +160,39 @@ export function promptBundlers(
   });
 }
 
-export function promptRemoteCacheProvider(): Promise<SupportedRemoteCacheProviders | null> {
+export function promptRemoteCacheProvider(
+  providers: RemoteCacheTemplateInfo[],
+): Promise<RemoteCacheTemplateInfo | null> {
   return promptSelect({
     message: 'Which remote cache provider do you want to use?',
-    initialValue: 'github-actions',
-    options: [
-      {
-        value: 'github-actions',
-        label: 'GitHub Actions',
-        hint: 'Enable builds on your CI',
-      },
-      { value: null, label: 'None', hint: 'Local builds only' },
-    ],
-  }) as Promise<SupportedRemoteCacheProviders | null>;
+    initialValue: providers[0],
+    options: providers.map((provider) => ({
+      value: provider,
+      label: provider.displayName,
+    })),
+  });
+}
+
+export function promptRemoteCacheProvidersConfig(
+  provider: SupportedRemoteCacheProviders,
+) {
+  switch (provider) {
+    case 'github-actions':
+      return promptGroup({
+        owner: () => promptText({ message: 'GitHub owner' }),
+        repo: () => promptText({ message: 'GitHub repo' }),
+        token: () =>
+          promptPassword({ message: 'GitHub Personal Access Token (PAT)' }),
+      });
+    case 's3':
+      return promptGroup({
+        bucket: () => promptText({ message: 'S3 bucket' }),
+        region: () => promptText({ message: 'S3 region' }),
+        accessKeyId: () => promptText({ message: 'S3 access key ID' }),
+        secretAccessKey: () =>
+          promptPassword({ message: 'S3 secret access key' }),
+      });
+  }
 }
 
 export function confirmOverrideFiles(targetDir: string) {

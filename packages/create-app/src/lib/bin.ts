@@ -9,14 +9,14 @@ import {
   RockError,
   spawn,
   spinner,
-  type SupportedRemoteCacheProviders,
 } from '@rock-js/tools';
 import { gitInitStep, hasGitClient, isGitRepo } from './steps/git-init.js';
-import type { TemplateInfo } from './templates.js';
+import type { RemoteCacheTemplateInfo, TemplateInfo } from './templates.js';
 import {
   BUNDLERS,
   PLATFORMS,
   PLUGINS,
+  REMOTE_CACHE_PROVIDERS,
   resolveTemplate,
   TEMPLATES,
 } from './templates.js';
@@ -47,6 +47,7 @@ import {
   promptPlugins,
   promptProjectName,
   promptRemoteCacheProvider,
+  promptRemoteCacheProvidersConfig,
   promptTemplate,
 } from './utils/prompts.js';
 import {
@@ -145,7 +146,11 @@ export async function run() {
     options.remoteCacheProvider !== undefined ||
     options.remoteCacheProvider === false
       ? null
-      : await promptRemoteCacheProvider();
+      : await promptRemoteCacheProvider(REMOTE_CACHE_PROVIDERS);
+
+  const remoteCacheProviderConfig = remoteCacheProvider
+    ? await promptRemoteCacheProvidersConfig(remoteCacheProvider.name)
+    : null;
 
   const shouldInstallDependencies =
     options.install || isInteractive()
@@ -173,7 +178,12 @@ export async function run() {
     platforms,
     plugins,
     bundler,
-    remoteCacheProvider,
+    remoteCacheProvider && remoteCacheProviderConfig
+      ? {
+          provider: remoteCacheProvider,
+          args: remoteCacheProviderConfig,
+        }
+      : null,
   );
   loader.stop('Applied template, platforms and plugins.');
 
@@ -293,7 +303,10 @@ function createConfig(
   platforms: TemplateInfo[],
   plugins: TemplateInfo[] | null,
   bundler: TemplateInfo,
-  remoteCacheProvider: SupportedRemoteCacheProviders | null,
+  remoteCacheProvider: {
+    provider: RemoteCacheTemplateInfo;
+    args: Record<string, unknown>;
+  } | null,
 ) {
   const rockConfig = path.join(absoluteTargetDir, 'rock.config.mjs');
   fs.writeFileSync(
@@ -306,7 +319,10 @@ export function formatConfig(
   platforms: TemplateInfo[],
   plugins: TemplateInfo[] | null,
   bundler: TemplateInfo,
-  remoteCacheProvider: SupportedRemoteCacheProviders | null,
+  remoteCacheProvider: {
+    provider: RemoteCacheTemplateInfo;
+    args: Record<string, unknown>;
+  } | null,
 ) {
   const platformsWithImports = platforms.filter(
     (template) => template.importName,
@@ -314,7 +330,12 @@ export function formatConfig(
   const pluginsWithImports = plugins
     ? plugins.filter((template) => template.importName)
     : null;
-  return `${[...platformsWithImports, ...(pluginsWithImports ?? []), bundler]
+  return `${[
+    ...platformsWithImports,
+    ...(pluginsWithImports ?? []),
+    bundler,
+    ...(remoteCacheProvider ? [remoteCacheProvider.provider] : []),
+  ]
     .map(
       (template) =>
         `import { ${template.importName} } from '${template.packageName}';`,
@@ -338,7 +359,16 @@ export default {${
       .join('\n    ')}
   },
   remoteCacheProvider: ${
-    remoteCacheProvider === null ? null : `'${remoteCacheProvider}'`
+    remoteCacheProvider === null
+      ? null
+      : `${remoteCacheProvider.provider.importName}({\n${Object.entries(
+          remoteCacheProvider.args,
+        )
+          .map(
+            ([key, value]) =>
+              `    ${JSON.stringify(key)}: ${JSON.stringify(value)},`,
+          )
+          .join('\n')}\n  })`
   },
 };
 `;
