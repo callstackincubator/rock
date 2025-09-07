@@ -2,37 +2,37 @@
 
 function getAndroidIgnorePaths(sourceDir: string) {
   return [
-    `${sourceDir}/app/.gradle/**/*`,
+    `${sourceDir}/app/.gradle`,
     `${sourceDir}/build`,
     `${sourceDir}/**/build`,
     `${sourceDir}/**/.cxx`,
-    `${sourceDir}/.kotlin/**`,
+    `${sourceDir}/.kotlin`,
     `${sourceDir}/local.properties`,
     `${sourceDir}/.idea`,
     `${sourceDir}/.gradle`,
     `${sourceDir}/gradlew.bat`, // Often has different line endings, thus we have to ignore it
 
     // Android annotations - revisit
-    '**/android-annotation/build/**/*',
-    '**/android-annotation/.cxx/**/*',
-    '**/android-annotation/.gradle/**/*',
-    '**/android-annotation-processor/build/**/*',
-    '**/android-annotation-processor/.cxx/**/*',
-    '**/android-annotation-processor/.gradle/**/*',
+    '**/android-annotation/build',
+    '**/android-annotation/.cxx',
+    '**/android-annotation/.gradle',
+    '**/android-annotation-processor/build',
+    '**/android-annotation-processor/.cxx',
+    '**/android-annotation-processor/.gradle',
 
     // Android gradle plugins
-    '**/*-gradle-plugin/build/**/*',
-    '**/*-gradle-plugin/.cxx/**/*',
-    '**/*-gradle-plugin/.gradle/**/*',
+    '**/*-gradle-plugin/build',
+    '**/*-gradle-plugin/.cxx',
+    '**/*-gradle-plugin/.gradle',
   ];
 }
 
 function getIOSIgnorePaths(sourceDir: string) {
   return [
-    `${sourceDir}/build/**/*`,
+    `${sourceDir}/build`,
     `${sourceDir}/.xcode.env.local`,
     `${sourceDir}/**/project.xcworkspace`,
-    `${sourceDir}/*.xcworkspace/xcuserdata/**/*`,
+    `${sourceDir}/*.xcworkspace/xcuserdata`,
     `${sourceDir}/DerivedData`,
     `${sourceDir}/Pods`,
     `${sourceDir}/tmp.xcconfig`, // added by react-native-config,

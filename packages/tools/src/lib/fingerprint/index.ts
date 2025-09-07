@@ -1,8 +1,7 @@
 import fs from 'node:fs/promises';
-import { createRequire } from 'node:module';
 import path from 'node:path';
 import { calculateFingerprint, type FingerprintResult } from 'fs-fingerprint';
-import { logger } from '../../index.js';
+import { getReactNativeVersion, logger } from '../../index.js';
 import { spawn } from '../spawn.js';
 import {
   getDefaultIgnorePaths,
@@ -47,11 +46,6 @@ export async function nativeFingerprint(
   const packageJSONPath = path.join(projectRoot, 'package.json');
   const packageJSON = await readPackageJSON(packageJSONPath);
   const scripts = packageJSON['scripts'];
-  const require = createRequire(import.meta.url);
-
-  const rnPackageJSONPath = require.resolve('react-native/package.json', {
-    paths: [projectRoot],
-  });
 
   const platforms = Object.keys(autolinkingConfig.project).map((key) => {
     return {
@@ -68,8 +62,8 @@ export async function nativeFingerprint(
   }
 
   const fingerprint = await calculateFingerprint(projectRoot, {
+    ignoreFilePath: '.gitignore',
     include: [
-      path.relative(projectRoot, rnPackageJSONPath),
       ...platforms.map((platform) => platform.sourceDir),
       ...options.extraSources.map((source) =>
         path.isAbsolute(source) ? path.relative(projectRoot, source) : source,
@@ -80,6 +74,10 @@ export async function nativeFingerprint(
       {
         key: 'autolinkingSources',
         json: parseAutolinkingSources(autolinkingConfig),
+      },
+      {
+        key: 'reactNativeVersion',
+        json: { version: getReactNativeVersion(projectRoot) },
       },
       ...(options.env.length > 0 ? [{ key: 'env', json: options.env }] : []),
     ],

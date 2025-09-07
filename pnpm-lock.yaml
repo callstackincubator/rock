@@ -87,9 +87,6 @@ importers:
       commander:
         specifier: ^12.1.0
         version: 12.1.0
-      fs-fingerprint:
-        specifier: ^0.5.0
-        version: 0.5.0
       tar:
         specifier: ^7.4.3
         version: 7.4.3
@@ -398,8 +395,8 @@ importers:
         specifier: ^3.3.2
         version: 3.3.3
       fs-fingerprint:
-        specifier: ^0.5.0
-        version: 0.5.0
+        specifier: ^0.6.0
+        version: 0.6.0
       is-unicode-supported:
         specifier: ^2.1.0
         version: 2.1.0
@@ -3912,8 +3909,8 @@ packages:
     resolution: {integrity: sha512-yhlQgA6mnOJUKOsRUFsgJdQCvkKhcz8tlZG5HBQfReYZy46OwLcY+Zia0mtdHsOo9y/hP+CxMN0TU9QxoOtG4g==}
     engines: {node: '>=6 <7 || >=8'}
 
-  fs-fingerprint@0.5.0:
-    resolution: {integrity: sha512-3yMFw5jNojXnTpzwDEvVj1/rbzzwTavLtOpSN+pW8EicLMcGHoGgNAg+ObS1/OodocY7foypw1BHjtAA8pDN1g==}
+  fs-fingerprint@0.6.0:
+    resolution: {integrity: sha512-dgmGS6EX+Y3GiyV1p6x1CAO5TLKe8VkdQgVBP/blxONElhmYIBVt7W/X52yqGTV4/LLAABdNrw33w8qvpOoEbQ==}
     engines: {node: '>=20.0.0'}
 
   fs.realpath@1.0.0:
@@ -11450,8 +11447,9 @@ snapshots:
       jsonfile: 4.0.0
       universalify: 0.1.2
 
-  fs-fingerprint@0.5.0:
+  fs-fingerprint@0.6.0:
     dependencies:
+      ignore: 7.0.5
       micromatch: 4.0.8
       p-limit: 7.1.1
 
