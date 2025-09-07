@@ -4,17 +4,22 @@ import path from 'node:path';
 import { calculateFingerprint, type FingerprintResult } from 'fs-fingerprint';
 import { logger } from '../../index.js';
 import { spawn } from '../spawn.js';
-import { getDefaultIgnorePaths, getPlatformDirIgnorePaths } from './ignorePaths.js';
+import {
+  getDefaultIgnorePaths,
+  getPlatformDirIgnorePaths,
+} from './ignorePaths.js';
 
 export type FingerprintSources = {
   extraSources: string[];
   ignorePaths: string[];
+  env: string[];
 };
 
 export type FingerprintOptions = {
   platform: 'ios' | 'android';
   extraSources: string[];
   ignorePaths: string[];
+  env: string[];
 };
 
 /**
@@ -76,6 +81,7 @@ export async function nativeFingerprint(
         key: 'autolinkingSources',
         json: parseAutolinkingSources(autolinkingConfig),
       },
+      ...(options.env.length > 0 ? [{ key: 'env', json: options.env }] : []),
     ],
     exclude: [
       ...getDefaultIgnorePaths(),

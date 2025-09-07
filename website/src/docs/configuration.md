@@ -56,6 +56,9 @@ It's intentional design decision to explicitly define platforms, bundlers etc, s
 
     // Paths to ignore when calculating fingerprints
     ignorePaths?: string[];
+
+    // Environmental variables that should affect fingerprints
+    env?: string[];
   }
 }
 ```
@@ -75,6 +78,7 @@ type PluginApi = {
   getFingerprintOptions: () => {
     extraSources: string[];
     ignorePaths: string[];
+    env: string[];
   };
 };
 ```
@@ -574,7 +578,11 @@ export default {
 
 A fingerprint is a representation of your native project in a form of a hash (e.g. `378083de0c6e6bb6caf8fb72df658b0b26fb29ef`). It's calculated every time the CLI is run. When a local fingerprint matches the one that's generated on a remote server, we have a match and can download the project for you instead of building it locally.
 
-The fingerprint configuration helps determine when builds should be cached and invalidated in non-standard settings, e.g. when you have git submodules in your project:
+The fingerprint configuration helps determine when builds should be cached and invalidated in non-standard settings:
+
+- `extraSources`: when you have git submodules in your project
+- `ignorePaths`: custom directories that are not relevant for the native build state
+- `env`: environment variables that should affect the fingerprint
 
 ```ts
 export default {
@@ -582,7 +590,7 @@ export default {
   fingerprint: {
     extraSources: ['./git-submodule'],
     ignorePaths: ['./temp'],
+    env: [process.env.CUSTOM_ENV],
   },
 };
 ```
-

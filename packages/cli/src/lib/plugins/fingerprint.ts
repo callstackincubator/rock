@@ -19,7 +19,7 @@ type NativeFingerprintCommandOptions = {
 
 export async function nativeFingerprintCommand(
   path: string,
-  { extraSources, ignorePaths }: FingerprintSources,
+  { extraSources, ignorePaths, env }: FingerprintSources,
   options: NativeFingerprintCommandOptions,
 ) {
   validateOptions(options);
@@ -31,6 +31,7 @@ export async function nativeFingerprintCommand(
       platform,
       extraSources,
       ignorePaths,
+      env,
     });
     console.log(fingerprint.hash);
     // log sources to stderr to avoid polluting the standard output
@@ -57,6 +58,7 @@ export async function nativeFingerprintCommand(
     platform,
     extraSources,
     ignorePaths,
+    env,
   });
   const duration = performance.now() - start;
 
