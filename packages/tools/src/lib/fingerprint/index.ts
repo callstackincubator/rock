@@ -31,7 +31,7 @@ export async function nativeFingerprint(
     const { stdout: autolinkingConfigString } = await spawn(
       'rock',
       ['config', '-p', options.platform],
-      { cwd: projectRoot, stdio: 'pipe', preferLocal: true },
+      { cwd: projectRoot, stdio: 'pipe' },
     );
 
     autolinkingConfig = JSON.parse(autolinkingConfigString);
