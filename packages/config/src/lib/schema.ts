@@ -55,6 +55,7 @@ const ConfigTypeSchema = Joi.object({
     .default({
       extraSources: [],
       ignorePaths: [],
+      env: [],
     })
     .optional(),
 }).unknown(false);

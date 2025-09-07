@@ -71,6 +71,7 @@ export type ConfigType = {
   fingerprint?: {
     extraSources?: string[];
     ignorePaths?: string[];
+    env?: string[];
   };
 };
 
