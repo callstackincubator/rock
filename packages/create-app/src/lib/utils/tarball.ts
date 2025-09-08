@@ -1,7 +1,6 @@
 import fs from 'node:fs';
 import path from 'node:path';
 import { RockError } from '@rock-js/tools';
-import packageJson from 'package-json';
 import * as tar from 'tar';
 import { getNameWithoutExtension } from './fs.js';
 
@@ -11,17 +10,17 @@ export async function downloadTarballFromNpm(
   targetDir: string,
 ) {
   try {
-    const metadata = await packageJson(packageName, { version });
+    const versionData = await getPackageVersionData(packageName, version);
 
-    const tarballUrl = metadata['dist']?.tarball;
+    const tarballUrl = versionData.dist?.tarball;
     if (!tarballUrl) {
       throw new RockError('Tarball URL not found.');
     }
 
-    const response = await fetch(tarballUrl);
-    if (!response.ok) {
+    const tarballResponse = await fetch(tarballUrl);
+    if (!tarballResponse.ok) {
       throw new RockError(
-        `Failed to fetch package ${packageName}: ${response.statusText}`,
+        `Failed to fetch package ${packageName}: ${tarballResponse.statusText}`,
       );
     }
 
@@ -30,7 +29,7 @@ export async function downloadTarballFromNpm(
       `${packageName.replace('/', '-')}.tgz`,
     );
     // Write the tarball to disk
-    const arrayBuffer = await response.arrayBuffer();
+    const arrayBuffer = await tarballResponse.arrayBuffer();
     fs.writeFileSync(tarballPath, new Uint8Array(arrayBuffer));
 
     return tarballPath;
@@ -39,6 +38,30 @@ export async function downloadTarballFromNpm(
       cause: error,
     });
   }
+}
+
+async function getPackageVersionData(packageName: string, version: string) {
+  // Fetch package metadata from npm registry
+  const registryUrl = `https://registry.npmjs.org/${packageName}`;
+  const response = await fetch(registryUrl);
+
+  if (!response.ok) {
+    throw new RockError(
+      `Failed to fetch package metadata for ${packageName}: ${response.statusText}`,
+    );
+  }
+
+  const metadata = await response.json();
+  const versionTag = metadata['dist-tags']?.[version];
+  const versionData = versionTag
+    ? metadata.versions?.[versionTag]
+    : metadata.versions?.[version];
+  if (!versionData) {
+    throw new RockError(
+      `Version ${version} not found for package ${packageName}`,
+    );
+  }
+  return versionData;
 }
 
 /**
