@@ -22,3 +22,7 @@ export {
   handleUploadResponse,
 } from './lib/build-cache/fetchCachedBuild.js';
 export { getInfoPlist } from './lib/getInfoPlist.js';
+export * from './lib/fs.js';
+export * from './lib/package-json.js';
+export * from './lib/project-name.js';
+export * from './lib/edit-template.js';

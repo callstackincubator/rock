@@ -1,9 +1,8 @@
 import fs from 'node:fs';
 import path from 'node:path';
-import { RockError } from '@rock-js/tools';
+import { getNameWithoutExtension, RockError } from '@rock-js/tools';
 import packageJson from 'package-json';
 import * as tar from 'tar';
-import { getNameWithoutExtension } from './fs.js';
 
 export async function downloadTarballFromNpm(
   packageName: string,

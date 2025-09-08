@@ -2,14 +2,22 @@ import fs from 'node:fs';
 import path from 'node:path';
 import {
   cancelPromptAndExit,
+  copyDirSync,
+  isEmptyDirSync,
   isInteractive,
   logger,
+  normalizeProjectName,
   promptConfirm,
+  removeDirSync,
+  renameCommonFiles,
+  replacePlaceholder,
   resolveAbsolutePath,
+  rewritePackageJson,
   RockError,
   spawn,
   spinner,
   type SupportedRemoteCacheProviders,
+  validateProjectName,
 } from '@rock-js/tools';
 import { gitInitStep, hasGitClient, isGitRepo } from './steps/git-init.js';
 import type { TemplateInfo } from './templates.js';
@@ -20,21 +28,11 @@ import {
   resolveTemplate,
   TEMPLATES,
 } from './templates.js';
-import {
-  renameCommonFiles,
-  replacePlaceholder,
-} from './utils/edit-template.js';
-import { copyDirSync, isEmptyDirSync, removeDirSync } from './utils/fs.js';
 import { getPkgManager } from './utils/getPkgManager.js';
 import { initInExistingProject } from './utils/initInExistingProject.js';
 import { migrateRnefProject } from './utils/migrateRnefProject.js';
-import { rewritePackageJson } from './utils/package-json.js';
 import { parseCliOptions } from './utils/parse-cli-options.js';
 import { parsePackageInfo } from './utils/parsers.js';
-import {
-  normalizeProjectName,
-  validateProjectName,
-} from './utils/project-name.js';
 import {
   confirmOverrideFiles,
   printByeMessage,

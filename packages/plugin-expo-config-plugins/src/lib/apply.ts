@@ -16,15 +16,19 @@ export async function applyConfigPlugins(info: ProjectInfo) {
   const { expo, ...rest } = JSON.parse(content);
   const appJsonConfig = expo || rest;
 
-  if (
-    !Array.isArray(appJsonConfig.plugins) ||
-    appJsonConfig.plugins.length === 0
-  ) {
-    return;
-  }
+  const updatedInfo = {
+    ...info,
+    iosBundleIdentifier:
+      appJsonConfig.ios?.bundleIdentifier ?? info.iosBundleIdentifier,
+    androidPackageName:
+      appJsonConfig.android?.package ?? info.androidPackageName,
+  };
 
   return compileModsAsync(
-    withPlugins(withInternal(appJsonConfig, info), appJsonConfig.plugins),
-    info,
+    withPlugins(
+      withInternal(appJsonConfig, updatedInfo),
+      appJsonConfig.plugins ?? [],
+    ),
+    updatedInfo,
   );
 }
