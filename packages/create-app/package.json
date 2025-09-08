@@ -11,8 +11,8 @@
     "dist"
   ],
   "scripts": {
-    "build": "tsc -p tsconfig.lib.json",
-    "dev": "tsc -p tsconfig.lib.json --watch",
+    "build": "rslib build",
+    "dev": "rslib build --watch",
     "publish:npm": "npm publish --access public",
     "publish:verdaccio": "npm publish --registry http://localhost:4873 --userconfig ../../.npmrc",
     "e2e": "CI=true vitest --config vite.e2e.config.js"
@@ -20,17 +20,16 @@
   "bin": {
     "create-rock": "./dist/src/bin.js"
   },
-  "dependencies": {
+  "devDependencies": {
+    "@rock-js/test-helpers": "^0.10.2",
     "@rock-js/tools": "^0.10.2",
+    "@rslib/core": "^0.13.0",
+    "@types/gradient-string": "^1.1.6",
+    "@types/minimist": "^1.2.5",
     "gradient-string": "^3.0.0",
     "minimist": "^1.2.8",
     "tar": "^7.4.3",
     "tslib": "^2.3.0"
-  },
-  "devDependencies": {
-    "@types/gradient-string": "^1.1.6",
-    "@rock-js/test-helpers": "^0.10.2",
-    "@types/minimist": "^1.2.5"
   },
   "publishConfig": {
     "access": "public"
