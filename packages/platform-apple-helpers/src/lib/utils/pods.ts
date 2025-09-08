@@ -122,15 +122,11 @@ async function runPodInstall(options: {
       env: {
         RCT_NEW_ARCH_ENABLED: options.newArch ? '1' : '0',
         RCT_IGNORE_PODS_DEPRECATION: '1',
+        RCT_USE_RN_DEP: process.env['RCT_USE_RN_DEP'] || '1',
+        RCT_USE_PREBUILT_RNCORE: process.env['RCT_USE_PREBUILT_RNCORE'] || '1',
         ...(options.brownfield && { USE_FRAMEWORKS: 'static' }),
         ...(process.env['USE_THIRD_PARTY_JSC'] && {
           USE_THIRD_PARTY_JSC: process.env['USE_THIRD_PARTY_JSC'],
-        }),
-        ...(process.env['RCT_USE_RN_DEP'] && {
-          RCT_USE_RN_DEP: process.env['RCT_USE_RN_DEP'],
-        }),
-        ...(process.env['RCT_USE_PREBUILT_RNCORE'] && {
-          RCT_USE_PREBUILT_RNCORE: process.env['RCT_USE_PREBUILT_RNCORE'],
         }),
       },
       cwd: options.sourceDir,
