@@ -395,8 +395,8 @@ importers:
         specifier: ^3.3.2
         version: 3.3.3
       fs-fingerprint:
-        specifier: ^0.6.0
-        version: 0.6.0
+        specifier: ^0.7.0
+        version: 0.7.0
       is-unicode-supported:
         specifier: ^2.1.0
         version: 2.1.0
@@ -3909,8 +3909,8 @@ packages:
     resolution: {integrity: sha512-yhlQgA6mnOJUKOsRUFsgJdQCvkKhcz8tlZG5HBQfReYZy46OwLcY+Zia0mtdHsOo9y/hP+CxMN0TU9QxoOtG4g==}
     engines: {node: '>=6 <7 || >=8'}
 
-  fs-fingerprint@0.6.0:
-    resolution: {integrity: sha512-dgmGS6EX+Y3GiyV1p6x1CAO5TLKe8VkdQgVBP/blxONElhmYIBVt7W/X52yqGTV4/LLAABdNrw33w8qvpOoEbQ==}
+  fs-fingerprint@0.7.0:
+    resolution: {integrity: sha512-bEfz/cgk+gU9m9HvgV4oySvUrxgR91/UHNKvSY9rfXy64P4cq6SzS1LibaPySyqaygrdKGHxPn0AvUaTjWZkaA==}
     engines: {node: '>=20.0.0'}
 
   fs.realpath@1.0.0:
@@ -5875,11 +5875,6 @@ packages:
 
   semver@6.3.1:
     resolution: {integrity: sha512-BR7VvDCVHO+q2xBEWskxS6DJE1qRnb7DxzUrogb71CWoSficBxYsiAGd+Kl0mmq/MprG9yArRkyrQxTO6XjMzA==}
-    hasBin: true
-
-  semver@7.6.3:
-    resolution: {integrity: sha512-oVekP1cKtI+CTDvHWYFUcMtsK/00wmAEfyqKfNdARm8u1wNVhSgaX7A8d4UuIlUI5e84iEwOhs7ZPYRmzU9U6A==}
-    engines: {node: '>=10'}
     hasBin: true
 
   semver@7.7.2:
@@ -11447,11 +11442,11 @@ snapshots:
       jsonfile: 4.0.0
       universalify: 0.1.2
 
-  fs-fingerprint@0.6.0:
+  fs-fingerprint@0.7.0:
     dependencies:
       ignore: 7.0.5
-      micromatch: 4.0.8
       p-limit: 7.1.1
+      picomatch: 4.0.3
 
   fs.realpath@1.0.0: {}
 
@@ -14114,8 +14109,6 @@ snapshots:
       node-forge: 1.3.1
 
   semver@6.3.1: {}
-
-  semver@7.6.3: {}
 
   semver@7.7.2: {}
 
