@@ -66,6 +66,7 @@ export const createBuild = async ({
   let artifactName = await getArtifactName();
 
   const binaryPath = await getBinaryPath({
+    platformName,
     artifactName,
     localFlag: args.local,
     remoteCacheProvider,

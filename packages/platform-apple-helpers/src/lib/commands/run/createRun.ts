@@ -66,6 +66,7 @@ export const createRun = async ({
   let artifactName = await getArtifactName();
 
   const binaryPath = await getBinaryPath({
+    platformName: 'ios',
     artifactName,
     binaryPathFlag: args.binaryPath,
     localFlag: args.local,

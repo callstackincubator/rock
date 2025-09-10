@@ -19,7 +19,7 @@ type NativeFingerprintCommandOptions = {
 
 export async function nativeFingerprintCommand(
   path: string,
-  { extraSources, ignorePaths }: FingerprintSources,
+  { extraSources, ignorePaths, env }: FingerprintSources,
   options: NativeFingerprintCommandOptions,
 ) {
   validateOptions(options);
@@ -31,6 +31,7 @@ export async function nativeFingerprintCommand(
       platform,
       extraSources,
       ignorePaths,
+      env,
     });
     console.log(fingerprint.hash);
     // log sources to stderr to avoid polluting the standard output
@@ -38,7 +39,7 @@ export async function nativeFingerprintCommand(
       JSON.stringify(
         {
           hash: fingerprint.hash,
-          sources: fingerprint.sources.filter((source) => source.hash != null),
+          sources: fingerprint.inputs.filter((source) => source.hash != null),
         },
         null,
         2,
@@ -57,6 +58,7 @@ export async function nativeFingerprintCommand(
     platform,
     extraSources,
     ignorePaths,
+    env,
   });
   const duration = performance.now() - start;
 
@@ -67,7 +69,7 @@ export async function nativeFingerprintCommand(
   logger.debug(
     'Sources:',
     JSON.stringify(
-      fingerprint.sources.filter((source) => source.hash != null),
+      fingerprint.inputs.filter((source) => source.hash != null),
       null,
       2,
     ),
