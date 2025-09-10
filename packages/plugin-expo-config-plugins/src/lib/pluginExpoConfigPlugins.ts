@@ -1,10 +1,17 @@
 import fs from 'node:fs/promises';
 import path from 'node:path';
 import type { PluginApi, PluginOutput } from '@rock-js/config';
-import { logger } from '@rock-js/tools';
+import {
+  hasGitClient,
+  isGitDirty,
+  isGitRepo,
+  logger,
+  promptConfirm,
+  removeDirs,
+} from '@rock-js/tools';
 import { applyConfigPlugins } from './apply.js';
 import type { ProjectInfo } from './types.js';
-import { cleanNativeDirs, regenNativeDirs } from './utils/regen-native-dirs.js';
+import { regenNativeDirs } from './utils/regen-native-dirs.js';
 
 type ConfigPluginsArgs = {
   platforms: string[];
@@ -72,24 +79,54 @@ export const pluginExpoConfigPlugins =
       description:
         'Regenerates the native folders and reapplies config plugins.',
       action: async (args: ConfigPluginsArgs) => {
-        // @todo: Check if user has uncommitted changes and prompt to decide if they want to proceed
+        const projectRoot = api.getProjectRoot();
+
+        if ((await isGitRepo(projectRoot)) && (await hasGitClient())) {
+          const isDirty = await isGitDirty(projectRoot);
+
+          if (isDirty) {
+            const shouldProceed = await promptConfirm({
+              message:
+                'Git has uncommitted changes. Would you like to proceed?',
+              confirmLabel: 'Yes',
+              cancelLabel: 'No',
+            });
+
+            if (!shouldProceed) {
+              process.exit(1);
+            }
+          }
+        }
 
         logger.log('Cleaning up native folders');
-        const cleanResult = await cleanNativeDirs(api);
 
-        if (!cleanResult.success) {
-          logger.error('Failed to clean native folders:', cleanResult);
+        try {
+          await removeDirs([
+            path.join(projectRoot, 'ios'),
+            path.join(projectRoot, 'android'),
+          ]);
+        } catch (error) {
+          logger.error('Failed to remove native folders:', error);
+          process.exit(1);
         }
 
         logger.log('Regenerating native folders');
-        const regenResult = await regenNativeDirs(api);
 
-        if (!regenResult.success) {
-          logger.error('Failed to regenerate native folders:', regenResult);
+        try {
+          await regenNativeDirs(api);
+        } catch (error) {
+          logger.error('Failed to regenerate native folders:', error);
+          process.exit(1);
         }
 
         logger.log('Applying config plugins');
-        await applyConfigPluginsCommand(api, args);
+
+        try {
+          await applyConfigPluginsCommand(api, args);
+        } catch (error) {
+          logger.error('Failed to apply config plugins:', error);
+          process.exit(1);
+        }
 
         logger.success(
           'Native folders regenerated and config plugins applied!',

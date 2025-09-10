@@ -3,7 +3,11 @@ import path from 'node:path';
 import {
   cancelPromptAndExit,
   copyDirSync,
+  gitInitStep,
+  hasGitClient,
   isEmptyDirSync,
+  isGitDirty,
+  isGitRepo,
   isInteractive,
   logger,
   normalizeProjectName,
@@ -19,7 +23,6 @@ import {
   type SupportedRemoteCacheProviders,
   validateProjectName,
 } from '@rock-js/tools';
-import { gitInitStep, hasGitClient, isGitRepo } from './steps/git-init.js';
 import type { TemplateInfo } from './templates.js';
 import {
   BUNDLERS,
@@ -73,6 +76,7 @@ export async function run() {
 
   if (isRnefProject(projectRoot)) {
     await validateGitStatus(projectRoot);
+
     const shouldMigrate = await promptConfirm({
       message: `Detected existing RNEF project. Would you like to migrate it to Rock?`,
       confirmLabel: 'Yes',
@@ -212,11 +216,9 @@ function isRnefProject(dir: string) {
 
 async function validateGitStatus(dir: string) {
   if ((await isGitRepo(dir)) && (await hasGitClient())) {
-    const { output } = await spawn('git', ['status', '--porcelain'], {
-      cwd: dir,
-    });
+    const isDirty = await isGitDirty(dir);
 
-    if (output.trim() !== '') {
+    if (isDirty) {
       logger.error(
         'Git has uncommitted changes. Please commit or stash your changes before continuing with initializing Rock in existing project.',
       );

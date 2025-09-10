@@ -26,3 +26,4 @@ export * from './lib/fs.js';
 export * from './lib/package-json.js';
 export * from './lib/project-name.js';
 export * from './lib/edit-template.js';
+export * from './lib/git.js';
