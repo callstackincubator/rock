@@ -1,5 +1,8 @@
 import * as path from 'node:path';
-import { resolveAbsolutePath, type SupportedRemoteCacheProviders } from '@rock-js/tools';
+import {
+  resolveAbsolutePath,
+  type SupportedRemoteCacheProviders,
+} from '@rock-js/tools';
 
 export type TemplateInfo = NpmTemplateInfo | LocalTemplateInfo;
 
@@ -21,13 +24,6 @@ export type LocalTemplateInfo = {
   directory: string | undefined;
   importName?: string;
 };
-
-export type RemoteCacheTemplateInfo = {
-  name: SupportedRemoteCacheProviders;
-  displayName: string;
-  packageName: string;
-  importName: string;
-}
 
 export const TEMPLATES: TemplateInfo[] = [
   {
@@ -96,20 +92,35 @@ export const PLATFORMS: TemplateInfo[] = [
   },
 ];
 
-export const REMOTE_CACHE_PROVIDERS: RemoteCacheTemplateInfo[] = [
-  {
-    name: 'github-actions',
-    displayName: 'GitHub Actions',
-    packageName: '@rock-js/provider-github-actions',
-    importName: 'providerGithubActions',
-  },
-  {
-    name: 's3',
-    displayName: 'S3',
-    packageName: '@rock-js/provider-s3',
-    importName: 'providerS3',
-  },
-];
+export function remoteCacheProviderToImportTemplate(
+  provider: SupportedRemoteCacheProviders,
+) {
+  switch (provider) {
+    case 'github-actions':
+      return `import { providerGithubActions } from '@rock-js/provider-github-actions';`;
+    case 's3':
+      return `import { providerS3 } from '@rock-js/provider-s3';`;
+  }
+}
+
+export function remoteCacheProviderToConfigTemplate(
+  provider: SupportedRemoteCacheProviders,
+  args: any,
+) {
+  switch (provider) {
+    case 'github-actions':
+      return `remoteCacheProvider: providerGithubActions({
+    owner: "${args.owner}",
+    repo: "${args.repo}",
+    token: ${process.env['GITHUB_TOKEN']},
+  }),`;
+    case 's3':
+      return `remoteCacheProvider: providerS3({
+    bucket: "${args.bucket}",
+    region: "${args.region}",
+  }),`;
+  }
+}
 
 export function resolveTemplate(
   templates: TemplateInfo[],

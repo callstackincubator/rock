@@ -7,7 +7,6 @@ import {
   promptConfirm,
   promptGroup,
   promptMultiselect,
-  promptPassword,
   promptSelect,
   promptText,
   relativeToCwd,
@@ -15,7 +14,7 @@ import {
   type SupportedRemoteCacheProviders,
 } from '@rock-js/tools';
 import { vice } from 'gradient-string';
-import type { RemoteCacheTemplateInfo, TemplateInfo } from '../templates.js';
+import type { TemplateInfo } from '../templates.js';
 import { validateProjectName } from './project-name.js';
 import { getRockVersion } from './version.js';
 
@@ -160,37 +159,51 @@ export function promptBundlers(
   });
 }
 
-export function promptRemoteCacheProvider(
-  providers: RemoteCacheTemplateInfo[],
-): Promise<RemoteCacheTemplateInfo | null> {
-  return promptSelect({
-    message: 'Which remote cache provider do you want to use?',
-    initialValue: providers[0],
-    options: providers.map((provider) => ({
-      value: provider,
-      label: provider.displayName,
-    })),
+export function promptRemoteCacheProvider() {
+  return promptSelect<SupportedRemoteCacheProviders | null>({
+    message: 'Where do you store or intend to store remote build cache?',
+    initialValue: 'github-actions',
+    options: [
+      {
+        value: 'github-actions',
+        label: 'GitHub Actions',
+      },
+      {
+        value: 's3',
+        label: 'Amazon S3',
+      },
+      {
+        value: null,
+        label: 'None',
+        hint: 'Local cache only',
+      },
+    ],
   });
 }
 
-export function promptRemoteCacheProvidersConfig(
+export function promptRemoteCacheProviderArgs(
   provider: SupportedRemoteCacheProviders,
 ) {
   switch (provider) {
     case 'github-actions':
       return promptGroup({
-        owner: () => promptText({ message: 'GitHub owner' }),
-        repo: () => promptText({ message: 'GitHub repo' }),
+        owner: () => promptText({ message: 'GitHub repository owner' }),
+        repo: () => promptText({ message: 'GitHub repository name' }),
         token: () =>
-          promptPassword({ message: 'GitHub Personal Access Token (PAT)' }),
+          promptText({
+            message: 'GitHub Personal Access Token (PAT)',
+            placeholder: 'GITHUB_TOKEN',
+          }),
       });
     case 's3':
       return promptGroup({
-        bucket: () => promptText({ message: 'S3 bucket' }),
-        region: () => promptText({ message: 'S3 region' }),
-        accessKeyId: () => promptText({ message: 'S3 access key ID' }),
-        secretAccessKey: () =>
-          promptPassword({ message: 'S3 secret access key' }),
+        bucket: () =>
+          promptText({ message: 'Bucket name', placeholder: 'bucket-name' }),
+        region: () =>
+          promptText({
+            message: 'Region',
+            placeholder: 'us-west-1',
+          }),
       });
   }
 }
