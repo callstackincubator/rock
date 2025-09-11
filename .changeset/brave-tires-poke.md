@@ -1,5 +1,5 @@
 ---
-'create-rock': patch
+'create-rock': minor
 ---
 
 perf: drop package-json dep
