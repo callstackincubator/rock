@@ -1,5 +1,17 @@
 # @rnef/plugin-brownfield-ios
 
+## 0.11.0
+
+### Minor Changes
+
+- ee4e5d9: feat: enable prebuilds ios by default
+
+### Patch Changes
+
+- Updated dependencies [88f18d4]
+  - @rock-js/platform-apple-helpers@0.11.0
+  - @rock-js/tools@0.11.0
+
 ## 0.10.2
 
 ### Patch Changes

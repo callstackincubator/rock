@@ -1,5 +1,11 @@
 # rock-docs
 
+## 1.3.0
+
+### Minor Changes
+
+- 88f18d4: feat: use fs-fingerprint
+
 ## 1.2.1
 
 ### Patch Changes
