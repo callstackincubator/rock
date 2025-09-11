@@ -1,10 +1,10 @@
 ---
-'@rock-js/platform-apple-helpers': patch
-'@rock-js/platform-android': patch
-'@rock-js/config': patch
-'@rock-js/tools': patch
-'rock': patch
-'rock-docs': patch
+'@rock-js/platform-apple-helpers': minor
+'@rock-js/platform-android': minor
+'@rock-js/config': minor
+'@rock-js/tools': minor
+'rock': minor
+'rock-docs': minor
 ---
 
 feat: use fs-fingerprint
