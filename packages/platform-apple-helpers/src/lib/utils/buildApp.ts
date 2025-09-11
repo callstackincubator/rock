@@ -1,6 +1,12 @@
 import path from 'node:path';
 import type { IOSProjectConfig } from '@react-native-community/cli-types';
-import { getInfoPlist, RockError } from '@rock-js/tools';
+import {
+  type FingerprintSources,
+  formatArtifactName,
+  getInfoPlist,
+  RockError,
+  saveLocalBuildCache,
+} from '@rock-js/tools';
 import type { BuildFlags } from '../commands/build/buildOptions.js';
 import { buildProject } from '../commands/build/buildProject.js';
 import { getBuildSettings } from '../commands/run/getBuildSettings.js';
@@ -24,6 +30,9 @@ export async function buildApp({
   reactNativePath,
   binaryPath,
   brownfield,
+  artifactName,
+  fingerprintOptions,
+  deviceOrSimulator,
 }: {
   args: RunFlags | BuildFlags;
   projectConfig: ProjectConfig;
@@ -35,6 +44,9 @@ export async function buildApp({
   reactNativePath: string;
   binaryPath?: string;
   brownfield?: boolean;
+  artifactName: string;
+  fingerprintOptions: FingerprintSources;
+  deviceOrSimulator: string;
 }) {
   if (binaryPath) {
     // @todo Info.plist is hardcoded when reading from binaryPath
@@ -49,11 +61,9 @@ export async function buildApp({
       scheme: args.scheme,
       xcodeProject: projectConfig.xcodeProject,
       sourceDir: projectConfig.sourceDir,
-      didInstallPods: false,
     };
   }
-
-  let didInstallPods = false;
+  let artifactNameToSave = artifactName;
   let { xcodeProject, sourceDir } = projectConfig;
 
   if (args.installPods) {
@@ -77,7 +87,16 @@ export async function buildApp({
       xcodeProject = newProjectConfig.xcodeProject;
       sourceDir = newProjectConfig.sourceDir;
     }
-    didInstallPods = true;
+
+    // After installing pods the fingerprint likely changes.
+    // We update the artifact name to reflect the new fingerprint and store proper entry in the local cache.
+    artifactNameToSave = await formatArtifactName({
+      platform: 'ios',
+      traits: [deviceOrSimulator, args.configuration ?? 'Debug'],
+      root: projectRoot,
+      fingerprintOptions,
+      type: 'update',
+    });
   }
 
   const info = await getInfo(xcodeProject, sourceDir);
@@ -119,6 +138,8 @@ export async function buildApp({
     buildFolder: args.buildFolder,
   });
 
+  saveLocalBuildCache(artifactNameToSave, buildSettings.appPath);
+
   return {
     appPath: buildSettings.appPath,
     infoPlistPath: buildSettings.infoPlistPath,
@@ -126,7 +147,6 @@ export async function buildApp({
     xcodeProject,
     sourceDir,
     bundleIdentifier: buildSettings.bundleIdentifier,
-    didInstallPods,
   };
 }
 
