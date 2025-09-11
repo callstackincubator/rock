@@ -1,5 +1,16 @@
 # create-rock
 
+## 0.11.0
+
+### Minor Changes
+
+- e64f846: perf: drop package-json dep
+
+### Patch Changes
+
+- 0c3badd: Bundle create-rock for faster startup
+- e66a3f9: feat: ask instead of bail when git has uncommited changes
+
 ## 0.10.2
 
 ### Patch Changes
