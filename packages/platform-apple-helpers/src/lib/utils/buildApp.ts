@@ -67,7 +67,7 @@ export async function buildApp({
   let { xcodeProject, sourceDir } = projectConfig;
 
   if (args.installPods) {
-    await installPodsIfNeeded(
+    const didInstallPods = await installPodsIfNeeded(
       projectRoot,
       platformName,
       sourceDir,
@@ -88,15 +88,17 @@ export async function buildApp({
       sourceDir = newProjectConfig.sourceDir;
     }
 
-    // After installing pods the fingerprint likely changes.
-    // We update the artifact name to reflect the new fingerprint and store proper entry in the local cache.
-    artifactNameToSave = await formatArtifactName({
-      platform: 'ios',
-      traits: [deviceOrSimulator, args.configuration ?? 'Debug'],
-      root: projectRoot,
-      fingerprintOptions,
-      type: 'update',
-    });
+    if (didInstallPods) {
+      // After installing pods the fingerprint likely changes.
+      // We update the artifact name to reflect the new fingerprint and store proper entry in the local cache.
+      artifactNameToSave = await formatArtifactName({
+        platform: 'ios',
+        traits: [deviceOrSimulator, args.configuration ?? 'Debug'],
+        root: projectRoot,
+        fingerprintOptions,
+        type: 'update',
+      });
+    }
   }
 
   const info = await getInfo(xcodeProject, sourceDir);

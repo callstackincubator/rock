@@ -56,7 +56,9 @@ export async function installPodsIfNeeded(
       cacheKey,
       calculateCurrentHash({ podfilePath, podsPath, nativeDependencies }),
     );
+    return true;
   }
+  return false;
 }
 
 const calculateCurrentHash = ({
