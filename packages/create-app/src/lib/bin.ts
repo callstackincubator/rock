@@ -332,38 +332,43 @@ export function formatConfig(
   const pluginsWithImports = plugins
     ? plugins.filter((template) => template.importName)
     : null;
-  return `${[...platformsWithImports, ...(pluginsWithImports ?? []), bundler]
-    .map(
+
+  return `${[
+    ...[...platformsWithImports, ...(pluginsWithImports ?? []), bundler].map(
       (template) =>
         `import { ${template.importName} } from '${template.packageName}';`,
-    )
+    ),
+    remoteCacheProvider?.name
+      ? remoteCacheProviderToImportTemplate(remoteCacheProvider.name)
+      : '',
+  ]
+    .filter(Boolean)
     .join('\n')}
-${[remoteCacheProvider ? remoteCacheProviderToImportTemplate(remoteCacheProvider.name) : '']}
 
-export default {${
+export default {
+  ${[
     pluginsWithImports && pluginsWithImports.length > 0
-      ? `
-  plugins: [
+      ? `plugins: [
     ${pluginsWithImports
       .map((template) => `${template.importName}(),`)
       .join('\n    ')}
   ],`
-      : ''
-  }
-  bundler: ${bundler.importName}(),
-  platforms: {
+      : '',
+    `bundler: ${bundler.importName}(),`,
+    `platforms: {
     ${platformsWithImports
       .map((template) => `${template.name}: ${template.importName}(),`)
       .join('\n    ')}
-  },
-  ${
-    remoteCacheProvider
+  },`,
+    remoteCacheProvider?.name
       ? remoteCacheProviderToConfigTemplate(
           remoteCacheProvider.name,
           remoteCacheProvider.args,
         )
-      : ''
-  }
+      : '',
+  ]
+    .filter(Boolean)
+    .join('\n  ')}
 };
 `;
 }
