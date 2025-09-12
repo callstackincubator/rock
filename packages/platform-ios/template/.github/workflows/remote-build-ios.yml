@@ -34,7 +34,7 @@ jobs:
         with:
           destination: device
           github-token: ${{ secrets.GITHUB_TOKEN }}
-          scheme: SCHEME_FOR_DEVICES # replace with preferred scheme
+          scheme: HelloWorld
           configuration: Release # replace with preferred configuration
           certificate-base64: ${{ secrets.APPLE_BUILD_CERTIFICATE_BASE64 }}
           certificate-password: ${{ secrets.APPLE_BUILD_CERTIFICATE_PASSWORD }}
@@ -63,5 +63,5 @@ jobs:
         with:
           destination: simulator
           github-token: ${{ secrets.GITHUB_TOKEN }}
-          scheme: SCHEME_FOR_SIMULATORS # replace with preferred scheme
+          scheme: HelloWorld
           configuration: Debug # replace with preferred configuration
