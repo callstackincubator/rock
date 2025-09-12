@@ -4,7 +4,6 @@ import { color } from '../color.js';
 import type { FingerprintSources } from '../fingerprint/index.js';
 import { nativeFingerprint } from '../fingerprint/index.js';
 import { isInteractive } from '../isInteractive.js';
-import logger from '../logger.js';
 import { getCacheRootPath } from '../project.js';
 import { spinner } from '../prompts.js';
 
@@ -105,14 +104,14 @@ export async function formatArtifactName({
   root,
   fingerprintOptions,
   raw,
-  silent,
+  type,
 }: {
   platform?: 'ios' | 'android';
   traits?: string[];
   root: string;
   fingerprintOptions: FingerprintSources;
   raw?: boolean;
-  silent?: boolean;
+  type?: 'create' | 'update';
 }): Promise<string> {
   if (!platform || !traits) {
     return '';
@@ -126,18 +125,18 @@ export async function formatArtifactName({
     return `rock-${platform}-${traits.join('-')}-${hash}`;
   }
 
-  const loader = spinner({ silent });
-  loader.start('Calculating project fingerprint');
+  const startMessage = type === 'update' ? 'Updating' : 'Calculating';
+  const stopMessage = type === 'update' ? 'Updated' : 'Calculated';
+
+  const loader = spinner();
+  loader.start(`${startMessage} project fingerprint`);
   const { hash } = await nativeFingerprint(root, {
     ...fingerprintOptions,
     platform,
   });
   loader.stop(
-    `Calculated project fingerprint: ${color.bold(color.magenta(hash))}`,
+    `${stopMessage} project fingerprint: ${color.bold(color.magenta(hash))}`,
   );
-  if (silent) {
-    logger.debug(`Calculated project fingerprint: ${hash}`);
-  }
   return `rock-${platform}-${traits.join('-')}-${hash}`;
 }
 

@@ -53,17 +53,12 @@ export const createBuild = async ({
       : 'device'
     : 'simulator';
 
-  async function getArtifactName({ silent }: { silent?: boolean } = {}) {
-    return await formatArtifactName({
-      platform: 'ios',
-      traits: [deviceOrSimulator, args.configuration ?? 'Debug'],
-      root: projectRoot,
-      fingerprintOptions,
-      silent,
-    });
-  }
-
-  let artifactName = await getArtifactName();
+  const artifactName = await formatArtifactName({
+    platform: 'ios',
+    traits: [deviceOrSimulator, args.configuration ?? 'Debug'],
+    root: projectRoot,
+    fingerprintOptions,
+  });
 
   const binaryPath = await getBinaryPath({
     platformName,
@@ -90,26 +85,22 @@ export const createBuild = async ({
   }
 
   try {
-    const { appPath, didInstallPods, ...buildAppResult } = await buildApp({
+    const { appPath, ...buildAppResult } = await buildApp({
       projectRoot,
       projectConfig,
       platformName,
       args,
       reactNativePath,
       brownfield,
+      artifactName,
+      deviceOrSimulator,
+      fingerprintOptions,
     });
     logger.log(`Build available at: ${colorLink(relativeToCwd(appPath))}`);
 
     xcodeProject = buildAppResult.xcodeProject;
     sourceDir = buildAppResult.sourceDir;
     scheme = buildAppResult.scheme;
-
-    // After installing pods the fingerprint likely changes.
-    // We update the artifact name to reflect the new fingerprint and store proper entry in the local cache.
-    if (didInstallPods) {
-      artifactName = await getArtifactName({ silent: true });
-    }
-    saveLocalBuildCache(artifactName, appPath);
   } catch (error) {
     const message = `Failed to create ${args.archive ? 'archive' : 'build'}`;
     throw new RockError(message, { cause: error });
