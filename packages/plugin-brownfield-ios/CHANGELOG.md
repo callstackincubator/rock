@@ -1,5 +1,13 @@
 # @rnef/plugin-brownfield-ios
 
+## 0.11.1
+
+### Patch Changes
+
+- Updated dependencies [4f8c7dc]
+  - @rock-js/platform-apple-helpers@0.11.1
+  - @rock-js/tools@0.11.1
+
 ## 0.11.0
 
 ### Minor Changes

@@ -1,5 +1,11 @@
 # rock-docs
 
+## 1.3.1
+
+### Patch Changes
+
+- ec90814: fix: update brownfield-gradle-plugin to 0.5
+
 ## 1.3.0
 
 ### Minor Changes
