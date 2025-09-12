@@ -1,5 +1,11 @@
 # @rnef/tools
 
+## 0.11.1
+
+### Patch Changes
+
+- 4f8c7dc: refactor: move saving cache to buildApp; show that fingerprint was updated
+
 ## 0.11.0
 
 ### Minor Changes

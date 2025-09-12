@@ -1,5 +1,14 @@
 # @rnef/plugin-brownfield-android
 
+## 0.11.1
+
+### Patch Changes
+
+- ec90814: fix: update brownfield-gradle-plugin to 0.5
+- Updated dependencies [4f8c7dc]
+  - @rock-js/tools@0.11.1
+  - @rock-js/platform-android@0.11.1
+
 ## 0.11.0
 
 ### Patch Changes

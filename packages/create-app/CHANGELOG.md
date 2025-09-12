@@ -1,5 +1,11 @@
 # create-rock
 
+## 0.11.1
+
+### Patch Changes
+
+- 1d579ad: chore(create-app): add hints for brownfield plugins
+
 ## 0.11.0
 
 ### Minor Changes

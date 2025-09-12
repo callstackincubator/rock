@@ -1,5 +1,13 @@
 # @rnef/platform-apple-helpers
 
+## 0.11.1
+
+### Patch Changes
+
+- 4f8c7dc: refactor: move saving cache to buildApp; show that fingerprint was updated
+- Updated dependencies [4f8c7dc]
+  - @rock-js/tools@0.11.1
+
 ## 0.11.0
 
 ### Minor Changes
