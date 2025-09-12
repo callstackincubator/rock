@@ -135,6 +135,7 @@ export function promptPlugins(
     options: plugins.map((plugin) => ({
       value: plugin,
       label: plugin.name,
+      hint: plugin.hint,
     })),
     required: false,
   });
