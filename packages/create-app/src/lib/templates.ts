@@ -112,7 +112,7 @@ export function remoteCacheProviderToConfigTemplate(
       return `remoteCacheProvider: providerGithubActions({
     owner: "${args.owner}",
     repo: "${args.repo}",
-    token: ${process.env['GITHUB_TOKEN']},
+    token: process.env['${args.token}'],
   }),`;
     case 's3':
       return `remoteCacheProvider: providerS3({

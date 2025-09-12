@@ -193,6 +193,7 @@ export function promptRemoteCacheProviderArgs(
           promptText({
             message: 'GitHub Personal Access Token (PAT)',
             placeholder: 'GITHUB_TOKEN',
+            defaultValue: 'GITHUB_TOKEN'
           }),
       });
     case 's3':
