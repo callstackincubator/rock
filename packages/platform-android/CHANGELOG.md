@@ -1,5 +1,12 @@
 # @rnef/platform-android
 
+## 0.11.1
+
+### Patch Changes
+
+- Updated dependencies [4f8c7dc]
+  - @rock-js/tools@0.11.1
+
 ## 0.11.0
 
 ### Minor Changes

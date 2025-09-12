@@ -1,6 +1,6 @@
 {
   "name": "@rock-js/welcome-screen",
-  "version": "0.11.0",
+  "version": "0.11.1",
   "type": "module",
   "main": "./dist/src/index.jsx",
   "types": "./dist/src/index.d.ts",
@@ -31,7 +31,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/callstack/rock.git",
+    "url": "git+https://github.com/callstack/rock.git",
     "directory": "packages/welcome-screen"
   },
   "homepage": "https://rockjs.dev",

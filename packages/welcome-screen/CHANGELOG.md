@@ -1,5 +1,11 @@
 # @rnef/welcome-screen
 
+## 0.11.1
+
+### Patch Changes
+
+- 7d011f6: chore: update logo
+
 ## 0.11.0
 
 ## 0.10.2
