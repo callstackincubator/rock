@@ -7,12 +7,6 @@ Rock ships with a ready-to-use GitHub Actions:
 
 which you can include in your GHA workflows to build iOS and Android apps and store native artifacts to reuse across CI jobs and local dev environment through Rock CLI.
 
-## Workflow permissions
-
-Make sure to include the following workflow permissions for your project:
-
-Settings -> Actions -> General -> Workflow Permissions -> **Read and write permissions**
-
 ## GitHub Workflow Setup
 
 This is the recommended base setup for a GitHub Workflow file running our GitHub Actions that:
@@ -33,9 +27,9 @@ concurrency:
   group: remote-build-ios-${{ github.ref }}
 ```
 
-## Generate GitHub Personal Access Token for downloading cached builds
+## Setup GitHub Personal Access Token
 
-You'll be asked about this token when cached build is available while running the `rock run:ios` or `rock run:android` commands.
+You'll be asked about this token when cached build is available while running the `rock run:ios` or `rock run:android` commands. The token is necessary for downloading cached builds.
 
 ### Fine-grained tokens for organizations
 
