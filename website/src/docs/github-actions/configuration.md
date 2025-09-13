@@ -15,7 +15,10 @@ Settings -> Actions -> General -> Workflow Permissions -> **Read and write permi
 
 ## GitHub Workflow Setup
 
-This is the recommended base setup for a GitHub Workflow file running our GitHub Actions:
+This is the recommended base setup for a GitHub Workflow file running our GitHub Actions that:
+
+- Runs the workflow on pushes to the `main` branch
+- Runs the workflow on pull requests to any branch
 
 ```yaml
 on:
@@ -30,10 +33,46 @@ concurrency:
   group: remote-build-ios-${{ github.ref }}
 ```
 
-This configuration:
+## Generate GitHub Personal Access Token for downloading cached builds
 
-- Runs the workflow on pushes to the `main` branch
-- Runs the workflow on pull requests to any branch
+You'll be asked about this token when cached build is available while running the `rock run:ios` or `rock run:android` commands.
+
+### Fine-grained tokens for organizations
+
+Generate a [fine-grained Personal Access Token](https://github.com/settings/personal-access-tokens/new) and set **Resource owner** to your organization. Ensure the following repository permissions:
+
+- Actions: Read
+- Contents: Read
+- Metadata: Read-only
+
+![Fine-grained Personal Access Token](../assets/github-pat.png)
+
+### Personal classic access token for individual developers
+
+Generate [GitHub Personal Access Token](https://github.com/settings/tokens/new?scopes=repo) for downloading cached builds with `repo` permissions.
+
+### Using GitHub PAT securely in `rock.config.mjs`
+
+Typically, you'll use `.env` file to store your GitHub Personal Access Token, next to other project secrets securely, not exposing it to the public.
+
+Here, we'll use the `dotenv` package to load the `.env` file:
+
+```ts title="rock.config.mjs"
+import { providerGitHub } from '@rock-js/provider-github';
+import { config } from 'dotenv';
+
+config(); // load .env file
+
+export default {
+  // rest of the config
+  // ...
+  remoteCacheProvider: providerGitHub({
+    owner: 'github_org',
+    repository: 'github_repo_name',
+    token: process.env.GITHUB_TOKEN,
+  }),
+};
+```
 
 ## Optimizing CI/CD Performance with paths-ignore
 
@@ -60,18 +99,4 @@ on:
   # You can set similar config for pull_request hook
 ```
 
-## Generate GitHub Personal Access Token for downloading cached builds
-
-You'll be asked about this token when cached build is available while running the `npx rock run:` command.
-
-### Fine-grained tokens for organizations
-
-Generate a [fine-grained Personal Access Token](https://github.com/settings/personal-access-tokens/new) and set **Resource owner** to your organization. Ensure the following repository permissions:
-
-- Actions: Read
-- Contents: Read
-- Metadata: Read-only
-
-### Personal classic access token for individual developers
-
-Generate [GitHub Personal Access Token](https://github.com/settings/tokens/new?scopes=repo) for downloading cached builds with `repo` permissions.
+With this base setup, you are now ready to follow the [iOS](./ios.md) and [Android](./android.md) instructions that will get you through setting up the GitHub Actions `jobs` for building your app for simulator and device targets.
