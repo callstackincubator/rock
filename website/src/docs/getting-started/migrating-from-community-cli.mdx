@@ -154,7 +154,7 @@ If you prefer to do it manually or encounter any issues, follow the steps below.
    ```yaml title=".github/workflows/build-ios"
    - name: Rock Remote Build - iOS simulator
      id: rock-remote-build-ios
-     uses: callstackincubator/ios@v2
+     uses: callstackincubator/ios@v3
      with:
        destination: simulator
        github-token: ${{ secrets.GITHUB_TOKEN }}
@@ -166,7 +166,7 @@ If you prefer to do it manually or encounter any issues, follow the steps below.
    ```yaml title=".github/workflows/build-android"
    - name: Rock Remote Build - Android
      id: rock-remote-build-android
-     uses: callstackincubator/android@v2
+     uses: callstackincubator/android@v3
      with:
        variant: debug
        github-token: ${{ secrets.GITHUB_TOKEN }}
