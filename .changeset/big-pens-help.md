@@ -17,4 +17,4 @@
 '@rock-js/welcome-screen': patch
 ---
 
-git st
+fix: use v3 actions in docs and simplify instructions
