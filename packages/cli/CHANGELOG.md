@@ -1,5 +1,14 @@
 # rock
 
+## 0.11.2
+
+### Patch Changes
+
+- b2b156a: fix: use v3 actions in docs and simplify instructions
+- Updated dependencies [b2b156a]
+  - @rock-js/config@0.11.2
+  - @rock-js/tools@0.11.2
+
 ## 0.11.0
 
 ### Minor Changes

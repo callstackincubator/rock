@@ -1,5 +1,11 @@
 # @rnef/test-helpers
 
+## 0.11.2
+
+### Patch Changes
+
+- b2b156a: fix: use v3 actions in docs and simplify instructions
+
 ## 0.11.1
 
 ## 0.11.0
