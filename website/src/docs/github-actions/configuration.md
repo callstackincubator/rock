@@ -41,7 +41,7 @@ Generate a [fine-grained Personal Access Token](https://github.com/settings/pers
 
 ![Fine-grained Personal Access Token](../assets/github-pat.png)
 
-### Personal classic access token for individual developers
+### Classic tokes for individual developers
 
 Generate [GitHub Personal Access Token](https://github.com/settings/tokens/new?scopes=repo) for downloading cached builds with `repo` permissions.
 
@@ -92,5 +92,7 @@ on:
       - 'design/**' # Skip design files
   # You can set similar config for pull_request hook
 ```
+
+## Next steps
 
 With this base setup, you are now ready to follow the [iOS](./ios.md) and [Android](./android.md) instructions that will get you through setting up the GitHub Actions `jobs` for building your app for simulator and device targets.
