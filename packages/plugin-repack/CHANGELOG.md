@@ -1,5 +1,13 @@
 # @rnef/plugin-repack
 
+## 0.11.2
+
+### Patch Changes
+
+- b2b156a: fix: use v3 actions in docs and simplify instructions
+- Updated dependencies [b2b156a]
+  - @rock-js/tools@0.11.2
+
 ## 0.11.1
 
 ### Patch Changes

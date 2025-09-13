@@ -1,6 +1,6 @@
 {
   "name": "rock",
-  "version": "0.11.1",
+  "version": "0.11.2",
   "type": "module",
   "types": "./dist/src/index.d.ts",
   "exports": {
@@ -24,8 +24,8 @@
   },
   "dependencies": {
     "@react-native-community/cli-config": "^20.0.0",
-    "@rock-js/config": "^0.11.1",
-    "@rock-js/tools": "^0.11.1",
+    "@rock-js/config": "^0.11.2",
+    "@rock-js/tools": "^0.11.2",
     "adm-zip": "^0.5.16",
     "commander": "^12.1.0",
     "tar": "^7.4.3",
