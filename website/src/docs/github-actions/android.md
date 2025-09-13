@@ -13,7 +13,7 @@ Use in the GitHub Workflow file like this:
 ```yaml
 - name: Rock Remote Build - Android
   id: rock-remote-build-android
-  uses: callstackincubator/android@v2
+  uses: callstackincubator/android@v3
   with:
     variant: debug
     github-token: ${{ secrets.GITHUB_TOKEN }}
@@ -46,7 +46,7 @@ Use in the GitHub Workflow file like this:
 ```yaml
 - name: Rock Remote Build - Android device
   id: rock-remote-build-android
-  uses: callstackincubator/android@v2
+  uses: callstackincubator/android@v3
   with:
     variant: release
     github-token: ${{ secrets.GITHUB_TOKEN }}
@@ -70,7 +70,7 @@ Pass extra parameters to the `rock build:android` command, in order to apply cus
 ```yaml
 - name: Rock Remote Build - Android
   id: rock-remote-build-android
-  uses: callstackincubator/android@v2
+  uses: callstackincubator/android@v3
   with:
     variant: release
     github-token: ${{ secrets.GITHUB_TOKEN }}
@@ -88,7 +88,7 @@ To avoid polluting artifact storage it will also handle removal of old artifacts
 ```yaml
 - name: Rock Remote Build - Android
   id: rock-remote-build-android
-  uses: callstackincubator/android@v2
+  uses: callstackincubator/android@v3
   with:
     variant: release
     github-token: ${{ secrets.GITHUB_TOKEN }}
@@ -104,7 +104,7 @@ For security reasons we add Gradle Wrapper validation step to Android build acti
 ```yaml
 - name: Rock Remote Build - Android
   id: rock-remote-build-android
-  uses: callstackincubator/android@v2
+  uses: callstackincubator/android@v3
   with:
     variant: debug
     github-token: ${{ secrets.GITHUB_TOKEN }}
@@ -132,7 +132,7 @@ You'll need to set `working-directory: ./packages/mobile`:
 ```yaml
 - name: Rock Remote Build - Android
   id: rock-remote-build-android
-  uses: callstackincubator/android@v2
+  uses: callstackincubator/android@v3
   with:
     variant: debug
     github-token: ${{ secrets.GITHUB_TOKEN }}

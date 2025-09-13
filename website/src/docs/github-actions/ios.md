@@ -11,7 +11,7 @@ Use in the GitHub Workflow file like this:
 ```yaml
 - name: Rock Remote Build - iOS simulator
   id: rock-remote-build-ios
-  uses: callstackincubator/ios@v2
+  uses: callstackincubator/ios@v3
   with:
     destination: simulator
     github-token: ${{ secrets.GITHUB_TOKEN }}
@@ -121,7 +121,7 @@ Use in the GitHub Workflow file like this:
 ```yaml
 - name: Rock Remote Build - iOS device
   id: rock-remote-build-ios
-  uses: callstackincubator/ios@v2
+  uses: callstackincubator/ios@v3
   with:
     destination: device
     github-token: ${{ secrets.GITHUB_TOKEN }}
@@ -146,7 +146,7 @@ Pass extra parameters to the `rock build:ios` command, in order to apply custom 
 ```yaml
 - name: Rock Remote Build - iOS device
   id: rock-remote-build-ios
-  uses: callstackincubator/ios@v2
+  uses: callstackincubator/ios@v3
   with:
     destination: device
     github-token: ${{ secrets.GITHUB_TOKEN }}
@@ -164,7 +164,7 @@ To avoid polluting artifact storage it will also handle removal of old artifacts
 ```yaml
 - name: Rock Remote Build - iOS device
   id: rock-remote-build-ios
-  uses: callstackincubator/ios@v2
+  uses: callstackincubator/ios@v3
   with:
     destination: device
     github-token: ${{ secrets.GITHUB_TOKEN }}
@@ -193,7 +193,7 @@ You'll need to set `working-directory: ./packages/mobile`:
 ```yaml
 - name: Rock Remote Build - iOS device
   id: rock-remote-build-ios
-  uses: callstackincubator/ios@v2
+  uses: callstackincubator/ios@v3
   with:
     destination: device
     github-token: ${{ secrets.GITHUB_TOKEN }}
