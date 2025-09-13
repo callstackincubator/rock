@@ -30,7 +30,7 @@ jobs:
         run: npm install
 
       - name: Rock Remote Build - iOS device
-        uses: callstackincubator/ios@v2
+        uses: callstackincubator/ios@v3
         with:
           destination: device
           github-token: ${{ secrets.GITHUB_TOKEN }}
@@ -59,7 +59,7 @@ jobs:
         run: npm install
 
       - name: Rock Remote Build - iOS simulator
-        uses: callstackincubator/ios@v2
+        uses: callstackincubator/ios@v3
         with:
           destination: simulator
           github-token: ${{ secrets.GITHUB_TOKEN }}
