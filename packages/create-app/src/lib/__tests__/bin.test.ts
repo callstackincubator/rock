@@ -32,16 +32,11 @@ test('should format config with plugins', () => {
     },
   ];
 
-  expect(
-    formatConfig([PLATFORMS[0]], plugins, BUNDLERS[1], {
-      name: 'github-actions',
-      args: { owner: 'custom-owner', repo: 'repo-name', token: 'GITHUB_TOKEN' },
-    }),
-  ).toMatchInlineSnapshot(`
+  expect(formatConfig([PLATFORMS[0]], plugins, BUNDLERS[1], null))
+    .toMatchInlineSnapshot(`
       "import { platformIOS } from '@rock-js/platform-ios';
       import { pluginTest } from '@rock-js/plugin-test';
       import { pluginRepack } from '@rock-js/plugin-repack';
-      import { providerGithubActions } from '@rock-js/provider-github-actions';
 
       export default {
         plugins: [
@@ -51,10 +46,82 @@ test('should format config with plugins', () => {
         platforms: {
           ios: platformIOS(),
         },
+      };
+      "
+    `);
+});
+
+test(`should format config with the 'github-actions' provider`, () => {
+  expect(
+    formatConfig([PLATFORMS[0]], null, BUNDLERS[1], {
+      name: 'github-actions',
+      args: { owner: 'custom-owner', repo: 'repo-name', token: 'GITHUB_TOKEN' },
+    }),
+  ).toMatchInlineSnapshot(`
+      "import { platformIOS } from '@rock-js/platform-ios';
+      import { pluginRepack } from '@rock-js/plugin-repack';
+      import { providerGithubActions } from '@rock-js/provider-github-actions';
+
+      export default {
+        bundler: pluginRepack(),
+        platforms: {
+          ios: platformIOS(),
+        },
         remoteCacheProvider: providerGithubActions({
-          owner: "custom-owner",
-          repo: "repo-name",
+          owner: 'custom-owner',
+          repo: 'repo-name',
           token: process.env['GITHUB_TOKEN'],
+        }),
+      };
+      "
+    `);
+});
+
+test(`should format config with the 's3' provider`, () => {
+  expect(
+    formatConfig([PLATFORMS[0]], null, BUNDLERS[1], {
+      name: 's3',
+      args: { bucket: 'custom-bucket', region: 'us-east-1' },
+    }),
+  ).toMatchInlineSnapshot(`
+      "import { platformIOS } from '@rock-js/platform-ios';
+      import { pluginRepack } from '@rock-js/plugin-repack';
+      import { providerS3 } from '@rock-js/provider-s3';
+
+      export default {
+        bundler: pluginRepack(),
+        platforms: {
+          ios: platformIOS(),
+        },
+        remoteCacheProvider: providerS3({
+          bucket: 'custom-bucket',
+          region: 'us-east-1',
+        }),
+      };
+      "
+    `);
+});
+
+test(`should format config with the 's3' provider using a custom endpoint`, () => {
+  expect(
+    formatConfig([PLATFORMS[0]], null, BUNDLERS[1], {
+      name: 's3',
+      args: { bucket: 'custom-bucket', region: 'us-east-1', endpoint: 'https://custom-endpoint.com' },
+    }),
+  ).toMatchInlineSnapshot(`
+      "import { platformIOS } from '@rock-js/platform-ios';
+      import { pluginRepack } from '@rock-js/plugin-repack';
+      import { providerS3 } from '@rock-js/provider-s3';
+
+      export default {
+        bundler: pluginRepack(),
+        platforms: {
+          ios: platformIOS(),
+        },
+        remoteCacheProvider: providerS3({
+          bucket: 'custom-bucket',
+          region: 'us-east-1',
+          endpoint: 'https://custom-endpoint.com',
         }),
       };
       "

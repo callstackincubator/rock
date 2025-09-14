@@ -109,17 +109,40 @@ export function remoteCacheProviderToConfigTemplate(
 ) {
   switch (provider) {
     case 'github-actions':
-      return `remoteCacheProvider: providerGithubActions({
-    owner: "${args.owner}",
-    repo: "${args.repo}",
-    token: process.env['${args.token}'],
-  }),`;
+      return template([
+        'remoteCacheProvider: providerGithubActions({',
+        `  owner: '${args.owner}',`,
+        `  repo: '${args.repo}',`,
+        `  token: process.env['${args.token}'],`,
+        '}),',
+      ]);
     case 's3':
-      return `remoteCacheProvider: providerS3({
-    bucket: "${args.bucket}",
-    region: "${args.region}",
-  }),`;
+      return template([
+        'remoteCacheProvider: providerS3({',
+        `  bucket: '${args.bucket}',`,
+        `  region: '${args.region}',`,
+        [`  endpoint: '${args.endpoint}',`, args.endpoint],
+        '}),',
+      ]);
   }
+}
+
+export function template(lines: Array<string | [string, boolean]>) {
+  return lines
+    .filter((line) => {
+      // If it's a [content, condition] pair, check the condition
+      if (Array.isArray(line)) {
+        return line[1] != null;
+      }
+      // If it's just a string, always include it
+      return true;
+    })
+    .map((line) => {
+      // Extract content from [content, condition] pair or use string directly
+      const content = Array.isArray(line) ? line[0] : line;
+      return content;
+    })
+    .join('\n  ');
 }
 
 export function resolveTemplate(
