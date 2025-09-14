@@ -142,6 +142,22 @@ The `build:ios` command builds your iOS app for simulators, devices, or distribu
 | `--no-install-pods`               | Skip CocoaPods installation                                                                                                                                                                                                                                  |
 | `--no-new-arch`                   | Build in legacy async architecture                                                                                                                                                                                                                           |
 
+#### Supported environmental variables
+
+The `build:ios` command supports the following environmental variables that are passed to `pod` command that installs CocoaPods dependencies:
+
+| Variable                  | Description                                                   | Default |
+| ------------------------- | ------------------------------------------------------------- | ------- |
+| `RCT_USE_RN_DEP`          | Use prebuilt React Native dependencies for faster compilation | `1`     |
+| `RCT_USE_PREBUILT_RNCORE` | Use prebuilt React Native core for faster compilation         | `1`     |
+| `USE_THIRD_PARTY_JSC`     | Use JavaScriptCore instead of Hermes for JavaScript execution | `0`     |
+
+To change these variables, you can prefix the `build:ios` command with environmental variables. For example, to use prebuilt React Native dependencies and core for faster compilation, you can use the following command:
+
+```shell
+RCT_USE_PREBUILT_RNCORE=0 RCT_USE_RN_DEP=0 npx rock build:ios
+```
+
 ### `rock run:ios` Options
 
 The `run:ios` command runs your iOS app on a simulator or device. It follows this build strategy:
@@ -161,6 +177,8 @@ The build cache is populated either by a local build or when downloaded frome re
 | `--device <string>`      | Device/simulator to use (by name or UDID) |
 | `--catalyst`             | Run on Mac Catalyst                       |
 | `--local`                | Force local build with xcodebuild         |
+
+You can also pass the same environmental variables listed in [`build:ios` options](#supported-environmental-variables) to the `run:ios` command.
 
 ### `rock sign:ios` Options
 

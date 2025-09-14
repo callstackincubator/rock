@@ -9,7 +9,6 @@ import {
   isGitDirty,
   isGitRepo,
   isInteractive,
-  logger,
   normalizeProjectName,
   promptConfirm,
   removeDirSync,
@@ -93,7 +92,7 @@ export async function run() {
     await validateGitStatus(projectRoot);
 
     const shouldInit = await promptConfirm({
-      message: `Detected existing React Native project. Would you like to initialize Rock in this project?`,
+      message: `Detected existing React Native project. Would you like to migrate it to Rock?`,
       confirmLabel: 'Yes',
       cancelLabel: 'No',
     });
@@ -219,10 +218,14 @@ async function validateGitStatus(dir: string) {
     const isDirty = await isGitDirty(dir);
 
     if (isDirty) {
-      logger.error(
-        'Git has uncommitted changes. Please commit or stash your changes before continuing with initializing Rock in existing project.',
-      );
-      process.exit(1);
+      const shouldContinue = await promptConfirm({
+        message: `Git has uncommitted changes. Would you like to continue with initializing Rock in existing project?`,
+        confirmLabel: 'Yes',
+        cancelLabel: 'No',
+      });
+      if (!shouldContinue) {
+        cancelPromptAndExit();
+      }
     }
   }
 }
@@ -322,7 +325,7 @@ export function formatConfig(
     .join('\n')}
 
 export default {${
-    pluginsWithImports
+    pluginsWithImports && pluginsWithImports.length > 0
       ? `
   plugins: [
     ${pluginsWithImports

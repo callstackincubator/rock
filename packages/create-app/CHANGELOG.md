@@ -1,5 +1,60 @@
 # create-rock
 
+## 0.11.2
+
+### Patch Changes
+
+- b2b156a: fix: use v3 actions in docs and simplify instructions
+
+## 0.11.1
+
+### Patch Changes
+
+- 1d579ad: chore(create-app): add hints for brownfield plugins
+
+## 0.11.0
+
+### Minor Changes
+
+- e64f846: perf: drop package-json dep
+
+### Patch Changes
+
+- 0c3badd: Bundle create-rock for faster startup
+- e66a3f9: feat: ask instead of bail when git has uncommited changes
+
+## 0.10.2
+
+### Patch Changes
+
+- ee95903: chore: add repository informatino for npm
+- 1062e4b: Updated the cliFile regex and add a warning when the file content cannot be modified.
+- 72bcd0b: Skip adding `plugins` property if no plugins
+- Updated dependencies [ee95903]
+  - @rock-js/tools@0.10.2
+
+## 0.10.1
+
+### Patch Changes
+
+- b10225e: fix: run only on connected Android devices
+- Updated dependencies [b10225e]
+  - @rock-js/tools@0.10.1
+
+## 0.10.0
+
+### Minor Changes
+
+- 03dc80e: feat: upgrade templates to 0.81
+
+### Patch Changes
+
+- 06f8882: fix(create-app): get package manager from lock correctly
+- da39f42: fix(init): change order or appIdSuffix
+- Updated dependencies [03dc80e]
+- Updated dependencies [fbbc26b]
+  - @rock-js/tools@0.10.0
+
 ## 0.9.2
 
 ### Patch Changes

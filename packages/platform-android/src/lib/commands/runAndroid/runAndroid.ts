@@ -68,6 +68,7 @@ export async function runAndroid(
     fingerprintOptions,
   });
   const binaryPath = await getBinaryPath({
+    platformName: 'android',
     artifactName,
     binaryPathFlag: args.binaryPath,
     localFlag: args.local,
@@ -104,7 +105,9 @@ export async function runAndroid(
     }
 
     for (const device of await listAndroidDevices()) {
-      await runOnDevice({ device, androidProject, args, tasks, binaryPath });
+      if (device.connected) {
+        await runOnDevice({ device, androidProject, args, tasks, binaryPath });
+      }
     }
   }
 

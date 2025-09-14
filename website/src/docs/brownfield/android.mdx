@@ -1,4 +1,4 @@
-import { PackageManagerTabs } from 'rspress/theme';
+import { PackageManagerTabs } from '@theme';
 
 # Integrating with Android Apps
 
@@ -55,7 +55,7 @@ We need a special Gradle plugin to create an AAR that includes all dependencies.
            mavenCentral()
        }
        dependencies {
-           classpath("com.callstack.react:brownfield-gradle-plugin:0.4.0") // check the latest version
+           classpath("com.callstack.react:brownfield-gradle-plugin:0.5.0") // check the latest version
        }
    }
    ```
@@ -87,9 +87,9 @@ Add the required React Native dependencies to your `reactnativeapp/build.gradle.
 
 ```groovy title="reactnativeapp/build.gradle.kts" {2-3}
 dependencies {
-    // Match your version of React Native, here 0.80
-    api("com.facebook.react:react-android:0.80.0")
-    api("com.facebook.react:hermes-android:0.80.0")
+    // Match your version of React Native, here 0.81
+    api("com.facebook.react:react-android:0.81.1")
+    api("com.facebook.react:hermes-android:0.81.1")
 }
 ```
 

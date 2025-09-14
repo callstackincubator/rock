@@ -1,6 +1,6 @@
 {
   "name": "@rock-js/provider-s3",
-  "version": "0.9.2",
+  "version": "0.11.2",
   "type": "module",
   "types": "./dist/src/index.d.ts",
   "exports": {
@@ -22,10 +22,19 @@
     "@aws-sdk/credential-providers": "^3.830.0",
     "@aws-sdk/lib-storage": "^3.830.0",
     "@aws-sdk/s3-request-presigner": "^3.830.0",
-    "@rock-js/tools": "^0.9.2",
+    "@rock-js/tools": "^0.11.2",
     "tslib": "^2.3.0"
   },
   "publishConfig": {
     "access": "public"
-  }
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/callstack/rock.git",
+    "directory": "packages/provider-s3"
+  },
+  "homepage": "https://rockjs.dev",
+  "bugs": "https://github.com/callstack/rock/issues",
+  "license": "MIT",
+  "author": "Callstack <incubator@callstack.com>"
 }

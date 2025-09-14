@@ -9,7 +9,6 @@ import {
   logger,
   promptSelect,
   RockError,
-  saveLocalBuildCache,
 } from '@rock-js/tools';
 import type {
   ApplePlatform,
@@ -52,13 +51,16 @@ export const createRun = async ({
       ? 'simulator'
       : 'device'
     : 'simulator';
+
   const artifactName = await formatArtifactName({
     platform: 'ios',
     traits: [deviceOrSimulator, args.configuration ?? 'Debug'],
     root: projectRoot,
     fingerprintOptions,
   });
+
   const binaryPath = await getBinaryPath({
+    platformName: 'ios',
     artifactName,
     binaryPathFlag: args.binaryPath,
     localFlag: args.local,
@@ -86,6 +88,9 @@ export const createRun = async ({
       deviceName,
       reactNativePath,
       binaryPath,
+      artifactName,
+      deviceOrSimulator,
+      fingerprintOptions,
     });
     await runOnMac(appPath);
     return;
@@ -99,6 +104,9 @@ export const createRun = async ({
       deviceName,
       reactNativePath,
       binaryPath,
+      artifactName,
+      deviceOrSimulator,
+      fingerprintOptions,
     });
     if (scheme) {
       await runOnMacCatalyst(appPath, scheme);
@@ -142,9 +150,11 @@ ${devices
           projectRoot,
           reactNativePath,
           binaryPath,
+          artifactName,
+          deviceOrSimulator,
+          fingerprintOptions,
         }),
       ]);
-      saveLocalBuildCache(artifactName, appPath);
       await runOnSimulator(device, appPath, infoPlistPath);
     } else if (device.type === 'device') {
       const { appPath, bundleIdentifier } = await buildApp({
@@ -155,6 +165,9 @@ ${devices
         projectRoot,
         reactNativePath,
         binaryPath,
+        artifactName,
+        deviceOrSimulator,
+        fingerprintOptions,
       });
       await runOnDevice(
         device,
@@ -205,9 +218,11 @@ ${devices
             projectRoot,
             reactNativePath,
             binaryPath,
+            artifactName,
+            deviceOrSimulator,
+            fingerprintOptions,
           }),
         ]);
-      saveLocalBuildCache(artifactName, appPath);
       if (bootedDevice.type === 'simulator') {
         await runOnSimulator(bootedDevice, appPath, infoPlistPath);
       } else {

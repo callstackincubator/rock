@@ -1,5 +1,29 @@
 # @rnef/test-helpers
 
+## 0.11.2
+
+### Patch Changes
+
+- b2b156a: fix: use v3 actions in docs and simplify instructions
+
+## 0.11.1
+
+## 0.11.0
+
+## 0.10.2
+
+## 0.10.1
+
+### Patch Changes
+
+- b10225e: fix: run only on connected Android devices
+
+## 0.10.0
+
+### Minor Changes
+
+- 03dc80e: feat: upgrade templates to 0.81
+
 ## 0.9.2
 
 ## 0.9.1

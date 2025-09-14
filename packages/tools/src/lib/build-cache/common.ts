@@ -104,12 +104,14 @@ export async function formatArtifactName({
   root,
   fingerprintOptions,
   raw,
+  type,
 }: {
   platform?: 'ios' | 'android';
   traits?: string[];
   root: string;
   fingerprintOptions: FingerprintSources;
   raw?: boolean;
+  type?: 'create' | 'update';
 }): Promise<string> {
   if (!platform || !traits) {
     return '';
@@ -123,14 +125,17 @@ export async function formatArtifactName({
     return `rock-${platform}-${traits.join('-')}-${hash}`;
   }
 
+  const startMessage = type === 'update' ? 'Updating' : 'Calculating';
+  const stopMessage = type === 'update' ? 'Updated' : 'Calculated';
+
   const loader = spinner();
-  loader.start('Calculating project fingerprint');
+  loader.start(`${startMessage} project fingerprint`);
   const { hash } = await nativeFingerprint(root, {
     ...fingerprintOptions,
     platform,
   });
   loader.stop(
-    `Calculated project fingerprint: ${color.bold(color.magenta(hash))}`,
+    `${stopMessage} project fingerprint: ${color.bold(color.magenta(hash))}`,
   );
   return `rock-${platform}-${traits.join('-')}-${hash}`;
 }

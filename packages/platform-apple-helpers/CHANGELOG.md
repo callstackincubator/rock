@@ -1,5 +1,61 @@
 # @rnef/platform-apple-helpers
 
+## 0.11.2
+
+### Patch Changes
+
+- b2b156a: fix: use v3 actions in docs and simplify instructions
+- Updated dependencies [b2b156a]
+  - @rock-js/tools@0.11.2
+
+## 0.11.1
+
+### Patch Changes
+
+- 4f8c7dc: refactor: move saving cache to buildApp; show that fingerprint was updated
+- Updated dependencies [4f8c7dc]
+  - @rock-js/tools@0.11.1
+
+## 0.11.0
+
+### Minor Changes
+
+- 88f18d4: feat: use fs-fingerprint
+
+### Patch Changes
+
+- Updated dependencies [88f18d4]
+  - @rock-js/tools@0.11.0
+
+## 0.10.2
+
+### Patch Changes
+
+- ee95903: chore: add repository informatino for npm
+- Updated dependencies [ee95903]
+  - @rock-js/tools@0.10.2
+
+## 0.10.1
+
+### Patch Changes
+
+- b10225e: fix: run only on connected Android devices
+- Updated dependencies [b10225e]
+  - @rock-js/tools@0.10.1
+
+## 0.10.0
+
+### Minor Changes
+
+- 03dc80e: feat: upgrade templates to 0.81
+
+### Patch Changes
+
+- fbbc26b: fix: make sure new ios project has properly configured iOS options
+- Updated dependencies [03dc80e]
+- Updated dependencies [fbbc26b]
+  - @rock-js/tools@0.10.0
+
 ## 0.9.2
 
 ### Patch Changes

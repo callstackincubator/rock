@@ -1,57 +1,32 @@
-import * as path from 'node:path';
-import { pluginCallstackTheme } from '@callstack/rspress-theme/plugin';
-import { pluginLlms } from '@rspress/plugin-llms';
-import { pluginOpenGraph } from 'rsbuild-plugin-open-graph';
-import { defineConfig } from 'rspress/config';
-import pluginSitemap from 'rspress-plugin-sitemap';
-import vercelPluginAnalytics from 'rspress-plugin-vercel-analytics';
+import path from 'node:path';
+import url from 'node:url';
+import { withCallstackPreset } from '@callstack/rspress-preset';
+import { defineConfig, type RspressPlugin } from '@rspress/core';
 
-export default defineConfig({
-  root: path.join(__dirname, 'src'),
-  title: 'Rock',
-  icon: '/logo.svg',
-  outDir: 'build',
-  route: {
-    cleanUrls: true,
-  },
-  logo: {
-    light: '/logo-light.svg',
-    dark: '/logo-dark.svg',
-  },
-  builderConfig: {
-    plugins: [
-      pluginOpenGraph({
-        title: 'Rock',
-        type: 'website',
-        url: 'https://rockjs.dev',
-        image: 'https://rockjs.dev/og-image.jpg',
-        description:
-          'Easy to adopt. Simple to scale. Built for flexibility from day one',
-        twitter: {
-          site: '@rockjs_dev',
-          card: 'summary_large_image',
-        },
-      }),
-    ],
-  },
-  themeConfig: {
-    socialLinks: [
-      {
-        icon: 'github',
-        mode: 'link',
-        content: 'https://github.com/callstack/rock',
+const __filename = url.fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+
+export default withCallstackPreset(
+  {
+    context: __dirname,
+    docs: {
+      title: 'Rock',
+      description:
+        'Easy to adopt. Simple to scale. Built for flexibility from day one',
+      editUrl: 'https://github.com/callstack/rock/edit/main/website/src',
+      icon: '/logo.svg',
+      logoLight: '/logo-light.svg',
+      logoDark: '/logo-dark.svg',
+      ogImage: '/og-image.jpg',
+      rootDir: 'src',
+      rootUrl: 'https://rockjs.dev',
+      socials: {
+        github: 'https://github.com/callstack/rock',
+        x: 'https://x.com/rockjs_dev',
       },
-    ],
+    },
   },
-  globalStyles: path.join(__dirname, 'theme/styles.css'),
-  plugins: [
-    pluginCallstackTheme(),
-    // @ts-expect-error outdated @rspress/shared declared as dependency
-    vercelPluginAnalytics(),
-    pluginLlms({
-      exclude: ({ page }) => page.routePath.includes('404'),
-    }),
-    // @ts-expect-error outdated @rspress/shared declared as dependency
-    pluginSitemap({ domain: 'https://rockjs.dev' }),
-  ],
-});
+  defineConfig({
+    outDir: 'build',
+  }),
+);

@@ -11,10 +11,10 @@ import {
   spawn,
   spinner,
 } from '@rock-js/tools';
-import { getPkgManager } from './getPkgManager.js';
+import { getPkgManagerFromLockFile } from './getPkgManager.js';
 
 export async function initInExistingProject(projectRoot: string) {
-  const pkgManager = getPkgManager();
+  const pkgManager = getPkgManagerFromLockFile();
 
   const loader = spinner();
 
@@ -166,22 +166,35 @@ export default {
   fs.writeFileSync(rockConfigPath, content);
 }
 
-function updateAndroidBuildGradle(projectRoot: string, sourceDir: string) {
+export function updateAndroidBuildGradle(projectRoot: string, sourceDir: string) {
   const filePath = path.join(projectRoot, sourceDir, 'app', 'build.gradle');
   if (!fs.existsSync(filePath)) {
     return;
   }
   const desired = 'cliFile = file("../../node_modules/rock/dist/src/bin.js")';
   const content = fs.readFileSync(filePath, 'utf8');
+
+  if (content.includes(desired)) {
+    logger.debug(`${filePath} already contains "${desired}"`);
+    return;
+  }
+
   const replaced = content.replace(
-    /\/\/\s+cliFile\s*=\s*file\([^)]*\)/g,
+    /(?:\/\/\s+)?cliFile\s*=\s*file\([^)]*\)/g,
     desired,
   );
 
-  if (!content.includes(desired) && replaced !== content) {
-    fs.writeFileSync(filePath, replaced);
+  if (replaced === content) {
+    logger.warn(
+      `Unable to update ${color.bold(filePath)}. 
+Please update the "CLI file" build phase manually with:
+  cliFile = file("../../node_modules/rock/dist/src/bin.js")
+`,
+    );
     return;
   }
+
+  fs.writeFileSync(filePath, replaced);
 }
 
 function updateAndroidSettingsGradle(projectRoot: string, sourceDir: string) {
@@ -282,8 +295,8 @@ function updatePackageJsonScripts(projectRoot: string) {
     .replaceAll(/run:ios(.*)--mode(.*)/g, 'run:ios$1--configuration$2')
     .replaceAll(/build:android(.*)--mode(.*)/g, 'build:android$1--variant$2')
     .replaceAll(/build:ios(.*)--mode(.*)/g, 'build:ios$1--configuration$2')
-    .replaceAll('--appId', '--app-id')
     .replaceAll('--appIdSuffix', '--app-id-suffix')
+    .replaceAll('--appId', '--app-id')
     .replaceAll('--buildFolder', '--build-folder');
 
   fs.writeFileSync(packageJsonPath, replaced);

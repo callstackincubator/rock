@@ -1,5 +1,57 @@
 # rock
 
+## 0.11.2
+
+### Patch Changes
+
+- b2b156a: fix: use v3 actions in docs and simplify instructions
+- Updated dependencies [b2b156a]
+  - @rock-js/config@0.11.2
+  - @rock-js/tools@0.11.2
+
+## 0.11.0
+
+### Minor Changes
+
+- 88f18d4: feat: use fs-fingerprint
+
+### Patch Changes
+
+- Updated dependencies [88f18d4]
+  - @rock-js/config@0.11.0
+  - @rock-js/tools@0.11.0
+
+## 0.10.2
+
+### Patch Changes
+
+- ee95903: chore: add repository informatino for npm
+- Updated dependencies [ee95903]
+  - @rock-js/config@0.10.2
+  - @rock-js/tools@0.10.2
+
+## 0.10.1
+
+### Patch Changes
+
+- b10225e: fix: run only on connected Android devices
+- Updated dependencies [b10225e]
+  - @rock-js/config@0.10.1
+  - @rock-js/tools@0.10.1
+
+## 0.10.0
+
+### Minor Changes
+
+- 03dc80e: feat: upgrade templates to 0.81
+
+### Patch Changes
+
+- Updated dependencies [03dc80e]
+- Updated dependencies [fbbc26b]
+  - @rock-js/config@0.10.0
+  - @rock-js/tools@0.10.0
+
 ## 0.9.2
 
 ### Patch Changes

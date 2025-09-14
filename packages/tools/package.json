@@ -1,6 +1,6 @@
 {
   "name": "@rock-js/tools",
-  "version": "0.9.2",
+  "version": "0.11.2",
   "type": "module",
   "types": "./dist/src/index.d.ts",
   "exports": {
@@ -18,11 +18,11 @@
   },
   "dependencies": {
     "@clack/prompts": "^0.11.0",
-    "@expo/fingerprint": "^0.11.6",
     "@types/adm-zip": "^0.5.7",
     "adm-zip": "^0.5.16",
     "appdirsjs": "^1.2.7",
     "fast-glob": "^3.3.2",
+    "fs-fingerprint": "^0.7.0",
     "is-unicode-supported": "^2.1.0",
     "nano-spawn": "^0.2.0",
     "picocolors": "^1.1.1",
@@ -31,9 +31,18 @@
     "tslib": "^2.3.0"
   },
   "devDependencies": {
-    "@rock-js/test-helpers": "^0.9.2"
+    "@rock-js/test-helpers": "^0.11.2"
   },
   "publishConfig": {
     "access": "public"
-  }
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/callstack/rock.git",
+    "directory": "packages/tools"
+  },
+  "homepage": "https://rockjs.dev",
+  "bugs": "https://github.com/callstack/rock/issues",
+  "license": "MIT",
+  "author": "Callstack <incubator@callstack.com>"
 }

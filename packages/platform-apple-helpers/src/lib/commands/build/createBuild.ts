@@ -52,13 +52,16 @@ export const createBuild = async ({
       ? 'simulator'
       : 'device'
     : 'simulator';
+
   const artifactName = await formatArtifactName({
     platform: 'ios',
     traits: [deviceOrSimulator, args.configuration ?? 'Debug'],
     root: projectRoot,
     fingerprintOptions,
   });
+
   const binaryPath = await getBinaryPath({
+    platformName,
     artifactName,
     localFlag: args.local,
     remoteCacheProvider,
@@ -89,13 +92,15 @@ export const createBuild = async ({
       args,
       reactNativePath,
       brownfield,
+      artifactName,
+      deviceOrSimulator,
+      fingerprintOptions,
     });
     logger.log(`Build available at: ${colorLink(relativeToCwd(appPath))}`);
 
     xcodeProject = buildAppResult.xcodeProject;
     sourceDir = buildAppResult.sourceDir;
     scheme = buildAppResult.scheme;
-    saveLocalBuildCache(artifactName, appPath);
   } catch (error) {
     const message = `Failed to create ${args.archive ? 'archive' : 'build'}`;
     throw new RockError(message, { cause: error });

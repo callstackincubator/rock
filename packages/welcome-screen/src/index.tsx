@@ -16,7 +16,7 @@ const ICONS = {
   // eslint-disable-next-line @typescript-eslint/no-require-imports
   book: require('./assets/book-open.png'),
   // eslint-disable-next-line @typescript-eslint/no-require-imports
-  logo: require('./assets/building-skyscraper.png'),
+  logo: require('./assets/rock.png'),
   // eslint-disable-next-line @typescript-eslint/no-require-imports
   debug: require('./assets/debug-check.png'),
   // eslint-disable-next-line @typescript-eslint/no-require-imports

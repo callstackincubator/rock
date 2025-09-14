@@ -1,5 +1,45 @@
 # @rnef/tools
 
+## 0.11.2
+
+### Patch Changes
+
+- b2b156a: fix: use v3 actions in docs and simplify instructions
+
+## 0.11.1
+
+### Patch Changes
+
+- 4f8c7dc: refactor: move saving cache to buildApp; show that fingerprint was updated
+
+## 0.11.0
+
+### Minor Changes
+
+- 88f18d4: feat: use fs-fingerprint
+
+## 0.10.2
+
+### Patch Changes
+
+- ee95903: chore: add repository informatino for npm
+
+## 0.10.1
+
+### Patch Changes
+
+- b10225e: fix: run only on connected Android devices
+
+## 0.10.0
+
+### Minor Changes
+
+- 03dc80e: feat: upgrade templates to 0.81
+
+### Patch Changes
+
+- fbbc26b: fix: make sure new ios project has properly configured iOS options
+
 ## 0.9.2
 
 ### Patch Changes
