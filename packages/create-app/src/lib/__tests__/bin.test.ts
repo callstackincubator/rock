@@ -55,22 +55,21 @@ test(`should format config with the 'github-actions' provider`, () => {
   expect(
     formatConfig([PLATFORMS[0]], null, BUNDLERS[1], {
       name: 'github-actions',
-      args: { owner: 'custom-owner', repo: 'repo-name', token: 'GITHUB_TOKEN' },
+      args: { owner: 'custom-owner', repo: 'repo-name' },
     }),
   ).toMatchInlineSnapshot(`
       "import { platformIOS } from '@rock-js/platform-ios';
       import { pluginRepack } from '@rock-js/plugin-repack';
-      import { providerGithubActions } from '@rock-js/provider-github-actions';
+      import { providerGitHub } from '@rock-js/provider-github';
 
       export default {
         bundler: pluginRepack(),
         platforms: {
           ios: platformIOS(),
         },
-        remoteCacheProvider: providerGithubActions({
+        remoteCacheProvider: providerGitHub({
           owner: 'custom-owner',
           repo: 'repo-name',
-          token: process.env['GITHUB_TOKEN'],
         }),
       };
       "
@@ -106,7 +105,11 @@ test(`should format config with the 's3' provider using a custom endpoint`, () =
   expect(
     formatConfig([PLATFORMS[0]], null, BUNDLERS[1], {
       name: 's3',
-      args: { bucket: 'custom-bucket', region: 'us-east-1', endpoint: 'https://custom-endpoint.com' },
+      args: {
+        bucket: 'custom-bucket',
+        region: 'us-east-1',
+        endpoint: 'https://custom-endpoint.com',
+      },
     }),
   ).toMatchInlineSnapshot(`
       "import { platformIOS } from '@rock-js/platform-ios';

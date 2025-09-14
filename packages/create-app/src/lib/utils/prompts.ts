@@ -192,12 +192,6 @@ export function promptRemoteCacheProviderArgs(
       return promptGroup({
         owner: () => promptText({ message: 'GitHub repository owner' }),
         repo: () => promptText({ message: 'GitHub repository name' }),
-        token: () =>
-          promptText({
-            message: 'GitHub Personal Access Token (PAT)',
-            placeholder: 'GITHUB_TOKEN',
-            defaultValue: 'GITHUB_TOKEN',
-          }),
       });
     case 's3':
       return promptGroup({

@@ -310,7 +310,7 @@ function createConfig(
   bundler: TemplateInfo,
   remoteCacheProvider: {
     name: SupportedRemoteCacheProviders;
-    args: Record<string, unknown>;
+    args: Record<string, string>;
   } | null,
 ) {
   const rockConfig = path.join(absoluteTargetDir, 'rock.config.mjs');
@@ -326,7 +326,7 @@ export function formatConfig(
   bundler: TemplateInfo,
   remoteCacheProvider: {
     name: SupportedRemoteCacheProviders;
-    args: Record<string, unknown>;
+    args: Record<string, string>;
   } | null,
 ) {
   const platformsWithImports = platforms.filter(

@@ -101,7 +101,7 @@ export function remoteCacheProviderToImportTemplate(
 ) {
   switch (provider) {
     case 'github-actions':
-      return `import { providerGithubActions } from '@rock-js/provider-github-actions';`;
+      return `import { providerGitHub } from '@rock-js/provider-github';`;
     case 's3':
       return `import { providerS3 } from '@rock-js/provider-s3';`;
   }
@@ -109,23 +109,22 @@ export function remoteCacheProviderToImportTemplate(
 
 export function remoteCacheProviderToConfigTemplate(
   provider: SupportedRemoteCacheProviders,
-  args: any,
+  args: Record<string, string>,
 ) {
   switch (provider) {
     case 'github-actions':
       return template([
-        'remoteCacheProvider: providerGithubActions({',
-        `  owner: '${args.owner}',`,
-        `  repo: '${args.repo}',`,
-        `  token: process.env['${args.token}'],`,
+        'remoteCacheProvider: providerGitHub({',
+        `  owner: '${args['owner']}',`,
+        `  repo: '${args['repo']}',`,
         '}),',
       ]);
     case 's3':
       return template([
         'remoteCacheProvider: providerS3({',
-        `  bucket: '${args.bucket}',`,
-        `  region: '${args.region}',`,
-        [`  endpoint: '${args.endpoint}',`, args.endpoint],
+        `  bucket: '${args['bucket']}',`,
+        `  region: '${args['region']}',`,
+        [`  endpoint: '${args['endpoint']}',`, 'endpoint' in args],
         '}),',
       ]);
   }
