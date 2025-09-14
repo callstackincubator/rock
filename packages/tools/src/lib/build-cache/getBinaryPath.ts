@@ -1,11 +1,10 @@
+import path from 'node:path';
 import { color, colorLink } from '../color.js';
 import type { RockError } from '../error.js';
-import {
-  DEFAULT_IGNORE_PATHS,
-  EXPO_DEFAULT_IGNORE_PATHS,
-  type FingerprintSources,
-} from '../fingerprint/index.js';
+import { getAllIgnorePaths } from '../fingerprint/ignorePaths.js';
+import { type FingerprintSources } from '../fingerprint/index.js';
 import logger from '../logger.js';
+import { getProjectRoot } from '../project.js';
 import { spawn } from '../spawn.js';
 import type { RemoteBuildCache } from './common.js';
 import { fetchCachedBuild } from './fetchCachedBuild.js';
@@ -18,6 +17,7 @@ export async function getBinaryPath({
   remoteCacheProvider,
   fingerprintOptions,
   sourceDir,
+  platformName,
 }: {
   artifactName: string;
   binaryPathFlag?: string;
@@ -25,6 +25,7 @@ export async function getBinaryPath({
   remoteCacheProvider: null | (() => RemoteBuildCache) | undefined;
   fingerprintOptions: FingerprintSources;
   sourceDir: string;
+  platformName: string;
 }) {
   // 1. First check if the binary path is provided
   let binaryPath = binaryPathFlag;
@@ -56,7 +57,7 @@ Read more: ${colorLink(
           'https://rockjs.dev/docs/configuration#remote-cache-configuration',
         )}`,
       );
-      await warnIgnoredFiles(fingerprintOptions, sourceDir);
+      await warnIgnoredFiles(fingerprintOptions, platformName, sourceDir);
       logger.debug('Remote cache failure error:', error);
       logger.info('Continuing with local build');
     }
@@ -67,6 +68,7 @@ Read more: ${colorLink(
 
 async function warnIgnoredFiles(
   fingerprintOptions: FingerprintSources,
+  platformName: string,
   sourceDir: string,
 ) {
   // @todo unify git helpers from create-app
@@ -79,11 +81,11 @@ async function warnIgnoredFiles(
     // Not a git repository, skip the git clean check
     return;
   }
-
+  const projectRoot = getProjectRoot();
   const ignorePaths = [
     ...(fingerprintOptions?.ignorePaths ?? []),
-    ...EXPO_DEFAULT_IGNORE_PATHS,
-    ...DEFAULT_IGNORE_PATHS,
+    // git expects relative paths
+    ...getAllIgnorePaths(platformName, path.relative(projectRoot, sourceDir)),
   ];
   const { output } = await spawn('git', [
     'clean',

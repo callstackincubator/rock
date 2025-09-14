@@ -14,6 +14,7 @@ export type NpmTemplateInfo = {
   /** Directory inside package that contains the template */
   directory: string | undefined;
   importName?: string;
+  hint?: string;
 };
 
 export type LocalTemplateInfo = {
@@ -23,6 +24,7 @@ export type LocalTemplateInfo = {
   packageName: string;
   directory: string | undefined;
   importName?: string;
+  hint?: string;
 };
 
 export const TEMPLATES: TemplateInfo[] = [
@@ -40,6 +42,7 @@ export const PLUGINS: TemplateInfo[] = [
     type: 'npm',
     name: 'brownfield-ios',
     packageName: '@rock-js/plugin-brownfield-ios',
+    hint: 'Setup packaging React Native app as a XCFramework',
     version: 'latest',
     directory: 'template',
     importName: 'pluginBrownfieldIos',
@@ -48,6 +51,7 @@ export const PLUGINS: TemplateInfo[] = [
     type: 'npm',
     name: 'brownfield-android',
     packageName: '@rock-js/plugin-brownfield-android',
+    hint: 'Setup packaging React Native app as an AAR',
     version: 'latest',
     directory: 'template',
     importName: 'pluginBrownfieldAndroid',

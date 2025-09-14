@@ -3,7 +3,7 @@ import { createRequire } from 'node:module';
 import * as path from 'node:path';
 import { pathToFileURL } from 'node:url';
 import type { FingerprintSources, RemoteBuildCache } from '@rock-js/tools';
-import { colorLink, logger } from '@rock-js/tools';
+import { colorLink, getReactNativeVersion, logger } from '@rock-js/tools';
 import type { ValidationError } from 'joi';
 import { ConfigTypeSchema } from './schema.js';
 import { formatValidationError } from './utils.js';
@@ -71,6 +71,7 @@ export type ConfigType = {
   fingerprint?: {
     extraSources?: string[];
     ignorePaths?: string[];
+    env?: string[];
   };
 };
 
@@ -216,24 +217,6 @@ export async function getConfig(
   };
 
   return outputConfig;
-}
-
-function getReactNativeVersion(root: string) {
-  try {
-    const require = createRequire(import.meta.url);
-    return JSON.parse(
-      fs.readFileSync(
-        path.join(
-          require.resolve('react-native', { paths: [root] }),
-          '..',
-          'package.json',
-        ),
-        'utf-8',
-      ),
-    ).version;
-  } catch {
-    return 'unknown';
-  }
 }
 
 function resolveReactNativePath(root: string) {

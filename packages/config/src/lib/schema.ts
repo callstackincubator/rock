@@ -50,10 +50,12 @@ const ConfigTypeSchema = Joi.object({
   fingerprint: Joi.object({
     extraSources: Joi.array().items(Joi.string()).default([]),
     ignorePaths: Joi.array().items(Joi.string()).default([]),
+    env: Joi.array().items(Joi.string()).default([]),
   })
     .default({
       extraSources: [],
       ignorePaths: [],
+      env: [],
     })
     .optional(),
 }).unknown(false);

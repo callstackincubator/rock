@@ -68,6 +68,7 @@ export async function runAndroid(
     fingerprintOptions,
   });
   const binaryPath = await getBinaryPath({
+    platformName: 'android',
     artifactName,
     binaryPathFlag: args.binaryPath,
     localFlag: args.local,

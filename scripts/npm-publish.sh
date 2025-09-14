@@ -14,7 +14,7 @@ echo "NPM: Publishing all packages"
 if [ -n "$NPM_TOKEN" ]; then
   pnpm -r run publish:npm
 else
-  pnpm -r run publish:npm --otp="$OTP"
+  pnpm -r --no-bail run publish:npm --otp="$OTP"
 fi
 
 echo "NPM: Publishing template"

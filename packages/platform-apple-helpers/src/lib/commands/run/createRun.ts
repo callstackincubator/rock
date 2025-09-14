@@ -9,7 +9,6 @@ import {
   logger,
   promptSelect,
   RockError,
-  saveLocalBuildCache,
 } from '@rock-js/tools';
 import type {
   ApplePlatform,
@@ -53,19 +52,15 @@ export const createRun = async ({
       : 'device'
     : 'simulator';
 
-  async function getArtifactName({ silent }: { silent?: boolean } = {}) {
-    return await formatArtifactName({
-      platform: 'ios',
-      traits: [deviceOrSimulator, args.configuration ?? 'Debug'],
-      root: projectRoot,
-      fingerprintOptions,
-      silent,
-    });
-  }
-
-  let artifactName = await getArtifactName();
+  const artifactName = await formatArtifactName({
+    platform: 'ios',
+    traits: [deviceOrSimulator, args.configuration ?? 'Debug'],
+    root: projectRoot,
+    fingerprintOptions,
+  });
 
   const binaryPath = await getBinaryPath({
+    platformName: 'ios',
     artifactName,
     binaryPathFlag: args.binaryPath,
     localFlag: args.local,
@@ -93,6 +88,9 @@ export const createRun = async ({
       deviceName,
       reactNativePath,
       binaryPath,
+      artifactName,
+      deviceOrSimulator,
+      fingerprintOptions,
     });
     await runOnMac(appPath);
     return;
@@ -106,6 +104,9 @@ export const createRun = async ({
       deviceName,
       reactNativePath,
       binaryPath,
+      artifactName,
+      deviceOrSimulator,
+      fingerprintOptions,
     });
     if (scheme) {
       await runOnMacCatalyst(appPath, scheme);
@@ -139,7 +140,7 @@ ${devices
     }
     cacheRecentDevice(device, platformName);
     if (device.type === 'simulator') {
-      const [, { appPath, infoPlistPath, didInstallPods }] = await Promise.all([
+      const [, { appPath, infoPlistPath }] = await Promise.all([
         launchSimulator(device),
         buildApp({
           args,
@@ -149,14 +150,11 @@ ${devices
           projectRoot,
           reactNativePath,
           binaryPath,
+          artifactName,
+          deviceOrSimulator,
+          fingerprintOptions,
         }),
       ]);
-      // After installing pods the fingerprint likely changes.
-      // We update the artifact name to reflect the new fingerprint and store proper entry in the local cache.
-      if (didInstallPods) {
-        artifactName = await getArtifactName({ silent: true });
-      }
-      saveLocalBuildCache(artifactName, appPath);
       await runOnSimulator(device, appPath, infoPlistPath);
     } else if (device.type === 'device') {
       const { appPath, bundleIdentifier } = await buildApp({
@@ -167,6 +165,9 @@ ${devices
         projectRoot,
         reactNativePath,
         binaryPath,
+        artifactName,
+        deviceOrSimulator,
+        fingerprintOptions,
       });
       await runOnDevice(
         device,
@@ -206,7 +207,7 @@ ${devices
       }
     }
     for (const bootedDevice of bootedDevices) {
-      const [, { appPath, infoPlistPath, bundleIdentifier, didInstallPods }] =
+      const [, { appPath, infoPlistPath, bundleIdentifier }] =
         await Promise.all([
           launchSimulator(bootedDevice),
           buildApp({
@@ -217,14 +218,11 @@ ${devices
             projectRoot,
             reactNativePath,
             binaryPath,
+            artifactName,
+            deviceOrSimulator,
+            fingerprintOptions,
           }),
         ]);
-      // After installing pods the fingerprint likely changes.
-      // We update the artifact name to reflect the new fingerprint and store proper entry in the local cache.
-      if (didInstallPods) {
-        artifactName = await getArtifactName({ silent: true });
-      }
-      saveLocalBuildCache(artifactName, appPath);
       if (bootedDevice.type === 'simulator') {
         await runOnSimulator(bootedDevice, appPath, infoPlistPath);
       } else {

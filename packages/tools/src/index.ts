@@ -22,3 +22,4 @@ export {
   handleUploadResponse,
 } from './lib/build-cache/fetchCachedBuild.js';
 export { getInfoPlist } from './lib/getInfoPlist.js';
+export { getReactNativeVersion } from './lib/getReactNativeVersion.js';

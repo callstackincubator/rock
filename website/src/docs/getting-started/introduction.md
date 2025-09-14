@@ -101,7 +101,7 @@ Out of the box we support storing artifacts on GitHub Actions and we're working 
 
 ### How It Works
 
-1. For each build, we calculate a unique hash (fingerprint) with [`@expo/fingerprint`](https://docs.expo.dev/versions/latest/sdk/fingerprint/) that represents your project's native state
+1. For each build, we calculate a unique hash (fingerprint) that represents your project's native state
 2. This hash remains stable across builds unless you:
    - Modify native files
    - Change dependencies with native code

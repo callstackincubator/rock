@@ -1,5 +1,29 @@
 # @rnef/tools
 
+## 0.11.2
+
+### Patch Changes
+
+- b2b156a: fix: use v3 actions in docs and simplify instructions
+
+## 0.11.1
+
+### Patch Changes
+
+- 4f8c7dc: refactor: move saving cache to buildApp; show that fingerprint was updated
+
+## 0.11.0
+
+### Minor Changes
+
+- 88f18d4: feat: use fs-fingerprint
+
+## 0.10.2
+
+### Patch Changes
+
+- ee95903: chore: add repository informatino for npm
+
 ## 0.10.1
 
 ### Patch Changes

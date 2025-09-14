@@ -1,5 +1,24 @@
 # rock-docs
 
+## 1.3.2
+
+### Patch Changes
+
+- b2b156a: fix: use v3 actions in docs and simplify instructions
+- 0bc2561: Use `@callstack/rspress-preset` & upgrade `@rspress/core` to 2.0.0-beta.32 &
+
+## 1.3.1
+
+### Patch Changes
+
+- ec90814: fix: update brownfield-gradle-plugin to 0.5
+
+## 1.3.0
+
+### Minor Changes
+
+- 88f18d4: feat: use fs-fingerprint
+
 ## 1.2.1
 
 ### Patch Changes

@@ -1,5 +1,43 @@
 # @rnef/platform-ios
 
+## 0.11.2
+
+### Patch Changes
+
+- b2b156a: fix: use v3 actions in docs and simplify instructions
+- Updated dependencies [b2b156a]
+  - @rock-js/platform-apple-helpers@0.11.2
+  - @rock-js/tools@0.11.2
+
+## 0.11.1
+
+### Patch Changes
+
+- Updated dependencies [4f8c7dc]
+  - @rock-js/platform-apple-helpers@0.11.1
+  - @rock-js/tools@0.11.1
+
+## 0.11.0
+
+### Minor Changes
+
+- ee4e5d9: feat: enable prebuilds ios by default
+
+### Patch Changes
+
+- Updated dependencies [88f18d4]
+  - @rock-js/platform-apple-helpers@0.11.0
+  - @rock-js/tools@0.11.0
+
+## 0.10.2
+
+### Patch Changes
+
+- ee95903: chore: add repository informatino for npm
+- Updated dependencies [ee95903]
+  - @rock-js/platform-apple-helpers@0.10.2
+  - @rock-js/tools@0.10.2
+
 ## 0.10.1
 
 ### Patch Changes
