@@ -135,7 +135,7 @@ export function template(lines: Array<string | [string, boolean]>) {
     .filter((line) => {
       // If it's a [content, condition] pair, check the condition
       if (Array.isArray(line)) {
-        return line[1] != null;
+        return Boolean(line[1]);
       }
       // If it's just a string, always include it
       return true;
