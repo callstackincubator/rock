@@ -161,21 +161,23 @@ export function promptBundlers(
 
 export function promptRemoteCacheProvider() {
   return promptSelect<SupportedRemoteCacheProviders | null>({
-    message: 'Where do you store or intend to store remote build cache?',
+    message: 'What do you want to use as cache for your remote builds?',
     initialValue: 'github-actions',
     options: [
       {
         value: 'github-actions',
         label: 'GitHub Actions',
+        hint: 'The easiest way to start if you store your code on GitHub'
       },
       {
         value: 's3',
-        label: 'Amazon S3',
+        label: 'S3',
+        hint: 'Work with any S3-compatible storage, including AWS S3 and Cloudflare R2'
       },
       {
         value: null,
         label: 'None',
-        hint: 'Local cache only',
+        hint: `Local cache only which isn't shared across team members or CI/CD environments`,
       },
     ],
   });
