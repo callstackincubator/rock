@@ -167,12 +167,12 @@ export function promptRemoteCacheProvider() {
       {
         value: 'github-actions',
         label: 'GitHub Actions',
-        hint: 'The easiest way to start if you store your code on GitHub'
+        hint: 'The easiest way to start if you store your code on GitHub',
       },
       {
         value: 's3',
         label: 'S3',
-        hint: 'Work with any S3-compatible storage, including AWS S3 and Cloudflare R2'
+        hint: 'Work with any S3-compatible storage, including AWS S3 and Cloudflare R2',
       },
       {
         value: null,
@@ -195,7 +195,7 @@ export function promptRemoteCacheProviderArgs(
           promptText({
             message: 'GitHub Personal Access Token (PAT)',
             placeholder: 'GITHUB_TOKEN',
-            defaultValue: 'GITHUB_TOKEN'
+            defaultValue: 'GITHUB_TOKEN',
           }),
       });
     case 's3':
@@ -206,6 +206,12 @@ export function promptRemoteCacheProviderArgs(
           promptText({
             message: 'Region',
             placeholder: 'us-west-1',
+          }),
+        endpoint: () =>
+          promptText({
+            message:
+              'Endpoint (Only necessary for self-hosted S3 or Cloudflare R2)',
+            placeholder: 'https://<ACCOUNT_ID>.r2.cloudflarestorage.com',
           }),
       });
   }
