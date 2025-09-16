@@ -1,10 +1,13 @@
-import type {
-  compileModsAsync as expoCompileModsAsync,
-  ConfigPlugin,
-  withDefaultBaseMods as expoWithDefaultBaseMods,
-} from '@expo/config-plugins';
-import configPlugins from '@expo/config-plugins';
-import { BaseMods, evalModsAsync } from '../ExpoConfigPlugins.js';
+import {
+  AndroidConfig,
+  BaseMods,
+  type compileModsAsync as expoCompileModsAsync,
+  type ConfigPlugin,
+  evalModsAsync,
+  IOSConfig,
+  type withDefaultBaseMods as expoWithDefaultBaseMods,
+  withPlugins,
+} from '../ExpoConfigPlugins.js';
 import type { ProjectInfo } from '../types.js';
 import { getAndroidModFileProviders } from './withAndroidBaseMods.js';
 import { getIosModFileProviders } from './withIosBaseMods.js';
@@ -20,8 +23,6 @@ const withDefaultBaseMods: typeof expoWithDefaultBaseMods = (config, props) => {
   });
   return config;
 };
-
-const { withPlugins, IOSConfig, AndroidConfig } = configPlugins;
 
 /**
  * Config plugin to apply all of the custom Expo iOS config plugins we support by default.

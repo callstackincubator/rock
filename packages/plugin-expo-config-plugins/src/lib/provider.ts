@@ -15,7 +15,7 @@ export function makeNullProvider(defaultRead: object = {}) {
  * Creates a mod modifier that just changes `getFilePath()`.
  */
 export function makeFilePathModifier(
-  actualProjectDir: string
+  actualProjectDir: string,
 ): CustomModProvider {
   return function (original, file) {
     return BaseMods.provider({
@@ -35,7 +35,7 @@ export function makeFilePathModifier(
 function findFile(
   file: string,
   startDir: string = process.cwd(),
-  fs = nodefs
+  fs = nodefs,
 ): string | undefined {
   let currentDir = startDir;
   let candidate = path.join(currentDir, file);

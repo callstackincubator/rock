@@ -1,7 +1,6 @@
-import { BaseMods } from '../ExpoConfigPlugins.js';
+import { BaseMods, type ExportedConfig } from '../ExpoConfigPlugins.js';
 import { makeFilePathModifier, makeNullProvider } from '../provider.js';
 import type { IosModFileProviders } from '../types.js';
-import configPlugins from '@expo/config-plugins';
 
 // @todo rewrite template finding and copying logic
 const modifyFilePath = makeFilePathModifier('node_modules/../ios');
@@ -12,24 +11,24 @@ const nullProvider = makeNullProvider();
 const expoProviders = BaseMods.getIosModFileProviders();
 
 export function getIosModFileProviders(
-  config: configPlugins.ExportedConfig
+  config: ExportedConfig,
 ): IosModFileProviders {
   return {
     dangerous: expoProviders.dangerous,
     finalized: expoProviders.finalized,
     appDelegate: modifyFilePath(
       expoProviders.appDelegate,
-      `${config._internal?.['iosProjectName']}/AppDelegate.swift`
+      `${config._internal?.['iosProjectName']}/AppDelegate.swift`,
     ),
     // @ts-expect-error todo fix
     expoPlist: nullProvider,
     xcodeproj: modifyFilePath(
       expoProviders.xcodeproj,
-      `${config._internal?.['iosProjectName']}.xcodeproj/project.pbxproj`
+      `${config._internal?.['iosProjectName']}.xcodeproj/project.pbxproj`,
     ),
     infoPlist: modifyFilePath(
       expoProviders.infoPlist,
-      `${config._internal?.['iosProjectName']}/Info.plist`
+      `${config._internal?.['iosProjectName']}/Info.plist`,
     ),
     // @ts-expect-error todo fix
     entitlements: nullProvider,

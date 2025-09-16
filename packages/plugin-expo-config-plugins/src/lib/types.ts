@@ -1,8 +1,9 @@
-import type { BaseMods, ModPlatform } from '@expo/config-plugins';
 import type {
   BaseModProviderMethods,
+  BaseMods,
   ForwardedBaseModOptions,
-} from '@expo/config-plugins/build/plugins/createBaseMod';
+  ModPlatform,
+} from './ExpoConfigPlugins.js';
 
 export type CustomModProvider = <
   ModType,

@@ -369,17 +369,17 @@ importers:
         specifier: ^10.1.2
         version: 10.1.2
       '@rock-js/tools':
-        specifier: ^0.9.2
-        version: 0.9.2
+        specifier: ^0.11.2
+        version: link:../tools
       tslib:
         specifier: ^2.3.0
         version: 2.8.1
     devDependencies:
       '@rock-js/config':
-        specifier: ^0.8.2
-        version: 0.8.13
+        specifier: ^0.11.2
+        version: link:../config
       '@rock-js/test-helpers':
-        specifier: ^0.8.2
+        specifier: ^0.11.2
         version: link:../test-helpers
       '@types/plist':
         specifier: ^3.0.5
@@ -2639,18 +2639,6 @@ packages:
     peerDependencies:
       react: '*'
       react-native: '*'
-
-  '@rock-js/config@0.8.13':
-    resolution: {integrity: sha512-6sT+RdU3FOmBOAK1Kmn8jSEVfZ+izvlWwg+NozrqQqt7H5vDuRj+G2R8r5DWgvD0TVwjH8CwvCkPyUZ74neYoA==}
-
-  '@rock-js/provider-github@0.8.13':
-    resolution: {integrity: sha512-gSXTn/LY1X6HRin2/HHtLSFuJyn21Mwap0/fFohXxHuj46fW0aPEYwesKNlLtiCh4ZA4rD9+GZkcpyUDHm4akw==}
-
-  '@rock-js/tools@0.8.13':
-    resolution: {integrity: sha512-9prQqwgcK9IKhCoVYOJliC9si9gQo/Zs1oSKplyPpoKjdcrmYDJIUqtNr9j71kf2aei9mn1RSR0ssdk+mv6A2w==}
-
-  '@rock-js/tools@0.9.2':
-    resolution: {integrity: sha512-HqXU3mpvjCMbNCj5yNRHzML9JTKcQIHQ5LBSq6NsOGZ7AMqD3lsenWF/3USmC83EFJaxj28rRP5/ufcU+Bc/Tw==}
 
   '@rollup/rollup-android-arm-eabi@4.24.0':
     resolution: {integrity: sha512-Q6HJd7Y6xdB48x8ZNVDOqsbh2uByBhgK8PiQgPhwkIw/HC/YX5Ghq2mQY5sRMZWHb3VsFkWooUVOZHKr7DmDIA==}
@@ -12799,58 +12787,6 @@ snapshots:
     dependencies:
       react: 19.1.0
       react-native: 0.80.1(@babel/core@7.25.2)(@types/react@19.1.8)(react@19.1.0)
-
-  '@rock-js/config@0.8.13':
-    dependencies:
-      '@babel/code-frame': 7.26.2
-      '@rock-js/provider-github': 0.8.13
-      '@rock-js/tools': 0.8.13
-      joi: 17.13.3
-      tslib: 2.8.1
-    transitivePeerDependencies:
-      - supports-color
-
-  '@rock-js/provider-github@0.8.13':
-    dependencies:
-      '@rock-js/tools': 0.8.13
-      ts-regex-builder: 1.8.2
-      tslib: 2.8.1
-    transitivePeerDependencies:
-      - supports-color
-
-  '@rock-js/tools@0.8.13':
-    dependencies:
-      '@clack/prompts': 0.11.0
-      '@expo/fingerprint': 0.11.6
-      '@types/adm-zip': 0.5.7
-      adm-zip: 0.5.16
-      appdirsjs: 1.2.7
-      fast-glob: 3.3.3
-      is-unicode-supported: 2.1.0
-      nano-spawn: 0.2.1
-      picocolors: 1.1.1
-      string-argv: 0.3.2
-      tar: 7.4.3
-      tslib: 2.8.1
-    transitivePeerDependencies:
-      - supports-color
-
-  '@rock-js/tools@0.9.2':
-    dependencies:
-      '@clack/prompts': 0.11.0
-      '@expo/fingerprint': 0.11.6
-      '@types/adm-zip': 0.5.7
-      adm-zip: 0.5.16
-      appdirsjs: 1.2.7
-      fast-glob: 3.3.3
-      is-unicode-supported: 2.1.0
-      nano-spawn: 0.2.1
-      picocolors: 1.1.1
-      string-argv: 0.3.2
-      tar: 7.4.3
-      tslib: 2.8.1
-    transitivePeerDependencies:
-      - supports-color
 
   '@rollup/rollup-android-arm-eabi@4.24.0':
     optional: true

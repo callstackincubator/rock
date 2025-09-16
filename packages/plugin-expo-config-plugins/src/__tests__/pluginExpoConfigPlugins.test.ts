@@ -1,15 +1,15 @@
 import * as fs from 'node:fs/promises';
 import path from 'node:path';
+import { cleanup, getTempDirectory } from '@rock-js/test-helpers';
+import * as plist from 'plist';
+import { afterEach, beforeEach, expect, test } from 'vitest';
 import {
+  AndroidConfig,
   evalModsAsync,
   IOSConfig,
   withDefaultBaseMods,
   withPlugins,
-} from '@expo/config-plugins';
-import { AndroidConfig } from '@expo/config-plugins';
-import { cleanup, getTempDirectory } from '@rock-js/test-helpers';
-import * as plist from 'plist';
-import { afterEach, beforeEach, expect, test } from 'vitest';
+} from '../lib/ExpoConfigPlugins.js';
 import { pluginExpoConfigPlugins } from '../lib/pluginExpoConfigPlugins.js';
 import { withAndroidExpoPlugins } from '../lib/plugins/modCompiler.js';
 import { withInternal } from '../lib/plugins/withInternal.js';
