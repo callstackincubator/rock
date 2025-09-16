@@ -1,48 +1,7 @@
-# plugin-expo-config-plugins
+# @rock-js/plugin-expo-config-plugins
 
-## Supported Expo Config Plugins
+Expo Config Plugins and CNG integration plugin for Rock. This package is part of the Rock ecosystem and provides tools for regenerating the native directories and applying config plugins.
 
-This table tracks the current support status for various Expo Config Plugins in the RNEF ecosystem.
+## Documentation
 
-### Default iOS Plugins
-
-| Plugin                           | Supported | Comments                                            |
-| -------------------------------- | --------- | --------------------------------------------------- |
-| `withBundleIdentifier`           | ✅        |                                                     |
-| `withGoogle`                     | ❓        |                                                     |
-| `withDisplayName`                | ✅        |                                                     |
-| `withProductName`                | ✅        |                                                     |
-| `withOrientation`                | ✅        |                                                     |
-| `withRequiresFullScreen`         | ✅        |                                                     |
-| `withScheme`                     | ✅        |                                                     |
-| `withUsesNonExemptEncryption`    | ✅        |                                                     |
-| `withBuildNumber`                | ✅        |                                                     |
-| `withVersion`                    | ✅        |                                                     |
-| `withGoogleServicesFile`         | ✅        |                                                     |
-| `withJsEnginePodfileProps`       | ❓        | Applies to Podfile.properties.json, but not Podfile |
-| `withNewArchEnabledPodfileProps` | ❓        | Applies to Podfile.properties.json, but not Podfile |
-
-### Default Android Plugins
-
-| Plugin                 | Supported |
-| ---------------------- | --------- |
-| _No plugins added yet_ |           |
-
-### Mods
-
-| Plugin              | Supported |
-| ------------------- | --------- |
-| _No mods added yet_ |           |
-
-### Community Plugins
-
-| Plugin                           | Supported |
-| -------------------------------- | --------- |
-| _No community plugins added yet_ |           |
-
----
-
-**Legend:**
-
-- ✅ = Supported
-- ❌ = Not Supported
+For detailed documentation about Rock and its tools, visit [Rock Documentation](https://rockjs.dev)
