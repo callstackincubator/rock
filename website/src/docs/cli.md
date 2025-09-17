@@ -146,11 +146,11 @@ The `build:ios` command builds your iOS app for simulators, devices, or distribu
 
 The `build:ios` command supports the following environmental variables that are passed to `pod` command that installs CocoaPods dependencies:
 
-| Variable                  | Description                                                   | Default |
-| ------------------------- | ------------------------------------------------------------- | ------- |
-| `RCT_USE_RN_DEP`          | Use prebuilt React Native dependencies for faster compilation | `1`     |
-| `RCT_USE_PREBUILT_RNCORE` | Use prebuilt React Native core for faster compilation         | `1`     |
-| `USE_THIRD_PARTY_JSC`     | Use JavaScriptCore instead of Hermes for JavaScript execution | `0`     |
+| Variable                  | Description                                                                                  | Default |
+| ------------------------- | -------------------------------------------------------------------------------------------- | ------- |
+| `RCT_USE_RN_DEP`          | Use prebuilt React Native dependencies for faster compilation (only for React Native v0.81+) | `1`     |
+| `RCT_USE_PREBUILT_RNCORE` | Use prebuilt React Native core for faster compilation (only for React Native v0.81+)         | `1`     |
+| `USE_THIRD_PARTY_JSC`     | Use JavaScriptCore instead of Hermes for JavaScript execution                                | `0`     |
 
 To change these variables, you can prefix the `build:ios` command with environmental variables. For example, to use prebuilt React Native dependencies and core for faster compilation, you can use the following command:
 
