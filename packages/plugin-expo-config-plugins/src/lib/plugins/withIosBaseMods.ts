@@ -20,7 +20,6 @@ export function getIosModFileProviders(
       expoProviders.appDelegate,
       `${config._internal?.['iosProjectName']}/AppDelegate.swift`,
     ),
-    // @ts-expect-error todo fix
     expoPlist: nullProvider,
     xcodeproj: modifyFilePath(
       expoProviders.xcodeproj,
@@ -30,9 +29,7 @@ export function getIosModFileProviders(
       expoProviders.infoPlist,
       `${config._internal?.['iosProjectName']}/Info.plist`,
     ),
-    // @ts-expect-error todo fix
     entitlements: nullProvider,
-    // @ts-expect-error todo fix
     podfile: makeNullProvider({
       path: '',
       language: 'rb' as const,

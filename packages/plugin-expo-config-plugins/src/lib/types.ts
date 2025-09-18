@@ -25,6 +25,19 @@ export type AndroidModFileProviders = ReturnType<
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   Record<string, BaseModProviderMethods<any, any>>;
 
+export type JSONValue =
+  | boolean
+  | number
+  | string
+  | null
+  | JSONArray
+  | JSONObject;
+
+export type JSONArray = Array<JSONValue>;
+export interface JSONObject {
+  [key: string]: JSONValue | undefined;
+}
+
 export type ProjectInfo = {
   introspect: boolean;
   projectRoot: string;

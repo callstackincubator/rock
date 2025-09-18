@@ -125,8 +125,6 @@ export const compileModsAsync = async (
   config: Parameters<typeof expoCompileModsAsync>[0],
   props: ProjectInfo,
 ): Promise<ReturnType<typeof expoCompileModsAsync>> => {
-  console.log(config);
-
   if (props.introspect === true) {
     console.warn('`introspect` is not supported');
   }

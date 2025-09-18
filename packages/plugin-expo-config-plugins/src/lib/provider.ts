@@ -1,9 +1,9 @@
 import nodefs from 'node:fs';
 import * as path from 'node:path';
 import { BaseMods } from './ExpoConfigPlugins.js';
-import type { CustomModProvider } from './types.js';
+import type { CustomModProvider, JSONObject } from './types.js';
 
-export function makeNullProvider(defaultRead: object = {}) {
+export function makeNullProvider<T = JSONObject>(defaultRead: T = {} as T) {
   return BaseMods.provider({
     getFilePath: () => '',
     read: () => Promise.resolve(defaultRead),
