@@ -7,6 +7,7 @@ import {
   cacheManager,
   color,
   colorLink,
+  getReactNativeVersion,
   logger,
   RockError,
   spawn,
@@ -103,6 +104,7 @@ async function runPodInstall(options: {
   newArch: boolean;
   useBundler: boolean;
   brownfield?: boolean;
+  projectRoot: string;
 }) {
   if (!options.useBundler) {
     await validatePodCommand(options.sourceDir);
@@ -116,7 +118,12 @@ async function runPodInstall(options: {
   const shouldHandleRepoUpdate = options?.shouldHandleRepoUpdate || true;
   const loader = spinner({ indicator: 'timer' });
   loader.start('Installing CocoaPods dependencies');
-
+  const reactNativeVersion = await getReactNativeVersion(options.projectRoot);
+  const isReactNative81OrHigher =
+    reactNativeVersion.localeCompare('0.81.0', undefined, {
+      numeric: true,
+      sensitivity: 'base',
+    }) >= 0;
   const command = options.useBundler ? 'bundle' : 'pod';
   const args = options.useBundler ? ['exec', 'pod', 'install'] : ['install'];
   try {
@@ -124,8 +131,12 @@ async function runPodInstall(options: {
       env: {
         RCT_NEW_ARCH_ENABLED: options.newArch ? '1' : '0',
         RCT_IGNORE_PODS_DEPRECATION: '1',
-        RCT_USE_RN_DEP: process.env['RCT_USE_RN_DEP'] || '1',
-        RCT_USE_PREBUILT_RNCORE: process.env['RCT_USE_PREBUILT_RNCORE'] || '1',
+        RCT_USE_RN_DEP:
+          process.env['RCT_USE_RN_DEP'] || isReactNative81OrHigher ? '1' : '0',
+        RCT_USE_PREBUILT_RNCORE:
+          process.env['RCT_USE_PREBUILT_RNCORE'] || isReactNative81OrHigher
+            ? '1'
+            : '0',
         ...(options.brownfield && { USE_FRAMEWORKS: 'static' }),
         ...(process.env['USE_THIRD_PARTY_JSC'] && {
           USE_THIRD_PARTY_JSC: process.env['USE_THIRD_PARTY_JSC'],
@@ -152,6 +163,7 @@ async function runPodInstall(options: {
         newArch: options.newArch,
         useBundler: options.useBundler,
         brownfield: options.brownfield,
+        projectRoot: options.projectRoot,
       });
     } else {
       throw new RockError(
@@ -212,6 +224,7 @@ async function installPods(options: {
     newArch: options.newArch,
     useBundler,
     brownfield: options.brownfield,
+    projectRoot: options.projectRoot,
   });
 }
 
