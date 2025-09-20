@@ -187,13 +187,28 @@ export function promptRemoteCacheProvider() {
 export function promptRemoteCacheProviderArgs(
   provider: SupportedRemoteCacheProviders,
 ) {
+  const environmentVariablesTitle = 'Set the below environment variables';
+
   switch (provider) {
     case 'github-actions':
+      note(
+        [`GITHUB_TOKEN      Your GitHub personal access token (PAT)`].join('\n'),
+        environmentVariablesTitle,
+      );
+
       return promptGroup({
         owner: () => promptText({ message: 'GitHub repository owner' }),
         repository: () => promptText({ message: 'GitHub repository name' }),
       });
     case 's3':
+      note(
+        [
+          `AWS_ACCESS_KEY_ID          Your AWS access key ID`,
+          `AWS_SECRET_ACCESS_KEY      Your AWS secret access key`,
+        ].join('\n'),
+        environmentVariablesTitle,
+      );
+
       return promptGroup({
         bucket: () =>
           promptText({ message: 'Bucket name', placeholder: 'bucket-name' }),
