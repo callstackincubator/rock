@@ -116,7 +116,7 @@ export function remoteCacheProviderToConfigTemplate(
       return template([
         'remoteCacheProvider: providerGitHub({',
         `  owner: '${args['owner']}',`,
-        `  repo: '${args['repo']}',`,
+        `  repository: '${args['repository']}',`,
         '}),',
       ]);
     case 's3':

@@ -55,7 +55,7 @@ test(`should format config with the 'github-actions' provider`, () => {
   expect(
     formatConfig([PLATFORMS[0]], null, BUNDLERS[1], {
       name: 'github-actions',
-      args: { owner: 'custom-owner', repo: 'repo-name' },
+      args: { owner: 'custom-owner', repository: 'repository-name' },
     }),
   ).toMatchInlineSnapshot(`
       "import { platformIOS } from '@rock-js/platform-ios';
@@ -69,7 +69,7 @@ test(`should format config with the 'github-actions' provider`, () => {
         },
         remoteCacheProvider: providerGitHub({
           owner: 'custom-owner',
-          repo: 'repo-name',
+          repository: 'repository-name',
         }),
       };
       "

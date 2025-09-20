@@ -191,7 +191,7 @@ export function promptRemoteCacheProviderArgs(
     case 'github-actions':
       return promptGroup({
         owner: () => promptText({ message: 'GitHub repository owner' }),
-        repo: () => promptText({ message: 'GitHub repository name' }),
+        repository: () => promptText({ message: 'GitHub repository name' }),
       });
     case 's3':
       return promptGroup({
