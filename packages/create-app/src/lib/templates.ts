@@ -124,7 +124,7 @@ export function remoteCacheProviderToConfigTemplate(
         'remoteCacheProvider: providerS3({',
         `  bucket: '${args['bucket']}',`,
         `  region: '${args['region']}',`,
-        [`  endpoint: '${args['endpoint']}',`, 'endpoint' in args],
+        [`  endpoint: '${args['endpoint']}',`, Boolean(args['endpoint'])],
         '}),',
       ]);
   }
