@@ -113,7 +113,7 @@ export function promptPlatforms(
   );
 
   return promptMultiselect({
-    message: 'What platforms do you want to start with?',
+    message: `What platforms do you want to start with? ${color.dim('(Press <space> to select, <enter> to skip)')}:`,
     initialValues: defaultPlatforms,
     // @ts-expect-error todo
     options: platforms.map((platform) => ({
@@ -131,7 +131,7 @@ export function promptPlugins(
   }
 
   return promptMultiselect({
-    message: 'Select plugins:',
+    message: `Select plugins ${color.dim('(Press <enter> to skip)')}:`,
     // @ts-expect-error todo fixup type
     options: plugins.map((plugin) => ({
       value: plugin,
@@ -187,12 +187,17 @@ export function promptRemoteCacheProvider() {
 export function promptRemoteCacheProviderArgs(
   provider: SupportedRemoteCacheProviders,
 ) {
-  const environmentVariablesTitle = 'Set the below environment variables';
+  const environmentVariablesTitle =
+    'Ensure the below environment variables are set';
 
   switch (provider) {
     case 'github-actions':
       note(
-        [`GITHUB_TOKEN      Your GitHub personal access token (PAT)`].join('\n'),
+        [
+          `GITHUB_TOKEN      Your GitHub personal access token (PAT)`,
+          '',
+          `💡 Set this in your ${color.bold('.env')} file or pass it as an argument to ${color.bold('run:*')} commands.`,
+        ].join('\n'),
         environmentVariablesTitle,
       );
 
@@ -205,23 +210,30 @@ export function promptRemoteCacheProviderArgs(
         [
           `AWS_ACCESS_KEY_ID          Your AWS access key ID`,
           `AWS_SECRET_ACCESS_KEY      Your AWS secret access key`,
+          '',
+          `💡 Set these in your ${color.bold('.env')} file or pass them as arguments to ${color.bold('run:*')} commands.`,
         ].join('\n'),
         environmentVariablesTitle,
       );
 
       return promptGroup({
         bucket: () =>
-          promptText({ message: 'Bucket name', placeholder: 'bucket-name' }),
+          promptText({
+            message: 'Pass your bucket name:',
+            placeholder: 'bucket-name',
+            defaultValue: 'bucket-name',
+          }),
         region: () =>
           promptText({
-            message: 'Region',
+            message: 'Pass your bucket region:',
             placeholder: 'us-west-1',
+            defaultValue: 'us-west-1',
           }),
         endpoint: () =>
           promptText({
-            message:
-              'Endpoint (Only necessary for self-hosted S3 or Cloudflare R2)',
+            message: `If you're using self-hosted S3 or Cloudflare R2, pass your endpoint ${color.dim('(Press <enter> to skip)')}:`,
             placeholder: 'https://<ACCOUNT_ID>.r2.cloudflarestorage.com',
+            defaultValue: undefined,
           }),
       });
   }
