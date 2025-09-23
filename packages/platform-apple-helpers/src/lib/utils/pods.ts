@@ -124,6 +124,7 @@ async function runPodInstall(options: {
       numeric: true,
       sensitivity: 'base',
     }) >= 0;
+  const usePrebuiltReactNative = !options.brownfield && isReactNative81OrHigher;
   const command = options.useBundler ? 'bundle' : 'pod';
   const args = options.useBundler ? ['exec', 'pod', 'install'] : ['install'];
   try {
@@ -132,9 +133,9 @@ async function runPodInstall(options: {
         RCT_NEW_ARCH_ENABLED: options.newArch ? '1' : '0',
         RCT_IGNORE_PODS_DEPRECATION: '1',
         RCT_USE_RN_DEP:
-          process.env['RCT_USE_RN_DEP'] || isReactNative81OrHigher ? '1' : '0',
+          process.env['RCT_USE_RN_DEP'] || usePrebuiltReactNative ? '1' : '0',
         RCT_USE_PREBUILT_RNCORE:
-          process.env['RCT_USE_PREBUILT_RNCORE'] || isReactNative81OrHigher
+          process.env['RCT_USE_PREBUILT_RNCORE'] || usePrebuiltReactNative
             ? '1'
             : '0',
         ...(options.brownfield && { USE_FRAMEWORKS: 'static' }),
