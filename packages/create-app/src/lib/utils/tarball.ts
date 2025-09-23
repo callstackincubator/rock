@@ -42,7 +42,7 @@ export async function downloadTarballFromNpm(
 
 async function getPackageVersionData(packageName: string, version: string) {
   // Fetch package metadata from npm registry
-  const registryUrl = `https://registry.npmjs.org/${packageName}`;
+  const registryUrl = `${process.env['NPM_CONFIG_REGISTRY'] || 'https://registry.npmjs.org'}/${packageName}`;
   const response = await fetch(registryUrl);
 
   if (!response.ok) {

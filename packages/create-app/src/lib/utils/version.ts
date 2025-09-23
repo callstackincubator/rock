@@ -6,9 +6,7 @@ import { logger } from '@rock-js/tools';
 export function getRockVersion() {
   try {
     const __dirname = dirname(fileURLToPath(import.meta.url));
-
-    // Note: account for 'dist' folder
-    const packageJsonPath = join(__dirname, '../../../../package.json');
+    const packageJsonPath = join(__dirname, '../../package.json');
     const packageJson = JSON.parse(fs.readFileSync(packageJsonPath, 'utf-8'));
     return packageJson.version;
   } catch (error) {
