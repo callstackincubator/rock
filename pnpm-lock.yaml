@@ -437,8 +437,8 @@ importers:
   website:
     dependencies:
       '@callstack/rspress-preset':
-        specifier: ~0.4.1
-        version: 0.4.1(@rsbuild/core@1.5.4)(@rspress/core@2.0.0-beta.32(@types/react@19.1.9))(react@19.1.1)
+        specifier: ~0.4.2
+        version: 0.4.2(@rsbuild/core@1.5.4)(@rspress/core@2.0.0-beta.32(@types/react@19.1.9))(react@19.1.1)
       '@rspress/core':
         specifier: 2.0.0-beta.32
         version: 2.0.0-beta.32(@types/react@19.1.9)
@@ -1165,13 +1165,13 @@ packages:
       webpack:
         optional: true
 
-  '@callstack/rspress-preset@0.4.1':
-    resolution: {integrity: sha512-5fsfcWUylQ9GQOlM92wEGOlD7Fskr4TBYzNw8i+G6Tyxm6xbXWr6/ogIN/6PPgOokXiJnYdxdvwKvyX08tYBqQ==}
+  '@callstack/rspress-preset@0.4.2':
+    resolution: {integrity: sha512-8Vh/XGNDowOH34ja8jExyoLFLydRe+kIShwqScMWI93mcMnDfVbbbKhcdhnM0ww0ywkplqx22NYAR/DnAIAAqw==}
     peerDependencies:
       '@rspress/core': 2.0.0-beta.32
 
-  '@callstack/rspress-theme@0.4.1':
-    resolution: {integrity: sha512-J06H+FsDXHBFJzhL/g+Nt8BZS+7fCWvBVbAFDQvJ6qdCIX+BaJ3vspqXMSokvbT0wbJpspbaVEPeyzBRkhVTXw==}
+  '@callstack/rspress-theme@0.4.2':
+    resolution: {integrity: sha512-2eJQOUm/hYwg7QF72OJuvmG8MYZ24lEs2HjaJ+dejDslmis0NmQHbgz6FzEGNGmP0qEU7XgebAwiLTH5KzKB/w==}
     peerDependencies:
       '@rspress/core': ^2.0.0-beta.32
       react: ^19.0.0
@@ -7797,9 +7797,9 @@ snapshots:
       - supports-color
       - utf-8-validate
 
-  '@callstack/rspress-preset@0.4.1(@rsbuild/core@1.5.4)(@rspress/core@2.0.0-beta.32(@types/react@19.1.9))(react@19.1.1)':
+  '@callstack/rspress-preset@0.4.2(@rsbuild/core@1.5.4)(@rspress/core@2.0.0-beta.32(@types/react@19.1.9))(react@19.1.1)':
     dependencies:
-      '@callstack/rspress-theme': 0.4.1(@rspress/core@2.0.0-beta.32(@types/react@19.1.9))(react@19.1.1)
+      '@callstack/rspress-theme': 0.4.2(@rspress/core@2.0.0-beta.32(@types/react@19.1.9))(react@19.1.1)
       '@rspress/core': 2.0.0-beta.32(@types/react@19.1.9)
       '@rspress/plugin-llms': 2.0.0-beta.32(@rspress/core@2.0.0-beta.32(@types/react@19.1.9))
       '@rspress/plugin-sitemap': 2.0.0-beta.32(@rspress/core@2.0.0-beta.32(@types/react@19.1.9))
@@ -7817,7 +7817,7 @@ snapshots:
       - vue
       - vue-router
 
-  '@callstack/rspress-theme@0.4.1(@rspress/core@2.0.0-beta.32(@types/react@19.1.9))(react@19.1.1)':
+  '@callstack/rspress-theme@0.4.2(@rspress/core@2.0.0-beta.32(@types/react@19.1.9))(react@19.1.1)':
     dependencies:
       '@rspress/core': 2.0.0-beta.32(@types/react@19.1.9)
       react: 19.1.1
