@@ -19,7 +19,7 @@ const withDefaultBaseMods: typeof expoWithDefaultBaseMods = (config, props) => {
   });
   config = BaseMods.withAndroidBaseMods(config, {
     ...props,
-    providers: getAndroidModFileProviders(),
+    providers: getAndroidModFileProviders(config),
   });
   return config;
 };
@@ -123,9 +123,9 @@ export const withAndroidExpoPlugins: ConfigPlugin<{
 
 export const compileModsAsync = async (
   config: Parameters<typeof expoCompileModsAsync>[0],
-  props: ProjectInfo,
+  info: ProjectInfo,
 ): Promise<ReturnType<typeof expoCompileModsAsync>> => {
-  if (props.introspect === true) {
+  if (info.introspect === true) {
     console.warn('`introspect` is not supported');
   }
   // @ts-expect-error todo fix
@@ -134,12 +134,12 @@ export const compileModsAsync = async (
   config.ios.networkInspector = false;
 
   config = withIosExpoPlugins(config, {
-    bundleIdentifier: props.iosBundleIdentifier,
+    bundleIdentifier: info.iosBundleIdentifier,
   });
   config = withAndroidExpoPlugins(config, {
-    package: props.androidPackageName,
-    projectRoot: props.projectRoot,
+    package: info.androidPackageName,
+    projectRoot: info.projectRoot,
   });
   config = withDefaultBaseMods(config);
-  return evalModsAsync(config, props);
+  return evalModsAsync(config, info);
 };
