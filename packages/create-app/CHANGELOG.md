@@ -1,5 +1,12 @@
 # create-rock
 
+## 0.11.3
+
+### Patch Changes
+
+- b7a14a3: fix: create-app local workflow
+- 3b2fa61: feat: add remote cache provider setup
+
 ## 0.11.2
 
 ### Patch Changes
