@@ -12,7 +12,7 @@
     "@callstack/rspress-preset": "~0.4.2"
   },
   "devDependencies": {
-    "@types/node": "^18.11.17",
+    "@types/node": "^20.18.0",
     "@types/react": "^19.1.8"
   }
 }

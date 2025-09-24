@@ -28,7 +28,7 @@
     "@changesets/cli": "^2.29.5",
     "@clack/prompts": "^0.11.0",
     "@eslint/js": "^9.33.0",
-    "@types/node": "^18.19.122",
+    "@types/node": "^20.18.0",
     "@typescript-eslint/eslint-plugin": "^8.39.0",
     "@typescript-eslint/parser": "^8.39.0",
     "@typescript-eslint/utils": "^8.39.0",
