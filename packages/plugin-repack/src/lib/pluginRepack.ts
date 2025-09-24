@@ -40,6 +40,7 @@ export const pluginRepack =
       name: 'start',
       description: 'Starts Re.Pack dev server.',
       action: async (args: StartArgs) => {
+        const reactNativePath = api.getReactNativePath();
         const root = api.getProjectRoot();
         const platforms = api.getPlatforms();
         const { port, startDevServer } = await findDevServerPort(
@@ -54,7 +55,7 @@ export const pluginRepack =
         startCommand.func(
           [],
           // @ts-expect-error TODO fix getPlatforms type
-          { root, platforms, ...pluginConfig },
+          { reactNativePath, root, platforms, ...pluginConfig },
           { ...args, port },
         );
       },
