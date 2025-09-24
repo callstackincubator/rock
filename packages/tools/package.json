@@ -27,7 +27,7 @@
     "nano-spawn": "^0.2.0",
     "picocolors": "^1.1.1",
     "string-argv": "^0.3.2",
-    "tar": "^7.4.3",
+    "tar": "^7.5.1",
     "tslib": "^2.3.0"
   },
   "devDependencies": {
