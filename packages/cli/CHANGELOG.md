@@ -1,5 +1,13 @@
 # rock
 
+## 0.11.3
+
+### Patch Changes
+
+- 052c384: chore: bump tar dep
+  - @rock-js/config@0.11.3
+  - @rock-js/tools@0.11.3
+
 ## 0.11.2
 
 ### Patch Changes

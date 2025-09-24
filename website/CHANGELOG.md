@@ -1,5 +1,13 @@
 # rock-docs
 
+## 1.3.3
+
+### Patch Changes
+
+- a865a55: fix: ensure RCT_USE_RN_DEP and RCT_USE_PREBUILT_RNCORE are only set for RN 0.81"
+- 29f064d: chore: update node types to 20
+- 7c3d633: docs: add acknowledgements
+
 ## 1.3.2
 
 ### Patch Changes
