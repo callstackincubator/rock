@@ -35,7 +35,7 @@ const applyConfigPluginsCommand = async (
 
     if (!packageJsonContent.includes('"@expo/config-plugins"')) {
       logger.warn(
-        '@expo/cofig-plugins not found in package.json. Skipping applying config plugins.',
+        '@expo/config-plugins not found in package.json. Skipping applying config plugins.',
       );
       return;
     }

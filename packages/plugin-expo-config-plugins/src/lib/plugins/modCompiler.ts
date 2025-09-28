@@ -128,9 +128,10 @@ export const compileModsAsync = async (
   if (info.introspect === true) {
     console.warn('`introspect` is not supported');
   }
-  // @ts-expect-error todo fix
+
+  // @ts-expect-error untyped
   config.android.networkInspector = false;
-  // @ts-expect-error todo fix
+  // @ts-expect-error untyped
   config.ios.networkInspector = false;
 
   config = withIosExpoPlugins(config, {
