@@ -1,5 +1,12 @@
 # @rnef/plugin-repack
 
+## 0.11.3
+
+### Patch Changes
+
+- 063de7a: Expose reactNativePath in pluginRepack.ts to prevent undefined error in Re.Pack getDevMiddleware when starting up dev server
+  - @rock-js/tools@0.11.3
+
 ## 0.11.2
 
 ### Patch Changes

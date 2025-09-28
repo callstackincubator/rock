@@ -5,6 +5,7 @@ import {
   note,
   outro,
   promptConfirm,
+  promptGroup,
   promptMultiselect,
   promptSelect,
   promptText,
@@ -23,9 +24,9 @@ export function printHelpMessage(
 ) {
   console.log(`
      Usage: create-rock [options]
-  
+
      Options:
-     
+
        -h, --help                 Display help for command
        -v, --version              Output the version number
        -d, --dir                  Create project in specified directory
@@ -36,7 +37,7 @@ export function printHelpMessage(
        --remote-cache-provider    Specify remote cache provider
        --override                 Override files in target directory
        --install                  Install Node.js dependencies
-     
+
      Available templates:
        ${templates.map((t) => t.name).join(', ')}
 
@@ -112,7 +113,7 @@ export function promptPlatforms(
   );
 
   return promptMultiselect({
-    message: 'What platforms do you want to start with?',
+    message: `What platforms do you want to start with? ${color.dim('(Press <space> to select, <enter> to skip)')}:`,
     initialValues: defaultPlatforms,
     // @ts-expect-error todo
     options: platforms.map((platform) => ({
@@ -130,7 +131,7 @@ export function promptPlugins(
   }
 
   return promptMultiselect({
-    message: 'Select plugins:',
+    message: `Select plugins ${color.dim('(Press <enter> to skip)')}:`,
     // @ts-expect-error todo fixup type
     options: plugins.map((plugin) => ({
       value: plugin,
@@ -159,19 +160,83 @@ export function promptBundlers(
   });
 }
 
-export function promptRemoteCacheProvider(): Promise<SupportedRemoteCacheProviders | null> {
-  return promptSelect({
-    message: 'Which remote cache provider do you want to use?',
+export function promptRemoteCacheProvider() {
+  return promptSelect<SupportedRemoteCacheProviders | null>({
+    message: 'What do you want to use as cache for your remote builds?',
     initialValue: 'github-actions',
     options: [
       {
         value: 'github-actions',
         label: 'GitHub Actions',
-        hint: 'Enable builds on your CI',
+        hint: 'The easiest way to start if you store your code on GitHub',
       },
-      { value: null, label: 'None', hint: 'Local builds only' },
+      {
+        value: 's3',
+        label: 'S3',
+        hint: 'Work with any S3-compatible storage, including AWS S3 and Cloudflare R2',
+      },
+      {
+        value: null,
+        label: 'None',
+        hint: `Local cache only which isn't shared across team members or CI/CD environments`,
+      },
     ],
-  }) as Promise<SupportedRemoteCacheProviders | null>;
+  });
+}
+
+export function promptRemoteCacheProviderArgs(
+  provider: SupportedRemoteCacheProviders,
+) {
+  const environmentVariablesTitle =
+    'Ensure the below environment variables are set';
+
+  switch (provider) {
+    case 'github-actions':
+      note(
+        [
+          `GITHUB_TOKEN      Your GitHub personal access token (PAT)`,
+          '',
+          `💡 Set this in your ${color.bold('.env')} file or pass it as an argument to ${color.bold('run:*')} commands.`,
+        ].join('\n'),
+        environmentVariablesTitle,
+      );
+
+      return promptGroup({
+        owner: () => promptText({ message: 'GitHub repository owner' }),
+        repository: () => promptText({ message: 'GitHub repository name' }),
+      });
+    case 's3':
+      note(
+        [
+          `AWS_ACCESS_KEY_ID          Your AWS access key ID`,
+          `AWS_SECRET_ACCESS_KEY      Your AWS secret access key`,
+          '',
+          `💡 Set these in your ${color.bold('.env')} file or pass them as arguments to ${color.bold('run:*')} commands.`,
+        ].join('\n'),
+        environmentVariablesTitle,
+      );
+
+      return promptGroup({
+        bucket: () =>
+          promptText({
+            message: 'Pass your bucket name:',
+            placeholder: 'bucket-name',
+            defaultValue: 'bucket-name',
+          }),
+        region: () =>
+          promptText({
+            message: 'Pass your bucket region:',
+            placeholder: 'us-west-1',
+            defaultValue: 'us-west-1',
+          }),
+        endpoint: () =>
+          promptText({
+            message: `If you're using self-hosted S3 or Cloudflare R2, pass your endpoint ${color.dim('(Press <enter> to skip)')}:`,
+            placeholder: 'https://<ACCOUNT_ID>.r2.cloudflarestorage.com',
+            defaultValue: undefined,
+          }),
+      });
+  }
 }
 
 export function confirmOverrideFiles(targetDir: string) {

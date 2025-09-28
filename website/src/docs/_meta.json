@@ -23,5 +23,10 @@
     "type": "dir",
     "name": "brownfield",
     "label": "Integration with Native Apps"
+  },
+  {
+    "type": "file",
+    "name": "acknowledgements",
+    "label": "Acknowledgements"
   }
 ]
