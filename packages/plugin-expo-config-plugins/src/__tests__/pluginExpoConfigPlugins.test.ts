@@ -55,11 +55,12 @@ async function getTestConfig() {
   const iosDirPath = path.join(pluginApi.getProjectRoot(), 'ios');
   const androidDirPath = path.join(pluginApi.getProjectRoot(), 'android');
 
-  const [appJsonContent, iosDirContent, androidDirContent] = await Promise.all([
-    fs.readFile(appJsonPath, 'utf-8'),
-    fs.readdir(iosDirPath),
-    fs.readdir(androidDirPath),
-  ]);
+  const [appJsonContent, iosDirContent, androidAppBuildGradleContent] =
+    await Promise.all([
+      fs.readFile(appJsonPath, 'utf-8'),
+      fs.readdir(iosDirPath),
+      fs.readFile(path.join(androidDirPath, 'app', 'build.gradle'), 'utf-8'),
+    ]);
 
   const { expo, ...rest } = JSON.parse(appJsonContent);
   const appJsonConfig = expo || rest;
@@ -68,19 +69,27 @@ async function getTestConfig() {
     iosDirContent.find((dir) => dir.includes('.xcodeproj'))?.split('.')[0] ??
     '';
 
-  const androidProjectName = androidDirContent.find((dir) =>
-    dir.includes('.gradle'),
-  )
-    ? 'android'
-    : '';
+  const projectPbxprojContent = await fs.readFile(
+    path.join(iosDirPath, `${iosProjectName}.xcodeproj`, 'project.pbxproj'),
+    'utf-8',
+  );
+
+  const iosBundleIdentifier =
+    projectPbxprojContent.match(/PRODUCT_BUNDLE_IDENTIFIER = "(.*)"/)?.[1] ??
+    '';
+
+  const androidPackageName =
+    androidAppBuildGradleContent.match(/applicationId "(.*)"/)?.[1] ?? '';
 
   const info = {
+    introspect: false,
     projectRoot: pluginApi.getProjectRoot(),
     platforms: ['ios', 'android'] as ProjectInfo['platforms'],
     packageJsonPath: path.join(pluginApi.getProjectRoot(), 'package.json'),
     appJsonPath,
     iosProjectName,
-    androidProjectName,
+    iosBundleIdentifier,
+    androidPackageName,
   };
 
   return { appJsonConfig, info };
