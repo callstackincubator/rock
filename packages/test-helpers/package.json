@@ -1,6 +1,6 @@
 {
   "name": "@rock-js/test-helpers",
-  "version": "0.11.3",
+  "version": "0.11.4",
   "type": "module",
   "private": true,
   "exports": {
