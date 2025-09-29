@@ -7,6 +7,7 @@ import {
   getDefaultIgnorePaths,
   getPlatformDirIgnorePaths,
 } from './ignorePaths.js';
+export type { FingerprintInputHash } from 'fs-fingerprint';
 
 export type FingerprintSources = {
   extraSources: string[];
@@ -61,6 +62,15 @@ export async function nativeFingerprint(
     throw new Error('No platforms found in autolinking project config');
   }
 
+  let env = undefined;
+
+  if (options.env.length > 0) {
+    env = options.env.reduce((acc: Record<string, string>, key: string) => {
+      acc[key] = process.env[key] ?? '';
+      return acc;
+    }, {});
+  }
+
   const fingerprint = await calculateFingerprint(projectRoot, {
     ignoreFilePath: '.gitignore',
     include: [
@@ -79,7 +89,7 @@ export async function nativeFingerprint(
         key: 'reactNativeVersion',
         json: { version: getReactNativeVersion(projectRoot) },
       },
-      ...(options.env.length > 0 ? [{ key: 'env', json: options.env }] : []),
+      ...(env ? [{ key: 'env', json: env }] : []),
     ],
     exclude: [
       ...getDefaultIgnorePaths(),
