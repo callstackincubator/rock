@@ -11,7 +11,7 @@
 
 ## React Native at scale is challenging
 
-Successful apps developed by large teams aren't built overnight. As maintainers of the Community CLI and partners to large teams, we've seen the real challenges: high build times, difficulty adopting new third-party cloud services, struggling with microfrontends setup, and high barriers to introducing React Native into existing iOS and Android apps.
+Successful apps developed by large teams aren't built overnight. At Callstack, we've seen these challenges at scale: high build times, difficulty adopting new third-party cloud services, struggling with microfrontends setup, and high barriers to introducing React Native into existing iOS and Android apps.
 
 Rock simplifies native build setup and reuse, makes it easy to adopt React Native in existing iOS and Android apps, and helps you deliver your app to multiple platforms using microfrontends and super apps if you need it.
 
