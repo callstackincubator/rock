@@ -1,10 +1,23 @@
 # Introduction
 
-Rock is a toolkit designed to accelerate React Native app development for enterprise teams. It provides a CLI and Remote Cache system to make your team's development workflow more efficient.
+Rock is a modular toolkit for teams building React Native apps at scale. It includes a CLI and a Remote Build Cache to speed up builds, adopt React Native incrementally, and keep your stack flexible.
 
 :::info OK I want to try it!
-If you feel like skipping this intro section and try it out in existing Community CLI project, head over to [Quick start](/docs/getting-started/index).
+If you want to try it in an existing Community CLI project, head over to [Quick start](/docs/getting-started/index).
 :::
+
+## Who should use Rock
+
+Rock is built for two kinds of teams:
+
+- **Existing React Native teams using Community CLI** that need more scale: save up to 96% of build time with the Remote Build Cache, and if you need it, structure large apps with microfrontends and super‑app patterns (Re.Pack or Metro Module Federation).
+- **iOS/Android native teams** planning to incorporate React Native without disrupting existing workflows: Rock Brownfield lets you add your whole React Native app like any other dependency.
+
+:::info New to React Native and building app from scratch?
+For **new projects that aren't brownfield**, consider starting with [Expo](https://expo.dev) for the best developer experience and similar remote caching capabilities. We recommend using [this template](https://github.com/nkzw-tech/expo-app-template) for sensible defaults. Rock is designed for teams who have outgrown the Community CLI or need advanced features like microfrontends and custom build pipelines.
+:::
+
+Both types of teams will benefit from Rock's cross‑platform reach: iOS and Android by default, with a flexible architecture that extends to TVs, macOS, Windows, and HarmonyOS (coming soon).
 
 ## Why We Exist
 
