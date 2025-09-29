@@ -16,7 +16,7 @@ import { findAndroidBuildTool, getAndroidBuildToolsPath } from '../../paths.js';
 import { buildJsBundle } from './bundle.js';
 
 export type SignAndroidOptions = {
-  apkPath: string;
+  path: string;
   keystorePath?: string;
   keystorePassword?: string;
   keyAlias?: string;
@@ -30,7 +30,9 @@ export type SignAndroidOptions = {
 export async function signAndroid(options: SignAndroidOptions) {
   validateOptions(options);
 
-  intro(`Modifying APK file`);
+  const extension = path.extname(options.path).slice(1);
+
+  intro(`Modifying ${extension.toUpperCase()} file`);
 
   const tempPath = getSignOutputPath();
   if (fs.existsSync(tempPath)) {
@@ -60,28 +62,28 @@ export async function signAndroid(options: SignAndroidOptions) {
     options.jsBundlePath = bundleOutputPath;
   }
 
-  // 2. Initialize temporary APK file
-  const tempApkPath = path.join(tempPath, 'output-app.apk');
+  // 2. Initialize temporary archive file
+  const tempArchivePath = path.join(tempPath, `output-app.${extension}`);
 
-  loader.start('Initializing output APK...');
+  loader.start(`Initializing output ${extension.toUpperCase()}...`);
   try {
-    const zip = new AdmZip(options.apkPath);
+    const zip = new AdmZip(options.path);
     // Remove old signature files
     zip.deleteFile('META-INF/*');
-    zip.writeZip(tempApkPath);
+    zip.writeZip(tempArchivePath);
   } catch (error) {
     throw new RockError(
-      `Failed to initialize output APK file: ${options.outputPath}`,
+      `Failed to initialize output file: ${options.outputPath}`,
       { cause: (error as SubprocessError).stderr },
     );
   }
-  loader.stop(`Initialized output APK.`);
+  loader.stop(`Initialized output file.`);
 
   // 3. Replace JS bundle if provided
   if (options.jsBundlePath) {
     loader.start('Replacing JS bundle...');
     await replaceJsBundle({
-      apkPath: tempApkPath,
+      archivePath: tempArchivePath,
       jsBundlePath: options.jsBundlePath,
     });
     loader.stop(
@@ -91,32 +93,51 @@ export async function signAndroid(options: SignAndroidOptions) {
     );
   }
 
-  // 4. Align APK file
-  loader.start('Aligning output APK file...');
-  const outputApkPath = options.outputPath ?? options.apkPath;
-  await alignApkFile(tempApkPath, outputApkPath);
-  loader.stop(
-    `Created output APK file: ${colorLink(relativeToCwd(outputApkPath))}.`,
-  );
+  // 4. Align archive before signing if apk
+  const outputPath = options.outputPath ?? options.path;
 
-  // 5. Sign APK file
-  loader.start('Signing the APK file...');
+  const alignArchive = async () => {
+    loader.start('Aligning output file...');
+    await alignArchiveFile(tempArchivePath, outputPath);
+    loader.stop(
+      `Created output ${extension.toUpperCase()} file: ${colorLink(relativeToCwd(outputPath))}.`,
+    );
+  }
+
+  if (!isAab(outputPath)) {
+    await alignArchive()
+  }
+
+  // 5. Sign archive file
+  loader.start(`Signing the ${extension.toUpperCase()} file...`);
   const keystorePath = options.keystorePath ?? 'android/app/debug.keystore';
-  await signApkFile({
-    apkPath: outputApkPath,
+
+  const signArgs = {
+    path: outputPath,
     keystorePath,
     keystorePassword: options.keystorePassword ?? 'pass:android',
     keyAlias: options.keyAlias,
     keyPassword: options.keyPassword,
-  });
-  loader.stop(`Signed the APK file with keystore: ${colorLink(keystorePath)}.`);
+  }
+  
+  if (isAab(outputPath)) {
+    await signAab(signArgs);
+  } else {
+    await signApk(signArgs);
+  }
+  loader.stop(`Signed the ${extension.toUpperCase()} file with keystore: ${colorLink(keystorePath)}.`);
+
+  // 6. Align archive after signing if aab
+  if (isAab(outputPath)) {
+    await alignArchive()
+  }
 
   outro('Success 🎉.');
 }
 
 function validateOptions(options: SignAndroidOptions) {
-  if (!fs.existsSync(options.apkPath)) {
-    throw new RockError(`APK file not found "${options.apkPath}"`);
+  if (!fs.existsSync(options.path)) {
+    throw new RockError(`File not found "${options.path}"`);
   }
 
   if (options.buildJsBundle && options.jsBundlePath) {
@@ -131,22 +152,24 @@ function validateOptions(options: SignAndroidOptions) {
 }
 
 type ReplaceJsBundleOptions = {
-  apkPath: string;
+  archivePath: string;
   jsBundlePath: string;
 };
 
 async function replaceJsBundle({
-  apkPath,
+  archivePath,
   jsBundlePath,
 }: ReplaceJsBundleOptions) {
   try {
-    const zip = new AdmZip(apkPath);
-    zip.deleteFile('assets/index.android.bundle');
-    zip.addLocalFile(jsBundlePath, 'assets', 'index.android.bundle');
-    zip.writeZip(apkPath);
+    const zip = new AdmZip(archivePath);
+    const assetsPath = isAab(archivePath) ? 'assets/base' : 'assets';
+
+    zip.deleteFile(path.join(assetsPath, 'index.android.bundle'));
+    zip.addLocalFile(jsBundlePath, assetsPath, 'index.android.bundle');
+    zip.writeZip(archivePath);
   } catch (error) {
     throw new RockError(
-      `Failed to replace JS bundle in destination file: ${apkPath}}`,
+      `Failed to replace JS bundle in destination file: ${archivePath}}`,
       { cause: error },
     );
   }
@@ -159,7 +182,7 @@ function isSdkGTE35(versionString: string) {
   return match[1].localeCompare('35.0.0', undefined, { numeric: true }) >= 0;
 }
 
-async function alignApkFile(inputApkPath: string, outputApkPath: string) {
+async function alignArchiveFile(inputArchivePath: string, outputPath: string) {
   const zipAlignPath = findAndroidBuildTool('zipalign');
   if (!zipAlignPath) {
     throw new RockError(
@@ -177,34 +200,69 @@ Please follow instructions at: https://reactnative.dev/docs/set-up-your-environm
     '-f', // Overwrites existing output file.
     '-v', // Overwrites existing output file.
     '4', // alignment in bytes, e.g. '4' provides 32-bit alignment
-    inputApkPath,
-    outputApkPath,
+    inputArchivePath,
+    outputPath,
   ];
   try {
     await spawn(zipAlignPath, zipalignArgs);
   } catch (error) {
     throw new RockError(
-      `Failed to align APK file: ${zipAlignPath} ${zipalignArgs.join(' ')}`,
+      `Failed to align archive file: ${zipAlignPath} ${zipalignArgs.join(' ')}`,
       { cause: (error as SubprocessError).stderr },
     );
   }
 }
 
-type SignApkOptions = {
-  apkPath: string;
+type SignOptions = {
+  path: string;
   keystorePath: string;
   keystorePassword: string;
   keyAlias?: string;
   keyPassword?: string;
 };
 
-async function signApkFile({
-  apkPath,
+async function signAab({
+  path,
   keystorePath,
   keystorePassword,
   keyAlias,
   keyPassword,
-}: SignApkOptions) {
+}: SignOptions) {
+  if (!fs.existsSync(keystorePath)) {
+    throw new RockError(
+      `Keystore file not found "${keystorePath}". Provide a valid keystore path using the "--keystore" option.`,
+    );
+  }
+
+  // For AAB files, we use jarsigner instead of apksigner
+  // jarsigner -keystore "" -storepass "" -keypass "" <path> <alias>
+  const jarsignerArgs = [
+    "-keystore",
+    keystorePath,
+    "-storepass",
+    keystorePassword,
+    ...(keyPassword ? ['-keypass', keyPassword] : []),
+    path,
+    keyAlias ?? ''
+  ]
+
+  try {
+    await spawn('jarsigner', jarsignerArgs);
+  } catch (error) {
+    throw new RockError(
+      `Failed to sign AAB file: jarsigner ${jarsignerArgs.join(' ')}`,
+      { cause: (error as SubprocessError).stderr },
+    );
+  }
+}
+
+async function signApk({
+  path,
+  keystorePath,
+  keystorePassword,
+  keyAlias,
+  keyPassword,
+}: SignOptions) {
   if (!fs.existsSync(keystorePath)) {
     throw new RockError(
       `Keystore file not found "${keystorePath}". Provide a valid keystore path using the "--keystore" option.`,
@@ -230,7 +288,7 @@ Please follow instructions at: https://reactnative.dev/docs/set-up-your-environm
     formatPassword(keystorePassword),
     ...(keyAlias ? ['--ks-key-alias', keyAlias] : []),
     ...(keyPassword ? ['--key-pass', formatPassword(keyPassword)] : []),
-    apkPath,
+    path,
   ];
 
   try {
@@ -263,4 +321,8 @@ function formatPassword(password: string) {
 
 function getSignOutputPath() {
   return path.join(getDotRockPath(), 'android/sign');
+}
+
+function isAab(filePath: string): boolean {
+  return path.extname(filePath).toLowerCase() === '.aab';
 }
