@@ -21,12 +21,12 @@ struct Index {
         }
         RNApp({
           rnInstanceConfig: {
-            name: "helloworld",
+            name: "HelloWorld",
             createRNPackages: getRNOHPackages,
             fontResourceByFontFamily: {},
             enableDebugger: this.rnohCoreContext?.isDebugModeEnabled,
           },
-          appKey: "helloworld",
+          appKey: "HelloWorld",
           jsBundleProvider: this.rnohCoreContext?.isDebugModeEnabled ?
             new AnyJSBundleProvider([
               new MetroJSBundleProvider(),
