@@ -244,8 +244,8 @@ async function signAab({
     "-keystore",
     keystorePath,
     "-storepass",
-    keystorePassword,
-    ...(keyPassword ? ['-keypass', keyPassword] : []),
+    stripPassword(keystorePassword),
+    ...(keyPassword ? ['-keypass', stripPassword(keyPassword)] : []),
     binaryPath,
     keyAlias
   ];
@@ -321,6 +321,15 @@ function formatPassword(password: string) {
   }
 
   return `pass:${password}`;
+}
+
+/**
+ * jarsigner expects password info with no prefixes
+ *
+ * @see https://docs.oracle.com/javase/6/docs/technotes/tools/windows/jarsigner.html
+ */
+function stripPassword(password: string) {
+  return password.replace(/^(pass:|env:|file:)/, '');
 }
 
 function getSignOutputPath() {
