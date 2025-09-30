@@ -104,7 +104,7 @@ export async function signAndroid(options: SignAndroidOptions) {
     );
   }
 
-  if (!isAab(outputPath)) {
+  if (!isAab(options.binaryPath)) {
     await alignArchive()
   }
 
@@ -120,7 +120,7 @@ export async function signAndroid(options: SignAndroidOptions) {
     keyPassword: options.keyPassword,
   }
   
-  if (isAab(outputPath)) {
+  if (isAab(options.binaryPath)) {
     await signAab(signArgs);
   } else {
     await signApk(signArgs);
@@ -128,7 +128,7 @@ export async function signAndroid(options: SignAndroidOptions) {
   loader.stop(`Signed the ${extension.toUpperCase()} file with keystore: ${colorLink(keystorePath)}.`);
 
   // 6. Align archive after signing if aab
-  if (isAab(outputPath)) {
+  if (isAab(options.binaryPath)) {
     await alignArchive()
   }
 
