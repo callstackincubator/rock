@@ -235,7 +235,7 @@ async function signAab({
   }
 
   if (!keyAlias) {
-    throw new RockError('Missing or empty alias. A valid alias must be provided as the last argument.')
+    throw new RockError('Missing or empty alias. A valid alias must be provided using the "--key-alias" option.')
   }
 
   // For AAB files, we use jarsigner instead of apksigner
