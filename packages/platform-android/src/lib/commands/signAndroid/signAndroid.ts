@@ -162,7 +162,7 @@ async function replaceJsBundle({
 }: ReplaceJsBundleOptions) {
   try {
     const zip = new AdmZip(archivePath);
-    const assetsPath = isAab(archivePath) ? 'assets/base' : 'assets';
+    const assetsPath = isAab(archivePath) ? 'base/assets' : 'assets';
 
     zip.deleteFile(path.join(assetsPath, 'index.android.bundle'));
     zip.addLocalFile(jsBundlePath, assetsPath, 'index.android.bundle');
