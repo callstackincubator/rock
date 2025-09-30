@@ -244,7 +244,7 @@ async function signAab({
     ...(keyPassword ? ['-keypass', keyPassword] : []),
     path,
     keyAlias ?? ''
-  ]
+  ];
 
   try {
     await spawn('jarsigner', jarsignerArgs);
