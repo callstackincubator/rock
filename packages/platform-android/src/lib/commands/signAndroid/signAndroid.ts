@@ -234,6 +234,10 @@ async function signAab({
     );
   }
 
+  if (!keyAlias) {
+    throw new RockError('Missing or empty alias. A valid alias must be provided as the last argument.')
+  }
+
   // For AAB files, we use jarsigner instead of apksigner
   // jarsigner -keystore "" -storepass "" -keypass "" <path> <alias>
   const jarsignerArgs = [
@@ -243,7 +247,7 @@ async function signAab({
     keystorePassword,
     ...(keyPassword ? ['-keypass', keyPassword] : []),
     path,
-    keyAlias ?? ''
+    keyAlias
   ];
 
   try {
