@@ -16,7 +16,7 @@ import { findAndroidBuildTool, getAndroidBuildToolsPath } from '../../paths.js';
 import { buildJsBundle } from './bundle.js';
 
 export type SignAndroidOptions = {
-  path: string;
+  binaryPath: string;
   keystorePath?: string;
   keystorePassword?: string;
   keyAlias?: string;
@@ -30,7 +30,7 @@ export type SignAndroidOptions = {
 export async function signAndroid(options: SignAndroidOptions) {
   validateOptions(options);
 
-  const extension = path.extname(options.path).slice(1);
+  const extension = path.extname(options.binaryPath).slice(1);
 
   intro(`Modifying ${extension.toUpperCase()} file`);
 
@@ -67,7 +67,7 @@ export async function signAndroid(options: SignAndroidOptions) {
 
   loader.start(`Initializing output ${extension.toUpperCase()}...`);
   try {
-    const zip = new AdmZip(options.path);
+    const zip = new AdmZip(options.binaryPath);
     // Remove old signature files
     zip.deleteFile('META-INF/*');
     zip.writeZip(tempArchivePath);
@@ -94,7 +94,7 @@ export async function signAndroid(options: SignAndroidOptions) {
   }
 
   // 4. Align archive before signing if apk
-  const outputPath = options.outputPath ?? options.path;
+  const outputPath = options.outputPath ?? options.binaryPath;
 
   const alignArchive = async () => {
     loader.start('Aligning output file...');
@@ -113,7 +113,7 @@ export async function signAndroid(options: SignAndroidOptions) {
   const keystorePath = options.keystorePath ?? 'android/app/debug.keystore';
 
   const signArgs = {
-    path: outputPath,
+    binaryPath: outputPath,
     keystorePath,
     keystorePassword: options.keystorePassword ?? 'pass:android',
     keyAlias: options.keyAlias,
@@ -136,8 +136,8 @@ export async function signAndroid(options: SignAndroidOptions) {
 }
 
 function validateOptions(options: SignAndroidOptions) {
-  if (!fs.existsSync(options.path)) {
-    throw new RockError(`File not found "${options.path}"`);
+  if (!fs.existsSync(options.binaryPath)) {
+    throw new RockError(`File not found "${options.binaryPath}"`);
   }
 
   if (options.buildJsBundle && options.jsBundlePath) {
@@ -214,7 +214,7 @@ Please follow instructions at: https://reactnative.dev/docs/set-up-your-environm
 }
 
 type SignOptions = {
-  path: string;
+  binaryPath: string;
   keystorePath: string;
   keystorePassword: string;
   keyAlias?: string;
@@ -222,7 +222,7 @@ type SignOptions = {
 };
 
 async function signAab({
-  path,
+  binaryPath,
   keystorePath,
   keystorePassword,
   keyAlias,
@@ -246,7 +246,7 @@ async function signAab({
     "-storepass",
     keystorePassword,
     ...(keyPassword ? ['-keypass', keyPassword] : []),
-    path,
+    binaryPath,
     keyAlias
   ];
 
@@ -261,7 +261,7 @@ async function signAab({
 }
 
 async function signApk({
-  path,
+  binaryPath,
   keystorePath,
   keystorePassword,
   keyAlias,
@@ -292,7 +292,7 @@ Please follow instructions at: https://reactnative.dev/docs/set-up-your-environm
     formatPassword(keystorePassword),
     ...(keyAlias ? ['--ks-key-alias', keyAlias] : []),
     ...(keyPassword ? ['--key-pass', formatPassword(keyPassword)] : []),
-    path,
+    binaryPath,
   ];
 
   try {

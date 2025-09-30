@@ -16,7 +16,7 @@ export type SignFlags = {
 
 const ARGUMENTS = [
   {
-    name: 'path',
+    name: 'binaryPath',
     description: 'Archive (apk or aab) file path',
   },
 ];
@@ -66,9 +66,9 @@ export const registerSignCommand = (api: PluginApi) => {
     description: 'Sign the Android app with modified JS bundle.',
     args: ARGUMENTS,
     options: OPTIONS,
-    action: async (path, flags: SignFlags) => {
+    action: async (binaryPath, flags: SignFlags) => {
       await signAndroid({
-        path,
+        binaryPath,
         keystorePath: flags.keystore,
         keystorePassword: flags.keystorePassword,
         keyAlias: flags.keyAlias,
