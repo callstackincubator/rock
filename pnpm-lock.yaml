@@ -129,10 +129,10 @@ importers:
   packages/create-app:
     devDependencies:
       '@rock-js/test-helpers':
-        specifier: ^0.11.3
+        specifier: ^0.11.4
         version: link:../test-helpers
       '@rock-js/tools':
-        specifier: ^0.11.3
+        specifier: ^0.11.4
         version: link:../tools
       '@rslib/core':
         specifier: ^0.13.0
