@@ -28,19 +28,22 @@ A familiar CLI that helps you develop, run, and build your app. Migrate from Com
 
 ## Installation
 
-Rock is designed for incremental adoption. Whether you're just starting with React Native in your iOS or Android app, or want to migrate from the React Native Community CLI, you can do it step by step.
+Choose your path based on your current situation:
 
-### Migrating an existing Community CLI project
+### Creating a new project
 
-To migrate an existing project, open a terminal in your project root and run:
+> [!TIP] 
+> For **new projects**, we recommend starting with [Expo](https://expo.dev) for the best developer experience and similar remote caching capabilities. Rock is designed for teams who have outgrown the Community CLI.
+
+To create a fresh React Native app with Rock, open a terminal and run:
 
 ```shell
 npm create rock
 ```
 
-### Creating a new project
+### Migrating an existing Community CLI project
 
-To create a fresh React Native app with Rock, open a terminal and run:
+To migrate an existing project, open a terminal in your project root and run:
 
 ```shell
 npm create rock
