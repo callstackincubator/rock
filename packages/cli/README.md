@@ -1,43 +1,34 @@
 <a href="https://www.callstack.com/open-source?utm_campaign=generic&utm_source=github&utm_medium=referral&utm_content=rock" align="center">
   <picture>
-    <img alt="Rock" src="https://github.com/callstack/rock/raw/main/banner.jpg">
+    <img alt="Rock" src="banner.jpg">
   </picture>
 </a>
 <p align="center">
-  🪨 Rock is a cross-platform React Native app development and build toolchain built for modularity, build reuse, and incremental adoption. It integrates seamlessly with your existing infrastructure, giving you complete control without vendor lock-in.
+  🪨 Rock is a modular toolkit for teams building React Native apps. It helps improve build times and developer experience while fitting into your existing workflows and infrastructure.
 </p>
 
 ---
 
-## React Native at scale is challenging
-
-Successful apps developed by large teams aren't built overnight. At Callstack, we've seen these challenges at scale: high build times, difficulty adopting new third-party cloud services, struggling with microfrontends setup, and high barriers to introducing React Native into existing iOS and Android apps.
-
-Rock simplifies native build setup and reuse, makes it easy to adopt React Native in existing iOS and Android apps, and helps you deliver your app to multiple platforms using microfrontends and super apps if you need it.
-
-## Features
+## Key Features
 
 **☁️ Remote Build Cache**  
-Save up to 96% of build time by reusing native artifacts (APK, AAB, APP, IPA). Store anywhere or use our GitHub, S3, or R2 integrations.
+Save up to 96% of build time by reusing native artifacts (APK, AAB, APP, IPA) across machines and CI. Use built‑in integrations for GitHub, S3, and R2 or bring your own storage.
 
-**🔗 Brownfield without the pain**  
-Add React Native to existing iOS and Android apps without disrupting existing tech stack by using Rock Brownfield.
-
-**📦 Microfrontends & Super Apps**  
-First‑class support for Re.Pack and Metro Module Federation to build mobile microfrontends and super apps.
+**🔗 Brownfield ready**  
+Add React Native to existing iOS and Android apps using Rock Brownfield.
 
 **🔌 Modular & Extensible**  
 A plugin‑driven architecture that lets you customize platforms, bundlers, cache providers, and more.
 
-**🖥️ Cross‑platform-ready**  
+**🖥️ Cross‑platform‑ready**  
 iOS and Android by default; designed to extend to TVs, macOS, and Windows (coming soon).
 
 **⚡ Easy Community CLI Migration**  
-A familiar CLI that helps you develop, run, and build your app. Integrates with Remote Build Cache. Migrate from Community CLI in minutes.
+A familiar CLI that helps you develop, run, and build your app. Migrate from Community CLI in minutes.
 
 ## Installation
 
-Rock is designed for incremental adoption. Whether you're just starting with React Native in your iOS or Android app, or want to migrate from the React Native Community CLI, you can do it step-by-step without having to figure everything out at once.
+Rock is designed for incremental adoption. Whether you're just starting with React Native in your iOS or Android app, or want to migrate from the React Native Community CLI, you can do it step by step.
 
 ### Migrating an existing Community CLI project
 

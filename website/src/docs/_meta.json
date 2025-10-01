@@ -1,8 +1,8 @@
 [
   {
     "type": "dir",
-    "name": "getting-started",
-    "label": "Getting Started"
+    "name": "rock",
+    "label": "Rock"
   },
   {
     "type": "file",
@@ -10,23 +10,13 @@
     "label": "CLI"
   },
   {
-    "type": "file",
-    "name": "configuration",
-    "label": "Configuration"
-  },
-  {
     "type": "dir",
-    "name": "github-actions",
-    "label": "GitHub Actions"
+    "name": "remote-cache",
+    "label": "Remote Cache"
   },
   {
     "type": "dir",
     "name": "brownfield",
     "label": "Integration with Native Apps"
-  },
-  {
-    "type": "file",
-    "name": "acknowledgements",
-    "label": "Acknowledgements"
   }
 ]

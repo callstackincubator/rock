@@ -1,6 +1,10 @@
-# `rock` CLI
+# CLI
 
 The Rock CLI is a command-line tool that helps you develop, build, and run React Native applications.
+
+We've created a new CLI from scratch with a focus on seamless migration from the Community CLI. Most projects can get started with our CLI in under 10 minutes.
+
+At its core is a modular configuration system that lets you customize capabilities through plugins and replaceable build chain components: bundlers, platforms, remote cache providers, and other helpers available as npm packages.
 
 Basic usage:
 
@@ -9,6 +13,53 @@ npx rock [command] [options]
 ```
 
 ![](/cli.png)
+
+## Key Features
+
+The CLI handles all essential build and deployment tasks:
+
+- Building and running APK/APP files on devices and simulators
+- Creating builds for different variants and configurations
+- Generating signed IPA and AAB archives for app stores
+- Re-signing archives with fresh JS bundles
+- Generating native project hashes for caching
+
+## Command Changes from Community CLI
+
+We've updated command names:
+
+- `run-android` → `run:android`
+- `build-android` → `build:android`
+- `run-ios` → `run:ios`
+- `build-ios` → `build:ios`
+
+## Flag Changes
+
+We've standardized flag naming across platforms:
+
+Android:
+
+- `--mode` → `--variant`
+- `--appId` → `--app-id`
+- `--appIdSuffix` → `--app-id-suffix`
+
+iOS:
+
+- `--mode` → `--configuration`
+- `--buildFolder` → `--build-folder`
+
+## Removed Flags
+
+We've simplified the interface by removing redundant flags:
+
+- `--interactive`/`-i` – CLI now prompts for input when needed
+- `--list-devices` – Device selection is now automatic when no devices are connected
+
+## Remote Cache
+
+The CLI integrates with Rock's Remote Cache system to speed up builds by reusing cached native artifacts. When available, the CLI will automatically download and use cached builds instead of rebuilding from scratch.
+
+Learn more about [Remote Cache & GitHub Actions](/docs/github-actions/introduction).
 
 ## Global Options
 
