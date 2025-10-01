@@ -76,7 +76,7 @@ export async function getBuildSettings({
   );
   if (settings.length === 0) {
     throw new RockError(
-      `Failed to get build settings for your project. Looking for "app" or "framework" wrapper extension but found: ${wrapperExtension}`,
+      `Failed to get build settings for your project. Looking for "app" or "framework" wrapper extensions but found none.`,
     );
   }
 
