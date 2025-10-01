@@ -1,6 +1,7 @@
 {
   "name": "@rock-js/plugin-metro",
   "version": "0.11.4",
+  "description": "Metro bundler integration plugin for Rock",
   "type": "module",
   "types": "./dist/src/index.d.ts",
   "exports": {

@@ -1,6 +1,7 @@
 {
   "name": "rock",
   "version": "0.11.4",
+  "description": "Command-line interface for Rock - a React Native development toolkit",
   "type": "module",
   "types": "./dist/src/index.d.ts",
   "exports": {

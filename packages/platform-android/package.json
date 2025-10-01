@@ -1,6 +1,7 @@
 {
   "name": "@rock-js/platform-android",
   "version": "0.11.4",
+  "description": "Android platform support and configuration for Rock",
   "type": "module",
   "types": "./dist/src/index.d.ts",
   "exports": {

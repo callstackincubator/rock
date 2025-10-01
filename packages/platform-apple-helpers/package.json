@@ -1,6 +1,7 @@
 {
   "name": "@rock-js/platform-apple-helpers",
   "version": "0.11.4",
+  "description": "Shared utilities and helpers for Apple platforms (iOS/macOS/tvOS/visionOS) in Rock",
   "type": "module",
   "types": "./dist/src/index.d.ts",
   "exports": {

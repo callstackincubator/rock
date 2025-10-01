@@ -1,6 +1,7 @@
 {
   "name": "@rock-js/plugin-brownfield-android",
   "version": "0.11.4",
+  "description": "Plugin for integrating Rock projects with existing Android apps",
   "type": "module",
   "types": "./dist/src/index.d.ts",
   "exports": {
