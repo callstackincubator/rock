@@ -23,13 +23,10 @@ features:
   - title: Brownfield ready
     details: Add React Native to existing iOS and Android apps using Rock Brownfield.
     icon: <img src="/radio-handheld.svg" />
-  - title: Microfrontends & Super Apps
-    details: First‑class support for Re.Pack and Metro Module Federation to build mobile microfrontends and super apps.
-    icon: <img src="/arrow-up-box.svg" />
   - title: Modular & Extensible
     details: A plugin‑driven architecture that lets you customize platforms, bundlers, cache providers, and more.
     icon: <img src="/add-grid.svg" />
-  - title: Cross‑platform-ready
+  - title: Cross‑platform ready
     details: iOS and Android by default; designed to extend to TVs, macOS, and Windows (coming soon).
     icon: <img src="/arrow-bar-right.svg" />
   - title: Easy Community CLI Migration
