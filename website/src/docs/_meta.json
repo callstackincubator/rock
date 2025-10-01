@@ -1,8 +1,18 @@
 [
   {
-    "type": "dir",
-    "name": "rock",
-    "label": "Rock"
+    "type": "file",
+    "name": "introduction",
+    "label": "Introduction"
+  },
+  {
+    "type": "file",
+    "name": "prior-art",
+    "label": "Prior Art"
+  },
+  {
+    "type": "file",
+    "name": "getting-started",
+    "label": "Getting Started"
   },
   {
     "type": "dir",

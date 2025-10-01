@@ -1,7 +1,7 @@
 [
   {
     "text": "Docs",
-    "link": "/docs/rock/introduction",
+    "link": "/docs/introduction",
     "activeMatch": "^/docs/"
   }
 ]
