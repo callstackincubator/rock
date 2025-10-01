@@ -19,7 +19,6 @@
   },
   "dependencies": {
     "@clack/prompts": "^0.11.0",
-    "@types/adm-zip": "^0.5.7",
     "adm-zip": "^0.5.16",
     "appdirsjs": "^1.2.7",
     "fast-glob": "^3.3.2",
@@ -32,7 +31,8 @@
     "tslib": "^2.3.0"
   },
   "devDependencies": {
-    "@rock-js/test-helpers": "^0.11.4"
+    "@rock-js/test-helpers": "^0.11.4",
+    "@types/adm-zip": "^0.5.7"
   },
   "publishConfig": {
     "access": "public"

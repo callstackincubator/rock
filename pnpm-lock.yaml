@@ -192,9 +192,6 @@ importers:
       '@rock-js/tools':
         specifier: ^0.11.4
         version: link:../tools
-      '@types/adm-zip':
-        specifier: ^0.5.7
-        version: 0.5.7
       adm-zip:
         specifier: ^0.5.16
         version: 0.5.16
@@ -214,6 +211,9 @@ importers:
       '@rock-js/config':
         specifier: ^0.11.4
         version: link:../config
+      '@types/adm-zip':
+        specifier: ^0.5.7
+        version: 0.5.7
 
   packages/platform-ios:
     dependencies:
@@ -384,9 +384,6 @@ importers:
       '@clack/prompts':
         specifier: ^0.11.0
         version: 0.11.0
-      '@types/adm-zip':
-        specifier: ^0.5.7
-        version: 0.5.7
       adm-zip:
         specifier: ^0.5.16
         version: 0.5.16
@@ -421,6 +418,9 @@ importers:
       '@rock-js/test-helpers':
         specifier: ^0.11.4
         version: link:../test-helpers
+      '@types/adm-zip':
+        specifier: ^0.5.7
+        version: 0.5.7
 
   packages/welcome-screen:
     devDependencies:
