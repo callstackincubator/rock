@@ -12,10 +12,10 @@ hero:
   actions:
     - theme: brand
       text: Learn more
-      link: /docs/getting-started/introduction
+      link: /docs/rock/introduction
     - theme: alt
-      text: Quick start
-      link: /docs/getting-started/index
+      text: Get Started
+      link: /docs/rock/getting-started
 features:
   - title: Remote Build Cache
     details: Save up to 96% of build time by reusing native artifacts (APK, AAB, APP, IPA) across machines and CI. Use built‑in integrations for GitHub, S3, and R2 or bring your own storage.
