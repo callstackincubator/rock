@@ -1,5 +1,15 @@
 # @rnef/config
 
+## 0.11.5
+
+### Patch Changes
+
+- 94e2fba: chore: add missing description fields to package.jsons
+- Updated dependencies [3be5269]
+- Updated dependencies [94e2fba]
+  - @rock-js/tools@0.11.5
+  - @rock-js/provider-github@0.11.5
+
 ## 0.11.4
 
 ### Patch Changes

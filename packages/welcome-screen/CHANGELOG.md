@@ -1,5 +1,11 @@
 # @rnef/welcome-screen
 
+## 0.11.5
+
+### Patch Changes
+
+- 94e2fba: chore: add missing description fields to package.jsons
+
 ## 0.11.4
 
 ## 0.11.3

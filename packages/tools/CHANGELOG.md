@@ -1,5 +1,12 @@
 # @rnef/tools
 
+## 0.11.5
+
+### Patch Changes
+
+- 3be5269: chore: remove unused deps
+- 94e2fba: chore: add missing description fields to package.jsons
+
 ## 0.11.4
 
 ### Patch Changes
