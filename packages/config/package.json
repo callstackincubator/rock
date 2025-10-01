@@ -1,6 +1,7 @@
 {
   "name": "@rock-js/config",
   "version": "0.11.4",
+  "description": "Configuration management utilities for Rock projects",
   "type": "module",
   "types": "./dist/src/index.d.ts",
   "exports": {

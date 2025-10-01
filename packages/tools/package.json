@@ -1,6 +1,7 @@
 {
   "name": "@rock-js/tools",
   "version": "0.11.4",
+  "description": "Internal core utilities for Rock",
   "type": "module",
   "types": "./dist/src/index.d.ts",
   "exports": {

@@ -1,6 +1,7 @@
 {
   "name": "@rock-js/plugin-brownfield-ios",
   "version": "0.11.4",
+  "description": "Plugin for integrating Rock projects with existing iOS apps",
   "type": "module",
   "types": "./dist/src/index.d.ts",
   "exports": {

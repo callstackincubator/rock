@@ -1,6 +1,7 @@
 {
   "name": "@rock-js/provider-s3",
   "version": "0.11.4",
+  "description": "AWS S3 (and Cloudflare R2) provider for Rock Remote Build Cache",
   "type": "module",
   "types": "./dist/src/index.d.ts",
   "exports": {
