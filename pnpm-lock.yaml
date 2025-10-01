@@ -195,9 +195,6 @@ importers:
       adm-zip:
         specifier: ^0.5.16
         version: 0.5.16
-      fast-glob:
-        specifier: ^3.3.2
-        version: 3.3.3
       fast-xml-parser:
         specifier: ^4.5.0
         version: 4.5.3
@@ -390,9 +387,6 @@ importers:
       appdirsjs:
         specifier: ^1.2.7
         version: 1.2.7
-      fast-glob:
-        specifier: ^3.3.2
-        version: 3.3.3
       fs-fingerprint:
         specifier: ^0.7.0
         version: 0.7.0
