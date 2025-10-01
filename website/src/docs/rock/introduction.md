@@ -14,7 +14,7 @@ Rock is built for two kinds of teams:
 - **iOS/Android native teams** planning to incorporate React Native without disrupting existing workflows: Rock Brownfield lets you add your whole React Native app like any other dependency.
 
 :::info New to React Native and building app from scratch?
-For **new projects that aren't brownfield**, consider starting with [Expo](https://expo.dev) for the best developer experience and similar remote caching capabilities. We recommend using [this template](https://github.com/nkzw-tech/expo-app-template) for sensible defaults. Rock is designed for teams who have outgrown the Community CLI or need more control over their build pipelines and infrastructure.
+For **new projects that aren't brownfield**, consider starting with [Expo](https://expo.dev) for the best developer experience and similar remote caching capabilities. We recommend using [this template](https://github.com/nkzw-tech/expo-app-template) for sensible defaults. Rock is designed for teams who have outgrown the Community CLI.
 :::
 
 Both types of teams will benefit from Rock's cross‑platform reach: iOS and Android by default, with a flexible architecture that extends to TVs, macOS, Windows, and HarmonyOS (coming soon).
