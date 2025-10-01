@@ -1,5 +1,14 @@
 # rock
 
+## 0.11.4
+
+### Patch Changes
+
+- c904ec9: fix: properly take env value into account; hash sensitive data
+- Updated dependencies [c904ec9]
+  - @rock-js/tools@0.11.4
+  - @rock-js/config@0.11.4
+
 ## 0.11.3
 
 ### Patch Changes

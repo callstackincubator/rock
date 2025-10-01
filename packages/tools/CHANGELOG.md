@@ -1,5 +1,11 @@
 # @rnef/tools
 
+## 0.11.4
+
+### Patch Changes
+
+- c904ec9: fix: properly take env value into account; hash sensitive data
+
 ## 0.11.3
 
 ## 0.11.2
