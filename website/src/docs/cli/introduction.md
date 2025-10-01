@@ -1,4 +1,4 @@
-# CLI
+# Introduction
 
 The Rock CLI is a command-line tool that helps you develop, build, and run React Native applications.
 
