@@ -94,6 +94,7 @@ export async function signAndroid(options: SignAndroidOptions) {
   }
 
   // 4. Align archive before signing if apk
+  // sign/align sequence is important, see https://developer.android.com/tools/zipalign
   const outputPath = options.outputPath ?? options.binaryPath;
 
   const alignArchive = async () => {
@@ -128,6 +129,7 @@ export async function signAndroid(options: SignAndroidOptions) {
   loader.stop(`Signed the ${extension.toUpperCase()} file with keystore: ${colorLink(keystorePath)}.`);
 
   // 6. Align archive after signing if aab
+  // sign/align sequence is important, see https://developer.android.com/tools/zipalign
   if (isAab(options.binaryPath)) {
     await alignArchive()
   }
