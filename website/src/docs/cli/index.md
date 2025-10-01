@@ -59,7 +59,7 @@ We've simplified the interface by removing redundant flags:
 
 The CLI integrates with Rock's Remote Cache system to speed up builds by reusing cached native artifacts. When available, the CLI will automatically download and use cached builds instead of rebuilding from scratch.
 
-Learn more about [Remote Cache & GitHub Actions](/docs/github-actions/introduction).
+Learn more about [Remote Cache & GitHub Actions](/docs/remote-cache/introduction).
 
 ## Global Options
 
@@ -217,7 +217,7 @@ The `run:ios` command runs your iOS app on a simulator or device. It follows thi
 1. Build locally if `--local` flag is set
 1. Otherwise, try to use a cached build from cache (in `.rock` folder)
 
-The build cache is populated either by a local build or when downloaded frome remote storage with [`remoteCacheProvider`](./configuration.md#remote-cache-configuration).
+The build cache is populated either by a local build or when downloaded frome remote storage with [`remoteCacheProvider`](../configuration.md#remote-cache-configuration).
 
 `run:ios` extends the functionality of `build:ios` with additional runtime options.
 
@@ -256,7 +256,7 @@ The `build:android` command builds your Android app for emulators, devices, or d
 1. Build locally if `--local` flag is set
 1. Otherwise, try to use a cached build from cache (in `.rock` folder)
 
-The build cache is populated either by a local build or when downloaded frome remote storage with [`remoteCacheProvider`](./configuration.md#remote-cache-configuration).
+The build cache is populated either by a local build or when downloaded frome remote storage with [`remoteCacheProvider`](../configuration.md#remote-cache-configuration).
 
 | Option                   | Description                             |
 | :----------------------- | :-------------------------------------- |

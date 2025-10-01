@@ -3,7 +3,7 @@
 Rock is a modular toolkit for teams building React Native apps. It helps improve build times and developer experience while fitting into your existing workflows and infrastructure.
 
 :::tip Ready to get started?
-Choose your path: [Getting Started →](/docs/getting-started/getting-started)
+Choose your path: [Getting Started →](/docs/rock/getting-started)
 :::
 
 ## Who should use Rock

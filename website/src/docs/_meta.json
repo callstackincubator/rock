@@ -5,7 +5,7 @@
     "label": "Rock"
   },
   {
-    "type": "file",
+    "type": "dir",
     "name": "cli",
     "label": "CLI"
   },
