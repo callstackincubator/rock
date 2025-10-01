@@ -147,8 +147,13 @@ async function runPodInstall(options: {
     });
   } catch (error) {
     loader.stop('Failed: Installing CocoaPods dependencies', 1);
+    const stderr = (error as SubprocessError).stderr;
     const fullOutput = (error as SubprocessError).output;
-    let errorMessage = fullOutput;
+    let errorMessage = stderr;
+    /**
+     * CocoaPods occasionally provides a markdown template with error message.
+     * We don't need the part above the Error secion.
+     */
     if (fullOutput.includes('### Error')) {
       errorMessage = fullOutput.split('### Error')[1].trim();
     }
