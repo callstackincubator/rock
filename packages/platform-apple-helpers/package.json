@@ -21,15 +21,14 @@
     "@react-native-community/cli-config": "^20.0.0",
     "@react-native-community/cli-config-apple": "^20.0.0",
     "@rock-js/tools": "^0.11.4",
-    "@types/adm-zip": "^0.5.7",
     "adm-zip": "^0.5.16",
-    "fast-glob": "^3.3.2",
     "fast-xml-parser": "^4.5.0",
     "tslib": "^2.3.0"
   },
   "devDependencies": {
     "@react-native-community/cli-types": "^20.0.0",
-    "@rock-js/config": "^0.11.4"
+    "@rock-js/config": "^0.11.4",
+    "@types/adm-zip": "^0.5.7"
   },
   "publishConfig": {
     "access": "public"
