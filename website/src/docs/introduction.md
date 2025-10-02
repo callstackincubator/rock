@@ -39,4 +39,4 @@ Rock is built on three core principles:
 
 - **Modular design** — add your supported platforms and plugins, and integrate existing tools; you can build around our framework
 - **Self-hosting** — use your own infrastructure; whether you're using GitHub Actions or Amazon S3 and BitBucket, we got you covered
-- **Incremental adoption** — easily migrate from Community CLI or add to an existing native app
+- **Incremental adoption** — easily migrate from Community CLI or add to an existing native app, at your own pace
