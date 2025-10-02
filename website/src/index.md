@@ -7,8 +7,8 @@ hero:
       light: /logo-light.svg
       dark: /logo-dark.svg
     alt: Rock logo
-  name: Rock
-  tagline: A modular toolkit for teams building React Native apps. It helps improve build times and developer experience while fitting into your existing workflows and infrastructure.
+  name: Build faster, ship everywhere
+  tagline: Rock is a modular toolkit for teams building React Native apps. It helps improve build times and developer experience while fitting into your existing workflows and infrastructure.
   actions:
     - theme: brand
       text: Learn more
