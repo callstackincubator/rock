@@ -1,5 +1,11 @@
 # rock
 
+## 0.11.6
+
+### Patch Changes
+
+- 810cafa: website: update wording to emphasize Rock's strengths
+
 ## 0.11.5
 
 ### Patch Changes
