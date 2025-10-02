@@ -1,6 +1,6 @@
 <a href="https://www.callstack.com/open-source?utm_campaign=generic&utm_source=github&utm_medium=referral&utm_content=rock" align="center">
   <picture>
-    <img alt="Rock" src="banner.jpg">
+    <img alt="Rock" src="https://github.com/callstack/rock/raw/main/banner.jpg">
   </picture>
 </a>
 <p align="center">
