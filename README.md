@@ -4,54 +4,46 @@
   </picture>
 </a>
 <p align="center">
-  🪨 Rock is a cross-platform React Native app development and build toolchain built for modularity, build reuse, and incremental adoption. It integrates seamlessly with your existing infrastructure, giving you complete control without vendor lock-in.
+  🪨 Rock is a modular toolkit for teams building React Native apps. It helps improve build times and developer experience while fitting into your existing workflows and infrastructure.
 </p>
 
 ---
 
-## React Native at scale is challenging
+## Key Features
 
-Enterprise apps aren't built overnight. As maintainers of the Community CLI and partners to enterprise teams, we've seen the real challenges: high build times, difficulty adopting new third-party cloud services, and high barriers to introducing React Native into existing iOS and Android apps.
+**☁️ Remote Build Cache**  
+Save up to 96% of build time by reusing native artifacts (APK, AAB, APP, IPA) across machines and CI. Use built‑in integrations for GitHub, S3, and R2 or bring your own storage.
 
-Rock simplifies native build setup and reuse. In most React Native codebases, only about 10% of code changes affect the native iOS/Android files. Yet most teams rebuild their native apps constantly—on every commit, PR, or merge to main—when it's completely unnecessary.
+**🔗 Brownfield ready**  
+Add React Native to existing iOS and Android apps using Rock Brownfield.
 
-Rock leverages this insight by providing intelligent caching in your cloud infrastructure, seamlessly integrated through its CLI. This allows you to skip up to 90% of unnecessary native builds.
+**🔌 Modular & Extensible**  
+A plugin‑driven architecture that lets you customize platforms, bundlers, cache providers, and more.
 
-## Features
+**🖥️ Cross‑platform‑ready**  
+iOS and Android by default; designed to extend to TVs, macOS, and Windows (coming soon).
 
-**🖥️ Brand New CLI**  
-A familiar CLI experience with end-to-end development and build workflows. Migrate in seconds with `npm create rock`.
-
-**☁️ Reusable Cloud Builds**  
-Reliable caching of native artifacts (APK, IPA) that you can store wherever you prefer, or use our out-of-the-box integrations with GitHub, S3, and R2.
-
-**🔧 GitHub Actions**  
-Complete logic for downloading, uploading, and building native artifacts for iOS (APP, IPA) and Android (APK, AAB).
-
-**🔗 Plug-and-Play Brownfield**  
-Package your React Native app as a framework and integrate it into your iOS and Android apps just like any other library.
-
-**📦 Bundler Flexibility**  
-Rock supports both Metro and Re.Pack for JavaScript bundling. With Re.Pack, you can build Super Apps and Mobile Microfrontends.
-
-**🔌 Extensible Plugin System**  
-Built with modularity in mind, Rock allows you to extend its capabilities through plugins that integrate with both the CLI and native templates.
+**⚡ Easy Community CLI Migration**  
+A familiar CLI that helps you develop, run, and build your app. Migrate from Community CLI in minutes.
 
 ## Installation
 
-Rock is designed for incremental adoption. Whether you're just starting with React Native in your iOS or Android app, or want to migrate from the React Native Community CLI, you can do it step-by-step without having to figure everything out at once.
+Choose your path based on your current situation:
 
-### Migrating an existing Community CLI project
+### Creating a new project
 
-To migrate an existing project, open a terminal in your project root and run:
+> **Consider Expo First**  
+> For **new projects**, we recommend starting with [Expo](https://expo.dev) for the best developer experience and similar remote caching capabilities. Rock is designed for teams who have outgrown the Community CLI.
+
+To create a fresh React Native app with Rock, open a terminal and run:
 
 ```shell
 npm create rock
 ```
 
-### Creating a new project
+### Migrating an existing Community CLI project
 
-To create a fresh React Native app with Rock, open a terminal and run:
+To migrate an existing project, open a terminal in your project root and run:
 
 ```shell
 npm create rock

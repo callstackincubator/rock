@@ -1,6 +1,10 @@
-# `rock` CLI
+# Introduction
 
 The Rock CLI is a command-line tool that helps you develop, build, and run React Native applications.
+
+We've created a new CLI from scratch with a focus on seamless migration from the Community CLI. Most projects can get started with our CLI in under 10 minutes.
+
+At its core is a modular configuration system that lets you customize capabilities through plugins and replaceable build chain components: bundlers, platforms, remote cache providers, and other helpers available as npm packages.
 
 Basic usage:
 
@@ -9,6 +13,57 @@ npx rock [command] [options]
 ```
 
 ![](/cli.png)
+
+## Key Features
+
+The CLI handles all essential build and deployment tasks:
+
+- Building and running APK/APP files on devices and simulators
+- Creating builds for different variants and configurations
+- Generating signed IPA and AAB archives for app stores
+- Re-signing archives with fresh JS bundles
+- Generating native project hashes for caching
+
+## Command Changes from Community CLI
+
+We've updated command names:
+
+- `run-android` → `run:android`
+- `build-android` → `build:android`
+- `run-ios` → `run:ios`
+- `build-ios` → `build:ios`
+
+## Flag Changes
+
+We've standardized flag naming across platforms:
+
+Android:
+
+- `--mode` → `--variant`
+- `--appId` → `--app-id`
+- `--appIdSuffix` → `--app-id-suffix`
+
+iOS:
+
+- `--mode` → `--configuration`
+- `--buildFolder` → `--build-folder`
+
+## Removed Flags
+
+We've simplified the interface by removing redundant flags:
+
+- `--interactive`/`-i` – CLI now prompts for input when needed
+- `--list-devices` – Device selection is now automatic when no devices are connected
+
+## Remote Cache
+
+The CLI integrates with Rock's Remote Cache system to speed up builds by reusing cached native artifacts. When available, the CLI will automatically download and use cached builds (APK/AAB/APP/IPA) instead of rebuilding from scratch.
+
+Learn more about [Remote Cache & GitHub Actions](/docs/remote-cache/introduction).
+
+## Local Cache
+
+Regardless of the remote cache provider you use, the CLI will also cache builds (APK/AAB/APP/IPA) in your local cache (`.rock/` directory). If a cached build is found, it will be used instead of rebuilding from scratch.
 
 ## Global Options
 
@@ -166,7 +221,7 @@ The `run:ios` command runs your iOS app on a simulator or device. It follows thi
 1. Build locally if `--local` flag is set
 1. Otherwise, try to use a cached build from cache (in `.rock` folder)
 
-The build cache is populated either by a local build or when downloaded frome remote storage with [`remoteCacheProvider`](./configuration.md#remote-cache-configuration).
+The build cache is populated either by a local build or when downloaded frome remote storage with [`remoteCacheProvider`](../configuration.md#remote-cache-configuration).
 
 `run:ios` extends the functionality of `build:ios` with additional runtime options.
 
@@ -205,7 +260,7 @@ The `build:android` command builds your Android app for emulators, devices, or d
 1. Build locally if `--local` flag is set
 1. Otherwise, try to use a cached build from cache (in `.rock` folder)
 
-The build cache is populated either by a local build or when downloaded frome remote storage with [`remoteCacheProvider`](./configuration.md#remote-cache-configuration).
+The build cache is populated either by a local build or when downloaded frome remote storage with [`remoteCacheProvider`](../configuration.md#remote-cache-configuration).
 
 | Option                   | Description                             |
 | :----------------------- | :-------------------------------------- |

@@ -11,8 +11,7 @@ export default withCallstackPreset(
     context: __dirname,
     docs: {
       title: 'Rock',
-      description:
-        'Easy to adopt. Simple to scale. Built for flexibility from day one',
+      description: 'Easy to adopt. Simple to scale. Ship everywhere.',
       editUrl: 'https://github.com/callstack/rock/edit/main/website/src',
       icon: '/logo.svg',
       logoLight: '/logo-light.svg',
