@@ -1,5 +1,23 @@
 # @rnef/platform-apple-helpers
 
+## 0.11.5
+
+### Patch Changes
+
+- 3be5269: chore: remove unused deps
+- 2dbae42: fix: run:ios with non-app targets ordered first
+- 94e2fba: chore: add missing description fields to package.jsons
+- Updated dependencies [3be5269]
+- Updated dependencies [94e2fba]
+  - @rock-js/tools@0.11.5
+
+## 0.11.4
+
+### Patch Changes
+
+- Updated dependencies [c904ec9]
+  - @rock-js/tools@0.11.4
+
 ## 0.11.3
 
 ### Patch Changes

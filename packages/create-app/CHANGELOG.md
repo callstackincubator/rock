@@ -1,5 +1,12 @@
 # create-rock
 
+## 0.11.5
+
+### Patch Changes
+
+- 2788d2f: bump create-rock
+- 94e2fba: chore: add missing description fields to package.jsons
+
 ## 0.11.3
 
 ### Patch Changes

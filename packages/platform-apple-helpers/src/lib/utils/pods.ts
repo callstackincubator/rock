@@ -147,8 +147,16 @@ async function runPodInstall(options: {
     });
   } catch (error) {
     loader.stop('Failed: Installing CocoaPods dependencies', 1);
-    const stderr =
-      (error as SubprocessError).stderr || (error as SubprocessError).output;
+    const stderr = (error as SubprocessError).stderr;
+    const fullOutput = (error as SubprocessError).output;
+    let errorMessage = stderr;
+    /**
+     * CocoaPods occasionally provides a markdown template with error message.
+     * We don't need the part above the Error secion.
+     */
+    if (fullOutput.includes('### Error')) {
+      errorMessage = fullOutput.split('### Error')[1].trim();
+    }
     /**
      * If CocoaPods failed due to repo being out of date, it will
      * include the update command in the error message.
@@ -156,7 +164,7 @@ async function runPodInstall(options: {
      * `shouldHandleRepoUpdate` will be set to `false` to
      * prevent infinite loop (unlikely scenario)
      */
-    if (stderr.includes('pod repo update') && shouldHandleRepoUpdate) {
+    if (fullOutput.includes('pod repo update') && shouldHandleRepoUpdate) {
       await runPodUpdate(options.sourceDir, options.useBundler);
       await runPodInstall({
         shouldHandleRepoUpdate: false,
@@ -170,7 +178,7 @@ async function runPodInstall(options: {
       throw new RockError(
         `CocoaPods installation failed. 
 ${podErrorHelpMessage}`,
-        { cause: stderr },
+        { cause: errorMessage },
       );
     }
   }
