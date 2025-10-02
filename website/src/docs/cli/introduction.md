@@ -57,9 +57,13 @@ We've simplified the interface by removing redundant flags:
 
 ## Remote Cache
 
-The CLI integrates with Rock's Remote Cache system to speed up builds by reusing cached native artifacts. When available, the CLI will automatically download and use cached builds instead of rebuilding from scratch.
+The CLI integrates with Rock's Remote Cache system to speed up builds by reusing cached native artifacts. When available, the CLI will automatically download and use cached builds (APK/AAB/APP/IPA) instead of rebuilding from scratch.
 
 Learn more about [Remote Cache & GitHub Actions](/docs/remote-cache/introduction).
+
+## Local Cache
+
+Regardless of the remote cache provider you use, the CLI will also cache builds (APK/AAB/APP/IPA) in your local cache (`.rock/` directory). If a cached build is found, it will be used instead of rebuilding from scratch.
 
 ## Global Options
 
