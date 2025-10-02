@@ -9,7 +9,7 @@
   },
   "dependencies": {
     "@rspress/core": "2.0.0-beta.32",
-    "@callstack/rspress-preset": "~0.4.2"
+    "@callstack/rspress-preset": "~0.4.3"
   },
   "devDependencies": {
     "@types/node": "^20.18.0",

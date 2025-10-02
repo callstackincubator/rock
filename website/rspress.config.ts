@@ -27,5 +27,6 @@ export default withCallstackPreset(
   },
   defineConfig({
     outDir: 'build',
+    globalStyles: undefined,
   }),
 );

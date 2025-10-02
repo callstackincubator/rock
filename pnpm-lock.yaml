@@ -77,10 +77,10 @@ importers:
         version: 20.0.1(typescript@5.9.2)
       '@rock-js/config':
         specifier: ^0.11.3
-        version: link:../config
+        version: 0.11.5
       '@rock-js/tools':
         specifier: ^0.11.3
-        version: link:../tools
+        version: 0.11.5
       adm-zip:
         specifier: ^0.5.16
         version: 0.5.16
@@ -108,10 +108,10 @@ importers:
         version: 7.27.1
       '@rock-js/provider-github':
         specifier: ^0.11.3
-        version: link:../provider-github
+        version: 0.11.5
       '@rock-js/tools':
         specifier: ^0.11.3
-        version: link:../tools
+        version: 0.11.5
       joi:
         specifier: ^17.13.3
         version: 17.13.3
@@ -133,7 +133,7 @@ importers:
         version: link:../test-helpers
       '@rock-js/tools':
         specifier: ^0.11.3
-        version: link:../tools
+        version: 0.11.5
       '@rslib/core':
         specifier: ^0.13.0
         version: 0.13.0(typescript@5.9.2)
@@ -163,7 +163,7 @@ importers:
         version: 20.0.1
       '@rock-js/tools':
         specifier: ^0.11.3
-        version: link:../tools
+        version: 0.11.5
       adm-zip:
         specifier: ^0.5.16
         version: 0.5.16
@@ -176,7 +176,7 @@ importers:
         version: 20.0.1
       '@rock-js/config':
         specifier: ^0.11.3
-        version: link:../config
+        version: 0.11.5
       '@types/adm-zip':
         specifier: ^0.5.7
         version: 0.5.7
@@ -191,7 +191,7 @@ importers:
         version: 20.0.1
       '@rock-js/tools':
         specifier: ^0.11.3
-        version: link:../tools
+        version: 0.11.5
       '@types/adm-zip':
         specifier: ^0.5.7
         version: 0.5.7
@@ -213,7 +213,7 @@ importers:
         version: 20.0.1
       '@rock-js/config':
         specifier: ^0.11.3
-        version: link:../config
+        version: 0.11.5
 
   packages/platform-ios:
     dependencies:
@@ -225,17 +225,17 @@ importers:
         version: 20.0.1
       '@rock-js/platform-apple-helpers':
         specifier: ^0.11.3
-        version: link:../platform-apple-helpers
+        version: 0.11.5(typescript@5.9.2)
       '@rock-js/tools':
         specifier: ^0.11.3
-        version: link:../tools
+        version: 0.11.5
       tslib:
         specifier: ^2.3.0
         version: 2.8.1
     devDependencies:
       '@rock-js/config':
         specifier: ^0.11.3
-        version: link:../config
+        version: 0.11.5
 
   packages/plugin-brownfield-android:
     dependencies:
@@ -244,10 +244,10 @@ importers:
         version: 20.0.1
       '@rock-js/platform-android':
         specifier: ^0.11.3
-        version: link:../platform-android
+        version: 0.11.5
       '@rock-js/tools':
         specifier: ^0.11.3
-        version: link:../tools
+        version: 0.11.5
       tslib:
         specifier: ^2.3.0
         version: 2.8.1
@@ -257,7 +257,7 @@ importers:
         version: 20.0.1
       '@rock-js/config':
         specifier: ^0.11.3
-        version: link:../config
+        version: 0.11.5
 
   packages/plugin-brownfield-ios:
     dependencies:
@@ -269,17 +269,17 @@ importers:
         version: 20.0.1
       '@rock-js/platform-apple-helpers':
         specifier: ^0.11.3
-        version: link:../platform-apple-helpers
+        version: 0.11.5(typescript@5.9.2)
       '@rock-js/tools':
         specifier: ^0.11.3
-        version: link:../tools
+        version: 0.11.5
       tslib:
         specifier: ^2.3.0
         version: 2.8.1
     devDependencies:
       '@rock-js/config':
         specifier: ^0.11.3
-        version: link:../config
+        version: 0.11.5
 
   packages/plugin-metro:
     dependencies:
@@ -288,7 +288,7 @@ importers:
         version: 20.0.1
       '@rock-js/tools':
         specifier: ^0.11.3
-        version: link:../tools
+        version: 0.11.5
       metro:
         specifier: ^0.83.1
         version: 0.83.1
@@ -313,7 +313,7 @@ importers:
         version: 0.81.1
       '@rock-js/config':
         specifier: ^0.11.3
-        version: link:../config
+        version: 0.11.5
 
   packages/plugin-repack:
     dependencies:
@@ -322,7 +322,7 @@ importers:
         version: 5.1.3(@babel/core@7.25.2)(@rspack/core@1.4.11(@swc/helpers@0.5.17))(react-native@0.81.1(@babel/core@7.25.2)(@react-native/metro-config@0.81.0(@babel/core@7.25.2))(@types/react@19.1.9)(react@19.1.1))(webpack@5.96.1)
       '@rock-js/tools':
         specifier: ^0.11.3
-        version: link:../tools
+        version: 0.11.5
       '@rspack/core':
         specifier: '>=1.2.8'
         version: 1.4.11(@swc/helpers@0.5.17)
@@ -335,13 +335,13 @@ importers:
     devDependencies:
       '@rock-js/config':
         specifier: ^0.11.3
-        version: link:../config
+        version: 0.11.5
 
   packages/provider-github:
     dependencies:
       '@rock-js/tools':
         specifier: ^0.11.3
-        version: link:../tools
+        version: 0.11.5
       ts-regex-builder:
         specifier: ^1.8.2
         version: 1.8.2
@@ -368,7 +368,7 @@ importers:
         version: 3.864.0
       '@rock-js/tools':
         specifier: ^0.11.3
-        version: link:../tools
+        version: 0.11.5
       tslib:
         specifier: ^2.3.0
         version: 2.8.1
@@ -437,8 +437,8 @@ importers:
   website:
     dependencies:
       '@callstack/rspress-preset':
-        specifier: ~0.4.2
-        version: 0.4.2(@rsbuild/core@1.5.4)(@rspress/core@2.0.0-beta.32(@types/react@19.1.9))(react@19.1.1)
+        specifier: ~0.4.3
+        version: 0.4.3(@rsbuild/core@1.5.4)(@rspress/core@2.0.0-beta.32(@types/react@19.1.9))(react@19.1.1)
       '@rspress/core':
         specifier: 2.0.0-beta.32
         version: 2.0.0-beta.32(@types/react@19.1.9)
@@ -1165,13 +1165,13 @@ packages:
       webpack:
         optional: true
 
-  '@callstack/rspress-preset@0.4.2':
-    resolution: {integrity: sha512-8Vh/XGNDowOH34ja8jExyoLFLydRe+kIShwqScMWI93mcMnDfVbbbKhcdhnM0ww0ywkplqx22NYAR/DnAIAAqw==}
+  '@callstack/rspress-preset@0.4.3':
+    resolution: {integrity: sha512-yEzcAv/NmHTz/niCXAo9y5Z9p7JXzR1vcOzccrQj7HDXhza8ZyizAVTIs2HVcBObIqResR9uYOJGq2Ia/vqY0Q==}
     peerDependencies:
       '@rspress/core': 2.0.0-beta.32
 
-  '@callstack/rspress-theme@0.4.2':
-    resolution: {integrity: sha512-2eJQOUm/hYwg7QF72OJuvmG8MYZ24lEs2HjaJ+dejDslmis0NmQHbgz6FzEGNGmP0qEU7XgebAwiLTH5KzKB/w==}
+  '@callstack/rspress-theme@0.4.3':
+    resolution: {integrity: sha512-w8BkpTsDakudmqmEnuyWeEBRSzQtBnwmXiX3t1aVxbyFcB8UeYCUCxfIMcDQzGLppS1W+03OLcifd/37ADoJ3Q==}
     peerDependencies:
       '@rspress/core': ^2.0.0-beta.32
       react: ^19.0.0
@@ -1774,6 +1774,21 @@ packages:
   '@remix-run/router@1.23.0':
     resolution: {integrity: sha512-O3rHJzAQKamUz1fvE0Qaw0xSFqsA/yafi2iqeE0pvdFtCO1viYx8QL6f3Ln/aCCTLxs68SLf0KPM9eSeM8yBnA==}
     engines: {node: '>=14.0.0'}
+
+  '@rock-js/config@0.11.5':
+    resolution: {integrity: sha512-Y6q9J6Pi2Oy1DU2PuhTF0jrUC90+SiPzzKL5s6hmYbeIyUAxPBk1RXR9hD7xNdmPcfhQJaBGHsROSNI0jzoCEA==}
+
+  '@rock-js/platform-android@0.11.5':
+    resolution: {integrity: sha512-iY7ssjRg26mkeuWSwJ4RhuzKcd8VaIEmmiFaOr7k0lY8msetu6nczyUo7v1H36W5mBAYt3JMSmojsix6C8y9xA==}
+
+  '@rock-js/platform-apple-helpers@0.11.5':
+    resolution: {integrity: sha512-+FFVTu+3gDR6f0CGko4B2BaT1w0m894TGXP08Q9vac5TnNFPyK+bwXmhHmvMPVclYIm8HrjOGWT2ywRvzj0p4g==}
+
+  '@rock-js/provider-github@0.11.5':
+    resolution: {integrity: sha512-xXcLJ3GI0eDY2GL3p8Ejzr7myXunV1W+bveCnDBKzggs4n/975nGFxxVqojdc00R9h6kKCCwMHXUiKapcXzLIQ==}
+
+  '@rock-js/tools@0.11.5':
+    resolution: {integrity: sha512-czjwdqarR1fy9TPrJeeHeMVgoe+V8Z0q1eoLJtV4FnoFAi6jMllSOmRiPA3bPMIgx6FezlDIZZRLAK3MLMpvfA==}
 
   '@rollup/rollup-android-arm-eabi@4.46.2':
     resolution: {integrity: sha512-Zj3Hl6sN34xJtMv7Anwb5Gu01yujyE/cLBDB2gnHTAHaWS1Z38L7kuSG+oAh0giZMqG060f/YBStXtMH6FvPMA==}
@@ -7788,9 +7803,9 @@ snapshots:
       - supports-color
       - utf-8-validate
 
-  '@callstack/rspress-preset@0.4.2(@rsbuild/core@1.5.4)(@rspress/core@2.0.0-beta.32(@types/react@19.1.9))(react@19.1.1)':
+  '@callstack/rspress-preset@0.4.3(@rsbuild/core@1.5.4)(@rspress/core@2.0.0-beta.32(@types/react@19.1.9))(react@19.1.1)':
     dependencies:
-      '@callstack/rspress-theme': 0.4.2(@rspress/core@2.0.0-beta.32(@types/react@19.1.9))(react@19.1.1)
+      '@callstack/rspress-theme': 0.4.3(@rspress/core@2.0.0-beta.32(@types/react@19.1.9))(react@19.1.1)
       '@rspress/core': 2.0.0-beta.32(@types/react@19.1.9)
       '@rspress/plugin-llms': 2.0.0-beta.32(@rspress/core@2.0.0-beta.32(@types/react@19.1.9))
       '@rspress/plugin-sitemap': 2.0.0-beta.32(@rspress/core@2.0.0-beta.32(@types/react@19.1.9))
@@ -7808,7 +7823,7 @@ snapshots:
       - vue
       - vue-router
 
-  '@callstack/rspress-theme@0.4.2(@rspress/core@2.0.0-beta.32(@types/react@19.1.9))(react@19.1.1)':
+  '@callstack/rspress-theme@0.4.3(@rspress/core@2.0.0-beta.32(@types/react@19.1.9))(react@19.1.1)':
     dependencies:
       '@rspress/core': 2.0.0-beta.32(@types/react@19.1.9)
       react: 19.1.1
@@ -8689,6 +8704,51 @@ snapshots:
       '@types/react': 19.1.9
 
   '@remix-run/router@1.23.0': {}
+
+  '@rock-js/config@0.11.5':
+    dependencies:
+      '@babel/code-frame': 7.27.1
+      '@rock-js/provider-github': 0.11.5
+      '@rock-js/tools': 0.11.5
+      joi: 17.13.3
+      tslib: 2.8.1
+
+  '@rock-js/platform-android@0.11.5':
+    dependencies:
+      '@react-native-community/cli-config-android': 20.0.1
+      '@rock-js/tools': 0.11.5
+      adm-zip: 0.5.16
+      tslib: 2.8.1
+
+  '@rock-js/platform-apple-helpers@0.11.5(typescript@5.9.2)':
+    dependencies:
+      '@react-native-community/cli-config': 20.0.1(typescript@5.9.2)
+      '@react-native-community/cli-config-apple': 20.0.1
+      '@rock-js/tools': 0.11.5
+      adm-zip: 0.5.16
+      fast-xml-parser: 4.5.3
+      tslib: 2.8.1
+    transitivePeerDependencies:
+      - typescript
+
+  '@rock-js/provider-github@0.11.5':
+    dependencies:
+      '@rock-js/tools': 0.11.5
+      ts-regex-builder: 1.8.2
+      tslib: 2.8.1
+
+  '@rock-js/tools@0.11.5':
+    dependencies:
+      '@clack/prompts': 0.11.0
+      adm-zip: 0.5.16
+      appdirsjs: 1.2.7
+      fs-fingerprint: 0.7.0
+      is-unicode-supported: 2.1.0
+      nano-spawn: 0.2.1
+      picocolors: 1.1.1
+      string-argv: 0.3.2
+      tar: 7.5.1
+      tslib: 2.8.1
 
   '@rollup/rollup-android-arm-eabi@4.46.2':
     optional: true
