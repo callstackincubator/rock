@@ -8,7 +8,7 @@
     "preview": "rspress preview"
   },
   "dependencies": {
-    "@rspress/core": "2.0.0-beta.32",
+    "@rspress/core": "2.0.0-beta.34",
     "@callstack/rspress-preset": "~0.4.3"
   },
   "devDependencies": {
