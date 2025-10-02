@@ -1,5 +1,11 @@
 # rock-docs
 
+## 1.3.4
+
+### Patch Changes
+
+- 810cafa: website: update wording to emphasize Rock's strengths
+
 ## 1.3.3
 
 ### Patch Changes
