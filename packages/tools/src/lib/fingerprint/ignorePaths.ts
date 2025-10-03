@@ -1,4 +1,4 @@
-// export const FINGERPRINT_IGNORE_FILENAME = '.fingerprintignore'. TODO: should we include this?
+import { getGitIgnoredPaths } from 'fs-fingerprint';
 
 function getAndroidIgnorePaths(sourceDir: string) {
   return [
@@ -40,22 +40,51 @@ function getIOSIgnorePaths(sourceDir: string) {
   ];
 }
 
-export function getDefaultIgnorePaths() {
+function getHarmonyIgnorePaths(sourceDir: string) {
+  return [
+    `${sourceDir}/.hvigor`,
+    `${sourceDir}/**/.idea`,
+    `${sourceDir}/**/oh_modules`,
+    `${sourceDir}/**/build`,
+    `${sourceDir}/**/.cxx`,
+    `${sourceDir}/**/.preview`,
+    `${sourceDir}/**/.clangd`,
+    `${sourceDir}/**/.clang-format`,
+    `${sourceDir}/**/.clang-tidy`,
+    `${sourceDir}/**/test`,
+  ];
+}
+
+function getDefaultIgnorePaths() {
   return ['**/.DS_Store'];
 }
 
-export function getPlatformDirIgnorePaths(platform: string, sourceDir: string) {
+function getPlatformDirIgnorePaths(platform: string, sourceDir: string) {
   if (platform === 'android') {
     return getAndroidIgnorePaths(sourceDir);
   } else if (platform === 'ios') {
     return getIOSIgnorePaths(sourceDir);
+  } else if (platform === 'harmony') {
+    return getHarmonyIgnorePaths(sourceDir);
   }
   return [];
 }
 
-export function getAllIgnorePaths(platform: string, sourceDir: string) {
+/**
+ * Returns all ignore paths for the given platform, source directory and project root.
+ * @param platform - The platform to get the ignore paths for.
+ * @param sourceDir - The relative source directory of that platform to get the ignore paths for.
+ * @param projectRoot - The project root to get the ignore paths for.
+ * @returns All ignore paths for the given platform, source directory and project root.
+ */
+export function getAllIgnorePaths(
+  platform: string,
+  sourceDir: string,
+  projectRoot: string,
+) {
   return [
     ...getDefaultIgnorePaths(),
+    ...getGitIgnoredPaths(projectRoot),
     ...getPlatformDirIgnorePaths(platform, sourceDir),
   ];
 }

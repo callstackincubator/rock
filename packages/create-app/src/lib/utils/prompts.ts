@@ -96,7 +96,7 @@ export async function promptTemplate(
     // @ts-expect-error todo
     options: templates.map((template) => ({
       value: template,
-      label: template.name,
+      label: template.displayName,
     })),
   });
 }
@@ -118,7 +118,7 @@ export function promptPlatforms(
     // @ts-expect-error todo
     options: platforms.map((platform) => ({
       value: platform,
-      label: platform.name,
+      label: platform.displayName,
     })),
   });
 }
@@ -135,7 +135,7 @@ export function promptPlugins(
     // @ts-expect-error todo fixup type
     options: plugins.map((plugin) => ({
       value: plugin,
-      label: plugin.name,
+      label: plugin.displayName,
       hint: plugin.hint,
     })),
     required: false,
@@ -155,7 +155,7 @@ export function promptBundlers(
     // @ts-expect-error todo fixup type
     options: bundlers.map((bundler) => ({
       value: bundler,
-      label: bundler.name,
+      label: bundler.displayName,
     })),
   });
 }

@@ -7,6 +7,7 @@ test('should format config without plugins', () => {
     .toMatchInlineSnapshot(`
       "import { platformIOS } from '@rock-js/platform-ios';
       import { platformAndroid } from '@rock-js/platform-android';
+      import { platformHarmony } from '@rock-js/platform-harmony';
       import { pluginMetro } from '@rock-js/plugin-metro';
 
       export default {
@@ -14,6 +15,7 @@ test('should format config without plugins', () => {
         platforms: {
           ios: platformIOS(),
           android: platformAndroid(),
+          harmony: platformHarmony(),
         },
       };
       "
@@ -25,6 +27,7 @@ test('should format config with plugins', () => {
     {
       type: 'npm',
       name: 'test',
+      displayName: 'test',
       packageName: '@rock-js/plugin-test',
       version: 'latest',
       directory: 'template',
