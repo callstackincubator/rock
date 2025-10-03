@@ -4,6 +4,7 @@ import { calculateFingerprint, type FingerprintResult } from 'fs-fingerprint';
 import { getReactNativeVersion, logger } from '../../index.js';
 import { spawn } from '../spawn.js';
 import { getAllIgnorePaths } from './ignorePaths.js';
+export type { FingerprintInputHash } from 'fs-fingerprint';
 
 export type FingerprintSources = {
   extraSources: string[];

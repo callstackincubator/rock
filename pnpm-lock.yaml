@@ -215,7 +215,7 @@ importers:
   packages/platform-harmony:
     dependencies:
       '@rock-js/tools':
-        specifier: ^0.11.2
+        specifier: ^0.11.5
         version: link:../tools
       json5:
         specifier: ^2.2.3
@@ -228,7 +228,7 @@ importers:
         specifier: ^20.0.0
         version: 20.0.1
       '@rock-js/config':
-        specifier: ^0.11.2
+        specifier: ^0.11.5
         version: link:../config
 
   packages/platform-ios:
