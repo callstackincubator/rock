@@ -115,7 +115,7 @@ function validateOptions(options: NativeFingerprintCommandOptions) {
     options.platform !== 'harmony'
   ) {
     throw new RockError(
-      `Unsupported platform "${options.platform}". Please specify either "ios" or "android".`,
+      `Unsupported platform "${options.platform}". Please specify either "ios", "android" or "harmony".`,
     );
   }
 }

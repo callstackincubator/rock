@@ -44,7 +44,7 @@ export async function nativeFingerprint(
   const packageJSONPath = path.join(projectRoot, 'package.json');
   const packageJSON = await readPackageJSON(packageJSONPath);
   const scripts = packageJSON['scripts'];
-  const { sourceDir } = autolinkingConfig.project[options.platform];
+  const sourceDir = autolinkingConfig.project[options.platform]?.sourceDir;
 
   if (!options.platform || !sourceDir) {
     throw new Error('No platforms found in autolinking project config');

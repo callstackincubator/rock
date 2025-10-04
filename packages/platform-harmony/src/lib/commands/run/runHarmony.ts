@@ -106,8 +106,6 @@ async function selectAndLaunchDevice() {
   const allDevices = await listHarmonyDevices();
   const device = await promptForDeviceSelection(allDevices);
 
-  console.log('sd', device);
-
   if (!device.connected) {
     // @todo add emulators
     // await tryLaunchEmulator(device.readableName);
