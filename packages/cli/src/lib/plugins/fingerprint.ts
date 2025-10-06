@@ -1,6 +1,7 @@
+import { createHash } from 'node:crypto';
 import { performance } from 'node:perf_hooks';
 import type { PluginApi } from '@rock-js/config';
-import type { FingerprintSources } from '@rock-js/tools';
+import type { FingerprintInputHash, FingerprintSources } from '@rock-js/tools';
 import {
   color,
   intro,
@@ -11,6 +12,25 @@ import {
   RockError,
   spinner,
 } from '@rock-js/tools';
+
+const hashValue = (value: string) =>
+  `[HASHED:${createHash('sha256').update(value).digest('hex').substring(0, 8)}]`;
+
+/**
+ * Redacts sensitive environment variables from fingerprint sources by hashing their values
+ */
+function redactSensitiveSources(sources: FingerprintInputHash[]) {
+  return sources.map((source) => {
+    if (source.key === 'json:env' && 'json' in source) {
+      const env = source.json as Record<string, string>;
+      const redactedEnv = Object.fromEntries(
+        Object.entries(env).map(([key, value]) => [key, hashValue(value)]),
+      );
+      return { ...source, json: redactedEnv };
+    }
+    return source;
+  });
+}
 
 type NativeFingerprintCommandOptions = {
   platform: 'ios' | 'android';
@@ -39,7 +59,9 @@ export async function nativeFingerprintCommand(
       JSON.stringify(
         {
           hash: fingerprint.hash,
-          sources: fingerprint.inputs.filter((source) => source.hash != null),
+          sources: redactSensitiveSources(
+            fingerprint.inputs.filter((source) => source.hash != null),
+          ),
         },
         null,
         2,
@@ -69,7 +91,9 @@ export async function nativeFingerprintCommand(
   logger.debug(
     'Sources:',
     JSON.stringify(
-      fingerprint.inputs.filter((source) => source.hash != null),
+      redactSensitiveSources(
+        fingerprint.inputs.filter((source) => source.hash != null),
+      ),
       null,
       2,
     ),

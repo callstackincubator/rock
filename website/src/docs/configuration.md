@@ -512,7 +512,7 @@ async upload({ artifactName, uploadArtifactName }) {
 
   This `index.html` file will display an ad-hoc distribution web portal, allowing developers and testers to install apps on their provisioned devices by simply clicking "Install App".
 
-  Learn more about ad-hoc distribution and how it works with `remote-cache upload --ad-hoc` command [here](./cli#ad-hoc-distribution).
+  Learn more about ad-hoc distribution and how it works with `remote-cache upload --ad-hoc` command [here](./cli/introduction#ad-hoc-distribution).
 
   | Ad-hoc distribution web portal       | Ad-hoc distribution web portal        |
   | ------------------------------------ | ------------------------------------- |

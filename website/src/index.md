@@ -7,32 +7,32 @@ hero:
       light: /logo-light.svg
       dark: /logo-dark.svg
     alt: Rock logo
-  name: React Native framework for Enterprise scale
-  tagline: Easy to adopt. Simple to scale. Built for flexibility from day one
+  name: Build faster, ship everywhere
+  tagline: Rock is a modular toolkit for teams building React Native apps. It helps improve build times and developer experience while fitting into your existing workflows and infrastructure.
   actions:
     - theme: brand
       text: Learn more
-      link: /docs/getting-started/introduction
+      link: /docs/introduction
     - theme: alt
-      text: Quick start
-      link: /docs/getting-started/index
+      text: Get Started
+      link: /docs/getting-started
 features:
-  - title: Brand New CLI
-    details: A familiar CLI experience with end-to-end development, and build workflows. Get started in minutes
-    icon: <img src="/arrow-bar-right.svg" />
-  - title: Reusable Cloud Builds
-    details: Reliable caching of native artifacts (APK, IPA) which you can store where you like, or use our out-of-the-box integrations with GitHub, S3, and R2
+  - title: Remote build cache
+    details: Save up to 96% of build time by reusing native artifacts (APK, AAB, APP, IPA) across machines and CI. Use built‑in integrations for GitHub, S3, and R2 or bring your own storage.
     icon: <img src="/cloud.svg" />
-  - title: GitHub Action
-    details: All the logic for downloading, uploading and building native build artifacts for iOS (APP, IPA) and Android (APK, AAB)
-    icon: <img src="/github.svg" />
-  - title: Plug-n-Play Brownfield
-    details: Package your React Native app as a framework and add to your iOS and Android apps as you would any other library
+  - title: Brownfield ready
+    details: Add React Native to existing iOS and Android apps using Rock Brownfield and use it as any other library.
     icon: <img src="/radio-handheld.svg" />
-  - title: Bundler of Choice
-    details: Rock supports both Metro and Re.Pack to bundle JS. With Re.Pack you can build Super Apps and Mobile Microfrontends
-    icon: <img src="/arrow-up-box.svg" />
-  - title: Plugins
-    details: Built in a modular way, Rock allows you to extend its capabilities via plugins that integrate with CLI and native templates
+  - title: Modular & extensible
+    details: A plugin‑driven architecture that lets you customize platforms, bundlers, cache providers, and more.
     icon: <img src="/add-grid.svg" />
+  - title: Cross‑platform ready
+    details: iOS and Android by default; designed to extend to TVs, macOS, and Windows (coming soon).
+    icon: <img src="/layout-columns.svg" />
+  - title: Easy Community CLI migration
+    details: A familiar CLI that helps you develop, run, and build your app. Integrates with Remote Build Cache. Migrate from Community CLI in minutes.
+    icon: <img src="/arrow-bar-right.svg" />
+  - title: Bundler of choice
+    details: Rock supports both Metro and Re.Pack to bundle JS. With Re.Pack you can build Super Apps and Mobile Microfrontends.
+    icon: <img src="/arrow-up-box.svg" />
 ---
