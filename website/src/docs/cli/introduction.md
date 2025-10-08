@@ -18,7 +18,7 @@ npx rock [command] [options]
 
 The CLI handles all essential build and deployment tasks:
 
-- Building and running APK/APP files on devices and simulators
+- Building and running APK/APP/HAP files on devices and simulators
 - Creating builds for different variants and configurations
 - Generating signed IPA and AAB archives for app stores
 - Re-signing archives with fresh JS bundles
@@ -127,6 +127,13 @@ Platform plugins are configured through the [`platform`](/docs/configuration/ind
   | `run:ios`   | Runs iOS app on simulator or device                          |
   | `sign:ios`  | Signs iOS app with certificate and provisioning profile      |
 
+- `@rock-js/platform-harmony` – HarmonyOS platform plugin (experimental) with the following commands:
+
+  | Command         | Description                                 |
+  | :-------------- | :------------------------------------------ |
+  | `build:harmony` | Builds HarmonyOS app for emulator or device |
+  | `run:harmony`   | Runs HarmonyOS app on device                |
+
 ## Command Options
 
 ### `rock start` Options
@@ -159,7 +166,7 @@ The `bundle` command creates an optimized JavaScript bundle for your application
 | Option                                  | Description                                                                                          |
 | :-------------------------------------- | :--------------------------------------------------------------------------------------------------- |
 | `--entry-file <path>`                   | Path to the root JS file, either absolute or relative to JS root                                     |
-| `--platform <string>`                   | Either "ios" or "android" (default: "ios")                                                           |
+| `--platform <string>`                   | Either "ios", "android", or "harmony" (default: "ios")                                               |
 | `--transformer <string>`                | Specify a custom transformer to be used                                                              |
 | `--dev [boolean]`                       | If false, warnings are disabled and the bundle is minified (default: true)                           |
 | `--minify [boolean]`                    | Allows overriding whether bundle is minified. Defaults to false if dev is true, true if dev is false |
