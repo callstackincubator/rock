@@ -11,13 +11,13 @@ Choose your path: [Getting Started →](/docs/getting-started)
 Rock is built for two kinds of teams:
 
 - **Existing React Native teams using Community CLI** who want to improve build times and developer experience while fitting into your existing workflows and infrastructure.
-- **iOS/Android native teams** planning to incorporate React Native without disrupting existing workflows: Rock Brownfield lets you add your whole React Native app like any other dependency.
+- **iOS/Android teams** planning to incorporate React Native without disrupting existing workflows: Rock Brownfield lets you add your whole React Native app like any other dependency.
 
 :::info New to React Native and building app from scratch?
 For **new projects that aren't brownfield**, consider starting with [Expo](https://expo.dev) for the best developer experience and similar remote caching capabilities. We recommend using [this template](https://github.com/nkzw-tech/expo-app-template) for sensible defaults. Rock is designed for teams who have outgrown the Community CLI.
 :::
 
-Both types of teams will benefit from Rock's cross‑platform reach: iOS and Android by default, with a flexible architecture that extends to TVs, macOS, Windows, and HarmonyOS (coming soon).
+Both types of teams will benefit from Rock's cross‑platform reach: iOS, Android, and experimental HarmonyOS by default, with a flexible architecture that extends to TVs, macOS, and Windows (coming soon).
 
 ## Why We Exist
 
@@ -25,7 +25,7 @@ At [Callstack](https://callstack.com/), we work with large teams building comple
 
 - **Build times** – No reuse of builds across CI jobs and development teams
 - **Infrastructure control** – Need to host everything on their own infrastructure
-- **Platform diversity** – Shipping to 10+ platforms beyond iOS and Android
+- **Platform diversity** – Shipping to 10+ platforms beyond iOS, Android, and HarmonyOS (experimental)
 - **Brownfield integration** – Embedding React Native in existing native apps
 - **Tech stack complexity** – Adding React Native to mixed technology environments
 

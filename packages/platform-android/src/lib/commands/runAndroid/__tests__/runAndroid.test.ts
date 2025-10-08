@@ -311,7 +311,7 @@ test.each([['release'], ['debug'], ['staging']])(
       { ...args, variant },
       '/',
       undefined,
-      { extraSources: [], ignorePaths: [] },
+      { extraSources: [], ignorePaths: [], env: [] },
     );
 
     expect(tools.outro).toBeCalledWith('Success 🎉.');
@@ -360,7 +360,7 @@ test('runAndroid runs gradle build with custom --appId, --appIdSuffix and --main
     },
     '/',
     undefined,
-    { extraSources: [], ignorePaths: [] },
+    { extraSources: [], ignorePaths: [], env: [] },
   );
 
   expect(tools.outro).toBeCalledWith('Success 🎉.');
@@ -387,7 +387,7 @@ test('runAndroid fails to launch an app on not-connected device when specified w
     { ...args, device: 'emulator-5554' },
     '/',
     undefined,
-    { extraSources: [], ignorePaths: [] },
+    { extraSources: [], ignorePaths: [], env: [] },
   );
   expect(logWarnSpy).toBeCalledWith(
     'No devices or emulators found matching "emulator-5554". Using available one instead.',
@@ -456,7 +456,7 @@ test.each([['release'], ['debug']])(
       { ...args, device: 'emulator-5554', variant },
       '/',
       undefined,
-      { extraSources: [], ignorePaths: [] },
+      { extraSources: [], ignorePaths: [], env: [] },
     );
 
     // we don't want to run installDebug when a device is selected, because gradle will install the app on all connected devices
@@ -516,6 +516,7 @@ test('runAndroid launches an app on all connected devices', async () => {
   await runAndroid({ ...androidProject }, { ...args }, '/', undefined, {
     extraSources: [],
     ignorePaths: [],
+    env: [],
   });
 
   // Runs assemble debug task with active architectures arm64-v8a, armeabi-v7a
@@ -582,7 +583,7 @@ test('runAndroid skips building when --binary-path is passed', async () => {
     },
     '/root',
     undefined,
-    { extraSources: [], ignorePaths: [] },
+    { extraSources: [], ignorePaths: [], env: [] },
   );
 
   // Skips gradle

@@ -27,7 +27,7 @@ features:
     details: A plugin‑driven architecture that lets you customize platforms, bundlers, cache providers, and more.
     icon: <img src="/add-grid.svg" />
   - title: Cross‑platform ready
-    details: iOS and Android by default; designed to extend to TVs, macOS, and Windows (coming soon).
+    details: iOS, Android, and experimental HarmonyOS by default; designed to extend to TVs, macOS, and Windows (coming soon).
     icon: <img src="/layout-columns.svg" />
   - title: Easy Community CLI migration
     details: A familiar CLI that helps you develop, run, and build your app. Integrates with Remote Build Cache. Migrate from Community CLI in minutes.
