@@ -21,7 +21,6 @@ import type { DeviceData } from './listHarmonyDevices.js';
 import { listHarmonyDevices } from './listHarmonyDevices.js';
 import { tryInstallAppOnDevice } from './tryInstallAppOnDevice.js';
 import { tryLaunchAppOnDevice } from './tryLaunchAppOnDevice.js';
-// import { tryLaunchEmulator } from './tryLaunchEmulator.js';
 
 export interface Flags extends BuildFlags {
   ability: string;
@@ -69,13 +68,11 @@ export async function runHarmony(
   if (device) {
     if (device.deviceId) {
       if (!binaryPath) {
-        // @todo fix sourceDir
         await runHvigor({ sourceDir, args, artifactName, device, bundleName });
       }
       await runOnDevice({ device, sourceDir, args, binaryPath, bundleName });
     }
   } else {
-    // @todo consider filtering out offline devices
     if ((await getDevices()).length === 0) {
       if (isInteractive()) {
         await selectAndLaunchDevice();
@@ -84,7 +81,6 @@ export async function runHarmony(
           'No booted devices or emulators found. Launching first available emulator.',
         );
         // @todo add emulators
-        // await tryLaunchEmulator();
       }
     }
 
@@ -108,7 +104,6 @@ async function selectAndLaunchDevice() {
 
   if (!device.connected) {
     // @todo add emulators
-    // await tryLaunchEmulator(device.readableName);
     // list devices once again when emulator is booted
     const allDevices = await listHarmonyDevices();
     const newDevice =
@@ -155,11 +150,13 @@ async function promptForDeviceSelection(
 ): Promise<DeviceData> {
   if (!allDevices.length) {
     throw new RockError(
-      'No devices and/or emulators connected. Please create emulator with DevEco Studio or connect HarmonyOS device.',
+      // @todo add emulators
+      'No devices connected. Please create connect HarmonyOS device.',
     );
   }
   const selected = await promptSelect({
-    message: 'Select the device / emulator you want to use',
+    // @todo add emulators
+    message: 'Select the device you want to use',
     options: allDevices.map((d) => ({
       label: `${d.readableName}${
         d.type === 'phone' ? ' - (physical device)' : ''

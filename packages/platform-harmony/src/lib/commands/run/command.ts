@@ -13,7 +13,7 @@ export function registerRunCommand(
   api.registerCommand({
     name: 'run:harmony',
     description:
-      'Builds your app and starts it on a connected HarmonyOS Next emulator or a device.',
+      'Builds your app and starts it on a connected HarmonyOS Next device.',
     action: async (args) => {
       const projectRoot = api.getProjectRoot();
       const harmonyConfig = getValidProjectConfig(projectRoot, pluginConfig);

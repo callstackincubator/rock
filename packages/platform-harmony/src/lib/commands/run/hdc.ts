@@ -22,16 +22,21 @@ export async function getDevices() {
       stdio: 'pipe',
     });
     const lines = output.trim().split('\n');
-    return lines.map((line) => {
-      const parts = line.split(/\s+/);
-      return {
-        name: parts[0],
-        method: parts[1], // USB
-        state: parts[2], // Connected, Offline
-        locate: parts[3], // localhost
-        connectTool: parts[4],
-      };
-    });
+    return (
+      lines
+        .map((line) => {
+          const parts = line.split(/\s+/);
+          return {
+            name: parts[0],
+            method: parts[1], // USB
+            state: parts[2], // Connected, Offline
+            locate: parts[3], // localhost
+            connectTool: parts[4],
+          };
+        })
+        // hdc will report no devices as [Empty] sometimes
+        .filter((line) => line.state != undefined)
+    );
   } catch {
     return [];
   }
