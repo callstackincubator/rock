@@ -426,13 +426,15 @@ export const remoteCachePlugin =
         },
         {
           name: '-p, --platform <string>',
-          description: 'Select platform, e.g. ios or android',
+          description:
+            'Select platform, e.g. ios, android, or harmony (experimental)',
         },
         {
           name: '-t, --traits <list>',
           description: `Comma-separated traits that construct final artifact name. Traits for Android are: variant; for iOS: destination and configuration. 
 Example iOS: --traits simulator,Release
-Example Android: --traits debug`,
+Example Android: --traits debug
+Example Harmony: --traits debug`,
           parse: (val: string) => val.split(','),
         },
         {

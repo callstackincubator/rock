@@ -261,6 +261,17 @@ The `sign:android <binaryPath>` command signs your Android app with a keystore, 
 
 ## Platform HarmonyOS (experimental)
 
+:::warning
+HarmonyOS integration is currently experimental and not fully feature complete with iOS and Android platforms. The API and functionality may change in future releases.
+
+Missing functionality:
+
+- Ready to use GitHub Action
+- Re-signing with `sign:harmony` command
+- Running on emulator (DevEco Studio doesn't allow for emulators outside of China)
+
+:::
+
 ### `rock build:harmony` Options
 
 The `build:harmony` command builds your HarmonyOS app for emulators or devices, producing HAP files. It follows this build strategy:
@@ -403,7 +414,7 @@ Actions have different options available:
 | `--name <string>`         | Full artifact name to operate on. Cannot be used with `--platform` or `--traits`                                                                                                   |
 | `--all`                   | List or delete all matching artifacts (affects `list` and `delete` actions only)                                                                                                   |
 | `--all-but-latest`        | Delete all but the latest matching artifact (affects `delete` action only)                                                                                                         |
-| `-p, --platform <string>` | Platform to target (`ios` or `android`). Must be used with `--traits`                                                                                                              |
+| `-p, --platform <string>` | Platform to target (`ios`, `android`, or `harmony`). Must be used with `--traits`                                                                                                  |
 | `-t, --traits <list>`     | Comma-separated traits that construct the final artifact name. For Android: variant (e.g., `debug`, `release`). For iOS: destination and configuration (e.g., `simulator,Release`) |
 | `--binary-path <string>`  | Path to the binary to upload (used with `upload` action)                                                                                                                           |
 | `--ad-hoc <string>`       | Upload IPA for ad-hoc distribution and installation from URL. Additionally uploads index.html and manifest.plist'                                                                  |
