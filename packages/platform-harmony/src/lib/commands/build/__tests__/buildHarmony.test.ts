@@ -9,7 +9,6 @@ const args: BuildFlags = {
   buildMode: 'debug',
   module: 'entry',
   product: 'default',
-  extraParams: undefined,
   local: true,
 };
 const harmonyProject: HarmonyProjectConfig = {
@@ -32,9 +31,12 @@ const spinnerMock = vi.hoisted(() => ({
 
 vi.spyOn(tools, 'spinner').mockImplementation(() => spinnerMock);
 
+const OLD_ENV = process.env;
+
 beforeEach(() => {
   vi.resetModules();
   vi.clearAllMocks();
+  process.env = { ...OLD_ENV, DEVECO_SDK_HOME: '/mock/deveco/sdk' };
 });
 
 function mockOhpmCall(file: string, args: string[]) {
