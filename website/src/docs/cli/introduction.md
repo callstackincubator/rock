@@ -134,57 +134,7 @@ Platform plugins are configured through the [`platform`](/docs/configuration/ind
   | `build:harmony` | Builds HarmonyOS app for emulator or device |
   | `run:harmony`   | Runs HarmonyOS app on device                |
 
-## Command Options
-
-### `rock start` Options
-
-The `start` command launches a development server (either Re.Pack or Metro, depending on your bundler plugin) that connects to your apps through port 8081 by default. It provides features like Hot Module Reloading (HMR) and error reporting.
-
-| Option                                            | Description                                                                                 |
-| :------------------------------------------------ | :------------------------------------------------------------------------------------------ |
-| `--port <number>`                                 | Port to run the server on (default: 8081)                                                   |
-| `--host <string>`                                 | Host to run the server on (default: "")                                                     |
-| `--project-root <path>`, `--projectRoot <path>`   | Path to a custom project root                                                               |
-| `--watch-folders <list>`, `--watchFolders <list>` | Specify any additional folders to be added to the watch list                                |
-| `--asset-plugins <list>`, `--assetPlugins <list>` | Specify any additional asset plugins to be used by the packager by full filepath            |
-| `--source-exts <list>`,`--sourceExts <list>`      | Specify any additional source extensions to be used by the packager                         |
-| `--max-workers <number>`                          | Specifies the maximum number of workers the worker-pool will spawn for transforming files   |
-| `--transformer <string>`                          | Specify a custom transformer to be used                                                     |
-| `--reset-cache`, `--resetCache`                   | Removes cached files                                                                        |
-| `--custom-log-reporter-path <string>`             | Path to a JavaScript file that exports a log reporter as a replacement for TerminalReporter |
-| `--https`                                         | Enables https connections to the server                                                     |
-| `--key <path>`                                    | Path to custom SSL key                                                                      |
-| `--cert <path>`                                   | Path to custom SSL cert                                                                     |
-| `--config <string>`                               | Path to the CLI configuration file                                                          |
-| `--no-interactive`                                | Disables interactive mode                                                                   |
-| `--client-logs`                                   | [Deprecated] Enable plain text JavaScript log streaming for all connected apps              |
-
-### `rock bundle` Options
-
-The `bundle` command creates an optimized JavaScript bundle for your application, optionally using Hermes bytecode.
-
-| Option                                  | Description                                                                                          |
-| :-------------------------------------- | :--------------------------------------------------------------------------------------------------- |
-| `--entry-file <path>`                   | Path to the root JS file, either absolute or relative to JS root                                     |
-| `--platform <string>`                   | Either "ios", "android", or "harmony" (default: "ios")                                               |
-| `--transformer <string>`                | Specify a custom transformer to be used                                                              |
-| `--dev [boolean]`                       | If false, warnings are disabled and the bundle is minified (default: true)                           |
-| `--minify [boolean]`                    | Allows overriding whether bundle is minified. Defaults to false if dev is true, true if dev is false |
-| `--bundle-output <string>`              | File name where to store the resulting bundle, ex. /tmp/groups.bundle                                |
-| `--bundle-encoding <string>`            | Encoding the bundle should be written in (default: "utf8")                                           |
-| `--max-workers <number>`                | Specifies the maximum number of workers the worker-pool will spawn for transforming files            |
-| `--sourcemap-output <string>`           | File name where to store the sourcemap file for resulting bundle, ex. /tmp/groups.map                |
-| `--sourcemap-sources-root <string>`     | Path to make sourcemap's sources entries relative to, ex. /root/dir                                  |
-| `--sourcemap-use-absolute-path`         | Report SourceMapURL using its full path (default: false)                                             |
-| `--assets-dest <string>`                | Directory name where to store assets referenced in the bundle                                        |
-| `--unstable-transform-profile <string>` | Experimental, transform JS for a specific JS engine (default: "default")                             |
-| `--asset-catalog-dest [string]`         | Path where to create an iOS Asset Catalog for images                                                 |
-| `--reset-cache`                         | Removes cached files (default: false)                                                                |
-| `--read-global-cache`                   | Try to fetch transformed JS code from the global cache, if configured (default: false)               |
-| `--config <string>`                     | Path to the CLI configuration file                                                                   |
-| `--resolver-option <string...>`         | Custom resolver options of the form key=value. URL-encoded. May be specified multiple times          |
-| `--config-cmd [string]`                 | [Internal] A hack for Xcode build script pointing to wrong bundle command                            |
-| `--hermes`                              | Passes the output JS bundle to Hermes compiler and outputs a bytecode file                           |
+## Platform iOS
 
 ### `rock build:ios` Options
 
@@ -259,6 +209,8 @@ The `sign:ios` command either signs your iOS app with certificates and provision
 | `--jsbundle <string>` | Path to JS bundle to apply before signing                           |
 | `--no-hermes`         | Don't use Hermes for JS bundle                                      |
 
+## Platform Android
+
 ### `rock build:android` Options
 
 The `build:android` command builds your Android app for emulators, devices, or distribution, producing either APK or AAB files. It follows this build strategy:
@@ -307,6 +259,115 @@ The `sign:android <binaryPath>` command signs your Android app with a keystore, 
 | `--jsbundle <string>`          | Path to JS bundle to apply before signing |
 | `--no-hermes`                  | Don't use Hermes for JS bundle            |
 
+## Platform HarmonyOS (experimental)
+
+### `rock build:harmony` Options
+
+The `build:harmony` command builds your HarmonyOS app for emulators or devices, producing HAP files. It follows this build strategy:
+
+1. Build locally if `--local` flag is set
+1. Otherwise, try to use a cached build from cache (in `.rock` folder)
+
+The build cache is populated by a local build only for now (remote cache is not supported yet).
+
+| Option                  | Description                   |
+| :---------------------- | :---------------------------- |
+| `--build-mode <string>` | Build mode (debug/release)    |
+| `--module <string>`     | Module to build               |
+| `--product <string>`    | Product to build              |
+| `--local`               | Force local build with Hvigor |
+
+### `rock run:harmony` Options
+
+The `run:harmony` command runs your HarmonyOS app on an emulator or device. It extends the functionality of `build:harmony` with additional runtime options.
+
+Same as for `build:harmony` and:
+
+| Option                   | Description                            |
+| :----------------------- | :------------------------------------- |
+| `--port <number>`        | Bundler port (default: 8081)           |
+| `--build-mode <string>`  | Build mode (debug/release)             |
+| `--product <string>`     | Product to build                       |
+| `--binary-path <string>` | Path to pre-built HAP binary           |
+| `--device <string>`      | Device/emulator to use (by name or ID) |
+| `--local`                | Force local build with Hvigor          |
+| `--ability <string>`     | Name of the ability to start           |
+
+## Plugin Bundler
+
+### `rock start` Options
+
+The `start` command launches a development server (either Re.Pack or Metro, depending on your bundler plugin) that connects to your apps through port 8081 by default. It provides features like Hot Module Reloading (HMR) and error reporting.
+
+| Option                                            | Description                                                                                 |
+| :------------------------------------------------ | :------------------------------------------------------------------------------------------ |
+| `--port <number>`                                 | Port to run the server on (default: 8081)                                                   |
+| `--host <string>`                                 | Host to run the server on (default: "")                                                     |
+| `--project-root <path>`, `--projectRoot <path>`   | Path to a custom project root                                                               |
+| `--watch-folders <list>`, `--watchFolders <list>` | Specify any additional folders to be added to the watch list                                |
+| `--asset-plugins <list>`, `--assetPlugins <list>` | Specify any additional asset plugins to be used by the packager by full filepath            |
+| `--source-exts <list>`,`--sourceExts <list>`      | Specify any additional source extensions to be used by the packager                         |
+| `--max-workers <number>`                          | Specifies the maximum number of workers the worker-pool will spawn for transforming files   |
+| `--transformer <string>`                          | Specify a custom transformer to be used                                                     |
+| `--reset-cache`, `--resetCache`                   | Removes cached files                                                                        |
+| `--custom-log-reporter-path <string>`             | Path to a JavaScript file that exports a log reporter as a replacement for TerminalReporter |
+| `--https`                                         | Enables https connections to the server                                                     |
+| `--key <path>`                                    | Path to custom SSL key                                                                      |
+| `--cert <path>`                                   | Path to custom SSL cert                                                                     |
+| `--config <string>`                               | Path to the CLI configuration file                                                          |
+| `--no-interactive`                                | Disables interactive mode                                                                   |
+| `--client-logs`                                   | [Deprecated] Enable plain text JavaScript log streaming for all connected apps              |
+
+### `rock bundle` Options
+
+The `bundle` command creates an optimized JavaScript bundle for your application, optionally using Hermes bytecode.
+
+| Option                                  | Description                                                                                          |
+| :-------------------------------------- | :--------------------------------------------------------------------------------------------------- |
+| `--entry-file <path>`                   | Path to the root JS file, either absolute or relative to JS root                                     |
+| `--platform <string>`                   | Either "ios", "android", or "harmony" (default: "ios")                                               |
+| `--transformer <string>`                | Specify a custom transformer to be used                                                              |
+| `--dev [boolean]`                       | If false, warnings are disabled and the bundle is minified (default: true)                           |
+| `--minify [boolean]`                    | Allows overriding whether bundle is minified. Defaults to false if dev is true, true if dev is false |
+| `--bundle-output <string>`              | File name where to store the resulting bundle, ex. /tmp/groups.bundle                                |
+| `--bundle-encoding <string>`            | Encoding the bundle should be written in (default: "utf8")                                           |
+| `--max-workers <number>`                | Specifies the maximum number of workers the worker-pool will spawn for transforming files            |
+| `--sourcemap-output <string>`           | File name where to store the sourcemap file for resulting bundle, ex. /tmp/groups.map                |
+| `--sourcemap-sources-root <string>`     | Path to make sourcemap's sources entries relative to, ex. /root/dir                                  |
+| `--sourcemap-use-absolute-path`         | Report SourceMapURL using its full path (default: false)                                             |
+| `--assets-dest <string>`                | Directory name where to store assets referenced in the bundle                                        |
+| `--unstable-transform-profile <string>` | Experimental, transform JS for a specific JS engine (default: "default")                             |
+| `--asset-catalog-dest [string]`         | Path where to create an iOS Asset Catalog for images                                                 |
+| `--reset-cache`                         | Removes cached files (default: false)                                                                |
+| `--read-global-cache`                   | Try to fetch transformed JS code from the global cache, if configured (default: false)               |
+| `--config <string>`                     | Path to the CLI configuration file                                                                   |
+| `--resolver-option <string...>`         | Custom resolver options of the form key=value. URL-encoded. May be specified multiple times          |
+| `--config-cmd [string]`                 | [Internal] A hack for Xcode build script pointing to wrong bundle command                            |
+| `--hermes`                              | Passes the output JS bundle to Hermes compiler and outputs a bytecode file                           |
+
+## Built-in plugins
+
+### `rock fingerprint` Options
+
+The `fingerprint` command calculates a unique hash that represents your project's native state. This hash is used for build caching and remains stable across builds unless you modify native files, change dependencies with native code, or update scripts in package.json.
+
+| Option                    | Description                                    |
+| :------------------------ | :--------------------------------------------- |
+| `-p, --platform <string>` | Select platform, e.g. ios, android, or harmony |
+| `--raw`                   | Output the raw fingerprint hash for piping     |
+
+**Arguments:**
+
+- `[path]` - Directory to calculate fingerprint for (optional)
+
+### `rock config` Options
+
+The `config` command outputs the autolinking configuration from Community CLI, which is useful for debugging and understanding how dependencies are linked.
+
+| Option                    | Description                                    |
+| :------------------------ | :--------------------------------------------- |
+| `-p, --platform <string>` | Select platform, e.g. ios, android, or harmony |
+
 ### `rock clean` Options
 
 The `clean` command helps you free up disk space by removing various caches and temporary files from your React Native project. It can clean Android (Gradle), iOS (CocoaPods), Metro, Watchman, Rock's own project caches, and package manager caches.
@@ -316,6 +377,8 @@ The `clean` command helps you free up disk space by removing various caches and 
 | `--include <string>` | Comma-separated list of caches to clean. Available options: `android`, `gradle`, `cocoapods`, `metro`, `watchman`, `npm`, `yarn`, `bun`, `pnpm`, `rock` |
 | `--verify-cache`     | Whether to verify the cache (currently only applies to npm cache)                                                                                       |
 | `--all`              | Clean all available caches without interactive prompt                                                                                                   |
+
+## Plugin Remote Cache
 
 ### `rock remote-cache` Actions and Options
 

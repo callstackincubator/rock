@@ -1,6 +1,6 @@
 # @rock-js/platform-harmony
 
-Android platform integration for Rock. This package is part of the Rock ecosystem and provides Android-specific build and development tools.
+HarmonyOS Next platform integration for Rock. This package is part of the Rock ecosystem and provides HarmonyOS-specific build and development tools.
 
 ## Documentation
 

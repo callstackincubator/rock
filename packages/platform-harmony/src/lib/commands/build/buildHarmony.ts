@@ -6,7 +6,6 @@ import {
   getBinaryPath,
   logger,
   outro,
-  parseArgs,
   relativeToCwd,
 } from '@rock-js/tools';
 import { findOutputFile } from '../run/findOutputFile.js';
@@ -16,7 +15,6 @@ export interface BuildFlags {
   buildMode: string;
   module: string;
   product: string;
-  extraParams?: Array<string>;
   local?: boolean;
 }
 
@@ -79,15 +77,6 @@ export async function buildHarmony(
 }
 
 export const options = [
-  {
-    name: '--variant <string>',
-    description: `Specify your app's build variant, which is constructed from build type and product flavor, e.g. "debug" or "freeRelease".`,
-  },
-  {
-    name: '--extra-params <string>',
-    description: 'Custom params passed to gradle build command',
-    parse: parseArgs,
-  },
   {
     name: '--local',
     description: 'Force local build with Gradle wrapper.',
