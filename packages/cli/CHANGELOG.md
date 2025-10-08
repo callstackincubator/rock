@@ -1,5 +1,15 @@
 # rock
 
+## 0.11.6
+
+### Patch Changes
+
+- 810cafa: website: update wording to emphasize Rock's strengths
+- b47210e: feat: add experimental support for HarmonyOS platform
+- Updated dependencies [b47210e]
+  - @rock-js/tools@0.11.6
+  - @rock-js/config@0.11.6
+
 ## 0.11.5
 
 ### Patch Changes

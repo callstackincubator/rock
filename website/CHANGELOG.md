@@ -1,5 +1,12 @@
 # rock-docs
 
+## 1.3.4
+
+### Patch Changes
+
+- 810cafa: website: update wording to emphasize Rock's strengths
+- b47210e: feat: add experimental support for HarmonyOS platform
+
 ## 1.3.3
 
 ### Patch Changes
