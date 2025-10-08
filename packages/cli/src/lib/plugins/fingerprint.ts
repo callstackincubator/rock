@@ -33,7 +33,7 @@ function redactSensitiveSources(sources: FingerprintInputHash[]) {
 }
 
 type NativeFingerprintCommandOptions = {
-  platform: 'ios' | 'android';
+  platform: 'ios' | 'android' | 'harmony';
   raw?: boolean;
 };
 
@@ -44,7 +44,12 @@ export async function nativeFingerprintCommand(
 ) {
   validateOptions(options);
   const platform = options.platform;
-  const readablePlatformName = platform === 'ios' ? 'iOS' : 'Android';
+  const readablePlatformName =
+    platform === 'ios'
+      ? 'iOS'
+      : platform === 'android'
+        ? 'Android'
+        : 'HarmonyOS';
 
   if (options.raw || !isInteractive()) {
     const fingerprint = await nativeFingerprint(path, {
