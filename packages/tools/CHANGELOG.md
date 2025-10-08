@@ -1,5 +1,11 @@
 # @rnef/tools
 
+## 0.11.6
+
+### Patch Changes
+
+- b47210e: feat: add experimental support for HarmonyOS platform
+
 ## 0.11.5
 
 ### Patch Changes
