@@ -7,6 +7,7 @@
 
 import path from 'node:path';
 import type { PluginApi } from '@rock-js/config';
+import type { StartDevServerArgs } from '@rock-js/config';
 import { findDevServerPort, intro } from '@rock-js/tools';
 import type { StartCommandArgs } from './runServer.js';
 import runServer from './runServer.js';
@@ -17,15 +18,9 @@ export async function startDevServer({
   reactNativeVersion,
   reactNativePath,
   platforms,
-}: {
-  root: string;
-  args: StartCommandArgs;
-  reactNativeVersion: string;
-  reactNativePath: string;
-  platforms: Record<string, object>;
-}) {
+}: StartDevServerArgs) {
   const { port, startDevServer } = await findDevServerPort(
-    args.port ?? 8081,
+    args.port ? Number(args.port) : 8081,
     root
   );
 
@@ -35,7 +30,7 @@ export async function startDevServer({
 
   return runServer(
     { root, reactNativeVersion, reactNativePath, platforms },
-    { ...args, port }
+    { ...args, port, platforms: Object.keys(platforms) }
   );
 }
 

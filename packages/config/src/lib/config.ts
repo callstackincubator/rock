@@ -2,7 +2,7 @@ import * as fs from 'node:fs';
 import { createRequire } from 'node:module';
 import * as path from 'node:path';
 import { pathToFileURL } from 'node:url';
-import { FingerprintSources, RemoteBuildCache } from '@rock-js/tools';
+import type { FingerprintSources, RemoteBuildCache } from '@rock-js/tools';
 import { colorLink, getReactNativeVersion, logger } from '@rock-js/tools';
 import type { ValidationError } from 'joi';
 import { ConfigTypeSchema } from './schema.js';
@@ -13,14 +13,26 @@ export type PluginOutput = {
   description: string;
 };
 
-type StartDevServerFunction = (options: {
+export type DevServerArgs = {
+  interactive: boolean;
+  clientLogs: boolean;
+  port?: string;
+  host?: string;
+  https?: boolean;
+  resetCache?: boolean;
+  platforms?: string[];
+  [key: string]: unknown;
+};
+
+export type StartDevServerArgs = {
   root: string;
-  // TODO fix type
-  args: any;
+  args: DevServerArgs;
   reactNativeVersion: string;
   reactNativePath: string;
   platforms: Record<string, object>;
-}) => Promise<void>;
+};
+
+type StartDevServerFunction = (options: StartDevServerArgs) => Promise<void>;
 
 export type BundlerPluginOutput = {
   name: string;
@@ -41,15 +53,8 @@ export type PluginApi = {
   getRemoteCacheProvider: () => Promise<
     null | undefined | (() => RemoteBuildCache)
   >;
-<<<<<<< HEAD
   getFingerprintOptions: () => FingerprintSources;
-=======
-  getFingerprintOptions: () => {
-    extraSources: string[];
-    ignorePaths: string[];
-  };
->>>>>>> 83e802f (make it run)
-  getBundlerStart: () => ({ args }: { args: any }) => void;
+  getBundlerStart: () => ({ args }: { args: DevServerArgs }) => void;
 };
 
 type PluginType = (args: PluginApi) => PluginOutput;
@@ -102,6 +107,7 @@ export type ConfigOutput = {
   root: string;
   commands?: Array<CommandType>;
   platforms?: Record<string, PlatformOutput>;
+  bundler?: BundlerPluginOutput;
 } & PluginApi;
 
 const extensions = ['.js', '.ts', '.mjs'];
@@ -209,10 +215,10 @@ Read more: ${colorLink('https://rockjs.dev/docs/configuration#github-actions-pro
       }
       return validatedConfig.remoteCacheProvider;
     },
-    getFingerprintOptions: () => FingerprintSources,
+    getFingerprintOptions: () => validatedConfig.fingerprint as FingerprintSources,
     getBundlerStart:
       () =>
-      ({ args }: { args: any }) => {
+      ({ args }: { args: DevServerArgs }) => {
         return bundler?.start({
           root: api.getProjectRoot(),
           args,
@@ -240,12 +246,11 @@ Read more: ${colorLink('https://rockjs.dev/docs/configuration#github-actions-pro
   }
 
   if (validatedConfig.bundler) {
-    // @ts-expect-error tbd
     bundler = assignOriginToCommand(
       validatedConfig.bundler,
       api,
       validatedConfig
-    );
+    ) as BundlerPluginOutput;
   }
 
   for (const internalPlugin of internalPlugins) {
@@ -260,7 +265,6 @@ Read more: ${colorLink('https://rockjs.dev/docs/configuration#github-actions-pro
     root: projectRoot,
     commands: validatedConfig.commands ?? [],
     platforms: platforms ?? {},
-    // @ts-expect-error tbd
     bundler,
     ...api,
   };
