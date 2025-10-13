@@ -36,6 +36,7 @@ export const createRun = async ({
   fingerprintOptions,
   reactNativePath,
   reactNativeVersion,
+  platforms,
   startDevServer,
 }: {
   platformName: ApplePlatform;
@@ -46,23 +47,10 @@ export const createRun = async ({
   fingerprintOptions: FingerprintSources;
   reactNativePath: string;
   reactNativeVersion: string;
+  platforms: { [platform: string]: object };
   startDevServer?: (options: StartDevServerArgs) => void;
 }) => {
   validateArgs(args, projectRoot);
-
-  if (startDevServer) {
-    logger.info('Starting dev server...');
-    startDevServer({
-      root: projectRoot,
-      reactNativePath,
-      reactNativeVersion,
-      platforms: { ios: {}, android: {} },
-      args: {
-        interactive: isInteractive(),
-        clientLogs: true,
-      },
-    });
-  }
 
   const deviceOrSimulator = args.destination
     ? // there can be multiple destinations, so we'll pick the first one
@@ -111,6 +99,21 @@ export const createRun = async ({
       deviceOrSimulator,
       fingerprintOptions,
     });
+    
+    if (startDevServer) {
+      logger.info('Starting dev server...');
+      startDevServer({
+        root: projectRoot,
+        reactNativePath,
+        reactNativeVersion,
+        platforms,
+        args: {
+          interactive: isInteractive(),
+          clientLogs: args.clientLogs ?? true,
+        },
+      });
+    }
+    
     await runOnMac(appPath);
     return;
   } else if (args.catalyst) {
@@ -127,6 +130,22 @@ export const createRun = async ({
       deviceOrSimulator,
       fingerprintOptions,
     });
+    
+    // Start dev server after build completes to avoid log clashing
+    if (startDevServer) {
+      logger.info('Starting dev server...');
+      startDevServer({
+        root: projectRoot,
+        reactNativePath,
+        reactNativeVersion,
+        platforms,
+        args: {
+          interactive: isInteractive(),
+          clientLogs: args.clientLogs ?? true,
+        },
+      });
+    }
+    
     if (scheme) {
       await runOnMacCatalyst(appPath, scheme);
       return;
@@ -147,7 +166,7 @@ export const createRun = async ({
   if (device) {
     if (device.type !== deviceOrSimulator) {
       throw new RockError(
-        `Selected device "${device.name}" is not a ${deviceOrSimulator}. 
+        `Selected device "${device.name}" is not a ${deviceOrSimulator}.
 Please either use "--destination ${
           deviceOrSimulator === 'simulator' ? 'device' : 'simulator'
         }" flag or select available ${deviceOrSimulator}:
@@ -174,6 +193,22 @@ ${devices
           fingerprintOptions,
         }),
       ]);
+      
+      // Start dev server after build completes to avoid log clashing
+      if (startDevServer) {
+        logger.info('Starting dev server...');
+        startDevServer({
+          root: projectRoot,
+          reactNativePath,
+          reactNativeVersion,
+          platforms,
+          args: {
+            interactive: isInteractive(),
+            clientLogs: args.clientLogs ?? true,
+          },
+        });
+      }
+      
       await runOnSimulator(device, appPath, infoPlistPath);
     } else if (device.type === 'device') {
       const { appPath, bundleIdentifier } = await buildApp({
@@ -188,6 +223,22 @@ ${devices
         deviceOrSimulator,
         fingerprintOptions,
       });
+      
+      // Start dev server after build completes to avoid log clashing
+      if (startDevServer) {
+        logger.info('Starting dev server...');
+        startDevServer({
+          root: projectRoot,
+          reactNativePath,
+          reactNativeVersion,
+          platforms,
+          args: {
+            interactive: isInteractive(),
+            clientLogs: args.clientLogs ?? true,
+          },
+        });
+      }
+      
       await runOnDevice(
         device,
         appPath,
@@ -242,6 +293,22 @@ ${devices
             fingerprintOptions,
           }),
         ]);
+      
+      // Start dev server after build completes to avoid log clashing
+      if (startDevServer) {
+        logger.info('Starting dev server...');
+        startDevServer({
+          root: projectRoot,
+          reactNativePath,
+          reactNativeVersion,
+          platforms,
+          args: {
+            interactive: isInteractive(),
+            clientLogs: args.clientLogs ?? true,
+          },
+        });
+      }
+      
       if (bootedDevice.type === 'simulator') {
         await runOnSimulator(bootedDevice, appPath, infoPlistPath);
       } else {

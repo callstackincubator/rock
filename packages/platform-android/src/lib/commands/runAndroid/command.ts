@@ -23,7 +23,8 @@ export function registerRunCommand(
         api.getFingerprintOptions(),
         api.getBundlerStart(),
         api.getReactNativeVersion(),
-        api.getReactNativePath()
+        api.getReactNativePath(),
+        api.getPlatforms()
       );
     },
     options: runOptions,

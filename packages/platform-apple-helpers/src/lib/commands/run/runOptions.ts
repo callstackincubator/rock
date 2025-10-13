@@ -8,6 +8,7 @@ export interface RunFlags extends BuildFlags {
   device?: string;
   catalyst?: boolean;
   local?: boolean;
+  clientLogs?: boolean;
 }
 
 export const getRunOptions = ({ platformName }: BuilderCommand) => {
@@ -29,6 +30,10 @@ export const getRunOptions = ({ platformName }: BuilderCommand) => {
     {
       name: '--catalyst',
       description: 'Run on Mac Catalyst.',
+    },
+    {
+      name: '--client-logs',
+      description: 'Enable client logs in dev server.',
     },
     ...getBuildOptions({ platformName }),
   ];

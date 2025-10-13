@@ -62,6 +62,7 @@ export const platformIOS =
           fingerprintOptions: api.getFingerprintOptions(),
           reactNativePath: api.getReactNativePath(),
           reactNativeVersion: api.getReactNativeVersion(),
+          platforms: api.getPlatforms(),
           startDevServer: api.getBundlerStart(),
         });
         outro('Success 🎉.');

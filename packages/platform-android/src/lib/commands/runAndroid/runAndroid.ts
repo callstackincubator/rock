@@ -38,6 +38,7 @@ export interface Flags extends BuildFlags {
   binaryPath?: string;
   user?: string;
   local?: boolean;
+  clientLogs?: boolean;
 }
 
 export type AndroidProject = NonNullable<Config['project']['android']>;
@@ -53,7 +54,8 @@ export async function runAndroid(
   fingerprintOptions: FingerprintSources,
   startDevServer: (options: StartDevServerArgs) => void,
   reactNativeVersion: string,
-  reactNativePath: string
+  reactNativePath: string,
+  platforms: { [platform: string]: object }
 ) {
   intro('Running Android app');
 
@@ -86,10 +88,10 @@ export async function runAndroid(
     root: projectRoot,
     reactNativePath,
     reactNativeVersion,
-    platforms: { ios: {}, android: {} },
+    platforms,
     args: {
       interactive: isInteractive(),
-      clientLogs: true,
+      clientLogs: args.clientLogs ?? true,
     },
   });
 
@@ -294,5 +296,9 @@ export const runOptions = [
   {
     name: '--user <number>',
     description: 'Id of the User Profile you want to install the app on.',
+  },
+  {
+    name: '--client-logs',
+    description: 'Enable client logs in dev server.',
   },
 ];
