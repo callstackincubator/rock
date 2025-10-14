@@ -12,6 +12,7 @@ import {
   RockError,
   spawn,
   spinner,
+  versionCompare,
 } from '@rock-js/tools';
 import type { ApplePlatform } from '../types/index.js';
 import runCodegen from './codegen.js';
@@ -123,10 +124,7 @@ async function runPodInstall(options: {
   loader.start('Installing CocoaPods dependencies');
   const reactNativeVersion = await getReactNativeVersion(options.projectRoot);
   const isReactNative81OrHigher =
-    reactNativeVersion.localeCompare('0.81.0', undefined, {
-      numeric: true,
-      sensitivity: 'base',
-    }) >= 0;
+    versionCompare('0.81.0', reactNativeVersion) >= 0;
   const usePrebuiltReactNative = !options.brownfield && isReactNative81OrHigher;
   const command = options.useBundler ? 'bundle' : 'pod';
   const args = options.useBundler ? ['exec', 'pod', 'install'] : ['install'];
