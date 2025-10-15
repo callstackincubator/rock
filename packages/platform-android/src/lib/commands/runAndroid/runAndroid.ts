@@ -83,18 +83,6 @@ export async function runAndroid(
     sourceDir: androidProject.sourceDir,
   });
 
-  logger.info('Starting dev server...');
-  startDevServer({
-    root: projectRoot,
-    reactNativePath,
-    reactNativeVersion,
-    platforms,
-    args: {
-      interactive: isInteractive(),
-      clientLogs: args.clientLogs ?? true,
-    },
-  });
-
   if (device) {
     if (!(await getDevices()).find((d) => d === device.deviceId)) {
       // deviceId is undefined until it's launched, hence overwriting it here
@@ -106,6 +94,18 @@ export async function runAndroid(
       }
       await runOnDevice({ device, androidProject, args, tasks, binaryPath });
     }
+
+    logger.info('Starting dev serverhhhh...');
+    startDevServer({
+      root: projectRoot,
+      reactNativePath,
+      reactNativeVersion,
+      platforms,
+      args: {
+        interactive: isInteractive(),
+        clientLogs: args.clientLogs ?? true,
+      },
+    });
   } else {
     if ((await getDevices()).length === 0) {
       if (isInteractive()) {
@@ -127,6 +127,17 @@ export async function runAndroid(
         await runOnDevice({ device, androidProject, args, tasks, binaryPath });
       }
     }
+    logger.info('Starting dev server...');
+    startDevServer({
+      root: projectRoot,
+      reactNativePath,
+      reactNativeVersion,
+      platforms,
+      args: {
+        interactive: isInteractive(),
+        clientLogs: args.clientLogs ?? true,
+      },
+    });
   }
 
   outro('Success 🎉.');

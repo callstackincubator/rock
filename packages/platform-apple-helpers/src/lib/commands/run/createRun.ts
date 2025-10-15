@@ -48,8 +48,22 @@ export const createRun = async ({
   reactNativePath: string;
   reactNativeVersion: string;
   platforms: { [platform: string]: object };
-  startDevServer?: (options: StartDevServerArgs) => void;
+  startDevServer: (options: StartDevServerArgs) => void;
 }) => {
+
+  const startDevServerHelper = () => {
+    logger.info('Starting dev server...');
+    startDevServer({
+      root: projectRoot,
+      reactNativePath,
+      reactNativeVersion,
+      platforms,
+      args: {
+        interactive: isInteractive(),
+        clientLogs: args.clientLogs ?? true,
+      },
+    });
+  };
   validateArgs(args, projectRoot);
 
   const deviceOrSimulator = args.destination
@@ -100,21 +114,10 @@ export const createRun = async ({
       fingerprintOptions,
     });
     
-    if (startDevServer) {
-      logger.info('Starting dev server...');
-      startDevServer({
-        root: projectRoot,
-        reactNativePath,
-        reactNativeVersion,
-        platforms,
-        args: {
-          interactive: isInteractive(),
-          clientLogs: args.clientLogs ?? true,
-        },
-      });
-    }
+
     
     await runOnMac(appPath);
+    startDevServerHelper();
     return;
   } else if (args.catalyst) {
     const { appPath, scheme } = await buildApp({
@@ -131,23 +134,11 @@ export const createRun = async ({
       fingerprintOptions,
     });
     
-    // Start dev server after build completes to avoid log clashing
-    if (startDevServer) {
-      logger.info('Starting dev server...');
-      startDevServer({
-        root: projectRoot,
-        reactNativePath,
-        reactNativeVersion,
-        platforms,
-        args: {
-          interactive: isInteractive(),
-          clientLogs: args.clientLogs ?? true,
-        },
-      });
-    }
-    
+
+
     if (scheme) {
       await runOnMacCatalyst(appPath, scheme);
+      startDevServerHelper();
       return;
     } else {
       throw new RockError('Failed to get project scheme');
@@ -194,22 +185,10 @@ ${devices
         }),
       ]);
       
-      // Start dev server after build completes to avoid log clashing
-      if (startDevServer) {
-        logger.info('Starting dev server...');
-        startDevServer({
-          root: projectRoot,
-          reactNativePath,
-          reactNativeVersion,
-          platforms,
-          args: {
-            interactive: isInteractive(),
-            clientLogs: args.clientLogs ?? true,
-          },
-        });
-      }
-      
+
+
       await runOnSimulator(device, appPath, infoPlistPath);
+      startDevServerHelper();
     } else if (device.type === 'device') {
       const { appPath, bundleIdentifier } = await buildApp({
         args,
@@ -224,27 +203,14 @@ ${devices
         fingerprintOptions,
       });
       
-      // Start dev server after build completes to avoid log clashing
-      if (startDevServer) {
-        logger.info('Starting dev server...');
-        startDevServer({
-          root: projectRoot,
-          reactNativePath,
-          reactNativeVersion,
-          platforms,
-          args: {
-            interactive: isInteractive(),
-            clientLogs: args.clientLogs ?? true,
-          },
-        });
-      }
-      
       await runOnDevice(
         device,
         appPath,
         projectConfig.sourceDir,
         bundleIdentifier,
       );
+      startDevServerHelper();
+
     }
     return;
   } else {
@@ -294,21 +260,6 @@ ${devices
           }),
         ]);
       
-      // Start dev server after build completes to avoid log clashing
-      if (startDevServer) {
-        logger.info('Starting dev server...');
-        startDevServer({
-          root: projectRoot,
-          reactNativePath,
-          reactNativeVersion,
-          platforms,
-          args: {
-            interactive: isInteractive(),
-            clientLogs: args.clientLogs ?? true,
-          },
-        });
-      }
-      
       if (bootedDevice.type === 'simulator') {
         await runOnSimulator(bootedDevice, appPath, infoPlistPath);
       } else {
@@ -320,6 +271,7 @@ ${devices
         );
       }
     }
+    startDevServerHelper();
   }
 };
 
