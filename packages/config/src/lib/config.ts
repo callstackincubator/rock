@@ -20,6 +20,7 @@ export type DevServerArgs = {
   host?: string;
   https?: boolean;
   resetCache?: boolean;
+  devServer?: boolean;
   platforms?: string[];
   [key: string]: unknown;
 };

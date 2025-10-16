@@ -38,6 +38,7 @@ export interface Flags extends BuildFlags {
   binaryPath?: string;
   user?: string;
   local?: boolean;
+  devServer?: boolean;
   clientLogs?: boolean;
 }
 
@@ -58,6 +59,22 @@ export async function runAndroid(
   platforms: { [platform: string]: object }
 ) {
   intro('Running Android app');
+
+  const startDevServerHelper = () => {
+    if(args.devServer) {
+          logger.info('🔍 Starting dev server...');
+          startDevServer({
+            root: projectRoot,
+            reactNativePath,
+            reactNativeVersion,
+            platforms,
+            args: {
+              interactive: isInteractive(),
+              clientLogs: args.clientLogs ?? true,
+            },
+          });
+        }
+      };
 
   normalizeArgs(args, projectRoot);
 
@@ -95,17 +112,7 @@ export async function runAndroid(
       await runOnDevice({ device, androidProject, args, tasks, binaryPath });
     }
 
-    logger.info('Starting dev serverhhhh...');
-    startDevServer({
-      root: projectRoot,
-      reactNativePath,
-      reactNativeVersion,
-      platforms,
-      args: {
-        interactive: isInteractive(),
-        clientLogs: args.clientLogs ?? true,
-      },
-    });
+    startDevServerHelper();
   } else {
     if ((await getDevices()).length === 0) {
       if (isInteractive()) {
@@ -127,17 +134,7 @@ export async function runAndroid(
         await runOnDevice({ device, androidProject, args, tasks, binaryPath });
       }
     }
-    logger.info('Starting dev server...');
-    startDevServer({
-      root: projectRoot,
-      reactNativePath,
-      reactNativeVersion,
-      platforms,
-      args: {
-        interactive: isInteractive(),
-        clientLogs: args.clientLogs ?? true,
-      },
-    });
+    startDevServerHelper();
   }
 
   outro('Success 🎉.');
@@ -311,5 +308,9 @@ export const runOptions = [
   {
     name: '--client-logs',
     description: 'Enable client logs in dev server.',
+  },
+  {
+    name: '--dev-server',
+    description: 'Enable automatic bundler detection and switching for Android apps.',
   },
 ];

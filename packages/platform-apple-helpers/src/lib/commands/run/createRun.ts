@@ -52,17 +52,19 @@ export const createRun = async ({
 }) => {
 
   const startDevServerHelper = () => {
-    logger.info('Starting dev server...');
-    startDevServer({
-      root: projectRoot,
-      reactNativePath,
-      reactNativeVersion,
-      platforms,
-      args: {
-        interactive: isInteractive(),
-        clientLogs: args.clientLogs ?? true,
-      },
-    });
+    if (args.devServer) {
+      logger.info('Starting dev server...');
+      startDevServer({
+        root: projectRoot,
+        reactNativePath,
+        reactNativeVersion,
+        platforms,
+        args: {
+          interactive: isInteractive(),
+          clientLogs: args.clientLogs ?? true,
+        },
+      });
+    }
   };
   validateArgs(args, projectRoot);
 
@@ -113,9 +115,7 @@ export const createRun = async ({
       deviceOrSimulator,
       fingerprintOptions,
     });
-    
 
-    
     await runOnMac(appPath);
     startDevServerHelper();
     return;
@@ -133,7 +133,6 @@ export const createRun = async ({
       deviceOrSimulator,
       fingerprintOptions,
     });
-    
 
 
     if (scheme) {
@@ -184,8 +183,6 @@ ${devices
           fingerprintOptions,
         }),
       ]);
-      
-
 
       await runOnSimulator(device, appPath, infoPlistPath);
       startDevServerHelper();
@@ -202,7 +199,7 @@ ${devices
         deviceOrSimulator,
         fingerprintOptions,
       });
-      
+
       await runOnDevice(
         device,
         appPath,
@@ -210,7 +207,6 @@ ${devices
         bundleIdentifier,
       );
       startDevServerHelper();
-
     }
     return;
   } else {
@@ -259,7 +255,7 @@ ${devices
             fingerprintOptions,
           }),
         ]);
-      
+
       if (bootedDevice.type === 'simulator') {
         await runOnSimulator(bootedDevice, appPath, infoPlistPath);
       } else {

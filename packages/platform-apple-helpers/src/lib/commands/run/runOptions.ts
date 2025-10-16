@@ -8,6 +8,7 @@ export interface RunFlags extends BuildFlags {
   device?: string;
   catalyst?: boolean;
   local?: boolean;
+  devServer?: boolean;
   clientLogs?: boolean;
 }
 
@@ -34,6 +35,10 @@ export const getRunOptions = ({ platformName }: BuilderCommand) => {
     {
       name: '--client-logs',
       description: 'Enable client logs in dev server.',
+    },
+    {
+      name: '--dev-server',
+      description: 'Disable dev server startup for iOS apps (use local bundle only).',
     },
     ...getBuildOptions({ platformName }),
   ];
