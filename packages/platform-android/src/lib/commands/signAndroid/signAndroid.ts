@@ -93,21 +93,14 @@ export async function signAndroid(options: SignAndroidOptions) {
     );
   }
 
-  // 4. Align archive before signing if apk
-  // sign/align sequence is important, see https://developer.android.com/tools/zipalign
   const outputPath = options.outputPath ?? options.binaryPath;
 
-  const alignArchive = async () => {
-    loader.start('Aligning output file...');
-    await alignArchiveFile(tempArchivePath, outputPath);
-    loader.stop(
-      `Created output ${extension.toUpperCase()} file: ${colorLink(relativeToCwd(outputPath))}.`,
-    );
-  }
-
-  if (!isAab(options.binaryPath)) {
-    await alignArchive()
-  }
+  // 4. Align archive
+  loader.start('Aligning output file...');
+  await alignArchiveFile(tempArchivePath, outputPath);
+  loader.stop(
+    `Created output ${extension.toUpperCase()} file: ${colorLink(relativeToCwd(outputPath))}.`,
+  );
 
   // 5. Sign archive file
   loader.start(`Signing the ${extension.toUpperCase()} file...`);
@@ -120,19 +113,10 @@ export async function signAndroid(options: SignAndroidOptions) {
     keyAlias: options.keyAlias,
     keyPassword: options.keyPassword,
   }
-  
-  if (isAab(options.binaryPath)) {
-    await signAab(signArgs);
-  } else {
-    await signApk(signArgs);
-  }
-  loader.stop(`Signed the ${extension.toUpperCase()} file with keystore: ${colorLink(keystorePath)}.`);
 
-  // 6. Align archive after signing if aab
-  // sign/align sequence is important, see https://developer.android.com/tools/zipalign
-  if (isAab(options.binaryPath)) {
-    await alignArchive()
-  }
+  await signArchive(signArgs);
+
+  loader.stop(`Signed the ${extension.toUpperCase()} file with keystore: ${colorLink(keystorePath)}.`);
 
   outro('Success 🎉.');
 }
@@ -223,46 +207,7 @@ type SignOptions = {
   keyPassword?: string;
 };
 
-async function signAab({
-  binaryPath,
-  keystorePath,
-  keystorePassword,
-  keyAlias,
-  keyPassword,
-}: SignOptions) {
-  if (!fs.existsSync(keystorePath)) {
-    throw new RockError(
-      `Keystore file not found "${keystorePath}". Provide a valid keystore path using the "--keystore" option.`,
-    );
-  }
-
-  if (!keyAlias) {
-    throw new RockError('Missing or empty alias. A valid alias must be provided using the "--key-alias" option.')
-  }
-
-  // For AAB files, we use jarsigner instead of apksigner
-  // jarsigner -keystore "" -storepass "" -keypass "" <path> <alias>
-  const jarsignerArgs = [
-    "-keystore",
-    keystorePath,
-    "-storepass",
-    stripPassword(keystorePassword),
-    ...(keyPassword ? ['-keypass', stripPassword(keyPassword)] : []),
-    binaryPath,
-    keyAlias
-  ];
-
-  try {
-    await spawn('jarsigner', jarsignerArgs);
-  } catch (error) {
-    throw new RockError(
-      `Failed to sign AAB file: jarsigner ${jarsignerArgs.join(' ')}`,
-      { cause: (error as SubprocessError).stderr },
-    );
-  }
-}
-
-async function signApk({
+async function signArchive({
   binaryPath,
   keystorePath,
   keystorePassword,
@@ -285,6 +230,8 @@ Please follow instructions at: https://reactnative.dev/docs/set-up-your-environm
     );
   }
 
+  const aabArgs = isAab(binaryPath) ? ['--min-sdk-version', '24'] : [];
+
   // apksigner sign --ks-pass "pass:android" --ks "android/app/debug.keystore" --ks-key-alias "androiddebugkey" --key-pass "pass:android" "$OUTPUT2_APK"
   const apksignerArgs = [
     'sign',
@@ -294,6 +241,7 @@ Please follow instructions at: https://reactnative.dev/docs/set-up-your-environm
     formatPassword(keystorePassword),
     ...(keyAlias ? ['--ks-key-alias', keyAlias] : []),
     ...(keyPassword ? ['--key-pass', formatPassword(keyPassword)] : []),
+    ...aabArgs,
     binaryPath,
   ];
 
@@ -323,15 +271,6 @@ function formatPassword(password: string) {
   }
 
   return `pass:${password}`;
-}
-
-/**
- * jarsigner expects password info with no prefixes
- *
- * @see https://docs.oracle.com/javase/6/docs/technotes/tools/windows/jarsigner.html
- */
-function stripPassword(password: string) {
-  return password.replace(/^(pass:|env:|file:)/, '');
 }
 
 function getSignOutputPath() {
