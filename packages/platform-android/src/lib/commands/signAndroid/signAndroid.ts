@@ -154,7 +154,7 @@ async function replaceJsBundle({
     zip.writeZip(archivePath);
   } catch (error) {
     throw new RockError(
-      `Failed to replace JS bundle in destination file: ${archivePath}}`,
+      `Failed to replace JS bundle in destination file: ${archivePath}`,
       { cause: error },
     );
   }
