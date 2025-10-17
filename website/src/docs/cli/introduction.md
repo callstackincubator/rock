@@ -208,6 +208,7 @@ The `sign:ios` command either signs your iOS app with certificates and provision
 | `--build-jsbundle`    | Build JS bundle before signing                                      |
 | `--jsbundle <string>` | Path to JS bundle to apply before signing                           |
 | `--no-hermes`         | Don't use Hermes for JS bundle                                      |
+| `--min-sdk-version`   | API level apksigner will use to determine signing strength.         |
 
 ## Platform Android
 
