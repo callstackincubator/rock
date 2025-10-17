@@ -25,6 +25,7 @@ export type SignAndroidOptions = {
   buildJsBundle?: boolean;
   jsBundlePath?: string;
   useHermes?: boolean;
+  minSdkVersion?: string;
 };
 
 export async function signAndroid(options: SignAndroidOptions) {
@@ -110,6 +111,7 @@ export async function signAndroid(options: SignAndroidOptions) {
     keystorePassword: options.keystorePassword ?? 'pass:android',
     keyAlias: options.keyAlias,
     keyPassword: options.keyPassword,
+    minSdkVersion: options.minSdkVersion,
   });
   loader.stop(`Signed the ${extension.toUpperCase()} file with keystore: ${colorLink(keystorePath)}.`);
 
@@ -200,6 +202,7 @@ type SignOptions = {
   keystorePassword: string;
   keyAlias?: string;
   keyPassword?: string;
+  minSdkVersion?: string;
 };
 
 async function signArchive({
@@ -208,6 +211,7 @@ async function signArchive({
   keystorePassword,
   keyAlias,
   keyPassword,
+  minSdkVersion
 }: SignOptions) {
   if (!fs.existsSync(keystorePath)) {
     throw new RockError(
@@ -225,8 +229,6 @@ Please follow instructions at: https://reactnative.dev/docs/set-up-your-environm
     );
   }
 
-  const aabArgs = isAab(binaryPath) ? ['--min-sdk-version', '24'] : [];
-
   // apksigner sign --ks-pass "pass:android" --ks "android/app/debug.keystore" --ks-key-alias "androiddebugkey" --key-pass "pass:android" "$OUTPUT2_APK"
   const apksignerArgs = [
     'sign',
@@ -236,7 +238,7 @@ Please follow instructions at: https://reactnative.dev/docs/set-up-your-environm
     formatPassword(keystorePassword),
     ...(keyAlias ? ['--ks-key-alias', keyAlias] : []),
     ...(keyPassword ? ['--key-pass', formatPassword(keyPassword)] : []),
-    ...aabArgs,
+    ...getSdkVersionArgs(isAab(binaryPath), minSdkVersion),
     binaryPath,
   ];
 
@@ -270,6 +272,14 @@ function formatPassword(password: string) {
 
 function getSignOutputPath() {
   return path.join(getDotRockPath(), 'android/sign');
+}
+
+function getSdkVersionArgs(aab?: boolean, minSdkVersion?: string) {
+  if (!aab && !minSdkVersion) {
+    return [];
+  }
+
+  return ['--min-sdk-version', minSdkVersion || '36'];
 }
 
 function isAab(filePath: string): boolean {
