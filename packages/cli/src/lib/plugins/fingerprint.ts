@@ -33,7 +33,7 @@ function redactSensitiveSources(sources: FingerprintInputHash[]) {
 }
 
 type NativeFingerprintCommandOptions = {
-  platform: 'ios' | 'android';
+  platform: 'ios' | 'android' | 'harmony';
   raw?: boolean;
 };
 
@@ -44,7 +44,12 @@ export async function nativeFingerprintCommand(
 ) {
   validateOptions(options);
   const platform = options.platform;
-  const readablePlatformName = platform === 'ios' ? 'iOS' : 'Android';
+  const readablePlatformName =
+    platform === 'ios'
+      ? 'iOS'
+      : platform === 'android'
+        ? 'Android'
+        : 'HarmonyOS';
 
   if (options.raw || !isInteractive()) {
     const fingerprint = await nativeFingerprint(path, {
@@ -106,12 +111,16 @@ export async function nativeFingerprintCommand(
 function validateOptions(options: NativeFingerprintCommandOptions) {
   if (!options.platform) {
     throw new RockError(
-      'The --platform flag is required. Please specify either "ios" or "android".',
+      'The --platform flag is required. Please specify either "ios", "android" or "harmony".',
     );
   }
-  if (options.platform !== 'ios' && options.platform !== 'android') {
+  if (
+    options.platform !== 'ios' &&
+    options.platform !== 'android' &&
+    options.platform !== 'harmony'
+  ) {
     throw new RockError(
-      `Unsupported platform "${options.platform}". Please specify either "ios" or "android".`,
+      `Unsupported platform "${options.platform}". Please specify either "ios", "android" or "harmony".`,
     );
   }
 }

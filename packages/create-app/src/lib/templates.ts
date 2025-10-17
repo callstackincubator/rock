@@ -9,6 +9,7 @@ export type TemplateInfo = NpmTemplateInfo | LocalTemplateInfo;
 export type NpmTemplateInfo = {
   type: 'npm';
   name: string;
+  displayName: string;
   version: string;
   packageName: string;
   /** Directory inside package that contains the template */
@@ -21,6 +22,7 @@ export type LocalTemplateInfo = {
   type: 'local';
   name: string;
   localPath: string;
+  displayName: string | undefined;
   packageName: string;
   directory: string | undefined;
   importName?: string;
@@ -31,6 +33,7 @@ export const TEMPLATES: TemplateInfo[] = [
   {
     type: 'npm',
     name: 'default',
+    displayName: 'default',
     packageName: '@rock-js/template-default',
     version: 'latest',
     directory: '.',
@@ -41,6 +44,7 @@ export const PLUGINS: TemplateInfo[] = [
   {
     type: 'npm',
     name: 'brownfield-ios',
+    displayName: 'Brownfield iOS',
     packageName: '@rock-js/plugin-brownfield-ios',
     hint: 'Setup packaging React Native app as a XCFramework',
     version: 'latest',
@@ -50,6 +54,7 @@ export const PLUGINS: TemplateInfo[] = [
   {
     type: 'npm',
     name: 'brownfield-android',
+    displayName: 'Brownfield Android',
     packageName: '@rock-js/plugin-brownfield-android',
     hint: 'Setup packaging React Native app as an AAR',
     version: 'latest',
@@ -62,6 +67,7 @@ export const BUNDLERS: TemplateInfo[] = [
   {
     type: 'npm',
     name: 'metro',
+    displayName: 'Metro',
     packageName: '@rock-js/plugin-metro',
     version: 'latest',
     directory: 'template',
@@ -70,6 +76,7 @@ export const BUNDLERS: TemplateInfo[] = [
   {
     type: 'npm',
     name: 'repack',
+    displayName: 'Re.Pack',
     packageName: '@rock-js/plugin-repack',
     version: 'latest',
     directory: 'template',
@@ -81,6 +88,7 @@ export const PLATFORMS: TemplateInfo[] = [
   {
     type: 'npm',
     name: 'ios',
+    displayName: 'iOS',
     packageName: '@rock-js/platform-ios',
     version: 'latest',
     directory: 'template',
@@ -89,10 +97,20 @@ export const PLATFORMS: TemplateInfo[] = [
   {
     type: 'npm',
     name: 'android',
+    displayName: 'Android',
     packageName: '@rock-js/platform-android',
     version: 'latest',
     directory: 'template',
     importName: 'platformAndroid',
+  },
+  {
+    type: 'npm',
+    name: 'harmony',
+    displayName: 'Harmony (experimental)',
+    packageName: '@rock-js/platform-harmony',
+    version: 'latest',
+    directory: 'template',
+    importName: 'platformHarmony',
   },
 ];
 
@@ -175,6 +193,7 @@ export function resolveTemplate(
     return {
       type: 'local',
       name: basename.slice(0, basename.length - ext.length),
+      displayName: basename.slice(0, basename.length - ext.length),
       localPath: resolveAbsolutePath(name),
       directory: '.',
       packageName: basename.slice(0, basename.length - ext.length),
@@ -187,6 +206,7 @@ export function resolveTemplate(
   return {
     type: 'npm',
     name: getNpmLibraryName(name),
+    displayName: getNpmLibraryName(name),
     packageName: getNpmLibraryName(name),
     directory: '.',
     version: getNpmLibraryVersion(name) ?? 'latest',

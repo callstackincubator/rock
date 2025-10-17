@@ -5,9 +5,9 @@
     "label": "Introduction"
   },
   {
-    "name": "configuration",
+    "name": "github-actions-setup",
     "type": "file",
-    "label": "Configuration"
+    "label": "Github Actions Setup"
   },
   {
     "name": "ios",

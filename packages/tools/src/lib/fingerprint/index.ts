@@ -3,10 +3,7 @@ import path from 'node:path';
 import { calculateFingerprint, type FingerprintResult } from 'fs-fingerprint';
 import { getReactNativeVersion, logger } from '../../index.js';
 import { spawn } from '../spawn.js';
-import {
-  getDefaultIgnorePaths,
-  getPlatformDirIgnorePaths,
-} from './ignorePaths.js';
+import { getAllIgnorePaths } from './ignorePaths.js';
 export type { FingerprintInputHash } from 'fs-fingerprint';
 
 export type FingerprintSources = {
@@ -16,7 +13,7 @@ export type FingerprintSources = {
 };
 
 export type FingerprintOptions = {
-  platform: 'ios' | 'android';
+  platform: 'ios' | 'android' | 'harmony';
   extraSources: string[];
   ignorePaths: string[];
   env: string[];
@@ -47,18 +44,9 @@ export async function nativeFingerprint(
   const packageJSONPath = path.join(projectRoot, 'package.json');
   const packageJSON = await readPackageJSON(packageJSONPath);
   const scripts = packageJSON['scripts'];
+  const sourceDir = autolinkingConfig.project[options.platform]?.sourceDir;
 
-  const platforms = Object.keys(autolinkingConfig.project).map((key) => {
-    return {
-      platform: key,
-      sourceDir: path.relative(
-        projectRoot,
-        autolinkingConfig.project[key].sourceDir,
-      ),
-    };
-  });
-
-  if (platforms.length === 0) {
+  if (!options.platform || !sourceDir) {
     throw new Error('No platforms found in autolinking project config');
   }
 
@@ -72,9 +60,8 @@ export async function nativeFingerprint(
   }
 
   const fingerprint = await calculateFingerprint(projectRoot, {
-    ignoreFilePath: '.gitignore',
     include: [
-      ...platforms.map((platform) => platform.sourceDir),
+      sourceDir,
       ...options.extraSources.map((source) =>
         path.isAbsolute(source) ? path.relative(projectRoot, source) : source,
       ),
@@ -92,10 +79,7 @@ export async function nativeFingerprint(
       ...(env ? [{ key: 'env', json: env }] : []),
     ],
     exclude: [
-      ...getDefaultIgnorePaths(),
-      ...platforms.flatMap(({ platform, sourceDir }) =>
-        getPlatformDirIgnorePaths(platform, sourceDir),
-      ),
+      ...getAllIgnorePaths(options.platform, sourceDir, projectRoot),
       ...(options.ignorePaths ?? []),
     ],
   });
