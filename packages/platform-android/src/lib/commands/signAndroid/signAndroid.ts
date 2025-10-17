@@ -113,7 +113,9 @@ export async function signAndroid(options: SignAndroidOptions) {
     keyPassword: options.keyPassword,
     minSdkVersion: options.minSdkVersion,
   });
-  loader.stop(`Signed the ${extension.toUpperCase()} file with keystore: ${colorLink(keystorePath)}.`);
+  loader.stop(
+    `Signed the ${extension.toUpperCase()} file with keystore: ${colorLink(keystorePath)}.`,
+  );
 
   outro('Success 🎉.');
 }
@@ -211,7 +213,7 @@ async function signArchive({
   keystorePassword,
   keyAlias,
   keyPassword,
-  minSdkVersion
+  minSdkVersion,
 }: SignOptions) {
   if (!fs.existsSync(keystorePath)) {
     throw new RockError(

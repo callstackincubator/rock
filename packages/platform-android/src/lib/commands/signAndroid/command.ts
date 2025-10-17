@@ -60,8 +60,8 @@ const OPTIONS = [
     description: 'Do not use Hermes to build the JS bundle.',
   },
   {
-      name: '--min-sdk-version',
-      description: 'Override for apksigner\'s --min-sdk-version.',
+    name: '--min-sdk-version',
+    description: "Override for apksigner's --min-sdk-version.",
   },
 ];
 
@@ -82,7 +82,7 @@ export const registerSignCommand = (api: PluginApi) => {
         buildJsBundle: flags.buildJsbundle,
         jsBundlePath: flags.jsbundle,
         useHermes: !flags.noHermes,
-        minSdkVersion: flags.minSdkVersion
+        minSdkVersion: flags.minSdkVersion,
       });
     },
   });
