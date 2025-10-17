@@ -1,6 +1,6 @@
 # iOS GitHub Action
 
-This GitHub Action allows you to build iOS apps using Rock's remote build system. It supports both simulator builds for development and signed device builds for testing and release. If you haven't yet, please check the [configuration guide](./configuration.md) where you can find information on optimal workflow setup, permissions, optimizations and GitHub Personal Access Tokens.
+This GitHub Action allows you to build iOS apps using Rock's remote build system. It supports both simulator builds for development and signed device builds for testing and release. If you haven't yet, please check the [configuration guide](./github-actions-setup.md) where you can find information on optimal workflow setup, permissions, optimizations and GitHub Personal Access Tokens.
 
 ## Development Builds For Simulators
 
