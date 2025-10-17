@@ -281,6 +281,8 @@ function getSdkVersionArgs(aab?: boolean, minSdkVersion?: string) {
     return [];
   }
 
+  // the default here will only be applied for AABs
+  // we use a higher value as it is irrelevant for AAB verification, but allows apksigner to use better signing algorithms
   return ['--min-sdk-version', minSdkVersion || '36'];
 }
 
