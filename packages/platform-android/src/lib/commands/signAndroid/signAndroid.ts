@@ -25,7 +25,6 @@ export type SignAndroidOptions = {
   buildJsBundle?: boolean;
   jsBundlePath?: string;
   useHermes?: boolean;
-  minSdkVersion?: string;
 };
 
 export async function signAndroid(options: SignAndroidOptions) {
@@ -111,7 +110,6 @@ export async function signAndroid(options: SignAndroidOptions) {
     keystorePassword: options.keystorePassword ?? 'pass:android',
     keyAlias: options.keyAlias,
     keyPassword: options.keyPassword,
-    minSdkVersion: options.minSdkVersion,
   });
   loader.stop(
     `Signed the ${extension.toUpperCase()} file with keystore: ${colorLink(keystorePath)}.`,
@@ -204,7 +202,6 @@ type SignOptions = {
   keystorePassword: string;
   keyAlias?: string;
   keyPassword?: string;
-  minSdkVersion?: string;
 };
 
 async function signArchive({
@@ -213,7 +210,6 @@ async function signArchive({
   keystorePassword,
   keyAlias,
   keyPassword,
-  minSdkVersion,
 }: SignOptions) {
   if (!fs.existsSync(keystorePath)) {
     throw new RockError(
@@ -240,7 +236,7 @@ Please follow instructions at: https://reactnative.dev/docs/set-up-your-environm
     formatPassword(keystorePassword),
     ...(keyAlias ? ['--ks-key-alias', keyAlias] : []),
     ...(keyPassword ? ['--key-pass', formatPassword(keyPassword)] : []),
-    ...getSdkVersionArgs(isAab(binaryPath), minSdkVersion),
+    ...(isAab(binaryPath) ? ['--min-sdk-version', '36'] : []),
     binaryPath,
   ];
 
@@ -274,16 +270,6 @@ function formatPassword(password: string) {
 
 function getSignOutputPath() {
   return path.join(getDotRockPath(), 'android/sign');
-}
-
-function getSdkVersionArgs(aab?: boolean, minSdkVersion?: string) {
-  if (!aab && !minSdkVersion) {
-    return [];
-  }
-
-  // the default here will only be applied for AABs
-  // we use a higher value as it is irrelevant for AAB verification, but allows apksigner to use better signing algorithms
-  return ['--min-sdk-version', minSdkVersion || '36'];
 }
 
 function isAab(filePath: string): boolean {
