@@ -93,10 +93,9 @@ export async function signAndroid(options: SignAndroidOptions) {
     );
   }
 
-  const outputPath = options.outputPath ?? options.binaryPath;
-
   // 4. Align archive
   loader.start('Aligning output file...');
+  const outputPath = options.outputPath ?? options.binaryPath;
   await alignArchiveFile(tempArchivePath, outputPath);
   loader.stop(
     `Created output ${extension.toUpperCase()} file: ${colorLink(relativeToCwd(outputPath))}.`,
@@ -105,17 +104,13 @@ export async function signAndroid(options: SignAndroidOptions) {
   // 5. Sign archive file
   loader.start(`Signing the ${extension.toUpperCase()} file...`);
   const keystorePath = options.keystorePath ?? 'android/app/debug.keystore';
-
-  const signArgs = {
+  await signArchive({
     binaryPath: outputPath,
     keystorePath,
     keystorePassword: options.keystorePassword ?? 'pass:android',
     keyAlias: options.keyAlias,
     keyPassword: options.keyPassword,
-  }
-
-  await signArchive(signArgs);
-
+  });
   loader.stop(`Signed the ${extension.toUpperCase()} file with keystore: ${colorLink(keystorePath)}.`);
 
   outro('Success 🎉.');
