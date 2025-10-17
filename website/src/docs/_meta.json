@@ -18,6 +18,11 @@
     "type": "dir",
     "name": "cli",
     "label": "CLI"
+  },  
+  {
+    "type": "file",
+    "name": "configuration",
+    "label": "Configuration"
   },
   {
     "type": "dir",
