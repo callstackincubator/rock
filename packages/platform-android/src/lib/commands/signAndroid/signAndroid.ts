@@ -78,7 +78,7 @@ export async function signAndroid(options: SignAndroidOptions) {
       { cause: (error as SubprocessError).stderr },
     );
   }
-  loader.stop(`Initialized output file.`);
+  loader.stop(`Initialized output ${extension.toUpperCase()}`);
 
   // 3. Replace JS bundle if provided
   if (options.jsBundlePath) {
