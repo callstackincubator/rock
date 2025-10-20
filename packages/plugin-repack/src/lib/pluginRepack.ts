@@ -1,5 +1,9 @@
 import commands from '@callstack/repack/commands/rspack';
-import type { BundlerPluginOutput, PluginApi, StartDevServerArgs } from '@rock-js/config';
+import type {
+  BundlerPluginOutput,
+  PluginApi,
+  StartDevServerArgs,
+} from '@rock-js/config';
 import {
   colorLink,
   findDevServerPort,
@@ -25,16 +29,19 @@ type BundleArgs = Parameters<NonNullable<typeof bundleCommand>['func']>[2] & {
 const startCommand = commands.find((command) => command.name === 'start');
 const bundleCommand = commands.find((command) => command.name === 'bundle');
 
-export async function startDevServer({
-  root,
-  args,
-  reactNativeVersion: _reactNativeVersion,
-  reactNativePath,
-  platforms,
-}: StartDevServerArgs, pluginConfig: PluginConfig = {}) {
+export async function startDevServer(
+  {
+    root,
+    args,
+    reactNativeVersion: _reactNativeVersion,
+    reactNativePath,
+    platforms,
+  }: StartDevServerArgs,
+  pluginConfig: PluginConfig = {},
+) {
   const { port, startDevServer } = await findDevServerPort(
     args.port ? Number(args.port) : 8081,
-    root
+    root,
   );
 
   if (!startDevServer) {

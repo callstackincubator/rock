@@ -216,7 +216,8 @@ Read more: ${colorLink('https://rockjs.dev/docs/configuration#github-actions-pro
       }
       return validatedConfig.remoteCacheProvider;
     },
-    getFingerprintOptions: () => validatedConfig.fingerprint as FingerprintSources,
+    getFingerprintOptions: () =>
+      validatedConfig.fingerprint as FingerprintSources,
     getBundlerStart:
       () =>
       ({ args }: { args: DevServerArgs }) => {
@@ -250,7 +251,7 @@ Read more: ${colorLink('https://rockjs.dev/docs/configuration#github-actions-pro
     bundler = assignOriginToCommand(
       validatedConfig.bundler,
       api,
-      validatedConfig
+      validatedConfig,
     ) as BundlerPluginOutput;
   }
 

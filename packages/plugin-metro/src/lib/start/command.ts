@@ -21,7 +21,7 @@ export async function startDevServer({
 }: StartDevServerArgs) {
   const { port, startDevServer } = await findDevServerPort(
     args.port ? Number(args.port) : 8081,
-    root
+    root,
   );
 
   if (!startDevServer) {
@@ -30,7 +30,7 @@ export async function startDevServer({
 
   return runServer(
     { root, reactNativeVersion, reactNativePath, platforms },
-    { ...args, port, platforms: Object.keys(platforms) }
+    { ...args, port, platforms: Object.keys(platforms) },
   );
 }
 

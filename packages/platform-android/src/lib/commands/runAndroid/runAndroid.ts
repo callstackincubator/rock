@@ -9,10 +9,8 @@ import type { FingerprintSources, RemoteBuildCache } from '@rock-js/tools';
 import {
   color,
   formatArtifactName,
-  intro,
   isInteractive,
   logger,
-  outro,
   promptSelect,
   RockError,
   spinner,
@@ -56,25 +54,23 @@ export async function runAndroid(
   startDevServer: (options: StartDevServerArgs) => void,
   reactNativeVersion: string,
   reactNativePath: string,
-  platforms: { [platform: string]: object }
+  platforms: { [platform: string]: object },
 ) {
-  intro('Running Android app');
-
   const startDevServerHelper = () => {
-    if(args.devServer) {
-          logger.info('🔍 Starting dev server...');
-          startDevServer({
-            root: projectRoot,
-            reactNativePath,
-            reactNativeVersion,
-            platforms,
-            args: {
-              interactive: isInteractive(),
-              clientLogs: args.clientLogs ?? true,
-            },
-          });
-        }
-      };
+    if (args.devServer) {
+      logger.info('Starting dev server...');
+      startDevServer({
+        root: projectRoot,
+        reactNativePath,
+        reactNativeVersion,
+        platforms,
+        args: {
+          interactive: isInteractive(),
+          clientLogs: args.clientLogs ?? true,
+        },
+      });
+    }
+  };
 
   normalizeArgs(args, projectRoot);
 
@@ -111,8 +107,6 @@ export async function runAndroid(
       }
       await runOnDevice({ device, androidProject, args, tasks, binaryPath });
     }
-
-    startDevServerHelper();
   } else {
     if ((await getDevices()).length === 0) {
       if (isInteractive()) {
@@ -134,10 +128,9 @@ export async function runAndroid(
         await runOnDevice({ device, androidProject, args, tasks, binaryPath });
       }
     }
-    startDevServerHelper();
   }
 
-  outro('Success 🎉.');
+  startDevServerHelper();
 }
 
 async function selectAndLaunchDevice() {
@@ -311,6 +304,7 @@ export const runOptions = [
   },
   {
     name: '--dev-server',
-    description: 'Enable automatic bundler detection and switching for Android apps.',
+    description:
+      'Enable automatic bundler detection and switching for Android apps.',
   },
 ];

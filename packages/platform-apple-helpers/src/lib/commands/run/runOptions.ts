@@ -38,7 +38,7 @@ export const getRunOptions = ({ platformName }: BuilderCommand) => {
     },
     {
       name: '--dev-server',
-      description: 'Disable dev server startup for iOS apps (use local bundle only).',
+      description: 'Automatically start a dev server after building the app.',
     },
     ...getBuildOptions({ platformName }),
   ];

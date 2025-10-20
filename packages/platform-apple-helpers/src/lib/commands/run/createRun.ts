@@ -50,7 +50,6 @@ export const createRun = async ({
   platforms: { [platform: string]: object };
   startDevServer: (options: StartDevServerArgs) => void;
 }) => {
-
   const startDevServerHelper = () => {
     if (args.devServer) {
       logger.info('Starting dev server...');
@@ -133,7 +132,6 @@ export const createRun = async ({
       deviceOrSimulator,
       fingerprintOptions,
     });
-
 
     if (scheme) {
       await runOnMacCatalyst(appPath, scheme);

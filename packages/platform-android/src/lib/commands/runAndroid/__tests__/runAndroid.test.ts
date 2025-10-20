@@ -531,11 +531,21 @@ test('runAndroid launches an app on all connected devices', async () => {
     });
   });
 
-  await runAndroid({ ...androidProject }, { ...args }, '/', undefined, {
-    extraSources: [],
-    ignorePaths: [],
-    env: [],
-  }, vi.fn(), '/path/to/react-native', '0.79.0', mockPlatforms);
+  await runAndroid(
+    { ...androidProject },
+    { ...args },
+    '/',
+    undefined,
+    {
+      extraSources: [],
+      ignorePaths: [],
+      env: [],
+    },
+    vi.fn(),
+    '/path/to/react-native',
+    '0.79.0',
+    mockPlatforms,
+  );
 
   // Runs assemble debug task with active architectures arm64-v8a, armeabi-v7a
   expect(spawn).toBeCalledWith(

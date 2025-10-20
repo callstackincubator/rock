@@ -1,5 +1,6 @@
 import type { AndroidProjectConfig } from '@react-native-community/cli-types';
 import type { PluginApi } from '@rock-js/config';
+import { intro, outro } from '@rock-js/tools';
 import { getValidProjectConfig } from '../getValidProjectConfig.js';
 import type { Flags } from './runAndroid.js';
 import { runAndroid, runOptions } from './runAndroid.js';
@@ -13,6 +14,7 @@ export function registerRunCommand(
     description:
       'Builds your app and starts it on a connected Android emulator or a device.',
     action: async (args) => {
+      intro('Running Android app');
       const projectRoot = api.getProjectRoot();
       const androidConfig = getValidProjectConfig(projectRoot, pluginConfig);
       await runAndroid(
@@ -24,8 +26,9 @@ export function registerRunCommand(
         api.getBundlerStart(),
         api.getReactNativeVersion(),
         api.getReactNativePath(),
-        api.getPlatforms()
+        api.getPlatforms(),
       );
+      outro('Success 🎉.');
     },
     options: runOptions,
   });
