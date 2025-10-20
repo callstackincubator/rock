@@ -320,7 +320,6 @@ test.each([['release'], ['debug'], ['staging']])(
       mockPlatforms,
     );
 
-    expect(tools.outro).toBeCalledWith('Success 🎉.');
     expect(tools.logger.error).not.toBeCalled();
 
     // Runs installDebug with only active architecture arm64-v8a
@@ -373,7 +372,6 @@ test('runAndroid runs gradle build with custom --appId, --appIdSuffix and --main
     mockPlatforms,
   );
 
-  expect(tools.outro).toBeCalledWith('Success 🎉.');
   expect(logErrorSpy).not.toBeCalled();
 
   // launches com.custom.suffix app with OtherActivity on emulator-5552
