@@ -58,6 +58,8 @@ export default function attachKeyHandlers({
 
   readline.emitKeypressEvents(process.stdin);
   setRawMode(true);
+  // resume stdin to allow reading keypresses
+  process.stdin.resume();
 
   const reload = throttle(() => {
     reporter.update({
