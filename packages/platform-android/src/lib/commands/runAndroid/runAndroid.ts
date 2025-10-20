@@ -304,7 +304,6 @@ export const runOptions = [
   },
   {
     name: '--dev-server',
-    description:
-      'Enable automatic bundler detection and switching for Android apps.',
+    description: 'Automatically start a dev server (bundler) after building the app.',
   },
 ];

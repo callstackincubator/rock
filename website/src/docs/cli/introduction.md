@@ -182,13 +182,14 @@ The build cache is populated either by a local build or when downloaded frome re
 
 `run:ios` extends the functionality of `build:ios` with additional runtime options.
 
-| Option                   | Description                               |
-| :----------------------- | :---------------------------------------- |
-| `--port <number>`        | Bundler port (default: 8081)              |
-| `--binary-path <string>` | Path to pre-built .app binary             |
-| `--device <string>`      | Device/simulator to use (by name or UDID) |
-| `--catalyst`             | Run on Mac Catalyst                       |
-| `--local`                | Force local build with xcodebuild         |
+| Option                   | Description                                                        |
+| :----------------------- | :----------------------------------------------------------------- |
+| `--port <number>`        | Bundler port (default: 8081)                                       |
+| `--binary-path <string>` | Path to pre-built .app binary                                      |
+| `--device <string>`      | Device/simulator to use (by name or UDID)                          |
+| `--catalyst`             | Run on Mac Catalyst                                                |
+| `--local`                | Force local build with xcodebuild                                  |
+| `--dev-server`           | Automatically start a dev server (bundler) after building the app. |
 
 You can also pass the same environmental variables listed in [`build:ios` options](#supported-environmental-variables) to the `run:ios` command.
 
@@ -235,12 +236,13 @@ The `run:android` command runs your Android app on an emulator or device. It ext
 
 Same as for `build:android` and:
 
-| Option                     | Description                           |
-| :------------------------- | :------------------------------------ |
-| `--app-id <string>`        | Application ID                        |
-| `--app-id-suffix <string>` | Application ID suffix                 |
-| `--binary-path <string>`   | Path to pre-built APK                 |
-| `--local`                  | Force local build with Gradle wrapper |
+| Option                     | Description                                                        |
+| :------------------------- | :----------------------------------------------------------------- |
+| `--app-id <string>`        | Application ID                                                     |
+| `--app-id-suffix <string>` | Application ID suffix                                              |
+| `--binary-path <string>`   | Path to pre-built APK                                              |
+| `--local`                  | Force local build with Gradle wrapper                              |
+| `--dev-server`             | Automatically start a dev server (bundler) after building the app. |
 
 ### `rock sign:android` Options
 
