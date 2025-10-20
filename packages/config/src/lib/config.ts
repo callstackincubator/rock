@@ -13,6 +13,34 @@ export type PluginOutput = {
   description: string;
 };
 
+export type DevServerArgs = {
+  interactive: boolean;
+  clientLogs: boolean;
+  port?: string;
+  host?: string;
+  https?: boolean;
+  resetCache?: boolean;
+  devServer?: boolean;
+  platforms?: string[];
+  [key: string]: unknown;
+};
+
+export type StartDevServerArgs = {
+  root: string;
+  args: DevServerArgs;
+  reactNativeVersion: string;
+  reactNativePath: string;
+  platforms: Record<string, object>;
+};
+
+type StartDevServerFunction = (options: StartDevServerArgs) => Promise<void>;
+
+export type BundlerPluginOutput = {
+  name: string;
+  description: string;
+  start: StartDevServerFunction;
+};
+
 export type PlatformOutput = PluginOutput & {
   autolinkingConfig: { project: Record<string, unknown> | undefined };
 };
@@ -27,10 +55,11 @@ export type PluginApi = {
     null | undefined | (() => RemoteBuildCache)
   >;
   getFingerprintOptions: () => FingerprintSources;
+  getBundlerStart: () => ({ args }: { args: DevServerArgs }) => void;
 };
 
 type PluginType = (args: PluginApi) => PluginOutput;
-
+type BundlerPluginType = (args: PluginApi) => BundlerPluginOutput;
 type PlatformType = (args: PluginApi) => PlatformOutput;
 
 type ArgValue = string | string[] | boolean;
@@ -63,7 +92,7 @@ export type ConfigType = {
   root?: string;
   reactNativeVersion?: string;
   reactNativePath?: string;
-  bundler?: PluginType;
+  bundler?: BundlerPluginType;
   plugins?: PluginType[];
   platforms?: Record<string, PlatformType>;
   commands?: Array<CommandType>;
@@ -79,6 +108,7 @@ export type ConfigOutput = {
   root: string;
   commands?: Array<CommandType>;
   platforms?: Record<string, PlatformOutput>;
+  bundler?: BundlerPluginOutput;
 } & PluginApi;
 
 const extensions = ['.js', '.ts', '.mjs'];
@@ -160,6 +190,8 @@ export async function getConfig(
     process.exit(1);
   }
 
+  let bundler: BundlerPluginOutput | undefined;
+
   const api = {
     registerCommand: (command: CommandType) => {
       validatedConfig.commands = [...(validatedConfig.commands || []), command];
@@ -186,6 +218,17 @@ Read more: ${colorLink('https://rockjs.dev/docs/configuration#github-actions-pro
     },
     getFingerprintOptions: () =>
       validatedConfig.fingerprint as FingerprintSources,
+    getBundlerStart:
+      () =>
+      ({ args }: { args: DevServerArgs }) => {
+        return bundler?.start({
+          root: api.getProjectRoot(),
+          args,
+          reactNativeVersion: api.getReactNativeVersion(),
+          reactNativePath: api.getReactNativePath(),
+          platforms: api.getPlatforms(),
+        });
+      },
   };
 
   const platforms: Record<string, PlatformOutput> = {};
@@ -205,7 +248,11 @@ Read more: ${colorLink('https://rockjs.dev/docs/configuration#github-actions-pro
   }
 
   if (validatedConfig.bundler) {
-    assignOriginToCommand(validatedConfig.bundler, api, validatedConfig);
+    bundler = assignOriginToCommand(
+      validatedConfig.bundler,
+      api,
+      validatedConfig,
+    ) as BundlerPluginOutput;
   }
 
   for (const internalPlugin of internalPlugins) {
@@ -220,6 +267,7 @@ Read more: ${colorLink('https://rockjs.dev/docs/configuration#github-actions-pro
     root: projectRoot,
     commands: validatedConfig.commands ?? [],
     platforms: platforms ?? {},
+    bundler,
     ...api,
   };
 
@@ -236,16 +284,17 @@ function resolveReactNativePath(root: string) {
  * Assigns __origin property to each command in the config for later use in error handling.
  */
 function assignOriginToCommand(
-  plugin: PluginType,
+  plugin: PluginType | BundlerPluginType,
   api: PluginApi,
   config: ConfigType,
 ) {
   const len = config.commands?.length ?? 0;
-  const { name } = plugin(api);
+  const { name, ...rest } = plugin(api);
   const newlen = config.commands?.length ?? 0;
   for (let i = len; i < newlen; i++) {
     if (config.commands?.[i]) {
       config.commands[i].__origin = name;
     }
   }
+  return { name, ...rest };
 }

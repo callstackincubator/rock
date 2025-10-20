@@ -1,5 +1,6 @@
 import fs from 'node:fs';
 import path from 'node:path';
+import type { StartDevServerArgs } from '@rock-js/config';
 import type { FingerprintSources, RemoteBuildCache } from '@rock-js/tools';
 import {
   color,
@@ -34,6 +35,9 @@ export const createRun = async ({
   remoteCacheProvider,
   fingerprintOptions,
   reactNativePath,
+  reactNativeVersion,
+  platforms,
+  startDevServer,
 }: {
   platformName: ApplePlatform;
   projectConfig: ProjectConfig;
@@ -42,7 +46,25 @@ export const createRun = async ({
   remoteCacheProvider: null | (() => RemoteBuildCache) | undefined;
   fingerprintOptions: FingerprintSources;
   reactNativePath: string;
+  reactNativeVersion: string;
+  platforms: { [platform: string]: object };
+  startDevServer: (options: StartDevServerArgs) => void;
 }) => {
+  const startDevServerHelper = () => {
+    if (args.devServer) {
+      logger.info('Starting dev server...');
+      startDevServer({
+        root: projectRoot,
+        reactNativePath,
+        reactNativeVersion,
+        platforms,
+        args: {
+          interactive: isInteractive(),
+          clientLogs: args.clientLogs ?? true,
+        },
+      });
+    }
+  };
   validateArgs(args, projectRoot);
 
   const deviceOrSimulator = args.destination
@@ -92,7 +114,9 @@ export const createRun = async ({
       deviceOrSimulator,
       fingerprintOptions,
     });
+
     await runOnMac(appPath);
+    startDevServerHelper();
     return;
   } else if (args.catalyst) {
     const { appPath, scheme } = await buildApp({
@@ -108,8 +132,10 @@ export const createRun = async ({
       deviceOrSimulator,
       fingerprintOptions,
     });
+
     if (scheme) {
       await runOnMacCatalyst(appPath, scheme);
+      startDevServerHelper();
       return;
     } else {
       throw new RockError('Failed to get project scheme');
@@ -128,7 +154,7 @@ export const createRun = async ({
   if (device) {
     if (device.type !== deviceOrSimulator) {
       throw new RockError(
-        `Selected device "${device.name}" is not a ${deviceOrSimulator}. 
+        `Selected device "${device.name}" is not a ${deviceOrSimulator}.
 Please either use "--destination ${
           deviceOrSimulator === 'simulator' ? 'device' : 'simulator'
         }" flag or select available ${deviceOrSimulator}:
@@ -155,7 +181,9 @@ ${devices
           fingerprintOptions,
         }),
       ]);
+
       await runOnSimulator(device, appPath, infoPlistPath);
+      startDevServerHelper();
     } else if (device.type === 'device') {
       const { appPath, bundleIdentifier } = await buildApp({
         args,
@@ -169,12 +197,14 @@ ${devices
         deviceOrSimulator,
         fingerprintOptions,
       });
+
       await runOnDevice(
         device,
         appPath,
         projectConfig.sourceDir,
         bundleIdentifier,
       );
+      startDevServerHelper();
     }
     return;
   } else {
@@ -223,6 +253,7 @@ ${devices
             fingerprintOptions,
           }),
         ]);
+
       if (bootedDevice.type === 'simulator') {
         await runOnSimulator(bootedDevice, appPath, infoPlistPath);
       } else {
@@ -234,6 +265,7 @@ ${devices
         );
       }
     }
+    startDevServerHelper();
   }
 };
 
