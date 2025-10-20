@@ -1,5 +1,12 @@
 # @rnef/platform-apple-helpers
 
+## 0.11.7
+
+### Patch Changes
+
+- 644f897: feat: allow running dev server from run commands with `--dev-server` flag
+  - @rock-js/tools@0.11.7
+
 ## 0.11.6
 
 ### Patch Changes

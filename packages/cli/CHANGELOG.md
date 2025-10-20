@@ -1,5 +1,14 @@
 # rock
 
+## 0.11.7
+
+### Patch Changes
+
+- 698ef47: bump packages
+- Updated dependencies [644f897]
+  - @rock-js/config@0.11.7
+  - @rock-js/tools@0.11.7
+
 ## 0.11.6
 
 ### Patch Changes

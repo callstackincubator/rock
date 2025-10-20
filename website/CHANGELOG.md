@@ -1,5 +1,11 @@
 # rock-docs
 
+## 1.3.5
+
+### Patch Changes
+
+- 0119b27: fix: config pages presence and positioning
+
 ## 1.3.4
 
 ### Patch Changes
