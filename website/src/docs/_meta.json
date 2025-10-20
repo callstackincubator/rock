@@ -15,6 +15,11 @@
     "label": "Getting Started"
   },
   {
+    "type": "file",
+    "name": "configuration",
+    "label": "Configuration"
+  },
+  {
     "type": "dir",
     "name": "cli",
     "label": "CLI"
