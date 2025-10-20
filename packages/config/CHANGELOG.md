@@ -1,5 +1,13 @@
 # @rnef/config
 
+## 0.11.7
+
+### Patch Changes
+
+- 644f897: feat: allow running dev server from run commands with `--dev-server` flag
+  - @rock-js/provider-github@0.11.7
+  - @rock-js/tools@0.11.7
+
 ## 0.11.6
 
 ### Patch Changes

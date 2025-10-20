@@ -1,5 +1,11 @@
 # create-rock
 
+## 0.11.7
+
+### Patch Changes
+
+- 698ef47: bump packages
+
 ## 0.11.6
 
 ### Patch Changes
