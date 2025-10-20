@@ -77,24 +77,14 @@ export const pluginRepack =
       name: 'start',
       description: 'Starts Re.Pack dev server.',
       action: async (args: StartArgs) => {
-        const reactNativePath = api.getReactNativePath();
-        const root = api.getProjectRoot();
-        const platforms = api.getPlatforms();
-        const { port, startDevServer } = await findDevServerPort(
-          args.port ? Number(args.port) : 8081,
-          root,
-        );
-
-        if (!startDevServer) {
-          return;
-        }
-
-        startCommand.func(
-          [],
-          // @ts-expect-error TODO fix getPlatforms type
-          { reactNativePath, root, platforms, ...pluginConfig },
-          { ...args, port },
-        );
+        startDevServer({
+          root: api.getProjectRoot(),
+          reactNativeVersion: api.getReactNativeVersion(),
+          reactNativePath: api.getReactNativePath(),
+          platforms: api.getPlatforms(),
+          // @ts-expect-error Re.Pack doesn't have clientLogs
+          args,
+        });
       },
       // @ts-expect-error fixup types
       options: startCommand.options,

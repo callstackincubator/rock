@@ -39,28 +39,13 @@ export const registerStartCommand = (api: PluginApi) => {
     name: 'start',
     action: async (args: StartCommandArgs) => {
       intro('Starting Metro dev server');
-      const root = api.getProjectRoot();
-      const { port, startDevServer } = await findDevServerPort(
-        args.port ? Number(args.port) : 8081,
-        root,
-      );
-
-      if (!startDevServer) {
-        return;
-      }
-
-      const reactNativeVersion = api.getReactNativeVersion();
-      const reactNativePath = api.getReactNativePath();
-      const platforms = api.getPlatforms();
-      return runServer(
-        {
-          root,
-          reactNativeVersion,
-          reactNativePath,
-          platforms,
-        },
-        { ...args, port },
-      );
+      startDevServer({
+        root: api.getProjectRoot(),
+        reactNativeVersion: api.getReactNativeVersion(),
+        reactNativePath: api.getReactNativePath(),
+        platforms: api.getPlatforms(),
+        args,
+      });
     },
     description: 'Start the Metro development server.',
     options: [
