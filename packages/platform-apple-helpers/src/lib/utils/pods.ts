@@ -132,12 +132,12 @@ async function runPodInstall(options: {
       env: {
         RCT_NEW_ARCH_ENABLED: options.newArch ? '1' : '0',
         RCT_IGNORE_PODS_DEPRECATION: '1',
-        RCT_USE_RN_DEP:
-          process.env['RCT_USE_RN_DEP'] || usePrebuiltReactNative ? '1' : '0',
-        RCT_USE_PREBUILT_RNCORE:
-          process.env['RCT_USE_PREBUILT_RNCORE'] || usePrebuiltReactNative
-            ? '1'
-            : '0',
+        RCT_USE_RN_DEP: process.env['RCT_USE_RN_DEP'] != undefined
+          ? String(process.env['RCT_USE_RN_DEP'])
+          : usePrebuiltReactNative ? '1' : '0',
+        RCT_USE_PREBUILT_RNCORE: process.env['RCT_USE_PREBUILT_RNCORE'] != undefined
+          ? String(process.env['RCT_USE_PREBUILT_RNCORE'])
+          : usePrebuiltReactNative ? '1' : '0',
         ...(options.brownfield && { USE_FRAMEWORKS: 'static' }),
         ...(process.env['USE_THIRD_PARTY_JSC'] && {
           USE_THIRD_PARTY_JSC: process.env['USE_THIRD_PARTY_JSC'],
