@@ -1,5 +1,11 @@
 # @rnef/welcome-screen
 
+## 0.11.9
+
+### Patch Changes
+
+- c819d6c: bump packages
+
 ## 0.11.8
 
 ## 0.11.7
