@@ -1,5 +1,11 @@
 # rock
 
+## 0.11.8
+
+### Patch Changes
+
+- e4c7365: bump packages
+
 ## 0.11.7
 
 ### Patch Changes
