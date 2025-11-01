@@ -1,5 +1,11 @@
 # @rnef/provider-s3
 
+## 0.11.8
+
+### Patch Changes
+
+- @rock-js/tools@0.11.8
+
 ## 0.11.7
 
 ### Patch Changes
