@@ -102,9 +102,9 @@ function hasMetroProject(projectRoot: string): boolean {
  * Checks if ccache is installed on the system.
  * @returns Promise that resolves to true if ccache is available, false otherwise
  */
-async function hasCCacheInstalled(): Promise<boolean> {
+async function isCCacheInstalled(): Promise<boolean> {
   try {
-    await spawn('sh', ['-c', 'command -v ccache']);
+    await spawn('which', ['ccache']);
     return true;
   } catch (error) {
     logger.debug(`Failed to find ccache binary: ${error}`);
@@ -222,7 +222,7 @@ async function createCleanupTasks(
     },
   });
 
-  const hasCCache = await hasCCacheInstalled();
+  const hasCCache = await isCCacheInstalled();
   // CCache cleanup (only if ccache is installed)
   tasks.push({
     name: 'ccache',
