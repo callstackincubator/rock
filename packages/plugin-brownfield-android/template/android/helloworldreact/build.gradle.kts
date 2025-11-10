@@ -24,6 +24,7 @@ android {
     defaultConfig {
         minSdk = 24
 
+        buildConfigField("boolean", "IS_EDGE_TO_EDGE_ENABLED", properties["edgeToEdgeEnabled"].toString())
         buildConfigField("boolean", "IS_NEW_ARCHITECTURE_ENABLED", properties["newArchEnabled"].toString())
         buildConfigField("boolean", "IS_HERMES_ENABLED", properties["hermesEnabled"].toString())
     }
