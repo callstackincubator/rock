@@ -5,7 +5,7 @@
     "publish-local:aar": "pnpm package:aar && rock publish-local:aar --module-name helloworldreact"
   },
   "dependencies": {
-    "@callstack/react-native-brownfield": "^1.2.0"
+    "@callstack/react-native-brownfield": "^2.0.0"
   },
   "devDependencies": {
     "@rock-js/plugin-brownfield-android": "^0.11.9"
