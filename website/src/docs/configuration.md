@@ -259,6 +259,7 @@ The S3 provider supports multiple authentication methods through the underlying 
 - **AWS credentials file**: Use `~/.aws/credentials` with the `profile` option
 - **Role assumption**: Use `roleArn` to assume a different role, optionally with `profile` as source credentials
 - **Temporary credentials**: Set `AWS_SESSION_TOKEN` environment variable for temporary credentials
+- **Public access**: When no credentials are provided, the provider configures a custom signer that doesn't sign requests, allowing access to public S3 buckets without authentication
 
 #### Cloudflare R2
 
