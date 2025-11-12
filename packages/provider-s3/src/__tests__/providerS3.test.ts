@@ -214,7 +214,7 @@ test('providerS3 supports R2', async () => {
   ]);
 });
 
-test('providerS3 supports public access without credentials', async () => {
+test('providerS3 supports public access', async () => {
   (clientS3.S3Client as ReturnType<typeof vi.fn>).mockClear();
   const mockSend = (clientS3 as any).mockSend;
   const mockStream = {
@@ -232,6 +232,7 @@ test('providerS3 supports public access without credentials', async () => {
   const cacheProvider = providerS3({
     bucket: 'test-bucket',
     region: 'us-east-1',
+    publicAccess: true,
   })();
 
   expect(clientS3.S3Client).toHaveBeenCalledWith(

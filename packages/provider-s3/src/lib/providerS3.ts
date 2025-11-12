@@ -65,6 +65,10 @@ type ProviderConfig = {
    * External ID when assuming a role (for additional security).
    */
   externalId?: string;
+  /**
+   * If true, the provider will not sign requests and will try to access the S3 bucket without authentication.
+   */
+  publicAccess?: boolean;
 };
 
 export class S3BuildCache implements RemoteBuildCache {
@@ -104,8 +108,8 @@ export class S3BuildCache implements RemoteBuildCache {
     } else if (config.profile) {
       // Use shared config file (e.g. ~/.aws/credentials) with a profile
       s3Config.credentials = fromIni({ profile: config.profile });
-    } else {
-      // Fallback to public access
+    } else if (config.publicAccess) {
+      // Access the S3 bucket without authentication
       s3Config.signer = {
         sign: async (request) => request,
       };
