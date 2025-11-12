@@ -213,3 +213,55 @@ test('providerS3 supports R2', async () => {
     },
   ]);
 });
+
+test('providerS3 supports public access without credentials', async () => {
+  (clientS3.S3Client as ReturnType<typeof vi.fn>).mockClear();
+  const mockSend = (clientS3 as any).mockSend;
+  const mockStream = {
+    on: vi.fn((event, callback) => {
+      if (event === 'data') callback(Buffer.from('test data'));
+      if (event === 'end') callback();
+      return mockStream;
+    }),
+  };
+  mockSend.mockResolvedValueOnce({
+    Body: mockStream,
+    ContentLength: 9,
+  });
+
+  const cacheProvider = providerS3({
+    bucket: 'test-bucket',
+    region: 'us-east-1',
+  })();
+
+  expect(clientS3.S3Client).toHaveBeenCalledWith(
+    expect.objectContaining({
+      region: 'us-east-1',
+      signer: expect.objectContaining({
+        sign: expect.any(Function),
+      }),
+      credentials: {
+        accessKeyId: '',
+        secretAccessKey: '',
+      },
+    }),
+  );
+
+  const s3ClientCall = (clientS3.S3Client as ReturnType<typeof vi.fn>).mock
+    .calls[0];
+  const signer = s3ClientCall[0].signer;
+  const mockRequest = { headers: {}, body: 'test' };
+  const signedRequest = await signer.sign(mockRequest);
+  expect(signedRequest).toBe(mockRequest);
+
+  const response = await cacheProvider.download({
+    artifactName: 'public-artifact',
+  });
+
+  expect(clientS3.GetObjectCommand).toHaveBeenCalledWith({
+    Bucket: 'test-bucket',
+    Key: 'rock-artifacts/public-artifact.zip',
+  });
+  expect(mockSend).toHaveBeenCalled();
+  expect(response.headers.get('content-length')).toBe('9');
+});
