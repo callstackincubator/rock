@@ -104,6 +104,15 @@ export class S3BuildCache implements RemoteBuildCache {
     } else if (config.profile) {
       // Use shared config file (e.g. ~/.aws/credentials) with a profile
       s3Config.credentials = fromIni({ profile: config.profile });
+    } else {
+      // Fallback to public access
+      s3Config.signer = {
+        sign: async (request) => request,
+      };
+      s3Config.credentials = {
+        accessKeyId: '',
+        secretAccessKey: '',
+      };
     }
 
     this.s3 = new clientS3.S3Client(s3Config);
