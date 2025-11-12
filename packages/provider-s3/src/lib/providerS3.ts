@@ -69,6 +69,10 @@ type ProviderConfig = {
    * If true, the provider will not sign requests and will try to access the S3 bucket without authentication.
    */
   publicAccess?: boolean;
+  /**
+   * ACL to use for the S3 server.
+   */
+  acl?: clientS3.ObjectCannedACL;
 };
 
 export class S3BuildCache implements RemoteBuildCache {
@@ -142,6 +146,7 @@ export class S3BuildCache implements RemoteBuildCache {
         Key: key,
         Body: buffer,
         ContentType: contentType || 'application/octet-stream',
+        ...(this.config.acl && { ACL: this.config.acl }),
         Metadata: {
           createdAt: new Date().toISOString(),
         },

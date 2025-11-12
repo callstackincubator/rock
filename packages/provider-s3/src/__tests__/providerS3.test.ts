@@ -266,3 +266,30 @@ test('providerS3 supports public access', async () => {
   expect(mockSend).toHaveBeenCalled();
   expect(response.headers.get('content-length')).toBe('9');
 });
+test('providerS3 passes ACL configuration to upload request', async () => {
+  const cacheProvider = providerS3({
+    bucket: 'test-bucket',
+    region: 'test-region',
+    accessKeyId: 'test-access-key-id',
+    secretAccessKey: 'test-secret-access-key',
+    acl: 'public-read',
+  })();
+
+  const buffer = Buffer.from('test data');
+  const { getResponse } = await cacheProvider.upload({
+    artifactName: 'rock-android-debug-1234567890',
+  });
+  await getResponse(buffer).arrayBuffer();
+
+  expect(libStorage.Upload).toHaveBeenCalledWith(
+    expect.objectContaining({
+      client: expect.any(Object),
+      params: expect.objectContaining({
+        Bucket: 'test-bucket',
+        Key: 'rock-artifacts/rock-android-debug-1234567890.zip',
+        Body: buffer,
+        ACL: 'public-read',
+      }),
+    }),
+  );
+});
