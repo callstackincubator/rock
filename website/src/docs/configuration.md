@@ -235,20 +235,21 @@ In case you use a different env variable, you can pass it as a `accessKeyId` and
 
 #### S3 Provider Options
 
-| Option               | Type     | Required | Description                                                                                      |
-| -------------------- | -------- | -------- | ------------------------------------------------------------------------------------------------ |
-| `endpoint`           | `string` | No       | Optional endpoint, necessary for self-hosted S3 servers or Cloudflare R2 integration             |
-| `bucket`             | `string` | Yes      | The bucket name to use for the S3 server                                                         |
-| `region`             | `string` | Yes      | The region of the S3 server                                                                      |
-| `accessKeyId`        | `string` | No       | The access key ID for the S3. Not required when using IAM roles or other auth methods server     |
-| `secretAccessKey`    | `string` | No       | The secret access key for the S3. Not required when using IAM roles or other auth methods server |
-| `profile`            | `string` | No       | AWS profile name to use for authentication. Useful for local development.                        |
-| `roleArn`            | `string` | No       | Role ARN to assume for authentication. Useful for cross-account access.                          |
-| `roleSessionName`    | `string` | No       | Session name when assuming a role.                                                               |
-| `externalId`         | `string` | No       | External ID when assuming a role (for additional security).                                      |
-| `directory`          | `string` | No       | The directory to store artifacts in the S3 server (defaults to `rock-artifacts`)                 |
-| `name`               | `string` | No       | The display name of the provider (defaults to `S3`)                                              |
-| `linkExpirationTime` | `number` | No       | The time in seconds for presigned URLs to expire (defaults to 24 hours)                          |
+| Option               | Type              | Required | Description                                                                                                                                                                                                     |
+| -------------------- | ----------------- | -------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `endpoint`           | `string`          | No       | Optional endpoint, necessary for self-hosted S3 servers or Cloudflare R2 integration                                                                                                                            |
+| `bucket`             | `string`          | Yes      | The bucket name to use for the S3 server                                                                                                                                                                        |
+| `region`             | `string`          | Yes      | The region of the S3 server                                                                                                                                                                                     |
+| `accessKeyId`        | `string`          | No       | The access key ID for the S3. Not required when using IAM roles or other auth methods server                                                                                                                    |
+| `secretAccessKey`    | `string`          | No       | The secret access key for the S3. Not required when using IAM roles or other auth methods server                                                                                                                |
+| `profile`            | `string`          | No       | AWS profile name to use for authentication. Useful for local development.                                                                                                                                       |
+| `roleArn`            | `string`          | No       | Role ARN to assume for authentication. Useful for cross-account access.                                                                                                                                         |
+| `roleSessionName`    | `string`          | No       | Session name when assuming a role.                                                                                                                                                                              |
+| `externalId`         | `string`          | No       | External ID when assuming a role (for additional security).                                                                                                                                                     |
+| `directory`          | `string`          | No       | The directory to store artifacts in the S3 server (defaults to `rock-artifacts`)                                                                                                                                |
+| `name`               | `string`          | No       | The display name of the provider (defaults to `S3`)                                                                                                                                                             |
+| `linkExpirationTime` | `number`          | No       | The time in seconds for presigned URLs to expire (defaults to 24 hours)                                                                                                                                         |
+| `acl`                | `ObjectCannedACL` | No       | ACL (Access Control List) to use for uploaded objects. Possible values: `private`, `public-read`, `public-read-write`, `authenticated-read`, `aws-exec-read`, `bucket-owner-read`, `bucket-owner-full-control`. |
 
 #### Authentication Methods
 
