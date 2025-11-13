@@ -92,7 +92,7 @@ Update the token under "${color.bold(
         )}" key in ${colorLink('rock.config.mjs')} config file.
 
 📘 Read more about generating a new token: ${colorLink(
-          'https://www.rockjs.dev/docs/remote-cache/github-actions-setup#setup-github-personal-access-token',
+          'https://rockjs.dev/docs/remote-cache/github-actions-setup#setup-github-personal-access-token',
         )}`,
       );
     }
@@ -108,7 +108,7 @@ Make sure the repository information and token under "${color.bold(
         )}" key in ${colorLink('rock.config.mjs')} config file is valid.
 
 📘 Read more about generating a new token: ${colorLink(
-          'https://www.rockjs.dev/docs/remote-cache/github-actions-setup#setup-github-personal-access-token',
+          'https://rockjs.dev/docs/remote-cache/github-actions-setup#setup-github-personal-access-token',
         )}`,
       );
     }
