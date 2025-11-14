@@ -1,5 +1,11 @@
 # @rnef/plugin-metro
 
+## 0.11.10
+
+### Patch Changes
+
+- @rock-js/tools@0.11.10
+
 ## 0.11.9
 
 ### Patch Changes

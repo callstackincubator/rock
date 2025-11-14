@@ -1,5 +1,14 @@
 # @rnef/plugin-brownfield-android
 
+## 0.11.10
+
+### Patch Changes
+
+- 665bd9b: feat: use latest brownfield with fixes for 0.81+ on Android
+- 471c5e7: fix: set IS_EDGE_TO_EDGE_ENABLED in brownfield template
+  - @rock-js/platform-android@0.11.10
+  - @rock-js/tools@0.11.10
+
 ## 0.11.9
 
 ### Patch Changes

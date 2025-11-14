@@ -1,5 +1,13 @@
 # @rnef/plugin-brownfield-ios
 
+## 0.11.10
+
+### Patch Changes
+
+- 665bd9b: feat: use latest brownfield with fixes for 0.81+ on Android
+  - @rock-js/platform-apple-helpers@0.11.10
+  - @rock-js/tools@0.11.10
+
 ## 0.11.9
 
 ### Patch Changes
