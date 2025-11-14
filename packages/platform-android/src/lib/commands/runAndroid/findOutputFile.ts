@@ -1,4 +1,4 @@
-import { existsSync } from 'node:fs';
+import { existsSync, readdirSync } from 'node:fs';
 import { logger, spawn } from '@rock-js/tools';
 import { getAdbPath } from './adb.js';
 import type { AndroidProject } from './runAndroid.js';
@@ -62,6 +62,16 @@ async function getInstallOutputFileName(
   const outputFile = `${appName}-${variant}.${apkOrAab}`;
   if (existsSync(`${buildDirectory}/${outputFile}`)) {
     return outputFile;
+  }
+
+  // check if there is a file like -debug.apk (missing app name)
+  if (existsSync(buildDirectory)) {
+    const pattern = `-${variant}.${apkOrAab}`;
+    const files = readdirSync(buildDirectory);
+    const matchingFile = files?.find((file) => file.endsWith(pattern));
+    if (matchingFile) {
+      return matchingFile;
+    }
   }
 
   logger.debug('Could not find the output file:', {
