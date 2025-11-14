@@ -1,6 +1,6 @@
 {
   "name": "@rock-js/plugin-brownfield-android",
-  "version": "0.11.9",
+  "version": "0.11.10",
   "description": "Plugin for integrating Rock projects with existing Android apps",
   "type": "module",
   "types": "./dist/src/index.d.ts",
@@ -20,13 +20,13 @@
     "publish:verdaccio": "npm publish --registry http://localhost:4873 --userconfig ../../.npmrc"
   },
   "dependencies": {
-    "@rock-js/tools": "^0.11.9",
-    "@rock-js/platform-android": "^0.11.9",
+    "@rock-js/tools": "^0.11.10",
+    "@rock-js/platform-android": "^0.11.10",
     "@react-native-community/cli-config-android": "^20.0.0",
     "tslib": "^2.3.0"
   },
   "devDependencies": {
-    "@rock-js/config": "^0.11.9",
+    "@rock-js/config": "^0.11.10",
     "@react-native-community/cli-types": "^20.0.0"
   },
   "publishConfig": {
