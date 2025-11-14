@@ -41,7 +41,7 @@ export async function findOutputFile(
   return outputFile ? `${buildDirectory}/${outputFile}` : undefined;
 }
 
-async function getInstallOutputFileName(
+export async function getInstallOutputFileName(
   appName: string,
   variant: string,
   buildDirectory: string,
