@@ -41,7 +41,7 @@ Generate a [fine-grained Personal Access Token](https://github.com/settings/pers
 
 ![Fine-grained Personal Access Token](../assets/github-pat.png)
 
-### Classic tokes for individual developers
+### Classic tokens for individual developers
 
 Generate [GitHub Personal Access Token](https://github.com/settings/tokens/new?scopes=repo) for downloading cached builds with `repo` permissions.
 
