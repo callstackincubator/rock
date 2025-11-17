@@ -1,5 +1,11 @@
 # @rnef/welcome-screen
 
+## 0.11.12
+
+### Patch Changes
+
+- e9b9ea6: chore: use compileSdk 36 for brownfield; update prompt instruction
+
 ## 0.11.11
 
 ### Patch Changes

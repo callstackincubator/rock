@@ -1,5 +1,11 @@
 # rock-docs
 
+## 1.3.7
+
+### Patch Changes
+
+- e9b9ea6: chore: use compileSdk 36 for brownfield; update prompt instruction
+
 ## 1.3.6
 
 ### Patch Changes
