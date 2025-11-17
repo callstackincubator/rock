@@ -1,5 +1,14 @@
 # rock
 
+## 0.11.11
+
+### Patch Changes
+
+- 447683c: fix: use npm run instead of pnpm in package:aar command
+- Updated dependencies [447683c]
+  - @rock-js/config@0.11.11
+  - @rock-js/tools@0.11.11
+
 ## 0.11.10
 
 ### Patch Changes
