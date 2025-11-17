@@ -1,5 +1,14 @@
 # @rnef/config
 
+## 0.11.12
+
+### Patch Changes
+
+- e9b9ea6: chore: use compileSdk 36 for brownfield; update prompt instruction
+- Updated dependencies [e9b9ea6]
+  - @rock-js/provider-github@0.11.12
+  - @rock-js/tools@0.11.12
+
 ## 0.11.11
 
 ### Patch Changes
