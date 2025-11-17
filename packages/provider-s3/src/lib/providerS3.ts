@@ -198,17 +198,25 @@ export class S3BuildCache implements RemoteBuildCache {
   }: {
     artifactName: string;
   }): Promise<Response> {
-    const res = await this.s3.send(
-      new clientS3.GetObjectCommand({
-        Bucket: this.bucket,
-        Key: `${this.directory}/${artifactName}.zip`,
-      }),
-    );
-    return new Response(toWebStream(res.Body as Readable), {
-      headers: {
-        'content-length': String(res.ContentLength),
-      },
-    });
+    try {
+      const res = await this.s3.send(
+        new clientS3.GetObjectCommand({
+          Bucket: this.bucket,
+          Key: `${this.directory}/${artifactName}.zip`,
+        }),
+      );
+      return new Response(toWebStream(res.Body as Readable), {
+        headers: {
+          'content-length': String(res.ContentLength),
+        },
+      });
+    } catch (error) {
+      if (this.config.publicAccess) {
+        (error as Error).message =
+          `Build not found or not accessible to the public`;
+      }
+      throw error;
+    }
   }
 
   async delete({
