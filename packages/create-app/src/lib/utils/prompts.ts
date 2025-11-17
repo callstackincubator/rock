@@ -131,7 +131,7 @@ export function promptPlugins(
   }
 
   return promptMultiselect({
-    message: `Select plugins ${color.dim('(Press <enter> to skip)')}:`,
+    message: `Which plugins do you want to use? ${color.dim('(Press <space> to select, <enter> to skip)')}:`,
     // @ts-expect-error todo fixup type
     options: plugins.map((plugin) => ({
       value: plugin,
