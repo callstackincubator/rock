@@ -46,6 +46,10 @@ type ProviderConfig = {
    * The time in seconds for the presigned URL to expire. By default, it is 24 hours.
    */
   linkExpirationTime?: number;
+  /**
+   * ACL (Access Control List) to use for uploaded objects
+   */
+  acl?: clientS3.ObjectCannedACL;
 };
 ```
 
