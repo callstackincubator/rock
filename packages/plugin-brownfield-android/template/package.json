@@ -2,12 +2,12 @@
   "name": "rock-plugin-brownfield-android-template",
   "scripts": {
     "package:aar": "rock package:aar --variant Release --module-name helloworldreact",
-    "publish-local:aar": "pnpm package:aar && rock publish-local:aar --module-name helloworldreact"
+    "publish-local:aar": "npm run package:aar && rock publish-local:aar --module-name helloworldreact"
   },
   "dependencies": {
     "@callstack/react-native-brownfield": "^2.0.0"
   },
   "devDependencies": {
-    "@rock-js/plugin-brownfield-android": "^0.11.10"
+    "@rock-js/plugin-brownfield-android": "^0.11.12"
   }
 }

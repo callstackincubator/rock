@@ -1,5 +1,21 @@
 # @rnef/platform-apple-helpers
 
+## 0.11.12
+
+### Patch Changes
+
+- e9b9ea6: chore: use compileSdk 36 for brownfield; update prompt instruction
+- Updated dependencies [e9b9ea6]
+  - @rock-js/tools@0.11.12
+
+## 0.11.11
+
+### Patch Changes
+
+- 447683c: fix: use npm run instead of pnpm in package:aar command
+- Updated dependencies [447683c]
+  - @rock-js/tools@0.11.11
+
 ## 0.11.10
 
 ### Patch Changes

@@ -1,5 +1,17 @@
 # rock-docs
 
+## 1.3.7
+
+### Patch Changes
+
+- e9b9ea6: chore: use compileSdk 36 for brownfield; update prompt instruction
+
+## 1.3.6
+
+### Patch Changes
+
+- 447683c: fix: use npm run instead of pnpm in package:aar command
+
 ## 1.3.5
 
 ### Patch Changes

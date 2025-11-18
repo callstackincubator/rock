@@ -19,7 +19,7 @@ repositories {
 
 android {
     namespace = "com.helloworldreact"
-    compileSdk = 34
+    compileSdk = 36
 
     defaultConfig {
         minSdk = 24
