@@ -36,8 +36,7 @@ export const platformIOS =
           reactNativePath: api.getReactNativePath(),
           fingerprintOptions: api.getFingerprintOptions(),
           remoteCacheProvider: await api.getRemoteCacheProvider(),
-          RCT_USE_RN_DEP: api.getRCT_USE_RN_DEP(),
-          RCT_USE_PREBUILT_RNCORE: api.getRCT_USE_PREBUILT_RNCORE(),
+          usePrebuiltRNCore: api.getUsePrebuiltRNCore(),
         });
         outro('Success 🎉.');
       },
@@ -66,8 +65,7 @@ export const platformIOS =
           reactNativeVersion: api.getReactNativeVersion(),
           platforms: api.getPlatforms(),
           startDevServer: api.getBundlerStart(),
-          RCT_USE_RN_DEP: api.getRCT_USE_RN_DEP(),
-          RCT_USE_PREBUILT_RNCORE: api.getRCT_USE_PREBUILT_RNCORE(),
+          usePrebuiltRNCore: api.getUsePrebuiltRNCore(),
         });
         outro('Success 🎉.');
       },

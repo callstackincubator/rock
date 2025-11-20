@@ -56,7 +56,7 @@ export type PluginApi = {
   >;
   getFingerprintOptions: () => FingerprintSources;
   getBundlerStart: () => ({ args }: { args: DevServerArgs }) => void;
-  geUusePrebuiltRNCore: () => number | undefined;
+  getUsePrebuiltRNCore: () => number | undefined;
 };
 
 type PluginType = (args: PluginApi) => PluginOutput;
