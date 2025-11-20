@@ -1,5 +1,12 @@
 # @rnef/platform-apple-helpers
 
+## 0.11.13
+
+### Patch Changes
+
+- 2396563: feat: add usePrebuiltRNCore to rock.config.mjs
+  - @rock-js/tools@0.11.13
+
 ## 0.11.12
 
 ### Patch Changes
