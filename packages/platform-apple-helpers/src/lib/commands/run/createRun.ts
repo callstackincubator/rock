@@ -38,8 +38,7 @@ export const createRun = async ({
   reactNativeVersion,
   platforms,
   startDevServer,
-  RCT_USE_RN_DEP,
-  RCT_USE_PREBUILT_RNCORE,
+  usePrebuiltRNCore
 }: {
   platformName: ApplePlatform;
   projectConfig: ProjectConfig;
@@ -51,8 +50,7 @@ export const createRun = async ({
   reactNativeVersion: string;
   platforms: { [platform: string]: object };
   startDevServer: (options: StartDevServerArgs) => void;
-  RCT_USE_RN_DEP?: number;
-  RCT_USE_PREBUILT_RNCORE?: number;
+  usePrebuiltRNCore?: number;
 }) => {
   const startDevServerHelper = () => {
     if (args.devServer) {
@@ -117,8 +115,7 @@ export const createRun = async ({
       artifactName,
       deviceOrSimulator,
       fingerprintOptions,
-      RCT_USE_RN_DEP,
-      RCT_USE_PREBUILT_RNCORE
+      usePrebuiltRNCore,
     });
 
     await runOnMac(appPath);
@@ -137,8 +134,7 @@ export const createRun = async ({
       artifactName,
       deviceOrSimulator,
       fingerprintOptions,
-      RCT_USE_RN_DEP,
-      RCT_USE_PREBUILT_RNCORE
+      usePrebuiltRNCore,
     });
 
     if (scheme) {
@@ -187,8 +183,7 @@ ${devices
           artifactName,
           deviceOrSimulator,
           fingerprintOptions,
-          RCT_USE_RN_DEP,
-          RCT_USE_PREBUILT_RNCORE
+          usePrebuiltRNCore,
         }),
       ]);
 
@@ -206,8 +201,7 @@ ${devices
         artifactName,
         deviceOrSimulator,
         fingerprintOptions,
-        RCT_USE_RN_DEP,
-        RCT_USE_PREBUILT_RNCORE
+        usePrebuiltRNCore,
       });
 
       await runOnDevice(
@@ -263,8 +257,7 @@ ${devices
             artifactName,
             deviceOrSimulator,
             fingerprintOptions,
-            RCT_USE_RN_DEP,
-            RCT_USE_PREBUILT_RNCORE
+            usePrebuiltRNCore,
           }),
         ]);
 
