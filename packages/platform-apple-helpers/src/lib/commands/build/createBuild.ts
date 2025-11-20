@@ -31,6 +31,7 @@ export const createBuild = async ({
   fingerprintOptions,
   brownfield,
   remoteCacheProvider,
+  usePrebuiltRNCore,
 }: {
   platformName: BuilderCommand['platformName'];
   projectConfig: ProjectConfig;
@@ -40,6 +41,7 @@ export const createBuild = async ({
   fingerprintOptions: FingerprintSources;
   brownfield?: boolean;
   remoteCacheProvider: null | (() => RemoteBuildCache) | undefined;
+  usePrebuiltRNCore?: number;
 }) => {
   await validateArgs(args);
 
@@ -95,6 +97,7 @@ export const createBuild = async ({
       artifactName,
       deviceOrSimulator,
       fingerprintOptions,
+      usePrebuiltRNCore,
     });
     logger.log(`Build available at: ${colorLink(relativeToCwd(appPath))}`);
 

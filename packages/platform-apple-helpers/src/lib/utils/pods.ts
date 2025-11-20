@@ -27,6 +27,7 @@ export async function installPodsIfNeeded(
   newArch: boolean,
   reactNativePath: string,
   brownfield?: boolean,
+  usePrebuiltRNCore?: number,
 ) {
   const podsPath = path.join(sourceDir, 'Pods');
   const podfilePath = path.join(sourceDir, 'Podfile');
@@ -52,6 +53,7 @@ export async function installPodsIfNeeded(
       podfilePath,
       newArch,
       brownfield,
+      usePrebuiltRNCore,
     });
     cacheManager.set(
       cacheKey,
@@ -105,6 +107,7 @@ async function runPodInstall(options: {
   useBundler: boolean;
   brownfield?: boolean;
   projectRoot: string;
+  usePrebuiltRNCore?: number;
 }) {
   if (!options.useBundler) {
     await validatePodCommand(options.sourceDir);
@@ -132,12 +135,16 @@ async function runPodInstall(options: {
       env: {
         RCT_NEW_ARCH_ENABLED: options.newArch ? '1' : '0',
         RCT_IGNORE_PODS_DEPRECATION: '1',
-        RCT_USE_RN_DEP: process.env['RCT_USE_RN_DEP'] != undefined
-          ? String(process.env['RCT_USE_RN_DEP'])
-          : usePrebuiltReactNative ? '1' : '0',
-        RCT_USE_PREBUILT_RNCORE: process.env['RCT_USE_PREBUILT_RNCORE'] != undefined
-          ? String(process.env['RCT_USE_PREBUILT_RNCORE'])
-          : usePrebuiltReactNative ? '1' : '0',
+        RCT_USE_RN_DEP: String(
+          process.env['RCT_USE_RN_DEP'] ??
+            options.usePrebuiltRNCore ??
+            (usePrebuiltReactNative ? 1 : 0),
+        ),
+        RCT_USE_PREBUILT_RNCORE: String(
+          process.env['RCT_USE_PREBUILT_RNCORE'] ??
+            options.usePrebuiltRNCore ??
+            (usePrebuiltReactNative ? 1 : 0),
+        ),
         ...(options.brownfield && { USE_FRAMEWORKS: 'static' }),
         ...(process.env['USE_THIRD_PARTY_JSC'] && {
           USE_THIRD_PARTY_JSC: process.env['USE_THIRD_PARTY_JSC'],
@@ -173,6 +180,7 @@ async function runPodInstall(options: {
         useBundler: options.useBundler,
         brownfield: options.brownfield,
         projectRoot: options.projectRoot,
+        usePrebuiltRNCore: options.usePrebuiltRNCore,
       });
     } else {
       throw new RockError(
@@ -214,6 +222,7 @@ async function installPods(options: {
   podfilePath: string;
   newArch: boolean;
   brownfield?: boolean;
+  usePrebuiltRNCore?: number;
 }) {
   if (!fs.existsSync(options.podfilePath)) {
     logger.debug(
@@ -234,6 +243,7 @@ async function installPods(options: {
     useBundler,
     brownfield: options.brownfield,
     projectRoot: options.projectRoot,
+    usePrebuiltRNCore: options.usePrebuiltRNCore,
   });
 }
 

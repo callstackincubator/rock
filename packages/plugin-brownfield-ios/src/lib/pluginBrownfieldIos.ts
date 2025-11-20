@@ -51,6 +51,7 @@ export const pluginBrownfieldIos =
           fingerprintOptions: api.getFingerprintOptions(),
           brownfield: true,
           remoteCacheProvider: await api.getRemoteCacheProvider(),
+          usePrebuiltRNCore: api.getUsePrebuiltRNCore(),
         });
 
         // 2) Merge the .framework outputs of the framework target

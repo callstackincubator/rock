@@ -36,6 +36,7 @@ export const platformIOS =
           reactNativePath: api.getReactNativePath(),
           fingerprintOptions: api.getFingerprintOptions(),
           remoteCacheProvider: await api.getRemoteCacheProvider(),
+          usePrebuiltRNCore: api.getUsePrebuiltRNCore(),
         });
         outro('Success 🎉.');
       },
@@ -64,6 +65,7 @@ export const platformIOS =
           reactNativeVersion: api.getReactNativeVersion(),
           platforms: api.getPlatforms(),
           startDevServer: api.getBundlerStart(),
+          usePrebuiltRNCore: api.getUsePrebuiltRNCore(),
         });
         outro('Success 🎉.');
       },

@@ -33,6 +33,7 @@ export async function buildApp({
   artifactName,
   fingerprintOptions,
   deviceOrSimulator,
+  usePrebuiltRNCore,
 }: {
   args: RunFlags | BuildFlags;
   projectConfig: ProjectConfig;
@@ -47,6 +48,7 @@ export async function buildApp({
   artifactName: string;
   fingerprintOptions: FingerprintSources;
   deviceOrSimulator: string;
+  usePrebuiltRNCore?: number,
 }) {
   if (binaryPath) {
     // @todo Info.plist is hardcoded when reading from binaryPath
@@ -74,6 +76,7 @@ export async function buildApp({
       args.newArch,
       reactNativePath,
       brownfield,
+      usePrebuiltRNCore,
     );
     // When the project is not a workspace, we need to get the project config again,
     // because running pods install might have generated .xcworkspace project.
