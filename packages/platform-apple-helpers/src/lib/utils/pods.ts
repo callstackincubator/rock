@@ -138,12 +138,12 @@ async function runPodInstall(options: {
         RCT_USE_RN_DEP: String(
           process.env['RCT_USE_RN_DEP'] ??
             options.usePrebuiltRNCore ??
-            usePrebuiltReactNative ? 1 : 0,
+            (usePrebuiltReactNative ? 1 : 0),
         ),
         RCT_USE_PREBUILT_RNCORE: String(
           process.env['RCT_USE_PREBUILT_RNCORE'] ??
             options.usePrebuiltRNCore ??
-            usePrebuiltReactNative ? 1 : 0,
+            (usePrebuiltReactNative ? 1 : 0),
         ),
         ...(options.brownfield && { USE_FRAMEWORKS: 'static' }),
         ...(process.env['USE_THIRD_PARTY_JSC'] && {
