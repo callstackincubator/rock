@@ -5,4 +5,4 @@
 '@rock-js/config': patch
 ---
 
-feat: add RCT_USE_RN_DEP and RCT_USE_PREBUILT_RNCORE to rock.config.mjs
+feat: add usePrebuiltRNCore to rock.config.mjs
