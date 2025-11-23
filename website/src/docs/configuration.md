@@ -249,6 +249,7 @@ In case you use a different env variable, you can pass it as a `accessKeyId` and
 | `directory`          | `string` | No       | The directory to store artifacts in the S3 server (defaults to `rock-artifacts`)                 |
 | `name`               | `string` | No       | The display name of the provider (defaults to `S3`)                                              |
 | `linkExpirationTime` | `number` | No       | The time in seconds for presigned URLs to expire (defaults to 24 hours)                          |
+| `publicAccess`      | `boolean`| No       | If true, the provider will not sign requests and will try to access the S3 bucket without authentication |
 
 #### Authentication Methods
 
@@ -259,6 +260,7 @@ The S3 provider supports multiple authentication methods through the underlying 
 - **AWS credentials file**: Use `~/.aws/credentials` with the `profile` option
 - **Role assumption**: Use `roleArn` to assume a different role, optionally with `profile` as source credentials
 - **Temporary credentials**: Set `AWS_SESSION_TOKEN` environment variable for temporary credentials
+- **Public access**: Set `publicAccess: true` to explicitly disable request signing and access public S3 buckets without authentication
 
 #### Cloudflare R2
 
