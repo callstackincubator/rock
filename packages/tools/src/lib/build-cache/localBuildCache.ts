@@ -3,7 +3,8 @@ import path from 'node:path';
 import { color, colorLink } from '../color.js';
 import logger from '../logger.js';
 import { relativeToCwd } from '../path.js';
-import { getLocalArtifactPath, getLocalBinaryPath } from './common.js';
+import { getCacheRootPath } from '../project.js';
+import { BUILD_CACHE_DIR, getLocalArtifactPath, getLocalBinaryPath } from './common.js';
 
 export type LocalBuild = {
   name: string;
@@ -62,4 +63,31 @@ export function getLocalBuildCacheBinaryPath(
     return localBuild.binaryPath;
   }
   return undefined;
+}
+
+/**
+ * Checks if there are any existing remote cache artifacts, indicating previous successful remote cache usage.
+ */
+export function hasUsedRemoteCacheBefore(): boolean {
+  try {
+    const remoteCacheDir = path.join(getCacheRootPath(), BUILD_CACHE_DIR);
+    
+    if (!fs.existsSync(remoteCacheDir)) {
+      return false;
+    }
+    
+    const entries = fs.readdirSync(remoteCacheDir);
+    
+    // Look for any rock- directories
+    const rockArtifacts = entries.filter(entry => {
+      const entryPath = path.join(remoteCacheDir, entry);
+      const stats = fs.statSync(entryPath, { throwIfNoEntry: false });
+      return stats?.isDirectory() && entry.startsWith('rock-');
+    });
+    
+    return rockArtifacts.length > 0;
+  } catch (error) {
+    logger.debug('Failed to check remote cache usage history:', error);
+    return false;
+  }
 }
