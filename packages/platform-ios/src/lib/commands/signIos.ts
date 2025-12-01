@@ -8,6 +8,7 @@ export type SignFlags = {
   buildJsbundle?: boolean;
   jsbundle?: string;
   noHermes?: boolean;
+  useAppEntitlements?: boolean;
 };
 
 const ARGUMENTS = [
@@ -43,6 +44,10 @@ const OPTIONS = [
   {
     name: '--no-hermes',
     description: 'Do not use Hermes to build the JS bundle.',
+  },
+  {
+    name: '--use-app-entitlements',
+    description: 'Merge entitlements from the existing app with the provisioning profile entitlements.',
   },
 ];
 
