@@ -65,6 +65,7 @@ export const registerSignCommand = (api: PluginApi) => {
           buildJsBundle: flags.buildJsbundle,
           jsBundlePath: flags.jsbundle,
           useHermes: !flags.noHermes,
+          useAppEntitlements: flags.useAppEntitlements,
         });
       } else {
         await modifyIpa({
@@ -75,6 +76,7 @@ export const registerSignCommand = (api: PluginApi) => {
           buildJsBundle: flags.buildJsbundle,
           jsBundlePath: flags.jsbundle,
           useHermes: !flags.noHermes,
+          useAppEntitlements: flags.useAppEntitlements,
         });
       }
     },
