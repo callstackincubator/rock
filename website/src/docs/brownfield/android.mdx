@@ -490,3 +490,28 @@ The above returns a FrameLayout, which can be used to present React Native as a 
 <hr />
 
 > Note: `brownfield-gradle-plugin` copies `.so` files to the `lib` folder. Make sure to add `**/*.so` to your .gitignore file, as to not commit these .so files. The reason is they are auto-generated each time.
+
+
+## Troubleshooting
+
+### React Native Reanimated v4 duplicate `libworklets.so` library conflict
+
+Both `react-native-reanimated` and `react-native-worklets` packages include the native library `libworklets.so`. When building an AAR with the brownfield Gradle plugin, this duplication causes build conflicts on Android.
+
+To resolve this, exclude `libworklets.so` from the packaging process by patching `react-native-reanimated` - specifically, add `libworklets.so` to the exclusion list in `android/build.gradle` of `react-native-reanimated`:
+
+```diff
+diff --git a/android/build.gradle b/android/build.gradle
+--- a/android/build.gradle
++++ b/android/build.gradle
+@@ -252,6 +252,7 @@ android {
+                 "**/libreact_render*.so",
+                 "**/librrc_root.so",
+                 "**/libjscexecutor.so",
++                "**/libworklets.so",
+         ]
+     }
+     compileOptions {
+```
+
+This prevents the duplicate library from being included in the AAR, resolving the build conflict.
