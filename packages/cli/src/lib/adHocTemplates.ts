@@ -343,7 +343,7 @@ function createAdHocTemplate({
         <p class="adhoc-info-text">
           ${adhocDescription}
           <br><br>
-          Learn more at <a class="link" href="https://rockjs.dev/docs/cli#ad-hoc-distribution">Rock Ad-hoc documentation</a>.
+          Learn more at <a class="link" href="https://www.rockjs.dev/docs/cli/introduction#ad-hoc-distribution">Rock Ad-hoc documentation</a>.
         </p>
       </div>
       ${sharedFooter}
