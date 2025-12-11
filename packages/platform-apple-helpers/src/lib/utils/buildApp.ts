@@ -12,7 +12,7 @@ import { buildProject } from '../commands/build/buildProject.js';
 import { getBuildSettings } from '../commands/run/getBuildSettings.js';
 import type { RunFlags } from '../commands/run/runOptions.js';
 import type { ApplePlatform, ProjectConfig } from '../types/index.js';
-import { getGenericDestination } from './destionation.js';
+import { getGenericDestination } from './destination.js';
 import { getConfiguration } from './getConfiguration.js';
 import { getInfo } from './getInfo.js';
 import { getScheme } from './getScheme.js';
