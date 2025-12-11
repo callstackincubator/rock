@@ -55,7 +55,7 @@ We need a special Gradle plugin to create an AAR that includes all dependencies.
            mavenCentral()
        }
        dependencies {
-           classpath("com.callstack.react:brownfield-gradle-plugin:0.5.0") // check the latest version
+           classpath("com.callstack.react:brownfield-gradle-plugin:0.6.2") // check the latest version: https://mvnrepository.com/artifact/com.callstack.react/brownfield-gradle-plugin
        }
    }
    ```
@@ -490,7 +490,6 @@ The above returns a FrameLayout, which can be used to present React Native as a 
 <hr />
 
 > Note: `brownfield-gradle-plugin` copies `.so` files to the `lib` folder. Make sure to add `**/*.so` to your .gitignore file, as to not commit these .so files. The reason is they are auto-generated each time.
-
 
 ## Troubleshooting
 
