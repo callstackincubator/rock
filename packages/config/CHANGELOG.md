@@ -1,5 +1,13 @@
 # @rnef/config
 
+## 0.11.13
+
+### Patch Changes
+
+- 2396563: feat: add usePrebuiltRNCore to rock.config.mjs
+  - @rock-js/provider-github@0.11.13
+  - @rock-js/tools@0.11.13
+
 ## 0.11.12
 
 ### Patch Changes
