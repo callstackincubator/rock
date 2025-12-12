@@ -29,6 +29,7 @@ export type ModifyIpaOptions = {
   buildJsBundle?: boolean;
   jsBundlePath?: string;
   useHermes?: boolean;
+  useAppEntitlements?: boolean;
 };
 
 export const modifyIpa = async (options: ModifyIpaOptions) => {
@@ -89,6 +90,8 @@ export const modifyIpa = async (options: ModifyIpaOptions) => {
   await generateEntitlementsPlist({
     provisioningPlistPath: tempPaths.provisioningPlist,
     outputPath: tempPaths.entitlementsPlist,
+    appPath: appPath,
+    useAppEntitlements: options.useAppEntitlements,
   });
 
   const codeSignArgs = [
