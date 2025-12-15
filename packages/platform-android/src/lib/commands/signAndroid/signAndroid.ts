@@ -143,18 +143,40 @@ async function replaceJsBundle({
   archivePath,
   jsBundlePath,
 }: ReplaceJsBundleOptions) {
-  try {
-    const zip = new AdmZip(archivePath);
-    const assetsPath = isAab(archivePath) ? 'base/assets' : 'assets';
+  const assetsPath = isAab(archivePath) ? 'base/assets' : 'assets';
+  const bundleEntryPath = path.posix.join(assetsPath, 'index.android.bundle');
+  const stagingRoot = path.join(
+    getDotRockPath(),
+    'android/sign/bundle-staging',
+  );
+  const stagedBundleDir = path.join(stagingRoot, assetsPath);
 
-    zip.deleteFile(path.join(assetsPath, 'index.android.bundle'));
-    zip.addLocalFile(jsBundlePath, assetsPath, 'index.android.bundle');
-    zip.writeZip(archivePath);
+  if (fs.existsSync(stagingRoot)) {
+    fs.rmSync(stagingRoot, { recursive: true });
+  }
+  fs.mkdirSync(stagedBundleDir, { recursive: true });
+  fs.copyFileSync(
+    jsBundlePath,
+    path.join(stagedBundleDir, 'index.android.bundle'),
+  );
+
+  try {
+    // Remove old bundle
+    await spawn('zip', ['-d', archivePath, bundleEntryPath]);
+
+    // Uses store-only compression (-0) to prevent bundle corruption.
+    await spawn('zip', ['-0', '-r', archivePath, assetsPath], {
+      cwd: stagingRoot,
+    });
   } catch (error) {
     throw new RockError(
       `Failed to replace JS bundle in destination file: ${archivePath}`,
       { cause: error },
     );
+  } finally {
+    if (fs.existsSync(stagingRoot)) {
+      fs.rmSync(stagingRoot, { recursive: true });
+    }
   }
 }
 
