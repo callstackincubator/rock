@@ -11,7 +11,6 @@ import {
   spawn,
   spinner,
 } from '@rock-js/tools';
-import AdmZip from 'adm-zip';
 import { findAndroidBuildTool, getAndroidBuildToolsPath } from '../../paths.js';
 import { buildJsBundle } from './bundle.js';
 
@@ -67,14 +66,14 @@ export async function signAndroid(options: SignAndroidOptions) {
 
   loader.start(`Initializing output ${extension.toUpperCase()}...`);
   try {
-    const zip = new AdmZip(options.binaryPath);
+    fs.mkdirSync(tempPath, { recursive: true });
+    fs.copyFileSync(options.binaryPath, tempArchivePath);
     // Remove old signature files
-    zip.deleteFile('META-INF/*');
-    zip.writeZip(tempArchivePath);
+    await spawn('zip', ['-d', tempArchivePath, 'META-INF/*']);
   } catch (error) {
     throw new RockError(
       `Failed to initialize output file: ${options.outputPath}`,
-      { cause: (error as SubprocessError).stderr },
+      { cause: error },
     );
   }
   loader.stop(`Initialized output ${extension.toUpperCase()}`);
