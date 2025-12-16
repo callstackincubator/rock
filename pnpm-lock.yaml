@@ -164,9 +164,6 @@ importers:
       '@rock-js/tools':
         specifier: ^0.11.12
         version: link:../tools
-      adm-zip:
-        specifier: ^0.5.16
-        version: 0.5.16
       tslib:
         specifier: ^2.3.0
         version: 2.8.1
@@ -177,9 +174,6 @@ importers:
       '@rock-js/config':
         specifier: ^0.11.12
         version: link:../config
-      '@types/adm-zip':
-        specifier: ^0.5.7
-        version: 0.5.7
 
   packages/platform-apple-helpers:
     dependencies:
