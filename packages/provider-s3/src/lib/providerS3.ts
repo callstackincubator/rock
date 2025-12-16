@@ -212,8 +212,8 @@ export class S3BuildCache implements RemoteBuildCache {
       });
     } catch (error) {
       if (this.config.publicAccess) {
-        (error as Error).message =
-          `Build not found or not accessible to the public`;
+        const err = error as Error;
+        err.message = `${err.message}\n\nNote: Public access mode is enabled. Build not found or not accessible to the public`;
       }
       throw error;
     }
