@@ -65,6 +65,10 @@ type ProviderConfig = {
    * External ID when assuming a role (for additional security).
    */
   externalId?: string;
+  /**
+   * If true, the provider will not sign requests and will try to access the S3 bucket without authentication.
+   */
+  publicAccess?: boolean;
 };
 
 export class S3BuildCache implements RemoteBuildCache {
@@ -104,6 +108,15 @@ export class S3BuildCache implements RemoteBuildCache {
     } else if (config.profile) {
       // Use shared config file (e.g. ~/.aws/credentials) with a profile
       s3Config.credentials = fromIni({ profile: config.profile });
+    } else if (config.publicAccess) {
+      // Workaround to access the S3 bucket without authentication (https://carriagereturn.nl/aws/iam/s3/anonymous/2024/07/31/anonymous-access.html)
+      s3Config.signer = {
+        sign: async (request) => request,
+      };
+      s3Config.credentials = {
+        accessKeyId: '',
+        secretAccessKey: '',
+      };
     }
 
     this.s3 = new clientS3.S3Client(s3Config);
@@ -185,17 +198,25 @@ export class S3BuildCache implements RemoteBuildCache {
   }: {
     artifactName: string;
   }): Promise<Response> {
-    const res = await this.s3.send(
-      new clientS3.GetObjectCommand({
-        Bucket: this.bucket,
-        Key: `${this.directory}/${artifactName}.zip`,
-      }),
-    );
-    return new Response(toWebStream(res.Body as Readable), {
-      headers: {
-        'content-length': String(res.ContentLength),
-      },
-    });
+    try {
+      const res = await this.s3.send(
+        new clientS3.GetObjectCommand({
+          Bucket: this.bucket,
+          Key: `${this.directory}/${artifactName}.zip`,
+        }),
+      );
+      return new Response(toWebStream(res.Body as Readable), {
+        headers: {
+          'content-length': String(res.ContentLength),
+        },
+      });
+    } catch (error) {
+      if (this.config.publicAccess) {
+        const err = error as Error;
+        err.message = `${err.message}\n\nNote: Public access mode is enabled. Build not found or not accessible to the public`;
+      }
+      throw error;
+    }
   }
 
   async delete({

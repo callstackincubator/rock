@@ -46,6 +46,10 @@ type ProviderConfig = {
    * The time in seconds for the presigned URL to expire. By default, it is 24 hours.
    */
   linkExpirationTime?: number;
+  /**
+   * If true, the provider will not sign requests and will try to access the S3 bucket without authentication.
+   */
+  publicAccess?: boolean;
 };
 ```
 
@@ -83,6 +87,22 @@ export default {
     region: 'your-region',
     accessKeyId: 'access-key',
     secretAccessKey: 'secret-key',
+  }),
+};
+```
+
+### Public S3 Bucket
+
+```ts
+// rock.config.mjs
+import { providerS3 } from '@rock-js/provider-s3';
+
+export default {
+  // ...
+  remoteCacheProvider: providerS3({
+    bucket: 'your-public-bucket',
+    region: 'your-region',
+    publicAccess: true, // Access public bucket without authentication
   }),
 };
 ```
