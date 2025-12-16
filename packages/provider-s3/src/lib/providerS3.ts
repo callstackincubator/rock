@@ -109,7 +109,7 @@ export class S3BuildCache implements RemoteBuildCache {
       // Use shared config file (e.g. ~/.aws/credentials) with a profile
       s3Config.credentials = fromIni({ profile: config.profile });
     } else if (config.publicAccess) {
-      // Access the S3 bucket without authentication
+      // Workaround to access the S3 bucket without authentication (https://carriagereturn.nl/aws/iam/s3/anonymous/2024/07/31/anonymous-access.html)
       s3Config.signer = {
         sign: async (request) => request,
       };
