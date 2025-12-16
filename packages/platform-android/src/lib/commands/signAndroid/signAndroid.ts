@@ -68,8 +68,6 @@ export async function signAndroid(options: SignAndroidOptions) {
   try {
     fs.mkdirSync(tempPath, { recursive: true });
     fs.copyFileSync(options.binaryPath, tempArchivePath);
-    // Remove old signature files
-    await spawn('zip', ['-d', tempArchivePath, 'META-INF/*']);
   } catch (error) {
     throw new RockError(
       `Failed to initialize output file: ${options.outputPath}`,
