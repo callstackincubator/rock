@@ -1,5 +1,16 @@
 # @rnef/plugin-brownfield-ios
 
+## 0.11.13
+
+### Patch Changes
+
+- 2396563: feat: add usePrebuiltRNCore to rock.config.mjs
+- Updated dependencies [2396563]
+- Updated dependencies [b036ba4]
+- Updated dependencies [6b020d5]
+  - @rock-js/platform-apple-helpers@0.11.13
+  - @rock-js/tools@0.11.13
+
 ## 0.11.12
 
 ### Patch Changes

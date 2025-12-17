@@ -1,5 +1,15 @@
 # rock-docs
 
+## 1.3.8
+
+### Patch Changes
+
+- 9ebbc9e: docs: update brownfield documentation with newest Gradle plugin version & link
+- a6a06cf: fix(docs): add missing section to create 'default' SoftwareComponent for Maven publishing in standalone setup
+- 541dd03: feat: add acl option for S3 provider
+- a6a06cf: fix(docs): add IS_EDGE_TO_EDGE_ENABLED buildConfigField to android brownfield docs
+- 8d85482: feat: add publicAccess option for S3 provider
+
 ## 1.3.7
 
 ### Patch Changes

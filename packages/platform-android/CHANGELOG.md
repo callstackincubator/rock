@@ -1,5 +1,13 @@
 # @rnef/platform-android
 
+## 0.11.13
+
+### Patch Changes
+
+- 14ab0fe: fix: androidSign method and re-sign flow
+- a0297f1: fix: android fallback in case of missing app name in projects with non-standard folder structure
+  - @rock-js/tools@0.11.13
+
 ## 0.11.12
 
 ### Patch Changes

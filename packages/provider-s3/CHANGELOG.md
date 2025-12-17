@@ -1,5 +1,13 @@
 # @rnef/provider-s3
 
+## 0.11.13
+
+### Patch Changes
+
+- 541dd03: feat: add acl option for S3 provider
+- 8d85482: feat: add publicAccess option for S3 provider
+  - @rock-js/tools@0.11.13
+
 ## 0.11.12
 
 ### Patch Changes
