@@ -248,7 +248,7 @@ In case you use a different env variable, you can pass it as a `accessKeyId` and
 | `externalId`         | `string`          | No       | External ID when assuming a role (for additional security).                                                                                                                                                     |
 | `directory`          | `string`          | No       | The directory to store artifacts in the S3 server (defaults to `rock-artifacts`)                                                                                                                                |
 | `name`               | `string`          | No       | The display name of the provider (defaults to `S3`)                                                                                                                                                             |
-| `linkExpirationTime` | `number`          | No       | The time in seconds for presigned URLs to expire (defaults to 24 hours)                                                                                                                                         |                                                                                                                                   
+| `linkExpirationTime` | `number`          | No       | The time in seconds for presigned URLs to expire (defaults to 24 hours)                                                                                                                                         |
 | `publicAccess`       | `boolean`         | No       | If true, the provider will not sign requests and will try to access the S3 bucket without authentication                                                                                                        |
 | `acl`                | `ObjectCannedACL` | No       | ACL (Access Control List) to use for uploaded objects. Possible values: `private`, `public-read`, `public-read-write`, `authenticated-read`, `aws-exec-read`, `bucket-owner-read`, `bucket-owner-full-control`. |
 
@@ -278,6 +278,31 @@ export default {
     region: 'your-region',
     accessKeyId: 'access-key',
     secretAccessKey: 'secret-key',
+  }),
+};
+```
+
+#### Private bucket with public read access
+
+For specific scenarios, you may want to restrict upload access to CI while allowing developers to fetch artifacts without credentials. This requires setting object-level ACL on uploads and using public URLs for downloads.
+
+Configure both `acl: 'public-read'` (applied during uploads on CI) and `publicAccess: true` (enables public URL downloads when credentials are unavailable):
+
+```ts title="rock.config.mjs"
+import { providerS3 } from '@rock-js/provider-s3';
+
+const isPublicAccess =
+  !process.env.AWS_ACCESS_KEY_ID || !process.env.AWS_SECRET_ACCESS_KEY;
+
+export default {
+  // ...
+  remoteCacheProvider: providerS3({
+    bucket: 'your-bucket',
+    region: 'your-region',
+    accessKeyId: process.env.AWS_ACCESS_KEY_ID,
+    secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY,
+    acl: 'public-read',
+    publicAccess: isPublicAccess,
   }),
 };
 ```
