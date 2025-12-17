@@ -1,5 +1,14 @@
 # @rnef/platform-apple-helpers
 
+## 0.11.13
+
+### Patch Changes
+
+- 2396563: feat: add usePrebuiltRNCore to rock.config.mjs
+- b036ba4: chore: rename typo in destination.ts in platform-apple-helpers
+- 6b020d5: fix: ios fingerprint update after pod install only for local builds
+  - @rock-js/tools@0.11.13
+
 ## 0.11.12
 
 ### Patch Changes

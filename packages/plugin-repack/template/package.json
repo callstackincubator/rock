@@ -1,7 +1,7 @@
 {
   "name": "rock-plugin-repack-template",
   "devDependencies": {
-    "@rock-js/plugin-repack": "^0.11.12",
+    "@rock-js/plugin-repack": "^0.11.13",
     "@callstack/repack": "^5.2.0",
     "@rspack/core": "^1.5.0",
     "@swc/helpers": "^0.5.17"

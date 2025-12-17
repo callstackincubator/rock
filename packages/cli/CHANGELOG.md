@@ -1,5 +1,13 @@
 # rock
 
+## 0.11.13
+
+### Patch Changes
+
+- Updated dependencies [2396563]
+  - @rock-js/config@0.11.13
+  - @rock-js/tools@0.11.13
+
 ## 0.11.12
 
 ### Patch Changes

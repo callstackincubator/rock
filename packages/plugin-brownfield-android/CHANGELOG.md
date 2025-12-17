@@ -1,5 +1,15 @@
 # @rnef/plugin-brownfield-android
 
+## 0.11.13
+
+### Patch Changes
+
+- 9ebbc9e: docs: update brownfield documentation with newest Gradle plugin version & link
+- Updated dependencies [14ab0fe]
+- Updated dependencies [a0297f1]
+  - @rock-js/platform-android@0.11.13
+  - @rock-js/tools@0.11.13
+
 ## 0.11.12
 
 ### Patch Changes
