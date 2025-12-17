@@ -50,6 +50,10 @@ type ProviderConfig = {
    * If true, the provider will not sign requests and will try to access the S3 bucket without authentication.
    */
   publicAccess?: boolean;
+  /**
+   * ACL (Access Control List) to use for uploaded objects
+   */
+  acl?: clientS3.ObjectCannedACL;
 };
 ```
 
