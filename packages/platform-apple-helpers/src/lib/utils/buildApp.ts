@@ -91,9 +91,10 @@ export async function buildApp({
       sourceDir = newProjectConfig.sourceDir;
     }
 
-    if (didInstallPods) {
+    if (didInstallPods && args.local){
       // After installing pods the fingerprint likely changes.
       // We update the artifact name to reflect the new fingerprint and store proper entry in the local cache.
+      // Only do this for local builds. Remote builds need the fingerprint determined upfront to properly find the cached build before pods install.
       artifactNameToSave = await formatArtifactName({
         platform: 'ios',
         traits: [deviceOrSimulator, args.configuration ?? 'Debug'],
