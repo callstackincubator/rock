@@ -404,7 +404,7 @@ Available actions:
 | `list`              | Lists the latest artifact matching the specified criteria                         |
 | `list-all`          | Lists all artifacts (optionally filtered by platform and traits)                  |
 | `download`          | Downloads an artifact from remote cache to local cache                            |
-| `upload`            | Uploads a binary to remote cache. Accepts `--ad-hoc` flag for Ad-Hoc distritbuion |
+| `upload`            | Uploads a binary to remote cache. Accepts `--ad-hoc` flag for Ad-Hoc distribution |
 | `delete`            | Deletes artifacts from remote cache                                               |
 | `get-provider-name` | Returns the name of the configured remote cache provider                          |
 
@@ -419,7 +419,7 @@ Actions have different options available:
 | `-p, --platform <string>` | Platform to target (`ios`, `android`, or `harmony`). Must be used with `--traits`                                                                                                  |
 | `-t, --traits <list>`     | Comma-separated traits that construct the final artifact name. For Android: variant (e.g., `debug`, `release`). For iOS: destination and configuration (e.g., `simulator,Release`) |
 | `--binary-path <string>`  | Path to the binary to upload (used with `upload` action)                                                                                                                           |
-| `--ad-hoc <string>`       | Upload IPA for ad-hoc distribution and installation from URL. Additionally uploads index.html and manifest.plist'                                                                  |
+| `--ad-hoc <string>`       | Upload binary for ad-hoc distribution and installation from URL. **iOS**: Uploads IPA, index.html, and manifest.plist. **Android**: Uploads APK and index.html                     |
 
 For example, to download remote cache for iOS simulator with Release configuration, you can use `remote-cache download` with `--name` option
 
@@ -435,29 +435,41 @@ npx rock remote-cache download --platform ios --traits simulator,Release
 
 #### Ad-hoc distribution
 
-Ad-hoc distribution allows you to share your iOS app with testers without going through the App Store. Testers can install your app directly on their devices by visiting a web page and tapping "Install App".
+Ad-hoc distribution allows you to share your mobile app with testers without going through the App Store or Play Store. Testers can install your app directly on their devices by visiting a web page.
 
 **What is Ad-hoc distribution?**
 
-Ad-hoc distribution is a method for sharing iOS apps with testers without going through the App Store. It requires devices to be registered in your Apple Developer account and is perfect for beta testing, internal testing, or client demos. Apps installed this way will appear on the device's home screen just like any other app.
+Ad-hoc distribution is a method for sharing mobile apps with testers without going through official app stores. It's perfect for beta testing, internal testing, or client demos. For iOS, devices must be registered in your Apple Developer account. For Android, testers need to enable "Install from Unknown Sources" in their device settings. Apps installed this way will appear on the device's home screen just like any other app.
 
 **How it works:**
 
-1. Build your app with a valid provisioning profile that includes your testers' devices
+1. Build your app with proper configuration
+
    ```shell
+   # iOS - requires valid provisioning profile that includes your testers devices
    npx rock build:ios --archive # ...other required flags
+
+   # Android - requires signing with keystore (use any signed variant e.g., release)
+   npx rock build:android --variant release # ...other required flags
    ```
+
 2. Use `upload --ad-hoc` to upload the app for ad-hoc distribution
+
    ```shell
+   # iOS
    npx rock remote-cache upload --ad-hoc --platform ios --traits device,Release
+
+   # Android - traits should match your build variant
+   npx rock remote-cache upload --ad-hoc --platform android --traits release
    ```
+
 3. Share the generated URL with your testers
-4. Testers visit the URL and tap "Install App" to install directly on their device
+4. Testers visit the URL and install the app on their device (iOS: tap "Install App"; Android: Download APK and install)
 
 The command creates a special folder structure that includes:
 
-- Your signed IPA file
+- Your signed binary (IPA for iOS, APK for Android)
 - An HTML page for easy installation (you need to configure your provider to **make this file publicly available**)
-- A manifest file that iOS uses to install the app
+- A manifest.plist file (iOS only)
 
 The folder will be available at `ad-hoc/` directory of your configured remote cache provider.
