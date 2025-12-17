@@ -64,7 +64,12 @@ export async function getInstallOutputFileName(
     return outputFile;
   }
 
-  // check if there is a file like -debug.apk (missing app name)
+  // Fallback for hybrid/brownfield apps where appName may be empty.
+  // appName comes from CLI's getAppName() which returns '' if neither
+  // userConfigAppName nor 'app' subfolder exists in sourceDir.
+  // In this case, Gradle uses the root project name as prefix
+  // (e.g., HybridApp-debug.apk instead of app-debug.apk).
+  // See: https://github.com/react-native-community/cli/blob/main/packages/cli-config-android/src/config/index.ts
   if (existsSync(buildDirectory)) {
     const pattern = `-${variant}.${apkOrAab}`;
     const files = readdirSync(buildDirectory);
