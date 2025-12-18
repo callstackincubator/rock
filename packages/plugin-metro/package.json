@@ -28,8 +28,8 @@
     "tslib": "^2.3.0"
   },
   "devDependencies": {
-    "@react-native/dev-middleware": "^0.82.0",
-    "@react-native/community-cli-plugin": "0.82.0",
+    "@react-native/dev-middleware": "^0.83.0",
+    "@react-native/community-cli-plugin": "0.83.0",
     "@rock-js/config": "^0.11.14"
   },
   "publishConfig": {
