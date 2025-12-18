@@ -1,4 +1,3 @@
-import { execFileSync } from 'node:child_process';
 import fs from 'node:fs';
 import os from 'node:os';
 import path from 'node:path';
@@ -16,6 +15,7 @@ import {
   logger,
   relativeToCwd,
   RockError,
+  spawn,
   spinner,
 } from '@rock-js/tools';
 import AdmZip from 'adm-zip';
@@ -256,7 +256,7 @@ ${output
 
         // Upload index.html for Android ad-hoc distribution
         if (args.adHoc && isArtifactAPK) {
-          const { version, packageName } = getManifestFromApk(binaryPath);
+          const { version, packageName } = await getManifestFromApk(binaryPath);
           const { url: urlIndexHtml, getResponse: getResponseIndexHtml } =
             await remoteBuildCache.upload({
               artifactName,
@@ -376,15 +376,17 @@ Please follow instructions at: https://reactnative.dev/docs/set-up-your-environm
   );
 }
 
-function getManifestFromApk(binaryPath: string) {
+async function getManifestFromApk(binaryPath: string) {
   const apkFileName = path.basename(binaryPath, '.apk');
 
   try {
     const aaptPath = findAapt();
 
-    const output = execFileSync(aaptPath, ['dump', 'badging', binaryPath], {
-      encoding: 'utf8',
-    });
+    const { stdout: output } = await spawn(
+      aaptPath,
+      ['dump', 'badging', binaryPath],
+      { stdio: 'pipe' },
+    );
 
     const packageMatch = output?.match(/package: name='([^']+)'/);
     const versionMatch = output?.match(/versionName='([^']+)'/);
