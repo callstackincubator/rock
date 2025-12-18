@@ -13,7 +13,7 @@ export function copyHermesXcframework({
 }) {
   const loader = spinner();
   const hermesFrameworkName =
-    versionCompare('0.82.0', reactNativeVersion) >= 0
+    versionCompare(reactNativeVersion, '0.82.0') >= 0
       ? 'hermesvm.xcframework'
       : 'hermes.xcframework';
 

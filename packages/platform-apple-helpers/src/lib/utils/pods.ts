@@ -124,7 +124,7 @@ async function runPodInstall(options: {
   loader.start('Installing CocoaPods dependencies');
   const reactNativeVersion = await getReactNativeVersion(options.projectRoot);
   const isReactNative81OrHigher =
-    versionCompare('0.81.0', reactNativeVersion) >= 0;
+    versionCompare(reactNativeVersion, '0.81.0') >= 0;
   const usePrebuiltReactNative = !options.brownfield && isReactNative81OrHigher;
   const command = options.useBundler ? 'bundle' : 'pod';
   const args = options.useBundler ? ['exec', 'pod', 'install'] : ['install'];
