@@ -1,5 +1,11 @@
 # rock-docs
 
+## 1.3.9
+
+### Patch Changes
+
+- b0282a5: feat: android adhoc builds
+
 ## 1.3.8
 
 ### Patch Changes

@@ -1,5 +1,13 @@
 # rock
 
+## 0.11.14
+
+### Patch Changes
+
+- b0282a5: feat: android adhoc builds
+  - @rock-js/config@0.11.14
+  - @rock-js/tools@0.11.14
+
 ## 0.11.13
 
 ### Patch Changes

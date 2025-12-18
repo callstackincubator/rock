@@ -1,6 +1,6 @@
 {
   "name": "@rock-js/test-helpers",
-  "version": "0.11.13",
+  "version": "0.11.14",
   "description": "Internal testing utilities and helpers for Rock packages",
   "type": "module",
   "private": true,
