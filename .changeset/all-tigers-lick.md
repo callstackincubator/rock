@@ -18,4 +18,4 @@
 '@rock-js/tools': minor
 ---
 
-feat: upgrade templates to RN 0.82
+feat: upgrade templates to RN 0.83
