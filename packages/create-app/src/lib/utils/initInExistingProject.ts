@@ -166,7 +166,10 @@ export default {
   fs.writeFileSync(rockConfigPath, content);
 }
 
-export function updateAndroidBuildGradle(projectRoot: string, sourceDir: string) {
+export function updateAndroidBuildGradle(
+  projectRoot: string,
+  sourceDir: string,
+) {
   const filePath = path.join(projectRoot, sourceDir, 'app', 'build.gradle');
   if (!fs.existsSync(filePath)) {
     return;
@@ -222,8 +225,13 @@ function updateAndroidSettingsGradle(projectRoot: string, sourceDir: string) {
 }
 
 function updateXcodeProject(projectRoot: string, sourceDir: string) {
-  const toReplace =
-    'shellScript = "set -e\\n\\nWITH_ENVIRONMENT=\\"$REACT_NATIVE_PATH/scripts/xcode/with-environment.sh\\"\\nREACT_NATIVE_XCODE=\\"$REACT_NATIVE_PATH/scripts/react-native-xcode.sh\\"\\n\\n/bin/sh -c \\"$WITH_ENVIRONMENT $REACT_NATIVE_XCODE\\"\\n";';
+  // Patterns to try, in order of preference
+  const patternsToReplace = [
+    // Default format
+    'shellScript = "set -e\\n\\nWITH_ENVIRONMENT=\\"$REACT_NATIVE_PATH/scripts/xcode/with-environment.sh\\"\\nREACT_NATIVE_XCODE=\\"$REACT_NATIVE_PATH/scripts/react-native-xcode.sh\\"\\n\\n/bin/sh -c \\"$WITH_ENVIRONMENT $REACT_NATIVE_XCODE\\"\\n";',
+    // 0.83 format
+    'shellScript = "set -e\\n\\nWITH_ENVIRONMENT=\\"$REACT_NATIVE_PATH/scripts/xcode/with-environment.sh\\"\\nREACT_NATIVE_XCODE=\\"$REACT_NATIVE_PATH/scripts/react-native-xcode.sh\\"\\n\\n/bin/sh -c \\"\\\\\\"$WITH_ENVIRONMENT\\\\\\" \\\\\\"$REACT_NATIVE_XCODE\\\\\\"\\"\\n";',
+  ];
   const expected =
     'shellScript = "set -e\\nif [[ -f \\"$PODS_ROOT/../.xcode.env\\" ]]; then\\nsource \\"$PODS_ROOT/../.xcode.env\\"\\nfi\\nif [[ -f \\"$PODS_ROOT/../.xcode.env.local\\" ]]; then\\nsource \\"$PODS_ROOT/../.xcode.env.local\\"\\nfi\\nexport CONFIG_CMD=\\"dummy-workaround-value\\"\\nexport CLI_PATH=\\"$(\\"$NODE_BINARY\\" --print \\"require(\'path\').dirname(require.resolve(\'rock/package.json\')) + \'/dist/src/bin.js\'\\")\\"\\nWITH_ENVIRONMENT=\\"$REACT_NATIVE_PATH/scripts/xcode/with-environment.sh\\"\\n";';
 
@@ -239,12 +247,15 @@ function updateXcodeProject(projectRoot: string, sourceDir: string) {
     return;
   }
   const content = fs.readFileSync(xcodeProjectPath, 'utf8');
-  const replaced = content.replace(toReplace, expected);
-  if (replaced !== content) {
-    fs.writeFileSync(xcodeProjectPath, replaced);
-  } else {
-    logger.warn(
-      `Unable to update ${color.bold(xcodeProjectPath)}. 
+  for (const pattern of patternsToReplace) {
+    const replaced = content.replace(pattern, expected);
+    if (replaced !== content) {
+      fs.writeFileSync(xcodeProjectPath, replaced);
+      return;
+    }
+  }
+  logger.warn(
+    `Unable to update ${color.bold(xcodeProjectPath)}.
 Please update the "Bundle React Native code and images" build phase manually with:
   set -e
   if [[ -f "$PODS_ROOT/../.xcode.env" ]]; then
@@ -257,8 +268,7 @@ Please update the "Bundle React Native code and images" build phase manually wit
   export CLI_PATH="$("$NODE_BINARY" --print "require('path').dirname(require.resolve('rock/package.json')) + '/dist/src/bin.js'")"
   WITH_ENVIRONMENT="$REACT_NATIVE_PATH/scripts/xcode/with-environment.sh"
 `,
-    );
-  }
+  );
 }
 
 function updatePodfile(projectRoot: string, sourceDir: string) {

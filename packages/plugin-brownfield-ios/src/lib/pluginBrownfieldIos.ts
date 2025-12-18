@@ -105,6 +105,7 @@ export const pluginBrownfieldIos =
         copyHermesXcframework({
           sourceDir,
           destinationDir: frameworkTargetOutputDir,
+          reactNativeVersion: api.getReactNativeVersion(),
         });
 
         // 5) Inform the user
