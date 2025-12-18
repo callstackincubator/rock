@@ -115,7 +115,7 @@ async function runServer(
     options.reactNativePath,
   );
   const { middleware, websocketEndpoints } = createDevMiddleware({
-    projectRoot,
+    projectRoot, // can be undefined since 0.83.0
     serverBaseUrl: devServerUrl,
     logger: createDevMiddlewareLogger(terminalReporter),
   });
@@ -144,7 +144,7 @@ async function runServer(
   // @ts-expect-error Assigning to readonly property
   metroConfig.reporter = reporter;
 
-  const { httpServer: serverInstance } = await Metro.runServer(metroConfig, {
+  await Metro.runServer(metroConfig, {
     host: args.host,
     secure: args.https,
     secureCert: args.cert,
@@ -157,18 +157,6 @@ async function runServer(
   });
 
   reportEvent = eventsSocketEndpoint.reportEvent;
-
-  // In Node 8, the default keep-alive for an HTTP connection is 5 seconds. In
-  // early versions of Node 8, this was implemented in a buggy way which caused
-  // some HTTP responses (like those containing large JS bundles) to be
-  // terminated early.
-  //
-  // As a workaround, arbitrarily increase the keep-alive from 5 to 30 seconds,
-  // which should be enough to send even the largest of JS bundles.
-  //
-  // For more info: https://github.com/nodejs/node/issues/13391
-  //
-  serverInstance.keepAliveTimeout = 30000;
 }
 
 const require = createRequire(import.meta.url);
