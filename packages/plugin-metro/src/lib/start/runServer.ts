@@ -115,7 +115,8 @@ async function runServer(
     options.reactNativePath,
   );
   const { middleware, websocketEndpoints } = createDevMiddleware({
-    projectRoot, // can be undefined since 0.83.0
+    // @ts-expect-error - projectRoot was removed from createDevMiddleware since 0.83.0, but is still required for compatibility with older RN versions
+    projectRoot,
     serverBaseUrl: devServerUrl,
     logger: createDevMiddlewareLogger(terminalReporter),
   });
