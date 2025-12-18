@@ -534,11 +534,10 @@ async upload({ artifactName, uploadArtifactName }) {
   - For iOS simulator builds (APP directory), Rock creates a temporary `app.tar.gz` to preserve permissions and includes it in the artifact; you just receive the buffer via `getResponse`. You don't need to create the tarball yourself.
 - **Ad-hoc distribution:**
   - with `--ad-hoc` flag passed to `remote-cache upload` Rock uploads:
-    - The signed IPA at `<directory>/ad-hoc/<artifactName>/<AppName>.ipa`
-    - An `index.html` landing page (make sure it's accessible for testers)
-    - A `manifest.plist`
+    - **iOS**: The signed IPA at `<directory>/ad-hoc/<artifactName>/<AppName>.ipa`, an `index.html` landing page, and a `manifest.plist` file
+    - **Android**: The signed APK at `<directory>/ad-hoc/<artifactName>/<AppName>.apk` and an `index.html` landing page
 
-  This `index.html` file will display an ad-hoc distribution web portal, allowing developers and testers to install apps on their provisioned devices by simply clicking "Install App".
+  This `index.html` file will display an ad-hoc distribution web portal, allowing developers and testers to install apps on their devices by simply clicking "Install App" (iOS) or "Download APK" (Android).
 
   Learn more about ad-hoc distribution and how it works with `remote-cache upload --ad-hoc` command [here](./cli/introduction#ad-hoc-distribution).
 

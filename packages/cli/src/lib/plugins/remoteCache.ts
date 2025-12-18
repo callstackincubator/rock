@@ -15,11 +15,16 @@ import {
   logger,
   relativeToCwd,
   RockError,
+  spawn,
   spinner,
 } from '@rock-js/tools';
 import AdmZip from 'adm-zip';
 import * as tar from 'tar';
-import { templateIndexHtml, templateManifestPlist } from '../adHocTemplates.js';
+import {
+  templateIndexHtmlAndroid,
+  templateIndexHtmlIOS,
+  templateManifestPlist,
+} from '../adHocTemplates.js';
 
 type Flags = {
   platform?: 'ios' | 'android';
@@ -170,19 +175,37 @@ ${output
         args,
       );
 
+      const isArtifactIPA = args.binaryPath?.endsWith('.ipa');
+      const isArtifactAPK = args.binaryPath?.endsWith('.apk');
+
       try {
         let uploadedArtifact;
         const appFileName = path.basename(binaryPath);
         const appName = appFileName.replace(/\.[^/.]+$/, '');
+
+        const uploadContent: {
+          messagePrefix: string;
+          artifactName: string | undefined;
+        } = {
+          messagePrefix: 'build',
+          artifactName: undefined,
+        };
+
+        if (args.adHoc && isArtifactIPA) {
+          uploadContent.messagePrefix = 'IPA, index.html and manifest.plist';
+          uploadContent.artifactName = `ad-hoc/${artifactName}/${appName}.ipa`;
+        } else if (args.adHoc && isArtifactAPK) {
+          uploadContent.messagePrefix = 'APK, index.html';
+          uploadContent.artifactName = `ad-hoc/${artifactName}/${appName}.apk`;
+        }
+
         const { name, url, getResponse } = await remoteBuildCache.upload({
           artifactName,
-          uploadArtifactName: args.adHoc
-            ? `ad-hoc/${artifactName}/${appName}.ipa`
-            : undefined,
+          uploadArtifactName: uploadContent.artifactName,
         });
-        const uploadMessage = `${
-          args.adHoc ? 'IPA, index.html and manifest.plist' : 'build'
-        } to ${color.bold(remoteBuildCache.name)}`;
+
+        const uploadMessage = `${uploadContent.messagePrefix} to ${color.bold(remoteBuildCache.name)}`;
+
         const loader = spinner({ silent: isJsonOutput });
         loader.start(`Uploading ${uploadMessage}`);
         await handleUploadResponse(getResponse, buffer, (progress, totalMB) => {
@@ -193,8 +216,8 @@ ${output
 
         uploadedArtifact = { name, url };
 
-        // Upload index.html and manifest.plist for ad-hoc distribution
-        if (args.adHoc) {
+        // Upload index.html and manifest.plist for iOS ad-hoc distribution
+        if (args.adHoc && isArtifactIPA) {
           const { version, bundleIdentifier } =
             await getInfoPlistFromIpa(binaryPath);
           const { url: urlIndexHtml, getResponse: getResponseIndexHtml } =
@@ -204,7 +227,7 @@ ${output
             });
           getResponseIndexHtml(
             Buffer.from(
-              templateIndexHtml({ appName, bundleIdentifier, version }),
+              templateIndexHtmlIOS({ appName, bundleIdentifier, version }),
             ),
             'text/html',
           );
@@ -225,6 +248,25 @@ ${output
                 platformIdentifier: 'com.apple.platform.iphoneos',
               }),
             ),
+          );
+
+          // For ad-hoc distribution, we want the url to point to the index.html for easier installation
+          uploadedArtifact = { name, url: urlIndexHtml.split('?')[0] + '' };
+        }
+
+        // Upload index.html for Android ad-hoc distribution
+        if (args.adHoc && isArtifactAPK) {
+          const { version, packageName } = await getManifestFromApk(binaryPath);
+          const { url: urlIndexHtml, getResponse: getResponseIndexHtml } =
+            await remoteBuildCache.upload({
+              artifactName,
+              uploadArtifactName: `ad-hoc/${artifactName}/index.html`,
+            });
+          getResponseIndexHtml(
+            Buffer.from(
+              templateIndexHtmlAndroid({ appName, packageName, version }),
+            ),
+            'text/html',
           );
 
           // For ad-hoc distribution, we want the url to point to the index.html for easier installation
@@ -305,6 +347,65 @@ async function getInfoPlistFromIpa(binaryPath: string) {
       'unknown',
     bundleIdentifier: infoPlistJson?.['CFBundleIdentifier'] || 'unknown',
   };
+}
+
+function findAapt() {
+  const sdkRoot =
+    process.env['ANDROID_HOME'] || process.env['ANDROID_SDK_ROOT'];
+
+  if (!sdkRoot) {
+    throw new RockError(
+      'ANDROID_HOME or ANDROID_SDK_ROOT environment variable is not set. Please follow instructions at: https://reactnative.dev/docs/set-up-your-environment?platform=android',
+    );
+  }
+
+  const buildToolsPath = path.join(sdkRoot, 'build-tools');
+  const versions = fs.readdirSync(buildToolsPath);
+
+  for (const version of versions) {
+    const aaptPath = path.join(buildToolsPath, version, 'aapt');
+    if (fs.existsSync(aaptPath)) {
+      logger.debug(`Found aapt at: ${aaptPath}`);
+      return aaptPath;
+    }
+  }
+
+  throw new RockError(
+    `"aapt" not found in Android Build-Tools directory: ${colorLink(buildToolsPath)}
+Please follow instructions at: https://reactnative.dev/docs/set-up-your-environment?platform=android`,
+  );
+}
+
+async function getManifestFromApk(binaryPath: string) {
+  const apkFileName = path.basename(binaryPath, '.apk');
+
+  try {
+    const aaptPath = findAapt();
+
+    const { stdout: output } = await spawn(
+      aaptPath,
+      ['dump', 'badging', binaryPath],
+      { stdio: 'pipe' },
+    );
+
+    const packageMatch = output?.match(/package: name='([^']+)'/);
+    const versionMatch = output?.match(/versionName='([^']+)'/);
+
+    const packageName = packageMatch?.[1] || apkFileName;
+    const version = versionMatch?.[1] || '1.0';
+
+    logger.debug(
+      `Extracted APK manifest - package: ${packageName}, version: ${version}`,
+    );
+
+    return { packageName, version };
+  } catch (error) {
+    logger.debug('Failed to parse APK manifest, using fallback', error);
+    return {
+      packageName: apkFileName,
+      version: '1.0',
+    };
+  }
 }
 
 async function getBinaryBuffer(
@@ -444,7 +545,7 @@ Example Harmony: --traits debug`,
         {
           name: '--ad-hoc',
           description:
-            'Upload IPA for ad-hoc distribution and installation from URL. Additionally uploads index.html and manifest.plist',
+            'Upload IPA or APK for ad-hoc distribution and installation from URL. For iOS: uploads IPA, index.html and manifest.plist. For Android: uploads APK and index.html',
         },
       ],
     });
