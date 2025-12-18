@@ -1,5 +1,17 @@
 # @rnef/config
 
+## 0.12.0
+
+### Minor Changes
+
+- 45666ed: feat: upgrade templates to RN 0.83
+
+### Patch Changes
+
+- Updated dependencies [45666ed]
+  - @rock-js/provider-github@0.12.0
+  - @rock-js/tools@0.12.0
+
 ## 0.11.14
 
 ### Patch Changes
