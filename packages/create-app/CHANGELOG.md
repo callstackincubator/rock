@@ -1,5 +1,11 @@
 # create-rock
 
+## 0.12.0
+
+### Minor Changes
+
+- 45666ed: feat: upgrade templates to RN 0.83
+
 ## 0.11.14
 
 ## 0.11.13

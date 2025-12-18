@@ -10,7 +10,7 @@
   },
   "devDependencies": {
     "@react-native-community/cli": "^15.0.1",
-    "@rock-js/platform-harmony": "^0.11.14",
+    "@rock-js/platform-harmony": "^0.12.0",
     "@react-native-oh/react-native-harmony": "0.77.18-1",
     "@react-native-oh/react-native-harmony-cli": "0.77.18-1",
     "@types/react": "^18.3.1",

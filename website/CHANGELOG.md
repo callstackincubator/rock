@@ -1,5 +1,11 @@
 # rock-docs
 
+## 1.4.0
+
+### Minor Changes
+
+- 45666ed: feat: upgrade templates to RN 0.83
+
 ## 1.3.9
 
 ### Patch Changes
