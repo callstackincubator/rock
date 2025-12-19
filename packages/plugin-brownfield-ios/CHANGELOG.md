@@ -1,5 +1,14 @@
 # @rnef/plugin-brownfield-ios
 
+## 0.12.1
+
+### Patch Changes
+
+- a09a4e8: chore: move & export mergeFrameworks from plugin-brownfield-ios to platform-apple-helpers, export buildApp
+- Updated dependencies [a09a4e8]
+  - @rock-js/platform-apple-helpers@0.12.1
+  - @rock-js/tools@0.12.1
+
 ## 0.12.0
 
 ### Minor Changes

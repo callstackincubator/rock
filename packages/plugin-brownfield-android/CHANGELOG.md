@@ -1,5 +1,12 @@
 # @rnef/plugin-brownfield-android
 
+## 0.12.1
+
+### Patch Changes
+
+- @rock-js/platform-android@0.12.1
+- @rock-js/tools@0.12.1
+
 ## 0.12.0
 
 ### Minor Changes
