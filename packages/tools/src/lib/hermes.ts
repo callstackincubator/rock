@@ -14,6 +14,43 @@ function getReactNativePackagePath() {
   return path.dirname(input);
 }
 
+function getHermesCompilerPackagePath(): string | null {
+  const require = createRequire(import.meta.url);
+  const root = getProjectRoot();
+  try {
+    const hermesCompilerPath = require.resolve('hermes-compiler/package.json', {
+      paths: [root],
+    });
+    return path.dirname(hermesCompilerPath);
+  } catch {
+    return null;
+  }
+}
+
+/**
+ * Returns the Hermes OS binary folder name for the current platform.
+ */
+function getHermesOSBin(): string {
+  const os = getLocalOS();
+  switch (os) {
+    case 'windows':
+      return 'win64-bin';
+    case 'macos':
+      return 'osx-bin';
+    default:
+      return 'linux64-bin';
+  }
+}
+
+/**
+ * Returns the Hermes executable name for the current platform.
+ */
+function getHermesOSExe(): string {
+  const hermesExecutableName = 'hermesc';
+  const os = getLocalOS();
+  return os === 'windows' ? `${hermesExecutableName}.exe` : hermesExecutableName;
+}
+
 /**
  * Returns the path to the react-native compose-source-maps.js script.
  */
@@ -76,12 +113,12 @@ export async function runHermes({
   sourcemapOutputPath?: string;
 }) {
   const hermescPath = getHermescPath();
-  if (!hermescPath) {
+  if(!hermescPath) {
     throw new RockError(
-      'Hermesc binary not found. Use `--no-hermes` flag to disable Hermes.',
+      'Hermesc binary not found. Please ensure React Native is installed correctly or use `--no-hermes` flag to disable Hermes.',
     );
   }
-
+  
   // Output will be .hbc file
   const hbcOutputPath = `${bundleOutputPath}.hbc`;
 
@@ -151,28 +188,53 @@ export async function runHermes({
 }
 
 /**
- * Get `hermesc` binary path.
+ * Get `hermesc` binary path with fallback strategy:
+ * 1. hermes-compiler package (RN 0.83+)
+ * 2. react-native bundled hermesc (RN 0.69-0.82)
+ * 3. Local build from source
+ *
  * Based on: https://github.com/facebook/react-native/blob/f2c78af56ae492f49b90d0af61ca9bf4d124fca0/packages/gradle-plugin/react-native-gradle-plugin/src/main/kotlin/com/facebook/react/utils/PathUtils.kt#L48-L55
  */
 function getHermescPath() {
-  const reactNativePath = getReactNativePackagePath();
+  // 1. Check hermes-compiler package (RN 0.83+)
+  const hermesCompilerPath = getHermesCompilerPackagePath();
+  if (hermesCompilerPath) {
+    const hermesCompilerBinPath = path.join(
+      hermesCompilerPath,
+      'hermesc',
+      getHermesOSBin(),
+      getHermesOSExe(),
+    );
+    if (fs.existsSync(hermesCompilerBinPath)) {
+      return hermesCompilerBinPath;
+    }
+  }
 
-  // Local build from source: node_modules/react-native/sdks/hermes/build/bin/hermesc
+
+  // 2. Check bundled hermesc in react-native/sdks/hermesc (RN 0.69-0.82)
+  const reactNativePath = getReactNativePackagePath();
+  const bundledHermesPath = path.join(
+    reactNativePath,
+    'sdks',
+    'hermesc',
+    getHermesOSBin(),
+    getHermesOSExe(),
+  );
+  if (fs.existsSync(bundledHermesPath)) {
+    return bundledHermesPath;
+  }
+
+  // 3. Check local build from source (fallback)
   const localBuildPath = path.join(
     reactNativePath,
-    'sdks/hermes/build/bin/hermesc',
+    'sdks',
+    'hermes',
+    'build',
+    'bin',
+    'hermesc',
   );
   if (fs.existsSync(localBuildPath)) {
     return localBuildPath;
   }
-
-  // Precompiled binaries: node_modules/react-native/sdks/hermesc/%OS-BIN%/hermesc
-  const prebuildPaths = {
-    macos: `${reactNativePath}/sdks/hermesc/osx-bin/hermesc`,
-    linux: `${reactNativePath}/sdks/hermesc/linux64-bin/hermesc`,
-    windows: `${reactNativePath}/sdks/hermesc/win64-bin/hermesc.exe`,
-  };
-
-  const os = getLocalOS();
-  return prebuildPaths[os];
+  return null;
 }
