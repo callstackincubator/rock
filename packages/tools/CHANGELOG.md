@@ -1,5 +1,11 @@
 # @rnef/tools
 
+## 0.12.2
+
+### Patch Changes
+
+- 483f8c6: fix(tools): support hermes-compiler package for RN 0.83+
+
 ## 0.12.1
 
 ## 0.12.0
