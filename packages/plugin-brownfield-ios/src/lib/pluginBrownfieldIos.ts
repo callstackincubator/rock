@@ -8,10 +8,11 @@ import {
   getBuildOptions,
   getBuildPaths,
   getValidProjectConfig,
+  mergeFrameworks,
 } from '@rock-js/platform-apple-helpers';
 import { colorLink, intro, logger, outro, relativeToCwd } from '@rock-js/tools';
 import { copyHermesXcframework } from './copyHermesXcframework.js';
-import { mergeFrameworks } from './mergeFrameworks.js';
+
 const buildOptions = getBuildOptions({ platformName: 'ios' });
 
 export const pluginBrownfieldIos =
