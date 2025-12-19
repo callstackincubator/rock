@@ -16,10 +16,9 @@ function getReactNativePackagePath() {
 
 function getHermesCompilerPackagePath(): string | null {
   const require = createRequire(import.meta.url);
-  const root = getProjectRoot();
   try {
     const hermesCompilerPath = require.resolve('hermes-compiler/package.json', {
-      paths: [root],
+      paths: [getReactNativePackagePath()],
     });
     return path.dirname(hermesCompilerPath);
   } catch {
@@ -118,7 +117,7 @@ export async function runHermes({
       'Hermesc binary not found. Please ensure React Native is installed correctly or use `--no-hermes` flag to disable Hermes.',
     );
   }
-  
+
   // Output will be .hbc file
   const hbcOutputPath = `${bundleOutputPath}.hbc`;
 
