@@ -10,3 +10,5 @@ export { getInfo } from './utils/getInfo.js';
 export { getScheme } from './utils/getScheme.js';
 export { getValidProjectConfig } from './utils/getValidProjectConfig.js';
 export { promptSigningIdentity } from './utils/signingIdentities.js';
+export { buildApp } from './utils/buildApp.js';
+export { mergeFrameworks } from './utils/mergeFrameworks.js';
