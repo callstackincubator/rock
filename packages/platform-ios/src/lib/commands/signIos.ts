@@ -8,6 +8,7 @@ export type SignFlags = {
   buildJsbundle?: boolean;
   jsbundle?: string;
   noHermes?: boolean;
+  useAppEntitlements?: boolean;
 };
 
 const ARGUMENTS = [
@@ -44,6 +45,10 @@ const OPTIONS = [
     name: '--no-hermes',
     description: 'Do not use Hermes to build the JS bundle.',
   },
+  {
+    name: '--use-app-entitlements',
+    description: 'Merge entitlements from the existing app with the provisioning profile entitlements.',
+  },
 ];
 
 export const registerSignCommand = (api: PluginApi) => {
@@ -60,6 +65,7 @@ export const registerSignCommand = (api: PluginApi) => {
           buildJsBundle: flags.buildJsbundle,
           jsBundlePath: flags.jsbundle,
           useHermes: !flags.noHermes,
+          useAppEntitlements: flags.useAppEntitlements,
         });
       } else {
         await modifyIpa({
@@ -70,6 +76,7 @@ export const registerSignCommand = (api: PluginApi) => {
           buildJsBundle: flags.buildJsbundle,
           jsBundlePath: flags.jsbundle,
           useHermes: !flags.noHermes,
+          useAppEntitlements: flags.useAppEntitlements,
         });
       }
     },
