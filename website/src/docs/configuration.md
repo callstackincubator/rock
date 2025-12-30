@@ -309,10 +309,11 @@ export default {
 
 ### Community providers
 
+If you're not using GitHub, or can't store artifacts on S3 bucket, you can try one of the available community providers, which often come with ready-to-use CI workflow setup.
+
 #### GitLab Provider
-:::info
-[`@congtuandevmobile/react-native-cache-build-gitlab`](https://github.com/congtuandevmobile/react-native-cache-build-gitlab): Support for **GitLab CI/CD** artifacts as a remote cache provider. This package allows you to use **GitLab Package Registry** to store and retrieve native build artifacts (iOS & Android).
-:::
+
+The [`@congtuandevmobile/react-native-cache-build-gitlab`](https://github.com/congtuandevmobile/react-native-cache-build-gitlab) project provides support for GitLab CI/CD artifacts as a remote cache provider. This package allows you to use GitLab Package Registry to store and retrieve native build artifacts (iOS & Android).
 
 ### Custom remote cache provider
 
