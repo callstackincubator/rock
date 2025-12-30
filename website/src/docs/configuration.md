@@ -307,6 +307,14 @@ export default {
 };
 ```
 
+### Community providers
+
+If you're not using GitHub, or can't store artifacts on S3 bucket, you can try one of the available community providers, which often come with ready-to-use CI workflow setup.
+
+#### GitLab Provider
+
+The [`@congtuandevmobile/react-native-cache-build-gitlab`](https://github.com/congtuandevmobile/react-native-cache-build-gitlab) project provides support for GitLab CI/CD artifacts as a remote cache provider. This package allows you to use GitLab Package Registry to store and retrieve native build artifacts (iOS & Android).
+
 ### Custom remote cache provider
 
 You can plug in any remote storage by implementing the `RemoteBuildCache` interface. This section explains how to implement each method and handle the complexity that Rock manages for you.
