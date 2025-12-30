@@ -1,5 +1,11 @@
 # create-rock
 
+## 0.12.3
+
+### Patch Changes
+
+- 5094eaa: fix: add missing packaging instructions for brownfield init flow
+
 ## 0.12.2
 
 ## 0.12.1

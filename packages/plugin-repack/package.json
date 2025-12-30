@@ -1,6 +1,6 @@
 {
   "name": "@rock-js/plugin-repack",
-  "version": "0.12.2",
+  "version": "0.12.3",
   "description": "Re.Pack bundler integration plugin for Rock",
   "type": "module",
   "types": "./dist/src/index.d.ts",
@@ -19,11 +19,11 @@
     "publish:verdaccio": "npm publish --registry http://localhost:4873 --userconfig ../../.npmrc"
   },
   "dependencies": {
-    "@rock-js/tools": "^0.12.2",
+    "@rock-js/tools": "^0.12.3",
     "tslib": "^2.3.0"
   },
   "devDependencies": {
-    "@rock-js/config": "^0.12.2"
+    "@rock-js/config": "^0.12.3"
   },
   "peerDependencies": {
     "@callstack/repack": ">=5",
