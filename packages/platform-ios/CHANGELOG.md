@@ -1,5 +1,12 @@
 # @rnef/platform-ios
 
+## 0.12.3
+
+### Patch Changes
+
+- @rock-js/platform-apple-helpers@0.12.3
+- @rock-js/tools@0.12.3
+
 ## 0.12.2
 
 ### Patch Changes

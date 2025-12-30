@@ -1,5 +1,13 @@
 # @rnef/plugin-brownfield-ios
 
+## 0.12.3
+
+### Patch Changes
+
+- abc9d79: fix: brownfield linked as not-static library for iOS when running 'pod install'
+  - @rock-js/platform-apple-helpers@0.12.3
+  - @rock-js/tools@0.12.3
+
 ## 0.12.2
 
 ### Patch Changes
