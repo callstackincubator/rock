@@ -307,6 +307,14 @@ export default {
 };
 ```
 
+### Community providers
+
+The following providers are created and maintained by the community:
+
+:::info
+[`@congtuandevmobile/react-native-cache-build-gitlab`](https://github.com/congtuandevmobile/react-native-cache-build-gitlab): Support for **GitLab CI/CD** artifacts as a remote cache provider. This package allows you to use **GitLab Package Registry** to store and retrieve native build artifacts (iOS & Android).
+:::
+
 ### Custom remote cache provider
 
 You can plug in any remote storage by implementing the `RemoteBuildCache` interface. This section explains how to implement each method and handle the complexity that Rock manages for you.
