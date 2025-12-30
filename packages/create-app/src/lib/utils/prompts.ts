@@ -1,5 +1,6 @@
 import {
   color,
+  colorLink,
   intro,
   isInteractive,
   note,
@@ -59,17 +60,38 @@ export function printByeMessage(
   targetDir: string,
   pkgManager: string,
   installDeps: boolean,
+  plugins: TemplateInfo[] | null,
 ) {
   const relativeDir = relativeToCwd(targetDir);
+
+  const usesBrownfieldIosPlugin = plugins?.some(
+    (plugin) => plugin.name === 'plugin-brownfield-ios',
+  );
+  const usesBrownfieldAndroidPlugin = plugins?.some(
+    (plugin) => plugin.name === 'plugin-brownfield-android',
+  );
 
   const nextSteps = [
     `cd ${relativeDir}`,
     installDeps ? undefined : `${pkgManager} install`,
-    `${pkgManager} run start      starts dev server`,
-    `${pkgManager} run ios        builds and runs iOS app`,
-    `${pkgManager} run android    builds and runs Android app`,
+    `${pkgManager} run start         starts dev server`,
+    usesBrownfieldIosPlugin
+      ? [
+          `${pkgManager} run package:ios   packages the React Native app as an XCFramework`,
+          `💡 Visit ${colorLink('https://www.rockjs.dev/docs/brownfield/ios')} for further instructions before continuing`,
+        ]
+      : undefined,
+    usesBrownfieldAndroidPlugin
+      ? [
+          `${pkgManager} run package:aar   packages the React Native app as an AAR`,
+          `💡 Visit ${colorLink('https://www.rockjs.dev/docs/brownfield/android')} for further instructions before continuing`,
+        ]
+      : undefined,
+    `${pkgManager} run ios           builds and runs iOS app`,
+    `${pkgManager} run android       builds and runs Android app`,
   ]
     .filter(Boolean)
+    .flat()
     .join('\n');
 
   note(nextSteps, 'Next steps');
