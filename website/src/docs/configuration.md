@@ -309,8 +309,7 @@ export default {
 
 ### Community providers
 
-The following providers are created and maintained by the community:
-
+#### GitLab Provider
 :::info
 [`@congtuandevmobile/react-native-cache-build-gitlab`](https://github.com/congtuandevmobile/react-native-cache-build-gitlab): Support for **GitLab CI/CD** artifacts as a remote cache provider. This package allows you to use **GitLab Package Registry** to store and retrieve native build artifacts (iOS & Android).
 :::
