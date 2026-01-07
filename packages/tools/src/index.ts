@@ -7,6 +7,7 @@ export { default as cacheManager } from './lib/cacheManager.js';
 export * from './lib/parse-args.js';
 export * from './lib/path.js';
 export * from './lib/project.js';
+export * from './lib/types.js';
 export * from './lib/build-cache/common.js';
 export * from './lib/build-cache/localBuildCache.js';
 export { getBinaryPath } from './lib/build-cache/getBinaryPath.js';

@@ -1,4 +1,4 @@
-import type { RemoteBuildCache } from '@rock-js/tools';
+import type { RemoteBuildCache, RockCLIOptions } from '@rock-js/tools';
 import {
   colorLink,
   type FingerprintSources,
@@ -96,4 +96,4 @@ export const options = [
     description: 'OpenHarmony product defined in build-profile.json5.',
     default: 'default',
   },
-];
+] satisfies RockCLIOptions;

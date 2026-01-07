@@ -1,3 +1,4 @@
+import type { RockCLIOptions } from '@rock-js/tools';
 import { outro } from '@rock-js/tools';
 import { runGradleAar } from '../runGradle.js';
 import type { AarProject } from './packageAar.js';
@@ -17,4 +18,4 @@ export const options = [
     name: '--module-name <string>',
     description: 'AAR module name',
   },
-];
+] satisfies RockCLIOptions;
