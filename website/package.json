@@ -8,10 +8,10 @@
     "preview": "rspress preview"
   },
   "dependencies": {
-    "@rspress/core": "2.0.0-beta.34",
-    "@callstack/rspress-preset": "~0.4.3",
-    "react": "19.2.0",
-    "react-dom": "19.2.0"
+    "@rspress/core": "2.0.0-rc.2",
+    "@callstack/rspress-preset": "~0.5.0",
+    "react": "19.2.3",
+    "react-dom": "19.2.3"
   },
   "devDependencies": {
     "@types/node": "^20.18.0",
