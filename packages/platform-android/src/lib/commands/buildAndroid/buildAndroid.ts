@@ -1,5 +1,5 @@
 import type { AndroidProjectConfig } from '@react-native-community/cli-types';
-import type { RemoteBuildCache } from '@rock-js/tools';
+import type { RemoteBuildCache, RockCLIOptions } from '@rock-js/tools';
 import {
   colorLink,
   type FingerprintSources,
@@ -104,4 +104,4 @@ export const options = [
     name: '--local',
     description: 'Force local build with Gradle wrapper.',
   },
-];
+] satisfies RockCLIOptions;
