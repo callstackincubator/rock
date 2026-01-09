@@ -23,6 +23,26 @@ export async function readKeyFromPlist(
   }
 }
 
+export async function setKeyInPlist(
+  plistPath: string,
+  key: string,
+  value: string,
+) {
+  try {
+    // First try to set the key (if it exists)
+    await plistBuddy(plistPath, `Set :${key} ${value}`);
+  } catch {
+    // If that fails, try to add the key
+    try {
+      await plistBuddy(plistPath, `Add :${key} ${value}`);
+    } catch (error) {
+      throw new RockError(`Error setting key ${key} in ${plistPath}`, {
+        cause: error instanceof SubprocessError ? error.stderr : error,
+      });
+    }
+  }
+}
+
 async function plistBuddy(
   path: string,
   command: string,

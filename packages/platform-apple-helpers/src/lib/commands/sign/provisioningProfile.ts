@@ -1,9 +1,33 @@
 import crypto from 'node:crypto';
 import fs from 'node:fs';
+import os from 'node:os';
 import path from 'node:path';
 import type { SubprocessError } from '@rock-js/tools';
 import { logger, relativeToCwd, RockError, spawn } from '@rock-js/tools';
-import { readBufferFromPlist, readKeyFromPlist } from '../../utils/plist.js';
+import {
+  readBufferFromPlist,
+  readKeyFromPlist,
+  setKeyInPlist,
+} from '../../utils/plist.js';
+
+// See: https://developer.apple.com/documentation/bundleresources/entitlements
+export const transferRules = [
+  'com.apple.developer.icloud-container-identifiers',
+  'com.apple.developer.icloud-services',
+  'com.apple.developer.ubiquity-kvstore-identifier',
+  'com.apple.developer.icloud-container-environment',
+  'com.apple.security.application-groups',
+  'keychain-access-groups',
+  'com.apple.developer.associated-domains',
+  'com.apple.developer.healthkit',
+  'com.apple.developer.homekit',
+  'inter-app-audio',
+  'com.apple.developer.networking.networkextension',
+  'com.apple.developer.maps',
+  'com.apple.external-accessory.wireless-configuration',
+  'com.apple.developer.siri',
+  'com.apple.developer.nfc.readersession.formats',
+];
 
 /**
  * Decodes provisioning profile to XML plist.
@@ -27,13 +51,6 @@ export async function decodeProvisioningProfileToPlist(
   }
 }
 
-export type GenerateEntitlementsFileOptions = {
-  provisioningPlistPath: string;
-  outputPath: string;
-  appPath?: string;
-  useAppEntitlements?: boolean;
-};
-
 /**
  * Generates entitlements plist from provisioning profile plist.
  * @param provisioningPlistPath - Path to the provisioning profile plist.
@@ -46,7 +63,12 @@ export const generateEntitlementsPlist = async ({
   provisioningPlistPath,
   appPath,
   useAppEntitlements,
-}: GenerateEntitlementsFileOptions) => {
+}: {
+  provisioningPlistPath: string;
+  outputPath: string;
+  appPath?: string;
+  useAppEntitlements?: boolean;
+}) => {
   if (useAppEntitlements && appPath) {
     await generateMergedEntitlementsPlist({
       provisioningPlistPath,
@@ -57,9 +79,7 @@ export const generateEntitlementsPlist = async ({
     const entitlements = await readKeyFromPlist(
       provisioningPlistPath,
       'Entitlements',
-      {
-        xml: true,
-      },
+      { xml: true },
     );
 
     fs.writeFileSync(outputPath, entitlements);
@@ -88,12 +108,6 @@ export function extractCertificateName(subject: string) {
   return match ? match[1] : null;
 }
 
-type MergedEntitlementsOptions = {
-  provisioningPlistPath: string;
-  appPath: string;
-  outputPath: string;
-};
-
 /**
  * Generates merged entitlements plist from both app and provisioning profile.
  * Based on fastlane's use_app_entitlements functionality.
@@ -102,26 +116,25 @@ async function generateMergedEntitlementsPlist({
   provisioningPlistPath,
   appPath,
   outputPath,
-}: MergedEntitlementsOptions) {
-  // Extract entitlements from provisioning profile
+}: {
+  provisioningPlistPath: string;
+  appPath: string;
+  outputPath: string;
+}) {
   const provisioningEntitlements = await readKeyFromPlist(
     provisioningPlistPath,
     'Entitlements',
     { xml: true },
   );
-
-  // Extract entitlements from app binary
   const appEntitlements = await extractAppEntitlements(appPath);
-
-  // Merge entitlements
   const mergedEntitlements = await mergeEntitlements(
     provisioningEntitlements,
     appEntitlements,
-    provisioningPlistPath,
   );
-
   fs.writeFileSync(outputPath, mergedEntitlements);
-  logger.debug(`Generated merged entitlements file: ${relativeToCwd(outputPath)}`);
+  logger.debug(
+    `Generated merged entitlements file: ${relativeToCwd(outputPath)}`,
+  );
 }
 
 /**
@@ -129,10 +142,18 @@ async function generateMergedEntitlementsPlist({
  */
 async function extractAppEntitlements(appPath: string): Promise<string> {
   try {
-    const result = await spawn('codesign', ['-d', '--entitlements', '-', '--xml', appPath]);
-    return result.stdout.trim();
+    const { stdout } = await spawn('codesign', [
+      '-d',
+      '--entitlements',
+      '-',
+      '--xml',
+      appPath,
+    ]);
+    return stdout.trim();
   } catch (error) {
-    logger.debug(`Could not extract entitlements from app: ${(error as SubprocessError).stderr}`);
+    logger.debug(
+      `Could not extract entitlements from app: ${(error as SubprocessError).stderr}`,
+    );
     // Return empty plist if no entitlements found
     return '<?xml version="1.0" encoding="UTF-8"?>\n<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">\n<plist version="1.0">\n<dict>\n</dict>\n</plist>';
   }
@@ -142,87 +163,40 @@ async function extractAppEntitlements(appPath: string): Promise<string> {
  * Merge entitlements from app and provisioning profile.
  * Based on fastlane's entitlements merging logic.
  */
-async function mergeEntitlements(
+export async function mergeEntitlements(
   provisioningEntitlements: string,
   appEntitlements: string,
-  provisioningPlistPath: string,
 ): Promise<string> {
-  // Write temporary files for processing
-  const tempDir = fs.mkdtempSync(path.join(process.cwd(), '.rock-temp-'));
-  const profileEntitlementsPath = path.join(tempDir, 'profile_entitlements.plist');
+  const tempDir = fs.mkdtempSync(path.join(os.tmpdir(), '.rock-temp-'));
+  const profileEntitlementsPath = path.join(
+    tempDir,
+    'profile_entitlements.plist',
+  );
   const appEntitlementsPath = path.join(tempDir, 'app_entitlements.plist');
-  const mergedEntitlementsPath = path.join(tempDir, 'merged_entitlements.plist');
 
   try {
     fs.writeFileSync(profileEntitlementsPath, provisioningEntitlements);
     fs.writeFileSync(appEntitlementsPath, appEntitlements);
 
-    // Get team identifier from provisioning profile
-    const teamIdentifier = await readKeyFromPlist(provisioningPlistPath, 'TeamIdentifier:0');
-
-    // Define entitlements that should be transferred from app to profile
-    const transferRules = [
-      'com.apple.developer.icloud-container-identifiers',
-      'com.apple.developer.icloud-services',
-      'com.apple.developer.ubiquity-kvstore-identifier',
-      'com.apple.developer.icloud-container-environment',
-      'com.apple.security.application-groups',
-      'keychain-access-groups',
-      'com.apple.developer.associated-domains',
-      'com.apple.developer.healthkit',
-      'com.apple.developer.homekit',
-      'inter-app-audio',
-      'com.apple.developer.networking.networkextension',
-      'com.apple.developer.maps',
-      'com.apple.external-accessory.wireless-configuration',
-      'com.apple.developer.siri',
-      'com.apple.developer.nfc.readersession.formats',
-    ];
-
-    // Start with profile entitlements as base
-    let mergedPlist = provisioningEntitlements;
-
-    // Transfer specific entitlements from app to merged entitlements
     for (const key of transferRules) {
       try {
-        const appValue = await readKeyFromPlist(appEntitlementsPath, key, { xml: true });
-        if (appValue.trim()) {
-          // Replace or add the key in the merged entitlements
+        const appValue = await readKeyFromPlist(appEntitlementsPath, key, {
+          xml: true,
+        });
+        if (appValue) {
           await setKeyInPlist(profileEntitlementsPath, key, appValue);
+          logger.debug(`Key "${key}" set in merged entitlements`);
         }
       } catch {
-        // Key doesn't exist in app entitlements, skip
+        logger.debug(
+          `Key "${key}" does not exist in app entitlements, skipping`,
+        );
       }
     }
-
-    // Read the final merged entitlements
-    mergedPlist = fs.readFileSync(profileEntitlementsPath, 'utf8');
-
-    // Clean up temporary files
-    fs.rmSync(tempDir, { recursive: true, force: true });
-
-    return mergedPlist;
+    return fs.readFileSync(profileEntitlementsPath, 'utf8');
   } catch (error) {
-    // Clean up on error
-    fs.rmSync(tempDir, { recursive: true, force: true });
     throw new RockError('Failed to merge entitlements', { cause: error });
-  }
-}
-
-/**
- * Set a key in a plist file using PlistBuddy.
- */
-async function setKeyInPlist(plistPath: string, key: string, value: string) {
-  try {
-    // First try to set the key (if it exists)
-    await spawn('/usr/libexec/PlistBuddy', ['-c', `Set :${key} ${value}`, plistPath]);
-  } catch {
-    try {
-      // If that fails, try to add the key
-      await spawn('/usr/libexec/PlistBuddy', ['-c', `Add :${key} ${value}`, plistPath]);
-    } catch {
-      // If both fail, the entitlement might be complex - skip for now
-      logger.debug(`Could not set entitlement key: ${key}`);
-    }
+  } finally {
+    fs.rmSync(tempDir, { recursive: true, force: true });
   }
 }

@@ -47,7 +47,8 @@ const OPTIONS = [
   },
   {
     name: '--use-app-entitlements',
-    description: 'Merge entitlements from the existing app with the provisioning profile entitlements.',
+    description:
+      'Extract app bundle codesigning entitlements and combine with entitlements from new provisioning profile.',
   },
 ];
 
