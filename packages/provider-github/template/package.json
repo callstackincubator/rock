@@ -1,6 +1,6 @@
 {
   "name": "rock-provider-github-template",
   "devDependencies": {
-    "@rock-js/provider-github": "^0.12.3"
+    "@rock-js/provider-github": "^0.12.4"
   }
 }
