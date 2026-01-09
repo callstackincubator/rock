@@ -201,14 +201,15 @@ The `sign:ios` command either signs your iOS app with certificates and provision
 | :----------- | :-------------------------- |
 | `binaryPath` | Path to the IPA or APP file |
 
-| Option                | Description                                                         |
-| :-------------------- | :------------------------------------------------------------------ |
-| `--app`               | Modify APP file (directory) instead of IPA file. No signing is done |
-| `--identity <string>` | Certificate Identity name for code signing                          |
-| `--output <string>`   | Path to output IPA file                                             |
-| `--build-jsbundle`    | Build JS bundle before signing                                      |
-| `--jsbundle <string>` | Path to JS bundle to apply before signing                           |
-| `--no-hermes`         | Don't use Hermes for JS bundle                                      |
+| Option                   | Description                                                                                             |
+| :----------------------- | :------------------------------------------------------------------------------------------------------ |
+| `--app`                  | Modify APP file (directory) instead of IPA file. No signing is done                                     |
+| `--identity <string>`    | Certificate Identity name for code signing                                                              |
+| `--output <string>`      | Path to output IPA file                                                                                 |
+| `--build-jsbundle`       | Build JS bundle before signing                                                                          |
+| `--jsbundle <string>`    | Path to JS bundle to apply before signing                                                               |
+| `--no-hermes`            | Don't use Hermes for JS bundle                                                                          |
+| `--use-app-entitlements` | Extract app bundle codesigning entitlements and combine with entitlements from new provisioning profile |
 
 ## Platform Android
 
