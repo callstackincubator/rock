@@ -10,28 +10,34 @@ import {
   getValidProjectConfig,
   mergeFrameworks,
 } from '@rock-js/platform-apple-helpers';
+import type { FingerprintSources, RemoteBuildCache } from '@rock-js/tools';
 import { colorLink, intro, logger, outro, relativeToCwd } from '@rock-js/tools';
 import { copyHermesXcframework } from './copyHermesXcframework.js';
 
 const buildOptions = getBuildOptions({ platformName: 'ios' });
 
-export const pluginBrownfieldIosPackageAction = async (
+export const packageIosAction = async (
   args: BuildFlags,
-  apiSubset: Pick<
-    PluginApi,
-    | 'getReactNativeVersion'
-    | 'getProjectRoot'
-    | 'getReactNativePath'
-    | 'getFingerprintOptions'
-    | 'getRemoteCacheProvider'
-    | 'getUsePrebuiltRNCore'
-  >,
+  {
+    projectRoot,
+    reactNativePath,
+    reactNativeVersion,
+    fingerprintOptions,
+    remoteCacheProvider,
+    usePrebuiltRNCore,
+  }: {
+    projectRoot: string;
+    reactNativePath: string;
+    reactNativeVersion: string;
+    fingerprintOptions: FingerprintSources;
+    remoteCacheProvider: null | (() => RemoteBuildCache) | undefined;
+    usePrebuiltRNCore: number | undefined;
+  },
   pluginConfig?: IOSProjectConfig,
 ) => {
   intro('Packaging iOS project');
 
   // 1) Build the project
-  const projectRoot = apiSubset.getProjectRoot();
   const iosConfig = getValidProjectConfig('ios', projectRoot, pluginConfig);
   const { derivedDataDir } = getBuildPaths('ios');
 
@@ -50,11 +56,11 @@ export const pluginBrownfieldIosPackageAction = async (
     projectConfig: iosConfig,
     args: { ...args, destination, buildFolder },
     projectRoot,
-    reactNativePath: apiSubset.getReactNativePath(),
-    fingerprintOptions: apiSubset.getFingerprintOptions(),
+    reactNativePath,
+    fingerprintOptions,
     brownfield: true,
-    remoteCacheProvider: await apiSubset.getRemoteCacheProvider(),
-    usePrebuiltRNCore: apiSubset.getUsePrebuiltRNCore(),
+    remoteCacheProvider,
+    usePrebuiltRNCore,
   });
 
   // 2) Merge the .framework outputs of the framework target
@@ -105,7 +111,7 @@ export const pluginBrownfieldIosPackageAction = async (
   copyHermesXcframework({
     sourceDir,
     destinationDir: frameworkTargetOutputDir,
-    reactNativeVersion: apiSubset.getReactNativeVersion(),
+    reactNativeVersion,
   });
 
   // 5) Inform the user
@@ -124,8 +130,19 @@ export const pluginBrownfieldIos =
     api.registerCommand({
       name: 'package:ios',
       description: 'Emit a .xcframework file from React Native code.',
-      action: (args: BuildFlags) =>
-        pluginBrownfieldIosPackageAction(args, api, pluginConfig),
+      action: async (args: BuildFlags) =>
+        packageIosAction(
+          args,
+          {
+            projectRoot: api.getProjectRoot(),
+            reactNativePath: api.getReactNativePath(),
+            reactNativeVersion: api.getReactNativeVersion(),
+            fingerprintOptions: api.getFingerprintOptions(),
+            remoteCacheProvider: await api.getRemoteCacheProvider(),
+            usePrebuiltRNCore: api.getUsePrebuiltRNCore(),
+          },
+          pluginConfig,
+        ),
       options: buildOptions,
     });
 

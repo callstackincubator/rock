@@ -1,6 +1,6 @@
 import type { PluginApi } from '@rock-js/config';
 import { modifyApp, modifyIpa } from '@rock-js/platform-apple-helpers';
-import type { RockCLIOptions } from 'packages/tools/dist/src/index.js';
+import type { RockCLIOptions } from '@rock-js/tools';
 
 export type SignFlags = {
   app: string;
