@@ -444,11 +444,11 @@ importers:
   website:
     dependencies:
       '@callstack/rspress-preset':
-        specifier: ~0.5.0
-        version: 0.5.0(@rsbuild/core@1.6.15)(@rspress/core@2.0.0-rc.2(@types/react@19.2.7))(react-dom@19.2.3(react@19.2.3))(react@19.2.3)
+        specifier: ~0.5.1
+        version: 0.5.1(@rsbuild/core@1.6.15)(@rspress/core@2.0.0-rc.4(@types/react@19.2.7))(react-dom@19.2.3(react@19.2.3))(react@19.2.3)
       '@rspress/core':
-        specifier: 2.0.0-rc.2
-        version: 2.0.0-rc.2(@types/react@19.2.7)
+        specifier: 2.0.0-rc.4
+        version: 2.0.0-rc.4(@types/react@19.2.7)
       react:
         specifier: 19.2.3
         version: 19.2.3
@@ -1178,15 +1178,15 @@ packages:
       webpack:
         optional: true
 
-  '@callstack/rspress-preset@0.5.0':
-    resolution: {integrity: sha512-c5Kkqq+BUWYge1EoHLwYSG0MShExzVUZPuZfnSbdPgONDSiPEbdRWUAQ2aOy3ggSZOpCF3Rj41e+jvuJNcYXIQ==}
+  '@callstack/rspress-preset@0.5.1':
+    resolution: {integrity: sha512-AlfWFAClrcwtZNXU1fXrPgnoaIazIJX9Uz8oTd4bUqms4BUEq7Lb/n27JoLdQxZ1RzhXc3APTK12eEAT6DBdwg==}
     peerDependencies:
-      '@rspress/core': 2.0.0-rc.3
+      '@rspress/core': 2.0.0-rc.4
 
-  '@callstack/rspress-theme@0.5.0':
-    resolution: {integrity: sha512-is33Rab0PU3d+lmIzc8ZypOUDiftkgh6NFcMbWf8+deAYJ3hT93vswL2AjISnOhojH40jK+ZvG6Ktmt2w4peug==}
+  '@callstack/rspress-theme@0.5.1':
+    resolution: {integrity: sha512-p8iS0icR9JbAvYWKOeglxfnJwwCATEpItjDoFW5srTYNFw4swVD1Aahox8Fv89l+wHLTzADokmC8iqqG8jnvqg==}
     peerDependencies:
-      '@rspress/core': ^2.0.0-rc.3
+      '@rspress/core': ^2.0.0-rc.4
       react: ^19.2.0
       react-dom: ^19.2.0
 
@@ -2083,9 +2083,9 @@ packages:
       webpack-hot-middleware:
         optional: true
 
-  '@rspress/core@2.0.0-rc.2':
-    resolution: {integrity: sha512-gs33kIrkYKHk3y1ytPfoHPpgp2ifXdS67sPEeB/lrCI6ad2wcGuXYcchic0WPzUZO9bKqje4z3jJxqEafBmgBg==}
-    engines: {node: '>=18.0.0'}
+  '@rspress/core@2.0.0-rc.4':
+    resolution: {integrity: sha512-EHJjbc8yA/La6sJN3bjZus24KhSCdh5lEIVtjt7EBEnLteDN+wULzO1sFKj8agH3BXYE0XOuz2W1HbTTGfcGJQ==}
+    engines: {node: '>=20.9.0'}
     hasBin: true
 
   '@rspress/mdx-rs-darwin-arm64@0.6.6':
@@ -2140,48 +2140,48 @@ packages:
     resolution: {integrity: sha512-NpNhTKBIlV3O6ADhoZkgHvBFvXMW2TYlIWmIT1ysJESUBqDpaN9H3Teve5fugjU2pQ2ORBZO6SQGKliMw/8m/Q==}
     engines: {node: '>= 10'}
 
-  '@rspress/plugin-llms@2.0.0-rc.3':
-    resolution: {integrity: sha512-qvTLbBP9WBu6wYlyzwDzw4r6zb9ABI2+qLmu0HG+RZnZPTQw5Jl1li7c0oJXH84NX3578e82Y+NYbNEcyQydgA==}
-    engines: {node: '>=18.0.0'}
+  '@rspress/plugin-llms@2.0.0-rc.4':
+    resolution: {integrity: sha512-PSG8JOO2EOqCeViif48puAeiP2pBhe//v0sC8dm9wGmQsrq8xbx2rH1aiQElZIwcoximqukzHavrU6O3qPW2NA==}
+    engines: {node: '>=20.9.0'}
     peerDependencies:
-      '@rspress/core': ^2.0.0-rc.3
+      '@rspress/core': ^2.0.0-rc.4
 
-  '@rspress/plugin-sitemap@2.0.0-rc.3':
-    resolution: {integrity: sha512-QUoeeWPLI/r8BPPf7smT3VxWR718wyMJutjvhRXyxCWtUtLwEvDKAlk2WFi5ZAkte2D3otNIGWqkpgeT8tEmpw==}
-    engines: {node: '>=18.0.0'}
+  '@rspress/plugin-sitemap@2.0.0-rc.4':
+    resolution: {integrity: sha512-sr900krxs9ZVfbV+b/ig7t8mAPaMOonWz2Qj9zXg4TgEgnh+LnNtHQpHYeFbiTF5WAozVxdu5lJ1E36oh231pQ==}
+    engines: {node: '>=20.9.0'}
     peerDependencies:
-      '@rspress/core': ^2.0.0-rc.3
+      '@rspress/core': ^2.0.0-rc.4
 
-  '@rspress/runtime@2.0.0-rc.2':
-    resolution: {integrity: sha512-DkHvSEzwBrL9mLv5DGBk3oKFkMgpRtNhV0I2TfutlEerqKiq4WloFt6NXKkyhGsHU78DdtBVUgsZvXQKVQ6PHg==}
-    engines: {node: '>=18.0.0'}
+  '@rspress/runtime@2.0.0-rc.4':
+    resolution: {integrity: sha512-BcNs6zpIXcWfhXGCDS525HDwSgLXO+S+q2Ty6sQPmyYJzOg+V9tHIlulKTOfuBCyEhTZeTAJofP4+rG4EZBUgw==}
+    engines: {node: '>=20.9.0'}
 
-  '@rspress/shared@2.0.0-rc.2':
-    resolution: {integrity: sha512-CnU/ok1/tJHYqB3wf9mk7/YDNzfiQK7LHX1cWyqbWD6cdAdl+S9QVUKRossqGDgD1YdaKTaFsNpsK1c43XmIuw==}
+  '@rspress/shared@2.0.0-rc.4':
+    resolution: {integrity: sha512-46jTwxV8SRLMbe3euCEMWQudmdYE2Tf+EN/5l6EP10i6QICOXMIzUFFWfr0LOTr4aZCSTSJu7Tp6Xxml6JbheA==}
 
   '@selderee/plugin-htmlparser2@0.11.0':
     resolution: {integrity: sha512-P33hHGdldxGabLFjPPpaTxVolMrzrcegejx+0GxjrIb9Zv48D8yAIA/QTDR2dFl7Uz7urX8aX6+5bCZslr+gWQ==}
 
-  '@shikijs/core@3.12.2':
-    resolution: {integrity: sha512-L1Safnhra3tX/oJK5kYHaWmLEBJi1irASwewzY3taX5ibyXyMkkSDZlq01qigjryOBwrXSdFgTiZ3ryzSNeu7Q==}
+  '@shikijs/core@3.21.0':
+    resolution: {integrity: sha512-AXSQu/2n1UIQekY8euBJlvFYZIw0PHY63jUzGbrOma4wPxzznJXTXkri+QcHeBNaFxiiOljKxxJkVSoB3PjbyA==}
 
-  '@shikijs/engine-javascript@3.12.2':
-    resolution: {integrity: sha512-Nm3/azSsaVS7hk6EwtHEnTythjQfwvrO5tKqMlaH9TwG1P+PNaR8M0EAKZ+GaH2DFwvcr4iSfTveyxMIvXEHMw==}
+  '@shikijs/engine-javascript@3.21.0':
+    resolution: {integrity: sha512-ATwv86xlbmfD9n9gKRiwuPpWgPENAWCLwYCGz9ugTJlsO2kOzhOkvoyV/UD+tJ0uT7YRyD530x6ugNSffmvIiQ==}
 
-  '@shikijs/engine-oniguruma@3.12.2':
-    resolution: {integrity: sha512-hozwnFHsLvujK4/CPVHNo3Bcg2EsnG8krI/ZQ2FlBlCRpPZW4XAEQmEwqegJsypsTAN9ehu2tEYe30lYKSZW/w==}
+  '@shikijs/engine-oniguruma@3.21.0':
+    resolution: {integrity: sha512-OYknTCct6qiwpQDqDdf3iedRdzj6hFlOPv5hMvI+hkWfCKs5mlJ4TXziBG9nyabLwGulrUjHiCq3xCspSzErYQ==}
 
-  '@shikijs/langs@3.12.2':
-    resolution: {integrity: sha512-bVx5PfuZHDSHoBal+KzJZGheFuyH4qwwcwG/n+MsWno5cTlKmaNtTsGzJpHYQ8YPbB5BdEdKU1rga5/6JGY8ww==}
+  '@shikijs/langs@3.21.0':
+    resolution: {integrity: sha512-g6mn5m+Y6GBJ4wxmBYqalK9Sp0CFkUqfNzUy2pJglUginz6ZpWbaWjDB4fbQ/8SHzFjYbtU6Ddlp1pc+PPNDVA==}
 
-  '@shikijs/rehype@3.12.2':
-    resolution: {integrity: sha512-9wg+FKv0ByaQScTonpZdrDhADOoJP/yCWLAuiYYG6GehwNV5rGwnLvWKj33UmtLedKMSHzWUdB+Un6rfDFo/FA==}
+  '@shikijs/rehype@3.21.0':
+    resolution: {integrity: sha512-fTQvwsZL67QdosMFdTgQ5SNjW3nxaPplRy//312hqOctRbIwviTV0nAbhv3NfnztHXvFli2zLYNKsTz/f9tbpQ==}
 
-  '@shikijs/themes@3.12.2':
-    resolution: {integrity: sha512-fTR3QAgnwYpfGczpIbzPjlRnxyONJOerguQv1iwpyQZ9QXX4qy/XFQqXlf17XTsorxnHoJGbH/LXBvwtqDsF5A==}
+  '@shikijs/themes@3.21.0':
+    resolution: {integrity: sha512-BAE4cr9EDiZyYzwIHEk7JTBJ9CzlPuM4PchfcA5ao1dWXb25nv6hYsoDiBq2aZK9E3dlt3WB78uI96UESD+8Mw==}
 
-  '@shikijs/types@3.12.2':
-    resolution: {integrity: sha512-K5UIBzxCyv0YoxN3LMrKB9zuhp1bV+LgewxuVwHdl4Gz5oePoUFrr9EfgJlGlDeXCU1b/yhdnXeuRvAnz8HN8Q==}
+  '@shikijs/types@3.21.0':
+    resolution: {integrity: sha512-zGrWOxZ0/+0ovPY7PvBU2gIS9tmhSUUt30jAcNV0Bq0gb2S98gwfjIs1vxlmH5zM7/4YxLamT6ChlqqAJmPPjA==}
 
   '@shikijs/vscode-textmate@10.0.2':
     resolution: {integrity: sha512-83yeghZ2xxin3Nj8z1NMd/NCuca+gsYXswywDy5bHvwlWL8tpTQmzGeUuHd9FC3E/SBEMvzJRwWEOz5gGes9Qg==}
@@ -4526,8 +4526,8 @@ packages:
   lockfile@1.0.4:
     resolution: {integrity: sha512-cvbTwETRfsFh4nHsL1eGWapU1XFi5Ot9E85sWAwia7Y7EgB7vfqcZhTKZ+l7hCGxSPoushMv5GKhT5PdLv03WA==}
 
-  lodash-es@4.17.21:
-    resolution: {integrity: sha512-mKnC+QJ9pWVzv+C4/U3rRsHapFfHvQFoFB92e52xeyGMcX6/OlIl78je1u8vePzYZSkkogMPJ2yjxxsb89cxyw==}
+  lodash-es@4.17.22:
+    resolution: {integrity: sha512-XEawp1t0gxSi9x01glktRZ5HDy0HXqrM0x5pXQM98EaI0NxO6jVM7omDOxsuEo5UIASAnm2bRp1Jt/e0a2XU8Q==}
 
   lodash.debounce@4.0.8:
     resolution: {integrity: sha512-FT1yDzDYEoYWhnSGnpE/4Kj1fLZkDFyqRb7fNt6FdYOSxlUWAtp42Eh6Wb0rGIv/m9Bgo7x4GhQbm5Ys4SG5ow==}
@@ -5047,8 +5047,8 @@ packages:
   oniguruma-parser@0.12.1:
     resolution: {integrity: sha512-8Unqkvk1RYc6yq2WBYRj4hdnsAxVze8i7iPfQr8e4uSP3tRv0rpZcbGUDvxfQQcdwHt/e9PrMvGCsa8OqG9X3w==}
 
-  oniguruma-to-es@4.3.3:
-    resolution: {integrity: sha512-rPiZhzC3wXwE59YQMRDodUwwT9FZ9nNBwQQfsd1wfdtlKEyCdRV0avrTcSZ5xlIvGRVPd/cx6ZN45ECmS39xvg==}
+  oniguruma-to-es@4.3.4:
+    resolution: {integrity: sha512-3VhUGN3w2eYxnTzHn+ikMI+fp/96KoRSVK9/kMTcFqj1NRDh2IhQCKvYxDnWePKRXY/AqH+Fuiyb7VHSzBjHfA==}
 
   open@10.2.0:
     resolution: {integrity: sha512-YgBpdJHPyQ2UE5x+hlSXcnejzAvD0b22U2OuAP+8OnlJT+PjWPxtgmGqKKc+RgTM63U9gN0YzrYc71R2WT/hTA==}
@@ -5809,8 +5809,8 @@ packages:
     resolution: {integrity: sha512-ObmnIF4hXNg1BqhnHmgbDETF8dLPCggZWBjkQfhZpbszZnYur5DUljTcCHii5LC3J5E0yeO/1LIMyH+UvHQgyw==}
     engines: {node: '>= 0.4'}
 
-  shiki@3.12.2:
-    resolution: {integrity: sha512-uIrKI+f9IPz1zDT+GMz+0RjzKJiijVr6WDWm9Pe3NNY6QigKCfifCEv9v9R2mDASKKjzjQ2QpFLcxaR3iHSnMA==}
+  shiki@3.21.0:
+    resolution: {integrity: sha512-N65B/3bqL/TI2crrXr+4UivctrAGEjmsib5rPMMPpFp1xAx/w03v8WZ9RDDFYteXoEgY7qZ4HGgl5KBIu1153w==}
 
   side-channel-list@1.0.0:
     resolution: {integrity: sha512-FCLHtRD/gnpCiCHEiJLOwdmFP+wzCmDEkc9y7NsYxeF4u7Btsn1ZuwgwJGxImImHicJArLP4R0yX4c2KCrMrTA==}
@@ -7838,12 +7838,12 @@ snapshots:
       - supports-color
       - utf-8-validate
 
-  '@callstack/rspress-preset@0.5.0(@rsbuild/core@1.6.15)(@rspress/core@2.0.0-rc.2(@types/react@19.2.7))(react-dom@19.2.3(react@19.2.3))(react@19.2.3)':
+  '@callstack/rspress-preset@0.5.1(@rsbuild/core@1.6.15)(@rspress/core@2.0.0-rc.4(@types/react@19.2.7))(react-dom@19.2.3(react@19.2.3))(react@19.2.3)':
     dependencies:
-      '@callstack/rspress-theme': 0.5.0(@rspress/core@2.0.0-rc.2(@types/react@19.2.7))(react-dom@19.2.3(react@19.2.3))(react@19.2.3)
-      '@rspress/core': 2.0.0-rc.2(@types/react@19.2.7)
-      '@rspress/plugin-llms': 2.0.0-rc.3(@rspress/core@2.0.0-rc.2(@types/react@19.2.7))
-      '@rspress/plugin-sitemap': 2.0.0-rc.3(@rspress/core@2.0.0-rc.2(@types/react@19.2.7))
+      '@callstack/rspress-theme': 0.5.1(@rspress/core@2.0.0-rc.4(@types/react@19.2.7))(react-dom@19.2.3(react@19.2.3))(react@19.2.3)
+      '@rspress/core': 2.0.0-rc.4(@types/react@19.2.7)
+      '@rspress/plugin-llms': 2.0.0-rc.4(@rspress/core@2.0.0-rc.4(@types/react@19.2.7))
+      '@rspress/plugin-sitemap': 2.0.0-rc.4(@rspress/core@2.0.0-rc.4(@types/react@19.2.7))
       '@vercel/analytics': 1.5.0(react@19.2.3)
       rsbuild-plugin-open-graph: 1.1.0(@rsbuild/core@1.6.15)
       zod: 3.25.76
@@ -7859,9 +7859,9 @@ snapshots:
       - vue
       - vue-router
 
-  '@callstack/rspress-theme@0.5.0(@rspress/core@2.0.0-rc.2(@types/react@19.2.7))(react-dom@19.2.3(react@19.2.3))(react@19.2.3)':
+  '@callstack/rspress-theme@0.5.1(@rspress/core@2.0.0-rc.4(@types/react@19.2.7))(react-dom@19.2.3(react@19.2.3))(react@19.2.3)':
     dependencies:
-      '@rspress/core': 2.0.0-rc.2(@types/react@19.2.7)
+      '@rspress/core': 2.0.0-rc.4(@types/react@19.2.7)
       react: 19.2.3
       react-dom: 19.2.3(react@19.2.3)
 
@@ -9006,16 +9006,16 @@ snapshots:
       html-entities: 2.6.0
       react-refresh: 0.18.0
 
-  '@rspress/core@2.0.0-rc.2(@types/react@19.2.7)':
+  '@rspress/core@2.0.0-rc.4(@types/react@19.2.7)':
     dependencies:
       '@mdx-js/mdx': 3.1.1
       '@mdx-js/react': 3.1.1(@types/react@19.2.7)(react@19.2.3)
       '@rsbuild/core': 1.6.15
       '@rsbuild/plugin-react': 1.4.2(@rsbuild/core@1.6.15)
       '@rspress/mdx-rs': 0.6.6
-      '@rspress/runtime': 2.0.0-rc.2
-      '@rspress/shared': 2.0.0-rc.2
-      '@shikijs/rehype': 3.12.2
+      '@rspress/runtime': 2.0.0-rc.4
+      '@rspress/shared': 2.0.0-rc.4
+      '@shikijs/rehype': 3.21.0
       '@types/unist': 3.0.3
       '@unhead/react': 2.0.19(react@19.2.3)
       body-scroll-lock: 4.0.0-beta.0
@@ -9028,7 +9028,7 @@ snapshots:
       hast-util-heading-rank: 3.0.0
       hast-util-to-jsx-runtime: 2.3.6
       html-to-text: 9.0.5
-      lodash-es: 4.17.21
+      lodash-es: 4.17.22
       mdast-util-mdx: 3.0.0
       mdast-util-mdxjs-esm: 2.0.1
       medium-zoom: 1.1.0
@@ -9045,7 +9045,7 @@ snapshots:
       remark-mdx: 3.1.1
       remark-stringify: 11.0.0
       scroll-into-view-if-needed: 3.1.0
-      shiki: 3.12.2
+      shiki: 3.21.0
       tinyglobby: 0.2.15
       tinypool: 1.1.1
       unified: 11.0.5
@@ -9091,9 +9091,9 @@ snapshots:
       '@rspress/mdx-rs-win32-arm64-msvc': 0.6.6
       '@rspress/mdx-rs-win32-x64-msvc': 0.6.6
 
-  '@rspress/plugin-llms@2.0.0-rc.3(@rspress/core@2.0.0-rc.2(@types/react@19.2.7))':
+  '@rspress/plugin-llms@2.0.0-rc.4(@rspress/core@2.0.0-rc.4(@types/react@19.2.7))':
     dependencies:
-      '@rspress/core': 2.0.0-rc.2(@types/react@19.2.7)
+      '@rspress/core': 2.0.0-rc.4(@types/react@19.2.7)
       remark-mdx: 3.1.1
       remark-parse: 11.0.0
       remark-stringify: 11.0.0
@@ -9102,24 +9102,24 @@ snapshots:
     transitivePeerDependencies:
       - supports-color
 
-  '@rspress/plugin-sitemap@2.0.0-rc.3(@rspress/core@2.0.0-rc.2(@types/react@19.2.7))':
+  '@rspress/plugin-sitemap@2.0.0-rc.4(@rspress/core@2.0.0-rc.4(@types/react@19.2.7))':
     dependencies:
-      '@rspress/core': 2.0.0-rc.2(@types/react@19.2.7)
+      '@rspress/core': 2.0.0-rc.4(@types/react@19.2.7)
 
-  '@rspress/runtime@2.0.0-rc.2':
+  '@rspress/runtime@2.0.0-rc.4':
     dependencies:
-      '@rspress/shared': 2.0.0-rc.2
+      '@rspress/shared': 2.0.0-rc.4
       '@unhead/react': 2.0.19(react@19.2.3)
       react: 19.2.3
       react-dom: 19.2.3(react@19.2.3)
       react-router-dom: 7.11.0(react-dom@19.2.3(react@19.2.3))(react@19.2.3)
 
-  '@rspress/shared@2.0.0-rc.2':
+  '@rspress/shared@2.0.0-rc.4':
     dependencies:
       '@rsbuild/core': 1.6.15
-      '@shikijs/rehype': 3.12.2
+      '@shikijs/rehype': 3.21.0
       gray-matter: 4.0.3
-      lodash-es: 4.17.21
+      lodash-es: 4.17.22
       unified: 11.0.5
 
   '@selderee/plugin-htmlparser2@0.11.0':
@@ -9127,42 +9127,42 @@ snapshots:
       domhandler: 5.0.3
       selderee: 0.11.0
 
-  '@shikijs/core@3.12.2':
+  '@shikijs/core@3.21.0':
     dependencies:
-      '@shikijs/types': 3.12.2
+      '@shikijs/types': 3.21.0
       '@shikijs/vscode-textmate': 10.0.2
       '@types/hast': 3.0.4
       hast-util-to-html: 9.0.5
 
-  '@shikijs/engine-javascript@3.12.2':
+  '@shikijs/engine-javascript@3.21.0':
     dependencies:
-      '@shikijs/types': 3.12.2
+      '@shikijs/types': 3.21.0
       '@shikijs/vscode-textmate': 10.0.2
-      oniguruma-to-es: 4.3.3
+      oniguruma-to-es: 4.3.4
 
-  '@shikijs/engine-oniguruma@3.12.2':
+  '@shikijs/engine-oniguruma@3.21.0':
     dependencies:
-      '@shikijs/types': 3.12.2
+      '@shikijs/types': 3.21.0
       '@shikijs/vscode-textmate': 10.0.2
 
-  '@shikijs/langs@3.12.2':
+  '@shikijs/langs@3.21.0':
     dependencies:
-      '@shikijs/types': 3.12.2
+      '@shikijs/types': 3.21.0
 
-  '@shikijs/rehype@3.12.2':
+  '@shikijs/rehype@3.21.0':
     dependencies:
-      '@shikijs/types': 3.12.2
+      '@shikijs/types': 3.21.0
       '@types/hast': 3.0.4
       hast-util-to-string: 3.0.1
-      shiki: 3.12.2
+      shiki: 3.21.0
       unified: 11.0.5
       unist-util-visit: 5.0.0
 
-  '@shikijs/themes@3.12.2':
+  '@shikijs/themes@3.21.0':
     dependencies:
-      '@shikijs/types': 3.12.2
+      '@shikijs/types': 3.21.0
 
-  '@shikijs/types@3.12.2':
+  '@shikijs/types@3.21.0':
     dependencies:
       '@shikijs/vscode-textmate': 10.0.2
       '@types/hast': 3.0.4
@@ -12010,7 +12010,7 @@ snapshots:
     dependencies:
       signal-exit: 3.0.7
 
-  lodash-es@4.17.21: {}
+  lodash-es@4.17.22: {}
 
   lodash.debounce@4.0.8:
     optional: true
@@ -12842,7 +12842,7 @@ snapshots:
 
   oniguruma-parser@0.12.1: {}
 
-  oniguruma-to-es@4.3.3:
+  oniguruma-to-es@4.3.4:
     dependencies:
       oniguruma-parser: 0.12.1
       regex: 6.0.1
@@ -13756,14 +13756,14 @@ snapshots:
 
   shell-quote@1.8.3: {}
 
-  shiki@3.12.2:
+  shiki@3.21.0:
     dependencies:
-      '@shikijs/core': 3.12.2
-      '@shikijs/engine-javascript': 3.12.2
-      '@shikijs/engine-oniguruma': 3.12.2
-      '@shikijs/langs': 3.12.2
-      '@shikijs/themes': 3.12.2
-      '@shikijs/types': 3.12.2
+      '@shikijs/core': 3.21.0
+      '@shikijs/engine-javascript': 3.21.0
+      '@shikijs/engine-oniguruma': 3.21.0
+      '@shikijs/langs': 3.21.0
+      '@shikijs/themes': 3.21.0
+      '@shikijs/types': 3.21.0
       '@shikijs/vscode-textmate': 10.0.2
       '@types/hast': 3.0.4
 
