@@ -1,5 +1,6 @@
 import type { PluginApi } from '@rock-js/config';
 import { modifyApp, modifyIpa } from '@rock-js/platform-apple-helpers';
+import type { RockCLIOptions } from 'packages/tools/dist/src/index.js';
 
 export type SignFlags = {
   app: string;
@@ -50,7 +51,7 @@ const OPTIONS = [
     description:
       'Extract app bundle codesigning entitlements and combine with entitlements from new provisioning profile.',
   },
-];
+] satisfies RockCLIOptions;
 
 export const registerSignCommand = (api: PluginApi) => {
   api.registerCommand({
