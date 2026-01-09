@@ -176,7 +176,7 @@ describe('mergeEntitlements', () => {
     expect(result).toEqual(profileEntitlements);
   });
 
-  it('should only transfer keys defined in transferRules', async () => {
+  it('should only transfer keys defined as arguments', async () => {
     mockPlistBuddy({
       'keychain-access-groups': '<array><string>TEAM123.*</string></array>',
     });

@@ -11,7 +11,7 @@ import {
 } from '../../utils/plist.js';
 
 // See: https://developer.apple.com/documentation/bundleresources/entitlements
-export const transferRules = [
+export const entitlementsToTransfer = [
   'com.apple.developer.icloud-container-identifiers',
   'com.apple.developer.icloud-services',
   'com.apple.developer.ubiquity-kvstore-identifier',
@@ -178,7 +178,7 @@ export async function mergeEntitlements(
     fs.writeFileSync(profileEntitlementsPath, provisioningEntitlements);
     fs.writeFileSync(appEntitlementsPath, appEntitlements);
 
-    for (const key of transferRules) {
+    for (const key of entitlementsToTransfer) {
       try {
         const appValue = await readKeyFromPlist(appEntitlementsPath, key, {
           xml: true,
