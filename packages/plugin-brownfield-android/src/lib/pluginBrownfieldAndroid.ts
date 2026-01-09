@@ -6,6 +6,7 @@ import {
   type PackageAarFlags,
   packageAarOptions,
   publishLocalAar,
+  type PublishLocalAarFlags,
   publishLocalAarOptions,
 } from '@rock-js/platform-android';
 import { intro, RockError } from '@rock-js/tools';
@@ -86,7 +87,7 @@ export const pluginBrownfieldAndroid =
     api.registerCommand({
       name: 'publish-local:aar',
       description: 'Publishes a AAR to local maven repo',
-      action: async (args: PackageAarFlags) => {
+      action: async (args: PublishLocalAarFlags) => {
         return publishLocalAarAction({
           moduleName: args.moduleName,
           projectRoot: api.getProjectRoot(),
