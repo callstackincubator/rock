@@ -1,5 +1,12 @@
 # @rnef/platform-apple-helpers
 
+## 0.12.4
+
+### Patch Changes
+
+- 8ec7496: feat(iOS): --use-app-entitlements for merging app entitlements & provisioning profiles entitlements
+  - @rock-js/tools@0.12.4
+
 ## 0.12.3
 
 ### Patch Changes

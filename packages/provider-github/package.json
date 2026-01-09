@@ -1,6 +1,6 @@
 {
   "name": "@rock-js/provider-github",
-  "version": "0.12.3",
+  "version": "0.12.4",
   "description": "GitHub Actions provider for Rock Remote Build Cache",
   "type": "module",
   "types": "./dist/src/index.d.ts",
@@ -18,7 +18,7 @@
     "publish:verdaccio": "npm publish --registry http://localhost:4873 --userconfig ../../.npmrc"
   },
   "dependencies": {
-    "@rock-js/tools": "^0.12.3",
+    "@rock-js/tools": "^0.12.4",
     "ts-regex-builder": "^1.8.2",
     "tslib": "^2.3.0"
   },

@@ -1,6 +1,6 @@
 {
   "name": "create-rock",
-  "version": "0.12.3",
+  "version": "0.12.4",
   "description": "Scaffolding tool for creating new React Native applications with Rock",
   "type": "module",
   "types": "./dist/src/index.d.ts",
@@ -22,8 +22,8 @@
     "create-rock": "./dist/src/bin.js"
   },
   "devDependencies": {
-    "@rock-js/test-helpers": "^0.12.3",
-    "@rock-js/tools": "^0.12.3",
+    "@rock-js/test-helpers": "^0.12.4",
+    "@rock-js/tools": "^0.12.4",
     "@rslib/core": "^0.13.0",
     "@types/gradient-string": "^1.1.6",
     "@types/minimist": "^1.2.5",
