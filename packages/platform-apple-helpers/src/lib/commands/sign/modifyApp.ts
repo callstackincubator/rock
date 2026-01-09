@@ -17,6 +17,7 @@ export type ModifyAppOptions = {
   buildJsBundle?: boolean;
   jsBundlePath?: string;
   useHermes?: boolean;
+  useAppEntitlements?: boolean;
 };
 
 export const modifyApp = async (options: ModifyAppOptions) => {
