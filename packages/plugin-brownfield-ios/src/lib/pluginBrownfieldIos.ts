@@ -22,23 +22,24 @@ import { copyHermesXcframework } from './copyHermesXcframework.js';
 
 const buildOptions = getBuildOptions({ platformName: 'ios' });
 
-export const pluginBrownfieldIosPackageAction = async (
+export const packageIosAction = async (
   args: BuildFlags,
-  apiSubset: Pick<
-    PluginApi,
-    | 'getReactNativeVersion'
-    | 'getProjectRoot'
-    | 'getReactNativePath'
-    | 'getFingerprintOptions'
-    | 'getRemoteCacheProvider'
-    | 'getUsePrebuiltRNCore'
-  >,
+  {
+    projectRoot,
+    reactNativePath,
+    reactNativeVersion,
+    usePrebuiltRNCore,
+  }: {
+    projectRoot: string;
+    reactNativePath: string;
+    reactNativeVersion: string;
+    usePrebuiltRNCore: number | undefined;
+  },
   pluginConfig?: IOSProjectConfig,
 ) => {
   intro('Packaging iOS project');
 
   // 1) Build the project
-  const projectRoot = apiSubset.getProjectRoot();
   const iosConfig = getValidProjectConfig('ios', projectRoot, pluginConfig);
   const { derivedDataDir } = getBuildPaths('ios');
 
@@ -57,9 +58,9 @@ export const pluginBrownfieldIosPackageAction = async (
       projectConfig: iosConfig,
       platformName: 'ios',
       args: { ...args, destination, buildFolder },
-      reactNativePath: apiSubset.getReactNativePath(),
+      reactNativePath,
       brownfield: true,
-      usePrebuiltRNCore: apiSubset.getUsePrebuiltRNCore(),
+      usePrebuiltRNCore,
     });
     logger.log(`Build available at: ${colorLink(relativeToCwd(appPath))}`);
 
@@ -118,7 +119,7 @@ export const pluginBrownfieldIosPackageAction = async (
   copyHermesXcframework({
     sourceDir,
     destinationDir: frameworkTargetOutputDir,
-    reactNativeVersion: apiSubset.getReactNativeVersion(),
+    reactNativeVersion,
   });
 
   // 5) Inform the user
@@ -137,8 +138,17 @@ export const pluginBrownfieldIos =
     api.registerCommand({
       name: 'package:ios',
       description: 'Emit a .xcframework file from React Native code.',
-      action: (args: BuildFlags) =>
-        pluginBrownfieldIosPackageAction(args, api, pluginConfig),
+      action: async (args: BuildFlags) =>
+        packageIosAction(
+          args,
+          {
+            projectRoot: api.getProjectRoot(),
+            reactNativePath: api.getReactNativePath(),
+            reactNativeVersion: api.getReactNativeVersion(),
+            usePrebuiltRNCore: api.getUsePrebuiltRNCore(),
+          },
+          pluginConfig,
+        ),
       options: buildOptions,
     });
 

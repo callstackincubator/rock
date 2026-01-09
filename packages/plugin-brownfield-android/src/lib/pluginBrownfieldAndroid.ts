@@ -11,44 +11,54 @@ import {
 import { intro, RockError } from '@rock-js/tools';
 
 const getAarConfig = (
-  args: PackageAarFlags,
+  moduleName: string | undefined,
   androidConfig: AndroidProjectConfig,
 ) => {
   const config = {
     sourceDir: androidConfig.sourceDir,
-    moduleName: args.moduleName ?? '',
+    moduleName: moduleName ?? '',
   };
   return config;
 };
 
-export const pluginBrownfieldAndroidPackageAction = async (
-  args: PackageAarFlags,
-  apiSubset: Pick<PluginApi, 'getProjectRoot'>,
-  pluginConfig?: AndroidProjectConfig,
-) => {
+export const packageAarAction = async ({
+  variant,
+  moduleName,
+  projectRoot,
+  pluginConfig,
+}: {
+  variant: string;
+  moduleName: string | undefined;
+  projectRoot: string;
+  pluginConfig?: AndroidProjectConfig;
+}) => {
   intro('Creating an AAR file');
 
-  const androidConfig = projectConfig(apiSubset.getProjectRoot(), pluginConfig);
+  const androidConfig = projectConfig(projectRoot, pluginConfig);
 
   if (androidConfig) {
-    const config = getAarConfig(args, androidConfig);
-    await packageAar(config, args);
+    const config = getAarConfig(moduleName, androidConfig);
+    await packageAar(config, variant);
   } else {
     throw new RockError('Android project not found.');
   }
 };
 
-export const pluginBrownfieldAndroidPublishAction = async (
-  args: PackageAarFlags,
-  apiSubset: Pick<PluginApi, 'getProjectRoot'>,
-  pluginConfig?: AndroidProjectConfig,
-) => {
+export const publishLocalAarAction = async ({
+  moduleName,
+  projectRoot,
+  pluginConfig,
+}: {
+  moduleName: string | undefined;
+  projectRoot: string;
+  pluginConfig?: AndroidProjectConfig;
+}) => {
   intro('Publishing AAR');
 
-  const androidConfig = projectConfig(apiSubset.getProjectRoot(), pluginConfig);
+  const androidConfig = projectConfig(projectRoot, pluginConfig);
 
   if (androidConfig) {
-    const config = getAarConfig(args, androidConfig);
+    const config = getAarConfig(moduleName, androidConfig);
     await publishLocalAar(config);
   } else {
     throw new RockError('Android project not found.');
@@ -62,16 +72,27 @@ export const pluginBrownfieldAndroid =
       name: 'package:aar',
       description:
         'Produces an AAR file suitable for including React Native app in native projects.',
-      action: (args: PackageAarFlags) =>
-        pluginBrownfieldAndroidPackageAction(args, api, pluginConfig),
+      action: (args: PackageAarFlags) => {
+        return packageAarAction({
+          variant: args.variant,
+          moduleName: args.moduleName,
+          projectRoot: api.getProjectRoot(),
+          pluginConfig,
+        });
+      },
       options: packageAarOptions,
     });
 
     api.registerCommand({
       name: 'publish-local:aar',
       description: 'Publishes a AAR to local maven repo',
-      action: async (args: PackageAarFlags) =>
-        pluginBrownfieldAndroidPublishAction(args, api, pluginConfig),
+      action: async (args: PackageAarFlags) => {
+        return publishLocalAarAction({
+          moduleName: args.moduleName,
+          projectRoot: api.getProjectRoot(),
+          pluginConfig,
+        });
+      },
       options: publishLocalAarOptions,
     });
 
