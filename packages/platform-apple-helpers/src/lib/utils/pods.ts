@@ -29,6 +29,7 @@ export async function installPodsIfNeeded(
   reactNativePath: string,
   brownfield?: boolean,
   usePrebuiltRNCore?: number,
+  cacheRootPathOverride?: string,
 ) {
   const podsPath = path.join(sourceDir, 'Pods');
   const podfilePath = path.join(sourceDir, 'Podfile');
@@ -37,7 +38,9 @@ export async function installPodsIfNeeded(
   const nativeDependencies = await getNativeDependencies(platformName);
 
   const cacheKey = `pods-dependencies`;
-  const cachedDependenciesHash = cacheManager.get(cacheKey);
+  const cachedDependenciesHash = cacheManager.get(cacheKey, {
+    cacheRootPathOverride,
+  });
   const podsDirExists = fs.existsSync(podsPath);
   const hashChanged = cachedDependenciesHash
     ? !compareMd5Hashes(
@@ -59,6 +62,7 @@ export async function installPodsIfNeeded(
     cacheManager.set(
       cacheKey,
       calculateCurrentHash({ podfilePath, podsPath, nativeDependencies }),
+      { cacheRootPathOverride },
     );
     return true;
   }

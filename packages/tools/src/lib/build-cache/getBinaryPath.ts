@@ -2,7 +2,7 @@ import path from 'node:path';
 import { color, colorLink } from '../color.js';
 import type { RockError } from '../error.js';
 import { getAllIgnorePaths } from '../fingerprint/ignorePaths.js';
-import { type FingerprintSources } from '../fingerprint/index.js';
+import { type FingerprintOptions } from '../fingerprint/index.js';
 import logger from '../logger.js';
 import { getProjectRoot } from '../project.js';
 import { spawn } from '../spawn.js';
@@ -18,21 +18,26 @@ export async function getBinaryPath({
   fingerprintOptions,
   sourceDir,
   platformName,
+  cacheRootPathOverride,
 }: {
   artifactName: string;
   binaryPathFlag?: string;
   localFlag?: boolean;
   remoteCacheProvider: null | (() => RemoteBuildCache) | undefined;
-  fingerprintOptions: FingerprintSources;
+  fingerprintOptions: FingerprintOptions;
   sourceDir: string;
   platformName: string;
+  cacheRootPathOverride?: string;
 }) {
   // 1. First check if the binary path is provided
   let binaryPath = binaryPathFlag;
 
   // 2. If not, check if the local build is requested
   if (!binaryPath && !localFlag) {
-    binaryPath = getLocalBuildCacheBinaryPath(artifactName);
+    binaryPath = getLocalBuildCacheBinaryPath(
+      artifactName,
+      cacheRootPathOverride,
+    );
   }
 
   // 3. If not, check if the remote cache is requested
@@ -67,7 +72,7 @@ Read more: ${colorLink(
 }
 
 async function warnIgnoredFiles(
-  fingerprintOptions: FingerprintSources,
+  fingerprintOptions: FingerprintOptions,
   platformName: string,
   sourceDir: string,
 ) {

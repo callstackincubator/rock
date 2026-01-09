@@ -1,6 +1,6 @@
 import fs from 'node:fs';
 import path from 'node:path';
-import type { FingerprintSources, RemoteBuildCache } from '@rock-js/tools';
+import type { FingerprintOptions, RemoteBuildCache } from '@rock-js/tools';
 import {
   color,
   formatArtifactName,
@@ -40,7 +40,7 @@ export async function runHarmony(
   args: Flags,
   projectRoot: string,
   remoteCacheProvider: null | (() => RemoteBuildCache) | undefined,
-  fingerprintOptions: FingerprintSources,
+  fingerprintOptions: FingerprintOptions,
 ) {
   intro('Running HarmonyOS Next app');
 

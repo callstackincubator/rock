@@ -1,7 +1,7 @@
 import fs from 'node:fs';
 import path from 'node:path';
 import type { StartDevServerArgs } from '@rock-js/config';
-import type { FingerprintSources, RemoteBuildCache } from '@rock-js/tools';
+import type { FingerprintOptions, RemoteBuildCache } from '@rock-js/tools';
 import {
   color,
   formatArtifactName,
@@ -38,14 +38,14 @@ export const createRun = async ({
   reactNativeVersion,
   platforms,
   startDevServer,
-  usePrebuiltRNCore
+  usePrebuiltRNCore,
 }: {
   platformName: ApplePlatform;
   projectConfig: ProjectConfig;
   args: RunFlags;
   projectRoot: string;
   remoteCacheProvider: null | (() => RemoteBuildCache) | undefined;
-  fingerprintOptions: FingerprintSources;
+  fingerprintOptions: FingerprintOptions;
   reactNativePath: string;
   reactNativeVersion: string;
   platforms: { [platform: string]: object };

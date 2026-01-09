@@ -11,10 +11,13 @@ import {
   mergeFrameworks,
   type ProjectConfig as AppleProjectConfig,
 } from '@rock-js/platform-apple-helpers';
-import type { FingerprintSources, RemoteBuildCache } from '@rock-js/tools';
+import type {
+  FingerprintOptions,
+  RemoteBuildCache,
+  RequireAllOrNone,
+} from '@rock-js/tools';
 import { colorLink, intro, logger, outro, relativeToCwd } from '@rock-js/tools';
 import { copyHermesXcframework } from './copyHermesXcframework.js';
-import type { RequireAllOrNone } from './types.js';
 
 const buildOptions = getBuildOptions({ platformName: 'ios' });
 
@@ -31,7 +34,7 @@ export const packageIosAction = async (
     projectRoot: string;
     reactNativePath: string;
     reactNativeVersion: string;
-    fingerprintOptions: FingerprintSources;
+    fingerprintOptions: FingerprintOptions;
     remoteCacheProvider: null | (() => RemoteBuildCache) | undefined;
     usePrebuiltRNCore: number | undefined;
   },
@@ -42,7 +45,7 @@ export const packageIosAction = async (
    */
   {
     iosConfigOverride,
-    derivedDataDirOverride,
+    cacheRootPathOverride,
   }: RequireAllOrNone<{
     /**
      * Override for iOS project config.
@@ -50,9 +53,9 @@ export const packageIosAction = async (
     iosConfigOverride: AppleProjectConfig;
 
     /**
-     * Override for derivedDataDir path.
+     * Override for cache root path.
      */
-    derivedDataDirOverride: string;
+    cacheRootPathOverride?: string;
   }> = {},
 ) => {
   intro('Packaging iOS project');
@@ -62,9 +65,7 @@ export const packageIosAction = async (
     iosConfigOverride ??
     getValidProjectConfig('ios', projectRoot, pluginConfig);
 
-  const { derivedDataDir } = derivedDataDirOverride
-    ? { derivedDataDir: derivedDataDirOverride }
-    : getBuildPaths('ios');
+  const { derivedDataDir } = getBuildPaths('ios', { cacheRootPathOverride });
   const destination = args.destination ?? [
     genericDestinations.ios.device,
     genericDestinations.ios.simulator,
@@ -85,11 +86,14 @@ export const packageIosAction = async (
     brownfield: true,
     remoteCacheProvider,
     usePrebuiltRNCore,
+    cacheRootPathOverride,
   });
 
   // 2) Merge the .framework outputs of the framework target
   const productsPath = path.join(buildFolder, 'Build', 'Products');
-  const { packageDir: frameworkTargetOutputDir } = getBuildPaths('ios');
+  const { packageDir: frameworkTargetOutputDir } = getBuildPaths('ios', {
+    cacheRootPathOverride,
+  });
 
   await mergeFrameworks({
     sourceDir,

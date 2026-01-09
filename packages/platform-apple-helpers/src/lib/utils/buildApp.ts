@@ -1,7 +1,7 @@
 import path from 'node:path';
 import type { IOSProjectConfig } from '@react-native-community/cli-types';
 import {
-  type FingerprintSources,
+  type FingerprintOptions,
   formatArtifactName,
   getInfoPlist,
   RockError,
@@ -34,6 +34,7 @@ export async function buildApp({
   fingerprintOptions,
   deviceOrSimulator,
   usePrebuiltRNCore,
+  cacheRootPathOverride,
 }: {
   args: RunFlags | BuildFlags;
   projectConfig: ProjectConfig;
@@ -46,9 +47,10 @@ export async function buildApp({
   binaryPath?: string;
   brownfield?: boolean;
   artifactName: string;
-  fingerprintOptions: FingerprintSources;
+  fingerprintOptions: FingerprintOptions;
   deviceOrSimulator: string;
-  usePrebuiltRNCore?: number,
+  usePrebuiltRNCore?: number;
+  cacheRootPathOverride?: string;
 }) {
   if (binaryPath) {
     // @todo Info.plist is hardcoded when reading from binaryPath
@@ -77,6 +79,7 @@ export async function buildApp({
       reactNativePath,
       brownfield,
       usePrebuiltRNCore,
+      cacheRootPathOverride,
     );
     // When the project is not a workspace, we need to get the project config again,
     // because running pods install might have generated .xcworkspace project.
@@ -91,7 +94,7 @@ export async function buildApp({
       sourceDir = newProjectConfig.sourceDir;
     }
 
-    if (didInstallPods && args.local){
+    if (didInstallPods && args.local) {
       // After installing pods the fingerprint likely changes.
       // We update the artifact name to reflect the new fingerprint and store proper entry in the local cache.
       // Only do this for local builds. Remote builds need the fingerprint determined upfront to properly find the cached build before pods install.
@@ -144,7 +147,11 @@ export async function buildApp({
     buildFolder: args.buildFolder,
   });
 
-  saveLocalBuildCache(artifactNameToSave, buildSettings.appPath);
+  saveLocalBuildCache(
+    artifactNameToSave,
+    buildSettings.appPath,
+    cacheRootPathOverride,
+  );
 
   return {
     appPath: buildSettings.appPath,

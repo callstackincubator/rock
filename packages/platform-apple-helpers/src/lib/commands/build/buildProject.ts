@@ -72,6 +72,7 @@ export const buildProject = async ({
   configuration,
   destinations,
   args,
+  cacheRootPathOverride,
 }: {
   xcodeProject: XcodeProjectInfo;
   sourceDir: string;
@@ -80,6 +81,7 @@ export const buildProject = async ({
   configuration: string;
   destinations: string[];
   args: RunFlags | BuildFlags;
+  cacheRootPathOverride?: string;
 }) => {
   if (!supportedPlatforms[platformName]) {
     throw new RockError(
@@ -101,7 +103,9 @@ export const buildProject = async ({
   ];
 
   if (args.archive) {
-    const { archiveDir } = getBuildPaths(platformName);
+    const { archiveDir } = getBuildPaths(platformName, {
+      cacheRootPathOverride,
+    });
     const archiveName = `${xcodeProject.name.replace(
       '.xcworkspace',
       '',

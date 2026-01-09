@@ -2,7 +2,7 @@ import fs from 'node:fs';
 import os from 'node:os';
 import path from 'node:path';
 import type { PluginApi, PluginOutput } from '@rock-js/config';
-import type { FingerprintSources, RemoteBuildCache } from '@rock-js/tools';
+import type { FingerprintOptions, RemoteBuildCache } from '@rock-js/tools';
 import {
   color,
   colorLink,
@@ -48,7 +48,7 @@ async function remoteCache({
   args: Flags;
   remoteCacheProvider: null | (() => RemoteBuildCache);
   projectRoot: string;
-  fingerprintOptions: FingerprintSources;
+  fingerprintOptions: FingerprintOptions;
 }) {
   const isJsonOutput = args.json;
   if (!remoteCacheProvider) {

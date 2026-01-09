@@ -6,3 +6,5 @@ export type RockCLIOption = {
 };
 
 export type RockCLIOptions = RockCLIOption[];
+
+export type RequireAllOrNone<T> = T | { [K in keyof T]?: never };

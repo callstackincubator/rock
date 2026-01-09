@@ -9,14 +9,18 @@ const CACHE_FILE_NAME = 'project.json';
 
 type CacheKey = string;
 type Cache = { [key in CacheKey]?: string };
+type CacheAccessOptions = { cacheRootPathOverride?: string };
 
-export function getCacheFile() {
-  return path.join(getCacheRootPath(), CACHE_FILE_NAME);
+export function getCacheFile(cacheRootPathOverride?: string) {
+  return path.join(
+    cacheRootPathOverride ?? getCacheRootPath(),
+    CACHE_FILE_NAME,
+  );
 }
 
-function loadCache(): Cache {
+function loadCache({ cacheRootPathOverride }: CacheAccessOptions = {}): Cache {
   try {
-    const cachePath = path.resolve(getCacheFile());
+    const cachePath = path.resolve(getCacheFile(cacheRootPathOverride));
     if (!fs.existsSync(cachePath)) {
       logger.debug(`No cache found at: ${cachePath}`);
       return {};
@@ -30,15 +34,18 @@ function loadCache(): Cache {
   }
 }
 
-function saveCache(cache: Cache) {
-  const cachePath = path.resolve(getCacheFile());
+function saveCache(
+  cache: Cache,
+  { cacheRootPathOverride }: CacheAccessOptions = {},
+) {
+  const cachePath = path.resolve(getCacheFile(cacheRootPathOverride));
   fs.mkdirSync(path.dirname(cachePath), { recursive: true });
   fs.writeFileSync(cachePath, JSON.stringify(cache, null, 2));
 }
 
-function removeProjectCache() {
+function removeProjectCache(cacheRootPathOverride?: string) {
   try {
-    const cachePath = path.resolve(getCacheFile());
+    const cachePath = path.resolve(getCacheFile(cacheRootPathOverride));
     if (fs.existsSync(cachePath)) {
       fs.rmSync(cachePath, { recursive: true });
     }
@@ -52,21 +59,31 @@ function removeProjectCache() {
   }
 }
 
-function get(key: CacheKey): string | undefined {
-  const cache = loadCache();
+function get(
+  key: CacheKey,
+  { cacheRootPathOverride }: CacheAccessOptions = {},
+): string | undefined {
+  const cache = loadCache({ cacheRootPathOverride });
   return cache[key];
 }
 
-function set(key: CacheKey, value: string) {
-  const cache = loadCache();
+function set(
+  key: CacheKey,
+  value: string,
+  { cacheRootPathOverride }: CacheAccessOptions = {},
+) {
+  const cache = loadCache({ cacheRootPathOverride });
   cache[key] = value;
-  saveCache(cache);
+  saveCache(cache, { cacheRootPathOverride });
 }
 
-function remove(key: CacheKey) {
-  const cache = loadCache();
+function remove(
+  key: CacheKey,
+  { cacheRootPathOverride }: CacheAccessOptions = {},
+) {
+  const cache = loadCache({ cacheRootPathOverride });
   delete cache[key];
-  saveCache(cache);
+  saveCache(cache, { cacheRootPathOverride });
 }
 
 export default {

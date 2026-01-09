@@ -5,6 +5,7 @@ import { getReactNativeVersion, logger } from '../../index.js';
 import { spawn } from '../spawn.js';
 import { getAllIgnorePaths } from './ignorePaths.js';
 export type { FingerprintInputHash } from 'fs-fingerprint';
+import type { Config as AutolinkingConfig } from '@react-native-community/cli-types';
 
 export type FingerprintSources = {
   extraSources: string[];
@@ -12,11 +13,12 @@ export type FingerprintSources = {
   env: string[];
 };
 
-export type FingerprintOptions = {
+export type FingerprintOptions = FingerprintSources & {
+  autolinkingConfig?: AutolinkingConfig;
+};
+
+export type NativeFingerprintOptions = FingerprintOptions & {
   platform: 'ios' | 'android' | 'harmony';
-  extraSources: string[];
-  ignorePaths: string[];
-  env: string[];
 };
 
 /**
@@ -24,21 +26,26 @@ export type FingerprintOptions = {
  */
 export async function nativeFingerprint(
   projectRoot: string,
-  options: FingerprintOptions,
+  options: NativeFingerprintOptions,
 ): Promise<FingerprintResult> {
-  let autolinkingConfig;
+  let autolinkingConfig: AutolinkingConfig | undefined =
+    options.autolinkingConfig;
 
-  try {
-    // Use stdout to avoid deprecation warnings
-    const { stdout: autolinkingConfigString } = await spawn(
-      'rock',
-      ['config', '-p', options.platform],
-      { cwd: projectRoot, stdio: 'pipe' },
-    );
+  if (!autolinkingConfig) {
+    try {
+      // Use stdout to avoid deprecation warnings
+      const { stdout: autolinkingConfigString } = await spawn(
+        'rock',
+        ['config', '-p', options.platform],
+        { cwd: projectRoot, stdio: 'pipe' },
+      );
 
-    autolinkingConfig = JSON.parse(autolinkingConfigString);
-  } catch {
-    throw new Error('Failed to read autolinking config');
+      autolinkingConfig = JSON.parse(
+        autolinkingConfigString,
+      ) as AutolinkingConfig;
+    } catch {
+      throw new Error('Failed to read autolinking config');
+    }
   }
 
   const packageJSONPath = path.join(projectRoot, 'package.json');

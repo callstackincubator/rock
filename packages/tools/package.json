@@ -31,7 +31,8 @@
   },
   "devDependencies": {
     "@rock-js/test-helpers": "^0.12.4",
-    "@types/adm-zip": "^0.5.7"
+    "@types/adm-zip": "^0.5.7",
+    "@react-native-community/cli-types": "^20.0.0"
   },
   "publishConfig": {
     "access": "public"

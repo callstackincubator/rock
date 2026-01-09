@@ -1,6 +1,6 @@
 import fs from 'node:fs';
 import path from 'node:path';
-import type { FingerprintSources, RemoteBuildCache } from '@rock-js/tools';
+import type { FingerprintOptions, RemoteBuildCache } from '@rock-js/tools';
 import {
   colorLink,
   formatArtifactName,
@@ -32,16 +32,18 @@ export const createBuild = async ({
   brownfield,
   remoteCacheProvider,
   usePrebuiltRNCore,
+  cacheRootPathOverride,
 }: {
   platformName: BuilderCommand['platformName'];
   projectConfig: ProjectConfig;
   args: BuildFlags;
   projectRoot: string;
   reactNativePath: string;
-  fingerprintOptions: FingerprintSources;
+  fingerprintOptions: FingerprintOptions;
   brownfield?: boolean;
   remoteCacheProvider: null | (() => RemoteBuildCache) | undefined;
   usePrebuiltRNCore?: number;
+  cacheRootPathOverride?: string;
 }) => {
   await validateArgs(args);
 
@@ -69,13 +71,16 @@ export const createBuild = async ({
     remoteCacheProvider,
     fingerprintOptions,
     sourceDir: projectConfig.sourceDir,
+    cacheRootPathOverride,
   });
 
   if (binaryPath) {
     logger.log(`Build available at: ${colorLink(relativeToCwd(binaryPath))}`);
 
     if (args.archive) {
-      const { exportDir } = getBuildPaths(platformName);
+      const { exportDir } = getBuildPaths(platformName, {
+        cacheRootPathOverride,
+      });
       if (fs.existsSync(exportDir) && fs.statSync(exportDir).isDirectory()) {
         logger.log(
           `Archives available at: ${colorLink(relativeToCwd(exportDir))}`,
@@ -98,6 +103,7 @@ export const createBuild = async ({
       deviceOrSimulator,
       fingerprintOptions,
       usePrebuiltRNCore,
+      cacheRootPathOverride,
     });
     logger.log(`Build available at: ${colorLink(relativeToCwd(appPath))}`);
 
@@ -110,7 +116,9 @@ export const createBuild = async ({
   }
 
   if (args.archive) {
-    const { archiveDir } = getBuildPaths(platformName);
+    const { archiveDir } = getBuildPaths(platformName, {
+      cacheRootPathOverride,
+    });
 
     const archivePath = path.join(
       archiveDir,
@@ -126,7 +134,7 @@ export const createBuild = async ({
     });
 
     // Save the IPA to the local build cache so it's available for remote-cache command
-    saveLocalBuildCache(artifactName, ipaPath);
+    saveLocalBuildCache(artifactName, ipaPath, cacheRootPathOverride);
   }
 
   return { scheme };
