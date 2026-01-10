@@ -1,8 +1,8 @@
 import type { AndroidProjectConfig } from '@react-native-community/cli-types';
-import type { RemoteBuildCache } from '@rock-js/tools';
+import type { RemoteBuildCache, RockCLIOptions } from '@rock-js/tools';
 import {
   colorLink,
-  type FingerprintSources,
+  type FingerprintOptions,
   formatArtifactName,
   getBinaryPath,
   logger,
@@ -28,7 +28,7 @@ export async function buildAndroid(
   args: BuildFlags,
   projectRoot: string,
   remoteCacheProvider: null | (() => RemoteBuildCache) | undefined,
-  fingerprintOptions: FingerprintSources,
+  fingerprintOptions: FingerprintOptions,
 ) {
   normalizeArgs(args);
   // Use assemble task by default, but bundle if the flag is set
@@ -104,4 +104,4 @@ export const options = [
     name: '--local',
     description: 'Force local build with Gradle wrapper.',
   },
-];
+] satisfies RockCLIOptions;

@@ -11,8 +11,14 @@ export type LocalBuild = {
   binaryPath: string;
 };
 
-export function queryLocalBuildCache(artifactName: string): LocalBuild | null {
-  const artifactPath = getLocalArtifactPath(artifactName);
+export function queryLocalBuildCache(
+  artifactName: string,
+  cacheRootPathOverride?: string,
+): LocalBuild | null {
+  const artifactPath = getLocalArtifactPath(
+    artifactName,
+    cacheRootPathOverride,
+  );
   if (!fs.statSync(artifactPath, { throwIfNoEntry: false })?.isDirectory()) {
     return null;
   }
@@ -27,9 +33,13 @@ export function queryLocalBuildCache(artifactName: string): LocalBuild | null {
   };
 }
 
-export function saveLocalBuildCache(artifactName: string, binaryPath: string) {
+export function saveLocalBuildCache(
+  artifactName: string,
+  binaryPath: string,
+  cacheRootPathOverride?: string,
+) {
   try {
-    const cachePath = getLocalArtifactPath(artifactName);
+    const cachePath = getLocalArtifactPath(artifactName, cacheRootPathOverride);
     if (!fs.existsSync(cachePath)) {
       fs.mkdirSync(cachePath, { recursive: true });
     }
@@ -53,8 +63,9 @@ export function saveLocalBuildCache(artifactName: string, binaryPath: string) {
 
 export function getLocalBuildCacheBinaryPath(
   artifactName: string,
+  cacheRootPathOverride?: string,
 ): string | undefined {
-  const localBuild = queryLocalBuildCache(artifactName);
+  const localBuild = queryLocalBuildCache(artifactName, cacheRootPathOverride);
   if (localBuild) {
     logger.log(
       `Found build cache for: ${color.bold(color.blue(localBuild.name))}`,

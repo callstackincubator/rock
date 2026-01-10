@@ -20,7 +20,7 @@ export async function mergeFrameworks({
   const xcframeworkName = path.basename(outputPath);
 
   if (existsSync(outputPath)) {
-    logger.debug(`Removing `);
+    logger.debug(`Removing existing merged framework output at ${outputPath}`);
     fs.rmSync(outputPath, { recursive: true, force: true });
   }
 

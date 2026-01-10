@@ -5,7 +5,7 @@ import type {
   Config,
 } from '@react-native-community/cli-types';
 import type { StartDevServerArgs } from '@rock-js/config';
-import type { FingerprintSources, RemoteBuildCache } from '@rock-js/tools';
+import type { FingerprintOptions, RemoteBuildCache } from '@rock-js/tools';
 import {
   color,
   formatArtifactName,
@@ -50,7 +50,7 @@ export async function runAndroid(
   args: Flags,
   projectRoot: string,
   remoteCacheProvider: null | (() => RemoteBuildCache) | undefined,
-  fingerprintOptions: FingerprintSources,
+  fingerprintOptions: FingerprintOptions,
   startDevServer: (options: StartDevServerArgs) => void,
   reactNativeVersion: string,
   reactNativePath: string,

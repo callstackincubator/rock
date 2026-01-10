@@ -16,12 +16,14 @@ export const exportArchive = async ({
   platformName,
   exportExtraParams,
   exportOptionsPlist,
+  cacheRootPathOverride,
 }: {
   sourceDir: string;
   archivePath: string;
   platformName: string;
   exportExtraParams: string[];
   exportOptionsPlist?: string;
+  cacheRootPathOverride?: string;
 }): Promise<{ ipaPath: string }> => {
   const loader = spinner();
 
@@ -40,7 +42,7 @@ export const exportArchive = async ({
     );
   }
 
-  const { exportDir } = getBuildPaths(platformName);
+  const { exportDir } = getBuildPaths(platformName, { cacheRootPathOverride });
   const xcodebuildArgs = [
     '-exportArchive',
     '-archivePath',

@@ -1,8 +1,19 @@
 import path from 'node:path';
+import type { RequireAllOrNone } from '@rock-js/tools';
 import { getCacheRootPath } from '@rock-js/tools';
 
-export const getBuildPaths = (platformName: string) => {
-  const buildDir = path.join(getCacheRootPath(), platformName);
+export const getBuildPaths = (
+  platformName: string,
+  {
+    cacheRootPathOverride,
+  }: RequireAllOrNone<{
+    cacheRootPathOverride: string;
+  }> = {},
+) => {
+  const buildDir = path.join(
+    cacheRootPathOverride ?? getCacheRootPath(),
+    platformName,
+  );
 
   return {
     buildDir,
