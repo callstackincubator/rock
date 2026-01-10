@@ -19,6 +19,20 @@ import { getScheme } from './getScheme.js';
 import { getValidProjectConfig } from './getValidProjectConfig.js';
 import { installPodsIfNeeded } from './pods.js';
 
+type SharedBuildAppOptions = {
+  args: RunFlags | BuildFlags;
+  projectConfig: ProjectConfig;
+  pluginConfig?: IOSProjectConfig;
+  platformName: ApplePlatform;
+  udid?: string;
+  deviceName?: string;
+  projectRoot: string;
+  reactNativePath: string;
+  binaryPath?: string;
+  deviceOrSimulator: string;
+  usePrebuiltRNCore?: number;
+};
+
 export async function buildApp({
   args,
   projectConfig,
@@ -34,22 +48,18 @@ export async function buildApp({
   fingerprintOptions,
   deviceOrSimulator,
   usePrebuiltRNCore,
-}: {
-  args: RunFlags | BuildFlags;
-  projectConfig: ProjectConfig;
-  pluginConfig?: IOSProjectConfig;
-  platformName: ApplePlatform;
-  udid?: string;
-  deviceName?: string;
-  projectRoot: string;
-  reactNativePath: string;
-  binaryPath?: string;
-  brownfield?: boolean;
-  artifactName: string;
-  fingerprintOptions: FingerprintSources;
-  deviceOrSimulator: string;
-  usePrebuiltRNCore?: number,
-}) {
+}:
+  | ({
+      brownfield?: false;
+      artifactName: string;
+      fingerprintOptions: FingerprintSources;
+    } & SharedBuildAppOptions)
+  | ({
+      brownfield: true;
+      // artifactName and fingerprintOptions are not used for brownfield builds
+      artifactName?: string;
+      fingerprintOptions?: FingerprintSources;
+    } & SharedBuildAppOptions)) {
   if (binaryPath) {
     // @todo Info.plist is hardcoded when reading from binaryPath
     const infoPlistPath = path.join(binaryPath, 'Info.plist');
@@ -91,7 +101,12 @@ export async function buildApp({
       sourceDir = newProjectConfig.sourceDir;
     }
 
-    if (didInstallPods && args.local){
+    if (
+      artifactNameToSave &&
+      fingerprintOptions &&
+      didInstallPods &&
+      args.local
+    ) {
       // After installing pods the fingerprint likely changes.
       // We update the artifact name to reflect the new fingerprint and store proper entry in the local cache.
       // Only do this for local builds. Remote builds need the fingerprint determined upfront to properly find the cached build before pods install.
@@ -144,7 +159,9 @@ export async function buildApp({
     buildFolder: args.buildFolder,
   });
 
-  saveLocalBuildCache(artifactNameToSave, buildSettings.appPath);
+  if (artifactNameToSave) {
+    saveLocalBuildCache(artifactNameToSave, buildSettings.appPath);
+  }
 
   return {
     appPath: buildSettings.appPath,
