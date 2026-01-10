@@ -4,6 +4,7 @@
     "outDir": "dist",
     "rootDir": ".",
     "declaration": true,
+    "declarationMap": true,
     "types": ["node"]
   },
   "include": ["src/**/*.ts", "src/**/*.tsx"],
