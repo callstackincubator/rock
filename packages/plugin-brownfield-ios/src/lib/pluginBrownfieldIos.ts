@@ -2,15 +2,22 @@ import path from 'node:path';
 import type { IOSProjectConfig } from '@react-native-community/cli-types';
 import type { PluginApi, PluginOutput } from '@rock-js/config';
 import {
+  buildApp,
   type BuildFlags,
-  createBuild,
   genericDestinations,
   getBuildOptions,
   getBuildPaths,
   getValidProjectConfig,
   mergeFrameworks,
 } from '@rock-js/platform-apple-helpers';
-import { colorLink, intro, logger, outro, relativeToCwd } from '@rock-js/tools';
+import {
+  colorLink,
+  intro,
+  logger,
+  outro,
+  relativeToCwd,
+  RockError,
+} from '@rock-js/tools';
 import { copyHermesXcframework } from './copyHermesXcframework.js';
 
 const buildOptions = getBuildOptions({ platformName: 'ios' });
@@ -43,17 +50,44 @@ export const pluginBrownfieldIos =
 
         const { sourceDir } = iosConfig;
 
-        const { scheme } = await createBuild({
-          platformName: 'ios',
-          projectConfig: iosConfig,
-          args: { ...args, destination, buildFolder },
-          projectRoot,
-          reactNativePath: api.getReactNativePath(),
-          fingerprintOptions: api.getFingerprintOptions(),
-          brownfield: true,
-          remoteCacheProvider: await api.getRemoteCacheProvider(),
-          usePrebuiltRNCore: api.getUsePrebuiltRNCore(),
-        });
+        // const { scheme } = await createBuild({
+        //   platformName: 'ios',
+        //   projectConfig: iosConfig,
+        //   args: { ...args, destination, buildFolder },
+        //   projectRoot,
+        //   reactNativePath: api.getReactNativePath(),
+        //   fingerprintOptions: api.getFingerprintOptions(),
+        //   brownfield: true,
+        //   remoteCacheProvider: await api.getRemoteCacheProvider(),
+        //   usePrebuiltRNCore: api.getUsePrebuiltRNCore(),
+        // });
+        const deviceOrSimulator = args.destination
+          ? // there can be multiple destinations, so we'll pick the first one
+            args.destination[0].match(/simulator/i)
+            ? 'simulator'
+            : 'device'
+          : 'simulator';
+        let scheme;
+        try {
+          const { appPath, ...buildAppResult } = await buildApp({
+            projectRoot,
+            projectConfig: iosConfig,
+            platformName: 'ios',
+            args: { ...args, destination, buildFolder },
+            reactNativePath: api.getReactNativePath(),
+            brownfield: true,
+            deviceOrSimulator,
+            usePrebuiltRNCore: api.getUsePrebuiltRNCore(),
+          });
+          logger.log(
+            `Build available at: ${colorLink(relativeToCwd(appPath))}`,
+          );
+
+          scheme = buildAppResult.scheme;
+        } catch (error) {
+          const message = `Failed to create ${args.archive ? 'archive' : 'build'}`;
+          throw new RockError(message, { cause: error });
+        }
 
         // 2) Merge the .framework outputs of the framework target
         const productsPath = path.join(buildFolder, 'Build', 'Products');
