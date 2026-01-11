@@ -313,7 +313,7 @@ test.each([['release'], ['debug'], ['staging']])(
       { ...args, variant },
       '/',
       undefined,
-      { extraSources: [], ignorePaths: [], env: [] },
+      { extraSources: [], ignorePaths: [], env: [], platform: 'android' },
       vi.fn(), // startDevServer mock
       '/path/to/react-native', // reactNativePath
       '0.79.0', // reactNativeVersion
@@ -365,7 +365,7 @@ test('runAndroid runs gradle build with custom --appId, --appIdSuffix and --main
     },
     '/',
     undefined,
-    { extraSources: [], ignorePaths: [], env: [] },
+    { extraSources: [], ignorePaths: [], env: [], platform: 'android' },
     vi.fn(), // startDevServer mock
     '/path/to/react-native', // reactNativePath
     '0.79.0', // reactNativeVersion
@@ -395,7 +395,7 @@ test('runAndroid fails to launch an app on not-connected device when specified w
     { ...args, device: 'emulator-5554' },
     '/',
     undefined,
-    { extraSources: [], ignorePaths: [], env: [] },
+    { extraSources: [], ignorePaths: [], env: [], platform: 'android' },
     vi.fn(), // startDevServer mock
     '/path/to/react-native', // reactNativePath
     '0.79.0', // reactNativeVersion
@@ -468,7 +468,7 @@ test.each([['release'], ['debug']])(
       { ...args, device: 'emulator-5554', variant },
       '/',
       undefined,
-      { extraSources: [], ignorePaths: [], env: [] },
+      { extraSources: [], ignorePaths: [], env: [], platform: 'android' },
       vi.fn(), // startDevServer mock
       '/path/to/react-native', // reactNativePath
       '0.79.0', // reactNativeVersion
@@ -538,6 +538,7 @@ test('runAndroid launches an app on all connected devices', async () => {
       extraSources: [],
       ignorePaths: [],
       env: [],
+      platform: 'android',
     },
     vi.fn(),
     '/path/to/react-native',
@@ -609,7 +610,7 @@ test('runAndroid skips building when --binary-path is passed', async () => {
     },
     '/root',
     undefined,
-    { extraSources: [], ignorePaths: [], env: [] },
+    { extraSources: [], ignorePaths: [], env: [], platform: 'android' },
     vi.fn(), // startDevServer mock
     '/path/to/react-native', // reactNativePath
     '0.79.0', // reactNativeVersion
