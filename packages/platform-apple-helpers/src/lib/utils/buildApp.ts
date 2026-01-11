@@ -30,6 +30,7 @@ type SharedBuildAppOptions = {
   reactNativePath: string;
   binaryPath?: string;
   usePrebuiltRNCore?: number;
+  skipCache?: boolean;
 };
 
 export async function buildApp({
@@ -47,6 +48,7 @@ export async function buildApp({
   fingerprintOptions,
   deviceOrSimulator,
   usePrebuiltRNCore,
+  skipCache,
 }:
   | ({
       brownfield?: false;
@@ -88,6 +90,7 @@ export async function buildApp({
       reactNativePath,
       brownfield,
       usePrebuiltRNCore,
+      skipCache,
     );
     // When the project is not a workspace, we need to get the project config again,
     // because running pods install might have generated .xcworkspace project.

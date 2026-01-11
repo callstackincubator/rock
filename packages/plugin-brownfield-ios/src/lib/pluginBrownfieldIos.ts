@@ -29,11 +29,13 @@ export const packageIosAction = async (
     reactNativePath,
     reactNativeVersion,
     usePrebuiltRNCore,
+    skipCache,
   }: {
     projectRoot: string;
     reactNativePath: string;
     reactNativeVersion: string;
     usePrebuiltRNCore: number | undefined;
+    skipCache?: boolean;
   },
   pluginConfig?: IOSProjectConfig,
 ) => {
@@ -59,6 +61,8 @@ export const packageIosAction = async (
       reactNativePath,
       brownfield: true,
       usePrebuiltRNCore,
+      pluginConfig,
+      skipCache,
     });
     logger.log(`Build available at: ${colorLink(relativeToCwd(appPath))}`);
 
