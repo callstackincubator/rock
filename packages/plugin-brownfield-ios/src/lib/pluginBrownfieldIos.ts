@@ -9,7 +9,6 @@ import {
   getBuildPaths,
   getValidProjectConfig,
   mergeFrameworks,
-  type ProjectConfig as AppleProjectConfig,
 } from '@rock-js/platform-apple-helpers';
 import {
   colorLink,
@@ -20,7 +19,6 @@ import {
   RockError,
 } from '@rock-js/tools';
 import { copyHermesXcframework } from './copyHermesXcframework.js';
-import type { RequireAllOrNone } from './types.js';
 
 const buildOptions = getBuildOptions({ platformName: 'ios' });
 
@@ -38,41 +36,17 @@ export const packageIosAction = async (
     usePrebuiltRNCore: number | undefined;
   },
   pluginConfig?: IOSProjectConfig,
-  /**
-   * Rock-dependent logic escape hatch.
-   * If this is not provided, the logic will depend on the presence of a Rock config file.
-   */
-  {
-    iosConfigOverride,
-    derivedDataDirOverride,
-  }: RequireAllOrNone<{
-    /**
-     * Override for iOS project config.
-     */
-    iosConfigOverride: AppleProjectConfig;
-
-    /**
-     * Override for derivedDataDir path.
-     */
-    derivedDataDirOverride: string;
-  }> = {},
 ) => {
   intro('Packaging iOS project');
 
   // 1) Build the project
-  const iosConfig =
-    iosConfigOverride ??
-    getValidProjectConfig('ios', projectRoot, pluginConfig);
-
-  const { derivedDataDir } = derivedDataDirOverride
-    ? { derivedDataDir: derivedDataDirOverride }
-    : getBuildPaths('ios');
+  const iosConfig = getValidProjectConfig('ios', projectRoot, pluginConfig);
   const destination = args.destination ?? [
     genericDestinations.ios.device,
     genericDestinations.ios.simulator,
   ];
 
-  const buildFolder = args.buildFolder ?? derivedDataDir;
+  const buildFolder = args.buildFolder ?? getBuildPaths('ios').derivedDataDir;
   const configuration = args.configuration ?? 'Debug';
   let scheme;
 
