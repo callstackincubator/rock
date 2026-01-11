@@ -47,27 +47,8 @@ export const pluginBrownfieldIos =
 
         const buildFolder = args.buildFolder ?? derivedDataDir;
         const configuration = args.configuration ?? 'Debug';
-
-        const { sourceDir } = iosConfig;
-
-        // const { scheme } = await createBuild({
-        //   platformName: 'ios',
-        //   projectConfig: iosConfig,
-        //   args: { ...args, destination, buildFolder },
-        //   projectRoot,
-        //   reactNativePath: api.getReactNativePath(),
-        //   fingerprintOptions: api.getFingerprintOptions(),
-        //   brownfield: true,
-        //   remoteCacheProvider: await api.getRemoteCacheProvider(),
-        //   usePrebuiltRNCore: api.getUsePrebuiltRNCore(),
-        // });
-        const deviceOrSimulator = args.destination
-          ? // there can be multiple destinations, so we'll pick the first one
-            args.destination[0].match(/simulator/i)
-            ? 'simulator'
-            : 'device'
-          : 'simulator';
         let scheme;
+
         try {
           const { appPath, ...buildAppResult } = await buildApp({
             projectRoot,
@@ -76,7 +57,6 @@ export const pluginBrownfieldIos =
             args: { ...args, destination, buildFolder },
             reactNativePath: api.getReactNativePath(),
             brownfield: true,
-            deviceOrSimulator,
             usePrebuiltRNCore: api.getUsePrebuiltRNCore(),
           });
           logger.log(
@@ -92,6 +72,7 @@ export const pluginBrownfieldIos =
         // 2) Merge the .framework outputs of the framework target
         const productsPath = path.join(buildFolder, 'Build', 'Products');
         const { packageDir: frameworkTargetOutputDir } = getBuildPaths('ios');
+        const { sourceDir } = iosConfig;
 
         await mergeFrameworks({
           sourceDir,

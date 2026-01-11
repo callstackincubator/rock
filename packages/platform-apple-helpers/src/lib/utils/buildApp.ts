@@ -29,7 +29,6 @@ type SharedBuildAppOptions = {
   projectRoot: string;
   reactNativePath: string;
   binaryPath?: string;
-  deviceOrSimulator: string;
   usePrebuiltRNCore?: number;
 };
 
@@ -52,12 +51,14 @@ export async function buildApp({
   | ({
       brownfield?: false;
       artifactName: string;
+      deviceOrSimulator: string;
       fingerprintOptions: FingerprintSources;
     } & SharedBuildAppOptions)
   | ({
       brownfield: true;
-      // artifactName and fingerprintOptions are not used for brownfield builds
+      // artifactName, deviceOrSimulator and fingerprintOptions are not used for brownfield builds
       artifactName?: string;
+      deviceOrSimulator?: string;
       fingerprintOptions?: FingerprintSources;
     } & SharedBuildAppOptions)) {
   if (binaryPath) {
@@ -104,6 +105,7 @@ export async function buildApp({
     if (
       artifactNameToSave &&
       fingerprintOptions &&
+      deviceOrSimulator &&
       didInstallPods &&
       args.local
     ) {
