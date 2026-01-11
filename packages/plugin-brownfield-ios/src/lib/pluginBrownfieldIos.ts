@@ -2,15 +2,22 @@ import path from 'node:path';
 import type { IOSProjectConfig } from '@react-native-community/cli-types';
 import type { PluginApi, PluginOutput } from '@rock-js/config';
 import {
+  buildApp,
   type BuildFlags,
-  createBuild,
   genericDestinations,
   getBuildOptions,
   getBuildPaths,
   getValidProjectConfig,
   mergeFrameworks,
 } from '@rock-js/platform-apple-helpers';
-import { colorLink, intro, logger, outro, relativeToCwd } from '@rock-js/tools';
+import {
+  colorLink,
+  intro,
+  logger,
+  outro,
+  relativeToCwd,
+  RockError,
+} from '@rock-js/tools';
 import { copyHermesXcframework } from './copyHermesXcframework.js';
 
 const buildOptions = getBuildOptions({ platformName: 'ios' });
@@ -40,24 +47,32 @@ export const pluginBrownfieldIos =
 
         const buildFolder = args.buildFolder ?? derivedDataDir;
         const configuration = args.configuration ?? 'Debug';
+        let scheme;
 
-        const { sourceDir } = iosConfig;
+        try {
+          const { appPath, ...buildAppResult } = await buildApp({
+            projectRoot,
+            projectConfig: iosConfig,
+            platformName: 'ios',
+            args: { ...args, destination, buildFolder },
+            reactNativePath: api.getReactNativePath(),
+            brownfield: true,
+            usePrebuiltRNCore: api.getUsePrebuiltRNCore(),
+          });
+          logger.log(
+            `Build available at: ${colorLink(relativeToCwd(appPath))}`,
+          );
 
-        const { scheme } = await createBuild({
-          platformName: 'ios',
-          projectConfig: iosConfig,
-          args: { ...args, destination, buildFolder },
-          projectRoot,
-          reactNativePath: api.getReactNativePath(),
-          fingerprintOptions: api.getFingerprintOptions(),
-          brownfield: true,
-          remoteCacheProvider: await api.getRemoteCacheProvider(),
-          usePrebuiltRNCore: api.getUsePrebuiltRNCore(),
-        });
+          scheme = buildAppResult.scheme;
+        } catch (error) {
+          const message = `Failed to create ${args.archive ? 'archive' : 'build'}`;
+          throw new RockError(message, { cause: error });
+        }
 
         // 2) Merge the .framework outputs of the framework target
         const productsPath = path.join(buildFolder, 'Build', 'Products');
         const { packageDir: frameworkTargetOutputDir } = getBuildPaths('ios');
+        const { sourceDir } = iosConfig;
 
         await mergeFrameworks({
           sourceDir,

@@ -38,7 +38,7 @@ export const createRun = async ({
   reactNativeVersion,
   platforms,
   startDevServer,
-  usePrebuiltRNCore
+  usePrebuiltRNCore,
 }: {
   platformName: ApplePlatform;
   projectConfig: ProjectConfig;
@@ -247,6 +247,7 @@ ${devices
         await Promise.all([
           launchSimulator(bootedDevice),
           buildApp({
+            brownfield: false,
             args,
             projectConfig,
             platformName,

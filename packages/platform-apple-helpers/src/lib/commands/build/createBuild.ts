@@ -29,7 +29,6 @@ export const createBuild = async ({
   projectRoot,
   reactNativePath,
   fingerprintOptions,
-  brownfield,
   remoteCacheProvider,
   usePrebuiltRNCore,
 }: {
@@ -39,7 +38,6 @@ export const createBuild = async ({
   projectRoot: string;
   reactNativePath: string;
   fingerprintOptions: FingerprintSources;
-  brownfield?: boolean;
   remoteCacheProvider: null | (() => RemoteBuildCache) | undefined;
   usePrebuiltRNCore?: number;
 }) => {
@@ -93,7 +91,6 @@ export const createBuild = async ({
       platformName,
       args,
       reactNativePath,
-      brownfield,
       artifactName,
       deviceOrSimulator,
       fingerprintOptions,
