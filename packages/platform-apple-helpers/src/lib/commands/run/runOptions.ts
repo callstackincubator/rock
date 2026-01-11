@@ -38,7 +38,8 @@ export const getRunOptions = ({ platformName }: BuilderCommand) => {
     },
     {
       name: '--dev-server',
-      description: 'Automatically start a dev server (bundler) after building the app.',
+      description:
+        'Automatically start a dev server (bundler) after building the app.',
     },
     ...getBuildOptions({ platformName }),
   ];

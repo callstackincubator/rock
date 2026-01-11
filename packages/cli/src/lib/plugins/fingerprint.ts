@@ -1,7 +1,7 @@
 import { createHash } from 'node:crypto';
 import { performance } from 'node:perf_hooks';
 import type { PluginApi } from '@rock-js/config';
-import type { FingerprintInputHash, FingerprintSources } from '@rock-js/tools';
+import type { FingerprintInputHash, FingerprintOptions } from '@rock-js/tools';
 import {
   color,
   intro,
@@ -39,7 +39,7 @@ type NativeFingerprintCommandOptions = {
 
 export async function nativeFingerprintCommand(
   path: string,
-  { extraSources, ignorePaths, env }: FingerprintSources,
+  { extraSources, ignorePaths, env }: FingerprintOptions,
   options: NativeFingerprintCommandOptions,
 ) {
   validateOptions(options);

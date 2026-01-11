@@ -2,7 +2,7 @@ import * as fs from 'node:fs';
 import { createRequire } from 'node:module';
 import * as path from 'node:path';
 import { pathToFileURL } from 'node:url';
-import type { FingerprintSources, RemoteBuildCache } from '@rock-js/tools';
+import type { FingerprintOptions, RemoteBuildCache } from '@rock-js/tools';
 import { colorLink, getReactNativeVersion, logger } from '@rock-js/tools';
 import type { ValidationError } from 'joi';
 import { ConfigTypeSchema } from './schema.js';
@@ -54,7 +54,7 @@ export type PluginApi = {
   getRemoteCacheProvider: () => Promise<
     null | undefined | (() => RemoteBuildCache)
   >;
-  getFingerprintOptions: () => FingerprintSources;
+  getFingerprintOptions: () => FingerprintOptions;
   getBundlerStart: () => ({ args }: { args: DevServerArgs }) => void;
   getUsePrebuiltRNCore: () => number | undefined;
 };
@@ -103,7 +103,7 @@ export type ConfigType = {
     ignorePaths?: string[];
     env?: string[];
   };
-  usePrebuiltRNCore?: number,
+  usePrebuiltRNCore?: number;
 };
 
 export type ConfigOutput = {
@@ -219,7 +219,7 @@ Read more: ${colorLink('https://rockjs.dev/docs/configuration#github-actions-pro
       return validatedConfig.remoteCacheProvider;
     },
     getFingerprintOptions: () =>
-      validatedConfig.fingerprint as FingerprintSources,
+      validatedConfig.fingerprint as FingerprintOptions,
     getBundlerStart:
       () =>
       ({ args }: { args: DevServerArgs }) => {

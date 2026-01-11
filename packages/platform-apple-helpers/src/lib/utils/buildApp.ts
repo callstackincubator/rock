@@ -1,7 +1,7 @@
 import path from 'node:path';
 import type { IOSProjectConfig } from '@react-native-community/cli-types';
 import {
-  type FingerprintSources,
+  type FingerprintOptions,
   formatArtifactName,
   getInfoPlist,
   RockError,
@@ -52,14 +52,14 @@ export async function buildApp({
       brownfield?: false;
       artifactName: string;
       deviceOrSimulator: string;
-      fingerprintOptions: FingerprintSources;
+      fingerprintOptions: FingerprintOptions;
     } & SharedBuildAppOptions)
   | ({
       brownfield: true;
       // artifactName, deviceOrSimulator and fingerprintOptions are not used for brownfield builds
       artifactName?: string;
       deviceOrSimulator?: string;
-      fingerprintOptions?: FingerprintSources;
+      fingerprintOptions?: FingerprintOptions;
     } & SharedBuildAppOptions)) {
   if (binaryPath) {
     // @todo Info.plist is hardcoded when reading from binaryPath
