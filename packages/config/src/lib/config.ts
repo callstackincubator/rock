@@ -56,7 +56,7 @@ export type PluginApi = {
   >;
   getFingerprintOptions: () => FingerprintOptions;
   getBundlerStart: () => ({ args }: { args: DevServerArgs }) => void;
-  getUsePrebuiltRNCore: () => number | undefined;
+  getUsePrebuiltRNCore: () => boolean;
 };
 
 type PluginType = (args: PluginApi) => PluginOutput;
@@ -103,7 +103,7 @@ export type ConfigType = {
     ignorePaths?: string[];
     env?: string[];
   };
-  usePrebuiltRNCore?: number;
+  usePrebuiltRNCore?: boolean;
 };
 
 export type ConfigOutput = {
@@ -231,7 +231,7 @@ Read more: ${colorLink('https://rockjs.dev/docs/configuration#github-actions-pro
           platforms: api.getPlatforms(),
         });
       },
-    getUsePrebuiltRNCore: () => validatedConfig.usePrebuiltRNCore,
+    getUsePrebuiltRNCore: () => validatedConfig.usePrebuiltRNCore ?? true,
   };
 
   const platforms: Record<string, PlatformOutput> = {};

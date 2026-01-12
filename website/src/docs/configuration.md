@@ -50,6 +50,7 @@ It's intentional design decision to explicitly define platforms, bundlers etc, s
   // Optional: Configure remote cache provider. Currently supports: 'github-actions' or custom provider (function).
   remoteCacheProvider?: 'github-actions' | () => RemoteBuildCache |  null;
 
+  // Optional: Configure fingerprint options.
   fingerprint?: {
     // Additional source files/directories to include in fingerprint calculation
     extraSources?: string[];
@@ -59,7 +60,10 @@ It's intentional design decision to explicitly define platforms, bundlers etc, s
 
     // Environmental variables that should affect fingerprints
     env?: string[];
-  }
+  },
+
+  // Optional: Whether to use prebuilt RN Core. Defaults to true.
+  usePrebuiltRNCore?: boolean;
 }
 ```
 

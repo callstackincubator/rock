@@ -39,7 +39,7 @@ export const createBuild = async ({
   reactNativePath: string;
   fingerprintOptions: FingerprintOptions;
   remoteCacheProvider: null | (() => RemoteBuildCache) | undefined;
-  usePrebuiltRNCore?: number;
+  usePrebuiltRNCore?: boolean;
 }) => {
   await validateArgs(args);
 

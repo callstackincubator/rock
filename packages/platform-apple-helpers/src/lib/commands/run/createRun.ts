@@ -50,7 +50,7 @@ export const createRun = async ({
   reactNativeVersion: string;
   platforms: { [platform: string]: object };
   startDevServer: (options: StartDevServerArgs) => void;
-  usePrebuiltRNCore?: number;
+  usePrebuiltRNCore?: boolean;
 }) => {
   const startDevServerHelper = () => {
     if (args.devServer) {
