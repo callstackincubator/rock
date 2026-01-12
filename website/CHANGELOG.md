@@ -1,5 +1,11 @@
 # rock-docs
 
+## 1.4.1
+
+### Patch Changes
+
+- 12fc050: fix: set usePrebuiltRNCore as boolean
+
 ## 1.4.0
 
 ### Minor Changes
