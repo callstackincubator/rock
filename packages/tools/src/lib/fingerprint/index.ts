@@ -6,14 +6,7 @@ import { spawn } from '../spawn.js';
 import { getAllIgnorePaths } from './ignorePaths.js';
 export type { FingerprintInputHash } from 'fs-fingerprint';
 
-export type FingerprintSources = {
-  extraSources: string[];
-  ignorePaths: string[];
-  env: string[];
-};
-
 export type FingerprintOptions = {
-  platform: 'ios' | 'android' | 'harmony';
   extraSources: string[];
   ignorePaths: string[];
   env: string[];
@@ -24,7 +17,9 @@ export type FingerprintOptions = {
  */
 export async function nativeFingerprint(
   projectRoot: string,
-  options: FingerprintOptions,
+  options: FingerprintOptions & {
+    platform: 'ios' | 'android' | 'harmony';
+  },
 ): Promise<FingerprintResult> {
   let autolinkingConfig;
 

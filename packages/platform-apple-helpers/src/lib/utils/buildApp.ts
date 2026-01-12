@@ -1,7 +1,7 @@
 import path from 'node:path';
 import type { IOSProjectConfig } from '@react-native-community/cli-types';
 import {
-  type FingerprintSources,
+  type FingerprintOptions,
   formatArtifactName,
   getInfoPlist,
   RockError,
@@ -30,6 +30,7 @@ type SharedBuildAppOptions = {
   reactNativePath: string;
   binaryPath?: string;
   usePrebuiltRNCore?: number;
+  skipCache?: boolean;
 };
 
 export async function buildApp({
@@ -47,19 +48,20 @@ export async function buildApp({
   fingerprintOptions,
   deviceOrSimulator,
   usePrebuiltRNCore,
+  skipCache,
 }:
   | ({
       brownfield?: false;
       artifactName: string;
       deviceOrSimulator: string;
-      fingerprintOptions: FingerprintSources;
+      fingerprintOptions: FingerprintOptions;
     } & SharedBuildAppOptions)
   | ({
       brownfield: true;
       // artifactName, deviceOrSimulator and fingerprintOptions are not used for brownfield builds
       artifactName?: string;
       deviceOrSimulator?: string;
-      fingerprintOptions?: FingerprintSources;
+      fingerprintOptions?: FingerprintOptions;
     } & SharedBuildAppOptions)) {
   if (binaryPath) {
     // @todo Info.plist is hardcoded when reading from binaryPath
@@ -88,6 +90,7 @@ export async function buildApp({
       reactNativePath,
       brownfield,
       usePrebuiltRNCore,
+      skipCache,
     );
     // When the project is not a workspace, we need to get the project config again,
     // because running pods install might have generated .xcworkspace project.

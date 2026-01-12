@@ -1,7 +1,7 @@
 import fs from 'node:fs';
 import path from 'node:path';
 import { color } from '../color.js';
-import type { FingerprintSources } from '../fingerprint/index.js';
+import type { FingerprintOptions } from '../fingerprint/index.js';
 import { nativeFingerprint } from '../fingerprint/index.js';
 import { isInteractive } from '../isInteractive.js';
 import { getCacheRootPath } from '../project.js';
@@ -10,8 +10,8 @@ import { spinner } from '../prompts.js';
 export const BUILD_CACHE_DIR = 'remote-build';
 
 export const supportedRemoteCacheProviders = ['github-actions', 's3'] as const;
-export type SupportedRemoteCacheProviders = typeof supportedRemoteCacheProviders[number];
-
+export type SupportedRemoteCacheProviders =
+  (typeof supportedRemoteCacheProviders)[number];
 
 export type RemoteArtifact = {
   name: string;
@@ -111,7 +111,7 @@ export async function formatArtifactName({
   platform?: 'ios' | 'android' | 'harmony';
   traits?: string[];
   root: string;
-  fingerprintOptions: FingerprintSources;
+  fingerprintOptions: FingerprintOptions;
   raw?: boolean;
   type?: 'create' | 'update';
 }): Promise<string> {

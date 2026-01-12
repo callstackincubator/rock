@@ -1,6 +1,6 @@
 import fs from 'node:fs';
 import path from 'node:path';
-import type { FingerprintSources, RemoteBuildCache } from '@rock-js/tools';
+import type { FingerprintOptions, RemoteBuildCache } from '@rock-js/tools';
 import {
   colorLink,
   formatArtifactName,
@@ -37,7 +37,7 @@ export const createBuild = async ({
   args: BuildFlags;
   projectRoot: string;
   reactNativePath: string;
-  fingerprintOptions: FingerprintSources;
+  fingerprintOptions: FingerprintOptions;
   remoteCacheProvider: null | (() => RemoteBuildCache) | undefined;
   usePrebuiltRNCore?: number;
 }) => {

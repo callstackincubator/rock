@@ -34,4 +34,3 @@ These actions automatically store native artifacts that can be reused across CI 
    - Falls back to local build if no match is found
 
 ![How CLI works with remote cache](/cli-remote-cache.png)
-

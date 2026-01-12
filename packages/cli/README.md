@@ -32,7 +32,7 @@ Choose your path based on your current situation:
 
 ### Creating a new project
 
-> [!TIP] 
+> [!TIP]
 > For **new projects**, we recommend starting with [Expo](https://expo.dev) for the best developer experience and similar remote caching capabilities. Rock is designed for teams who have outgrown the Community CLI.
 
 To create a fresh React Native app with Rock, open a terminal and run:

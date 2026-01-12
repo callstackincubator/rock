@@ -11,9 +11,7 @@ export async function tryLaunchAppOnDevice(
 ) {
   let deviceId;
   if (!device.deviceId) {
-    logger.debug(
-      `No "deviceId" for ${device}, skipping launching the app`,
-    );
+    logger.debug(`No "deviceId" for ${device}, skipping launching the app`);
     return {};
   } else {
     deviceId = device.deviceId;

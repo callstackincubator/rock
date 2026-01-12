@@ -1,3 +1,4 @@
+import type { RockCLIOptions } from '@rock-js/tools';
 import { outro } from '@rock-js/tools';
 import { runGradleAar } from '../runGradle.js';
 import { toPascalCase } from '../toPascalCase.js';
@@ -12,35 +13,24 @@ export type PackageAarFlags = {
   moduleName?: string;
 };
 
-export async function packageAar(
-  aarProject: AarProject,
-  args: PackageAarFlags,
-) {
-  normalizeArgs(args);
+export async function packageAar(aarProject: AarProject, variant: string) {
+  normalizeVariant(variant);
+  const tasks = [`assemble${toPascalCase(variant)}`];
 
-  const tasks = [`assemble${toPascalCase(args.variant)}`];
-
-  await runGradleAar({ tasks, aarProject, variant: args.variant });
+  await runGradleAar({ tasks, aarProject, variant });
   outro('Success 🎉.');
 }
 
-export async function localPublishAar(
-  aarProject: AarProject,
-  args: PackageAarFlags,
-) {
+export async function localPublishAar(aarProject: AarProject, variant: string) {
   const tasks = ['publishToMavenLocal'];
 
-  await runGradleAar({
-    tasks,
-    aarProject,
-    variant: args.variant,
-  });
+  await runGradleAar({ tasks, aarProject, variant });
   outro('Success 🎉.');
 }
 
-function normalizeArgs(args: PackageAarFlags) {
-  if (!args.variant) {
-    args.variant = 'debug';
+function normalizeVariant(variant: string) {
+  if (!variant) {
+    variant = 'debug';
   }
 }
 
@@ -54,4 +44,4 @@ export const options = [
     name: '--module-name <string>',
     description: 'AAR module name',
   },
-];
+] satisfies RockCLIOptions;

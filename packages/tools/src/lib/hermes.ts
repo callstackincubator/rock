@@ -47,7 +47,9 @@ function getHermesOSBin(): string {
 function getHermesOSExe(): string {
   const hermesExecutableName = 'hermesc';
   const os = getLocalOS();
-  return os === 'windows' ? `${hermesExecutableName}.exe` : hermesExecutableName;
+  return os === 'windows'
+    ? `${hermesExecutableName}.exe`
+    : hermesExecutableName;
 }
 
 /**
@@ -112,7 +114,7 @@ export async function runHermes({
   sourcemapOutputPath?: string;
 }) {
   const hermescPath = getHermescPath();
-  if(!hermescPath) {
+  if (!hermescPath) {
     throw new RockError(
       'Hermesc binary not found. Please ensure React Native is installed correctly or use `--no-hermes` flag to disable Hermes.',
     );
@@ -208,7 +210,6 @@ function getHermescPath() {
       return hermesCompilerBinPath;
     }
   }
-
 
   // 2. Check bundled hermesc in react-native/sdks/hermesc (RN 0.69-0.82)
   const reactNativePath = getReactNativePackagePath();
