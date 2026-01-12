@@ -28,7 +28,7 @@ export async function installPodsIfNeeded(
   newArch: boolean,
   reactNativePath: string,
   brownfield?: boolean,
-  usePrebuiltRNCore?: number,
+  usePrebuiltRNCore?: boolean,
   skipCache?: boolean,
 ) {
   const podsPath = path.join(sourceDir, 'Pods');
@@ -113,7 +113,7 @@ async function runPodInstall(options: {
   useBundler: boolean;
   brownfield?: boolean;
   projectRoot: string;
-  usePrebuiltRNCore?: number;
+  usePrebuiltRNCore?: boolean;
 }) {
   if (!options.useBundler) {
     await validatePodCommand(options.sourceDir);
@@ -130,7 +130,9 @@ async function runPodInstall(options: {
   const reactNativeVersion = await getReactNativeVersion(options.projectRoot);
   const isReactNative81OrHigher =
     versionCompare(reactNativeVersion, '0.81.0') >= 0;
-  const usePrebuiltReactNative = !options.brownfield && isReactNative81OrHigher;
+  const usePrebuiltReactNative = Boolean(
+    !options.brownfield && isReactNative81OrHigher && options.usePrebuiltRNCore,
+  );
   const command = options.useBundler ? 'bundle' : 'pod';
   const args = options.useBundler ? ['exec', 'pod', 'install'] : ['install'];
   try {
@@ -139,13 +141,10 @@ async function runPodInstall(options: {
         RCT_NEW_ARCH_ENABLED: options.newArch ? '1' : '0',
         RCT_IGNORE_PODS_DEPRECATION: '1',
         RCT_USE_RN_DEP: String(
-          process.env['RCT_USE_RN_DEP'] ??
-            options.usePrebuiltRNCore ??
-            (usePrebuiltReactNative ? 1 : 0),
+          process.env['RCT_USE_RN_DEP'] ?? (usePrebuiltReactNative ? 1 : 0),
         ),
         RCT_USE_PREBUILT_RNCORE: String(
           process.env['RCT_USE_PREBUILT_RNCORE'] ??
-            options.usePrebuiltRNCore ??
             (usePrebuiltReactNative ? 1 : 0),
         ),
         ...(options.brownfield && { USE_FRAMEWORKS: 'static' }),
@@ -225,7 +224,7 @@ async function installPods(options: {
   podfilePath: string;
   newArch: boolean;
   brownfield?: boolean;
-  usePrebuiltRNCore?: number;
+  usePrebuiltRNCore?: boolean;
 }) {
   if (!fs.existsSync(options.podfilePath)) {
     logger.debug(

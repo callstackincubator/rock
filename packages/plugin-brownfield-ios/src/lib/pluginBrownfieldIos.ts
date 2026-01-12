@@ -35,7 +35,7 @@ export const packageIosAction = async (
     projectRoot: string;
     reactNativePath: string;
     reactNativeVersion: string;
-    usePrebuiltRNCore: number | undefined;
+    usePrebuiltRNCore: boolean | undefined;
     skipCache?: boolean;
     packageDir?: string;
   },

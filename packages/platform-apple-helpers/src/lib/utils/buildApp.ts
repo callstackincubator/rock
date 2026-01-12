@@ -29,7 +29,7 @@ type SharedBuildAppOptions = {
   projectRoot: string;
   reactNativePath: string;
   binaryPath?: string;
-  usePrebuiltRNCore?: number;
+  usePrebuiltRNCore?: boolean;
   skipCache?: boolean;
 };
 
