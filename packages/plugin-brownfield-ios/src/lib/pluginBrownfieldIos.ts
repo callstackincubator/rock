@@ -30,12 +30,14 @@ export const packageIosAction = async (
     reactNativeVersion,
     usePrebuiltRNCore,
     skipCache,
+    packageDir,
   }: {
     projectRoot: string;
     reactNativePath: string;
     reactNativeVersion: string;
     usePrebuiltRNCore: number | undefined;
     skipCache?: boolean;
+    packageDir?: string;
   },
   pluginConfig?: IOSProjectConfig,
 ) => {
@@ -74,9 +76,8 @@ export const packageIosAction = async (
 
   // 2) Merge the .framework outputs of the framework target
   const productsPath = path.join(buildFolder, 'Build', 'Products');
-  const frameworkTargetOutputDir = args.buildFolder
-    ? path.join(args.buildFolder, 'package')
-    : getBuildPaths('ios').packageDir;
+  const frameworkTargetOutputDir =
+    packageDir ?? getBuildPaths('ios').packageDir;
   const { sourceDir } = iosConfig;
 
   await mergeFrameworks({
