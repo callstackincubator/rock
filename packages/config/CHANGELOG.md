@@ -1,5 +1,13 @@
 # @rnef/config
 
+## 0.12.6
+
+### Patch Changes
+
+- 12fc050: fix: set usePrebuiltRNCore as boolean
+  - @rock-js/provider-github@0.12.6
+  - @rock-js/tools@0.12.6
+
 ## 0.12.5
 
 ### Patch Changes

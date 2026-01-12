@@ -1,5 +1,14 @@
 # @rnef/plugin-brownfield-ios
 
+## 0.12.6
+
+### Patch Changes
+
+- 12fc050: fix: set usePrebuiltRNCore as boolean
+- Updated dependencies [12fc050]
+  - @rock-js/platform-apple-helpers@0.12.6
+  - @rock-js/tools@0.12.6
+
 ## 0.12.5
 
 ### Patch Changes
