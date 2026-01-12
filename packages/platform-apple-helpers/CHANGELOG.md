@@ -1,5 +1,13 @@
 # @rnef/platform-apple-helpers
 
+## 0.12.5
+
+### Patch Changes
+
+- 3547ac0: fix: make iOS brownfield action run without cache, as on Android
+- d6d6db9: fix: debug logs in mergeFrameworks not showing path to removed framework before writing merge output
+  - @rock-js/tools@0.12.5
+
 ## 0.12.4
 
 ### Patch Changes

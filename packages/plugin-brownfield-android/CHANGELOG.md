@@ -1,5 +1,13 @@
 # @rnef/plugin-brownfield-android
 
+## 0.12.5
+
+### Patch Changes
+
+- d6d6db9: feat: expose logic of brownfield plugin actions
+  - @rock-js/platform-android@0.12.5
+  - @rock-js/tools@0.12.5
+
 ## 0.12.4
 
 ### Patch Changes
