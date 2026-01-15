@@ -41,7 +41,7 @@ const args: Flags = {
 };
 
 const androidProject: AndroidProjectConfig = {
-  sourceDir: '/Users/thymikee/Developer/tmp/App73/android',
+  sourceDir: '/Users/developer/tmp/App73/android',
   appName: 'app',
   packageName: 'com.myapp',
   applicationId: 'com.myapp.custom',

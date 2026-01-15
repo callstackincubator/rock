@@ -1,7 +1,7 @@
 import fs, { existsSync } from 'node:fs';
 import path from 'node:path';
-import type { SubprocessError } from '@rock-js/tools';
-import { color, logger, spawn, spinner } from '@rock-js/tools';
+import { color, logger } from '@rock-js/tools';
+import { runXcodebuild } from './runXcodebuild.js';
 
 /**
  * Xcode emits different `.framework` file based on the destination (simulator arm64/x86_64, iphone arm64 etc.)
@@ -16,15 +16,12 @@ export async function mergeFrameworks({
   outputPath: string;
   sourceDir: string;
 }) {
-  const loader = spinner();
   const xcframeworkName = path.basename(outputPath);
 
   if (existsSync(outputPath)) {
     logger.debug(`Removing existing merged framework output at ${outputPath}`);
     fs.rmSync(outputPath, { recursive: true, force: true });
   }
-
-  loader.start(`Creating ${color.bold(xcframeworkName)}`);
 
   const xcodebuildArgs = [
     '-create-xcframework',
@@ -33,14 +30,15 @@ export async function mergeFrameworks({
     outputPath,
   ];
 
-  try {
-    await spawn('xcodebuild', xcodebuildArgs, { cwd: sourceDir });
+  const { errorSummary } = await runXcodebuild(xcodebuildArgs, {
+    cwd: sourceDir,
+  });
 
-    loader.stop(`Created ${color.bold(xcframeworkName)}`);
-  } catch (error) {
-    loader.stop(`Couldn't create ${color.bold(xcframeworkName)}.`, 1);
+  if (errorSummary) {
     throw new Error('Running xcodebuild failed', {
-      cause: (error as SubprocessError).stderr,
+      cause: errorSummary,
     });
+  } else {
+    logger.success(`Created ${color.bold(xcframeworkName)}`);
   }
 }

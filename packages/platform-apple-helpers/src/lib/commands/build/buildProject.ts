@@ -1,68 +1,11 @@
 import path from 'node:path';
-import type { SubprocessError } from '@rock-js/tools';
-import { color, logger, RockError, spawn, spinner } from '@rock-js/tools';
+import { color, logger, RockError } from '@rock-js/tools';
 import type { ApplePlatform, XcodeProjectInfo } from '../../types/index.js';
 import { getBuildPaths } from '../../utils/getBuildPaths.js';
+import { runXcodebuild } from '../../utils/runXcodebuild.js';
 import { supportedPlatforms } from '../../utils/supportedPlatforms.js';
 import type { RunFlags } from '../run/runOptions.js';
 import type { BuildFlags } from './buildOptions.js';
-
-let lastProgress = 0;
-/**
- * Creates an ASCII progress bar
- * @param percent - Percentage of completion (0-100)
- * @param length - Length of the progress bar in characters
- * @returns ASCII progress bar string
- */
-function createProgressBar(percent: number, length = 20): string {
-  const latestPercent = percent > lastProgress ? percent : lastProgress;
-  lastProgress = latestPercent;
-  const filledLength = Math.round(length * (latestPercent / 100));
-  const emptyLength = length - filledLength;
-
-  const filled = '█'.repeat(filledLength);
-  const empty = '░'.repeat(emptyLength);
-
-  return `[${filled}${empty}]`;
-}
-
-function reportProgress(
-  chunk: string,
-  loader: ReturnType<typeof spinner>,
-  message: string,
-) {
-  if (chunk.includes('PhaseScriptExecution')) {
-    if (chunk.includes('[CP-User]\\ [Hermes]\\ Replace\\ Hermes\\')) {
-      const progressBar = createProgressBar(10);
-      loader.message(`${message} ${progressBar}`);
-    }
-    if (
-      chunk.includes('[CP-User]\\ [RN]Check\\ rncore') &&
-      chunk.includes('React-Fabric')
-    ) {
-      const progressBar = createProgressBar(35);
-      loader.message(`${message} ${progressBar}`);
-    }
-    if (chunk.includes('[CP-User]\\ [RN]Check\\ FBReactNativeSpec')) {
-      const progressBar = createProgressBar(53);
-      loader.message(`${message} ${progressBar}`);
-    }
-    if (
-      chunk.includes('[CP-User]\\ [RN]Check\\ rncore') &&
-      chunk.includes('React-FabricComponents')
-    ) {
-      const progressBar = createProgressBar(66);
-      loader.message(`${message} ${progressBar}`);
-    }
-    if (chunk.includes('[CP]\\ Check\\ Pods\\ Manifest.lock')) {
-      const progressBar = createProgressBar(90);
-      loader.message(`${message} ${progressBar}`);
-    }
-  } else if (chunk.includes('BUILD SUCCEEDED')) {
-    const progressBar = createProgressBar(100);
-    loader.message(`${message} ${progressBar}`);
-  }
-}
 
 export const buildProject = async ({
   xcodeProject,
@@ -80,7 +23,7 @@ export const buildProject = async ({
   configuration: string;
   destinations: string[];
   args: RunFlags | BuildFlags;
-}) => {
+}): Promise<void> => {
   if (!supportedPlatforms[platformName]) {
     throw new RockError(
       `Unknown platform: ${platformName}. Please, use one of: ${Object.values(
@@ -122,45 +65,19 @@ export const buildProject = async ({
 Scheme          ${color.bold(scheme)}
 Configuration   ${color.bold(configuration)}`);
 
-  const loader = spinner({ indicator: 'timer' });
+  const { errorSummary } = await runXcodebuild(xcodebuildArgs, {
+    cwd: sourceDir,
+  });
 
-  const message = `${args.archive ? 'Archiving' : 'Building'} the app`;
-
-  let commandOutput = '';
-
-  loader.start(message);
-  try {
-    const process = spawn('xcodebuild', xcodebuildArgs, {
-      cwd: sourceDir,
-    });
-
-    if (!logger.isVerbose()) {
-      // Process the output from the AsyncIterable
-      for await (const chunk of process) {
-        commandOutput += chunk + '\n';
-        reportProgress(chunk, loader, message);
-      }
-    }
-
-    await process;
-    loader.stop(`${args.archive ? 'Archived' : 'Built'} the app.`);
-  } catch (error) {
-    loader.stop(`Failed: ${message}.`, 1);
+  if (errorSummary) {
     if (!xcodeProject.isWorkspace) {
       logger.error(
         `If your project uses CocoaPods, make sure to install pods with "pod install" in ${sourceDir} directory.`,
       );
     }
-    if (commandOutput) {
-      // Use lightweight console.error instead of logger.error to avoid stack overflow issues when Xcode logs go crazy
-      console.error(color.red(`xcodebuild output: ${commandOutput}`));
-      throw new RockError(
-        'Running xcodebuild failed. See error details above.',
-      );
-    }
-    throw new RockError('Running xcodebuild failed', {
-      cause:
-        (error as SubprocessError).stderr || (error as SubprocessError).command,
+
+    throw new RockError('Failed to build the project', {
+      cause: errorSummary,
     });
   }
 };

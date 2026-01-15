@@ -1,14 +1,8 @@
-import type { SubprocessError } from '@rock-js/tools';
-import {
-  colorLink,
-  relativeToCwd,
-  RockError,
-  spawn,
-  spinner,
-} from '@rock-js/tools';
+import { colorLink, logger, relativeToCwd, RockError } from '@rock-js/tools';
 import { existsSync, readdirSync } from 'fs';
 import path from 'path';
 import { getBuildPaths } from '../../utils/getBuildPaths.js';
+import { runXcodebuild } from '../../utils/runXcodebuild.js';
 
 export const exportArchive = async ({
   sourceDir,
@@ -23,16 +17,12 @@ export const exportArchive = async ({
   exportExtraParams: string[];
   exportOptionsPlist?: string;
 }): Promise<{ ipaPath: string }> => {
-  const loader = spinner();
-
-  loader.start('Exporting the archive...');
   const exportOptionsPlistPath = path.join(
     sourceDir,
     exportOptionsPlist ?? 'ExportOptions.plist',
   );
 
   if (!existsSync(exportOptionsPlistPath)) {
-    loader.stop('Failed to export the archive.', 1);
     throw new RockError(
       `ExportOptions.plist not found, please create ${colorLink(
         relativeToCwd(exportOptionsPlistPath),
@@ -52,29 +42,28 @@ export const exportArchive = async ({
     ...exportExtraParams,
   ];
 
+  let ipaFiles: string[] = [];
+
+  const { errorSummary } = await runXcodebuild(xcodebuildArgs, {
+    cwd: sourceDir,
+  });
   try {
-    let ipaFiles: string[] = [];
+    ipaFiles = readdirSync(exportDir).filter((file) => file.endsWith('.ipa'));
+  } catch {
+    ipaFiles = [];
+  }
 
-    await spawn('xcodebuild', xcodebuildArgs, {
-      cwd: sourceDir,
-      stdio: 'pipe',
+  if (errorSummary) {
+    throw new Error('Running xcodebuild failed', {
+      cause: errorSummary,
     });
-    try {
-      ipaFiles = readdirSync(exportDir).filter((file) => file.endsWith('.ipa'));
-    } catch {
-      ipaFiles = [];
-    }
-
-    loader.stop(
+  } else {
+    logger.success(
       `Archive available at: ${colorLink(
         path.join(exportDir, ipaFiles[0]) ?? exportDir,
       )}`,
     );
-    return { ipaPath: path.join(exportDir, ipaFiles[0]) };
-  } catch (error) {
-    loader.stop('Running xcodebuild failed.', 1);
-    throw new Error('Running xcodebuild failed', {
-      cause: (error as SubprocessError).stderr,
-    });
   }
+
+  return { ipaPath: path.join(exportDir, ipaFiles[0]) };
 };
