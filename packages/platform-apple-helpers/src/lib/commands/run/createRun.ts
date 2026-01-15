@@ -247,7 +247,6 @@ ${devices
         await Promise.all([
           launchSimulator(bootedDevice),
           buildApp({
-            brownfield: false,
             args,
             projectConfig,
             platformName,

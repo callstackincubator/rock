@@ -79,8 +79,17 @@ export async function runXcodebuild(
 ) {
   let fullLog = '';
   const isArchiveTask = args.includes('-archivePath');
-  const startMessage = isArchiveTask ? 'Archiving the app' : 'Building the app';
-  const successMessage = isArchiveTask ? 'Archived the app' : 'Built the app';
+  const isMergeFrameworksTask = args.includes('-create-xcframework');
+  const startMessage = isArchiveTask
+    ? 'Archiving the app'
+    : isMergeFrameworksTask
+      ? 'Merging frameworks'
+      : 'Building the app';
+  const successMessage = isArchiveTask
+    ? 'Archived the app'
+    : isMergeFrameworksTask
+      ? 'Merged frameworks'
+      : 'Built the app';
   const loader = spinner({ indicator: 'timer' });
   loader.start(startMessage);
 
@@ -111,7 +120,7 @@ export async function runXcodebuild(
     };
   } catch (error) {
     loader.stop(`Failed: ${startMessage}`, 1);
-
+    console.log(fullLog)
     return {
       fullLog,
       errorSummary:
