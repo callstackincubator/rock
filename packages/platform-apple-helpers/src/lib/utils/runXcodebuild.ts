@@ -13,11 +13,67 @@ const BUILD_STEP_PATTERNS = [
   /^ProcessInfoPlistFile\s/,
 ];
 
-// Patterns that indicate an error line
+// Patterns that indicate an error line (for compile errors)
 const ERROR_PATTERNS = [/error:/, /fatal error:/];
 
-// Patterns that should stop error context capture (noise)
-const NOISE_PATTERNS = [/warning:/, /\bnote:/];
+// Patterns that should be filtered as noise
+const NOISE_PATTERNS = [
+  /warning:/,
+  /\bnote:/,
+  /^\s*export\s+\w+\\?=/, // xcodebuild export statements
+  /^\s*\+{1,3}\s/, // bash debug output (set -x)
+  /^\s*cd\s+\//, // cd commands
+  /^\s*\/bin\/sh\s+-c/, // shell invocations
+  /^\s*builtin-/, // xcode builtin commands
+];
+
+// Pattern for the failed build commands section
+const FAILED_COMMANDS_HEADER = 'The following build commands failed:';
+const BUILD_FAILED_PATTERN = /^\*\* BUILD FAILED \*\*$/;
+const PHASE_SCRIPT_FAILED_PATTERN = /^Command PhaseScriptExecution failed/;
+
+/**
+ * Extract content between PhaseScriptExecution invocation and its failure,
+ * filtering out noise like export statements and warnings.
+ */
+function extractPhaseScriptError(
+  lines: string[],
+  failureIndex: number,
+): string {
+  // Find the closest PhaseScriptExecution line above the failure
+  let scriptStartIndex = -1;
+  for (let i = failureIndex - 1; i >= 0; i--) {
+    if (/^PhaseScriptExecution\s/.test(lines[i])) {
+      scriptStartIndex = i;
+      break;
+    }
+  }
+
+  if (scriptStartIndex === -1) {
+    return lines[failureIndex];
+  }
+
+  // Collect lines between PhaseScriptExecution and failure, filtering noise
+  const relevantLines: string[] = [];
+  for (let i = scriptStartIndex + 1; i <= failureIndex; i++) {
+    const line = lines[i];
+
+    // Skip noise (exports, warnings, notes, empty lines at the start)
+    const isNoise = NOISE_PATTERNS.some((p) => p.test(line));
+    if (isNoise) {
+      continue;
+    }
+
+    // Skip empty lines if we haven't started collecting content yet
+    if (relevantLines.length === 0 && line.trim() === '') {
+      continue;
+    }
+
+    relevantLines.push(line);
+  }
+
+  return relevantLines.join('\n').trim();
+}
 
 /**
  * Process xcodebuild output and extract error summary.
@@ -27,12 +83,60 @@ export function extractErrorSummary(output: string): string {
   const lines = output.split('\n');
   let errorSummary = '';
   let inErrorBlock = false;
+  let failedCommandsSection = '';
+  let inFailedCommandsSection = false;
 
-  for (const line of lines) {
+  for (let i = 0; i < lines.length; i++) {
+    const line = lines[i];
+
+    // Check for "The following build commands failed:" section
+    if (line.includes(FAILED_COMMANDS_HEADER)) {
+      inFailedCommandsSection = true;
+      continue;
+    }
+
+    // Capture lines in the failed commands section (until we hit a line with failures count)
+    if (inFailedCommandsSection) {
+      if (line.match(/^\(\d+ failures?\)$/)) {
+        inFailedCommandsSection = false;
+        continue;
+      }
+      // Capture non-empty command lines
+      const trimmedLine = line.trim();
+      if (trimmedLine && !trimmedLine.startsWith('Building workspace')) {
+        if (failedCommandsSection) {
+          failedCommandsSection += '\n';
+        }
+        failedCommandsSection += trimmedLine;
+      }
+      continue;
+    }
+
+    // Skip BUILD FAILED line
+    if (BUILD_FAILED_PATTERN.test(line)) {
+      continue;
+    }
+
+    // Handle PhaseScriptExecution failure - look backwards for script output
+    if (PHASE_SCRIPT_FAILED_PATTERN.test(line)) {
+      const scriptError = extractPhaseScriptError(lines, i);
+      if (errorSummary) {
+        errorSummary += '\n\n';
+      }
+      errorSummary += scriptError;
+      continue;
+    }
+
     // Check if this is a new build step - reset error block but don't include it
     const isBuildStep = BUILD_STEP_PATTERNS.some((p) => p.test(line));
     if (isBuildStep) {
       inErrorBlock = false;
+      continue;
+    }
+
+    // Check if this is noise - skip
+    const isNoise = NOISE_PATTERNS.some((p) => p.test(line));
+    if (isNoise) {
       continue;
     }
 
@@ -49,13 +153,6 @@ export function extractErrorSummary(output: string): string {
 
     // If we're in an error block, capture follow-up lines
     if (inErrorBlock) {
-      // Stop on noise (warnings, notes)
-      const isNoise = NOISE_PATTERNS.some((p) => p.test(line));
-      if (isNoise) {
-        inErrorBlock = false;
-        continue;
-      }
-
       // Stop on empty lines (end of error context)
       if (line.trim() === '') {
         inErrorBlock = false;
@@ -67,7 +164,18 @@ export function extractErrorSummary(output: string): string {
     }
   }
 
-  return errorSummary.trim();
+  // Combine error summary with failed commands info
+  let result = errorSummary.trim();
+  if (failedCommandsSection) {
+    if (result) {
+      result +=
+        '\n\nThe following build commands failed:\n' + failedCommandsSection;
+    } else {
+      result = 'The following build commands failed:\n' + failedCommandsSection;
+    }
+  }
+
+  return result;
 }
 
 export async function runXcodebuild(
@@ -108,6 +216,12 @@ export async function runXcodebuild(
 
     for await (const chunk of process) {
       processChunk(chunk);
+      // when running with multiple destinations, xcodebuild will run
+      // the script phases etc again, so we fail early.
+      if (chunk.includes('** BUILD FAILED **')) {
+        (await process.nodeChildProcess).kill();
+        break;
+      }
     }
 
     await process;
@@ -120,7 +234,7 @@ export async function runXcodebuild(
     };
   } catch (error) {
     loader.stop(`Failed: ${startMessage}`, 1);
-    console.log(fullLog)
+
     return {
       fullLog,
       errorSummary:
