@@ -1,5 +1,11 @@
 # @rnef/tools
 
+## 0.12.7
+
+### Patch Changes
+
+- 795ff4b: feat: add a hint to skip cache with "--local" flag
+
 ## 0.12.6
 
 ## 0.12.5
