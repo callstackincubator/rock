@@ -57,7 +57,7 @@ export function getLocalBuildCacheBinaryPath(
   const localBuild = queryLocalBuildCache(artifactName);
   if (localBuild) {
     logger.log(
-      `Found build cache for: ${color.bold(color.blue(localBuild.name))}`,
+      `Found build cache for: ${color.bold(color.blue(localBuild.name))} ${color.dim('(Skip cache with "--local" flag)')}.`,
     );
     return localBuild.binaryPath;
   }
