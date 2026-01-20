@@ -20,21 +20,31 @@ jobs:
       - name: Setup
         uses: ./.github/actions/setup-node
 
+      - name: Version packages
+        run: |
+          if [ -n "$(find .changeset -name '*.md' ! -name 'README.md' 2>/dev/null)" ]; then
+            ./scripts/changeset-version.sh
+          fi
+
       - name: Create Release Pull Request or Publish to npm
         id: changesets
         uses: changesets/action@e0145edc7d9d8679003495b11f87bd8ef63c0cba # v1.5.3
         with:
-          version: pnpm run version
-          commit: 'chore: version packages'
-          title: 'chore: version packages'
+          version: "true"
+          commit: 'chore: ${{ env.VERSION }}'
+          title: 'chore: ${{ env.VERSION }}'
           publish: pnpm publish:npm
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
 
       - name: Create git tags
-        if: steps.changesets.outputs.published == 'true'
+        if: env.VERSION
         run: |
-          VERSION=$(node -p "require('./packages/cli/package.json').version")
-          git tag "v$VERSION"
-          git push origin "v$VERSION"
+          TAG="v${{ env.VERSION }}"
+          if git ls-remote --tags origin | grep -q "refs/tags/$TAG$"; then
+            echo "Tag $TAG already exists, skipping"
+          else
+            git tag "$TAG"
+            git push origin "$TAG"
+          fi
