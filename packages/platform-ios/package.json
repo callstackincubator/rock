@@ -1,6 +1,6 @@
 {
   "name": "@rock-js/platform-ios",
-  "version": "0.12.6",
+  "version": "0.12.7",
   "description": "iOS platform support and configuration for Rock",
   "type": "module",
   "types": "./dist/src/index.d.ts",
@@ -22,12 +22,12 @@
   "dependencies": {
     "@react-native-community/cli-config-apple": "^20.0.0",
     "@react-native-community/cli-types": "^20.0.0",
-    "@rock-js/platform-apple-helpers": "^0.12.6",
-    "@rock-js/tools": "^0.12.6",
+    "@rock-js/platform-apple-helpers": "^0.12.7",
+    "@rock-js/tools": "^0.12.7",
     "tslib": "^2.3.0"
   },
   "devDependencies": {
-    "@rock-js/config": "^0.12.6"
+    "@rock-js/config": "^0.12.7"
   },
   "publishConfig": {
     "access": "public"

@@ -1,6 +1,6 @@
 {
   "name": "@rock-js/platform-harmony",
-  "version": "0.12.6",
+  "version": "0.12.7",
   "type": "module",
   "types": "./dist/src/index.d.ts",
   "exports": {
@@ -19,13 +19,13 @@
     "publish:verdaccio": "npm publish --registry http://localhost:4873 --userconfig ../../.npmrc"
   },
   "dependencies": {
-    "@rock-js/tools": "^0.12.6",
+    "@rock-js/tools": "^0.12.7",
     "json5": "^2.2.3",
     "tslib": "^2.3.0"
   },
   "devDependencies": {
     "@react-native-community/cli-types": "^20.0.0",
-    "@rock-js/config": "^0.12.6"
+    "@rock-js/config": "^0.12.7"
   },
   "publishConfig": {
     "access": "public"
