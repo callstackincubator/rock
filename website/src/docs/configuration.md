@@ -137,16 +137,14 @@ If you need to customize Metro (e.g., add asset extensions, configure transforme
 ```js title="metro.config.js"
 const { getDefaultConfig, mergeConfig } = require('@rock-js/plugin-metro');
 
-const config = getDefaultConfig(__dirname);
-
-module.exports = mergeConfig(config, {
+module.exports = mergeConfig(getDefaultConfig(__dirname), {
   // Your custom configuration
 });
 ```
 
 ### Common Customizations
 
-#### Adding Additional File Extensions
+#### Adding File Extensions
 
 ```js title="metro.config.js"
 const { getDefaultConfig, mergeConfig } = require('@rock-js/plugin-metro');
@@ -190,9 +188,7 @@ module.exports = mergeConfig(config, {
 ```js title="metro.config.js"
 const { getDefaultConfig, mergeConfig } = require('@rock-js/plugin-metro');
 
-const config = getDefaultConfig(__dirname);
-
-module.exports = mergeConfig(config, {
+module.exports = mergeConfig(getDefaultConfig(__dirname), {
   resolver: {
     blockList: [
       /.*\/node_modules\/.*\/node_modules\/.*/,
@@ -206,18 +202,18 @@ module.exports = mergeConfig(config, {
 
 #### `getDefaultConfig(projectRoot)`
 
-Returns the default Metro configuration for Rock projects. This wraps `@react-native/metro-config` with Rock-specific defaults.
+Returns the default Metro configuration. Re-exported from `@react-native/metro-config`.
 
 - **projectRoot** (`string`): The root directory of your project (usually `__dirname`)
-- **Returns**: Metro configuration object
+- **Returns**: `MetroConfig` object
 
 #### `mergeConfig(baseConfig, overrideConfig)`
 
-Merges two Metro configurations together. The override configuration takes precedence.
+Merges two Metro configurations together. Re-exported from `metro-config`.
 
 - **baseConfig** (`MetroConfig`): The base configuration
 - **overrideConfig** (`InputConfig`): Configuration to merge on top
-- **Returns**: Merged Metro configuration
+- **Returns**: Merged `MetroConfig`
 
 ## Platforms
 
