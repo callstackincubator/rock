@@ -28,6 +28,10 @@ vi.mock('node:fs', async (importOriginal) => ({
   writeFileSync: vi.fn(),
 }));
 
+// Strip ANSI escape sequences for consistent snapshots across environments
+// eslint-disable-next-line no-control-regex
+const stripAnsi = (str: string) => str.replace(/\x1b\[[0-9;]*m/g, '');
+
 function createMockProcess(output: string, shouldFail: boolean) {
   let consumed = false;
   return {
@@ -68,7 +72,7 @@ describe('extractErrorSummary', () => {
   it('extracts PhaseScriptExecution failure with Metro error', () => {
     const result = extractErrorSummary(phaseScriptExecutionFailFixture);
 
-    expect(result).toMatchInlineSnapshot(`
+    expect(stripAnsi(result)).toMatchInlineSnapshot(`
       "Node found at: /Users/thymikee/.nvm/versions/node/v24.6.0/bin/node
       ┌  Compiling JS bundle with Metro
 
@@ -151,7 +155,7 @@ describe('extractErrorSummary', () => {
     let x = foo
             ^`;
 
-    expect(extractErrorSummary(output)).toMatchInlineSnapshot(`
+    expect(stripAnsi(extractErrorSummary(output))).toMatchInlineSnapshot(`
       "/path/file.swift:10:5: error: cannot find 'foo' in scope
           let x = foo
                   ^
@@ -170,7 +174,7 @@ describe('extractErrorSummary', () => {
     code2
         ^`;
 
-    expect(extractErrorSummary(output)).toMatchInlineSnapshot(`
+    expect(stripAnsi(extractErrorSummary(output))).toMatchInlineSnapshot(`
       "/path/file1.swift:10:5: error: first error
           code1
               ^
@@ -189,7 +193,7 @@ warning: some warning here
     code
         ^`;
 
-    expect(extractErrorSummary(output)).toMatchInlineSnapshot(`
+    expect(stripAnsi(extractErrorSummary(output))).toMatchInlineSnapshot(`
       "/path/file.swift:10:5: error: some error
           code
               ^
@@ -207,7 +211,7 @@ ProcessInfoPlistFile /path/Info.plist (in target 'Test')
     cd /path
     builtin-infoPlistUtility`;
 
-    expect(extractErrorSummary(output)).toMatchInlineSnapshot(`
+    expect(stripAnsi(extractErrorSummary(output))).toMatchInlineSnapshot(`
       "/path/file.swift:10:5: error: some error
           code line
               ^
@@ -256,7 +260,7 @@ describe('runXcodebuild', () => {
       reportProgress: false,
     });
 
-    expect(result.errorSummary).toMatchInlineSnapshot(`
+    expect(stripAnsi(result.errorSummary ?? '')).toMatchInlineSnapshot(`
       "/Users/developer/rock-remote-build-test/ios/RockRemoteBuildTest/AppDelegate.swift:5:19: error: Unable to find module dependency: 'Brownie'
       @_exported import Brownie
                         ^ (in target 'RockRemoteBuildTest' from project 'RockRemoteBuildTest')
