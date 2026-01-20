@@ -1,20 +1,32 @@
-import * as fs from 'node:fs';
-import * as path from 'node:path';
+import type * as fsType from 'node:fs';
 import { spawn } from '@rock-js/tools';
 import type { Mock } from 'vitest';
 import { describe, expect, it, vi } from 'vitest';
 import { extractErrorSummary, runXcodebuild } from '../runXcodebuild.js';
 
-// Read fixtures using unmocked fs
-vi.unmock('node:fs');
-const fixture = fs.readFileSync(
-  path.join(__dirname, '__fixtures__', 'xcodebuildErrorOutput'),
+// Read fixtures using actual fs before mocking
+const actualFs = await vi.importActual<typeof fsType>('node:fs');
+const fixture = actualFs.readFileSync(
+  new URL('./__fixtures__/xcodebuildErrorOutput', import.meta.url),
   'utf-8',
 );
-const phaseScriptExecutionFailFixture = fs.readFileSync(
-  path.join(__dirname, '__fixtures__', 'phaseScriptExecutionFail'),
+const phaseScriptExecutionFailFixture = actualFs.readFileSync(
+  new URL('./__fixtures__/phaseScriptExecutionFail', import.meta.url),
   'utf-8',
 );
+
+vi.mock('node:os', () => ({
+  default: { tmpdir: vi.fn().mockReturnValue('/tmp') },
+  tmpdir: vi.fn().mockReturnValue('/tmp'),
+}));
+
+vi.spyOn(Date, 'now').mockReturnValue(2137000000000);
+
+vi.mock('node:fs', async (importOriginal) => ({
+  ...(await importOriginal<typeof fsType>()),
+  mkdirSync: vi.fn(),
+  writeFileSync: vi.fn(),
+}));
 
 function createMockProcess(output: string, shouldFail: boolean) {
   let consumed = false;
@@ -125,7 +137,8 @@ describe('extractErrorSummary', () => {
       Command PhaseScriptExecution failed with a nonzero exit code
 
       The following build commands failed:
-      PhaseScriptExecution Bundle\\ React\\ Native\\ code\\ and\\ images /Users/thymikee/Developer/Rock83Brownfield/.rock/cache/ios/derivedData/Build/Intermediates.noindex/Rock83Brownfield.build/Release-iphonesimulator/Rock83BrownfieldReact.build/Script-20D164A32D4D82600039A91E.sh (in target 'Rock83BrownfieldReact' from project 'Rock83Brownfield')"
+      PhaseScriptExecution Bundle\\ React\\ Native\\ code\\ and\\ images /Users/thymikee/Developer/Rock83Brownfield/.rock/cache/ios/derivedData/Build/Intermediates.noindex/Rock83Brownfield.build/Release-iphonesimulator/Rock83BrownfieldReact.build/Script-20D164A32D4D82600039A91E.sh (in target 'Rock83BrownfieldReact' from project 'Rock83Brownfield')
+      Full log available at: /tmp/.rock-xcodebuild/2137000000000.log"
     `);
   });
 
@@ -143,7 +156,8 @@ describe('extractErrorSummary', () => {
           let x = foo
                   ^
           let x = foo
-                  ^"
+                  ^
+      Full log available at: /tmp/.rock-xcodebuild/2137000000000.log"
     `);
   });
 
@@ -163,7 +177,8 @@ describe('extractErrorSummary', () => {
 
       /path/file2.swift:20:5: error: second error
           code2
-              ^"
+              ^
+      Full log available at: /tmp/.rock-xcodebuild/2137000000000.log"
     `);
   });
 
@@ -177,7 +192,8 @@ warning: some warning here
     expect(extractErrorSummary(output)).toMatchInlineSnapshot(`
       "/path/file.swift:10:5: error: some error
           code
-              ^"
+              ^
+      Full log available at: /tmp/.rock-xcodebuild/2137000000000.log"
     `);
   });
 
@@ -194,7 +210,8 @@ ProcessInfoPlistFile /path/Info.plist (in target 'Test')
     expect(extractErrorSummary(output)).toMatchInlineSnapshot(`
       "/path/file.swift:10:5: error: some error
           code line
-              ^"
+              ^
+      Full log available at: /tmp/.rock-xcodebuild/2137000000000.log"
     `);
   });
 
@@ -244,7 +261,8 @@ describe('runXcodebuild', () => {
       @_exported import Brownie
                         ^ (in target 'RockRemoteBuildTest' from project 'RockRemoteBuildTest')
       @_exported import Brownie
-                        ^ (in target 'RockRemoteBuildTest' from project 'RockRemoteBuildTest')"
+                        ^ (in target 'RockRemoteBuildTest' from project 'RockRemoteBuildTest')
+      Full log available at: /tmp/.rock-xcodebuild/2137000000000.log"
     `);
   });
 });

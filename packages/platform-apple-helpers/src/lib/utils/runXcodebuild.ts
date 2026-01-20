@@ -1,5 +1,8 @@
+import fs from 'node:fs';
+import os from 'node:os';
+import path from 'node:path';
 import type { SubprocessError } from '@rock-js/tools';
-import { logger, spawn, spinner } from '@rock-js/tools';
+import { color, colorLink, logger, spawn, spinner } from '@rock-js/tools';
 
 // Patterns that indicate a new build step (context)
 const BUILD_STEP_PATTERNS = [
@@ -175,6 +178,19 @@ export function extractErrorSummary(output: string): string {
     }
   }
 
+  try {
+    if (result) {
+      const tempDir = path.join(os.tmpdir(), '.rock-xcodebuild');
+      fs.mkdirSync(tempDir, { recursive: true });
+      const pathToLogFile = path.join(tempDir, `${Date.now()}.log`);
+      fs.writeFileSync(pathToLogFile, output);
+      result += color.dim(
+        `\nFull log available at: ${colorLink(pathToLogFile)}`,
+      );
+    }
+  } catch (error) {
+    logger.debug(`Failed to write full log to file: ${error}`);
+  }
   return result;
 }
 
