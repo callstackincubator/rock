@@ -1,5 +1,13 @@
 # @rnef/platform-apple-helpers
 
+## 0.12.7
+
+### Patch Changes
+
+- e4349d2: feat: filter xcodebuild errors for readability
+- Updated dependencies [795ff4b]
+  - @rock-js/tools@0.12.7
+
 ## 0.12.6
 
 ### Patch Changes

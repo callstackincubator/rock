@@ -1,6 +1,6 @@
 {
   "name": "@rock-js/plugin-metro",
-  "version": "0.12.6",
+  "version": "0.12.7",
   "description": "Metro bundler integration plugin for Rock",
   "type": "module",
   "types": "./dist/src/index.d.ts",
@@ -20,7 +20,7 @@
   },
   "dependencies": {
     "@react-native-community/cli-server-api": "^20.0.0",
-    "@rock-js/tools": "^0.12.6",
+    "@rock-js/tools": "^0.12.7",
     "metro": "^0.83.3",
     "metro-config": "^0.83.3",
     "metro-core": "^0.83.3",
@@ -30,7 +30,7 @@
   "devDependencies": {
     "@react-native/dev-middleware": "^0.83.0",
     "@react-native/community-cli-plugin": "0.83.0",
-    "@rock-js/config": "^0.12.6"
+    "@rock-js/config": "^0.12.7"
   },
   "publishConfig": {
     "access": "public"
