@@ -10,14 +10,7 @@ import {
   getValidProjectConfig,
   mergeFrameworks,
 } from '@rock-js/platform-apple-helpers';
-import {
-  colorLink,
-  intro,
-  logger,
-  outro,
-  relativeToCwd,
-  RockError,
-} from '@rock-js/tools';
+import { colorLink, intro, logger, outro, relativeToCwd } from '@rock-js/tools';
 import { copyHermesXcframework } from './copyHermesXcframework.js';
 
 const buildOptions = getBuildOptions({ platformName: 'ios' });
@@ -52,27 +45,19 @@ export const packageIosAction = async (
 
   const buildFolder = args.buildFolder ?? getBuildPaths('ios').derivedDataDir;
   const configuration = args.configuration ?? 'Debug';
-  let scheme;
 
-  try {
-    const { appPath, ...buildAppResult } = await buildApp({
-      projectRoot,
-      projectConfig: iosConfig,
-      platformName: 'ios',
-      args: { ...args, destination, buildFolder },
-      reactNativePath,
-      brownfield: true,
-      usePrebuiltRNCore,
-      pluginConfig,
-      skipCache,
-    });
-    logger.log(`Build available at: ${colorLink(relativeToCwd(appPath))}`);
-
-    scheme = buildAppResult.scheme;
-  } catch (error) {
-    const message = `Failed to create ${args.archive ? 'archive' : 'build'}`;
-    throw new RockError(message, { cause: error });
-  }
+  const { appPath, scheme } = await buildApp({
+    projectRoot,
+    projectConfig: iosConfig,
+    platformName: 'ios',
+    args: { ...args, destination, buildFolder },
+    reactNativePath,
+    brownfield: true,
+    usePrebuiltRNCore,
+    pluginConfig,
+    skipCache,
+  });
+  logger.log(`Build available at: ${colorLink(relativeToCwd(appPath))}`);
 
   // 2) Merge the .framework outputs of the framework target
   const productsPath = path.join(buildFolder, 'Build', 'Products');
