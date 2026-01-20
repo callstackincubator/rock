@@ -33,8 +33,11 @@ jobs:
           NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
 
       - name: Create git tags
-        if: steps.changesets.outputs.published == 'true'
         run: |
-          VERSION=$(node -p "require('./packages/cli/package.json').version")
-          git tag "v$VERSION"
-          git push origin "v$VERSION"
+          TAG="v$(node -p "require('./packages/cli/package.json').version")"
+          if git ls-remote --tags origin | grep -q "refs/tags/$TAG$"; then
+            echo "Tag $TAG already exists, skipping"
+          else
+            git tag "$TAG"
+            git push origin "$TAG"
+          fi
