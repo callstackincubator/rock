@@ -137,6 +137,9 @@ If you need to customize Metro (e.g., add asset extensions, configure transforme
 ```js title="metro.config.js"
 const { getDefaultConfig, mergeConfig } = require('@rock-js/plugin-metro');
 
+/**
+ * @type {import('@rock-js/plugin-metro').MetroConfig}
+ */
 module.exports = mergeConfig(getDefaultConfig(__dirname), {
   // Your custom configuration
 });
