@@ -400,6 +400,9 @@ importers:
       '@react-native-community/cli-server-api':
         specifier: ^20.0.0
         version: 20.0.2
+      '@react-native/metro-config':
+        specifier: ^0.83.0
+        version: 0.83.0(@babel/core@7.25.2)
       '@rock-js/tools':
         specifier: ^0.12.10
         version: link:../tools

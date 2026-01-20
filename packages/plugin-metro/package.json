@@ -19,6 +19,7 @@
     "publish:verdaccio": "npm publish --registry http://localhost:4873 --userconfig ../../.npmrc"
   },
   "dependencies": {
+    "@react-native/metro-config": "^0.83.0",
     "@react-native-community/cli-server-api": "^20.0.0",
     "@rock-js/tools": "^0.12.10",
     "metro": "^0.83.3",
