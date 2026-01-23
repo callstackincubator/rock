@@ -61,9 +61,13 @@ export const packageIosAction = async (
 
   // 2) Merge the .framework outputs of the framework target
   const productsPath = path.join(buildFolder, 'Build', 'Products');
-  const frameworkTargetOutputDir =
-    packageDir ?? getBuildPaths('ios').packageDir;
   const { sourceDir } = iosConfig;
+  const frameworkTargetOutputDir =
+    (packageDir &&
+      (path.isAbsolute(packageDir)
+        ? packageDir
+        : path.join(sourceDir, packageDir))) ??
+    getBuildPaths('ios').packageDir;
 
   await mergeFrameworks({
     sourceDir,
