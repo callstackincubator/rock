@@ -1,6 +1,6 @@
 {
   "name": "@rock-js/config",
-  "version": "0.12.7",
+  "version": "0.12.8",
   "description": "Configuration management utilities for Rock projects",
   "type": "module",
   "types": "./dist/src/index.d.ts",
@@ -19,14 +19,14 @@
   },
   "dependencies": {
     "@babel/code-frame": "^7.26.2",
-    "@rock-js/provider-github": "^0.12.7",
-    "@rock-js/tools": "^0.12.7",
+    "@rock-js/provider-github": "^0.12.8",
+    "@rock-js/tools": "^0.12.8",
     "joi": "^17.13.3",
     "tslib": "^2.3.0"
   },
   "devDependencies": {
     "@types/babel__code-frame": "^7.0.6",
-    "@rock-js/test-helpers": "^0.12.7"
+    "@rock-js/test-helpers": "^0.12.8"
   },
   "publishConfig": {
     "access": "public"
