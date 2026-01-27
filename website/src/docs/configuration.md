@@ -126,6 +126,98 @@ export default {
 };
 ```
 
+## Metro Configuration
+
+Rock uses sensible defaults from `@react-native/metro-config`, so you don't need a `metro.config.js` file for most projects. The bundler works out of the box.
+
+### Customizing Metro
+
+If you need to customize Metro (e.g., add asset extensions, configure transformers, or set up a monorepo), create a `metro.config.js` file in your project root:
+
+```js title="metro.config.js"
+const { getDefaultConfig, mergeConfig } = require('@rock-js/plugin-metro');
+
+/**
+ * @type {import('@rock-js/plugin-metro').MetroConfig}
+ */
+module.exports = mergeConfig(getDefaultConfig(__dirname), {
+  // Your custom configuration
+});
+```
+
+### Common Customizations
+
+#### Adding File Extensions
+
+```js title="metro.config.js"
+const { getDefaultConfig, mergeConfig } = require('@rock-js/plugin-metro');
+
+const config = getDefaultConfig(__dirname);
+
+module.exports = mergeConfig(config, {
+  resolver: {
+    sourceExts: [...config.resolver.sourceExts, 'cjs', 'mjs'],
+    assetExts: [...config.resolver.assetExts, 'ttf', 'otf'],
+  },
+});
+```
+
+#### Monorepo Setup
+
+For monorepo projects, you'll need to configure Metro to watch additional directories:
+
+```js title="metro.config.js"
+const path = require('path');
+const { getDefaultConfig, mergeConfig } = require('@rock-js/plugin-metro');
+
+const projectRoot = __dirname;
+const workspaceRoot = path.resolve(projectRoot, '../..');
+
+const config = getDefaultConfig(projectRoot);
+
+module.exports = mergeConfig(config, {
+  watchFolders: [workspaceRoot],
+  resolver: {
+    nodeModulesPaths: [
+      path.resolve(projectRoot, 'node_modules'),
+      path.resolve(workspaceRoot, 'node_modules'),
+    ],
+  },
+});
+```
+
+#### Blocking Specific Paths
+
+```js title="metro.config.js"
+const { getDefaultConfig, mergeConfig } = require('@rock-js/plugin-metro');
+
+module.exports = mergeConfig(getDefaultConfig(__dirname), {
+  resolver: {
+    blockList: [
+      /.*\/node_modules\/.*\/node_modules\/.*/,
+      /.*\/__fixtures__\/.*/,
+    ],
+  },
+});
+```
+
+### API Reference
+
+#### `getDefaultConfig(projectRoot)`
+
+Returns the default Metro configuration. Re-exported from `@react-native/metro-config`.
+
+- **projectRoot** (`string`): The root directory of your project (usually `__dirname`)
+- **Returns**: `MetroConfig` object
+
+#### `mergeConfig(baseConfig, overrideConfig)`
+
+Merges two Metro configurations together. Re-exported from `metro-config`.
+
+- **baseConfig** (`MetroConfig`): The base configuration
+- **overrideConfig** (`InputConfig`): Configuration to merge on top
+- **Returns**: Merged `MetroConfig`
+
 ## Platforms
 
 Platform is a plugin that registers platform-specific functionality such as commands to build the project and run it on a device or simulator.
