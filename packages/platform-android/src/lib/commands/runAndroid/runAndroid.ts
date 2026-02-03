@@ -37,6 +37,7 @@ export interface Flags extends BuildFlags {
   user?: string;
   local?: boolean;
   devServer?: boolean;
+  host?: string;
   clientLogs?: boolean;
 }
 
@@ -67,6 +68,7 @@ export async function runAndroid(
         args: {
           interactive: isInteractive(),
           clientLogs: args.clientLogs ?? true,
+          host: args.host,
         },
       });
     }
@@ -307,4 +309,9 @@ export const runOptions = [
     description:
       'Automatically start a dev server (bundler) after building the app.',
   },
+  {
+    name: '--host <string>',
+    description: 'Specify a custom host for the dev server (bundler) after building the app.',
+    default: '',
+  }
 ];
