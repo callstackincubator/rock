@@ -1,5 +1,11 @@
 # rock-docs
 
+## 1.4.2
+
+### Patch Changes
+
+- 562051e: add host cli flag to run:android & run:ios
+
 ## 1.4.1
 
 ### Patch Changes
