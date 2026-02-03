@@ -1,5 +1,11 @@
 # rock-docs
 
+## 1.4.3
+
+### Patch Changes
+
+- df12e67: docs: update stale link
+
 ## 1.4.2
 
 ### Patch Changes
