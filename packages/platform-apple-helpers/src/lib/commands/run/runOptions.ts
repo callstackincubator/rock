@@ -9,6 +9,7 @@ export interface RunFlags extends BuildFlags {
   catalyst?: boolean;
   local?: boolean;
   devServer?: boolean;
+  host?: string;
   clientLogs?: boolean;
 }
 
@@ -40,6 +41,11 @@ export const getRunOptions = ({ platformName }: BuilderCommand) => {
       name: '--dev-server',
       description:
         'Automatically start a dev server (bundler) after building the app.',
+    },
+    {
+      name: '--host <string>',
+      description: 'Specify a custom host for the dev server (bundler) after building the app.',
+      default: '',
     },
     ...getBuildOptions({ platformName }),
   ];

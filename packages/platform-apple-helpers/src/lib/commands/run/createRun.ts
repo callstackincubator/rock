@@ -63,6 +63,7 @@ export const createRun = async ({
         args: {
           interactive: isInteractive(),
           clientLogs: args.clientLogs ?? true,
+          host: args.host,
         },
       });
     }
