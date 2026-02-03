@@ -1,5 +1,13 @@
 # rock
 
+## 0.12.10
+
+### Patch Changes
+
+- 1bcb11d: fix: ios build for new app on ruby 3.4.0
+  - @rock-js/config@0.12.10
+  - @rock-js/tools@0.12.10
+
 ## 0.12.9
 
 ### Patch Changes
