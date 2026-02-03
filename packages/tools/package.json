@@ -1,6 +1,6 @@
 {
   "name": "@rock-js/tools",
-  "version": "0.12.8",
+  "version": "0.12.9",
   "description": "Internal core utilities for Rock",
   "type": "module",
   "types": "./dist/src/index.d.ts",
@@ -30,7 +30,7 @@
     "tslib": "^2.3.0"
   },
   "devDependencies": {
-    "@rock-js/test-helpers": "^0.12.8",
+    "@rock-js/test-helpers": "^0.12.9",
     "@types/adm-zip": "^0.5.7"
   },
   "publishConfig": {

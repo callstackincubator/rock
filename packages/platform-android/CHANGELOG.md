@@ -1,5 +1,12 @@
 # @rnef/platform-android
 
+## 0.12.9
+
+### Patch Changes
+
+- 562051e: add host cli flag to run:android & run:ios
+  - @rock-js/tools@0.12.9
+
 ## 0.12.8
 
 ### Patch Changes
