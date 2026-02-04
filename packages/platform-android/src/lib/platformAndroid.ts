@@ -1,6 +1,7 @@
 import type { AndroidProjectConfig } from '@react-native-community/cli-types';
 import type { PlatformOutput, PluginApi } from '@rock-js/config';
 import { registerBuildCommand } from './commands/buildAndroid/command.js';
+import { registerCheckElfAlignmentCommand } from './commands/checkElfAlignment/command.js';
 import { registerCreateKeystoreCommand } from './commands/generateKeystore.js';
 import { getValidProjectConfig } from './commands/getValidProjectConfig.js';
 import { registerRunCommand } from './commands/runAndroid/command.js';
@@ -12,6 +13,7 @@ export const platformAndroid =
   (pluginConfig?: Partial<PluginConfig>) =>
   (api: PluginApi): PlatformOutput => {
     registerBuildCommand(api, pluginConfig);
+    registerCheckElfAlignmentCommand(api);
     registerRunCommand(api, pluginConfig);
     registerCreateKeystoreCommand(api, pluginConfig);
     registerSignCommand(api);
