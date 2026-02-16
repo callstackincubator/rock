@@ -113,11 +113,12 @@ Platform plugins are configured through the [`platform`](/docs/configuration/ind
 
 - `@rock-js/platform-android` – Android platform plugin with the following commands:
 
-  | Command         | Description                                                     |
-  | :-------------- | :-------------------------------------------------------------- |
-  | `run:android`   | Runs Android app on emulator or device                          |
-  | `build:android` | Builds Android app for generic emulator, device or distribution |
-  | `sign:android`  | Signs Android app with keystore                                 |
+  | Command                    | Description                                                     |
+  | :------------------------- | :-------------------------------------------------------------- |
+  | `run:android`              | Runs Android app on emulator or device                          |
+  | `build:android`            | Builds Android app for generic emulator, device or distribution |
+  | `sign:android`             | Signs Android app with keystore                                 |
+  | `validate-elf-alignment`   | Validates ELF alignment of shared libraries in an APK           |
 
 - `@rock-js/platform-ios` – iOS platform plugin with the following commands:
 
@@ -263,6 +264,24 @@ The `sign:android <binaryPath>` command signs your Android app with a keystore, 
 | `--build-jsbundle`             | Build JS bundle before signing            |
 | `--jsbundle <string>`          | Path to JS bundle to apply before signing |
 | `--no-hermes`                  | Don't use Hermes for JS bundle            |
+
+
+### `rock validate-elf-alignment` Options
+
+The `validate-elf-alignment` command validates that shared libraries (`.so` files) inside an APK are properly aligned to 16KB page boundaries. Starting with Android 15, the Google Play Store requires 64-bit shared libraries (`arm64-v8a`, `x86_64`) to be aligned to 16KB pages. See [Android documentation on 16KB page sizes](https://developer.android.com/guide/practices/page-sizes#build-app-16kb) for more details.
+
+This command is based on the [check_elf_alignment.sh](https://cs.android.com/android/platform/superproject/main/+/main:system/extras/tools/check_elf_alignment.sh) script from the Android platform source.
+
+The command performs two checks:
+
+1. **Zip alignment check** (optional) — runs `zipalign` to verify APK-level alignment. Requires Android Build-Tools 35.0.0-rc3 or higher.
+2. **ELF alignment check** — extracts shared libraries from the APK and inspects each ELF binary's `LOAD` segment alignment using `objdump`. Alignment of `2**14` (16KB) or higher is considered valid.
+
+All unaligned libraries are listed, and the critical 64-bit ones (`arm64-v8a`/`x86_64`) are highlighted separately. Only unaligned 64-bit libraries cause the check to fail.
+
+| Argument     | Description          |
+| :----------- | :------------------- |
+| `binaryPath` | Path to the APK file |
 
 ## Platform HarmonyOS (experimental)
 
