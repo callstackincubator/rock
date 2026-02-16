@@ -1,5 +1,12 @@
 # rock-docs
 
+## 1.4.3
+
+### Patch Changes
+
+- df12e67: docs: update stale link
+- 1db5743: feat: add android command validate-elf-alignment
+
 ## 1.4.2
 
 ### Patch Changes
