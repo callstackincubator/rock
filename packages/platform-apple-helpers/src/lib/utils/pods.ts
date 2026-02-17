@@ -12,6 +12,7 @@ import {
   RockError,
   spawn,
   spinner,
+  versionCompare,
 } from '@rock-js/tools';
 import type { ApplePlatform } from '../types/index.js';
 import runCodegen from './codegen.js';
@@ -27,6 +28,8 @@ export async function installPodsIfNeeded(
   newArch: boolean,
   reactNativePath: string,
   brownfield?: boolean,
+  usePrebuiltRNCore?: boolean,
+  skipCache?: boolean,
 ) {
   const podsPath = path.join(sourceDir, 'Pods');
   const podfilePath = path.join(sourceDir, 'Podfile');
@@ -35,7 +38,9 @@ export async function installPodsIfNeeded(
   const nativeDependencies = await getNativeDependencies(platformName);
 
   const cacheKey = `pods-dependencies`;
-  const cachedDependenciesHash = cacheManager.get(cacheKey);
+  const cachedDependenciesHash = skipCache
+    ? undefined
+    : cacheManager.get(cacheKey);
   const podsDirExists = fs.existsSync(podsPath);
   const hashChanged = cachedDependenciesHash
     ? !compareMd5Hashes(
@@ -52,11 +57,14 @@ export async function installPodsIfNeeded(
       podfilePath,
       newArch,
       brownfield,
+      usePrebuiltRNCore,
     });
-    cacheManager.set(
-      cacheKey,
-      calculateCurrentHash({ podfilePath, podsPath, nativeDependencies }),
-    );
+    if (!skipCache) {
+      cacheManager.set(
+        cacheKey,
+        calculateCurrentHash({ podfilePath, podsPath, nativeDependencies }),
+      );
+    }
     return true;
   }
   return false;
@@ -105,6 +113,7 @@ async function runPodInstall(options: {
   useBundler: boolean;
   brownfield?: boolean;
   projectRoot: string;
+  usePrebuiltRNCore?: boolean;
 }) {
   if (!options.useBundler) {
     await validatePodCommand(options.sourceDir);
@@ -120,11 +129,10 @@ async function runPodInstall(options: {
   loader.start('Installing CocoaPods dependencies');
   const reactNativeVersion = await getReactNativeVersion(options.projectRoot);
   const isReactNative81OrHigher =
-    reactNativeVersion.localeCompare('0.81.0', undefined, {
-      numeric: true,
-      sensitivity: 'base',
-    }) >= 0;
-  const usePrebuiltReactNative = !options.brownfield && isReactNative81OrHigher;
+    versionCompare(reactNativeVersion, '0.81.0') >= 0;
+  const usePrebuiltReactNative = Boolean(
+    !options.brownfield && isReactNative81OrHigher && options.usePrebuiltRNCore,
+  );
   const command = options.useBundler ? 'bundle' : 'pod';
   const args = options.useBundler ? ['exec', 'pod', 'install'] : ['install'];
   try {
@@ -132,12 +140,13 @@ async function runPodInstall(options: {
       env: {
         RCT_NEW_ARCH_ENABLED: options.newArch ? '1' : '0',
         RCT_IGNORE_PODS_DEPRECATION: '1',
-        RCT_USE_RN_DEP:
-          process.env['RCT_USE_RN_DEP'] || usePrebuiltReactNative ? '1' : '0',
-        RCT_USE_PREBUILT_RNCORE:
-          process.env['RCT_USE_PREBUILT_RNCORE'] || usePrebuiltReactNative
-            ? '1'
-            : '0',
+        RCT_USE_RN_DEP: String(
+          process.env['RCT_USE_RN_DEP'] ?? (usePrebuiltReactNative ? 1 : 0),
+        ),
+        RCT_USE_PREBUILT_RNCORE: String(
+          process.env['RCT_USE_PREBUILT_RNCORE'] ??
+            (usePrebuiltReactNative ? 1 : 0),
+        ),
         ...(options.brownfield && { USE_FRAMEWORKS: 'static' }),
         ...(process.env['USE_THIRD_PARTY_JSC'] && {
           USE_THIRD_PARTY_JSC: process.env['USE_THIRD_PARTY_JSC'],
@@ -147,8 +156,16 @@ async function runPodInstall(options: {
     });
   } catch (error) {
     loader.stop('Failed: Installing CocoaPods dependencies', 1);
-    const stderr =
-      (error as SubprocessError).stderr || (error as SubprocessError).output;
+    const stderr = (error as SubprocessError).stderr;
+    const fullOutput = (error as SubprocessError).output;
+    let errorMessage = stderr;
+    /**
+     * CocoaPods occasionally provides a markdown template with error message.
+     * We don't need the part above the Error secion.
+     */
+    if (fullOutput.includes('### Error')) {
+      errorMessage = fullOutput.split('### Error')[1].trim();
+    }
     /**
      * If CocoaPods failed due to repo being out of date, it will
      * include the update command in the error message.
@@ -156,7 +173,7 @@ async function runPodInstall(options: {
      * `shouldHandleRepoUpdate` will be set to `false` to
      * prevent infinite loop (unlikely scenario)
      */
-    if (stderr.includes('pod repo update') && shouldHandleRepoUpdate) {
+    if (fullOutput.includes('pod repo update') && shouldHandleRepoUpdate) {
       await runPodUpdate(options.sourceDir, options.useBundler);
       await runPodInstall({
         shouldHandleRepoUpdate: false,
@@ -165,12 +182,13 @@ async function runPodInstall(options: {
         useBundler: options.useBundler,
         brownfield: options.brownfield,
         projectRoot: options.projectRoot,
+        usePrebuiltRNCore: options.usePrebuiltRNCore,
       });
     } else {
       throw new RockError(
         `CocoaPods installation failed. 
 ${podErrorHelpMessage}`,
-        { cause: stderr },
+        { cause: errorMessage },
       );
     }
   }
@@ -206,6 +224,7 @@ async function installPods(options: {
   podfilePath: string;
   newArch: boolean;
   brownfield?: boolean;
+  usePrebuiltRNCore?: boolean;
 }) {
   if (!fs.existsSync(options.podfilePath)) {
     logger.debug(
@@ -226,6 +245,7 @@ async function installPods(options: {
     useBundler,
     brownfield: options.brownfield,
     projectRoot: options.projectRoot,
+    usePrebuiltRNCore: options.usePrebuiltRNCore,
   });
 }
 

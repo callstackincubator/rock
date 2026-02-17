@@ -58,6 +58,7 @@ const ConfigTypeSchema = Joi.object({
       env: [],
     })
     .optional(),
+  usePrebuiltRNCore: Joi.boolean().optional(),
 }).unknown(false);
 
 export { ConfigTypeSchema };

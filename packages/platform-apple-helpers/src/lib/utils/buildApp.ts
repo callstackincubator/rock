@@ -1,7 +1,7 @@
 import path from 'node:path';
 import type { IOSProjectConfig } from '@react-native-community/cli-types';
 import {
-  type FingerprintSources,
+  type FingerprintOptions,
   formatArtifactName,
   getInfoPlist,
   RockError,
@@ -12,12 +12,26 @@ import { buildProject } from '../commands/build/buildProject.js';
 import { getBuildSettings } from '../commands/run/getBuildSettings.js';
 import type { RunFlags } from '../commands/run/runOptions.js';
 import type { ApplePlatform, ProjectConfig } from '../types/index.js';
-import { getGenericDestination } from './destionation.js';
+import { getGenericDestination } from './destination.js';
 import { getConfiguration } from './getConfiguration.js';
 import { getInfo } from './getInfo.js';
 import { getScheme } from './getScheme.js';
 import { getValidProjectConfig } from './getValidProjectConfig.js';
 import { installPodsIfNeeded } from './pods.js';
+
+type SharedBuildAppOptions = {
+  args: RunFlags | BuildFlags;
+  projectConfig: ProjectConfig;
+  pluginConfig?: IOSProjectConfig;
+  platformName: ApplePlatform;
+  udid?: string;
+  deviceName?: string;
+  projectRoot: string;
+  reactNativePath: string;
+  binaryPath?: string;
+  usePrebuiltRNCore?: boolean;
+  skipCache?: boolean;
+};
 
 export async function buildApp({
   args,
@@ -33,21 +47,22 @@ export async function buildApp({
   artifactName,
   fingerprintOptions,
   deviceOrSimulator,
-}: {
-  args: RunFlags | BuildFlags;
-  projectConfig: ProjectConfig;
-  pluginConfig?: IOSProjectConfig;
-  platformName: ApplePlatform;
-  udid?: string;
-  deviceName?: string;
-  projectRoot: string;
-  reactNativePath: string;
-  binaryPath?: string;
-  brownfield?: boolean;
-  artifactName: string;
-  fingerprintOptions: FingerprintSources;
-  deviceOrSimulator: string;
-}) {
+  usePrebuiltRNCore,
+  skipCache,
+}:
+  | ({
+      brownfield?: false;
+      artifactName: string;
+      deviceOrSimulator: string;
+      fingerprintOptions: FingerprintOptions;
+    } & SharedBuildAppOptions)
+  | ({
+      brownfield: true;
+      // artifactName, deviceOrSimulator and fingerprintOptions are not used for brownfield builds
+      artifactName?: string;
+      deviceOrSimulator?: string;
+      fingerprintOptions?: FingerprintOptions;
+    } & SharedBuildAppOptions)) {
   if (binaryPath) {
     // @todo Info.plist is hardcoded when reading from binaryPath
     const infoPlistPath = path.join(binaryPath, 'Info.plist');
@@ -74,6 +89,8 @@ export async function buildApp({
       args.newArch,
       reactNativePath,
       brownfield,
+      usePrebuiltRNCore,
+      skipCache,
     );
     // When the project is not a workspace, we need to get the project config again,
     // because running pods install might have generated .xcworkspace project.
@@ -88,9 +105,16 @@ export async function buildApp({
       sourceDir = newProjectConfig.sourceDir;
     }
 
-    if (didInstallPods) {
+    if (
+      artifactNameToSave &&
+      fingerprintOptions &&
+      deviceOrSimulator &&
+      didInstallPods &&
+      args.local
+    ) {
       // After installing pods the fingerprint likely changes.
       // We update the artifact name to reflect the new fingerprint and store proper entry in the local cache.
+      // Only do this for local builds. Remote builds need the fingerprint determined upfront to properly find the cached build before pods install.
       artifactNameToSave = await formatArtifactName({
         platform: 'ios',
         traits: [deviceOrSimulator, args.configuration ?? 'Debug'],
@@ -140,7 +164,9 @@ export async function buildApp({
     buildFolder: args.buildFolder,
   });
 
-  saveLocalBuildCache(artifactNameToSave, buildSettings.appPath);
+  if (artifactNameToSave) {
+    saveLocalBuildCache(artifactNameToSave, buildSettings.appPath);
+  }
 
   return {
     appPath: buildSettings.appPath,

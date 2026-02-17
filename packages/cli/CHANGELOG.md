@@ -1,5 +1,178 @@
 # rock
 
+## 0.12.9
+
+### Patch Changes
+
+- @rock-js/config@0.12.9
+- @rock-js/tools@0.12.9
+
+## 0.12.8
+
+### Patch Changes
+
+- @rock-js/config@0.12.8
+- @rock-js/tools@0.12.8
+
+## 0.12.7
+
+### Patch Changes
+
+- Updated dependencies [795ff4b]
+  - @rock-js/tools@0.12.7
+  - @rock-js/config@0.12.7
+
+## 0.12.6
+
+### Patch Changes
+
+- Updated dependencies [12fc050]
+  - @rock-js/config@0.12.6
+  - @rock-js/tools@0.12.6
+
+## 0.12.5
+
+### Patch Changes
+
+- @rock-js/config@0.12.5
+- @rock-js/tools@0.12.5
+
+## 0.12.4
+
+### Patch Changes
+
+- @rock-js/config@0.12.4
+- @rock-js/tools@0.12.4
+
+## 0.12.3
+
+### Patch Changes
+
+- @rock-js/config@0.12.3
+- @rock-js/tools@0.12.3
+
+## 0.12.2
+
+### Patch Changes
+
+- Updated dependencies [483f8c6]
+  - @rock-js/tools@0.12.2
+  - @rock-js/config@0.12.2
+
+## 0.12.1
+
+### Patch Changes
+
+- @rock-js/config@0.12.1
+- @rock-js/tools@0.12.1
+
+## 0.12.0
+
+### Minor Changes
+
+- 45666ed: feat: upgrade templates to RN 0.83
+
+### Patch Changes
+
+- Updated dependencies [45666ed]
+  - @rock-js/config@0.12.0
+  - @rock-js/tools@0.12.0
+
+## 0.11.14
+
+### Patch Changes
+
+- b0282a5: feat: android adhoc builds
+  - @rock-js/config@0.11.14
+  - @rock-js/tools@0.11.14
+
+## 0.11.13
+
+### Patch Changes
+
+- Updated dependencies [2396563]
+  - @rock-js/config@0.11.13
+  - @rock-js/tools@0.11.13
+
+## 0.11.12
+
+### Patch Changes
+
+- e9b9ea6: chore: use compileSdk 36 for brownfield; update prompt instruction
+- Updated dependencies [e9b9ea6]
+  - @rock-js/config@0.11.12
+  - @rock-js/tools@0.11.12
+
+## 0.11.11
+
+### Patch Changes
+
+- 447683c: fix: use npm run instead of pnpm in package:aar command
+- Updated dependencies [447683c]
+  - @rock-js/config@0.11.11
+  - @rock-js/tools@0.11.11
+
+## 0.11.10
+
+### Patch Changes
+
+- 3070360: feat: add ccache support in clean command
+  - @rock-js/config@0.11.10
+  - @rock-js/tools@0.11.10
+
+## 0.11.9
+
+### Patch Changes
+
+- c819d6c: bump packages
+- Updated dependencies [c819d6c]
+  - @rock-js/config@0.11.9
+  - @rock-js/tools@0.11.9
+
+## 0.11.8
+
+### Patch Changes
+
+- e4c7365: bump packages
+
+## 0.11.7
+
+### Patch Changes
+
+- 698ef47: bump packages
+- Updated dependencies [644f897]
+  - @rock-js/config@0.11.7
+  - @rock-js/tools@0.11.7
+
+## 0.11.6
+
+### Patch Changes
+
+- 810cafa: website: update wording to emphasize Rock's strengths
+- b47210e: feat: add experimental support for HarmonyOS platform
+- Updated dependencies [b47210e]
+  - @rock-js/tools@0.11.6
+  - @rock-js/config@0.11.6
+
+## 0.11.5
+
+### Patch Changes
+
+- 94e2fba: chore: add missing description fields to package.jsons
+- Updated dependencies [3be5269]
+- Updated dependencies [94e2fba]
+  - @rock-js/tools@0.11.5
+  - @rock-js/config@0.11.5
+
+## 0.11.4
+
+### Patch Changes
+
+- c904ec9: fix: properly take env value into account; hash sensitive data
+- Updated dependencies [c904ec9]
+  - @rock-js/tools@0.11.4
+  - @rock-js/config@0.11.4
+
 ## 0.11.3
 
 ### Patch Changes

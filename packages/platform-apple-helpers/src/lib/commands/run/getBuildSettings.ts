@@ -39,7 +39,7 @@ export async function getBuildSettings({
     ? getSimulatorPlatformSDK(platformName)
     : getDevicePlatformSDK(platformName);
 
-  const { stdout: buildSettings } = await spawn(
+  const { stdout: buildSettingsOutput } = await spawn(
     'xcodebuild',
     [
       xcodeProject.isWorkspace ? '-workspace' : '-project',
@@ -64,13 +64,22 @@ export async function getBuildSettings({
     action: string;
     buildSettings: BuildSettings;
     target: string;
-  }[] = JSON.parse(buildSettings).filter(
-    ({ target }: { target: string }) =>
-      target !== 'React' && target !== 'React-Core',
+  }[] = JSON.parse(buildSettingsOutput).filter(
+    ({
+      buildSettings: { WRAPPER_EXTENSION },
+    }: {
+      buildSettings: BuildSettings;
+    }) => WRAPPER_EXTENSION === 'app' || WRAPPER_EXTENSION === 'framework',
   );
   const targets = settings.map(
     ({ target: settingsTarget }: { target: string }) => settingsTarget,
   );
+  if (settings.length === 0) {
+    throw new RockError(
+      `Failed to get build settings for your project. Looking for "app" or "framework" wrapper extensions but found none.`,
+    );
+  }
+
   let selectedTarget = targets[0];
 
   if (target) {
@@ -89,31 +98,21 @@ export async function getBuildSettings({
 
   // Find app in all building settings - look for WRAPPER_EXTENSION: 'app',
   const targetIndex = targets.indexOf(selectedTarget);
-  const targetSettings = settings[targetIndex].buildSettings;
+  const buildSettings = settings[targetIndex].buildSettings;
 
-  const wrapperExtension = targetSettings.WRAPPER_EXTENSION;
-
-  if (wrapperExtension === 'app' || wrapperExtension === 'framework') {
-    const buildSettings = settings[targetIndex].buildSettings;
-
-    if (!buildSettings) {
-      throw new RockError('Failed to get build settings for your project');
-    }
-
-    const appPath = getBuildPath(buildSettings, platformName);
-    const infoPlistPath = buildSettings.INFOPLIST_PATH;
-    const targetBuildDir = buildSettings.TARGET_BUILD_DIR;
-
-    return {
-      appPath,
-      infoPlistPath: path.join(targetBuildDir, infoPlistPath),
-      bundleIdentifier: buildSettings.PRODUCT_BUNDLE_IDENTIFIER,
-    };
+  if (!buildSettings) {
+    throw new RockError('Failed to get build settings for your project');
   }
 
-  throw new RockError(
-    `Failed to get build settings for your project. Looking for "app" or "framework" wrapper extension but found: ${wrapperExtension}`,
-  );
+  const appPath = getBuildPath(buildSettings, platformName);
+  const infoPlistPath = buildSettings.INFOPLIST_PATH;
+  const targetBuildDir = buildSettings.TARGET_BUILD_DIR;
+
+  return {
+    appPath,
+    infoPlistPath: path.join(targetBuildDir, infoPlistPath),
+    bundleIdentifier: buildSettings.PRODUCT_BUNDLE_IDENTIFIER,
+  };
 }
 
 function getBuildPath(

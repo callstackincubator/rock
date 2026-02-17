@@ -129,7 +129,7 @@ error: underlying Objective-C module 'ReactBrownfield' not found
 
    ```
    .rock/cache/ios/package
-   ├── hermes.xcframework                  # JavaScript runtime
+   ├── hermesvm.xcframework                # JavaScript runtime (hermes.xcframework in React Native 0.81 or lower)
    ├── ReactBrownfield.xcframework         # React Native Brownfield library
    └── <framework_target_name>.xcframework # Your framework target
    ```
@@ -157,8 +157,8 @@ error: underlying Objective-C module 'ReactBrownfield' not found
            // Add `window` property required by React Native
            window = UIWindow(frame: UIScreen.main.bounds)
 
-           // Create VC that calls your module by name
-           let reactNativeVC = ReactNativeViewController(moduleName: "Enterprise")
+           // Create VC that calls your module by name registered by `AppRegistry.registerComponent` of your React Native app
+           let reactNativeVC = ReactNativeViewController(moduleName: "ReactNativeApp")
 
            // Display the view as full window or anyhow you need
            window?.rootViewController = reactNativeVC

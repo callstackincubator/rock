@@ -50,6 +50,7 @@ It's intentional design decision to explicitly define platforms, bundlers etc, s
   // Optional: Configure remote cache provider. Currently supports: 'github-actions' or custom provider (function).
   remoteCacheProvider?: 'github-actions' | () => RemoteBuildCache |  null;
 
+  // Optional: Configure fingerprint options.
   fingerprint?: {
     // Additional source files/directories to include in fingerprint calculation
     extraSources?: string[];
@@ -59,7 +60,10 @@ It's intentional design decision to explicitly define platforms, bundlers etc, s
 
     // Environmental variables that should affect fingerprints
     env?: string[];
-  }
+  },
+
+  // Optional: Whether to use prebuilt RN Core. Defaults to true.
+  usePrebuiltRNCore?: boolean;
 }
 ```
 
@@ -235,20 +239,22 @@ In case you use a different env variable, you can pass it as a `accessKeyId` and
 
 #### S3 Provider Options
 
-| Option               | Type     | Required | Description                                                                                      |
-| -------------------- | -------- | -------- | ------------------------------------------------------------------------------------------------ |
-| `endpoint`           | `string` | No       | Optional endpoint, necessary for self-hosted S3 servers or Cloudflare R2 integration             |
-| `bucket`             | `string` | Yes      | The bucket name to use for the S3 server                                                         |
-| `region`             | `string` | Yes      | The region of the S3 server                                                                      |
-| `accessKeyId`        | `string` | No       | The access key ID for the S3. Not required when using IAM roles or other auth methods server     |
-| `secretAccessKey`    | `string` | No       | The secret access key for the S3. Not required when using IAM roles or other auth methods server |
-| `profile`            | `string` | No       | AWS profile name to use for authentication. Useful for local development.                        |
-| `roleArn`            | `string` | No       | Role ARN to assume for authentication. Useful for cross-account access.                          |
-| `roleSessionName`    | `string` | No       | Session name when assuming a role.                                                               |
-| `externalId`         | `string` | No       | External ID when assuming a role (for additional security).                                      |
-| `directory`          | `string` | No       | The directory to store artifacts in the S3 server (defaults to `rock-artifacts`)                 |
-| `name`               | `string` | No       | The display name of the provider (defaults to `S3`)                                              |
-| `linkExpirationTime` | `number` | No       | The time in seconds for presigned URLs to expire (defaults to 24 hours)                          |
+| Option               | Type              | Required | Description                                                                                                                                                                                                     |
+| -------------------- | ----------------- | -------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `endpoint`           | `string`          | No       | Optional endpoint, necessary for self-hosted S3 servers or Cloudflare R2 integration                                                                                                                            |
+| `bucket`             | `string`          | Yes      | The bucket name to use for the S3 server                                                                                                                                                                        |
+| `region`             | `string`          | Yes      | The region of the S3 server                                                                                                                                                                                     |
+| `accessKeyId`        | `string`          | No       | The access key ID for the S3. Not required when using IAM roles or other auth methods server                                                                                                                    |
+| `secretAccessKey`    | `string`          | No       | The secret access key for the S3. Not required when using IAM roles or other auth methods server                                                                                                                |
+| `profile`            | `string`          | No       | AWS profile name to use for authentication. Useful for local development.                                                                                                                                       |
+| `roleArn`            | `string`          | No       | Role ARN to assume for authentication. Useful for cross-account access.                                                                                                                                         |
+| `roleSessionName`    | `string`          | No       | Session name when assuming a role.                                                                                                                                                                              |
+| `externalId`         | `string`          | No       | External ID when assuming a role (for additional security).                                                                                                                                                     |
+| `directory`          | `string`          | No       | The directory to store artifacts in the S3 server (defaults to `rock-artifacts`)                                                                                                                                |
+| `name`               | `string`          | No       | The display name of the provider (defaults to `S3`)                                                                                                                                                             |
+| `linkExpirationTime` | `number`          | No       | The time in seconds for presigned URLs to expire (defaults to 24 hours)                                                                                                                                         |
+| `publicAccess`       | `boolean`         | No       | If true, the provider will not sign requests and will try to access the S3 bucket without authentication                                                                                                        |
+| `acl`                | `ObjectCannedACL` | No       | ACL (Access Control List) to use for uploaded objects. Possible values: `private`, `public-read`, `public-read-write`, `authenticated-read`, `aws-exec-read`, `bucket-owner-read`, `bucket-owner-full-control`. |
 
 #### Authentication Methods
 
@@ -259,6 +265,7 @@ The S3 provider supports multiple authentication methods through the underlying 
 - **AWS credentials file**: Use `~/.aws/credentials` with the `profile` option
 - **Role assumption**: Use `roleArn` to assume a different role, optionally with `profile` as source credentials
 - **Temporary credentials**: Set `AWS_SESSION_TOKEN` environment variable for temporary credentials
+- **Public access**: Set `publicAccess: true` to explicitly disable request signing and access public S3 buckets without authentication
 
 #### Cloudflare R2
 
@@ -278,6 +285,39 @@ export default {
   }),
 };
 ```
+
+#### Private bucket with public read access
+
+For specific scenarios, you may want to restrict upload access to CI while allowing developers to fetch artifacts without credentials. This requires setting object-level ACL on uploads and using public URLs for downloads.
+
+Configure both `acl: 'public-read'` (applied during uploads on CI) and `publicAccess: true` (enables public URL downloads when credentials are unavailable):
+
+```ts title="rock.config.mjs"
+import { providerS3 } from '@rock-js/provider-s3';
+
+const isPublicAccess =
+  !process.env.AWS_ACCESS_KEY_ID || !process.env.AWS_SECRET_ACCESS_KEY;
+
+export default {
+  // ...
+  remoteCacheProvider: providerS3({
+    bucket: 'your-bucket',
+    region: 'your-region',
+    accessKeyId: process.env.AWS_ACCESS_KEY_ID,
+    secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY,
+    acl: 'public-read',
+    publicAccess: isPublicAccess,
+  }),
+};
+```
+
+### Community providers
+
+If you're not using GitHub, or can't store artifacts on S3 bucket, you can try one of the available community providers, which often come with ready-to-use CI workflow setup.
+
+#### GitLab Provider
+
+The [`@congtuandevmobile/react-native-cache-build-gitlab`](https://github.com/congtuandevmobile/react-native-cache-build-gitlab) project provides support for GitLab CI/CD artifacts as a remote cache provider. This package allows you to use GitLab Package Registry to store and retrieve native build artifacts (iOS & Android).
 
 ### Custom remote cache provider
 
@@ -506,13 +546,12 @@ async upload({ artifactName, uploadArtifactName }) {
   - For iOS simulator builds (APP directory), Rock creates a temporary `app.tar.gz` to preserve permissions and includes it in the artifact; you just receive the buffer via `getResponse`. You don't need to create the tarball yourself.
 - **Ad-hoc distribution:**
   - with `--ad-hoc` flag passed to `remote-cache upload` Rock uploads:
-    - The signed IPA at `<directory>/ad-hoc/<artifactName>/<AppName>.ipa`
-    - An `index.html` landing page (make sure it's accessible for testers)
-    - A `manifest.plist`
+    - **iOS**: The signed IPA at `<directory>/ad-hoc/<artifactName>/<AppName>.ipa`, an `index.html` landing page, and a `manifest.plist` file
+    - **Android**: The signed APK at `<directory>/ad-hoc/<artifactName>/<AppName>.apk` and an `index.html` landing page
 
-  This `index.html` file will display an ad-hoc distribution web portal, allowing developers and testers to install apps on their provisioned devices by simply clicking "Install App".
+  This `index.html` file will display an ad-hoc distribution web portal, allowing developers and testers to install apps on their devices by simply clicking "Install App" (iOS) or "Download APK" (Android).
 
-  Learn more about ad-hoc distribution and how it works with `remote-cache upload --ad-hoc` command [here](./cli#ad-hoc-distribution).
+  Learn more about ad-hoc distribution and how it works with `remote-cache upload --ad-hoc` command [here](./cli/introduction#ad-hoc-distribution).
 
   | Ad-hoc distribution web portal       | Ad-hoc distribution web portal        |
   | ------------------------------------ | ------------------------------------- |

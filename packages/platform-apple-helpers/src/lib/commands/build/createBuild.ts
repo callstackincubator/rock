@@ -1,6 +1,6 @@
 import fs from 'node:fs';
 import path from 'node:path';
-import type { FingerprintSources, RemoteBuildCache } from '@rock-js/tools';
+import type { FingerprintOptions, RemoteBuildCache } from '@rock-js/tools';
 import {
   colorLink,
   formatArtifactName,
@@ -9,14 +9,9 @@ import {
   logger,
   promptSelect,
   relativeToCwd,
-  RockError,
   saveLocalBuildCache,
 } from '@rock-js/tools';
-import type {
-  BuilderCommand,
-  ProjectConfig,
-  XcodeProjectInfo,
-} from '../../types/index.js';
+import type { BuilderCommand, ProjectConfig } from '../../types/index.js';
 import { buildApp } from '../../utils/buildApp.js';
 import { getBuildPaths } from '../../utils/getBuildPaths.js';
 import type { BuildFlags } from './buildOptions.js';
@@ -29,23 +24,20 @@ export const createBuild = async ({
   projectRoot,
   reactNativePath,
   fingerprintOptions,
-  brownfield,
   remoteCacheProvider,
+  usePrebuiltRNCore,
 }: {
   platformName: BuilderCommand['platformName'];
   projectConfig: ProjectConfig;
   args: BuildFlags;
   projectRoot: string;
   reactNativePath: string;
-  fingerprintOptions: FingerprintSources;
-  brownfield?: boolean;
+  fingerprintOptions: FingerprintOptions;
   remoteCacheProvider: null | (() => RemoteBuildCache) | undefined;
+  usePrebuiltRNCore?: boolean;
 }) => {
   await validateArgs(args);
 
-  let xcodeProject: XcodeProjectInfo;
-  let sourceDir: string;
-  let scheme = args.scheme;
   const deviceOrSimulator = args.destination
     ? // there can be multiple destinations, so we'll pick the first one
       args.destination[0].match(/simulator/i)
@@ -81,30 +73,21 @@ export const createBuild = async ({
       }
     }
 
-    return { scheme };
+    return { scheme: args.scheme };
   }
 
-  try {
-    const { appPath, ...buildAppResult } = await buildApp({
-      projectRoot,
-      projectConfig,
-      platformName,
-      args,
-      reactNativePath,
-      brownfield,
-      artifactName,
-      deviceOrSimulator,
-      fingerprintOptions,
-    });
-    logger.log(`Build available at: ${colorLink(relativeToCwd(appPath))}`);
-
-    xcodeProject = buildAppResult.xcodeProject;
-    sourceDir = buildAppResult.sourceDir;
-    scheme = buildAppResult.scheme;
-  } catch (error) {
-    const message = `Failed to create ${args.archive ? 'archive' : 'build'}`;
-    throw new RockError(message, { cause: error });
-  }
+  const { appPath, xcodeProject, sourceDir, scheme } = await buildApp({
+    projectRoot,
+    projectConfig,
+    platformName,
+    args,
+    reactNativePath,
+    artifactName,
+    deviceOrSimulator,
+    fingerprintOptions,
+    usePrebuiltRNCore,
+  });
+  logger.log(`Build available at: ${colorLink(relativeToCwd(appPath))}`);
 
   if (args.archive) {
     const { archiveDir } = getBuildPaths(platformName);

@@ -2,7 +2,7 @@ import path from 'node:path';
 import { color, colorLink } from '../color.js';
 import type { RockError } from '../error.js';
 import { getAllIgnorePaths } from '../fingerprint/ignorePaths.js';
-import { type FingerprintSources } from '../fingerprint/index.js';
+import { type FingerprintOptions } from '../fingerprint/index.js';
 import logger from '../logger.js';
 import { getProjectRoot } from '../project.js';
 import { spawn } from '../spawn.js';
@@ -23,7 +23,7 @@ export async function getBinaryPath({
   binaryPathFlag?: string;
   localFlag?: boolean;
   remoteCacheProvider: null | (() => RemoteBuildCache) | undefined;
-  fingerprintOptions: FingerprintSources;
+  fingerprintOptions: FingerprintOptions;
   sourceDir: string;
   platformName: string;
 }) {
@@ -67,7 +67,7 @@ Read more: ${colorLink(
 }
 
 async function warnIgnoredFiles(
-  fingerprintOptions: FingerprintSources,
+  fingerprintOptions: FingerprintOptions,
   platformName: string,
   sourceDir: string,
 ) {
@@ -84,8 +84,11 @@ async function warnIgnoredFiles(
   const projectRoot = getProjectRoot();
   const ignorePaths = [
     ...(fingerprintOptions?.ignorePaths ?? []),
-    // git expects relative paths
-    ...getAllIgnorePaths(platformName, path.relative(projectRoot, sourceDir)),
+    ...getAllIgnorePaths(
+      platformName,
+      path.relative(projectRoot, sourceDir), // git expects relative paths
+      projectRoot,
+    ),
   ];
   const { output } = await spawn('git', [
     'clean',

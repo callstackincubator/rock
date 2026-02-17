@@ -1,13 +1,18 @@
 [
   {
-    "type": "dir",
-    "name": "getting-started",
-    "label": "Getting Started"
+    "type": "file",
+    "name": "introduction",
+    "label": "Introduction"
   },
   {
     "type": "file",
-    "name": "cli",
-    "label": "CLI"
+    "name": "prior-art",
+    "label": "Prior Art"
+  },
+  {
+    "type": "file",
+    "name": "getting-started",
+    "label": "Getting Started"
   },
   {
     "type": "file",
@@ -16,17 +21,17 @@
   },
   {
     "type": "dir",
-    "name": "github-actions",
-    "label": "GitHub Actions"
+    "name": "cli",
+    "label": "CLI"
+  },
+  {
+    "type": "dir",
+    "name": "remote-cache",
+    "label": "Remote Cache"
   },
   {
     "type": "dir",
     "name": "brownfield",
     "label": "Integration with Native Apps"
-  },
-  {
-    "type": "file",
-    "name": "acknowledgements",
-    "label": "Acknowledgements"
   }
 ]

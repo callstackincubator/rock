@@ -4,14 +4,13 @@ import type {
   AndroidProjectConfig,
   Config,
 } from '@react-native-community/cli-types';
-import type { FingerprintSources, RemoteBuildCache } from '@rock-js/tools';
+import type { StartDevServerArgs } from '@rock-js/config';
+import type { FingerprintOptions, RemoteBuildCache } from '@rock-js/tools';
 import {
   color,
   formatArtifactName,
-  intro,
   isInteractive,
   logger,
-  outro,
   promptSelect,
   RockError,
   spinner,
@@ -37,6 +36,9 @@ export interface Flags extends BuildFlags {
   binaryPath?: string;
   user?: string;
   local?: boolean;
+  devServer?: boolean;
+  host?: string;
+  clientLogs?: boolean;
 }
 
 export type AndroidProject = NonNullable<Config['project']['android']>;
@@ -49,9 +51,28 @@ export async function runAndroid(
   args: Flags,
   projectRoot: string,
   remoteCacheProvider: null | (() => RemoteBuildCache) | undefined,
-  fingerprintOptions: FingerprintSources,
+  fingerprintOptions: FingerprintOptions,
+  startDevServer: (options: StartDevServerArgs) => void,
+  reactNativeVersion: string,
+  reactNativePath: string,
+  platforms: { [platform: string]: object },
 ) {
-  intro('Running Android app');
+  const startDevServerHelper = () => {
+    if (args.devServer) {
+      logger.info('Starting dev server...');
+      startDevServer({
+        root: projectRoot,
+        reactNativePath,
+        reactNativeVersion,
+        platforms,
+        args: {
+          interactive: isInteractive(),
+          clientLogs: args.clientLogs ?? true,
+          host: args.host,
+        },
+      });
+    }
+  };
 
   normalizeArgs(args, projectRoot);
 
@@ -111,7 +132,7 @@ export async function runAndroid(
     }
   }
 
-  outro('Success 🎉.');
+  startDevServerHelper();
 }
 
 async function selectAndLaunchDevice() {
@@ -279,4 +300,18 @@ export const runOptions = [
     name: '--user <number>',
     description: 'Id of the User Profile you want to install the app on.',
   },
+  {
+    name: '--client-logs',
+    description: 'Enable client logs in dev server.',
+  },
+  {
+    name: '--dev-server',
+    description:
+      'Automatically start a dev server (bundler) after building the app.',
+  },
+  {
+    name: '--host <string>',
+    description: 'Specify a custom host for the dev server (bundler) after building the app.',
+    default: '',
+  }
 ];

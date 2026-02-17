@@ -1,6 +1,7 @@
 {
   "name": "@rock-js/platform-android",
-  "version": "0.11.3",
+  "version": "0.12.9",
+  "description": "Android platform support and configuration for Rock",
   "type": "module",
   "types": "./dist/src/index.d.ts",
   "exports": {
@@ -20,14 +21,12 @@
   },
   "dependencies": {
     "@react-native-community/cli-config-android": "^20.0.0",
-    "@rock-js/tools": "^0.11.3",
-    "adm-zip": "^0.5.16",
+    "@rock-js/tools": "^0.12.9",
     "tslib": "^2.3.0"
   },
   "devDependencies": {
     "@react-native-community/cli-types": "^20.0.0",
-    "@rock-js/config": "^0.11.3",
-    "@types/adm-zip": "^0.5.7"
+    "@rock-js/config": "^0.12.9"
   },
   "publishConfig": {
     "access": "public"

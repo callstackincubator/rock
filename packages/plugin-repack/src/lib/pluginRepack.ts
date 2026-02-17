@@ -1,5 +1,9 @@
 import commands from '@callstack/repack/commands/rspack';
-import type { PluginApi, PluginOutput } from '@rock-js/config';
+import type {
+  BundlerPluginOutput,
+  PluginApi,
+  StartDevServerArgs,
+} from '@rock-js/config';
 import {
   colorLink,
   findDevServerPort,
@@ -25,9 +29,42 @@ type BundleArgs = Parameters<NonNullable<typeof bundleCommand>['func']>[2] & {
 const startCommand = commands.find((command) => command.name === 'start');
 const bundleCommand = commands.find((command) => command.name === 'bundle');
 
+export async function startDevServer(
+  {
+    root,
+    args,
+    reactNativeVersion: _reactNativeVersion,
+    reactNativePath,
+    platforms,
+  }: StartDevServerArgs,
+  pluginConfig: PluginConfig = {},
+) {
+  const { port, startDevServer } = await findDevServerPort(
+    args.port ? Number(args.port) : 8081,
+    root,
+  );
+
+  if (!startDevServer) {
+    return;
+  }
+
+  if (!startCommand) {
+    throw new RockError('Re.Pack "start" command not found.');
+  }
+
+  logger.info('Starting Re.Pack dev server...');
+
+  startCommand.func(
+    [],
+    // @ts-expect-error TODO fix getPlatforms type
+    { reactNativePath, root, platforms, ...pluginConfig },
+    { ...args, port },
+  );
+}
+
 export const pluginRepack =
   (pluginConfig: PluginConfig = {}) =>
-  (api: PluginApi): PluginOutput => {
+  (api: PluginApi): BundlerPluginOutput => {
     if (!startCommand) {
       throw new RockError('Re.Pack "start" command not found.');
     }
@@ -40,24 +77,14 @@ export const pluginRepack =
       name: 'start',
       description: 'Starts Re.Pack dev server.',
       action: async (args: StartArgs) => {
-        const reactNativePath = api.getReactNativePath();
-        const root = api.getProjectRoot();
-        const platforms = api.getPlatforms();
-        const { port, startDevServer } = await findDevServerPort(
-          args.port ? Number(args.port) : 8081,
-          root,
-        );
-
-        if (!startDevServer) {
-          return;
-        }
-
-        startCommand.func(
-          [],
-          // @ts-expect-error TODO fix getPlatforms type
-          { reactNativePath, root, platforms, ...pluginConfig },
-          { ...args, port },
-        );
+        startDevServer({
+          root: api.getProjectRoot(),
+          reactNativeVersion: api.getReactNativeVersion(),
+          reactNativePath: api.getReactNativePath(),
+          platforms: api.getPlatforms(),
+          // @ts-expect-error Re.Pack doesn't have clientLogs
+          args,
+        });
       },
       // @ts-expect-error fixup types
       options: startCommand.options,
@@ -117,6 +144,7 @@ export const pluginRepack =
     return {
       name: '@rock-js/plugin-repack',
       description: 'Rock plugin for Re.Pack toolkit with Rspack.',
+      start: startDevServer,
     };
   };
 

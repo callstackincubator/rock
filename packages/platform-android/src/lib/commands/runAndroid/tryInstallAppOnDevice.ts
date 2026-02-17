@@ -20,9 +20,7 @@ export async function tryInstallAppOnDevice(
 ) {
   let deviceId: string;
   if (!device.deviceId) {
-    logger.debug(
-      `No device with id "${device.deviceId}", skipping launching the app.`,
-    );
+    logger.debug(`No "deviceId" for ${device}, skipping launching the app`);
     return;
   } else {
     deviceId = device.deviceId;

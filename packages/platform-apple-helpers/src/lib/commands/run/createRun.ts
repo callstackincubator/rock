@@ -1,6 +1,7 @@
 import fs from 'node:fs';
 import path from 'node:path';
-import type { FingerprintSources, RemoteBuildCache } from '@rock-js/tools';
+import type { StartDevServerArgs } from '@rock-js/config';
+import type { FingerprintOptions, RemoteBuildCache } from '@rock-js/tools';
 import {
   color,
   formatArtifactName,
@@ -34,15 +35,39 @@ export const createRun = async ({
   remoteCacheProvider,
   fingerprintOptions,
   reactNativePath,
+  reactNativeVersion,
+  platforms,
+  startDevServer,
+  usePrebuiltRNCore,
 }: {
   platformName: ApplePlatform;
   projectConfig: ProjectConfig;
   args: RunFlags;
   projectRoot: string;
   remoteCacheProvider: null | (() => RemoteBuildCache) | undefined;
-  fingerprintOptions: FingerprintSources;
+  fingerprintOptions: FingerprintOptions;
   reactNativePath: string;
+  reactNativeVersion: string;
+  platforms: { [platform: string]: object };
+  startDevServer: (options: StartDevServerArgs) => void;
+  usePrebuiltRNCore?: boolean;
 }) => {
+  const startDevServerHelper = () => {
+    if (args.devServer) {
+      logger.info('Starting dev server...');
+      startDevServer({
+        root: projectRoot,
+        reactNativePath,
+        reactNativeVersion,
+        platforms,
+        args: {
+          interactive: isInteractive(),
+          clientLogs: args.clientLogs ?? true,
+          host: args.host,
+        },
+      });
+    }
+  };
   validateArgs(args, projectRoot);
 
   const deviceOrSimulator = args.destination
@@ -91,8 +116,11 @@ export const createRun = async ({
       artifactName,
       deviceOrSimulator,
       fingerprintOptions,
+      usePrebuiltRNCore,
     });
+
     await runOnMac(appPath);
+    startDevServerHelper();
     return;
   } else if (args.catalyst) {
     const { appPath, scheme } = await buildApp({
@@ -107,9 +135,12 @@ export const createRun = async ({
       artifactName,
       deviceOrSimulator,
       fingerprintOptions,
+      usePrebuiltRNCore,
     });
+
     if (scheme) {
       await runOnMacCatalyst(appPath, scheme);
+      startDevServerHelper();
       return;
     } else {
       throw new RockError('Failed to get project scheme');
@@ -128,7 +159,7 @@ export const createRun = async ({
   if (device) {
     if (device.type !== deviceOrSimulator) {
       throw new RockError(
-        `Selected device "${device.name}" is not a ${deviceOrSimulator}. 
+        `Selected device "${device.name}" is not a ${deviceOrSimulator}.
 Please either use "--destination ${
           deviceOrSimulator === 'simulator' ? 'device' : 'simulator'
         }" flag or select available ${deviceOrSimulator}:
@@ -153,9 +184,12 @@ ${devices
           artifactName,
           deviceOrSimulator,
           fingerprintOptions,
+          usePrebuiltRNCore,
         }),
       ]);
+
       await runOnSimulator(device, appPath, infoPlistPath);
+      startDevServerHelper();
     } else if (device.type === 'device') {
       const { appPath, bundleIdentifier } = await buildApp({
         args,
@@ -168,13 +202,16 @@ ${devices
         artifactName,
         deviceOrSimulator,
         fingerprintOptions,
+        usePrebuiltRNCore,
       });
+
       await runOnDevice(
         device,
         appPath,
         projectConfig.sourceDir,
         bundleIdentifier,
       );
+      startDevServerHelper();
     }
     return;
   } else {
@@ -221,8 +258,10 @@ ${devices
             artifactName,
             deviceOrSimulator,
             fingerprintOptions,
+            usePrebuiltRNCore,
           }),
         ]);
+
       if (bootedDevice.type === 'simulator') {
         await runOnSimulator(bootedDevice, appPath, infoPlistPath);
       } else {
@@ -234,6 +273,7 @@ ${devices
         );
       }
     }
+    startDevServerHelper();
   }
 };
 

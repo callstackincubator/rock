@@ -7,37 +7,45 @@
 
 import path from 'node:path';
 import type { PluginApi } from '@rock-js/config';
+import type { StartDevServerArgs } from '@rock-js/config';
 import { findDevServerPort, intro } from '@rock-js/tools';
 import type { StartCommandArgs } from './runServer.js';
 import runServer from './runServer.js';
+
+export async function startDevServer({
+  root,
+  args,
+  reactNativeVersion,
+  reactNativePath,
+  platforms,
+}: StartDevServerArgs) {
+  const { port, startDevServer } = await findDevServerPort(
+    args.port ? Number(args.port) : 8081,
+    root,
+  );
+
+  if (!startDevServer) {
+    return;
+  }
+
+  return runServer(
+    { root, reactNativeVersion, reactNativePath, platforms },
+    { ...args, port, platforms: Object.keys(platforms) },
+  );
+}
 
 export const registerStartCommand = (api: PluginApi) => {
   api.registerCommand({
     name: 'start',
     action: async (args: StartCommandArgs) => {
       intro('Starting Metro dev server');
-      const root = api.getProjectRoot();
-      const { port, startDevServer } = await findDevServerPort(
-        args.port ? Number(args.port) : 8081,
-        root,
-      );
-
-      if (!startDevServer) {
-        return;
-      }
-
-      const reactNativeVersion = api.getReactNativeVersion();
-      const reactNativePath = api.getReactNativePath();
-      const platforms = api.getPlatforms();
-      return runServer(
-        {
-          root,
-          reactNativeVersion,
-          reactNativePath,
-          platforms,
-        },
-        { ...args, port },
-      );
+      startDevServer({
+        root: api.getProjectRoot(),
+        reactNativeVersion: api.getReactNativeVersion(),
+        reactNativePath: api.getReactNativePath(),
+        platforms: api.getPlatforms(),
+        args,
+      });
     },
     description: 'Start the Metro development server.',
     options: [

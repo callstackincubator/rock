@@ -1,6 +1,7 @@
+import { createHash } from 'node:crypto';
 import { performance } from 'node:perf_hooks';
 import type { PluginApi } from '@rock-js/config';
-import type { FingerprintSources } from '@rock-js/tools';
+import type { FingerprintInputHash, FingerprintOptions } from '@rock-js/tools';
 import {
   color,
   intro,
@@ -12,19 +13,43 @@ import {
   spinner,
 } from '@rock-js/tools';
 
+const hashValue = (value: string) =>
+  `[HASHED:${createHash('sha256').update(value).digest('hex').substring(0, 8)}]`;
+
+/**
+ * Redacts sensitive environment variables from fingerprint sources by hashing their values
+ */
+function redactSensitiveSources(sources: FingerprintInputHash[]) {
+  return sources.map((source) => {
+    if (source.key === 'json:env' && 'json' in source) {
+      const env = source.json as Record<string, string>;
+      const redactedEnv = Object.fromEntries(
+        Object.entries(env).map(([key, value]) => [key, hashValue(value)]),
+      );
+      return { ...source, json: redactedEnv };
+    }
+    return source;
+  });
+}
+
 type NativeFingerprintCommandOptions = {
-  platform: 'ios' | 'android';
+  platform: 'ios' | 'android' | 'harmony';
   raw?: boolean;
 };
 
 export async function nativeFingerprintCommand(
   path: string,
-  { extraSources, ignorePaths, env }: FingerprintSources,
+  { extraSources, ignorePaths, env }: FingerprintOptions,
   options: NativeFingerprintCommandOptions,
 ) {
   validateOptions(options);
   const platform = options.platform;
-  const readablePlatformName = platform === 'ios' ? 'iOS' : 'Android';
+  const readablePlatformName =
+    platform === 'ios'
+      ? 'iOS'
+      : platform === 'android'
+        ? 'Android'
+        : 'HarmonyOS';
 
   if (options.raw || !isInteractive()) {
     const fingerprint = await nativeFingerprint(path, {
@@ -39,7 +64,9 @@ export async function nativeFingerprintCommand(
       JSON.stringify(
         {
           hash: fingerprint.hash,
-          sources: fingerprint.inputs.filter((source) => source.hash != null),
+          sources: redactSensitiveSources(
+            fingerprint.inputs.filter((source) => source.hash != null),
+          ),
         },
         null,
         2,
@@ -69,7 +96,9 @@ export async function nativeFingerprintCommand(
   logger.debug(
     'Sources:',
     JSON.stringify(
-      fingerprint.inputs.filter((source) => source.hash != null),
+      redactSensitiveSources(
+        fingerprint.inputs.filter((source) => source.hash != null),
+      ),
       null,
       2,
     ),
@@ -82,12 +111,16 @@ export async function nativeFingerprintCommand(
 function validateOptions(options: NativeFingerprintCommandOptions) {
   if (!options.platform) {
     throw new RockError(
-      'The --platform flag is required. Please specify either "ios" or "android".',
+      'The --platform flag is required. Please specify either "ios", "android" or "harmony".',
     );
   }
-  if (options.platform !== 'ios' && options.platform !== 'android') {
+  if (
+    options.platform !== 'ios' &&
+    options.platform !== 'android' &&
+    options.platform !== 'harmony'
+  ) {
     throw new RockError(
-      `Unsupported platform "${options.platform}". Please specify either "ios" or "android".`,
+      `Unsupported platform "${options.platform}". Please specify either "ios", "android" or "harmony".`,
     );
   }
 }

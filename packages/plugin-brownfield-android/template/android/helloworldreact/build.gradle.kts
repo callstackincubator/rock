@@ -19,11 +19,12 @@ repositories {
 
 android {
     namespace = "com.helloworldreact"
-    compileSdk = 34
+    compileSdk = 36
 
     defaultConfig {
         minSdk = 24
 
+        buildConfigField("boolean", "IS_EDGE_TO_EDGE_ENABLED", properties["edgeToEdgeEnabled"].toString())
         buildConfigField("boolean", "IS_NEW_ARCHITECTURE_ENABLED", properties["newArchEnabled"].toString())
         buildConfigField("boolean", "IS_HERMES_ENABLED", properties["hermesEnabled"].toString())
     }
@@ -68,8 +69,8 @@ publishing {
 }
 
 dependencies {
-    api("com.facebook.react:react-android:0.81.1")
-    api("com.facebook.react:hermes-android:0.81.1")
+    api("com.facebook.react:react-android:0.83.0")
+    api("com.facebook.hermes:hermes-android:0.14.0")
 }
 
 val moduleBuildDir: Directory = layout.buildDirectory.get()

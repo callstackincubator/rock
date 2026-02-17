@@ -4,6 +4,7 @@
     "outDir": "dist",
     "rootDir": ".",
     "declaration": true,
+    "declarationMap": true,
     "types": ["node"]
   },
   "include": ["src/**/*.ts", "e2e/e2e.test.ts"],

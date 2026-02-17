@@ -1,0 +1,68 @@
+import { PackageManagerTabs } from '@theme';
+
+# Getting Started
+
+Choose your path based on your current situation:
+
+## New React Native Project
+
+:::info Consider Expo First
+For **new projects**, we recommend starting with [Expo](https://expo.dev) for the best developer experience and similar remote caching capabilities. Use [this template](https://github.com/nkzw-tech/expo-app-template) for sensible defaults. Rock is designed for teams who have outgrown the Community CLI.
+:::
+
+To create a new React Native project with Rock:
+
+<PackageManagerTabs command="create rock@latest" />
+
+The command will ask you to pick your preferred bundler and platforms.
+
+## Migrate from Community CLI
+
+If you have an existing React Native project using Community CLI:
+
+<PackageManagerTabs command="create rock@latest" />
+
+This will automatically detect your existing project and guide you through the migration process.
+
+:::warning Automatic Migration Issues?
+If automatic migration doesn't work for your project, check the [detailed migration guide](/docs/cli/migrating-from-community-cli) for manual instructions.
+:::
+
+## Add to Existing Native Project
+
+For iOS/Android teams wanting to add React Native to existing apps, see our [Brownfield documentation](/docs/brownfield/intro) for step-by-step instructions.
+
+## Usage
+
+Now that you have Rock configured, you should be able to use Metro's or Re.Pack's development server and bundle your application.
+
+### Running development server
+
+When developing your application, you'll need to run a dev server that will use a bundler like Metro or Re.Pack to bundle your JS and later serve it to an app running on a device or simulator.
+
+To start the development server, run:
+
+<PackageManagerTabs command="rock start" />
+
+### Running the iOS app
+
+To build and run your app on an iOS simulator or device, run the `run:ios` command:
+
+<PackageManagerTabs command="rock run:ios" />
+
+### Running the Android app
+
+To build and run your app on an Android emulator or device, run the `run:android` command:
+
+<PackageManagerTabs command="rock run:android" />
+
+### Running the HarmonyOS app (experimental)
+
+To build and run your app on a HarmonyOS emulator or device, run the `run:harmony` command:
+
+<PackageManagerTabs command="rock run:harmony" />
+
+## Next Steps
+
+- Learn about [CLI commands and features](/docs/cli/introduction)
+- Set up [Remote Cache](/docs/remote-cache/introduction)

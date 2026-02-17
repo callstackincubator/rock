@@ -32,6 +32,8 @@ const androidProject: AndroidProjectConfig = {
 const OLD_ENV = process.env;
 let adbDevicesCallsCount = 0;
 
+const mockPlatforms = { ios: {}, android: {} };
+
 beforeEach(() => {
   adbDevicesCallsCount = 0;
   vi.clearAllMocks();
@@ -311,10 +313,13 @@ test.each([['release'], ['debug'], ['staging']])(
       { ...args, variant },
       '/',
       undefined,
-      { extraSources: [], ignorePaths: [] },
+      { extraSources: [], ignorePaths: [], env: [], platform: 'android' },
+      vi.fn(), // startDevServer mock
+      '/path/to/react-native', // reactNativePath
+      '0.79.0', // reactNativeVersion
+      mockPlatforms,
     );
 
-    expect(tools.outro).toBeCalledWith('Success 🎉.');
     expect(tools.logger.error).not.toBeCalled();
 
     // Runs installDebug with only active architecture arm64-v8a
@@ -360,10 +365,13 @@ test('runAndroid runs gradle build with custom --appId, --appIdSuffix and --main
     },
     '/',
     undefined,
-    { extraSources: [], ignorePaths: [] },
+    { extraSources: [], ignorePaths: [], env: [], platform: 'android' },
+    vi.fn(), // startDevServer mock
+    '/path/to/react-native', // reactNativePath
+    '0.79.0', // reactNativeVersion
+    mockPlatforms,
   );
 
-  expect(tools.outro).toBeCalledWith('Success 🎉.');
   expect(logErrorSpy).not.toBeCalled();
 
   // launches com.custom.suffix app with OtherActivity on emulator-5552
@@ -387,7 +395,11 @@ test('runAndroid fails to launch an app on not-connected device when specified w
     { ...args, device: 'emulator-5554' },
     '/',
     undefined,
-    { extraSources: [], ignorePaths: [] },
+    { extraSources: [], ignorePaths: [], env: [], platform: 'android' },
+    vi.fn(), // startDevServer mock
+    '/path/to/react-native', // reactNativePath
+    '0.79.0', // reactNativeVersion
+    mockPlatforms,
   );
   expect(logWarnSpy).toBeCalledWith(
     'No devices or emulators found matching "emulator-5554". Using available one instead.',
@@ -456,7 +468,11 @@ test.each([['release'], ['debug']])(
       { ...args, device: 'emulator-5554', variant },
       '/',
       undefined,
-      { extraSources: [], ignorePaths: [] },
+      { extraSources: [], ignorePaths: [], env: [], platform: 'android' },
+      vi.fn(), // startDevServer mock
+      '/path/to/react-native', // reactNativePath
+      '0.79.0', // reactNativeVersion
+      mockPlatforms,
     );
 
     // we don't want to run installDebug when a device is selected, because gradle will install the app on all connected devices
@@ -513,10 +529,22 @@ test('runAndroid launches an app on all connected devices', async () => {
     });
   });
 
-  await runAndroid({ ...androidProject }, { ...args }, '/', undefined, {
-    extraSources: [],
-    ignorePaths: [],
-  });
+  await runAndroid(
+    { ...androidProject },
+    { ...args },
+    '/',
+    undefined,
+    {
+      extraSources: [],
+      ignorePaths: [],
+      env: [],
+      platform: 'android',
+    },
+    vi.fn(),
+    '/path/to/react-native',
+    '0.79.0',
+    mockPlatforms,
+  );
 
   // Runs assemble debug task with active architectures arm64-v8a, armeabi-v7a
   expect(spawn).toBeCalledWith(
@@ -582,7 +610,11 @@ test('runAndroid skips building when --binary-path is passed', async () => {
     },
     '/root',
     undefined,
-    { extraSources: [], ignorePaths: [] },
+    { extraSources: [], ignorePaths: [], env: [], platform: 'android' },
+    vi.fn(), // startDevServer mock
+    '/path/to/react-native', // reactNativePath
+    '0.79.0', // reactNativeVersion
+    mockPlatforms,
   );
 
   // Skips gradle

@@ -1,0 +1,22 @@
+[
+  {
+    "name": "introduction",
+    "type": "file",
+    "label": "Introduction"
+  },
+  {
+    "name": "github-actions-setup",
+    "type": "file",
+    "label": "Github Actions Setup"
+  },
+  {
+    "name": "ios",
+    "type": "file",
+    "label": "iOS GitHub Action"
+  },
+  {
+    "name": "android",
+    "type": "file",
+    "label": "Android GitHub Action"
+  }
+]

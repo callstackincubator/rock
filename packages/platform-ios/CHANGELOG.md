@@ -1,5 +1,186 @@
 # @rnef/platform-ios
 
+## 0.12.9
+
+### Patch Changes
+
+- Updated dependencies [562051e]
+  - @rock-js/platform-apple-helpers@0.12.9
+  - @rock-js/tools@0.12.9
+
+## 0.12.8
+
+### Patch Changes
+
+- @rock-js/platform-apple-helpers@0.12.8
+- @rock-js/tools@0.12.8
+
+## 0.12.7
+
+### Patch Changes
+
+- Updated dependencies [795ff4b]
+- Updated dependencies [e4349d2]
+  - @rock-js/tools@0.12.7
+  - @rock-js/platform-apple-helpers@0.12.7
+
+## 0.12.6
+
+### Patch Changes
+
+- Updated dependencies [12fc050]
+  - @rock-js/platform-apple-helpers@0.12.6
+  - @rock-js/tools@0.12.6
+
+## 0.12.5
+
+### Patch Changes
+
+- Updated dependencies [3547ac0]
+- Updated dependencies [d6d6db9]
+  - @rock-js/platform-apple-helpers@0.12.5
+  - @rock-js/tools@0.12.5
+
+## 0.12.4
+
+### Patch Changes
+
+- 8ec7496: feat(iOS): --use-app-entitlements for merging app entitlements & provisioning profiles entitlements
+- Updated dependencies [8ec7496]
+  - @rock-js/platform-apple-helpers@0.12.4
+  - @rock-js/tools@0.12.4
+
+## 0.12.3
+
+### Patch Changes
+
+- @rock-js/platform-apple-helpers@0.12.3
+- @rock-js/tools@0.12.3
+
+## 0.12.2
+
+### Patch Changes
+
+- Updated dependencies [483f8c6]
+  - @rock-js/tools@0.12.2
+  - @rock-js/platform-apple-helpers@0.12.2
+
+## 0.12.1
+
+### Patch Changes
+
+- Updated dependencies [a09a4e8]
+  - @rock-js/platform-apple-helpers@0.12.1
+  - @rock-js/tools@0.12.1
+
+## 0.12.0
+
+### Minor Changes
+
+- 45666ed: feat: upgrade templates to RN 0.83
+
+### Patch Changes
+
+- Updated dependencies [45666ed]
+  - @rock-js/platform-apple-helpers@0.12.0
+  - @rock-js/tools@0.12.0
+
+## 0.11.14
+
+### Patch Changes
+
+- @rock-js/platform-apple-helpers@0.11.14
+- @rock-js/tools@0.11.14
+
+## 0.11.13
+
+### Patch Changes
+
+- 2396563: feat: add usePrebuiltRNCore to rock.config.mjs
+- Updated dependencies [2396563]
+- Updated dependencies [b036ba4]
+- Updated dependencies [6b020d5]
+  - @rock-js/platform-apple-helpers@0.11.13
+  - @rock-js/tools@0.11.13
+
+## 0.11.12
+
+### Patch Changes
+
+- e9b9ea6: chore: use compileSdk 36 for brownfield; update prompt instruction
+- Updated dependencies [e9b9ea6]
+  - @rock-js/platform-apple-helpers@0.11.12
+  - @rock-js/tools@0.11.12
+
+## 0.11.11
+
+### Patch Changes
+
+- 447683c: fix: use npm run instead of pnpm in package:aar command
+- Updated dependencies [447683c]
+  - @rock-js/platform-apple-helpers@0.11.11
+  - @rock-js/tools@0.11.11
+
+## 0.11.10
+
+### Patch Changes
+
+- @rock-js/platform-apple-helpers@0.11.10
+- @rock-js/tools@0.11.10
+
+## 0.11.9
+
+### Patch Changes
+
+- c819d6c: bump packages
+- Updated dependencies [c819d6c]
+  - @rock-js/platform-apple-helpers@0.11.9
+  - @rock-js/tools@0.11.9
+
+## 0.11.8
+
+### Patch Changes
+
+- Updated dependencies [c61b273]
+  - @rock-js/platform-apple-helpers@0.11.8
+  - @rock-js/tools@0.11.8
+
+## 0.11.7
+
+### Patch Changes
+
+- 644f897: feat: allow running dev server from run commands with `--dev-server` flag
+- Updated dependencies [644f897]
+  - @rock-js/platform-apple-helpers@0.11.7
+  - @rock-js/tools@0.11.7
+
+## 0.11.6
+
+### Patch Changes
+
+- Updated dependencies [b47210e]
+  - @rock-js/tools@0.11.6
+  - @rock-js/platform-apple-helpers@0.11.6
+
+## 0.11.5
+
+### Patch Changes
+
+- 94e2fba: chore: add missing description fields to package.jsons
+- Updated dependencies [3be5269]
+- Updated dependencies [2dbae42]
+- Updated dependencies [94e2fba]
+  - @rock-js/platform-apple-helpers@0.11.5
+  - @rock-js/tools@0.11.5
+
+## 0.11.4
+
+### Patch Changes
+
+- Updated dependencies [c904ec9]
+  - @rock-js/tools@0.11.4
+  - @rock-js/platform-apple-helpers@0.11.4
+
 ## 0.11.3
 
 ### Patch Changes

@@ -55,7 +55,7 @@ We need a special Gradle plugin to create an AAR that includes all dependencies.
            mavenCentral()
        }
        dependencies {
-           classpath("com.callstack.react:brownfield-gradle-plugin:0.5.0") // check the latest version
+           classpath("com.callstack.react:brownfield-gradle-plugin:0.6.2") // check the latest version: https://mvnrepository.com/artifact/com.callstack.react/brownfield-gradle-plugin
        }
    }
    ```
@@ -87,9 +87,12 @@ Add the required React Native dependencies to your `reactnativeapp/build.gradle.
 
 ```groovy title="reactnativeapp/build.gradle.kts" {2-3}
 dependencies {
-    // Match your version of React Native, here 0.81
-    api("com.facebook.react:react-android:0.81.1")
-    api("com.facebook.react:hermes-android:0.81.1")
+    // Match your version of React Native, here 0.83:
+    api("com.facebook.react:react-android:0.83.0")
+    // For React Native 0.83 or newer use:
+    api("com.facebook.hermes:hermes-android:0.14.0")
+    // For React Native 0.82 or older use:
+    // api("com.facebook.react:hermes-android:0.82.0")
 }
 ```
 
@@ -100,6 +103,15 @@ After adding these, sync your project and run `./gradlew assembleRelease` to ver
 Here we add the `react-native-brownfield` library to help us with APIs required to initialize and present react-native views.
 
 <PackageManagerTabs command="install @callstack/react-native-brownfield" />
+
+**Compatibility Matrix**
+
+| React Native Version | `@callstack/react-native-brownfield` Version |
+| -------------------- | -------------------------------------------- |
+| 0.81+                | v2 (latest)                                  |
+| < 0.81               | v1.2.0                                       |
+
+Our default brownfield template uses the latest version of `@callstack/react-native-brownfield` (currently v2).
 
 ### 5. Create React Native Host Manager
 
@@ -141,8 +153,15 @@ android {
     defaultConfig {
         minSdk = 24
 
+        buildConfigField("boolean", "IS_EDGE_TO_EDGE_ENABLED", properties["edgeToEdgeEnabled"].toString())
         buildConfigField("boolean", "IS_NEW_ARCHITECTURE_ENABLED", properties["newArchEnabled"].toString())
         buildConfigField("boolean", "IS_HERMES_ENABLED", properties["hermesEnabled"].toString())
+    }
+
+    publishing {
+        multipleVariants {
+            allVariants()
+        }
     }
 }
 ```
@@ -481,3 +500,27 @@ The above returns a FrameLayout, which can be used to present React Native as a 
 <hr />
 
 > Note: `brownfield-gradle-plugin` copies `.so` files to the `lib` folder. Make sure to add `**/*.so` to your .gitignore file, as to not commit these .so files. The reason is they are auto-generated each time.
+
+## Troubleshooting
+
+### React Native Reanimated v4 duplicate `libworklets.so` library conflict
+
+Both `react-native-reanimated` and `react-native-worklets` packages include the native library `libworklets.so`. When building an AAR with the brownfield Gradle plugin, this duplication causes build conflicts on Android.
+
+To resolve this, exclude `libworklets.so` from the packaging process by patching `react-native-reanimated` - specifically, add `libworklets.so` to the exclusion list in `android/build.gradle` of `react-native-reanimated`:
+
+```diff
+diff --git a/android/build.gradle b/android/build.gradle
+--- a/android/build.gradle
++++ b/android/build.gradle
+@@ -252,6 +252,7 @@ android {
+                 "**/libreact_render*.so",
+                 "**/librrc_root.so",
+                 "**/libjscexecutor.so",
++                "**/libworklets.so",
+         ]
+     }
+     compileOptions {
+```
+
+This prevents the duplicate library from being included in the AAR, resolving the build conflict.

@@ -5,6 +5,7 @@ import { registerCreateKeystoreCommand } from './commands/generateKeystore.js';
 import { getValidProjectConfig } from './commands/getValidProjectConfig.js';
 import { registerRunCommand } from './commands/runAndroid/command.js';
 import { registerSignCommand } from './commands/signAndroid/command.js';
+import { registerValidateElfAlignmentCommand } from './commands/validateElfAlignment/command.js';
 
 type PluginConfig = AndroidProjectConfig;
 
@@ -13,6 +14,7 @@ export const platformAndroid =
   (api: PluginApi): PlatformOutput => {
     registerBuildCommand(api, pluginConfig);
     registerRunCommand(api, pluginConfig);
+    registerValidateElfAlignmentCommand(api);
     registerCreateKeystoreCommand(api, pluginConfig);
     registerSignCommand(api);
 

@@ -1,5 +1,64 @@
 # rock-docs
 
+## 1.4.2
+
+### Patch Changes
+
+- 562051e: add host cli flag to run:android & run:ios
+
+## 1.4.1
+
+### Patch Changes
+
+- 12fc050: fix: set usePrebuiltRNCore as boolean
+
+## 1.4.0
+
+### Minor Changes
+
+- 45666ed: feat: upgrade templates to RN 0.83
+
+## 1.3.9
+
+### Patch Changes
+
+- b0282a5: feat: android adhoc builds
+
+## 1.3.8
+
+### Patch Changes
+
+- 9ebbc9e: docs: update brownfield documentation with newest Gradle plugin version & link
+- a6a06cf: fix(docs): add missing section to create 'default' SoftwareComponent for Maven publishing in standalone setup
+- 541dd03: feat: add acl option for S3 provider
+- a6a06cf: fix(docs): add IS_EDGE_TO_EDGE_ENABLED buildConfigField to android brownfield docs
+- 8d85482: feat: add publicAccess option for S3 provider
+
+## 1.3.7
+
+### Patch Changes
+
+- e9b9ea6: chore: use compileSdk 36 for brownfield; update prompt instruction
+
+## 1.3.6
+
+### Patch Changes
+
+- 447683c: fix: use npm run instead of pnpm in package:aar command
+
+## 1.3.5
+
+### Patch Changes
+
+- 0119b27: fix: config pages presence and positioning
+
+## 1.3.4
+
+### Patch Changes
+
+- 810cafa: website: update wording to emphasize Rock's strengths
+- b47210e: feat: add experimental support for HarmonyOS platform
+
 ## 1.3.3
 
 ### Patch Changes

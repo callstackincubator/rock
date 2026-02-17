@@ -1,5 +1,84 @@
 # @rnef/tools
 
+## 0.12.9
+
+## 0.12.8
+
+## 0.12.7
+
+### Patch Changes
+
+- 795ff4b: feat: add a hint to skip cache with "--local" flag
+
+## 0.12.6
+
+## 0.12.5
+
+## 0.12.4
+
+## 0.12.3
+
+## 0.12.2
+
+### Patch Changes
+
+- 483f8c6: fix(tools): support hermes-compiler package for RN 0.83+
+
+## 0.12.1
+
+## 0.12.0
+
+### Minor Changes
+
+- 45666ed: feat: upgrade templates to RN 0.83
+
+## 0.11.14
+
+## 0.11.13
+
+## 0.11.12
+
+### Patch Changes
+
+- e9b9ea6: chore: use compileSdk 36 for brownfield; update prompt instruction
+
+## 0.11.11
+
+### Patch Changes
+
+- 447683c: fix: use npm run instead of pnpm in package:aar command
+
+## 0.11.10
+
+## 0.11.9
+
+### Patch Changes
+
+- c819d6c: bump packages
+
+## 0.11.8
+
+## 0.11.7
+
+## 0.11.6
+
+### Patch Changes
+
+- b47210e: feat: add experimental support for HarmonyOS platform
+
+## 0.11.5
+
+### Patch Changes
+
+- 3be5269: chore: remove unused deps
+- 94e2fba: chore: add missing description fields to package.jsons
+
+## 0.11.4
+
+### Patch Changes
+
+- c904ec9: fix: properly take env value into account; hash sensitive data
+
 ## 0.11.3
 
 ## 0.11.2

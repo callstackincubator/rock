@@ -1,5 +1,6 @@
 import type { PluginApi } from '@rock-js/config';
 import { modifyApp, modifyIpa } from '@rock-js/platform-apple-helpers';
+import type { RockCLIOptions } from '@rock-js/tools';
 
 export type SignFlags = {
   app: string;
@@ -8,6 +9,7 @@ export type SignFlags = {
   buildJsbundle?: boolean;
   jsbundle?: string;
   noHermes?: boolean;
+  useAppEntitlements?: boolean;
 };
 
 const ARGUMENTS = [
@@ -44,7 +46,12 @@ const OPTIONS = [
     name: '--no-hermes',
     description: 'Do not use Hermes to build the JS bundle.',
   },
-];
+  {
+    name: '--use-app-entitlements',
+    description:
+      'Extract app bundle codesigning entitlements and combine with entitlements from new provisioning profile.',
+  },
+] satisfies RockCLIOptions;
 
 export const registerSignCommand = (api: PluginApi) => {
   api.registerCommand({
@@ -60,6 +67,7 @@ export const registerSignCommand = (api: PluginApi) => {
           buildJsBundle: flags.buildJsbundle,
           jsBundlePath: flags.jsbundle,
           useHermes: !flags.noHermes,
+          useAppEntitlements: flags.useAppEntitlements,
         });
       } else {
         await modifyIpa({
@@ -70,6 +78,7 @@ export const registerSignCommand = (api: PluginApi) => {
           buildJsBundle: flags.buildJsbundle,
           jsBundlePath: flags.jsbundle,
           useHermes: !flags.noHermes,
+          useAppEntitlements: flags.useAppEntitlements,
         });
       }
     },

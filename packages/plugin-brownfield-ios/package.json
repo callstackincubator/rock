@@ -1,6 +1,7 @@
 {
   "name": "@rock-js/plugin-brownfield-ios",
-  "version": "0.11.3",
+  "version": "0.12.9",
+  "description": "Plugin for integrating Rock projects with existing iOS apps",
   "type": "module",
   "types": "./dist/src/index.d.ts",
   "exports": {
@@ -21,12 +22,12 @@
   "dependencies": {
     "@react-native-community/cli-config-apple": "^20.0.0",
     "@react-native-community/cli-types": "^20.0.0",
-    "@rock-js/tools": "^0.11.3",
-    "@rock-js/platform-apple-helpers": "^0.11.3",
+    "@rock-js/tools": "^0.12.9",
+    "@rock-js/platform-apple-helpers": "^0.12.9",
     "tslib": "^2.3.0"
   },
   "devDependencies": {
-    "@rock-js/config": "^0.11.3"
+    "@rock-js/config": "^0.12.9"
   },
   "publishConfig": {
     "access": "public"
