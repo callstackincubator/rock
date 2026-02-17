@@ -1,4 +1,6 @@
-import { logger, spawn, spinner } from '@rock-js/tools';
+import logger from './logger.js';
+import { spinner } from './prompts.js';
+import { spawn } from './spawn.js';
 
 export async function gitInitStep(path: string, version: string | null) {
   if (!(await hasGitClient())) {
