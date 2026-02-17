@@ -1,5 +1,12 @@
 # @rnef/platform-android
 
+## 0.12.10
+
+### Patch Changes
+
+- 1db5743: feat: add android command validate-elf-alignment
+  - @rock-js/tools@0.12.10
+
 ## 0.12.9
 
 ### Patch Changes
