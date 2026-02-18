@@ -12,9 +12,19 @@ export async function applyConfigPlugins(info: ProjectInfo) {
     return;
   }
 
-  const content = await fs.readFile(info.appJsonPath, { encoding: 'utf-8' });
+  let content: string;
+  try {
+    content = await fs.readFile(info.appJsonPath, { encoding: 'utf-8' });
+  } catch {
+    throw new Error(`app.json not found at ${info.appJsonPath}`);
+  }
+
   const { expo, ...rest } = JSON.parse(content);
   const appJsonConfig = expo || rest;
+
+  if (!appJsonConfig.name) {
+    throw new Error('app.json must have the "name" key');
+  }
 
   const updatedInfo = {
     ...info,

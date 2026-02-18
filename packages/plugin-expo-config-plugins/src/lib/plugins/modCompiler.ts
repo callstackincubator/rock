@@ -1,3 +1,4 @@
+import { logger } from '@rock-js/tools';
 import {
   AndroidConfig,
   BaseMods,
@@ -126,13 +127,17 @@ export const compileModsAsync = async (
   info: ProjectInfo,
 ): Promise<ReturnType<typeof expoCompileModsAsync>> => {
   if (info.introspect === true) {
-    console.warn('`introspect` is not supported');
+    logger.warn('`introspect` is not supported');
   }
 
-  // @ts-expect-error untyped
-  config.android.networkInspector = false;
-  // @ts-expect-error untyped
-  config.ios.networkInspector = false;
+  if (config.android) {
+    // @ts-expect-error untyped
+    config.android.networkInspector = false;
+  }
+  if (config.ios) {
+    // @ts-expect-error untyped
+    config.ios.networkInspector = false;
+  }
 
   config = withIosExpoPlugins(config, {
     bundleIdentifier: info.iosBundleIdentifier,

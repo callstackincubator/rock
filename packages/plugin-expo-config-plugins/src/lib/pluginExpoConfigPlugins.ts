@@ -21,54 +21,52 @@ const applyConfigPluginsCommand = async (
   api: PluginApi,
   args: ConfigPluginsArgs,
 ) => {
-  {
-    const packageJsonPath = path.join(api.getProjectRoot(), 'package.json');
-    const iosDirPath = path.join(api.getProjectRoot(), 'ios');
-    const androidDirPath = path.join(api.getProjectRoot(), 'android');
+  const packageJsonPath = path.join(api.getProjectRoot(), 'package.json');
+  const iosDirPath = path.join(api.getProjectRoot(), 'ios');
+  const androidDirPath = path.join(api.getProjectRoot(), 'android');
 
-    const [packageJsonContent, iosDirContent, androidAppBuildGradleContent] =
-      await Promise.all([
-        fs.readFile(packageJsonPath, 'utf-8'),
-        fs.readdir(iosDirPath),
-        fs.readFile(path.join(androidDirPath, 'app', 'build.gradle'), 'utf-8'),
-      ]);
+  const [packageJsonContent, iosDirContent, androidAppBuildGradleContent] =
+    await Promise.all([
+      fs.readFile(packageJsonPath, 'utf-8'),
+      fs.readdir(iosDirPath),
+      fs.readFile(path.join(androidDirPath, 'app', 'build.gradle'), 'utf-8'),
+    ]);
 
-    if (!packageJsonContent.includes('"@expo/config-plugins"')) {
-      logger.warn(
-        '@expo/config-plugins not found in package.json. Skipping applying config plugins.',
-      );
-      return;
-    }
-
-    const iosProjectName =
-      iosDirContent.find((dir) => dir.includes('.xcodeproj'))?.split('.')[0] ??
-      '';
-
-    const projectPbxprojContent = await fs.readFile(
-      path.join(iosDirPath, `${iosProjectName}.xcodeproj`, 'project.pbxproj'),
-      'utf-8',
+  if (!packageJsonContent.includes('"@expo/config-plugins"')) {
+    logger.warn(
+      '@expo/config-plugins not found in package.json. Skipping applying config plugins.',
     );
-
-    const iosBundleIdentifier =
-      projectPbxprojContent.match(/PRODUCT_BUNDLE_IDENTIFIER = "(.*)"/)?.[1] ??
-      '';
-
-    const androidPackageName =
-      androidAppBuildGradleContent.match(/applicationId "(.*)"/)?.[1] ?? '';
-
-    const platforms = args.platforms || Object.keys(api.getPlatforms());
-
-    applyConfigPlugins({
-      introspect: false,
-      projectRoot: api.getProjectRoot(),
-      platforms: platforms as ProjectInfo['platforms'],
-      packageJsonPath,
-      appJsonPath: path.join(api.getProjectRoot(), 'app.json'),
-      iosProjectName,
-      iosBundleIdentifier,
-      androidPackageName,
-    });
+    return;
   }
+
+  const iosProjectName =
+    iosDirContent.find((dir) => dir.includes('.xcodeproj'))?.split('.')[0] ??
+    '';
+
+  const projectPbxprojContent = await fs.readFile(
+    path.join(iosDirPath, `${iosProjectName}.xcodeproj`, 'project.pbxproj'),
+    'utf-8',
+  );
+
+  const iosBundleIdentifier =
+    projectPbxprojContent.match(/PRODUCT_BUNDLE_IDENTIFIER = "(.*)"/)?.[1] ??
+    '';
+
+  const androidPackageName =
+    androidAppBuildGradleContent.match(/applicationId "(.*)"/)?.[1] ?? '';
+
+  const platforms = args.platforms || Object.keys(api.getPlatforms());
+
+  await applyConfigPlugins({
+    introspect: false,
+    projectRoot: api.getProjectRoot(),
+    platforms: platforms as ProjectInfo['platforms'],
+    packageJsonPath,
+    appJsonPath: path.join(api.getProjectRoot(), 'app.json'),
+    iosProjectName,
+    iosBundleIdentifier,
+    androidPackageName,
+  });
 };
 
 export const pluginExpoConfigPlugins =
