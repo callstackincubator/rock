@@ -11,6 +11,7 @@
   },
   "dependencies": {
     "@bottom-tabs/react-navigation": "^1.1.0",
+    "expo-build-properties": "^1.0.10",
     "react": "19.2.0",
     "react-native": "0.83.0",
     "react-native-bottom-tabs": "^1.1.0"
