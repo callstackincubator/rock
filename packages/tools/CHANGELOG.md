@@ -1,5 +1,11 @@
 # @rnef/tools
 
+## 0.12.11
+
+### Patch Changes
+
+- ddf9194: feat: add Expo Config Plugins support
+
 ## 0.12.10
 
 ## 0.12.9
