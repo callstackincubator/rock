@@ -1,5 +1,12 @@
 # @rnef/plugin-metro
 
+## 0.12.11
+
+### Patch Changes
+
+- Updated dependencies [ddf9194]
+  - @rock-js/tools@0.12.11
+
 ## 0.12.10
 
 ### Patch Changes
