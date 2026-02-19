@@ -1,4 +1,6 @@
-import { logger, spawn, spinner } from '@rock-js/tools';
+import logger from './logger.js';
+import { spinner } from './prompts.js';
+import { spawn } from './spawn.js';
 
 export async function gitInitStep(path: string, version: string | null) {
   if (!(await hasGitClient())) {
@@ -54,4 +56,12 @@ export async function isGitRepo(path: string): Promise<boolean> {
   } catch {
     return false;
   }
+}
+
+export async function isGitDirty(dir: string) {
+  const { output } = await spawn('git', ['status', '--porcelain'], {
+    cwd: dir,
+  });
+
+  return output.trim() !== '';
 }

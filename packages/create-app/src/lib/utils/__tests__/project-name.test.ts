@@ -1,5 +1,5 @@
+import { normalizeProjectName } from '@rock-js/tools';
 import { describe, expect, it } from 'vitest';
-import { normalizeProjectName } from '../project-name.js';
 
 describe('normalizeProjectName', () => {
   it('handles kebab-case', () => {

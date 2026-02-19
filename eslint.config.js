@@ -6,7 +6,7 @@ import tseslint from 'typescript-eslint';
 export default [
   eslint.configs.recommended,
   ...tseslint.configs.recommended,
-  globalIgnores(['website/', 'templates/']),
+  globalIgnores(['apps/', 'website/', 'templates/']),
   {
     files: ['**/*.ts', '**/*.tsx', '**/*.js', '**/*.jsx'],
     rules: {
