@@ -10,8 +10,10 @@
     "android": "rock run:android"
   },
   "dependencies": {
+    "@bottom-tabs/react-navigation": "^1.1.0",
     "react": "19.2.0",
-    "react-native": "0.83.0"
+    "react-native": "0.83.0",
+    "react-native-bottom-tabs": "^1.1.0"
   },
   "devDependencies": {
     "@babel/core": "^7.25.2",
@@ -35,7 +37,6 @@
     "rock": "^0.12.10",
     "typescript": "^5.8.3"
   },
-  "peerDependencies": {},
   "engines": {
     "node": ">=20"
   }

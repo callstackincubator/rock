@@ -72,12 +72,18 @@ importers:
 
   apps/expo-config-plugins-test-app:
     dependencies:
+      '@bottom-tabs/react-navigation':
+        specifier: ^1.1.0
+        version: 1.1.0(@react-navigation/native@7.1.28(react-native@0.83.0(@babel/core@7.25.2)(@react-native/metro-config@0.83.0(@babel/core@7.25.2))(@types/react@19.2.7)(react@19.2.0))(react@19.2.0))(react-native-bottom-tabs@1.1.0(react-native@0.83.0(@babel/core@7.25.2)(@react-native/metro-config@0.83.0(@babel/core@7.25.2))(@types/react@19.2.7)(react@19.2.0))(react@19.2.0))(react-native@0.83.0(@babel/core@7.25.2)(@react-native/metro-config@0.83.0(@babel/core@7.25.2))(@types/react@19.2.7)(react@19.2.0))(react@19.2.0)
       react:
         specifier: 19.2.0
         version: 19.2.0
       react-native:
         specifier: 0.83.0
         version: 0.83.0(@babel/core@7.25.2)(@react-native/metro-config@0.83.0(@babel/core@7.25.2))(@types/react@19.2.7)(react@19.2.0)
+      react-native-bottom-tabs:
+        specifier: ^1.1.0
+        version: 1.1.0(react-native@0.83.0(@babel/core@7.25.2)(@react-native/metro-config@0.83.0(@babel/core@7.25.2))(@types/react@19.2.7)(react@19.2.0))(react@19.2.0)
     devDependencies:
       '@babel/core':
         specifier: ^7.25.2
@@ -102,16 +108,16 @@ importers:
         version: 0.83.0
       '@rock-js/platform-android':
         specifier: ^0.12.10
-        version: 0.12.10
+        version: link:../../packages/platform-android
       '@rock-js/platform-ios':
         specifier: ^0.12.10
-        version: 0.12.10(typescript@5.9.2)
+        version: link:../../packages/platform-ios
       '@rock-js/plugin-metro':
         specifier: ^0.12.10
-        version: 0.12.10
+        version: link:../../packages/plugin-metro
       '@rock-js/welcome-screen':
         specifier: ^0.12.10
-        version: 0.12.10(react-native@0.83.0(@babel/core@7.25.2)(@react-native/metro-config@0.83.0(@babel/core@7.25.2))(@types/react@19.2.7)(react@19.2.0))(react@19.2.0)
+        version: link:../../packages/welcome-screen
       '@types/react':
         specifier: ^19.2.0
         version: 19.2.7
@@ -135,7 +141,7 @@ importers:
         version: 19.2.0(react@19.2.0)
       rock:
         specifier: ^0.12.10
-        version: 0.12.10(typescript@5.9.2)
+        version: link:../../packages/cli
       typescript:
         specifier: ^5.8.3
         version: 5.9.2
@@ -424,13 +430,13 @@ importers:
     dependencies:
       '@callstack/repack':
         specifier: '>=5'
-        version: 5.1.3(@babel/core@7.25.2)(@rspack/core@1.5.2(@swc/helpers@0.5.17))(react-native@0.83.0(@babel/core@7.25.2)(@react-native/metro-config@0.83.0(@babel/core@7.25.2))(@types/react@19.2.7)(react@19.2.3))(webpack@5.101.3)
+        version: 5.1.3(@babel/core@7.25.2)(@rspack/core@1.6.8(@swc/helpers@0.5.17))(react-native@0.83.0(@babel/core@7.25.2)(@react-native/metro-config@0.83.0(@babel/core@7.25.2))(@types/react@19.2.7)(react@19.2.3))(webpack@5.101.3)
       '@rock-js/tools':
         specifier: ^0.12.10
         version: link:../tools
       '@rspack/core':
         specifier: '>=1.2.8'
-        version: 1.5.2(@swc/helpers@0.5.17)
+        version: 1.6.8(@swc/helpers@0.5.17)
       '@swc/helpers':
         specifier: '>=0.5.15'
         version: 0.5.17
@@ -1570,6 +1576,14 @@ packages:
     resolution: {integrity: sha512-6zABk/ECA/QYSCQ1NGiVwwbQerUCZ+TQbp64Q3AgmfNvurHH0j8TtXa1qbShXA6qqkpAj4V5W8pP6mLe1mcMqA==}
     engines: {node: '>=18'}
 
+  '@bottom-tabs/react-navigation@1.1.0':
+    resolution: {integrity: sha512-+4YppCodABcSNIgJiq95QUQ+3ClVBG+rLG3WmYI0+/nbxqKbCz6luFBep4KFOj98Iplj1JY2Ki6ix8CcOZVQ/Q==}
+    peerDependencies:
+      '@react-navigation/native': '>=7'
+      react: '*'
+      react-native: '*'
+      react-native-bottom-tabs: '*'
+
   '@bufbuild/protobuf@2.2.3':
     resolution: {integrity: sha512-tFQoXHJdkEOSwj5tRIZSPNUuXK3RaR7T1nUrPgbYX1pUbvqqaaZAsfo+NXBPsz5rZMSKVFrgK1WL8Q/MSLvprg==}
 
@@ -2345,32 +2359,19 @@ packages:
       '@types/react':
         optional: true
 
-  '@rock-js/config@0.12.10':
-    resolution: {integrity: sha512-7oLM7anqZtd+Iy+443Kmkuz6lt6rgO7dkfeO9wDfxXGlylL9TFSZ9YRo5mwpDR4nTx1Laariuu82WMm98WXvVQ==}
-
-  '@rock-js/platform-android@0.12.10':
-    resolution: {integrity: sha512-me5I/tBflDBXun7FTbYWXPEkjeRoEORMqWyR7A7aOwLXpqhdYgyMfjIJlCMdqwj2XtBJFlEv0UuOAIthfYsTpA==}
-
-  '@rock-js/platform-apple-helpers@0.12.10':
-    resolution: {integrity: sha512-eVJrlTlEW4gIQlCIGCjebAHwUzoLP49eGyJVE5R7QuN/T9+Wl0mOLsCTJa0RBlCF+jPMgOKRBHDmUWiyt64zXg==}
-
-  '@rock-js/platform-ios@0.12.10':
-    resolution: {integrity: sha512-0C1JiiN2iHSgeqlW2arlQqKLfDMAovXw6BHpQJ/cTUsm+wJiBsu9tdokVxQ/prVIhHm6SkBu9/pZklNbRU18Gg==}
-
-  '@rock-js/plugin-metro@0.12.10':
-    resolution: {integrity: sha512-BbHeV6CIW++344VQy5AGlYomg3sxXKH/zVhmBrPfOxJTIHVcixwILY1evgydeqT2qOk7u9BJi6zq2+dFg6JLoA==}
-
-  '@rock-js/provider-github@0.12.10':
-    resolution: {integrity: sha512-HeV8325o1zom8+Tp6VR/vhskVqSfUtxj4WcbdyM/hfN6Hdg6lZx4e2qEkN1G01dNS1nLpSr2hqgRfaofuBBWkQ==}
-
-  '@rock-js/tools@0.12.10':
-    resolution: {integrity: sha512-PNCaFlUp32xB/zcoYZoS7OOtZOuouiQUlecOSxnTKRt5egOzBR9yjJy2/0ew8VM/mVzXPwnm/dj2/D/awXFvmA==}
-
-  '@rock-js/welcome-screen@0.12.10':
-    resolution: {integrity: sha512-EHGI1i6ERFg0hv6zlc6OefNLp8U3AvPySVmqtNY9MZqm9MrlZCNhxBLqrTlorpM5UKaRgCeg3tya8Dj1+6pERQ==}
+  '@react-navigation/core@7.14.0':
+    resolution: {integrity: sha512-tMpzskBzVp0E7CRNdNtJIdXjk54Kwe/TF9ViXAef+YFM1kSfGv4e/B2ozfXE+YyYgmh4WavTv8fkdJz1CNyu+g==}
     peerDependencies:
-      react: '*'
+      react: '>= 18.2.0'
+
+  '@react-navigation/native@7.1.28':
+    resolution: {integrity: sha512-d1QDn+KNHfHGt3UIwOZvupvdsDdiHYZBEj7+wL2yDVo3tMezamYy60H9s3EnNVE1Ae1ty0trc7F2OKqo/RmsdQ==}
+    peerDependencies:
+      react: '>= 18.2.0'
       react-native: '*'
+
+  '@react-navigation/routers@7.5.3':
+    resolution: {integrity: sha512-1tJHg4KKRJuQ1/EvJxatrMef3NZXEPzwUIUZ3n1yJ2t7Q97siwRtbynRpQG9/69ebbtiZ8W3ScOZF/OmhvM4Rg==}
 
   '@rollup/rollup-android-arm-eabi@4.46.2':
     resolution: {integrity: sha512-Zj3Hl6sN34xJtMv7Anwb5Gu01yujyE/cLBDB2gnHTAHaWS1Z38L7kuSG+oAh0giZMqG060f/YBStXtMH6FvPMA==}
@@ -4122,11 +4123,27 @@ packages:
     resolution: {integrity: sha512-RRECPsj7iu/xb5oKYcsFHSppFNnsj/52OVTRKb4zP5onXwVF3zVmmToNcOfGC+CRDpfK/U584fMg38ZHCaElKQ==}
     engines: {node: '>=7.0.0'}
 
+  color-convert@3.1.3:
+    resolution: {integrity: sha512-fasDH2ont2GqF5HpyO4w0+BcewlhHEZOFn9c1ckZdHpJ56Qb7MHhH/IcJZbBGgvdtwdwNbLvxiBEdg336iA9Sg==}
+    engines: {node: '>=14.6'}
+
   color-name@1.1.3:
     resolution: {integrity: sha512-72fSenhMw2HZMTVHeCA9KCmpEIbzWiQsjN+BHcBbS9vr1mtt+vJjPdksIBNUmKAW8TFUDPJK5SUU3QhE9NEXDw==}
 
   color-name@1.1.4:
     resolution: {integrity: sha512-dOy+3AuW3a2wNbZHIuMZpTcgjGuLU/uBL/ubcZF9OXbDo8ff4O8yVp5Bf0efS8uEoYo5q4Fx7dY9OgQGXgAsQA==}
+
+  color-name@2.1.0:
+    resolution: {integrity: sha512-1bPaDNFm0axzE4MEAzKPuqKWeRaT43U/hyxKPBdqTfmPF+d6n7FSoTFxLVULUJOmiLp01KjhIPPH+HrXZJN4Rg==}
+    engines: {node: '>=12.20'}
+
+  color-string@2.1.4:
+    resolution: {integrity: sha512-Bb6Cq8oq0IjDOe8wJmi4JeNn763Xs9cfrBcaylK1tPypWzyoy2G3l90v9k64kjphl/ZJjPIShFztenRomi8WTg==}
+    engines: {node: '>=18'}
+
+  color@5.0.3:
+    resolution: {integrity: sha512-ezmVcLR3xAVp8kYOm4GS45ZLLgIE6SPAFoduLr6hTDajwb3KZ2F46gulK3XpcwRFb5KKGCSezCBAY4Dw4HsyXA==}
+    engines: {node: '>=18'}
 
   colorette@2.0.20:
     resolution: {integrity: sha512-IfEDxwoWIjkeXL1eXcDiow4UbKjhLdq6/EuSVR9GMN7KVH3r9gQ83e73hsz1Nd1T3ijd5xv1wcWRYO+D6kCI2w==}
@@ -4293,6 +4310,10 @@ packages:
 
   decode-named-character-reference@1.2.0:
     resolution: {integrity: sha512-c6fcElNV6ShtZXmsgNgFFV5tVX2PaV4g+MOAkb8eXHvn6sryJBrZa9r0zV6+dtTyoCKxtDy5tyQ5ZwQuidtd+Q==}
+
+  decode-uri-component@0.2.2:
+    resolution: {integrity: sha512-FqUYQ+8o158GyGTrMFJms9qh3CqTKvAqgqsTnkLI8sKu0028orqBhxNMFkFen0zGyg6epACD32pjVk58ngIErQ==}
+    engines: {node: '>=0.10'}
 
   dedent@0.7.0:
     resolution: {integrity: sha512-Q6fKUPqnAHAyhiUgFU7BUzLiv0kd8saH9al7tnu5Q/okj6dnupxyTgFIBjVzJATdfIAm9NAsvXNzjaKa+bxVyA==}
@@ -4872,6 +4893,10 @@ packages:
     resolution: {integrity: sha512-YsGpe3WHLK8ZYi4tWDg2Jy3ebRz2rXowDxnld4bkQB00cc/1Zw9AWnC0i9ztDJitivtQvaI9KaLyKrc+hBW0yg==}
     engines: {node: '>=8'}
 
+  filter-obj@1.1.0:
+    resolution: {integrity: sha512-8rXg1ZnX7xzy2NGDVkBVaAy+lSlPNwad13BtgSlLuxfIslyt5Vg64U7tFcCt4WS1R0hvtnQybT/IyCkGZ3DpXQ==}
+    engines: {node: '>=0.10.0'}
+
   finalhandler@1.1.2:
     resolution: {integrity: sha512-aAWcW57uxVNrQZqFXjITpW3sIUQmHGG3qSb9mUah9MgMC4NeWhNOlNjXEYq3HjRAvL6arUviZGGJsBg6z0zsWA==}
     engines: {node: '>= 0.8'}
@@ -5060,7 +5085,7 @@ packages:
 
   glob@7.2.3:
     resolution: {integrity: sha512-nFR0zLpU2YCaRxwoCJvL6UvCH2JFyFVIvwTLsIf21AuHlMskA1hhTdk+LlYJtOlYt9v6dvszD2BGRqBL+iQK9Q==}
-    deprecated: Glob versions prior to v9 are no longer supported
+    deprecated: Old versions of glob are not supported, and contain widely publicized security vulnerabilities, which have been fixed in the current version. Please update. Support for old versions may be purchased (at exorbitant rates) by contacting i@izs.me
 
   globals@13.24.0:
     resolution: {integrity: sha512-AhO5QUcj8llrbG09iWhPU2B204J1xnPeL8kQmVorSsy+Sjj1sk8gIyh6cUocGmH4L0UuhAJy+hJMRA4mgA4mFQ==}
@@ -6788,6 +6813,10 @@ packages:
     resolution: {integrity: sha512-YWWTjgABSKcvs/nWBi9PycY/JiPJqOD4JA6o9Sej2AtvSGarXxKC3OQSk4pAarbdQlKAh5D4FCQkJNkW+GAn3w==}
     engines: {node: '>=0.6'}
 
+  query-string@7.1.3:
+    resolution: {integrity: sha512-hh2WYhq4fi8+b+/2Kg9CEge4fDPvHS534aOOvOZeQ3+Vf2mCFsaFBYj0i+iXcAq6I9Vzp5fjMFBlONvayDC1qg==}
+    engines: {node: '>=6'}
+
   queue-microtask@1.2.3:
     resolution: {integrity: sha512-NuaNSa6flKT5JaSYQzJok04JzTL1CA6aGhv5rfLW3PgqA+M2ChpZQnAC8h8i4ZFkBS8X5RqkDBHA7r4hej3K9A==}
 
@@ -6819,6 +6848,12 @@ packages:
     peerDependencies:
       react: ^19.2.3
 
+  react-freeze@1.0.4:
+    resolution: {integrity: sha512-r4F0Sec0BLxWicc7HEyo2x3/2icUTrRmDjaaRyzzn+7aDyFZliszMDOgLVwSnQnYENOlL1o569Ze2HZefk8clA==}
+    engines: {node: '>=10'}
+    peerDependencies:
+      react: '>=17.0.0'
+
   react-is@16.13.1:
     resolution: {integrity: sha512-24e6ynE2H+OKt4kqsOvNd8kBpV65zoxbA4BVsEOB3ARVWQki/DHzaUoC5KuON/BiccDaCCTZBuOcfZs70kR8bQ==}
 
@@ -6833,6 +6868,12 @@ packages:
 
   react-lazy-with-preload@2.2.1:
     resolution: {integrity: sha512-ONSb8gizLE5jFpdHAclZ6EAAKuFX2JydnFXPPPjoUImZlLjGtKzyBS8SJgJq7CpLgsGKh9QCZdugJyEEOVC16Q==}
+
+  react-native-bottom-tabs@1.1.0:
+    resolution: {integrity: sha512-Uu1gvM3i1Hb4DjVvR/38J1QVQEs0RkPc7K6yon99HgvRWWOyLs7kjPDhUswtb8ije4pKW712skIXWJ0lgKzbyQ==}
+    peerDependencies:
+      react: '*'
+      react-native: '*'
 
   react-native@0.83.0:
     resolution: {integrity: sha512-a8wPjGfkktb1+Mjvzkky3d0u6j6zdWAzftZ2LdQtgRgqkMMfgQxD9S+ri3RNlfAFQpuCAOYUIyrNHiVkUQChxA==}
@@ -7045,10 +7086,6 @@ packages:
   rimraf@3.0.2:
     resolution: {integrity: sha512-JZkJMZkAGFFPP2YqXZXPbMlMBgsxzE8ILs4lMIX/2o0L9UBw9O/Y3o6wFw/i9YLapcUJWwqbi3kdxIPdC62TIA==}
     deprecated: Rimraf versions prior to v4 are no longer supported
-    hasBin: true
-
-  rock@0.12.10:
-    resolution: {integrity: sha512-czQFCzWJKI6G3CYK+3O7tbtFy97ZZaWEd4QwK40fs6/P/Mg38WBAE2jKrQ7/4tKt0VN377INK7i+Hp1PCVT+jg==}
     hasBin: true
 
   rollup@4.46.2:
@@ -7318,6 +7355,10 @@ packages:
   setprototypeof@1.2.0:
     resolution: {integrity: sha512-E5LDX7Wrp85Kil5bhZv46j8jOeboKq5JMmYM3gVGdGH8xFpPWXUMsNrlODCrkoxMEeNi/XZIwuRvY4XNwYMJpw==}
 
+  sf-symbols-typescript@2.2.0:
+    resolution: {integrity: sha512-TPbeg0b7ylrswdGCji8FRGFAKuqbpQlLbL8SOle3j1iHSs5Ob5mhvMAxWN2UItOjgALAB5Zp3fmMfj8mbWvXKw==}
+    engines: {node: '>=10'}
+
   shallow-clone@3.0.1:
     resolution: {integrity: sha512-/6KqX+GVUdqPuPPd2LxDDxzX6CAbjJehAAOKlNpqqUpAqPM6HeL8f+o3a+JsyGjn2lv0WY8UsTgUJjU9Ok55NA==}
     engines: {node: '>=8'}
@@ -7422,6 +7463,10 @@ packages:
   spawndamnit@3.0.1:
     resolution: {integrity: sha512-MmnduQUuHCoFckZoWnXsTg7JaiLBJrKFj9UI2MbRPGaJeVpsLcVBu6P/IGZovziM/YBsellCmsprgNA+w0CzVg==}
 
+  split-on-first@1.1.0:
+    resolution: {integrity: sha512-43ZssAJaMusuKWL8sKUBQXHWOpq8d6CfN/u1p4gUzfJkM05C8rxTmYrkIPTXapZpORA6LkkzcUulJ8FqA7Uudw==}
+    engines: {node: '>=6'}
+
   split2@4.2.0:
     resolution: {integrity: sha512-UcjcJOWknrNkF6PLX83qcHM6KHgVKNkV62Y8a5uYDVv9ydGQVwAHMKqHdJje1VTWpljG0WYpCDhrCdAOYH4TWg==}
     engines: {node: '>= 10.x'}
@@ -7478,6 +7523,10 @@ packages:
 
   streamx@2.20.1:
     resolution: {integrity: sha512-uTa0mU6WUC65iUvzKH4X9hEdvSW7rbPxPtwfWiLMSj3qTdQbAiUboZTxauKfpFuGIGa1C2BYijZ7wgdUXICJhA==}
+
+  strict-uri-encode@2.0.0:
+    resolution: {integrity: sha512-QwiXZgpRcKkhTj2Scnn++4PKtWsH0kpzZ62L2R6c/LUVYv7hVnZqcg2+sMuT6R7Jusu1vviK/MFsu6kNJfWlEQ==}
+    engines: {node: '>=4'}
 
   string-argv@0.3.2:
     resolution: {integrity: sha512-aqD2Q0144Z+/RqG52NeHEkZauTAUWJO8c6yTftGJKO3Tja5tUgIfmIl6kExvhtxSDP7fXB6DvzkfMpCd/F3G+Q==}
@@ -7603,6 +7652,7 @@ packages:
   tar@7.5.1:
     resolution: {integrity: sha512-nlGpxf+hv0v7GkWBK2V9spgactGOp0qvfWRxUMjqHyzrt3SgwE48DIv/FhqPHJYLHpgW1opq3nERbz5Anq7n1g==}
     engines: {node: '>=18'}
+    deprecated: Old versions of tar are not supported, and contain widely publicized security vulnerabilities, which have been fixed in the current version. Please update. Support for old versions may be purchased (at exorbitant rates) by contacting i@izs.me
 
   term-size@2.2.1:
     resolution: {integrity: sha512-wK0Ri4fOGjv/XPy8SBHZChl8CM7uMc5VML7SqiQ0zG7+J5Vr+RMQDoHa2CNT6KHUnTGIXH34UDMkPzAUyapBZg==}
@@ -7911,6 +7961,16 @@ packages:
 
   uri-js@4.4.1:
     resolution: {integrity: sha512-7rKUyy33Q1yc98pQ1DAmLtwX109F7TIfWlW1Ydo8Wl1ii1SeHieeh0HHfPeL2fMXK6z0s8ecKs9frCuLJvndBg==}
+
+  use-latest-callback@0.2.6:
+    resolution: {integrity: sha512-FvRG9i1HSo0wagmX63Vrm8SnlUU3LMM3WyZkQ76RnslpBrX694AdG4A0zQBx2B3ZifFA0yv/BaEHGBnEax5rZg==}
+    peerDependencies:
+      react: '>=16.8'
+
+  use-sync-external-store@1.6.0:
+    resolution: {integrity: sha512-Pp6GSwGP/NrPIrxVFAIkOQeyw8lFenOHijQWkUTrDvrF4ALqylP2C/KCkeS9dpUM3KvYRQhna5vt7IL95+ZQ9w==}
+    peerDependencies:
+      react: ^16.8.0 || ^17.0.0 || ^18.0.0 || ^19.0.0
 
   util-deprecate@1.0.2:
     resolution: {integrity: sha512-EPD5q1uXyFxJpCrLnCc1nHnq3gOa6DZBocAIiI2TaSCA7VCJ1UJDMagCzIkXNsUYfD1daK//LTEQ8xiIbrHtcw==}
@@ -9992,6 +10052,14 @@ snapshots:
 
   '@bcoe/v8-coverage@1.0.2': {}
 
+  '@bottom-tabs/react-navigation@1.1.0(@react-navigation/native@7.1.28(react-native@0.83.0(@babel/core@7.25.2)(@react-native/metro-config@0.83.0(@babel/core@7.25.2))(@types/react@19.2.7)(react@19.2.0))(react@19.2.0))(react-native-bottom-tabs@1.1.0(react-native@0.83.0(@babel/core@7.25.2)(@react-native/metro-config@0.83.0(@babel/core@7.25.2))(@types/react@19.2.7)(react@19.2.0))(react@19.2.0))(react-native@0.83.0(@babel/core@7.25.2)(@react-native/metro-config@0.83.0(@babel/core@7.25.2))(@types/react@19.2.7)(react@19.2.0))(react@19.2.0)':
+    dependencies:
+      '@react-navigation/native': 7.1.28(react-native@0.83.0(@babel/core@7.25.2)(@react-native/metro-config@0.83.0(@babel/core@7.25.2))(@types/react@19.2.7)(react@19.2.0))(react@19.2.0)
+      color: 5.0.3
+      react: 19.2.0
+      react-native: 0.83.0(@babel/core@7.25.2)(@react-native/metro-config@0.83.0(@babel/core@7.25.2))(@types/react@19.2.7)(react@19.2.0)
+      react-native-bottom-tabs: 1.1.0(react-native@0.83.0(@babel/core@7.25.2)(@react-native/metro-config@0.83.0(@babel/core@7.25.2))(@types/react@19.2.7)(react@19.2.0))(react@19.2.0)
+
   '@bufbuild/protobuf@2.2.3':
     optional: true
 
@@ -10015,7 +10083,7 @@ snapshots:
       - supports-color
       - utf-8-validate
 
-  '@callstack/repack@5.1.3(@babel/core@7.25.2)(@rspack/core@1.5.2(@swc/helpers@0.5.17))(react-native@0.83.0(@babel/core@7.25.2)(@react-native/metro-config@0.83.0(@babel/core@7.25.2))(@types/react@19.2.7)(react@19.2.3))(webpack@5.101.3)':
+  '@callstack/repack@5.1.3(@babel/core@7.25.2)(@rspack/core@1.6.8(@swc/helpers@0.5.17))(react-native@0.83.0(@babel/core@7.25.2)(@react-native/metro-config@0.83.0(@babel/core@7.25.2))(@types/react@19.2.7)(react@19.2.3))(webpack@5.101.3)':
     dependencies:
       '@callstack/repack-dev-server': 5.1.3
       '@discoveryjs/json-ext': 0.5.7
@@ -10042,7 +10110,7 @@ snapshots:
       throttleit: 2.1.0
       webpack-merge: 6.0.1
     optionalDependencies:
-      '@rspack/core': 1.5.2(@swc/helpers@0.5.17)
+      '@rspack/core': 1.6.8(@swc/helpers@0.5.17)
       webpack: 5.101.3
     transitivePeerDependencies:
       - '@babel/core'
@@ -11222,78 +11290,31 @@ snapshots:
     optionalDependencies:
       '@types/react': 19.2.7
 
-  '@rock-js/config@0.12.10':
+  '@react-navigation/core@7.14.0(react@19.2.0)':
     dependencies:
-      '@babel/code-frame': 7.27.1
-      '@rock-js/provider-github': 0.12.10
-      '@rock-js/tools': 0.12.10
-      joi: 17.13.3
-      tslib: 2.8.1
+      '@react-navigation/routers': 7.5.3
+      escape-string-regexp: 4.0.0
+      fast-deep-equal: 3.1.3
+      nanoid: 3.3.11
+      query-string: 7.1.3
+      react: 19.2.0
+      react-is: 19.2.4
+      use-latest-callback: 0.2.6(react@19.2.0)
+      use-sync-external-store: 1.6.0(react@19.2.0)
 
-  '@rock-js/platform-android@0.12.10':
+  '@react-navigation/native@7.1.28(react-native@0.83.0(@babel/core@7.25.2)(@react-native/metro-config@0.83.0(@babel/core@7.25.2))(@types/react@19.2.7)(react@19.2.0))(react@19.2.0)':
     dependencies:
-      '@react-native-community/cli-config-android': 20.0.2
-      '@rock-js/tools': 0.12.10
-      tslib: 2.8.1
-
-  '@rock-js/platform-apple-helpers@0.12.10(typescript@5.9.2)':
-    dependencies:
-      '@react-native-community/cli-config': 20.0.2(typescript@5.9.2)
-      '@react-native-community/cli-config-apple': 20.0.2
-      '@rock-js/tools': 0.12.10
-      adm-zip: 0.5.16
-      fast-xml-parser: 4.5.1
-      tslib: 2.8.1
-    transitivePeerDependencies:
-      - typescript
-
-  '@rock-js/platform-ios@0.12.10(typescript@5.9.2)':
-    dependencies:
-      '@react-native-community/cli-config-apple': 20.0.2
-      '@react-native-community/cli-types': 20.1.1
-      '@rock-js/platform-apple-helpers': 0.12.10(typescript@5.9.2)
-      '@rock-js/tools': 0.12.10
-      tslib: 2.8.1
-    transitivePeerDependencies:
-      - typescript
-
-  '@rock-js/plugin-metro@0.12.10':
-    dependencies:
-      '@react-native-community/cli-server-api': 20.0.2
-      '@rock-js/tools': 0.12.10
-      metro: 0.83.3
-      metro-config: 0.83.3
-      metro-core: 0.83.3
-      metro-resolver: 0.83.3
-      tslib: 2.8.1
-    transitivePeerDependencies:
-      - bufferutil
-      - supports-color
-      - utf-8-validate
-
-  '@rock-js/provider-github@0.12.10':
-    dependencies:
-      '@rock-js/tools': 0.12.10
-      ts-regex-builder: 1.8.2
-      tslib: 2.8.1
-
-  '@rock-js/tools@0.12.10':
-    dependencies:
-      '@clack/prompts': 0.11.0
-      adm-zip: 0.5.16
-      appdirsjs: 1.2.7
-      fs-fingerprint: 0.11.0
-      is-unicode-supported: 2.1.0
-      nano-spawn: 0.2.1
-      picocolors: 1.1.1
-      string-argv: 0.3.2
-      tar: 7.5.1
-      tslib: 2.8.1
-
-  '@rock-js/welcome-screen@0.12.10(react-native@0.83.0(@babel/core@7.25.2)(@react-native/metro-config@0.83.0(@babel/core@7.25.2))(@types/react@19.2.7)(react@19.2.0))(react@19.2.0)':
-    dependencies:
+      '@react-navigation/core': 7.14.0(react@19.2.0)
+      escape-string-regexp: 4.0.0
+      fast-deep-equal: 3.1.3
+      nanoid: 3.3.11
       react: 19.2.0
       react-native: 0.83.0(@babel/core@7.25.2)(@react-native/metro-config@0.83.0(@babel/core@7.25.2))(@types/react@19.2.7)(react@19.2.0)
+      use-latest-callback: 0.2.6(react@19.2.0)
+
+  '@react-navigation/routers@7.5.3':
+    dependencies:
+      nanoid: 3.3.11
 
   '@rollup/rollup-android-arm-eabi@4.46.2':
     optional: true
@@ -13503,9 +13524,24 @@ snapshots:
     dependencies:
       color-name: 1.1.4
 
+  color-convert@3.1.3:
+    dependencies:
+      color-name: 2.1.0
+
   color-name@1.1.3: {}
 
   color-name@1.1.4: {}
+
+  color-name@2.1.0: {}
+
+  color-string@2.1.4:
+    dependencies:
+      color-name: 2.1.0
+
+  color@5.0.3:
+    dependencies:
+      color-convert: 3.1.3
+      color-string: 2.1.4
 
   colorette@2.0.20: {}
 
@@ -13666,6 +13702,8 @@ snapshots:
   decode-named-character-reference@1.2.0:
     dependencies:
       character-entities: 2.0.2
+
+  decode-uri-component@0.2.2: {}
 
   dedent@0.7.0: {}
 
@@ -14428,6 +14466,8 @@ snapshots:
   fill-range@7.1.1:
     dependencies:
       to-regex-range: 5.0.1
+
+  filter-obj@1.1.0: {}
 
   finalhandler@1.1.2:
     dependencies:
@@ -16968,6 +17008,13 @@ snapshots:
     dependencies:
       side-channel: 1.1.0
 
+  query-string@7.1.3:
+    dependencies:
+      decode-uri-component: 0.2.2
+      filter-obj: 1.1.0
+      split-on-first: 1.1.0
+      strict-uri-encode: 2.0.0
+
   queue-microtask@1.2.3: {}
 
   queue-tick@1.0.1: {}
@@ -17004,6 +17051,10 @@ snapshots:
       react: 19.2.3
       scheduler: 0.27.0
 
+  react-freeze@1.0.4(react@19.2.0):
+    dependencies:
+      react: 19.2.0
+
   react-is@16.13.1: {}
 
   react-is@17.0.2: {}
@@ -17013,6 +17064,14 @@ snapshots:
   react-is@19.2.4: {}
 
   react-lazy-with-preload@2.2.1: {}
+
+  react-native-bottom-tabs@1.1.0(react-native@0.83.0(@babel/core@7.25.2)(@react-native/metro-config@0.83.0(@babel/core@7.25.2))(@types/react@19.2.7)(react@19.2.0))(react@19.2.0):
+    dependencies:
+      react: 19.2.0
+      react-freeze: 1.0.4(react@19.2.0)
+      react-native: 0.83.0(@babel/core@7.25.2)(@react-native/metro-config@0.83.0(@babel/core@7.25.2))(@types/react@19.2.7)(react@19.2.0)
+      sf-symbols-typescript: 2.2.0
+      use-latest-callback: 0.2.6(react@19.2.0)
 
   react-native@0.83.0(@babel/core@7.25.2)(@react-native/metro-config@0.83.0(@babel/core@7.25.2))(@types/react@19.2.7)(react@19.2.0):
     dependencies:
@@ -17371,18 +17430,6 @@ snapshots:
     dependencies:
       glob: 7.2.3
 
-  rock@0.12.10(typescript@5.9.2):
-    dependencies:
-      '@react-native-community/cli-config': 20.0.2(typescript@5.9.2)
-      '@rock-js/config': 0.12.10
-      '@rock-js/tools': 0.12.10
-      adm-zip: 0.5.16
-      commander: 12.1.0
-      tar: 7.5.1
-      tslib: 2.8.1
-    transitivePeerDependencies:
-      - typescript
-
   rollup@4.46.2:
     dependencies:
       '@types/estree': 1.0.8
@@ -17655,6 +17702,8 @@ snapshots:
 
   setprototypeof@1.2.0: {}
 
+  sf-symbols-typescript@2.2.0: {}
+
   shallow-clone@3.0.1:
     dependencies:
       kind-of: 6.0.3
@@ -17772,6 +17821,8 @@ snapshots:
       cross-spawn: 7.0.6
       signal-exit: 4.1.0
 
+  split-on-first@1.1.0: {}
+
   split2@4.2.0: {}
 
   sprintf-js@1.0.3: {}
@@ -17831,6 +17882,8 @@ snapshots:
       text-decoder: 1.2.0
     optionalDependencies:
       bare-events: 2.4.2
+
+  strict-uri-encode@2.0.0: {}
 
   string-argv@0.3.2: {}
 
@@ -18287,6 +18340,14 @@ snapshots:
   uri-js@4.4.1:
     dependencies:
       punycode: 2.3.1
+
+  use-latest-callback@0.2.6(react@19.2.0):
+    dependencies:
+      react: 19.2.0
+
+  use-sync-external-store@1.6.0(react@19.2.0):
+    dependencies:
+      react: 19.2.0
 
   util-deprecate@1.0.2: {}
 
