@@ -7,7 +7,7 @@
 
 import { createRequire } from 'node:module';
 import path from 'node:path';
-import { logger, RockError } from '@rock-js/tools';
+import { logger } from '@rock-js/tools';
 import type { ConfigT, InputConfigT, YargArguments } from 'metro-config';
 import { loadConfig, mergeConfig, resolveConfig } from 'metro-config';
 import { reactNativePlatformResolver } from './metroPlatformResolver.js';
@@ -115,8 +115,17 @@ export default async function loadMetroConfig(
   const cwd = ctx.root;
   const projectConfig = await resolveConfig(options.config, cwd);
 
+  // If no metro.config.js exists, use defaults from @react-native/metro-config
   if (projectConfig.isEmpty) {
-    throw new RockError(`No Metro config found in ${cwd}`);
+    logger.debug('No metro.config.js found, using default configuration');
+
+    if (typeof RNMetroConfig.setFrameworkDefaults === 'function') {
+      return defaultConfig;
+    } else {
+      // Fallback to the old API for RN < 0.81
+      const overrideConfig = getCommunityCliDefaultConfig(ctx, defaultConfig);
+      return mergeConfig(defaultConfig, overrideConfig);
+    }
   }
 
   logger.debug(`Reading Metro config from ${projectConfig.filepath}`);

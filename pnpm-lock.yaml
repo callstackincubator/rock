@@ -425,6 +425,9 @@ importers:
       '@react-native/dev-middleware':
         specifier: ^0.83.0
         version: 0.83.1
+      '@react-native/metro-config':
+        specifier: ^0.83.0
+        version: 0.83.0(@babel/core@7.25.2)
       '@rock-js/config':
         specifier: ^0.12.10
         version: link:../config
@@ -1023,10 +1026,6 @@ packages:
 
   '@babel/helper-skip-transparent-expression-wrappers@7.27.1':
     resolution: {integrity: sha512-Tub4ZKEXqbPjXgWLl2+3JpQAYBJ8+ikpQ2Ocj/q/r0LwE3UhENh7EUabyHjz2kCEsrRY83ew2DQdHluuiDQFzg==}
-    engines: {node: '>=6.9.0'}
-
-  '@babel/helper-string-parser@7.25.9':
-    resolution: {integrity: sha512-4A/SCr/2KLd5jrtOMFzaKjVtAei3+2r/NChoBNoZ3EyP/+GlhoaEGoWOZUmFmoITP7zOJyHIMm+DYRd8o3PvHA==}
     engines: {node: '>=6.9.0'}
 
   '@babel/helper-string-parser@7.27.1':
@@ -9992,8 +9991,6 @@ snapshots:
     transitivePeerDependencies:
       - supports-color
 
-  '@babel/helper-string-parser@7.25.9': {}
-
   '@babel/helper-string-parser@7.27.1': {}
 
   '@babel/helper-validator-identifier@7.27.1': {}
@@ -10024,7 +10021,7 @@ snapshots:
 
   '@babel/parser@7.26.7':
     dependencies:
-      '@babel/types': 7.26.7
+      '@babel/types': 7.29.0
 
   '@babel/parser@7.28.3':
     dependencies:
@@ -10768,7 +10765,7 @@ snapshots:
 
   '@babel/types@7.26.7':
     dependencies:
-      '@babel/helper-string-parser': 7.25.9
+      '@babel/helper-string-parser': 7.27.1
       '@babel/helper-validator-identifier': 7.28.5
 
   '@babel/types@7.28.2':

@@ -30,6 +30,7 @@
   "devDependencies": {
     "@react-native/dev-middleware": "^0.83.0",
     "@react-native/community-cli-plugin": "0.83.0",
+    "@react-native/metro-config": "^0.83.0",
     "@rock-js/config": "^0.12.10"
   },
   "publishConfig": {
