@@ -1,5 +1,14 @@
 # @rnef/platform-ios
 
+## 0.12.11
+
+### Patch Changes
+
+- ddf9194: feat: add Expo Config Plugins support
+- Updated dependencies [ddf9194]
+  - @rock-js/tools@0.12.11
+  - @rock-js/platform-apple-helpers@0.12.11
+
 ## 0.12.10
 
 ### Patch Changes

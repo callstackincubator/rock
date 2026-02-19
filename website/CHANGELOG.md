@@ -1,5 +1,11 @@
 # rock-docs
 
+## 1.4.4
+
+### Patch Changes
+
+- daabdeb: feat: use metro config from plugin-metro; make config optional
+
 ## 1.4.3
 
 ### Patch Changes

@@ -1,5 +1,13 @@
 # @rnef/plugin-metro
 
+## 0.12.11
+
+### Patch Changes
+
+- daabdeb: feat: use metro config from plugin-metro; make config optional
+- Updated dependencies [ddf9194]
+  - @rock-js/tools@0.12.11
+
 ## 0.12.10
 
 ### Patch Changes
