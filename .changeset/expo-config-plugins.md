@@ -1,5 +1,5 @@
 ---
-'@rock-js/plugin-expo-config-plugins': minor
+'@rock-js/plugin-expo-config-plugins': patch
 '@rock-js/tools': patch
 '@rock-js/platform-ios': patch
 ---
