@@ -82,7 +82,7 @@ describe('regenNativeDirs', () => {
 
     // Should not use parent directory name
     await expect(
-      fs.access(path.join(tempDir, 'ios', 'mobile.xcodeproj')),
+      fs.access(path.join(tempDir, 'ios', 'Mobile.xcodeproj')),
     ).rejects.toThrow();
 
     const pbxproj = await fs.readFile(
@@ -103,7 +103,7 @@ describe('regenNativeDirs', () => {
     await regenNativeDirs(getApi(tempDir));
 
     await expect(
-      fs.access(path.join(tempDir, 'ios', 'mobile.xcodeproj')),
+      fs.access(path.join(tempDir, 'ios', 'Mobile.xcodeproj')),
     ).resolves.toBeUndefined();
   });
 });
