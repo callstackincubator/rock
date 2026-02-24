@@ -1,5 +1,12 @@
 # rock
 
+## 0.12.12
+
+### Patch Changes
+
+- @rock-js/config@0.12.12
+- @rock-js/tools@0.12.12
+
 ## 0.12.11
 
 ### Patch Changes

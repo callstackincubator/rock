@@ -1,6 +1,6 @@
 {
   "name": "@rock-js/platform-apple-helpers",
-  "version": "0.12.11",
+  "version": "0.12.12",
   "description": "Shared utilities and helpers for Apple platforms (iOS/macOS/tvOS/visionOS) in Rock",
   "type": "module",
   "types": "./dist/src/index.d.ts",
@@ -20,14 +20,14 @@
   "dependencies": {
     "@react-native-community/cli-config": "^20.0.0",
     "@react-native-community/cli-config-apple": "^20.0.0",
-    "@rock-js/tools": "^0.12.11",
+    "@rock-js/tools": "^0.12.12",
     "adm-zip": "^0.5.16",
     "fast-xml-parser": "^4.5.0",
     "tslib": "^2.3.0"
   },
   "devDependencies": {
     "@react-native-community/cli-types": "^20.0.0",
-    "@rock-js/config": "^0.12.11",
+    "@rock-js/config": "^0.12.12",
     "@types/adm-zip": "^0.5.7"
   },
   "publishConfig": {
