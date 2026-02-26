@@ -25,6 +25,10 @@ import {
   templateIndexHtmlIOS,
   templateManifestPlist,
 } from '../adHocTemplates.js';
+import {
+  promptRemoteCacheProvider,
+  promptRemoteCacheProviderArgs,
+} from '../utils/prompts.js';
 
 type Flags = {
   platform?: 'ios' | 'android';
@@ -317,6 +321,25 @@ ${deletedArtifacts
       console.log(remoteBuildCache.name);
       break;
     }
+    case 'setup': {
+      if (remoteBuildCache) {
+        console.log(
+          `You already have a remote build cache setup with ${remoteBuildCache.name}`,
+        );
+        break;
+      }
+
+      // Prompt duplicates from https://github.com/callstack/rock/blob/626ccf8f585afeec323e17727bc541ddbed829bf/packages/create-app/src/lib/utils/prompts.ts
+      const provider = await promptRemoteCacheProvider();
+      const args = provider
+        ? await promptRemoteCacheProviderArgs(provider)
+        : null;
+
+      // Setup remote build cache
+      // await remoteBuildCache.setup(providerName, args);
+      console.log(`Remote build cache setup with ${provider}: ${args}`);
+      break;
+    }
   }
 
   return null;
@@ -503,7 +526,7 @@ export const remoteCachePlugin =
         {
           name: '[action]',
           description:
-            'Select action, e.g. list, list-all, download, upload, delete, get-provider-name',
+            'Select action, e.g. setup, list, list-all, download, upload, delete, get-provider-name',
         },
       ],
       options: [
@@ -532,7 +555,7 @@ export const remoteCachePlugin =
         },
         {
           name: '-t, --traits <list>',
-          description: `Comma-separated traits that construct final artifact name. Traits for Android are: variant; for iOS: destination and configuration. 
+          description: `Comma-separated traits that construct final artifact name. Traits for Android are: variant; for iOS: destination and configuration.
 Example iOS: --traits simulator,Release
 Example Android: --traits debug
 Example Harmony: --traits debug`,
