@@ -1,5 +1,12 @@
 # @rock-js/plugin-expo-config-plugins
 
+## 0.12.13
+
+### Patch Changes
+
+- 600e56e: Remove committed iOS and Android directories in the test app and regenerate during tests
+  - @rock-js/tools@0.12.13
+
 ## 0.12.12
 
 ### Patch Changes
