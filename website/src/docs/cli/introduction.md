@@ -405,11 +405,11 @@ The `config` command outputs the autolinking configuration from Community CLI, w
 
 ### `rock clean` Options
 
-The `clean` command helps you free up disk space by removing various caches and temporary files from your React Native project. It can clean Android (Gradle), iOS (CocoaPods), Metro, Watchman, Rock's own project caches, and package manager caches.
+The `clean` command helps you free up disk space by removing various caches and temporary files from your React Native project. It can clean Android (Gradle), iOS (CocoaPods), Metro, Watchman, Rock's own project caches, package manager caches, and CCache compiler cache.
 
 | Option               | Description                                                                                                                                             |
 | :------------------- | :------------------------------------------------------------------------------------------------------------------------------------------------------ |
-| `--include <string>` | Comma-separated list of caches to clean. Available options: `android`, `gradle`, `cocoapods`, `metro`, `watchman`, `npm`, `yarn`, `bun`, `pnpm`, `rock` |
+| `--include <string>` | Comma-separated list of caches to clean. Available options: `android`, `gradle`, `cocoapods`, `metro`, `watchman`, `npm`, `yarn`, `bun`, `pnpm`, `rock`, `ccache` |
 | `--verify-cache`     | Whether to verify the cache (currently only applies to npm cache)                                                                                       |
 | `--all`              | Clean all available caches without interactive prompt                                                                                                   |
 
