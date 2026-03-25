@@ -1,6 +1,6 @@
 {
   "name": "@rock-js/welcome-screen",
-  "version": "0.12.12",
+  "version": "0.12.13",
   "description": "Welcome screen component for Rock React Native applications",
   "type": "module",
   "main": "./dist/src/index.jsx",
