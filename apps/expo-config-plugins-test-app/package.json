@@ -1,6 +1,6 @@
 {
   "name": "expo-config-plugins-test-app",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "private": true,
   "scripts": {
     "start": "rock start",
@@ -24,10 +24,10 @@
     "@react-native/eslint-config": "0.83.0",
     "@react-native/metro-config": "0.83.0",
     "@react-native/typescript-config": "0.83.0",
-    "@rock-js/platform-android": "^0.12.10",
-    "@rock-js/platform-ios": "^0.12.10",
-    "@rock-js/plugin-metro": "^0.12.10",
-    "@rock-js/welcome-screen": "^0.12.10",
+    "@rock-js/platform-android": "^0.12.13",
+    "@rock-js/platform-ios": "^0.12.13",
+    "@rock-js/plugin-metro": "^0.12.13",
+    "@rock-js/welcome-screen": "^0.12.13",
     "@types/react": "^19.2.0",
     "@types/react-test-renderer": "^19.1.0",
     "babel-jest": "^29.6.3",
@@ -35,7 +35,7 @@
     "jest": "^29.6.3",
     "prettier": "2.8.8",
     "react-test-renderer": "19.2.0",
-    "rock": "^0.12.10",
+    "rock": "^0.12.13",
     "typescript": "^5.8.3"
   },
   "engines": {
