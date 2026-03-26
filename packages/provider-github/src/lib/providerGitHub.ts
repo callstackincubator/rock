@@ -3,7 +3,11 @@ import {
   deleteGitHubArtifacts,
   fetchGitHubArtifactsByName,
 } from './artifacts.js';
-import { detectGitHubRepoDetails, type GitHubRepoDetails } from './config.js';
+import {
+  detectGitHubRepoDetails,
+  getGitHubCLIToken,
+  type GitHubRepoDetails,
+} from './config.js';
 
 export class GitHubBuildCache implements RemoteBuildCache {
   name = 'GitHub';
@@ -12,22 +16,40 @@ export class GitHubBuildCache implements RemoteBuildCache {
   constructor(config?: { owner: string; repository: string; token: string }) {
     if (config) {
       const token = config.token || process.env['GITHUB_TOKEN'];
-      if (!token) {
-        throw new Error(
-          'GitHub Personal Access Token is required to fetch remote cache. Configure `GITHUB_TOKEN` variable in .env file or pass it as a `token` argument.',
-        );
+      if (token) {
+        this.repoDetails = {
+          owner: config.owner,
+          repository: config.repository,
+          token,
+        };
+      } else {
+        // Defer token resolution to getRepoDetails() so we can await getGitHubCLIToken()
+        this.repoDetails = null;
+        this._pendingConfig = config;
       }
-      this.repoDetails = {
-        owner: config.owner,
-        repository: config.repository,
-        token,
-      };
     }
   }
 
+  private _pendingConfig?: { owner: string; repository: string; token: string };
+
   async getRepoDetails() {
     if (!this.repoDetails) {
-      this.repoDetails = await detectGitHubRepoDetails();
+      if (this._pendingConfig) {
+        const cliToken = await getGitHubCLIToken();
+        if (!cliToken) {
+          throw new Error(
+            'GitHub Personal Access Token is required to fetch remote cache. Configure `GITHUB_TOKEN` variable in .env file, pass it as a `token` argument, or authenticate with GitHub CLI (`gh auth login`).',
+          );
+        }
+        this.repoDetails = {
+          owner: this._pendingConfig.owner,
+          repository: this._pendingConfig.repository,
+          token: cliToken,
+        };
+        this._pendingConfig = undefined;
+      } else {
+        this.repoDetails = await detectGitHubRepoDetails();
+      }
     }
     return this.repoDetails;
   }

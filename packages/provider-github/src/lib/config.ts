@@ -25,6 +25,22 @@ export function getGitHubToken(): string | undefined {
   return cacheManager.get('githubToken');
 }
 
+export async function getGitHubCLIToken(): Promise<string | undefined> {
+  try {
+    const { output: token } = await spawn('gh', ['auth', 'token'], {
+      stdio: 'pipe',
+    });
+    const trimmed = token.trim();
+    if (trimmed) {
+      logger.info('Using GitHub token from GitHub CLI (`gh auth token`).');
+      return trimmed;
+    }
+  } catch {
+    // gh CLI not installed or not authenticated — fall through
+  }
+  return undefined;
+}
+
 export async function promptForGitHubToken() {
   const githubToken = (await promptPassword({
     message: 'Paste your GitHub Personal Access Token',
@@ -61,12 +77,14 @@ export async function detectGitHubRepoDetails(): Promise<GitHubRepoDetails> {
         `The remote URL "${url}" doesn't look like a GitHub repo.`,
       );
     }
-    let token = getGitHubToken();
+    let token = getGitHubToken() ?? (await getGitHubCLIToken());
     if (!token) {
       logger.warn(
         `No GitHub Personal Access Token found necessary to download cached builds.
-Please generate one at: ${colorLink('https://github.com/settings/tokens')}
-Include "repo", "workflow", and "read:org" permissions.`,
+You can either:
+  - Install GitHub CLI and authenticate with ${colorLink('gh auth login')}
+  - Generate a token at: ${colorLink('https://github.com/settings/tokens')}
+    Include "repo", "workflow", and "read:org" permissions.`,
       );
       token = await promptForGitHubToken();
     }
