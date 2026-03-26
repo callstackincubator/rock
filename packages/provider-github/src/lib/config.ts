@@ -77,8 +77,7 @@ export async function detectGitHubRepoDetails(): Promise<GitHubRepoDetails> {
         `The remote URL "${url}" doesn't look like a GitHub repo.`,
       );
     }
-    let token =
-      getGitHubToken() ?? process.env['GITHUB_TOKEN'] ?? (await getGitHubCLIToken());
+    let token = getGitHubToken() ?? (await getGitHubCLIToken());
     if (!token) {
       logger.warn(
         `No GitHub Personal Access Token found necessary to download cached builds.
