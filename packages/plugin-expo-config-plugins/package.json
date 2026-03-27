@@ -19,6 +19,7 @@
   },
   "dependencies": {
     "@expo/config-plugins": "^10.1.2",
+    "@expo/prebuild-config": "^55.0.10",
     "@rock-js/tools": "^0.12.12",
     "tslib": "^2.3.0"
   },
