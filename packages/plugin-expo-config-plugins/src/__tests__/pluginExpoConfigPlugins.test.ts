@@ -11,7 +11,7 @@ import {
   withDefaultBaseMods,
   withPlugins,
 } from '../lib/ExpoConfigPlugins.js';
-import { withIosIcons } from '../lib/ExpoPrebuildConfig.js';
+import { withAndroidIcons, withIosIcons } from '../lib/ExpoPrebuildConfig.js';
 import { pluginExpoConfigPlugins } from '../lib/pluginExpoConfigPlugins.js';
 import { withAndroidExpoPlugins } from '../lib/plugins/modCompiler.js';
 import { withInternal } from '../lib/plugins/withInternal.js';
@@ -1673,7 +1673,51 @@ describe('plugin applies default Android config plugins correctly', () => {
 
   test.skip('withEdgeToEdge', async () => {});
 
-  test.skip('withAndroidIcons', async () => {});
+  test('withAndroidIcons', async () => {
+    const { appJsonConfig, info } = await getTestConfig();
+    let config = withInternal(appJsonConfig, info);
+
+    config.icon = path.join(
+      WORKSPACE_ROOT,
+      'packages',
+      'welcome-screen',
+      'src',
+      'assets',
+      'rock.png',
+    );
+
+    config = withPlugins(config, [withAndroidIcons]);
+
+    config = withDefaultBaseMods(config);
+
+    const userProvidedIconPath = path.join(
+      TEMP_DIR,
+      'android',
+      'app',
+      'src',
+      'main',
+      'res',
+      'mipmap-mdpi',
+      'ic_launcher.webp',
+    );
+    const rockTemplateIconPath = path.join(
+      TEMP_DIR,
+      'android',
+      'app',
+      'src',
+      'main',
+      'res',
+      'mipmap-mdpi',
+      'ic_launcher.png',
+    );
+    await expect(fs.access(rockTemplateIconPath)).resolves.toBeUndefined();
+    await expect(fs.access(userProvidedIconPath)).rejects.toThrow();
+
+    await evalModsAsync(config, info);
+
+    await expect(fs.access(rockTemplateIconPath)).rejects.toThrow();
+    await expect(fs.access(userProvidedIconPath)).resolves.toBeUndefined();
+  });
 
   test('withPrimaryColor', async () => {
     const { appJsonConfig, info } = await getTestConfig();

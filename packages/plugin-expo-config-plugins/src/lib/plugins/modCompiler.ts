@@ -9,7 +9,7 @@ import {
   type withDefaultBaseMods as expoWithDefaultBaseMods,
   withPlugins,
 } from '../ExpoConfigPlugins.js';
-import { withIosIcons } from '../ExpoPrebuildConfig.js';
+import { withAndroidIcons, withIosIcons } from '../ExpoPrebuildConfig.js';
 import type { ProjectInfo } from '../types.js';
 import { getAndroidModFileProviders } from './withAndroidBaseMods.js';
 import { getIosModFileProviders } from './withIosBaseMods.js';
@@ -116,7 +116,7 @@ export const withAndroidExpoPlugins: ConfigPlugin<{
     AndroidConfig.PrimaryColor.withPrimaryColor,
     // (config) => withEdgeToEdge(config, props),
 
-    // withAndroidIcons,
+    withAndroidIcons,
     // If we renamed the package, we should also move it around and rename it in source files
     // Added last to ensure this plugin runs first. Out of tree solutions will mistakenly resolve the package incorrectly otherwise.
     AndroidConfig.Package.withPackageRefactor,
