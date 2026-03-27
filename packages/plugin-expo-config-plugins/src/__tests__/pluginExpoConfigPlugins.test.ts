@@ -11,6 +11,7 @@ import {
   withDefaultBaseMods,
   withPlugins,
 } from '../lib/ExpoConfigPlugins.js';
+import { withIosIcons } from '../lib/ExpoPrebuildConfig.js';
 import { pluginExpoConfigPlugins } from '../lib/pluginExpoConfigPlugins.js';
 import { withAndroidExpoPlugins } from '../lib/plugins/modCompiler.js';
 import { withInternal } from '../lib/plugins/withInternal.js';
@@ -856,6 +857,51 @@ describe('plugin applies default iOS config plugins correctly', () => {
     // Check that development team was updated
     const changedProjectContent = await fs.readFile(projectPbxprojPath, 'utf8');
     expect(changedProjectContent).toContain(config.ios?.appleTeamId);
+  });
+
+  test('withIosIcons', async () => {
+    const { appJsonConfig, info } = await getTestConfig();
+    let config = withInternal(appJsonConfig, info);
+
+    config.icon = path.join(
+      WORKSPACE_ROOT,
+      'packages',
+      'welcome-screen',
+      'src',
+      'assets',
+      'rock.png',
+    );
+
+    config = withPlugins(config, [withIosIcons]);
+
+    config = withDefaultBaseMods(config);
+
+    const appIconSetPath = path.join(
+      TEMP_DIR,
+      'ios',
+      info.iosProjectName,
+      'Images.xcassets',
+      'AppIcon.appiconset',
+    );
+    const marketingIconFilename = 'App-Icon-1024x1024@1x.png';
+    const marketingIconPath = path.join(appIconSetPath, marketingIconFilename);
+    const initialContents = await fs.readFile(
+      path.join(appIconSetPath, 'Contents.json'),
+      'utf8',
+    );
+
+    expect(initialContents).not.toContain(marketingIconFilename);
+    await expect(fs.access(marketingIconPath)).rejects.toThrow();
+
+    await evalModsAsync(config, info);
+
+    const changedContents = await fs.readFile(
+      path.join(appIconSetPath, 'Contents.json'),
+      'utf8',
+    );
+
+    expect(changedContents).toContain(marketingIconFilename);
+    await expect(fs.access(marketingIconPath)).resolves.toBeUndefined();
   });
 
   test('withPrivacyInfo', async () => {

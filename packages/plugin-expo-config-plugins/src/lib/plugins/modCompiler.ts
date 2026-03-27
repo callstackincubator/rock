@@ -9,6 +9,7 @@ import {
   type withDefaultBaseMods as expoWithDefaultBaseMods,
   withPlugins,
 } from '../ExpoConfigPlugins.js';
+import { withIosIcons } from '../ExpoPrebuildConfig.js';
 import type { ProjectInfo } from '../types.js';
 import { getAndroidModFileProviders } from './withAndroidBaseMods.js';
 import { getIosModFileProviders } from './withIosBaseMods.js';
@@ -58,7 +59,7 @@ export const withIosExpoPlugins: ConfigPlugin<{
     IOSConfig.Locales.withLocales,
     IOSConfig.DevelopmentTeam.withDevelopmentTeam,
     // Dangerous
-    // withIosIcons,
+    withIosIcons,
     IOSConfig.PrivacyInfo.withPrivacyInfo,
   ]);
 };
