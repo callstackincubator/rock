@@ -110,16 +110,16 @@ importers:
         specifier: 0.83.0
         version: 0.83.0
       '@rock-js/platform-android':
-        specifier: ^0.12.10
+        specifier: ^0.13.0
         version: link:../../packages/platform-android
       '@rock-js/platform-ios':
-        specifier: ^0.12.10
+        specifier: ^0.13.0
         version: link:../../packages/platform-ios
       '@rock-js/plugin-metro':
-        specifier: ^0.12.10
+        specifier: ^0.13.0
         version: link:../../packages/plugin-metro
       '@rock-js/welcome-screen':
-        specifier: ^0.12.10
+        specifier: ^0.13.0
         version: link:../../packages/welcome-screen
       '@types/react':
         specifier: ^19.2.0
@@ -143,7 +143,7 @@ importers:
         specifier: 19.2.0
         version: 19.2.0(react@19.2.0)
       rock:
-        specifier: ^0.12.10
+        specifier: ^0.13.0
         version: link:../../packages/cli
       typescript:
         specifier: ^5.8.3
@@ -155,10 +155,10 @@ importers:
         specifier: ^20.0.0
         version: 20.0.2(typescript@5.9.2)
       '@rock-js/config':
-        specifier: ^0.12.12
+        specifier: ^0.13.0
         version: link:../config
       '@rock-js/tools':
-        specifier: ^0.12.12
+        specifier: ^0.13.0
         version: link:../tools
       adm-zip:
         specifier: ^0.5.16
@@ -186,10 +186,10 @@ importers:
         specifier: ^7.26.2
         version: 7.29.0
       '@rock-js/provider-github':
-        specifier: ^0.12.12
+        specifier: ^0.13.0
         version: link:../provider-github
       '@rock-js/tools':
-        specifier: ^0.12.12
+        specifier: ^0.13.0
         version: link:../tools
       joi:
         specifier: ^17.13.3
@@ -199,7 +199,7 @@ importers:
         version: 2.8.1
     devDependencies:
       '@rock-js/test-helpers':
-        specifier: ^0.12.12
+        specifier: ^0.13.0
         version: link:../test-helpers
       '@types/babel__code-frame':
         specifier: ^7.0.6
@@ -208,10 +208,10 @@ importers:
   packages/create-app:
     devDependencies:
       '@rock-js/test-helpers':
-        specifier: ^0.12.12
+        specifier: ^0.13.0
         version: link:../test-helpers
       '@rock-js/tools':
-        specifier: ^0.12.12
+        specifier: ^0.13.0
         version: link:../tools
       '@rslib/core':
         specifier: ^0.13.0
@@ -241,7 +241,7 @@ importers:
         specifier: ^20.0.0
         version: 20.0.2
       '@rock-js/tools':
-        specifier: ^0.12.12
+        specifier: ^0.13.0
         version: link:../tools
       tslib:
         specifier: ^2.3.0
@@ -251,7 +251,7 @@ importers:
         specifier: ^20.0.0
         version: 20.1.1
       '@rock-js/config':
-        specifier: ^0.12.12
+        specifier: ^0.13.0
         version: link:../config
 
   packages/platform-apple-helpers:
@@ -263,7 +263,7 @@ importers:
         specifier: ^20.0.0
         version: 20.0.2
       '@rock-js/tools':
-        specifier: ^0.12.12
+        specifier: ^0.13.0
         version: link:../tools
       adm-zip:
         specifier: ^0.5.16
@@ -279,7 +279,7 @@ importers:
         specifier: ^20.0.0
         version: 20.1.1
       '@rock-js/config':
-        specifier: ^0.12.12
+        specifier: ^0.13.0
         version: link:../config
       '@types/adm-zip':
         specifier: ^0.5.7
@@ -288,7 +288,7 @@ importers:
   packages/platform-harmony:
     dependencies:
       '@rock-js/tools':
-        specifier: ^0.12.12
+        specifier: ^0.13.0
         version: link:../tools
       json5:
         specifier: ^2.2.3
@@ -301,7 +301,7 @@ importers:
         specifier: ^20.0.0
         version: 20.1.1
       '@rock-js/config':
-        specifier: ^0.12.12
+        specifier: ^0.13.0
         version: link:../config
 
   packages/platform-ios:
@@ -313,17 +313,17 @@ importers:
         specifier: ^20.0.0
         version: 20.1.1
       '@rock-js/platform-apple-helpers':
-        specifier: ^0.12.12
+        specifier: ^0.13.0
         version: link:../platform-apple-helpers
       '@rock-js/tools':
-        specifier: ^0.12.12
+        specifier: ^0.13.0
         version: link:../tools
       tslib:
         specifier: ^2.3.0
         version: 2.8.1
     devDependencies:
       '@rock-js/config':
-        specifier: ^0.12.12
+        specifier: ^0.13.0
         version: link:../config
 
   packages/plugin-brownfield-android:
@@ -332,10 +332,10 @@ importers:
         specifier: ^20.0.0
         version: 20.0.2
       '@rock-js/platform-android':
-        specifier: ^0.12.12
+        specifier: ^0.13.0
         version: link:../platform-android
       '@rock-js/tools':
-        specifier: ^0.12.12
+        specifier: ^0.13.0
         version: link:../tools
       tslib:
         specifier: ^2.3.0
@@ -345,7 +345,7 @@ importers:
         specifier: ^20.0.0
         version: 20.1.1
       '@rock-js/config':
-        specifier: ^0.12.12
+        specifier: ^0.13.0
         version: link:../config
 
   packages/plugin-brownfield-ios:
@@ -357,17 +357,17 @@ importers:
         specifier: ^20.0.0
         version: 20.1.1
       '@rock-js/platform-apple-helpers':
-        specifier: ^0.12.12
+        specifier: ^0.13.0
         version: link:../platform-apple-helpers
       '@rock-js/tools':
-        specifier: ^0.12.12
+        specifier: ^0.13.0
         version: link:../tools
       tslib:
         specifier: ^2.3.0
         version: 2.8.1
     devDependencies:
       '@rock-js/config':
-        specifier: ^0.12.12
+        specifier: ^0.13.0
         version: link:../config
 
   packages/plugin-expo-config-plugins:
@@ -379,17 +379,17 @@ importers:
         specifier: ^55.0.10
         version: 55.0.10(expo@54.0.33(@babel/core@7.25.2)(react-native@0.83.0(@babel/core@7.25.2)(@react-native/metro-config@0.83.0(@babel/core@7.25.2))(@types/react@19.2.7)(react@19.2.3))(react@19.2.3))(typescript@5.9.2)
       '@rock-js/tools':
-        specifier: ^0.12.12
+        specifier: ^0.13.0
         version: link:../tools
       tslib:
         specifier: ^2.3.0
         version: 2.8.1
     devDependencies:
       '@rock-js/config':
-        specifier: ^0.12.12
+        specifier: ^0.13.0
         version: link:../config
       '@rock-js/test-helpers':
-        specifier: ^0.12.12
+        specifier: ^0.13.0
         version: link:../test-helpers
       '@types/plist':
         specifier: ^3.0.5
@@ -404,7 +404,7 @@ importers:
         specifier: ^20.0.0
         version: 20.0.2
       '@rock-js/tools':
-        specifier: ^0.12.12
+        specifier: ^0.13.0
         version: link:../tools
       metro:
         specifier: ^0.83.3
@@ -432,7 +432,7 @@ importers:
         specifier: ^0.83.0
         version: 0.83.0(@babel/core@7.25.2)
       '@rock-js/config':
-        specifier: ^0.12.12
+        specifier: ^0.13.0
         version: link:../config
 
   packages/plugin-repack:
@@ -441,7 +441,7 @@ importers:
         specifier: '>=5'
         version: 5.1.3(@babel/core@7.25.2)(@rspack/core@1.6.8(@swc/helpers@0.5.17))(react-native@0.83.0(@babel/core@7.25.2)(@react-native/metro-config@0.83.0(@babel/core@7.25.2))(@types/react@19.2.7)(react@19.2.3))(webpack@5.101.3)
       '@rock-js/tools':
-        specifier: ^0.12.12
+        specifier: ^0.13.0
         version: link:../tools
       '@rspack/core':
         specifier: '>=1.2.8'
@@ -454,13 +454,13 @@ importers:
         version: 2.8.1
     devDependencies:
       '@rock-js/config':
-        specifier: ^0.12.12
+        specifier: ^0.13.0
         version: link:../config
 
   packages/provider-github:
     dependencies:
       '@rock-js/tools':
-        specifier: ^0.12.12
+        specifier: ^0.13.0
         version: link:../tools
       ts-regex-builder:
         specifier: ^1.8.2
@@ -487,7 +487,7 @@ importers:
         specifier: ^3.830.0
         version: 3.830.0
       '@rock-js/tools':
-        specifier: ^0.12.12
+        specifier: ^0.13.0
         version: link:../tools
       tslib:
         specifier: ^2.3.0
@@ -533,7 +533,7 @@ importers:
         version: 2.8.1
     devDependencies:
       '@rock-js/test-helpers':
-        specifier: ^0.12.12
+        specifier: ^0.13.0
         version: link:../test-helpers
       '@types/adm-zip':
         specifier: ^0.5.7
@@ -2077,14 +2077,8 @@ packages:
   '@expo/image-utils@0.8.12':
     resolution: {integrity: sha512-3KguH7kyKqq7pNwLb9j6BBdD/bjmNwXZG/HPWT6GWIXbwrvAJt2JNyYTP5agWJ8jbbuys1yuCzmkX+TU6rmI7A==}
 
-  '@expo/image-utils@0.8.8':
-    resolution: {integrity: sha512-HHHaG4J4nKjTtVa1GG9PCh763xlETScfEyNxxOvfTRr8IKPJckjTyqSLEtdJoFNJ1vqiABEjW7tqGhqGibZLeA==}
-
   '@expo/json-file@10.0.12':
     resolution: {integrity: sha512-inbDycp1rMAelAofg7h/mMzIe+Owx6F7pur3XdQ3EPTy00tme+4P6FWgHKUcjN8dBSrnbRNpSyh5/shzHyVCyQ==}
-
-  '@expo/json-file@10.0.8':
-    resolution: {integrity: sha512-9LOTh1PgKizD1VXfGQ88LtDH0lRwq9lsTb4aichWTWSWqy3Ugfkhfm3BhzBIkJJfQQ5iJu3m/BoRlEIjoCGcnQ==}
 
   '@expo/json-file@9.1.5':
     resolution: {integrity: sha512-prWBhLUlmcQtvN6Y7BpW2k9zXGd3ySa3R6rAguMJkp1z22nunLN64KYTUWfijFlprFoxm9r2VNnGkcbndAlgKA==}
@@ -4583,10 +4577,6 @@ packages:
     resolution: {integrity: sha512-uV2QOWP2nWzsy2aMp8aRibhi9dlzF5Hgh5SHaB9OiTGEyDTiJJyx0uy51QXdyWbtAHNua4XJzUKca3OzKUd3vA==}
     engines: {node: '>= 8'}
 
-  crypto-random-string@2.0.0:
-    resolution: {integrity: sha512-v1plID3y9r/lPhviJ1wrXpLeyUIGAZ2SHNYTEapm7/8A9nLPoyvVp3RK/EPFqn5kEznyWgYZNsRtYYIWbuG8KA==}
-    engines: {node: '>=8'}
-
   csstype@3.2.3:
     resolution: {integrity: sha512-z1HGKcYy2xA8AGQfwrn0PAy+PB7X/GSj3UVJW9qKyn43xWa+gl5nXmU4qqLMRzWVLFC8KusUX8T/0kCiOYpAIQ==}
 
@@ -5531,10 +5521,6 @@ packages:
   glob@7.2.3:
     resolution: {integrity: sha512-nFR0zLpU2YCaRxwoCJvL6UvCH2JFyFVIvwTLsIf21AuHlMskA1hhTdk+LlYJtOlYt9v6dvszD2BGRqBL+iQK9Q==}
     deprecated: Old versions of glob are not supported, and contain widely publicized security vulnerabilities, which have been fixed in the current version. Please update. Support for old versions may be purchased (at exorbitant rates) by contacting i@izs.me
-
-  global-dirs@0.1.1:
-    resolution: {integrity: sha512-NknMLn7F2J7aflwFOlGdNIuCDpN3VGoSoB+aap3KABFWbHVn1TCgFC+np23J8W2BiZbjfEw3BFBycSMv1AFblg==}
-    engines: {node: '>=4'}
 
   globals@13.24.0:
     resolution: {integrity: sha512-AhO5QUcj8llrbG09iWhPU2B204J1xnPeL8kQmVorSsy+Sjj1sk8gIyh6cUocGmH4L0UuhAJy+hJMRA4mgA4mFQ==}
@@ -7610,10 +7596,6 @@ packages:
     resolution: {integrity: sha512-qYg9KP24dD5qka9J47d0aVky0N+b4fTU89LN9iDnjB5waksiC49rvMB0PrUJQGoTmH50XPiqOvAjDfaijGxYZw==}
     engines: {node: '>=8'}
 
-  resolve-global@1.0.0:
-    resolution: {integrity: sha512-zFa12V4OLtT5XUX/Q4VLvTfBf+Ok0SPc1FNGM/z9ctUdiU618qwKpWnd0CHs3+RqROfyEg/DhuHbMWYqcgljEw==}
-    engines: {node: '>=8'}
-
   resolve-workspace-root@2.0.1:
     resolution: {integrity: sha512-nR23LHAvaI6aHtMg6RWoaHpdR4D881Nydkzi2CixINyg9T00KgaJdJI6Vwty+Ps8WLxZHuxsS0BseWjxSA4C+w==}
 
@@ -8242,10 +8224,6 @@ packages:
     resolution: {integrity: sha512-BTLcK0xsDh2+PUe9F6c2TlRp4zOOBMTkoQHQIWSIzI0R7KG46uEwq4OPk2W7bZcprBMsuaeFsqwYr7pjh6CuHg==}
     engines: {node: '>=18'}
 
-  temp-dir@2.0.0:
-    resolution: {integrity: sha512-aoBAniQmmwtcKp/7BzsH8Cxzv8OL736p7v1ihGb5e9DJ9kTwGWHrQrVB5+lfVDzfGrdRzXch+ig7LHaY1JTOrg==}
-    engines: {node: '>=8'}
-
   term-size@2.2.1:
     resolution: {integrity: sha512-wK0Ri4fOGjv/XPy8SBHZChl8CM7uMc5VML7SqiQ0zG7+J5Vr+RMQDoHa2CNT6KHUnTGIXH34UDMkPzAUyapBZg==}
     engines: {node: '>=8'}
@@ -8530,10 +8508,6 @@ packages:
 
   unified@11.0.5:
     resolution: {integrity: sha512-xKvGhPWw3k84Qjh8bI3ZeJjqnyadK+GEFtazSfZv/rKeTkTjOJho6mFqh2SM96iIcZokxiOpg78GazTSg8+KHA==}
-
-  unique-string@2.0.0:
-    resolution: {integrity: sha512-uNaeirEPvpZWSgzwsPGtU2zVSTrn/8L5q/IexZmH0eH6SA73CmAA5U4GwORTxQAZs95TAXLNqeLoPPNO5gZfWg==}
-    engines: {node: '>=8'}
 
   unist-util-is@6.0.0:
     resolution: {integrity: sha512-2qCTHimwdxLfz+YzdGfkqNlH0tLi9xjTnHddPmJwtIG9MGsdbutfTc4P+haPD7l7Cjxf/WZj+we5qfVPvvxfYw==}
@@ -11264,8 +11238,8 @@ snapshots:
       '@expo/config-plugins': 54.0.4
       '@expo/devcert': 1.2.1
       '@expo/env': 2.0.8
-      '@expo/image-utils': 0.8.8
-      '@expo/json-file': 10.0.8
+      '@expo/image-utils': 0.8.12
+      '@expo/json-file': 10.0.12
       '@expo/metro': 54.2.0
       '@expo/metro-config': 54.0.14(expo@54.0.33(@babel/core@7.25.2)(react-native@0.83.0(@babel/core@7.25.2)(@react-native/metro-config@0.83.0(@babel/core@7.25.2))(@types/react@19.2.7)(react@19.2.0))(react@19.2.0))
       '@expo/osascript': 2.3.8
@@ -11338,8 +11312,8 @@ snapshots:
       '@expo/config-plugins': 54.0.4
       '@expo/devcert': 1.2.1
       '@expo/env': 2.0.8
-      '@expo/image-utils': 0.8.8
-      '@expo/json-file': 10.0.8
+      '@expo/image-utils': 0.8.12
+      '@expo/json-file': 10.0.12
       '@expo/metro': 54.2.0
       '@expo/metro-config': 54.0.14(expo@54.0.33(@babel/core@7.25.2)(react-native@0.83.0(@babel/core@7.25.2)(@react-native/metro-config@0.83.0(@babel/core@7.25.2))(@types/react@19.2.7)(react@19.2.3))(react@19.2.3))
       '@expo/osascript': 2.3.8
@@ -11430,7 +11404,7 @@ snapshots:
   '@expo/config-plugins@54.0.4':
     dependencies:
       '@expo/config-types': 54.0.10
-      '@expo/json-file': 10.0.8
+      '@expo/json-file': 10.0.12
       '@expo/plist': 0.4.8
       '@expo/sdk-runtime-versions': 1.0.0
       chalk: 4.1.2
@@ -11475,7 +11449,7 @@ snapshots:
       '@babel/code-frame': 7.10.4
       '@expo/config-plugins': 54.0.4
       '@expo/config-types': 54.0.10
-      '@expo/json-file': 10.0.8
+      '@expo/json-file': 10.0.12
       deepmerge: 4.3.1
       getenv: 2.0.0
       glob: 13.0.5
@@ -11562,27 +11536,9 @@ snapshots:
       resolve-from: 5.0.0
       semver: 7.7.2
 
-  '@expo/image-utils@0.8.8':
-    dependencies:
-      '@expo/spawn-async': 1.7.2
-      chalk: 4.1.2
-      getenv: 2.0.0
-      jimp-compact: 0.16.1
-      parse-png: 2.1.0
-      resolve-from: 5.0.0
-      resolve-global: 1.0.0
-      semver: 7.7.2
-      temp-dir: 2.0.0
-      unique-string: 2.0.0
-
   '@expo/json-file@10.0.12':
     dependencies:
       '@babel/code-frame': 7.29.0
-      json5: 2.2.3
-
-  '@expo/json-file@10.0.8':
-    dependencies:
-      '@babel/code-frame': 7.10.4
       json5: 2.2.3
 
   '@expo/json-file@9.1.5':
@@ -11597,7 +11553,7 @@ snapshots:
       '@babel/generator': 7.29.1
       '@expo/config': 12.0.13
       '@expo/env': 2.0.8
-      '@expo/json-file': 10.0.8
+      '@expo/json-file': 10.0.12
       '@expo/metro': 54.2.0
       '@expo/spawn-async': 1.7.2
       browserslist: 4.25.3
@@ -11627,7 +11583,7 @@ snapshots:
       '@babel/generator': 7.29.1
       '@expo/config': 12.0.13
       '@expo/env': 2.0.8
-      '@expo/json-file': 10.0.8
+      '@expo/json-file': 10.0.12
       '@expo/metro': 54.2.0
       '@expo/spawn-async': 1.7.2
       browserslist: 4.25.3
@@ -11678,7 +11634,7 @@ snapshots:
 
   '@expo/package-manager@1.9.10':
     dependencies:
-      '@expo/json-file': 10.0.8
+      '@expo/json-file': 10.0.12
       '@expo/spawn-async': 1.7.2
       chalk: 4.1.2
       npm-package-arg: 11.0.3
@@ -11708,8 +11664,8 @@ snapshots:
       '@expo/config': 12.0.13
       '@expo/config-plugins': 54.0.4
       '@expo/config-types': 54.0.10
-      '@expo/image-utils': 0.8.8
-      '@expo/json-file': 10.0.8
+      '@expo/image-utils': 0.8.12
+      '@expo/json-file': 10.0.12
       '@react-native/normalize-colors': 0.81.5
       debug: 4.4.1
       expo: 54.0.33(@babel/core@7.25.2)(react-native@0.83.0(@babel/core@7.25.2)(@react-native/metro-config@0.83.0(@babel/core@7.25.2))(@types/react@19.2.7)(react@19.2.0))(react@19.2.0)
@@ -11724,8 +11680,8 @@ snapshots:
       '@expo/config': 12.0.13
       '@expo/config-plugins': 54.0.4
       '@expo/config-types': 54.0.10
-      '@expo/image-utils': 0.8.8
-      '@expo/json-file': 10.0.8
+      '@expo/image-utils': 0.8.12
+      '@expo/json-file': 10.0.12
       '@react-native/normalize-colors': 0.81.5
       debug: 4.4.1
       expo: 54.0.33(@babel/core@7.25.2)(react-native@0.83.0(@babel/core@7.25.2)(@react-native/metro-config@0.83.0(@babel/core@7.25.2))(@types/react@19.2.7)(react@19.2.3))(react@19.2.3)
@@ -15128,8 +15084,6 @@ snapshots:
       shebang-command: 2.0.0
       which: 2.0.2
 
-  crypto-random-string@2.0.0: {}
-
   csstype@3.2.3: {}
 
   dashdash@1.14.1:
@@ -15800,7 +15754,7 @@ snapshots:
 
   expo-asset@12.0.12(expo@54.0.33(@babel/core@7.25.2)(react-native@0.83.0(@babel/core@7.25.2)(@react-native/metro-config@0.83.0(@babel/core@7.25.2))(@types/react@19.2.7)(react@19.2.0))(react@19.2.0))(react-native@0.83.0(@babel/core@7.25.2)(@react-native/metro-config@0.83.0(@babel/core@7.25.2))(@types/react@19.2.7)(react@19.2.0))(react@19.2.0):
     dependencies:
-      '@expo/image-utils': 0.8.8
+      '@expo/image-utils': 0.8.12
       expo: 54.0.33(@babel/core@7.25.2)(react-native@0.83.0(@babel/core@7.25.2)(@react-native/metro-config@0.83.0(@babel/core@7.25.2))(@types/react@19.2.7)(react@19.2.0))(react@19.2.0)
       expo-constants: 18.0.13(expo@54.0.33(@babel/core@7.25.2)(react-native@0.83.0(@babel/core@7.25.2)(@react-native/metro-config@0.83.0(@babel/core@7.25.2))(@types/react@19.2.7)(react@19.2.0))(react@19.2.0))(react-native@0.83.0(@babel/core@7.25.2)(@react-native/metro-config@0.83.0(@babel/core@7.25.2))(@types/react@19.2.7)(react@19.2.0))
       react: 19.2.0
@@ -15810,7 +15764,7 @@ snapshots:
 
   expo-asset@12.0.12(expo@54.0.33(@babel/core@7.25.2)(react-native@0.83.0(@babel/core@7.25.2)(@react-native/metro-config@0.83.0(@babel/core@7.25.2))(@types/react@19.2.7)(react@19.2.3))(react@19.2.3))(react-native@0.83.0(@babel/core@7.25.2)(@react-native/metro-config@0.83.0(@babel/core@7.25.2))(@types/react@19.2.7)(react@19.2.3))(react@19.2.3):
     dependencies:
-      '@expo/image-utils': 0.8.8
+      '@expo/image-utils': 0.8.12
       expo: 54.0.33(@babel/core@7.25.2)(react-native@0.83.0(@babel/core@7.25.2)(@react-native/metro-config@0.83.0(@babel/core@7.25.2))(@types/react@19.2.7)(react@19.2.3))(react@19.2.3)
       expo-constants: 18.0.13(expo@54.0.33(@babel/core@7.25.2)(react-native@0.83.0(@babel/core@7.25.2)(@react-native/metro-config@0.83.0(@babel/core@7.25.2))(@types/react@19.2.7)(react@19.2.3))(react@19.2.3))(react-native@0.83.0(@babel/core@7.25.2)(@react-native/metro-config@0.83.0(@babel/core@7.25.2))(@types/react@19.2.7)(react@19.2.3))
       react: 19.2.3
@@ -16355,10 +16309,6 @@ snapshots:
       minimatch: 3.1.2
       once: 1.4.0
       path-is-absolute: 1.0.1
-
-  global-dirs@0.1.1:
-    dependencies:
-      ini: 1.3.8
 
   globals@13.24.0:
     dependencies:
@@ -19172,10 +19122,6 @@ snapshots:
 
   resolve-from@5.0.0: {}
 
-  resolve-global@1.0.0:
-    dependencies:
-      global-dirs: 0.1.1
-
   resolve-workspace-root@2.0.1: {}
 
   resolve.exports@2.0.3: {}
@@ -19844,8 +19790,6 @@ snapshots:
       minizlib: 3.1.0
       yallist: 5.0.0
 
-  temp-dir@2.0.0: {}
-
   term-size@2.2.1: {}
 
   terminal-link@2.1.1:
@@ -20121,10 +20065,6 @@ snapshots:
       is-plain-obj: 4.1.0
       trough: 2.2.0
       vfile: 6.0.3
-
-  unique-string@2.0.0:
-    dependencies:
-      crypto-random-string: 2.0.0
 
   unist-util-is@6.0.0:
     dependencies:

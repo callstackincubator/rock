@@ -1,5 +1,12 @@
 # @rock-js/platform-harmony
 
+## 0.13.0
+
+### Patch Changes
+
+- Updated dependencies [b99059b]
+  - @rock-js/tools@0.13.0
+
 ## 0.12.12
 
 ### Patch Changes

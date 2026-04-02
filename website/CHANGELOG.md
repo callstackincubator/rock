@@ -1,5 +1,11 @@
 # rock-docs
 
+## 1.4.5
+
+### Patch Changes
+
+- b46d23e: Add missing ccache option for clean command
+
 ## 1.4.4
 
 ### Patch Changes

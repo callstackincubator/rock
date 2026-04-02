@@ -1,5 +1,11 @@
 # @rnef/tools
 
+## 0.13.0
+
+### Patch Changes
+
+- b99059b: Support icon customization on Rock CNG
+
 ## 0.12.12
 
 ## 0.12.11
