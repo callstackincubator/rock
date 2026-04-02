@@ -23,7 +23,27 @@ const ANDROID_TEMPLATE_ICON_FILES = [
   'ic_launcher_round.png',
 ];
 
+function hasConfiguredAndroidIcon(config: {
+  icon?: unknown;
+  android?: {
+    icon?: unknown;
+    adaptiveIcon?: {
+      foregroundImage?: unknown;
+    };
+  };
+}) {
+  return Boolean(
+    config.android?.adaptiveIcon?.foregroundImage ??
+      config.android?.icon ??
+      config.icon,
+  );
+}
+
 export const withAndroidIcons: ConfigPlugin = (config) => {
+  if (!hasConfiguredAndroidIcon(config)) {
+    return expoWithAndroidIcons(config);
+  }
+
   config = withDangerousMod(config, [
     'android',
     async (config) => {

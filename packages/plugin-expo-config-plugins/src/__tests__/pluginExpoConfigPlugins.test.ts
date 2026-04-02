@@ -1719,6 +1719,44 @@ describe('plugin applies default Android config plugins correctly', () => {
     await expect(fs.access(userProvidedIconPath)).resolves.toBeUndefined();
   });
 
+  test('withAndroidIcons leaves template icons intact when no icon is configured', async () => {
+    const { appJsonConfig, info } = await getTestConfig();
+    let config = withInternal(appJsonConfig, info);
+
+    config = withPlugins(config, [withAndroidIcons]);
+
+    config = withDefaultBaseMods(config);
+
+    const userProvidedIconPath = path.join(
+      TEMP_DIR,
+      'android',
+      'app',
+      'src',
+      'main',
+      'res',
+      'mipmap-mdpi',
+      'ic_launcher.webp',
+    );
+    const rockTemplateIconPath = path.join(
+      TEMP_DIR,
+      'android',
+      'app',
+      'src',
+      'main',
+      'res',
+      'mipmap-mdpi',
+      'ic_launcher.png',
+    );
+
+    await expect(fs.access(rockTemplateIconPath)).resolves.toBeUndefined();
+    await expect(fs.access(userProvidedIconPath)).rejects.toThrow();
+
+    await evalModsAsync(config, info);
+
+    await expect(fs.access(rockTemplateIconPath)).resolves.toBeUndefined();
+    await expect(fs.access(userProvidedIconPath)).rejects.toThrow();
+  });
+
   test('withPrimaryColor', async () => {
     const { appJsonConfig, info } = await getTestConfig();
     let config = withInternal(appJsonConfig, info);

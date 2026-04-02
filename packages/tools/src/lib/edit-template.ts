@@ -45,19 +45,7 @@ export function replacePlaceholder(
       continue;
     }
 
-    let fileStat: fs.Stats;
-    try {
-      fileStat = fs.statSync(filePath);
-    } catch (error) {
-      // Ignore files that disappear while traversing the tree, such as
-      // transient git lockfiles that may be created and removed mid-scan.
-      if ((error as NodeJS.ErrnoException).code === 'ENOENT') {
-        continue;
-      }
-      throw error;
-    }
-
-    if (!fileStat.isDirectory()) {
+    if (!fs.statSync(filePath).isDirectory()) {
       replacePlaceholderInTextFile(filePath, normalizedName);
     }
 
