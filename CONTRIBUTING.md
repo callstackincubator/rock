@@ -124,6 +124,15 @@ When you're sending a pull request:
 
 This part is for maintainers only, documenting steps to manually publish the packages with Changesets.
 
+### npm trusted publishing
+
+Package publishing to npm is handled by GitHub Actions via OIDC trusted publishing.
+
+- The publishing workflow is [`.github/workflows/release.yml`](.github/workflows/release.yml).
+- Each published npm package must have a trusted publisher configured in npm for this repository and workflow file.
+- `NPM_TOKEN` is not used by the release workflow anymore.
+- If a release run is retried after a partial publish, [`scripts/npm-publish.sh`](scripts/npm-publish.sh) skips package versions that are already present on npm.
+
 ### Stable version
 
 1. Pull latest changes for the stable branch.
