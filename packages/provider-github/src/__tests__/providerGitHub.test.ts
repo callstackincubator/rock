@@ -11,7 +11,7 @@ const ARTIFACTS = [
     id: 123,
     name: 'rock-android-debug-1234567890',
     archive_download_url:
-      'https://api.github.com/repos/callstackincubator/rock/actions/artifacts/123',
+      'https://api.github.com/repos/callstack/rock/actions/artifacts/123',
     size_in_bytes: 10000,
     expires_at: '2025-05-20T12:00:00Z',
   },
@@ -20,7 +20,7 @@ const ARTIFACTS = [
     id: 124,
     name: 'rock-android-debug-1234567890',
     archive_download_url:
-      'https://api.github.com/repos/callstackincubator/rock/actions/artifacts/124',
+      'https://api.github.com/repos/callstack/rock/actions/artifacts/124',
     size_in_bytes: 10000,
     expires_at: '2025-05-20T12:00:00Z',
   },
@@ -41,7 +41,7 @@ test('providerGitHub implements list method returning an array of artifacts', as
     limit,
   });
   expect(fetch).toHaveBeenCalledWith(
-    `https://api.github.com/repos/callstackincubator/rock/actions/artifacts?per_page=${limit}&page=1&name=rock-android-debug-1234567890`,
+    `https://api.github.com/repos/callstack/rock/actions/artifacts?per_page=${limit}&page=1&name=rock-android-debug-1234567890`,
     {
       headers: {
         Authorization: 'token TEST_TOKEN',
@@ -52,7 +52,7 @@ test('providerGitHub implements list method returning an array of artifacts', as
     {
       id: '123',
       name: 'rock-android-debug-1234567890',
-      url: 'https://api.github.com/repos/callstackincubator/rock/actions/artifacts/123',
+      url: 'https://api.github.com/repos/callstack/rock/actions/artifacts/123',
     },
   ]);
 });
@@ -64,7 +64,7 @@ test('providerGitHub implements download method returning a stream with artifact
   global.fetch = vi.fn((url) => {
     if (
       url ===
-      'https://api.github.com/repos/callstackincubator/rock/actions/artifacts?per_page=100&page=1&name=rock-android-debug-1234567890'
+      'https://api.github.com/repos/callstack/rock/actions/artifacts?per_page=100&page=1&name=rock-android-debug-1234567890'
     ) {
       return Promise.resolve(
         new Response(JSON.stringify({ artifacts: ARTIFACTS.slice(0, limit) })),
@@ -72,7 +72,7 @@ test('providerGitHub implements download method returning a stream with artifact
     }
     if (
       url ===
-      'https://api.github.com/repos/callstackincubator/rock/actions/artifacts/123'
+      'https://api.github.com/repos/callstack/rock/actions/artifacts/123'
     ) {
       return Promise.resolve(downloadResponse);
     }
@@ -97,7 +97,7 @@ test('providerGitHub implements delete method', async () => {
   global.fetch = vi.fn((url, options) => {
     if (
       url ===
-      'https://api.github.com/repos/callstackincubator/rock/actions/artifacts?per_page=100&page=1&name=rock-android-debug-1234567890'
+      'https://api.github.com/repos/callstack/rock/actions/artifacts?per_page=100&page=1&name=rock-android-debug-1234567890'
     ) {
       return Promise.resolve(
         new Response(JSON.stringify({ artifacts: ARTIFACTS })),
@@ -105,14 +105,14 @@ test('providerGitHub implements delete method', async () => {
     }
     if (
       url ===
-        'https://api.github.com/repos/callstackincubator/rock/actions/artifacts/123' &&
+        'https://api.github.com/repos/callstack/rock/actions/artifacts/123' &&
       options.method === 'DELETE'
     ) {
       return Promise.resolve(new Response());
     }
     if (
       url ===
-        'https://api.github.com/repos/callstackincubator/rock/actions/artifacts/124' &&
+        'https://api.github.com/repos/callstack/rock/actions/artifacts/124' &&
       options.method === 'DELETE'
     ) {
       return Promise.resolve(new Response());
@@ -131,11 +131,11 @@ test('providerGitHub implements delete method', async () => {
   expect(response).toEqual([
     {
       name: 'rock-android-debug-1234567890',
-      url: 'https://api.github.com/repos/callstackincubator/rock/actions/artifacts/123',
+      url: 'https://api.github.com/repos/callstack/rock/actions/artifacts/123',
     },
     {
       name: 'rock-android-debug-1234567890',
-      url: 'https://api.github.com/repos/callstackincubator/rock/actions/artifacts/124',
+      url: 'https://api.github.com/repos/callstack/rock/actions/artifacts/124',
     },
   ]);
 });
