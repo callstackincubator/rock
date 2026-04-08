@@ -1,5 +1,7 @@
 #!/bin/bash
-set -e
+set -euo pipefail
+
+ROOT_DIR="$(cd "$(dirname "$0")/.." && pwd)"
 
 echo "Building all packages..."
 
@@ -9,21 +11,28 @@ if [ -z "$NPM_TOKEN" ] && [ -z "$CI" ] && [ -z "$GITHUB_ACTIONS" ]; then
   read -p "Enter NPM OTP: " OTP
 fi
 
+publish_package() {
+  local package_dir="$1"
+  shift
+
+  node "$ROOT_DIR/scripts/npm-publish-package.mjs" "$package_dir" "$@"
+}
+
 echo "NPM: Publishing all packages"
-# In CI, trusted publishing should be non-interactive and not require OTP input.
-if [ -n "$NPM_TOKEN" ] || [ -n "$CI" ] || [ -n "$GITHUB_ACTIONS" ]; then
-  pnpm -r run publish:npm
-else
-  pnpm -r --no-bail run publish:npm --otp="$OTP"
-fi
+for package_json in "$ROOT_DIR"/packages/*/package.json; do
+  publish_args=()
+  if [ -z "${NPM_TOKEN:-}" ] && [ -z "${CI:-}" ] && [ -z "${GITHUB_ACTIONS:-}" ]; then
+    publish_args+=(--otp="$OTP")
+  fi
+
+  publish_package "${package_json%/package.json}" --access public "${publish_args[@]}"
+done
 
 echo "NPM: Publishing template"
-cd templates/rock-template-default
-# In CI, trusted publishing should be non-interactive and not require OTP input.
-if [ -n "$NPM_TOKEN" ] || [ -n "$CI" ] || [ -n "$GITHUB_ACTIONS" ]; then
-  npm publish
-else
-  npm publish --otp="$OTP"
+template_publish_args=()
+if [ -z "${NPM_TOKEN:-}" ] && [ -z "${CI:-}" ] && [ -z "${GITHUB_ACTIONS:-}" ]; then
+  template_publish_args+=(--otp="$OTP")
 fi
+publish_package "$ROOT_DIR/templates/rock-template-default" "${template_publish_args[@]}"
 
 echo "Done"
