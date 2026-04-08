@@ -7,19 +7,38 @@ echo "Building all packages..."
 
 pnpm build
 
-if [ -z "$NPM_TOKEN" ] && [ -z "$CI" ] && [ -z "$GITHUB_ACTIONS" ]; then
+if [ -z "${NPM_TOKEN:-}" ] && [ -z "${CI:-}" ] && [ -z "${GITHUB_ACTIONS:-}" ]; then
   read -p "Enter NPM OTP: " OTP
 fi
 
 publish_package() {
   local package_dir="$1"
+  local package_json="$package_dir/package.json"
   shift
 
-  node "$ROOT_DIR/scripts/npm-publish-package.mjs" "$package_dir" "$@"
+  local package_name
+  local package_version
+  local package_ref
+
+  package_name=$(node -p "require(process.argv[1]).name" "$package_json")
+  package_version=$(node -p "require(process.argv[1]).version" "$package_json")
+  package_ref="${package_name}@${package_version}"
+
+  if npm view "$package_ref" version --registry https://registry.npmjs.org/ --silent >/dev/null 2>&1; then
+    echo "Skipping already published package ${package_ref}"
+    return 0
+  fi
+
+  echo "Publishing ${package_ref}"
+  (
+    cd "$package_dir"
+    npm publish "$@"
+  )
 }
 
 echo "NPM: Publishing all packages"
-for package_json in "$ROOT_DIR"/packages/*/package.json; do
+mapfile -t package_jsons < <(rg -l '"publish:npm"' "$ROOT_DIR/packages" -g package.json | sort)
+for package_json in "${package_jsons[@]}"; do
   publish_args=()
   if [ -z "${NPM_TOKEN:-}" ] && [ -z "${CI:-}" ] && [ -z "${GITHUB_ACTIONS:-}" ]; then
     publish_args+=(--otp="$OTP")
