@@ -5,6 +5,11 @@ on:
     branches:
       - main
 
+permissions:
+  contents: write
+  pull-requests: write
+  id-token: write
+
 concurrency: ${{ github.workflow }}-${{ github.ref }}
 
 jobs:
@@ -20,6 +25,9 @@ jobs:
       - name: Setup
         uses: ./.github/actions/setup-node
 
+      - name: Configure npm registry
+        run: npm config set registry https://registry.npmjs.org/
+
       - name: Create Release Pull Request or Publish to npm
         id: changesets
         uses: changesets/action@e0145edc7d9d8679003495b11f87bd8ef63c0cba # v1.5.3
@@ -30,7 +38,6 @@ jobs:
           publish: pnpm publish:npm
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
 
       - name: Create git tags
         run: |
