@@ -7,7 +7,7 @@ echo "Building all packages..."
 
 pnpm build
 
-if [ -z "${NPM_TOKEN:-}" ] && [ -z "${CI:-}" ] && [ -z "${GITHUB_ACTIONS:-}" ]; then
+if [ -z "${CI:-}" ] && [ -z "${GITHUB_ACTIONS:-}" ]; then
   read -p "Enter NPM OTP: " OTP
 fi
 
@@ -43,7 +43,7 @@ for package_json in "$ROOT_DIR"/packages/*/package.json; do
   fi
 
   publish_args=()
-  if [ -z "${NPM_TOKEN:-}" ] && [ -z "${CI:-}" ] && [ -z "${GITHUB_ACTIONS:-}" ]; then
+  if [ -z "${CI:-}" ] && [ -z "${GITHUB_ACTIONS:-}" ]; then
     publish_args+=(--otp="$OTP")
   fi
 
@@ -52,7 +52,7 @@ done
 
 echo "NPM: Publishing template"
 template_publish_args=()
-if [ -z "${NPM_TOKEN:-}" ] && [ -z "${CI:-}" ] && [ -z "${GITHUB_ACTIONS:-}" ]; then
+if [ -z "${CI:-}" ] && [ -z "${GITHUB_ACTIONS:-}" ]; then
   template_publish_args+=(--otp="$OTP")
 fi
 publish_package "$ROOT_DIR/templates/rock-template-default" --access public "${template_publish_args[@]}"
