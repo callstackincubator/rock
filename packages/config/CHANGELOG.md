@@ -1,5 +1,14 @@
 # @rnef/config
 
+## 0.13.0
+
+### Patch Changes
+
+- Updated dependencies [b99059b]
+- Updated dependencies [c0dd9d8]
+  - @rock-js/tools@0.13.0
+  - @rock-js/provider-github@0.13.0
+
 ## 0.12.12
 
 ### Patch Changes

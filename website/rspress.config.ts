@@ -12,7 +12,7 @@ export default withCallstackPreset(
     docs: {
       title: 'Rock',
       description: 'Easy to adopt. Simple to scale. Ship everywhere.',
-      editUrl: 'https://github.com/callstack/rock/edit/main/website/src',
+      editUrl: 'https://github.com/callstackincubator/rock/edit/main/website/src',
       icon: '/logo.svg',
       logoLight: '/logo-light.svg',
       logoDark: '/logo-dark.svg',
@@ -20,7 +20,7 @@ export default withCallstackPreset(
       rootDir: 'src',
       rootUrl: 'https://rockjs.dev',
       socials: {
-        github: 'https://github.com/callstack/rock',
+        github: 'https://github.com/callstackincubator/rock',
         x: 'https://x.com/rockjs_dev',
         discord: 'https://discord.gg/cF3DRqwg',
       },

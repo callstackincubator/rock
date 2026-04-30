@@ -1,5 +1,17 @@
 # @rock-js/plugin-expo-config-plugins
 
+## 0.13.0
+
+### Minor Changes
+
+- b99059b: Support icon customization on Rock CNG
+
+### Patch Changes
+
+- 600e56e: Remove committed iOS and Android directories in the test app and regenerate during tests
+- Updated dependencies [b99059b]
+  - @rock-js/tools@0.13.0
+
 ## 0.12.12
 
 ### Patch Changes

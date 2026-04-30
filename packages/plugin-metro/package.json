@@ -1,6 +1,6 @@
 {
   "name": "@rock-js/plugin-metro",
-  "version": "0.12.12",
+  "version": "0.13.0",
   "description": "Metro bundler integration plugin for Rock",
   "type": "module",
   "types": "./dist/src/index.d.ts",
@@ -20,7 +20,7 @@
   },
   "dependencies": {
     "@react-native-community/cli-server-api": "^20.0.0",
-    "@rock-js/tools": "^0.12.12",
+    "@rock-js/tools": "^0.13.0",
     "metro": "^0.83.3",
     "metro-config": "^0.83.3",
     "metro-core": "^0.83.3",
@@ -31,18 +31,18 @@
     "@react-native/dev-middleware": "^0.83.0",
     "@react-native/community-cli-plugin": "0.83.0",
     "@react-native/metro-config": "^0.83.0",
-    "@rock-js/config": "^0.12.12"
+    "@rock-js/config": "^0.13.0"
   },
   "publishConfig": {
     "access": "public"
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/callstack/rock.git",
+    "url": "git+https://github.com/callstackincubator/rock.git",
     "directory": "packages/plugin-metro"
   },
   "homepage": "https://rockjs.dev",
-  "bugs": "https://github.com/callstack/rock/issues",
+  "bugs": "https://github.com/callstackincubator/rock/issues",
   "license": "MIT",
   "author": "Callstack <incubator@callstack.com>"
 }

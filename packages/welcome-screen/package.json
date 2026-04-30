@@ -1,6 +1,6 @@
 {
   "name": "@rock-js/welcome-screen",
-  "version": "0.12.12",
+  "version": "0.13.0",
   "description": "Welcome screen component for Rock React Native applications",
   "type": "module",
   "main": "./dist/src/index.jsx",
@@ -32,11 +32,11 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/callstack/rock.git",
+    "url": "git+https://github.com/callstackincubator/rock.git",
     "directory": "packages/welcome-screen"
   },
   "homepage": "https://rockjs.dev",
-  "bugs": "https://github.com/callstack/rock/issues",
+  "bugs": "https://github.com/callstackincubator/rock/issues",
   "license": "MIT",
   "author": "Callstack <incubator@callstack.com>"
 }

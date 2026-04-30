@@ -1,6 +1,6 @@
 {
   "name": "@rock-js/plugin-repack",
-  "version": "0.12.12",
+  "version": "0.13.0",
   "description": "Re.Pack bundler integration plugin for Rock",
   "type": "module",
   "types": "./dist/src/index.d.ts",
@@ -19,11 +19,11 @@
     "publish:verdaccio": "npm publish --registry http://localhost:4873 --userconfig ../../.npmrc"
   },
   "dependencies": {
-    "@rock-js/tools": "^0.12.12",
+    "@rock-js/tools": "^0.13.0",
     "tslib": "^2.3.0"
   },
   "devDependencies": {
-    "@rock-js/config": "^0.12.12"
+    "@rock-js/config": "^0.13.0"
   },
   "peerDependencies": {
     "@callstack/repack": ">=5",
@@ -35,11 +35,11 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/callstack/rock.git",
+    "url": "git+https://github.com/callstackincubator/rock.git",
     "directory": "packages/plugin-repack"
   },
   "homepage": "https://rockjs.dev",
-  "bugs": "https://github.com/callstack/rock/issues",
+  "bugs": "https://github.com/callstackincubator/rock/issues",
   "license": "MIT",
   "author": "Callstack <incubator@callstack.com>"
 }

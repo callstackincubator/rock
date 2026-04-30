@@ -147,7 +147,7 @@ This part is for maintainers only, documenting steps to manually publish the pac
 
 ## Reporting issues
 
-You can report issues on our [bug tracker](https://github.com/callstack/rock/issues). Please follow the issue template when opening an issue.
+You can report issues on our [bug tracker](https://github.com/callstackincubator/rock/issues). Please follow the issue template when opening an issue.
 
 ## Stale Bot
 

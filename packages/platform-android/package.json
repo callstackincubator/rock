@@ -1,6 +1,6 @@
 {
   "name": "@rock-js/platform-android",
-  "version": "0.12.12",
+  "version": "0.13.0",
   "description": "Android platform support and configuration for Rock",
   "type": "module",
   "types": "./dist/src/index.d.ts",
@@ -21,23 +21,23 @@
   },
   "dependencies": {
     "@react-native-community/cli-config-android": "^20.0.0",
-    "@rock-js/tools": "^0.12.12",
+    "@rock-js/tools": "^0.13.0",
     "tslib": "^2.3.0"
   },
   "devDependencies": {
     "@react-native-community/cli-types": "^20.0.0",
-    "@rock-js/config": "^0.12.12"
+    "@rock-js/config": "^0.13.0"
   },
   "publishConfig": {
     "access": "public"
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/callstack/rock.git",
+    "url": "git+https://github.com/callstackincubator/rock.git",
     "directory": "packages/platform-android"
   },
   "homepage": "https://rockjs.dev",
-  "bugs": "https://github.com/callstack/rock/issues",
+  "bugs": "https://github.com/callstackincubator/rock/issues",
   "license": "MIT",
   "author": "Callstack <incubator@callstack.com>"
 }

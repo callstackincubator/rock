@@ -1,5 +1,13 @@
 # @rnef/provider-github
 
+## 0.13.0
+
+### Patch Changes
+
+- c0dd9d8: Add GitHub CLI (`gh auth token`) as fallback for GITHUB_TOKEN resolution
+- Updated dependencies [b99059b]
+  - @rock-js/tools@0.13.0
+
 ## 0.12.12
 
 ### Patch Changes
