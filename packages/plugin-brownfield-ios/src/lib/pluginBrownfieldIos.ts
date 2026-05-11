@@ -36,6 +36,7 @@ export const packageIosAction = async (
   pluginConfig?: IOSProjectConfig,
 ) => {
   intro('Packaging iOS project');
+  logger.setVerbose(args.verbose ?? false);
 
   // 1) Build the project
   const iosConfig = getValidProjectConfig('ios', projectRoot, pluginConfig);
