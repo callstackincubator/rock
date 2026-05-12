@@ -124,15 +124,30 @@ async function runPodInstall(options: {
     fs.rmSync('build', { recursive: true });
   }
 
-  const shouldHandleRepoUpdate = options?.shouldHandleRepoUpdate || true;
-  const loader = spinner({ indicator: 'timer' });
-  loader.start('Installing CocoaPods dependencies');
   const reactNativeVersion = await getReactNativeVersion(options.projectRoot);
   const isReactNative81OrHigher =
     versionCompare(reactNativeVersion, '0.81.0') >= 0;
+  const isReactNative84OrHigher =
+    versionCompare(reactNativeVersion, '0.84.0') >= 0;
+
+  // below: starting from RN 0.84, Apple prebuilts are used by default; before this version,
+  // they need to be explicitly enabled
+  // ref: https://github.com/facebook/react-native/commit/df9d31b2435255f799aa024ffb0f87bcdb665645
   const usePrebuiltReactNative = Boolean(
-    !options.brownfield && isReactNative81OrHigher && options.usePrebuiltRNCore,
+    isReactNative81OrHigher &&
+      (options.usePrebuiltRNCore ?? isReactNative84OrHigher),
   );
+
+  logger.info(
+    usePrebuiltReactNative
+      ? 'Using prebuilt React Native'
+      : 'Building React Native from source',
+  );
+
+  const shouldHandleRepoUpdate = options?.shouldHandleRepoUpdate || true;
+  const loader = spinner({ indicator: 'timer' });
+  loader.start('Installing CocoaPods dependencies');
+
   const command = options.useBundler ? 'bundle' : 'pod';
   const args = options.useBundler ? ['exec', 'pod', 'install'] : ['install'];
   try {
