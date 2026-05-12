@@ -1,5 +1,13 @@
 # @rock-js/platform-harmony
 
+## 0.13.2
+
+### Patch Changes
+
+- 0286470: fix: add and normalize package metadata to fix OIDC publishing
+- Updated dependencies [0286470]
+  - @rock-js/tools@0.13.2
+
 ## 0.13.1
 
 ### Patch Changes
