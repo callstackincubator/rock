@@ -22,6 +22,7 @@ import {
   type SupportedRemoteCacheProviders,
   validateProjectName,
 } from '@rock-js/tools';
+import { stripTemplatePackageJsonMetadata } from './stripTemplatePackageJsonMetadata.js';
 import type { TemplateInfo } from './templates.js';
 import {
   BUNDLERS,
@@ -182,6 +183,9 @@ export async function run() {
   replacePlaceholder(absoluteTargetDir, normalizeProjectName(projectName));
   // For package.json name we can use any valid name (kebab-case, PascalCase, etc).
   rewritePackageJson(absoluteTargetDir, projectName);
+  // The template contains complete package metadata in package.json, required for OIDC publishing,
+  // but entirely undesired after expanding the template
+  stripTemplatePackageJsonMetadata(absoluteTargetDir);
   createConfig(
     absoluteTargetDir,
     platforms,
