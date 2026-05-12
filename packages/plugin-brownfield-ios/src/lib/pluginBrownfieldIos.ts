@@ -12,6 +12,7 @@ import {
 } from '@rock-js/platform-apple-helpers';
 import { colorLink, intro, logger, outro, relativeToCwd } from '@rock-js/tools';
 import { copyHermesXcframework } from './copyHermesXcframework.js';
+import { copyReactXcframeworks } from './copyReactXcframeworks.js';
 
 const buildOptions = getBuildOptions({ platformName: 'ios' });
 
@@ -35,6 +36,7 @@ export const packageIosAction = async (
   pluginConfig?: IOSProjectConfig,
 ) => {
   intro('Packaging iOS project');
+  logger.setVerbose(args.verbose ?? false);
 
   // 1) Build the project
   const iosConfig = getValidProjectConfig('ios', projectRoot, pluginConfig);
@@ -116,7 +118,13 @@ export const packageIosAction = async (
     reactNativeVersion,
   });
 
-  // 5) Inform the user
+  // 5) Copy React and ReactNativeDependencies xcframeworks to the output path
+  copyReactXcframeworks({
+    sourceDir,
+    destinationDir: frameworkTargetOutputDir,
+  });
+
+  // 6) Inform the user
   logger.log(
     `XCFrameworks are available at: ${colorLink(
       relativeToCwd(frameworkTargetOutputDir),
