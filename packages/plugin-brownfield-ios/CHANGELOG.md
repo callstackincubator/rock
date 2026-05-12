@@ -1,5 +1,13 @@
 # @rnef/plugin-brownfield-ios
 
+## 0.13.1
+
+### Patch Changes
+
+- 20a14bb: feat: copy React Native prebuilt frameworks
+  - @rock-js/platform-apple-helpers@0.13.1
+  - @rock-js/tools@0.13.1
+
 ## 0.13.0
 
 ### Patch Changes
