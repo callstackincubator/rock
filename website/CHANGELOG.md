@@ -1,5 +1,11 @@
 # rock-docs
 
+## 1.4.6
+
+### Patch Changes
+
+- 0286470: fix: add and normalize package metadata to fix OIDC publishing
+
 ## 1.4.5
 
 ### Patch Changes
