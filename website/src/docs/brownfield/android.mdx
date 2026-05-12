@@ -282,50 +282,39 @@ If you're integrating an Expo app with Expo CLI instead of Rock, skip this step.
 1. Make `ReactNativeHostManager` aware with expo modules:
 
 ```diff
-@@ -11,6 +11,8 @@ import com.facebook.react.defaults.DefaultReactHost.getDefaultReactHost
- import com.facebook.react.defaults.DefaultReactNativeHost
- import com.facebook.react.soloader.OpenSourceMergedSoMapping
- import com.facebook.soloader.SoLoader
+@@ -3,13 +3,30 @@
++import android.app.Application
++import android.content.res.Configuration
+ import com.callstack.reactnativebrownfield.OnJSBundleLoaded
+ import com.callstack.reactnativebrownfield.ReactNativeBrownfield
+ import com.facebook.react.PackageList
++import com.facebook.react.ReactHost
+ import com.facebook.react.ReactNativeApplicationEntryPoint.loadReactNative
 +import expo.modules.ApplicationLifecycleDispatcher
-+import expo.modules.ReactNativeHostWrapper
-
- class ReactNativeHostManager {
-     companion object {
-@@ -37,21 +39,23 @@ class ReactNativeHostManager {
-             // If you opted-in for the New Architecture, we load the native entry point for this app.
-             load()
-         }
++import expo.modules.ExpoReactHostFactory
+ 
+ object ReactNativeHostManager {
+     fun initialize(application: Application, onJSBundleLoaded: OnJSBundleLoaded? = null) {
+         loadReactNative(application)
+ 
+-        val packageList = PackageList(application).packages
+-        ReactNativeBrownfield.initialize(application, packageList, onJSBundleLoaded)
 +        ApplicationLifecycleDispatcher.onApplicationCreate(application)
-
-
-        /**
-         * If your project is using ExpoModules, you can use `index` instead.
-         *
-         * Below module name is used when your project is using Expo CLI
-         */
-+        val jsMainModuleName = ".expo/.virtual-metro-entry"
-
-         val reactApp = object : ReactApplication {
--            override val reactNativeHost: ReactNativeHost = object : DefaultReactNativeHost(application) {
-+            override val reactNativeHost: ReactNativeHost = ReactNativeHostWrapper(application,
-+                object : DefaultReactNativeHost(application) {
-                     override fun getPackages(): MutableList<ReactPackage> {
-                         return PackageList(application).packages
-                     }
-
--                    override fun getJSMainModuleName(): String = "index"
-+                    override fun getJSMainModuleName(): String = jsMainModuleName
-                     override fun getBundleAssetName(): String = "index.android.bundle"
-
-                     override fun getUseDeveloperSupport() = BuildConfig.DEBUG
-
-                     override val isNewArchEnabled: Boolean = BuildConfig.IS_NEW_ARCHITECTURE_ENABLED
-                     override val isHermesEnabled: Boolean = BuildConfig.IS_HERMES_ENABLED
--                }
-+                })
-
-             override val reactHost: ReactHost
-                 get() = getDefaultReactHost(application, reactNativeHost)
++
++        val reactHost: ReactHost by lazy {
++            ExpoReactHostFactory.getDefaultReactHost(
++                context = application.applicationContext,
++                packageList = PackageList(application).packages,
++            )
++        }
++
++        ReactNativeBrownfield.initialize(application, reactHost, onJSBundleLoaded)
+     }
++
++    fun onConfigurationChanged(application: Application, newConfig: Configuration) {
++        ApplicationLifecycleDispatcher.onConfigurationChanged(application, newConfig)
++    }
+ }
 ```
 
 2. Update your `reactnativeapp/build.gradle`:
