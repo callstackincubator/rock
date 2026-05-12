@@ -19,7 +19,7 @@
     "e2e": "CI=true vitest --config vite.e2e.config.js"
   },
   "bin": {
-    "create-rock": "./dist/src/bin.js"
+    "create-rock": "dist/src/bin.js"
   },
   "devDependencies": {
     "@rock-js/test-helpers": "^0.13.1",

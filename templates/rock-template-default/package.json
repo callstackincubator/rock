@@ -33,5 +33,14 @@
   },
   "publishConfig": {
     "access": "public"
-  }
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/callstackincubator/rock.git",
+    "directory": "templates/rock-template-default"
+  },
+  "homepage": "https://rockjs.dev",
+  "bugs": "https://github.com/callstackincubator/rock/issues",
+  "license": "MIT",
+  "author": "Callstack <incubator@callstack.com>"
 }
