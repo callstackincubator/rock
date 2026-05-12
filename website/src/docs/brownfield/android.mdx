@@ -282,7 +282,9 @@ If you're integrating an Expo app with Expo CLI instead of Rock, skip this step.
 1. Make `ReactNativeHostManager` aware with expo modules:
 
 ```diff
-@@ -4,9 +4,18 @@
+@@ -3,13 +3,30 @@
++import android.app.Application
++import android.content.res.Configuration
  import com.callstack.reactnativebrownfield.OnJSBundleLoaded
  import com.callstack.reactnativebrownfield.ReactNativeBrownfield
  import com.facebook.react.PackageList
@@ -293,19 +295,25 @@ If you're integrating an Expo app with Expo CLI instead of Rock, skip this step.
  
  object ReactNativeHostManager {
      fun initialize(application: Application, onJSBundleLoaded: OnJSBundleLoaded? = null) {
-+        ApplicationLifecycleDispatcher.onApplicationCreate(application)
-+
          loadReactNative(application)
  
 -        val packageList = PackageList(application).packages
 -        ReactNativeBrownfield.initialize(application, packageList, onJSBundleLoaded)
-+        val reactHost: ReactHost = ExpoReactHostFactory.getDefaultReactHost(
-+            context = application.applicationContext,
-+            packageList = PackageList(application).packages
-+        )
++        ApplicationLifecycleDispatcher.onApplicationCreate(application)
++
++        val reactHost: ReactHost by lazy {
++            ExpoReactHostFactory.getDefaultReactHost(
++                context = application.applicationContext,
++                packageList = PackageList(application).packages,
++            )
++        }
 +
 +        ReactNativeBrownfield.initialize(application, reactHost, onJSBundleLoaded)
      }
++
++    fun onConfigurationChanged(application: Application, newConfig: Configuration) {
++        ApplicationLifecycleDispatcher.onConfigurationChanged(application, newConfig)
++    }
  }
 ```
 
