@@ -271,15 +271,21 @@ Please update the "Bundle React Native code and images" build phase manually wit
   );
 }
 
-function updatePodfile(projectRoot: string, sourceDir: string) {
+export function updatePodfile(projectRoot: string, sourceDir: string) {
   const filePath = path.join(projectRoot, sourceDir, 'Podfile');
   if (!fs.existsSync(filePath)) {
     return;
   }
   const content = fs.readFileSync(filePath, 'utf8');
+  // Replace `config = use_native_modules!` together with any existing
+  // argument list. The Community-CLI Podfile template calls it with no
+  // arguments (`use_native_modules!`), but the Expo prebuild template
+  // passes its own autolinking command in (`use_native_modules!(config_command)`).
+  // Without consuming that argument the previous regex left it dangling
+  // on the line and produced invalid Ruby — see issue #702.
   const replaced = content.replace(
-    /(config\s*=\s*use_native_modules!)(\s*)/g,
-    "$1(['npx', 'rock', 'config', '-p', 'ios'])$2",
+    /(config\s*=\s*use_native_modules!)(\s*\([^)]*\))?/g,
+    "$1(['npx', 'rock', 'config', '-p', 'ios'])",
   );
   if (
     !content.includes(`(['npx', 'rock', 'config', '-p', 'ios'])`) &&

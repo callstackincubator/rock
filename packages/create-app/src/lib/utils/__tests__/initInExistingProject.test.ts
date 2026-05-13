@@ -2,7 +2,7 @@ import * as fs from 'node:fs';
 import * as path from 'node:path';
 import { cleanup, getTempDirectory, writeFiles } from '@rock-js/test-helpers';
 import * as tools from '@rock-js/tools';
-import { updateAndroidBuildGradle } from '../initInExistingProject.js';
+import { updateAndroidBuildGradle, updatePodfile } from '../initInExistingProject.js';
 
 const directory = getTempDirectory('test_updateAndroidBuildGradle');
 
@@ -120,3 +120,73 @@ describe('updateAndroidBuildGradle', () => {
     );
   });
 });
+
+describe('updatePodfile', () => {
+  it('replaces a bare `use_native_modules!` call (Community-CLI template)', () => {
+    const content = `
+target 'App' do
+  config = use_native_modules!
+
+  use_react_native!(:path => config[:reactNativePath])
+end
+`;
+    const expected = `
+target 'App' do
+  config = use_native_modules!(['npx', 'rock', 'config', '-p', 'ios'])
+
+  use_react_native!(:path => config[:reactNativePath])
+end
+`;
+    writeFiles(directory, { 'ios/Podfile': content });
+    updatePodfile(directory, 'ios');
+
+    expect(
+      fs.readFileSync(path.join(directory, 'ios/Podfile'), 'utf8'),
+    ).toStrictEqual(expected);
+  });
+
+  it('replaces a `use_native_modules!(config_command)` call (Expo prebuild template, regression test for #702)', () => {
+    const content = `
+target 'App' do
+  config_command = ['node', '--no-warnings', '--eval', "require('expo/bin/autolinking')"]
+  config = use_native_modules!(config_command)
+
+  use_react_native!(:path => config[:reactNativePath])
+end
+`;
+    const expected = `
+target 'App' do
+  config_command = ['node', '--no-warnings', '--eval', "require('expo/bin/autolinking')"]
+  config = use_native_modules!(['npx', 'rock', 'config', '-p', 'ios'])
+
+  use_react_native!(:path => config[:reactNativePath])
+end
+`;
+    writeFiles(directory, { 'ios/Podfile': content });
+    updatePodfile(directory, 'ios');
+
+    expect(
+      fs.readFileSync(path.join(directory, 'ios/Podfile'), 'utf8'),
+    ).toStrictEqual(expected);
+  });
+
+  it('is idempotent — running on an already-patched Podfile is a no-op', () => {
+    const content = `
+target 'App' do
+  config = use_native_modules!(['npx', 'rock', 'config', '-p', 'ios'])
+end
+`;
+    writeFiles(directory, { 'ios/Podfile': content });
+    updatePodfile(directory, 'ios');
+
+    expect(
+      fs.readFileSync(path.join(directory, 'ios/Podfile'), 'utf8'),
+    ).toStrictEqual(content);
+  });
+
+  it('does nothing when there is no Podfile', () => {
+    // No Podfile written; updatePodfile should return without throwing.
+    expect(() => updatePodfile(directory, 'ios')).not.toThrow();
+  });
+});
+
