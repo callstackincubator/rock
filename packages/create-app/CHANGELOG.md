@@ -1,5 +1,11 @@
 # create-rock
 
+## 0.13.3
+
+### Patch Changes
+
+- 7301d58: fix: remove metadata required for OIDC from extracted app template
+
 ## 0.13.2
 
 ### Patch Changes
