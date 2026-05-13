@@ -1,5 +1,11 @@
 # @rnef/platform-android
 
+## 0.13.3
+
+### Patch Changes
+
+- @rock-js/tools@0.13.3
+
 ## 0.13.2
 
 ### Patch Changes
