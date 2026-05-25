@@ -717,7 +717,9 @@ The fingerprint configuration helps determine when builds should be cached and i
 
 - `extraSources`: when you have git submodules in your project
 - `ignorePaths`: custom directories that are not relevant for the native build state
-- `env`: environment variables that should affect the fingerprint
+- `env`: names of environment variables that should affect the fingerprint
+
+When you configure `env`, pass the environment variable names, not their resolved values. Rock reads each name from `process.env` when calculating the fingerprint.
 
 ```ts
 export default {
@@ -725,7 +727,7 @@ export default {
   fingerprint: {
     extraSources: ['./git-submodule'],
     ignorePaths: ['./temp'],
-    env: [process.env.CUSTOM_ENV],
+    env: ['CUSTOM_ENV'],
   },
 };
 ```
