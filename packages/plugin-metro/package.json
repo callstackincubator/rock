@@ -21,10 +21,10 @@
   "dependencies": {
     "@react-native-community/cli-server-api": "^20.0.0",
     "@rock-js/tools": "^0.13.3",
-    "metro": "^0.83.3",
-    "metro-config": "^0.83.3",
-    "metro-core": "^0.83.3",
-    "metro-resolver": "^0.83.3",
+    "metro": "^0.83.3 || ^0.84.0",
+    "metro-config": "^0.83.3 || ^0.84.0",
+    "metro-core": "^0.83.3 || ^0.84.0",
+    "metro-resolver": "^0.83.3 || ^0.84.0",
     "tslib": "^2.3.0"
   },
   "devDependencies": {
