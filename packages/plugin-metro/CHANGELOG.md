@@ -1,5 +1,12 @@
 # @rnef/plugin-metro
 
+## 0.13.4
+
+### Patch Changes
+
+- 0cf9308: Add support for Metro 0.84.x.
+  - @rock-js/tools@0.13.4
+
 ## 0.13.3
 
 ### Patch Changes
