@@ -1,5 +1,11 @@
 # create-rock
 
+## 0.13.4
+
+### Patch Changes
+
+- 7c966c3: fix(create-app): preserve existing arg list when patching Podfile
+
 ## 0.13.3
 
 ### Patch Changes
