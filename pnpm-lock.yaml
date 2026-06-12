@@ -407,16 +407,16 @@ importers:
         specifier: ^0.13.3
         version: link:../tools
       metro:
-        specifier: ^0.83.3
+        specifier: ^0.83.3 || ^0.84.0
         version: 0.83.3
       metro-config:
-        specifier: ^0.83.3
+        specifier: ^0.83.3 || ^0.84.0
         version: 0.83.3
       metro-core:
-        specifier: ^0.83.3
+        specifier: ^0.83.3 || ^0.84.0
         version: 0.83.3
       metro-resolver:
-        specifier: ^0.83.3
+        specifier: ^0.83.3 || ^0.84.0
         version: 0.83.3
       tslib:
         specifier: ^2.3.0
