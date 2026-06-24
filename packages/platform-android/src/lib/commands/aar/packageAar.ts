@@ -4,12 +4,26 @@ import { runGradleAar } from '../runGradle.js';
 import { toPascalCase } from '../toPascalCase.js';
 
 export interface AarProject {
+  /**
+   * The source directory of the AAR project.
+   */
   sourceDir: string;
+
+  /**
+   * AAR module name.
+   */
   moduleName: string;
 }
 
 export type PackageAarFlags = {
+  /**
+   * Your app's build variant, which is constructed from build type and product flavor, e.g. 'debug' or 'freeRelease'.
+   */
   variant: string;
+
+  /**
+   * AAR module name.
+   */
   moduleName?: string;
 };
 
