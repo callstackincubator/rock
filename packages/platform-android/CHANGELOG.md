@@ -1,5 +1,12 @@
 # @rnef/platform-android
 
+## 0.13.5
+
+### Patch Changes
+
+- c4d1b74: feat: added docstring descriptions to option typings
+  - @rock-js/tools@0.13.5
+
 ## 0.13.4
 
 ### Patch Changes
