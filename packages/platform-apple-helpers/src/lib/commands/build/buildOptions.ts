@@ -3,18 +3,69 @@ import type { BuilderCommand } from '../../types/index.js';
 import { getPlatformInfo } from '../../utils/getPlatformInfo.js';
 
 export type BuildFlags = {
+  /**
+   * Enable verbose build output.
+   */
   verbose?: boolean;
+
+  /**
+   * Xcode scheme configuration (case sensitive).
+   */
   configuration?: string;
+
+  /**
+   * Xcode scheme to use.
+   */
   scheme?: string;
+
+  /**
+   * Xcode target to use.
+   */
   target?: string;
+
+  /**
+   * Custom xcodebuild parameters.
+   */
   extraParams?: string[];
+
+  /**
+   * Custom xcodebuild export archive parameters.
+   */
   exportExtraParams?: string[];
+
+  /**
+   * Export options file name for archiving (default: ExportOptions.plist).
+   */
   exportOptionsPlist?: string;
+
+  /**
+   * Location for iOS build artifacts.
+   */
   buildFolder?: string;
+
+  /**
+   * Destination(s) for the build. You can pass multiple destinations as separate values or repeated use of the flag. Values can be either: "simulator", "device" or destinations supported by "xcodebuild -destination" flag, e.g. "generic/platform=iOS".
+   */
   destination?: string[];
+
+  /**
+   * Create Xcode archive (IPA)
+   */
   archive?: boolean;
+
+  /**
+   * Whether to install CocoaPods.
+   */
   installPods: boolean;
+
+  /**
+   * Whether to build in new architecture.
+   */
   newArch: boolean;
+
+  /**
+   * Whether to use a local build or remote cache.
+   */
   local?: boolean;
 };
 

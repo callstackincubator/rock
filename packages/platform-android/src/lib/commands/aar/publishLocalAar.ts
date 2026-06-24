@@ -4,6 +4,9 @@ import { runGradleAar } from '../runGradle.js';
 import type { AarProject } from './packageAar.js';
 
 export type PublishLocalAarFlags = {
+  /**
+   * AAR module name.
+   */
   moduleName?: string;
 };
 
