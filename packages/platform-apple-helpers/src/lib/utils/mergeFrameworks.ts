@@ -10,20 +10,24 @@ interface MergeFrameworksOptions {
   sourceDir: string;
 }
 
+// Ensure a path exists before writing files into it.
 function ensureDirectory(targetPath: string) {
   fs.mkdirSync(targetPath, { recursive: true });
 }
 
+// Copy a single file, creating the destination directory first.
 function copyFile(sourcePath: string, destinationPath: string) {
   ensureDirectory(path.dirname(destinationPath));
   fs.copyFileSync(sourcePath, destinationPath);
 }
 
+// Copy an entire directory tree, overwriting existing content.
 function copyDirectory(sourcePath: string, destinationPath: string) {
   ensureDirectory(path.dirname(destinationPath));
   fs.cpSync(sourcePath, destinationPath, { recursive: true, force: true });
 }
 
+// Generate a minimal Info.plist for a synthesized framework wrapper.
 function createFrameworkInfoPlist(frameworkName: string) {
   return `<?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
@@ -46,6 +50,7 @@ function createFrameworkInfoPlist(frameworkName: string) {
 `;
 }
 
+// Create a module map that exposes Objective-C and optional Swift headers.
 function createFrameworkModuleMap({
   frameworkName,
   umbrellaHeaderName,
@@ -73,6 +78,7 @@ module ${frameworkName}.Swift {
 `;
 }
 
+// Build a fallback umbrella header when one isn't provided by Xcode.
 function createGeneratedUmbrellaHeader({
   frameworkName,
   headerNames,
@@ -89,6 +95,7 @@ FOUNDATION_EXPORT const unsigned char ${frameworkName}VersionString[];
 `;
 }
 
+// Parse the umbrella header for local header imports within the framework.
 function collectLocalUmbrellaImports(
   umbrellaHeader: string,
   frameworkName: string,
@@ -114,12 +121,14 @@ function collectLocalUmbrellaImports(
   return imports;
 }
 
+// Extract FOUNDATION_EXPORT lines to preserve version exports.
 function collectFoundationExports(umbrellaHeader: string) {
   return umbrellaHeader.match(/^\s*FOUNDATION_EXPORT\b.*$/gm)?.map((line) =>
     line.trim(),
   ) ?? [];
 }
 
+// Render an umbrella header that only references headers we copied.
 function renderSanitizedUmbrellaHeader({
   frameworkName,
   headerNames,
@@ -146,6 +155,7 @@ function renderSanitizedUmbrellaHeader({
   return `${imports}${imports ? '\n\n' : ''}${foundationExportPrelude}\n\n${exports}\n`;
 }
 
+// Rewrite the umbrella header to drop missing header references.
 function sanitizeUmbrellaHeader({
   frameworkName,
   headersDir,
@@ -181,10 +191,12 @@ function sanitizeUmbrellaHeader({
   );
 }
 
+// Derive framework name from its bundle path.
 function resolveFrameworkName(frameworkPath: string) {
   return path.basename(frameworkPath, '.framework');
 }
 
+// Create a temporary .framework wrapper around a static library output.
 function createFrameworkWrapper(frameworkPath: string) {
   const frameworkName = resolveFrameworkName(frameworkPath);
   const buildProductPath = path.dirname(frameworkPath);
@@ -294,6 +306,7 @@ function createFrameworkWrapper(frameworkPath: string) {
   return frameworkDir;
 }
 
+// Resolve framework input, synthesizing a wrapper when only a static lib exists.
 function resolveFrameworkInputPath(
   frameworkPath: string,
   temporaryFrameworkPaths: string[],
@@ -307,8 +320,9 @@ function resolveFrameworkInputPath(
 }
 
 /**
- * Xcode emits different `.framework` file based on the destination (simulator arm64/x86_64, iphone arm64 etc.)
- * This takes those `.frameworks` files and merges them to a single `.xcframework` file for easier distribution.
+ * Xcode emits different `.framework` files per destination (simulator arm64/x86_64, device arm64, etc.).
+ * This merges those outputs into a single `.xcframework`, synthesizing temporary wrappers when only
+ * static-library build products are present.
  */
 export async function mergeFrameworks({
   frameworkPaths,

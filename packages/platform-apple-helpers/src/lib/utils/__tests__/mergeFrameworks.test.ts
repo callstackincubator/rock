@@ -1,3 +1,4 @@
+import type * as Fs from 'node:fs';
 import os from 'node:os';
 import path from 'node:path';
 import { logger } from '@rock-js/tools';
@@ -5,7 +6,7 @@ import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 vi.unmock('node:fs');
 
-const fs = await vi.importActual<typeof import('node:fs')>('node:fs');
+const fs = await vi.importActual<typeof Fs>('node:fs');
 
 const runXcodebuildMock = vi.fn();
 
