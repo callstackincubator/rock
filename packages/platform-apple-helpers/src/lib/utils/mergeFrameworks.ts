@@ -10,19 +10,21 @@ interface MergeFrameworksOptions {
   sourceDir: string;
 }
 
-interface NormalizedFrameworkInput {
-  frameworkPath: string;
-  cleanupPath?: string;
+function ensureDirectory(targetPath: string) {
+  fs.mkdirSync(targetPath, { recursive: true });
 }
 
-function resolveFrameworkName(frameworkPath: string) {
-  return path.basename(frameworkPath, '.framework');
+function copyFile(sourcePath: string, destinationPath: string) {
+  ensureDirectory(path.dirname(destinationPath));
+  fs.copyFileSync(sourcePath, destinationPath);
 }
 
-function createFrameworkInfoPlist(
-  frameworkName: string,
-  bundleIdentifier: string,
-) {
+function copyDirectory(sourcePath: string, destinationPath: string) {
+  ensureDirectory(path.dirname(destinationPath));
+  fs.cpSync(sourcePath, destinationPath, { recursive: true, force: true });
+}
+
+function createFrameworkInfoPlist(frameworkName: string) {
   return `<?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
@@ -30,7 +32,7 @@ function createFrameworkInfoPlist(
   <key>CFBundleExecutable</key>
   <string>${frameworkName}</string>
   <key>CFBundleIdentifier</key>
-  <string>${bundleIdentifier}</string>
+  <string>dev.rock.generated.${frameworkName}</string>
   <key>CFBundleName</key>
   <string>${frameworkName}</string>
   <key>CFBundlePackageType</key>
@@ -71,46 +73,6 @@ module ${frameworkName}.Swift {
 `;
 }
 
-function ensureDirectory(targetPath: string) {
-  fs.mkdirSync(targetPath, { recursive: true });
-}
-
-function copyFileIfExists(sourcePath: string, destinationPath: string) {
-  if (!existsSync(sourcePath)) {
-    return;
-  }
-
-  ensureDirectory(path.dirname(destinationPath));
-  fs.copyFileSync(sourcePath, destinationPath);
-}
-
-function copyDirectoryIfExists(sourcePath: string, destinationPath: string) {
-  if (!existsSync(sourcePath)) {
-    return;
-  }
-
-  ensureDirectory(path.dirname(destinationPath));
-  fs.cpSync(sourcePath, destinationPath, { recursive: true, force: true });
-}
-
-function copyDirectoryContentsIfExists(
-  sourcePath: string,
-  destinationPath: string,
-) {
-  if (!existsSync(sourcePath)) {
-    return;
-  }
-
-  ensureDirectory(destinationPath);
-
-  for (const entry of fs.readdirSync(sourcePath)) {
-    fs.cpSync(path.join(sourcePath, entry), path.join(destinationPath, entry), {
-      recursive: true,
-      force: true,
-    });
-  }
-}
-
 function createGeneratedUmbrellaHeader({
   frameworkName,
   headerNames,
@@ -122,54 +84,40 @@ function createGeneratedUmbrellaHeader({
     .filter((headerName) => headerName !== `${frameworkName}-Swift.h`)
     .map((headerName) => `#import "${headerName}"`)
     .join('\n');
-
   return `${imports}${imports ? '\n\n' : ''}FOUNDATION_EXPORT double ${frameworkName}VersionNumber;
 FOUNDATION_EXPORT const unsigned char ${frameworkName}VersionString[];
 `;
 }
 
-function getFrameworkHeaderImports(
-  umbrellaHeaderPath: string,
+function collectLocalUmbrellaImports(
+  umbrellaHeader: string,
   frameworkName: string,
 ) {
-  if (!existsSync(umbrellaHeaderPath)) {
-    return [];
-  }
-
-  const umbrellaHeaderContents = fs.readFileSync(umbrellaHeaderPath, 'utf8');
   const imports: string[] = [];
   const importPattern = /^\s*#import\s+(?:"([^"]+)"|<([^>]+)>)/gm;
   let match: RegExpExecArray | null;
-
-  while ((match = importPattern.exec(umbrellaHeaderContents)) !== null) {
+  while ((match = importPattern.exec(umbrellaHeader)) !== null) {
     const quotedImport = match[1];
     const angledImport = match[2];
-
     if (quotedImport) {
       imports.push(path.basename(quotedImport));
       continue;
     }
-
     if (!angledImport) {
       continue;
     }
-
     const [moduleName, headerName] = angledImport.split('/');
-
     if (moduleName === frameworkName && headerName) {
       imports.push(path.basename(headerName));
     }
   }
-
   return imports;
 }
 
 function collectFoundationExports(umbrellaHeader: string) {
-  return (
-    umbrellaHeader.match(/^\s*FOUNDATION_EXPORT\b.*$/gm)?.map((line) =>
-      line.trim(),
-    ) ?? []
-  );
+  return umbrellaHeader.match(/^\s*FOUNDATION_EXPORT\b.*$/gm)?.map((line) =>
+    line.trim(),
+  ) ?? [];
 }
 
 function renderSanitizedUmbrellaHeader({
@@ -195,7 +143,6 @@ function renderSanitizedUmbrellaHeader({
     foundationExports.length > 0
       ? foundationExports.join('\n')
       : `FOUNDATION_EXPORT double ${frameworkName}VersionNumber;\nFOUNDATION_EXPORT const unsigned char ${frameworkName}VersionString[];`;
-
   return `${imports}${imports ? '\n\n' : ''}${foundationExportPrelude}\n\n${exports}\n`;
 }
 
@@ -209,29 +156,20 @@ function sanitizeUmbrellaHeader({
   umbrellaHeaderName: string;
 }) {
   const umbrellaHeaderPath = path.join(headersDir, umbrellaHeaderName);
-
   if (!existsSync(umbrellaHeaderPath)) {
     return;
   }
-
   const umbrellaHeader = fs.readFileSync(umbrellaHeaderPath, 'utf8');
-  const localImports = getFrameworkHeaderImports(
-    umbrellaHeaderPath,
-    frameworkName,
-  );
-
+  const localImports = collectLocalUmbrellaImports(umbrellaHeader, frameworkName);
   if (localImports.length === 0) {
     return;
   }
-
   const availableImports = localImports.filter((headerName) =>
     existsSync(path.join(headersDir, headerName)),
   );
-
   if (availableImports.length === localImports.length) {
     return;
   }
-
   fs.writeFileSync(
     umbrellaHeaderPath,
     renderSanitizedUmbrellaHeader({
@@ -243,150 +181,44 @@ function sanitizeUmbrellaHeader({
   );
 }
 
-function getHeaderSearchRoots(sourceDir: string) {
-  const absoluteSourceDir = path.resolve(sourceDir);
-  const searchRoots: string[] = [];
-  let currentDir = absoluteSourceDir;
-
-  while (currentDir && !searchRoots.includes(currentDir)) {
-    searchRoots.push(currentDir);
-    const parentDir = path.dirname(currentDir);
-    if (parentDir === currentDir) {
-      break;
-    }
-    currentDir = parentDir;
-  }
-
-  currentDir = path.resolve(process.cwd());
-  while (currentDir && !searchRoots.includes(currentDir)) {
-    searchRoots.push(currentDir);
-    const parentDir = path.dirname(currentDir);
-    if (parentDir === currentDir) {
-      break;
-    }
-    currentDir = parentDir;
-  }
-
-  return searchRoots.flatMap((searchRoot) => {
-    const nestedRoots = [searchRoot];
-
-    for (const childDirName of ['packages', 'apps']) {
-      const nestedRoot = path.join(searchRoot, childDirName);
-      if (existsSync(nestedRoot)) {
-        nestedRoots.push(nestedRoot);
-      }
-    }
-
-    return nestedRoots;
-  });
+function resolveFrameworkName(frameworkPath: string) {
+  return path.basename(frameworkPath, '.framework');
 }
 
-function shouldSkipDirectoryEntry(entryName: string) {
-  return (
-    entryName === '.git' ||
-    entryName === 'build' ||
-    entryName === 'DerivedData' ||
-    entryName === 'node_modules' ||
-    entryName.startsWith('.')
-  );
-}
-
-function findFileInDirectoryTree(rootDir: string, fileName: string): string | undefined {
-  if (!existsSync(rootDir)) {
-    return undefined;
-  }
-
-  const entries = fs.readdirSync(rootDir, { withFileTypes: true });
-  for (const entry of entries) {
-    const entryPath = path.join(rootDir, entry.name);
-    if (entry.isFile() && entry.name === fileName) {
-      return entryPath;
-    }
-
-    if (entry.isDirectory() && !shouldSkipDirectoryEntry(entry.name)) {
-      const nestedMatch = findFileInDirectoryTree(entryPath, fileName);
-      if (nestedMatch) {
-        return nestedMatch;
-      }
-    }
-  }
-
-  return undefined;
-}
-
-function resolveMissingHeaderPath({
-  buildProductPath,
-  headerName,
-  sourceDir,
-}: {
-  buildProductPath: string;
-  headerName: string;
-  sourceDir: string;
-}) {
-  const directBuildProductPath = path.join(buildProductPath, headerName);
-  if (existsSync(directBuildProductPath)) {
-    return directBuildProductPath;
-  }
-
-  for (const searchRoot of getHeaderSearchRoots(sourceDir)) {
-    const resolvedHeaderPath = findFileInDirectoryTree(searchRoot, headerName);
-    if (resolvedHeaderPath) {
-      return resolvedHeaderPath;
-    }
-  }
-
-  return undefined;
-}
-
-function createTemporaryFrameworkWrapper(
-  missingFrameworkPath: string,
-  sourceDir: string,
-): NormalizedFrameworkInput {
-  const frameworkName = resolveFrameworkName(missingFrameworkPath);
-  const buildProductPath = path.dirname(missingFrameworkPath);
+function createFrameworkWrapper(frameworkPath: string) {
+  const frameworkName = resolveFrameworkName(frameworkPath);
+  const buildProductPath = path.dirname(frameworkPath);
   const staticLibraryPath = path.join(buildProductPath, `lib${frameworkName}.a`);
-  const umbrellaHeaderPath = path.join(
-    buildProductPath,
-    `${frameworkName}-umbrella.h`,
-  );
-  const namedModuleMapPath = path.join(
-    buildProductPath,
-    `${frameworkName}.modulemap`,
-  );
-  const swiftHeaderPath = path.join(
-    buildProductPath,
-    'Swift Compatibility Header',
-    `${frameworkName}-Swift.h`,
-  );
-  const swiftModulePath = path.join(
-    buildProductPath,
-    `${frameworkName}.swiftmodule`,
-  );
-  const publicHeadersPath = path.join(buildProductPath, 'Headers');
-
   if (!existsSync(staticLibraryPath)) {
     throw new Error(
-      `Could not resolve framework input for ${frameworkName}: neither ${missingFrameworkPath} nor ${staticLibraryPath} exists`,
+      `Could not find framework or static library for ${frameworkName} at ${frameworkPath}`,
     );
   }
-
-  if (!existsSync(umbrellaHeaderPath)) {
-    throw new Error(
-      `Could not synthesize framework wrapper for ${frameworkName}: missing umbrella header at ${umbrellaHeaderPath}`,
-    );
-  }
-
   const frameworkTempDir = fs.mkdtempSync(
     path.join(os.tmpdir(), `${frameworkName.toLowerCase()}-framework-`),
   );
   const frameworkDir = path.join(frameworkTempDir, `${frameworkName}.framework`);
   const headersDir = path.join(frameworkDir, 'Headers');
   const modulesDir = path.join(frameworkDir, 'Modules');
+  const swiftModuleSourceDir = path.join(
+    buildProductPath,
+    `${frameworkName}.swiftmodule`,
+  );
+  const swiftCompatibilityHeaderPath = path.join(
+    buildProductPath,
+    'Swift Compatibility Header',
+    `${frameworkName}-Swift.h`,
+  );
+  const umbrellaHeaderPath = path.join(
+    buildProductPath,
+    `${frameworkName}-umbrella.h`,
+  );
+  const moduleMapPath = path.join(buildProductPath, `${frameworkName}.modulemap`);
 
   ensureDirectory(headersDir);
   ensureDirectory(modulesDir);
 
-  fs.copyFileSync(staticLibraryPath, path.join(frameworkDir, frameworkName));
+  copyFile(staticLibraryPath, path.join(frameworkDir, frameworkName));
 
   const copiedHeaderNames: string[] = [];
   const copiedHeaders = new Set<string>();
@@ -397,8 +229,7 @@ function createTemporaryFrameworkWrapper(
     if (!existsSync(sourcePath) || copiedHeaders.has(destinationName)) {
       return;
     }
-
-    copyFileIfExists(sourcePath, path.join(headersDir, destinationName));
+    copyFile(sourcePath, path.join(headersDir, destinationName));
     copiedHeaders.add(destinationName);
     copiedHeaderNames.push(destinationName);
   };
@@ -411,44 +242,16 @@ function createTemporaryFrameworkWrapper(
     }
   }
 
-  copyDirectoryContentsIfExists(publicHeadersPath, headersDir);
-  if (existsSync(publicHeadersPath)) {
-    for (const entry of fs.readdirSync(publicHeadersPath, { withFileTypes: true })) {
-      if (entry.isFile() && entry.name.endsWith('.h')) {
-        copiedHeaders.add(entry.name);
-        copiedHeaderNames.push(entry.name);
-      }
-    }
-  }
   copyHeaderIfPresent(umbrellaHeaderPath, `${frameworkName}-umbrella.h`);
-  copyHeaderIfPresent(namedModuleMapPath, `${frameworkName}.modulemap`);
-  copyHeaderIfPresent(swiftHeaderPath, `${frameworkName}-Swift.h`);
-  for (const importedHeaderName of getFrameworkHeaderImports(
-    umbrellaHeaderPath,
-    frameworkName,
-  )) {
-    if (copiedHeaders.has(importedHeaderName)) {
-      continue;
-    }
+  copyHeaderIfPresent(moduleMapPath, `${frameworkName}.modulemap`);
+  copyHeaderIfPresent(swiftCompatibilityHeaderPath, `${frameworkName}-Swift.h`);
 
-    const resolvedHeaderPath = resolveMissingHeaderPath({
-      buildProductPath,
-      headerName: importedHeaderName,
-      sourceDir,
-    });
-
-    if (resolvedHeaderPath) {
-      copyHeaderIfPresent(resolvedHeaderPath, importedHeaderName);
-    } else {
-      logger.warn(
-        `Could not resolve public header ${importedHeaderName} while synthesizing ${frameworkName}.framework`,
-      );
-    }
+  if (existsSync(swiftModuleSourceDir)) {
+    copyDirectory(
+      swiftModuleSourceDir,
+      path.join(modulesDir, `${frameworkName}.swiftmodule`),
+    );
   }
-  copyDirectoryIfExists(
-    swiftModulePath,
-    path.join(modulesDir, `${frameworkName}.swiftmodule`),
-  );
 
   let umbrellaHeaderName = `${frameworkName}-umbrella.h`;
   if (!copiedHeaders.has(umbrellaHeaderName)) {
@@ -484,112 +287,23 @@ function createTemporaryFrameworkWrapper(
   );
   fs.writeFileSync(
     path.join(frameworkDir, 'Info.plist'),
-    createFrameworkInfoPlist(
-      frameworkName,
-      `dev.rockjs.synthetic.${frameworkName.toLowerCase()}`,
-    ),
+    createFrameworkInfoPlist(frameworkName),
     'utf8',
   );
 
-  return {
-    frameworkPath: frameworkDir,
-    cleanupPath: frameworkTempDir,
-  };
+  return frameworkDir;
 }
 
-function normalizeFrameworkInput(
+function resolveFrameworkInputPath(
   frameworkPath: string,
-  sourceDir: string,
-): NormalizedFrameworkInput {
+  temporaryFrameworkPaths: string[],
+) {
   if (existsSync(frameworkPath)) {
-    return { frameworkPath };
+    return frameworkPath;
   }
-
-  return createTemporaryFrameworkWrapper(frameworkPath, sourceDir);
-}
-
-function getSwiftModuleDirectory(frameworkPath: string) {
-  const frameworkName = resolveFrameworkName(frameworkPath);
-  const frameworkSwiftModuleDir = path.join(
-    frameworkPath,
-    'Modules',
-    `${frameworkName}.swiftmodule`,
-  );
-  if (existsSync(frameworkSwiftModuleDir)) {
-    return frameworkSwiftModuleDir;
-  }
-
-  const buildProductSwiftModuleDir = path.join(
-    path.dirname(frameworkPath),
-    `${frameworkName}.swiftmodule`,
-  );
-  if (existsSync(buildProductSwiftModuleDir)) {
-    return buildProductSwiftModuleDir;
-  }
-
-  return undefined;
-}
-
-function copyMissingSwiftmoduleBinaries({
-  inputFrameworkPath,
-  outputPath,
-}: {
-  inputFrameworkPath: string;
-  outputPath: string;
-}) {
-  const frameworkName = resolveFrameworkName(inputFrameworkPath);
-  const inputSwiftModuleDir = getSwiftModuleDirectory(inputFrameworkPath);
-
-  if (!inputSwiftModuleDir) {
-    return;
-  }
-
-  const outputFrameworkDirs: string[] = [];
-  for (const libraryDirName of fs.readdirSync(outputPath)) {
-    const candidateFrameworkDir = path.join(
-      outputPath,
-      libraryDirName,
-      `${frameworkName}.framework`,
-    );
-    if (existsSync(candidateFrameworkDir)) {
-      outputFrameworkDirs.push(candidateFrameworkDir);
-    }
-  }
-
-  if (outputFrameworkDirs.length === 0) {
-    return;
-  }
-
-  for (const entry of fs.readdirSync(inputSwiftModuleDir, { withFileTypes: true })) {
-    if (!entry.isFile() || !entry.name.endsWith('.swiftmodule')) {
-      continue;
-    }
-
-    const sourceSwiftModulePath = path.join(inputSwiftModuleDir, entry.name);
-    const swiftModuleStem = entry.name.slice(0, -'.swiftmodule'.length);
-
-    for (const outputFrameworkDir of outputFrameworkDirs) {
-      const outputSwiftModuleDir = path.join(
-        outputFrameworkDir,
-        'Modules',
-        `${frameworkName}.swiftmodule`,
-      );
-      const hasMatchingInterface =
-        existsSync(path.join(outputSwiftModuleDir, `${swiftModuleStem}.swiftinterface`)) ||
-        existsSync(
-          path.join(outputSwiftModuleDir, `${swiftModuleStem}.private.swiftinterface`),
-        );
-
-      if (!hasMatchingInterface) {
-        continue;
-      }
-
-      const destinationSwiftModulePath = path.join(outputSwiftModuleDir, entry.name);
-      if (!existsSync(destinationSwiftModulePath)) {
-        copyFileIfExists(sourceSwiftModulePath, destinationSwiftModulePath);
-      }
-    }
-  }
+  const synthesizedFrameworkPath = createFrameworkWrapper(frameworkPath);
+  temporaryFrameworkPaths.push(path.dirname(synthesizedFrameworkPath));
+  return synthesizedFrameworkPath;
 }
 
 /**
@@ -602,52 +316,39 @@ export async function mergeFrameworks({
   sourceDir,
 }: MergeFrameworksOptions) {
   const xcframeworkName = path.basename(outputPath);
-  const normalizedFrameworkPaths = frameworkPaths.map((frameworkPath) =>
-    normalizeFrameworkInput(frameworkPath, sourceDir),
-  );
+  const temporaryFrameworkPaths: string[] = [];
 
   if (existsSync(outputPath)) {
     logger.debug(`Removing existing merged framework output at ${outputPath}`);
     fs.rmSync(outputPath, { recursive: true, force: true });
   }
 
-  const xcodebuildArgs = [
-    '-create-xcframework',
-    ...normalizedFrameworkPaths.flatMap(({ frameworkPath }) => [
-      '-framework',
-      frameworkPath,
-    ]),
-    '-output',
-    outputPath,
-  ];
-
   try {
+    const resolvedFrameworkPaths = frameworkPaths.map((frameworkPath) =>
+      resolveFrameworkInputPath(frameworkPath, temporaryFrameworkPaths),
+    );
+    const xcodebuildArgs = [
+      '-create-xcframework',
+      ...resolvedFrameworkPaths.flatMap((frameworkPath) => [
+        '-framework',
+        frameworkPath,
+      ]),
+      '-output',
+      outputPath,
+    ];
     const { errorSummary } = await runXcodebuild(xcodebuildArgs, {
       cwd: sourceDir,
     });
-
     if (errorSummary) {
       throw new Error('Running xcodebuild failed', {
         cause: errorSummary,
       });
+    } else {
+      logger.success(`Created ${color.bold(xcframeworkName)}`);
     }
-
-    for (const { frameworkPath } of normalizedFrameworkPaths) {
-      copyMissingSwiftmoduleBinaries({
-        inputFrameworkPath: frameworkPath,
-        outputPath,
-      });
-    }
-
-    logger.success(`Created ${color.bold(xcframeworkName)}`);
   } finally {
-    for (const normalizedFrameworkPath of normalizedFrameworkPaths) {
-      if (normalizedFrameworkPath.cleanupPath) {
-        fs.rmSync(normalizedFrameworkPath.cleanupPath, {
-          recursive: true,
-          force: true,
-        });
-      }
+    for (const temporaryFrameworkPath of temporaryFrameworkPaths) {
+      fs.rmSync(temporaryFrameworkPath, { recursive: true, force: true });
     }
   }
 }
