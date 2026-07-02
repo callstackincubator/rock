@@ -1,5 +1,15 @@
 # @rnef/platform-apple-helpers
 
+## 0.14.0
+
+### Minor Changes
+
+- 364fdbc: support static library to xcframework
+
+### Patch Changes
+
+- @rock-js/tools@0.14.0
+
 ## 0.13.5
 
 ### Patch Changes

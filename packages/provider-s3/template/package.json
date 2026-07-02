@@ -1,6 +1,6 @@
 {
   "name": "rock-provider-s3-template",
   "devDependencies": {
-    "@rock-js/provider-s3": "^0.13.5"
+    "@rock-js/provider-s3": "^0.14.0"
   }
 }
