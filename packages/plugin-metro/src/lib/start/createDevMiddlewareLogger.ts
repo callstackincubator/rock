@@ -33,9 +33,7 @@ function makeLogger(
 ): LoggerFn {
   return (...data: Array<unknown>) =>
     reporter.update({
-      // @ts-expect-error - metro types are not updated
       type: 'unstable_server_log',
-      // @ts-expect-error - metro types are not updated
       level,
       data,
     });

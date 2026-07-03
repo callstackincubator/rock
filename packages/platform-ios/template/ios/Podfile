@@ -3,7 +3,11 @@ require File.join(File.dirname(`node --print "require.resolve('react-native/pack
 # Inspired from https://github.com/expo/expo/blob/main/templates/expo-template-bare-minimum/ios/Podfile
 podfile_properties = JSON.parse(File.read(File.join(__dir__, 'Podfile.properties.json'))) rescue {}
 
-ENV['RCT_NEW_ARCH_ENABLED'] ||= '0' if podfile_properties['newArchEnabled'] == 'false'
+if podfile_properties['newArchEnabled'] == 'true'
+  ENV['RCT_NEW_ARCH_ENABLED'] ||= '1'
+elsif podfile_properties['newArchEnabled'] == 'false'
+  ENV['RCT_NEW_ARCH_ENABLED'] ||= '0'
+end
 ENV['RCT_USE_RN_DEP'] ||= '1' if podfile_properties['ios.buildReactNativeFromSource'] != 'true' && podfile_properties['newArchEnabled'] != 'false'
 ENV['RCT_USE_PREBUILT_RNCORE'] ||= '1' if podfile_properties['ios.buildReactNativeFromSource'] != 'true' && podfile_properties['newArchEnabled'] != 'false'
 

@@ -47,10 +47,8 @@ export default function attachKeyHandlers({
 }) {
   if (process.stdin.isTTY !== true) {
     reporter.update({
-      // @ts-expect-error - metro types are not updated
       type: 'unstable_server_log',
       level: 'info',
-      // @ts-expect-error - metro types are not updated
       data: 'Interactive mode is not supported in this environment',
     });
     return;
@@ -63,10 +61,8 @@ export default function attachKeyHandlers({
 
   const reload = throttle(() => {
     reporter.update({
-      // @ts-expect-error - metro types are not updated
       type: 'unstable_server_log',
       level: 'info',
-      // @ts-expect-error - metro types are not updated
       data: 'Reloading connected app(s)...',
     });
     messageSocket.broadcast('reload', null);
@@ -88,10 +84,8 @@ export default function attachKeyHandlers({
         break;
       case 'd':
         reporter.update({
-          // @ts-expect-error - metro types are not updated
           type: 'unstable_server_log',
           level: 'info',
-          // @ts-expect-error - metro types are not updated
           data: 'Opening Dev Menu...',
         });
         messageSocket.broadcast('devMenu', null);
@@ -103,10 +97,8 @@ export default function attachKeyHandlers({
       case CTRL_D:
         openDebuggerKeyboardHandler.dismiss();
         reporter.update({
-          // @ts-expect-error - metro types are not updated
           type: 'unstable_server_log',
           level: 'info',
-          // @ts-expect-error - metro types are not updated
           data: 'Stopping server',
         });
         setRawMode(false);
@@ -117,10 +109,8 @@ export default function attachKeyHandlers({
   });
 
   reporter.update({
-    // @ts-expect-error - metro types are not updated
     type: 'unstable_server_log',
     level: 'info',
-    // @ts-expect-error - metro types are not updated
     data: `Key commands available:
 
   ${color.bold(color.inverse(' r '))} - reload app(s)
