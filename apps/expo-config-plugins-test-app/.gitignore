@@ -77,6 +77,6 @@ yarn-error.log
 # Rock
 .rock/
 
-# prebuild native direcotries
+# prebuild native directories
 ios/
 android/
