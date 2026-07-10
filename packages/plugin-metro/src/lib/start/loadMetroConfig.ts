@@ -7,6 +7,7 @@
 
 import { createRequire } from 'node:module';
 import path from 'node:path';
+import { pathToFileURL } from 'node:url';
 import { logger } from '@rock-js/tools';
 import type { ConfigT, InputConfigT, YargArguments } from 'metro-config';
 import { loadConfig, mergeConfig, resolveConfig } from 'metro-config';
@@ -90,7 +91,9 @@ export default async function loadMetroConfig(
   let RNMetroConfig = null;
   try {
     RNMetroConfig = await import(
-      require.resolve('@react-native/metro-config', { paths: [ctx.root] })
+      pathToFileURL(
+        require.resolve('@react-native/metro-config', { paths: [ctx.root] }),
+      ).href
     );
   } catch {
     throw new Error(

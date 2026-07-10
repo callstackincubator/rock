@@ -1,4 +1,5 @@
 import { createRequire } from 'node:module';
+import { pathToFileURL } from 'node:url';
 import type devMiddleware from '@react-native/dev-middleware';
 
 export async function getDevMiddleware(
@@ -14,7 +15,7 @@ export async function getDevMiddleware(
     paths: [reactNativeCommunityCliPluginPath],
   });
 
-  return import(devMiddlewarePath);
+  return import(pathToFileURL(devMiddlewarePath).href);
 }
 
 export async function getReactNativeCommunityCliPlugin(
@@ -26,5 +27,5 @@ export async function getReactNativeCommunityCliPlugin(
     { paths: [reactNativePath] },
   );
 
-  return import(reactNativeCommunityCliPluginPath);
+  return import(pathToFileURL(reactNativeCommunityCliPluginPath).href);
 }
