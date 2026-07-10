@@ -1,6 +1,6 @@
 {
   "name": "@rock-js/plugin-expo-config-plugins",
-  "version": "0.14.0",
+  "version": "0.14.1",
   "type": "module",
   "exports": {
     "types": "./dist/src/index.d.ts",
@@ -20,12 +20,12 @@
   "dependencies": {
     "@expo/config-plugins": "^10.1.2",
     "@expo/prebuild-config": "^55.0.10",
-    "@rock-js/tools": "^0.14.0",
+    "@rock-js/tools": "^0.14.1",
     "tslib": "^2.3.0"
   },
   "devDependencies": {
-    "@rock-js/config": "^0.14.0",
-    "@rock-js/test-helpers": "^0.14.0",
+    "@rock-js/config": "^0.14.1",
+    "@rock-js/test-helpers": "^0.14.1",
     "@types/plist": "^3.0.5",
     "plist": "^3.1.0"
   },
