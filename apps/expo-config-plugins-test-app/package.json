@@ -8,7 +8,7 @@
     "test": "jest",
     "ios": "rock run:ios",
     "android": "rock run:android",
-    "prebuild": "rock prebuild"
+    "prebuild": "rock prebuild && node ./scripts/patch-settings.js"
   },
   "dependencies": {
     "@bottom-tabs/react-navigation": "^1.1.0",
