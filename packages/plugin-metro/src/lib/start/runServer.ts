@@ -7,12 +7,10 @@
 
 import { createRequire } from 'node:module';
 import path from 'node:path';
-import url from 'node:url';
 import { createDevServerMiddleware } from '@react-native-community/cli-server-api';
 import { color } from '@rock-js/tools';
 import type {
   Reporter,
-  // @ts-expect-error - https://github.com/facebook/metro/pull/1563
   TerminalReportableEvent,
   TerminalReporter,
 } from 'metro';
@@ -76,9 +74,10 @@ async function runServer(
     watchFolders,
   } = metroConfig;
   const protocol = args.https === true ? 'https' : 'http';
-  const devServerUrl = url.format({ protocol, hostname, port });
+  const devServerUrl = new URL(`${protocol}://${hostname}:${port}`);
+  const devServerUrlString = devServerUrl.toString();
 
-  console.info(`Starting dev server on ${devServerUrl}\n`);
+  console.info(`Starting dev server on ${devServerUrlString}\n`);
 
   if (args.assetPlugins) {
     // @ts-expect-error Assigning to readonly property
@@ -134,7 +133,7 @@ async function runServer(
           data: `Dev server ready. ${color.dim('Press Ctrl+C to exit.')}`,
         });
         attachKeyHandlers({
-          devServerUrl,
+          devServerUrl: devServerUrlString,
           // @ts-expect-error - TBD
           messageSocket: messageSocketEndpoint,
           reporter: terminalReporter,

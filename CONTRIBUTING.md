@@ -90,6 +90,14 @@ pnpm link --global ...
 pnpm verdaccio:reset
 ```
 
+## Running expo-config-plugins-test-app
+- Run `pnpm install` and `pnpm build` from the root
+- In a new terminal, from the root run `pnpm watch`
+- Run `pnpm install` from the app
+- Run `pnpm prebuild` command from `apps/expo-config-plugins-test-app`
+- Run `pnpm ios` or `pnpm android`
+- In a new terminal, run `pnpm start`
+
 ## Typechecking, linting and testing
 
 Currently we use TypeScript for typechecking, `eslint` with `prettier` for linting and formatting the code and `jest` for testing.

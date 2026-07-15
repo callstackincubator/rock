@@ -150,9 +150,7 @@ export default class OpenDebuggerKeyboardHandler {
 
   #log(level: 'info' | 'warn' | 'error', ...data: Array<unknown>): void {
     this.#reporter.update({
-      // @ts-expect-error - metro types are not updated
       type: 'unstable_server_log',
-      // @ts-expect-error - metro types are not updated
       level,
       data,
     });
@@ -160,7 +158,6 @@ export default class OpenDebuggerKeyboardHandler {
 
   #setTerminalMenu(message: string) {
     this.#reporter.update({
-      // @ts-expect-error - metro types are not updated
       type: 'unstable_server_menu_updated',
       message,
     });
@@ -168,7 +165,6 @@ export default class OpenDebuggerKeyboardHandler {
 
   #clearTerminalMenu() {
     this.#reporter.update({
-      // @ts-expect-error - metro types are not updated
       type: 'unstable_server_menu_cleared',
     });
   }

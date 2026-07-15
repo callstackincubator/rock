@@ -87,12 +87,10 @@ Add the required React Native dependencies to your `reactnativeapp/build.gradle.
 
 ```groovy title="reactnativeapp/build.gradle.kts" {2-3}
 dependencies {
-    // Match your version of React Native, here 0.83:
-    api("com.facebook.react:react-android:0.83.0")
-    // For React Native 0.83 or newer use:
-    api("com.facebook.hermes:hermes-android:0.14.0")
-    // For React Native 0.82 or older use:
-    // api("com.facebook.react:hermes-android:0.82.0")
+    // Match your version of React Native, here 0.86:
+    api("com.facebook.react:react-android:0.86.0")
+    // For React Native 0.86 or newer use:
+    api("com.facebook.hermes:hermes-android:250829098.0.14")
 }
 ```
 
@@ -165,6 +163,8 @@ android {
     }
 }
 ```
+
+The template defaults `newArchEnabled=true` in `android/gradle.properties`. Set it to `false` if you need to opt out of the New Architecture.
 
 ### 7. Configure Maven Publishing
 

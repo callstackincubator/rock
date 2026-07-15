@@ -21,16 +21,16 @@
   "dependencies": {
     "@react-native-community/cli-server-api": "^20.0.0",
     "@rock-js/tools": "^0.14.1",
-    "metro": "^0.83.3 || ^0.84.0",
-    "metro-config": "^0.83.3 || ^0.84.0",
-    "metro-core": "^0.83.3 || ^0.84.0",
-    "metro-resolver": "^0.83.3 || ^0.84.0",
+    "metro": "^0.85.0",
+    "metro-config": "^0.85.0",
+    "metro-core": "^0.85.0",
+    "metro-resolver": "^0.85.0",
     "tslib": "^2.3.0"
   },
   "devDependencies": {
-    "@react-native/dev-middleware": "^0.83.0",
-    "@react-native/community-cli-plugin": "0.83.0",
-    "@react-native/metro-config": "^0.83.0",
+    "@react-native/dev-middleware": "^0.86.0",
+    "@react-native/community-cli-plugin": "0.86.0",
+    "@react-native/metro-config": "^0.86.0",
     "@rock-js/config": "^0.14.1"
   },
   "publishConfig": {
