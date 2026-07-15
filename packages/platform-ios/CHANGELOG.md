@@ -1,5 +1,16 @@
 # @rnef/platform-ios
 
+## 0.15.0
+
+### Minor Changes
+
+- a18d90a: upgrade to react-native v0.86.0
+
+### Patch Changes
+
+- @rock-js/platform-apple-helpers@0.15.0
+- @rock-js/tools@0.15.0
+
 ## 0.14.1
 
 ### Patch Changes
