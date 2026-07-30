@@ -9,14 +9,15 @@ creates the `PluginApi`; platform, bundler, and utility plugins register command
   through configuration. Core code must use `PluginApi`, not hard-code platform implementations.
 - Shared Apple implementation belongs in `packages/platform-apple-helpers`.
 - `packages/tools` owns cross-package contracts, fingerprinting, caching, logging, and process helpers.
-- Remote-cache implementations belong in `packages/provider-*` behind `RemoteBuildCache`.
 - Keep shared command behavior provider- and platform-agnostic; specialize at package boundaries.
+- `plugin-metro`'s `start` and `bundle` commands are ports of React Native's community CLI plugin;
+  diff their upstream sources on every React Native upgrade, especially Metro handling.
+- Runtime packages remain compatible with older React Native and Metro APIs; the default template
+  instead tracks the latest available React Native. Do not infer runtime minimums from template deps.
 - `templates/rock-template-default` follows the Community CLI template but is not a verbatim mirror;
   platform and bundler packages contribute additional template fragments.
 - `create-rock` migrates existing Community CLI projects; preserve drop-in behavior unless a
   difference is intentional and documented.
-- User-facing configuration changes may require matching `packages/create-app` template updates.
-- User-facing command or configuration changes require corresponding `website/src/docs` updates.
 
 ## Release rules
 
@@ -27,4 +28,3 @@ creates the `PluginApi`; platform, bundler, and utility plugins register command
 
 - Test and typecheck the affected package first.
 - Run `pnpm build` for cross-package API or contract changes.
-- Use `pnpm validate` before finalizing broad changes.
