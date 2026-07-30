@@ -424,6 +424,7 @@ Available actions:
 | Action              | Description                                                                       |
 | :------------------ | :-------------------------------------------------------------------------------- |
 | `list`              | Lists the latest artifact matching the specified criteria                         |
+| `status`            | Reports whether the current fingerprint has a matching cached artifact            |
 | `list-all`          | Lists all artifacts (optionally filtered by platform and traits)                  |
 | `download`          | Downloads an artifact from remote cache to local cache                            |
 | `upload`            | Uploads a binary to remote cache. Accepts `--ad-hoc` flag for Ad-Hoc distribution |
@@ -454,6 +455,18 @@ or pass `--traits`, so you don't need to pass the fingerprint:
 ```shell
 npx rock remote-cache download --platform ios --traits simulator,Release
 ```
+
+To check whether the current fingerprint has a matching cached artifact without
+downloading it:
+
+```shell
+npx rock remote-cache status --platform ios --traits device,AdHoc --json
+```
+
+The JSON output includes the provider, fingerprint, artifact name, hit status,
+and matching artifact information when one exists. It supports both bundled
+remote cache providers: GitHub Actions and S3 (including S3-compatible
+storage). The command fails when the provider lookup fails.
 
 #### Ad-hoc distribution
 

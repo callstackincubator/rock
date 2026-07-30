@@ -2,7 +2,11 @@ import fs from 'node:fs';
 import os from 'node:os';
 import path from 'node:path';
 import type { PluginApi, PluginOutput } from '@rock-js/config';
-import type { FingerprintOptions, RemoteBuildCache } from '@rock-js/tools';
+import type {
+  FingerprintOptions,
+  RemoteArtifact,
+  RemoteBuildCache,
+} from '@rock-js/tools';
 import {
   color,
   colorLink,
@@ -37,7 +41,15 @@ type Flags = {
   adHoc?: boolean;
 };
 
-async function remoteCache({
+type RemoteCacheStatus = {
+  provider: string;
+  fingerprint: string;
+  artifactName: string;
+  hit: boolean;
+  artifact: RemoteArtifact | null;
+};
+
+export async function remoteCache({
   action,
   args,
   remoteCacheProvider,
@@ -93,6 +105,30 @@ async function remoteCache({
 - url: ${colorLink(artifact.url)}`);
           });
         }
+      }
+      break;
+    }
+    case 'status': {
+      const artifact = (
+        await remoteBuildCache.list({ artifactName, limit: 1 })
+      )[0];
+      const artifactNamePrefix = `rock-${args.platform}-${args.traits?.join('-')}-`;
+      const status: RemoteCacheStatus = {
+        provider: remoteBuildCache.name,
+        fingerprint: artifactName.slice(artifactNamePrefix.length),
+        artifactName,
+        hit: artifact !== undefined,
+        artifact: artifact ?? null,
+      };
+
+      if (isJsonOutput) {
+        console.log(JSON.stringify(status, null, 2));
+      } else {
+        logger.log(`Remote cache status:
+- provider: ${color.bold(remoteBuildCache.name)}
+- fingerprint: ${color.bold(color.magenta(status.fingerprint))}
+- artifact: ${color.bold(color.blue(artifactName))}
+- status: ${status.hit ? color.green('hit') : color.yellow('miss')}`);
       }
       break;
     }
@@ -457,7 +493,12 @@ function validateArgs(args: Flags, action: string) {
   if (!action) {
     // @todo make Commander handle this
     throw new RockError(
-      'Action is required. Available actions: list, list-all, download, upload, delete',
+      'Action is required. Available actions: list, status, list-all, download, upload, delete, get-provider-name',
+    );
+  }
+  if (action === 'status' && (!args.platform || !args.traits)) {
+    throw new RockError(
+      'The "status" action requires "--platform" and "--traits".',
     );
   }
   if (action === 'list-all' || action === 'get-provider-name') {
@@ -503,7 +544,7 @@ export const remoteCachePlugin =
         {
           name: '[action]',
           description:
-            'Select action, e.g. list, list-all, download, upload, delete, get-provider-name',
+            'Select action, e.g. list, status, list-all, download, upload, delete, get-provider-name',
         },
       ],
       options: [
