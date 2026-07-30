@@ -1,5 +1,13 @@
 # rock
 
+## 0.15.1
+
+### Patch Changes
+
+- 365b0be: Add `remote-cache status` for checking whether the current native fingerprint has a matching GitHub Actions or S3 remote build artifact.
+  - @rock-js/config@0.15.1
+  - @rock-js/tools@0.15.1
+
 ## 0.15.0
 
 ### Patch Changes
