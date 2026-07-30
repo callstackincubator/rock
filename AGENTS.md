@@ -11,6 +11,10 @@ creates the `PluginApi`; platform, bundler, and utility plugins register command
 - `packages/tools` owns cross-package contracts, fingerprinting, caching, logging, and process helpers.
 - Remote-cache implementations belong in `packages/provider-*` behind `RemoteBuildCache`.
 - Keep shared command behavior provider- and platform-agnostic; specialize at package boundaries.
+- `templates/rock-template-default` follows the Community CLI template but is not a verbatim mirror;
+  platform and bundler packages contribute additional template fragments.
+- `create-rock` migrates existing Community CLI projects; preserve drop-in behavior unless a
+  difference is intentional and documented.
 - User-facing configuration changes may require matching `packages/create-app` template updates.
 - User-facing command or configuration changes require corresponding `website/src/docs` updates.
 
@@ -24,4 +28,3 @@ creates the `PluginApi`; platform, bundler, and utility plugins register command
 - Test and typecheck the affected package first.
 - Run `pnpm build` for cross-package API or contract changes.
 - Use `pnpm validate` before finalizing broad changes.
-- Some tests fetch external resources; isolate network failures before treating them as regressions.
