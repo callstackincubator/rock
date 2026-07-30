@@ -1,5 +1,11 @@
 # @rock-js/plugin-expo-config-plugins
 
+## 0.15.1
+
+### Patch Changes
+
+- @rock-js/tools@0.15.1
+
 ## 0.15.0
 
 ### Patch Changes
