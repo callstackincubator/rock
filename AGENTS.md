@@ -1,30 +1,27 @@
 # AGENTS.md
 
-Rock is a pnpm monorepo for a modular React Native CLI. Configuration creates a shared
-`PluginApi`; platform, bundler, and utility plugins register commands against it.
+Rock is a modular React Native CLI. `packages/config` loads project configuration and
+creates the `PluginApi`; platform, bundler, and utility plugins register commands through it.
 
-## Repository map
+## Architecture
 
-- `packages/cli` and `packages/config`: CLI bootstrap, config loading, and plugin contracts.
-- `packages/tools`: shared types, fingerprinting, cache contracts, logging, and process helpers.
-- `packages/platform-*`: platform commands; Apple platforms share `platform-apple-helpers`.
-- `packages/plugin-*` and `packages/provider-*`: optional integrations and remote-cache providers.
-- `packages/create-app`: project scaffolding and generated configuration.
-- `website/src/docs`: user-facing documentation.
+- Platform logic is encapsulated in `packages/platform-*`; projects add platforms dynamically
+  through configuration. Core code must use `PluginApi`, not hard-code platform implementations.
+- Shared Apple implementation belongs in `packages/platform-apple-helpers`.
+- `packages/tools` owns cross-package contracts, fingerprinting, caching, logging, and process helpers.
+- Remote-cache implementations belong in `packages/provider-*` behind `RemoteBuildCache`.
+- Keep shared command behavior provider- and platform-agnostic; specialize at package boundaries.
+- User-facing configuration changes may require matching `packages/create-app` template updates.
+- User-facing command or configuration changes require corresponding `website/src/docs` updates.
 
-## Working rules
+## Release rules
 
-- Use pnpm only; do not add npm or Yarn lockfiles.
-- This is ESM TypeScript: preserve `.js` suffixes in relative imports.
-- Follow package boundaries and export public APIs through each package's `src/index.ts`.
-- Keep shared behavior provider/platform-agnostic; specialize only at package boundaries.
-- Reuse contracts and helpers from `@rock-js/tools` instead of duplicating them.
-- Colocate Vitest tests under `src/**/__tests__` and follow existing package patterns.
-- Update CLI help and website docs when changing user-facing commands or configuration.
-- For 0.x releases, use patch Changesets unless adding support for a new React Native version.
-- Keep PRs focused, preserve unrelated worktree changes, and use Conventional Commit prefixes.
+- For the current 0.x line, use a patch Changeset unless adding support for a new React Native version.
+- Changesets version `@rock-js/*`, `rock`, and `create-rock` together as a fixed group.
 
 ## Validation
 
-Start with the affected package's Vitest config and `tsc -p <package>/tsconfig.lib.json --noEmit`.
-For cross-package changes, run focused lint/format checks, then `pnpm validate` and `pnpm build`.
+- Test and typecheck the affected package first.
+- Run `pnpm build` for cross-package API or contract changes.
+- Use `pnpm validate` before finalizing broad changes.
+- Some tests fetch external resources; isolate network failures before treating them as regressions.
