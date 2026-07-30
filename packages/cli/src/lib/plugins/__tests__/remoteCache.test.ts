@@ -123,7 +123,7 @@ describe('remote-cache status', () => {
     });
   });
 
-  test('fails when no remote cache provider is configured', async () => {
+  test('returns when no remote cache provider is configured', async () => {
     await expect(
       remoteCache({
         action: 'status',
@@ -136,9 +136,7 @@ describe('remote-cache status', () => {
         projectRoot: '/project',
         fingerprintOptions,
       }),
-    ).rejects.toThrow(
-      'No remote cache provider configured. Set "remoteCacheProvider" in rock.config.mjs before checking cache status.',
-    );
+    ).resolves.toBeNull();
   });
 
   test('propagates provider lookup failures', async () => {

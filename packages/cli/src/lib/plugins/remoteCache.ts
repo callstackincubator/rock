@@ -64,11 +64,6 @@ export async function remoteCache({
 }) {
   const isJsonOutput = args.json;
   if (!remoteCacheProvider) {
-    if (action === 'status') {
-      throw new RockError(
-        'No remote cache provider configured. Set "remoteCacheProvider" in rock.config.mjs before checking cache status.',
-      );
-    }
     return null;
   }
   const remoteBuildCache = remoteCacheProvider();

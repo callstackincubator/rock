@@ -466,8 +466,7 @@ npx rock remote-cache status --platform ios --traits device,AdHoc --json
 The JSON output includes the provider, fingerprint, artifact name, hit status,
 and matching artifact information when one exists. It supports both bundled
 remote cache providers: GitHub Actions and S3 (including S3-compatible
-storage). The command fails when no remote cache provider is configured or the
-provider lookup fails.
+storage). The command fails when the provider lookup fails.
 
 #### Ad-hoc distribution
 
