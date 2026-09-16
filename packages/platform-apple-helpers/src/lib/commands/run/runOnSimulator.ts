@@ -1,3 +1,4 @@
+import fs from 'node:fs';
 import path from 'node:path';
 import type { SubprocessError } from '@rock-js/tools';
 import { color, logger, RockError, spawn, spinner } from '@rock-js/tools';
@@ -24,12 +25,18 @@ export async function launchSimulator(device: Device) {
     stdio: 'pipe',
   });
 
-  await spawn('open', [
-    `${activeDeveloperDir}/Applications/Simulator.app`,
-    '--args',
-    '-CurrentDeviceUDID',
-    device.udid,
-  ]);
+  const simulatorApp = path.join(activeDeveloperDir.trim(), 'Applications', 'Simulator.app');
+
+  if (fs.existsSync(simulatorApp)) {
+    await spawn('open', [
+      simulatorApp,
+      '--args',
+      '-CurrentDeviceUDID',
+      device.udid,
+    ]);
+  } else {
+    await spawn('open', [`devices://device/open?id=${device.udid}`]);
+  }
 
   if (device.state !== 'Booted') {
     await bootSimulator(device);
