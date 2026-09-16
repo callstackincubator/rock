@@ -1,5 +1,11 @@
 # @rock-js/platform-harmony
 
+## 0.15.2
+
+### Patch Changes
+
+- @rock-js/tools@0.15.2
+
 ## 0.15.1
 
 ### Patch Changes

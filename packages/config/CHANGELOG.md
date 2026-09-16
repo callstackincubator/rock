@@ -1,5 +1,13 @@
 # @rnef/config
 
+## 0.15.2
+
+### Patch Changes
+
+- dce336d: Require Joi 17.13.6 or newer to prevent prototype pollution through localized validation messages.
+  - @rock-js/provider-github@0.15.2
+  - @rock-js/tools@0.15.2
+
 ## 0.15.1
 
 ### Patch Changes
