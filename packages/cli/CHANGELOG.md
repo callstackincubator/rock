@@ -1,5 +1,13 @@
 # rock
 
+## 0.15.2
+
+### Patch Changes
+
+- Updated dependencies [dce336d]
+  - @rock-js/config@0.15.2
+  - @rock-js/tools@0.15.2
+
 ## 0.15.1
 
 ### Patch Changes

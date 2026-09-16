@@ -1,5 +1,12 @@
 # @rnef/platform-apple-helpers
 
+## 0.15.2
+
+### Patch Changes
+
+- 8689e90: Support launching Apple simulators through Device Hub in Xcode 27.
+  - @rock-js/tools@0.15.2
+
 ## 0.15.1
 
 ### Patch Changes
