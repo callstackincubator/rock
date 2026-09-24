@@ -3,6 +3,7 @@ import { createRequire } from 'node:module';
 import path from 'node:path';
 import { getLocalOS } from './env.js';
 import { RockError } from './error.js';
+import logger from './logger.js';
 import { getProjectRoot } from './project.js';
 import type { SubprocessError } from './spawn.js';
 import { spawn } from './spawn.js';
@@ -172,6 +173,15 @@ export async function runHermes({
       throw new RockError('Failed to run compose-source-maps script', {
         cause: (error as SubprocessError).stderr,
       });
+    }
+
+    try {
+      fs.rmSync(hermesSourceMapFile, { force: true });
+    } catch (error) {
+      logger.warn(
+        `Failed to remove temporary Hermes source map: ${hermesSourceMapFile}`,
+        error,
+      );
     }
   }
 
