@@ -1,3 +1,4 @@
+import fs from 'node:fs';
 import path from 'node:path';
 import type { IOSProjectConfig } from '@react-native-community/cli-types';
 import type { PluginApi, PluginOutput } from '@rock-js/config';
@@ -10,9 +11,94 @@ import {
   getValidProjectConfig,
   mergeFrameworks,
 } from '@rock-js/platform-apple-helpers';
-import { colorLink, intro, logger, outro, relativeToCwd } from '@rock-js/tools';
+import {
+  colorLink,
+  intro,
+  logger,
+  outro,
+  relativeToCwd,
+  RockError,
+} from '@rock-js/tools';
 import { copyHermesXcframework } from './copyHermesXcframework.js';
 import { copyReactXcframeworks } from './copyReactXcframeworks.js';
+
+type AppleSdk = 'iphoneos' | 'iphonesimulator';
+
+const ALL_SDKS: AppleSdk[] = ['iphoneos', 'iphonesimulator'];
+
+// `--destination` narrows which slices Xcode emits, so the merges below must only
+// look at the slices that were actually built.
+function resolveSdksForDestination(destination: string): AppleSdk[] {
+  const normalized = destination.trim().toLowerCase();
+
+  if (normalized === 'device') {
+    return ['iphoneos'];
+  }
+
+  if (normalized === 'simulator' || normalized.includes('simulator')) {
+    return ['iphonesimulator'];
+  }
+
+  if (normalized.includes('platform=ios')) {
+    return ['iphoneos'];
+  }
+
+  return ALL_SDKS;
+}
+
+function resolveDestinationSdks(destinations: string[]): AppleSdk[] {
+  const sdks = new Set(destinations.flatMap(resolveSdksForDestination));
+
+  return ALL_SDKS.filter((sdk) => sdks.has(sdk));
+}
+
+// `mergeFrameworks` also accepts a directory holding only the static library, which
+// it wraps into a temporary framework.
+function hasBuildProduct(directoryPath: string, frameworkName: string) {
+  return (
+    fs.existsSync(path.join(directoryPath, `${frameworkName}.framework`)) ||
+    fs.existsSync(path.join(directoryPath, `lib${frameworkName}.a`))
+  );
+}
+
+function collectFrameworkPaths({
+  productsPath,
+  configuration,
+  sdks,
+  frameworkName,
+  productSubDir,
+}: {
+  productsPath: string;
+  configuration: string;
+  sdks: AppleSdk[];
+  frameworkName: string;
+  productSubDir?: string;
+}): string[] {
+  const searchedDirectories = sdks.map((sdk) =>
+    path.join(
+      productsPath,
+      `${configuration}-${sdk}`,
+      ...(productSubDir ? [productSubDir] : []),
+    ),
+  );
+
+  const frameworkPaths = searchedDirectories
+    .filter((directoryPath) => hasBuildProduct(directoryPath, frameworkName))
+    .map((directoryPath) =>
+      path.join(directoryPath, `${frameworkName}.framework`),
+    );
+
+  if (frameworkPaths.length === 0) {
+    throw new RockError(
+      `Could not find a build product for ${frameworkName} in the ${configuration} configuration. ` +
+        `Looked for ${frameworkName}.framework or lib${frameworkName}.a in:\n` +
+        searchedDirectories.map((dir) => `  - ${dir}`).join('\n') +
+        `\nIf the build produced an .app instead of a framework, the wrong scheme was built; pass --scheme with your brownfield framework scheme.`,
+    );
+  }
+
+  return frameworkPaths;
+}
 
 const buildOptions = getBuildOptions({ platformName: 'ios' });
 
@@ -44,6 +130,7 @@ export const packageIosAction = async (
     genericDestinations.ios.device,
     genericDestinations.ios.simulator,
   ];
+  const sdks = resolveDestinationSdks(destination);
 
   const buildFolder = args.buildFolder ?? getBuildPaths('ios').derivedDataDir;
   const configuration = args.configuration ?? 'Debug';
@@ -59,6 +146,13 @@ export const packageIosAction = async (
     pluginConfig,
     skipCache,
   });
+
+  if (!scheme) {
+    throw new RockError(
+      'Could not determine the framework name. Pass --scheme with your brownfield framework scheme.',
+    );
+  }
+
   logger.log(`Build available at: ${colorLink(relativeToCwd(appPath))}`);
 
   // 2) Merge the .framework outputs of the framework target
@@ -73,38 +167,25 @@ export const packageIosAction = async (
 
   await mergeFrameworks({
     sourceDir,
-    frameworkPaths: [
-      path.join(
-        productsPath,
-        `${configuration}-iphoneos`,
-        `${scheme}.framework`,
-      ),
-      path.join(
-        productsPath,
-        `${configuration}-iphonesimulator`,
-        `${scheme}.framework`,
-      ),
-    ],
+    frameworkPaths: collectFrameworkPaths({
+      productsPath,
+      configuration,
+      sdks,
+      frameworkName: scheme,
+    }),
     outputPath: path.join(frameworkTargetOutputDir, `${scheme}.xcframework`),
   });
 
   // 3) Merge React Native Brownfield paths
   await mergeFrameworks({
     sourceDir,
-    frameworkPaths: [
-      path.join(
-        productsPath,
-        `${configuration}-iphoneos`,
-        'ReactBrownfield',
-        'ReactBrownfield.framework',
-      ),
-      path.join(
-        productsPath,
-        `${configuration}-iphonesimulator`,
-        'ReactBrownfield',
-        'ReactBrownfield.framework',
-      ),
-    ],
+    frameworkPaths: collectFrameworkPaths({
+      productsPath,
+      configuration,
+      sdks,
+      frameworkName: 'ReactBrownfield',
+      productSubDir: 'ReactBrownfield',
+    }),
     outputPath: path.join(
       frameworkTargetOutputDir,
       'ReactBrownfield.xcframework',
