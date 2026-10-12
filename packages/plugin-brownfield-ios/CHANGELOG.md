@@ -1,5 +1,13 @@
 # @rnef/plugin-brownfield-ios
 
+## 0.15.3
+
+### Patch Changes
+
+- ae00c3e: Respect the requested iOS destination when packaging XCFramework slices and report a clear error when the expected framework product is missing.
+  - @rock-js/platform-apple-helpers@0.15.3
+  - @rock-js/tools@0.15.3
+
 ## 0.15.2
 
 ### Patch Changes
