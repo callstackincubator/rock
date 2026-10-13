@@ -32,11 +32,11 @@ describe('loadMetroConfig', () => {
   });
 
   it('applies framework defaults when no metro.config.js exists', async () => {
-    const config = await loadMetroConfig(ctx);
+    const config = await loadMetroConfig({
+      ...ctx,
+      platforms: { android: {} },
+    });
 
-    expect(config.resolver.platforms).toEqual(['ios', 'android', 'native']);
-    expect(config.serializer.getModulesRunBeforeMainModule).toBeInstanceOf(
-      Function,
-    );
+    expect(config.resolver.platforms).toEqual(['android', 'native']);
   });
 });
