@@ -3,6 +3,13 @@ import { logger, spawn } from '@rock-js/tools';
 import { getAdbPath } from './adb.js';
 import type { AndroidProject } from './runAndroid.js';
 
+/**
+ * Gradle produces following output binaries:
+ * - build/outputs/apk/debug/app-debug.apk - for buildTypes.debug in install* and assemble* tasks
+ * - build/outputs/bundle/release/app-release.aab - for buildTypes.release in bundle* tasks
+ * - build/outputs/bundle/production/debug/app-production-debug.aab - for buildTypes.debug and flavors.production in bundle* tasks
+ * - build/outputs/apk/customBuildType/app-customBuildType.apk - for buildTypes.customBuildType in install* and assemble* tasks
+ */
 export async function findOutputFile(
   androidProject: AndroidProject,
   tasks: string[],
@@ -19,21 +26,30 @@ export async function findOutputFile(
     return false;
   }
   // handle if selected task includes build flavour as well, eg. installProductionDebug should create ['production','debug'] array
-  const variantFromSelectedTask = selectedTask
+  const variantFromBuildTypeAndFlavor = selectedTask
     ?.replace('install', '')
     ?.replace('assemble', '')
     ?.replace('bundle', '')
     .split(/(?=[A-Z])/);
 
-  // create path to output file, eg. `production/debug`
-  const variantPath = variantFromSelectedTask?.join('/')?.toLowerCase();
-  // create output file name, eg. `production-debug`
-  const variantAppName = variantFromSelectedTask?.join('-')?.toLowerCase();
   const apkOrBundle = selectedTask?.includes('bundle') ? 'bundle' : 'apk';
-  const buildDirectory = `${sourceDir}/${appName}/build/outputs/${apkOrBundle}/${variantPath}`;
+  // create path to output file, eg. `production/debug`
+  const variantPath = variantFromBuildTypeAndFlavor?.join('/')?.toLowerCase();
+  // create output file name, eg. `production-debug`
+  let variant = variantFromBuildTypeAndFlavor?.join('-')?.toLowerCase();
+  let buildDirectory = `${sourceDir}/${appName}/build/outputs/${apkOrBundle}/${variantPath}`;
+
+  if (!existsSync(buildDirectory)) {
+    // default "debug" nor "release" build type or flavor is not found. fallback to searching for buildTypes that might be named with pascalCase
+    const buildTypeVariant = variantFromBuildTypeAndFlavor;
+    buildTypeVariant[0] = buildTypeVariant[0]?.toLowerCase();
+    const variantPath = buildTypeVariant?.join('');
+    variant = buildTypeVariant?.join('');
+    buildDirectory = `${sourceDir}/${appName}/build/outputs/${apkOrBundle}/${variantPath}`;
+  }
   const outputFile = await getInstallOutputFileName(
     appName,
-    variantAppName,
+    variant,
     buildDirectory,
     apkOrBundle === 'apk' ? 'apk' : 'aab',
     device,
