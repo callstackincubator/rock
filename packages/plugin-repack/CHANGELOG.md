@@ -1,5 +1,11 @@
 # @rnef/plugin-repack
 
+## 0.15.4
+
+### Patch Changes
+
+- @rock-js/tools@0.15.4
+
 ## 0.15.3
 
 ### Patch Changes
