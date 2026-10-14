@@ -123,11 +123,19 @@ export default async function loadMetroConfig(
     logger.debug('No metro.config.js found, using default configuration');
 
     if (typeof RNMetroConfig.setFrameworkDefaults === 'function') {
-      return defaultConfig;
+      // Call getDefaultConfig again, so that it includes the framework
+      // defaults registered above.
+      return loadConfig(
+        { cwd, ...options },
+        RNMetroConfig.getDefaultConfig(ctx.root),
+      );
     } else {
       // Fallback to the old API for RN < 0.81
       const overrideConfig = getCommunityCliDefaultConfig(ctx, defaultConfig);
-      return mergeConfig(defaultConfig, overrideConfig);
+      return loadConfig(
+        { cwd, ...options },
+        mergeConfig(defaultConfig, overrideConfig),
+      );
     }
   }
 
