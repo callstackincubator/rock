@@ -1,7 +1,8 @@
 name: PR Labeler
 
 on:
-  pull_request:
+  # Label fork PRs with the base repository's token; never check out PR code here.
+  pull_request_target:
     types:
       - opened
       - edited
@@ -12,6 +13,7 @@ jobs:
     if: github.repository == 'callstackincubator/rock'
     name: Labeling for releasing
     permissions:
+      contents: read
       issues: write
       pull-requests: write
     runs-on: ubuntu-latest
