@@ -27,6 +27,7 @@ export type ModifyIpaOptions = {
   identity?: string;
   outputPath?: string;
   buildJsBundle?: boolean;
+  sourcemapOutputPath?: string;
   jsBundlePath?: string;
   useHermes?: boolean;
   useAppEntitlements?: boolean;
@@ -51,6 +52,7 @@ export const modifyIpa = async (options: ModifyIpaOptions) => {
     await buildJsBundle({
       bundleOutputPath: appPaths.jsBundle,
       assetsDestPath: appPaths.assetsDest,
+      sourcemapOutputPath: options.sourcemapOutputPath,
       useHermes: options.useHermes ?? true,
     });
     loader.stop(
@@ -137,6 +139,12 @@ function validateOptions(options: ModifyIpaOptions) {
   if (options.buildJsBundle && options.jsBundlePath) {
     throw new RockError(
       'The "--build-jsbundle" flag is incompatible with "--jsbundle". Pick one.',
+    );
+  }
+
+  if (options.sourcemapOutputPath && !options.buildJsBundle) {
+    throw new RockError(
+      'The "--sourcemap-output" flag requires "--build-jsbundle".',
     );
   }
 

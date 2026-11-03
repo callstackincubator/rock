@@ -7,6 +7,7 @@ export type SignFlags = {
   output?: string;
   identity?: string;
   buildJsbundle?: boolean;
+  sourcemapOutput?: string;
   jsbundle?: string;
   noHermes?: boolean;
   useAppEntitlements?: boolean;
@@ -39,6 +40,11 @@ const OPTIONS = [
     description: 'Build the JS bundle before signing.',
   },
   {
+    name: '--sourcemap-output <string>',
+    description:
+      'Path to write the source map of the built JS bundle. Requires "--build-jsbundle".',
+  },
+  {
     name: '--jsbundle <string>',
     description: 'Path to the JS bundle to apply before signing.',
   },
@@ -65,6 +71,7 @@ export const registerSignCommand = (api: PluginApi) => {
           appPath: binaryPath,
           outputPath: flags.output,
           buildJsBundle: flags.buildJsbundle,
+          sourcemapOutputPath: flags.sourcemapOutput,
           jsBundlePath: flags.jsbundle,
           useHermes: !flags.noHermes,
           useAppEntitlements: flags.useAppEntitlements,
@@ -76,6 +83,7 @@ export const registerSignCommand = (api: PluginApi) => {
           identity: flags.identity,
           outputPath: flags.output,
           buildJsBundle: flags.buildJsbundle,
+          sourcemapOutputPath: flags.sourcemapOutput,
           jsBundlePath: flags.jsbundle,
           useHermes: !flags.noHermes,
           useAppEntitlements: flags.useAppEntitlements,

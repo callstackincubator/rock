@@ -113,12 +113,12 @@ Platform plugins are configured through the [`platform`](/docs/configuration/ind
 
 - `@rock-js/platform-android` – Android platform plugin with the following commands:
 
-  | Command                    | Description                                                     |
-  | :------------------------- | :-------------------------------------------------------------- |
-  | `run:android`              | Runs Android app on emulator or device                          |
-  | `build:android`            | Builds Android app for generic emulator, device or distribution |
-  | `sign:android`             | Signs Android app with keystore                                 |
-  | `validate-elf-alignment`   | Validates ELF alignment of shared libraries in an APK           |
+  | Command                  | Description                                                     |
+  | :----------------------- | :-------------------------------------------------------------- |
+  | `run:android`            | Runs Android app on emulator or device                          |
+  | `build:android`          | Builds Android app for generic emulator, device or distribution |
+  | `sign:android`           | Signs Android app with keystore                                 |
+  | `validate-elf-alignment` | Validates ELF alignment of shared libraries in an APK           |
 
 - `@rock-js/platform-ios` – iOS platform plugin with the following commands:
 
@@ -203,15 +203,16 @@ The `sign:ios` command either signs your iOS app with certificates and provision
 | :----------- | :-------------------------- |
 | `binaryPath` | Path to the IPA or APP file |
 
-| Option                   | Description                                                                                             |
-| :----------------------- | :------------------------------------------------------------------------------------------------------ |
-| `--app`                  | Modify APP file (directory) instead of IPA file. No signing is done                                     |
-| `--identity <string>`    | Certificate Identity name for code signing                                                              |
-| `--output <string>`      | Path to output IPA file                                                                                 |
-| `--build-jsbundle`       | Build JS bundle before signing                                                                          |
-| `--jsbundle <string>`    | Path to JS bundle to apply before signing                                                               |
-| `--no-hermes`            | Don't use Hermes for JS bundle                                                                          |
-| `--use-app-entitlements` | Extract app bundle codesigning entitlements and combine with entitlements from new provisioning profile |
+| Option                        | Description                                                                                             |
+| :---------------------------- | :------------------------------------------------------------------------------------------------------ |
+| `--app`                       | Modify APP file (directory) instead of IPA file. No signing is done                                     |
+| `--identity <string>`         | Certificate Identity name for code signing                                                              |
+| `--output <string>`           | Path to output IPA file                                                                                 |
+| `--build-jsbundle`            | Build JS bundle before signing                                                                          |
+| `--sourcemap-output <string>` | Path to write the source map of the built JS bundle (requires `--build-jsbundle`)                       |
+| `--jsbundle <string>`         | Path to JS bundle to apply before signing                                                               |
+| `--no-hermes`                 | Don't use Hermes for JS bundle                                                                          |
+| `--use-app-entitlements`      | Extract app bundle codesigning entitlements and combine with entitlements from new provisioning profile |
 
 ## Platform Android
 
@@ -256,15 +257,15 @@ The `sign:android <binaryPath>` command signs your Android app with a keystore, 
 | :----------- | :-------------------------- |
 | `binaryPath` | Path to the APK or AAB file |
 
-| Option                         | Description                               |
-| :----------------------------- | :---------------------------------------- |
-| `--keystore <string>`          | Path to keystore file                     |
-| `--keystore-password <string>` | Password for keystore file                |
-| `--output <string>`            | Path to output APK or AAB file            |
-| `--build-jsbundle`             | Build JS bundle before signing            |
-| `--jsbundle <string>`          | Path to JS bundle to apply before signing |
-| `--no-hermes`                  | Don't use Hermes for JS bundle            |
-
+| Option                         | Description                                                                       |
+| :----------------------------- | :-------------------------------------------------------------------------------- |
+| `--keystore <string>`          | Path to keystore file                                                             |
+| `--keystore-password <string>` | Password for keystore file                                                        |
+| `--output <string>`            | Path to output APK or AAB file                                                    |
+| `--build-jsbundle`             | Build JS bundle before signing                                                    |
+| `--sourcemap-output <string>`  | Path to write the source map of the built JS bundle (requires `--build-jsbundle`) |
+| `--jsbundle <string>`          | Path to JS bundle to apply before signing                                         |
+| `--no-hermes`                  | Don't use Hermes for JS bundle                                                    |
 
 ### `rock validate-elf-alignment` Options
 
@@ -407,11 +408,11 @@ The `config` command outputs the autolinking configuration from Community CLI, w
 
 The `clean` command helps you free up disk space by removing various caches and temporary files from your React Native project. It can clean Android (Gradle), iOS (CocoaPods), Metro, Watchman, Rock's own project caches, package manager caches, and CCache compiler cache.
 
-| Option               | Description                                                                                                                                             |
-| :------------------- | :------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| Option               | Description                                                                                                                                                       |
+| :------------------- | :---------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | `--include <string>` | Comma-separated list of caches to clean. Available options: `android`, `gradle`, `cocoapods`, `metro`, `watchman`, `npm`, `yarn`, `bun`, `pnpm`, `rock`, `ccache` |
-| `--verify-cache`     | Whether to verify the cache (currently only applies to npm cache)                                                                                       |
-| `--all`              | Clean all available caches without interactive prompt                                                                                                   |
+| `--verify-cache`     | Whether to verify the cache (currently only applies to npm cache)                                                                                                 |
+| `--all`              | Clean all available caches without interactive prompt                                                                                                             |
 
 ## Plugin Remote Cache
 

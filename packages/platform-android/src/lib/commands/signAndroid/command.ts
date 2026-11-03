@@ -10,6 +10,7 @@ export type SignFlags = {
   keyAlias?: string;
   keyPassword?: string;
   buildJsbundle?: boolean;
+  sourcemapOutput?: string;
   jsbundle?: string;
   noHermes?: boolean;
 };
@@ -51,6 +52,11 @@ const OPTIONS = [
     description: 'Build the JS bundle before signing.',
   },
   {
+    name: '--sourcemap-output <string>',
+    description:
+      'Path to write the source map of the built JS bundle. Requires "--build-jsbundle".',
+  },
+  {
     name: '--jsbundle <string>',
     description: 'Path to the JS bundle to apply before signing.',
   },
@@ -75,6 +81,7 @@ export const registerSignCommand = (api: PluginApi) => {
         keyPassword: flags.keyPassword,
         outputPath: flags.output,
         buildJsBundle: flags.buildJsbundle,
+        sourcemapOutputPath: flags.sourcemapOutput,
         jsBundlePath: flags.jsbundle,
         useHermes: !flags.noHermes,
       });

@@ -22,6 +22,7 @@ export type SignAndroidOptions = {
   keyPassword?: string;
   outputPath?: string;
   buildJsBundle?: boolean;
+  sourcemapOutputPath?: string;
   jsBundlePath?: string;
   useHermes?: boolean;
 };
@@ -48,10 +49,9 @@ export async function signAndroid(options: SignAndroidOptions) {
     await buildJsBundle({
       bundleOutputPath,
       assetsDestPath: path.join(tempPath, 'res'),
-      sourcemapOutputPath: path.join(
-        tempPath,
-        'index.android.bundle.packager.map',
-      ),
+      sourcemapOutputPath:
+        options.sourcemapOutputPath ??
+        path.join(tempPath, 'index.android.bundle.packager.map'),
       useHermes: options.useHermes ?? true,
     });
     loader.stop(
@@ -123,6 +123,12 @@ function validateOptions(options: SignAndroidOptions) {
   if (options.buildJsBundle && options.jsBundlePath) {
     throw new RockError(
       'The "--build-jsbundle" flag is incompatible with "--jsbundle". Pick one.',
+    );
+  }
+
+  if (options.sourcemapOutputPath && !options.buildJsBundle) {
+    throw new RockError(
+      'The "--sourcemap-output" flag requires "--build-jsbundle".',
     );
   }
 
