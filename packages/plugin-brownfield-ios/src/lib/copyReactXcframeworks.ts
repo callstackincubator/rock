@@ -35,6 +35,7 @@ export function copyReactXcframeworks({
     fs.cpSync(reactFrameworkSource, reactDestination, {
       recursive: true,
       force: true,
+      verbatimSymlinks: true,
     });
 
     loader.stop(`Copied ${color.bold(react)}`);
@@ -56,6 +57,7 @@ export function copyReactXcframeworks({
     fs.cpSync(reactNativeDepsSource, reactNativeDepsDestination, {
       recursive: true,
       force: true,
+      verbatimSymlinks: true,
     });
 
     loader.stop(`Copied ${color.bold(reactNativeDependencies)}`);
