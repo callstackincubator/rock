@@ -18,6 +18,7 @@ type RunGradleAarArgs = {
   aarProject: AarProject;
   // if variant is not provided, it means we are publishing the AAR
   variant?: string;
+  extraParams?: string[];
 };
 
 export type RunGradleArgs = {
@@ -113,6 +114,7 @@ export async function runGradleAar({
   tasks,
   aarProject,
   variant,
+  extraParams,
 }: RunGradleAarArgs) {
   const loader = spinner({ indicator: 'timer' });
   const message = variant
@@ -123,6 +125,10 @@ export async function runGradleAar({
   const gradleArgs = getTaskNames(aarProject.moduleName, tasks);
 
   gradleArgs.push('-x', 'lint');
+
+  if (extraParams) {
+    gradleArgs.push(...extraParams);
+  }
 
   const gradleWrapper = getGradleWrapper();
 

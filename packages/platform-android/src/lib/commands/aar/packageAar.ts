@@ -1,5 +1,5 @@
 import type { RockCLIOptions } from '@rock-js/tools';
-import { outro } from '@rock-js/tools';
+import { outro, parseArgs } from '@rock-js/tools';
 import { runGradleAar } from '../runGradle.js';
 import { toPascalCase } from '../toPascalCase.js';
 
@@ -25,13 +25,22 @@ export type PackageAarFlags = {
    * AAR module name.
    */
   moduleName?: string;
+
+  /**
+   * Extra parameters passed to Gradle, e.g. `-PmyProperty=value`.
+   */
+  extraParams?: string[];
 };
 
-export async function packageAar(aarProject: AarProject, variant: string) {
+export async function packageAar(
+  aarProject: AarProject,
+  variant: string,
+  extraParams?: string[],
+) {
   normalizeVariant(variant);
   const tasks = [`assemble${toPascalCase(variant)}`];
 
-  await runGradleAar({ tasks, aarProject, variant });
+  await runGradleAar({ tasks, aarProject, variant, extraParams });
   outro('Success 🎉.');
 }
 
@@ -57,5 +66,10 @@ export const options = [
   {
     name: '--module-name <string>',
     description: 'AAR module name',
+  },
+  {
+    name: '--extra-params <string>',
+    description: 'Custom params passed to gradle build command',
+    parse: parseArgs,
   },
 ] satisfies RockCLIOptions;
