@@ -135,8 +135,11 @@ export function formatStartMessage(
     return undefined;
   }
 
-  const messageWithoutDots = text.replace(/\.+$/, '');
-  return `${messageWithoutDots}...`;
+  let end = text.length;
+  while (end > 0 && text[end - 1] === '.') {
+    end--;
+  }
+  return `${text.slice(0, end)}...`;
 }
 
 export function cancelPromptAndExit(message?: string): never {
