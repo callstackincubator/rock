@@ -25,11 +25,13 @@ const getAarConfig = (
 export const packageAarAction = async ({
   variant,
   moduleName,
+  extraParams,
   projectRoot,
   pluginConfig,
 }: {
   variant: string;
   moduleName: string | undefined;
+  extraParams?: string[];
   projectRoot: string;
   pluginConfig?: AndroidProjectConfig;
 }) => {
@@ -39,7 +41,7 @@ export const packageAarAction = async ({
 
   if (androidConfig) {
     const config = getAarConfig(moduleName, androidConfig);
-    await packageAar(config, variant);
+    await packageAar(config, variant, extraParams);
   } else {
     throw new RockError('Android project not found.');
   }
@@ -47,10 +49,12 @@ export const packageAarAction = async ({
 
 export const publishLocalAarAction = async ({
   moduleName,
+  extraParams,
   projectRoot,
   pluginConfig,
 }: {
   moduleName: string | undefined;
+  extraParams?: string[];
   projectRoot: string;
   pluginConfig?: AndroidProjectConfig;
 }) => {
@@ -60,7 +64,7 @@ export const publishLocalAarAction = async ({
 
   if (androidConfig) {
     const config = getAarConfig(moduleName, androidConfig);
-    await publishLocalAar(config);
+    await publishLocalAar(config, extraParams);
   } else {
     throw new RockError('Android project not found.');
   }
@@ -77,6 +81,7 @@ export const pluginBrownfieldAndroid =
         return packageAarAction({
           variant: args.variant,
           moduleName: args.moduleName,
+          extraParams: args.extraParams,
           projectRoot: api.getProjectRoot(),
           pluginConfig,
         });
@@ -90,6 +95,7 @@ export const pluginBrownfieldAndroid =
       action: async (args: PublishLocalAarFlags) => {
         return publishLocalAarAction({
           moduleName: args.moduleName,
+          extraParams: args.extraParams,
           projectRoot: api.getProjectRoot(),
           pluginConfig,
         });
