@@ -1,4 +1,4 @@
-import fs from 'node:fs';
+import { existsSync } from 'node:fs';
 import path from 'node:path';
 import type { SubprocessError } from '@rock-js/tools';
 import { color, logger, RockError, spawn, spinner } from '@rock-js/tools';
@@ -15,27 +15,48 @@ export async function launchSimulator(device: Device) {
    * (running in the background).
    *
    * In order for user to see the app and the simulator itself, we have to make sure
-   * that the Simulator.app is running.
+   * that the Simulator.app (or Device Hub on Xcode 27+) is running.
    *
-   * We also pass it `-CurrentDeviceUDID` so that when we launch it for the first time,
-   * it will not boot the "default" device, but the one we set. If the app is already running,
-   * this flag has no effect.
+   * For Simulator.app we also pass `-CurrentDeviceUDID` so that when we launch it for
+   * the first time, it will not boot the "default" device, but the one we set. We only
+   * do this for a device that is not booted yet: for an already booted device Simulator.app
+   * re-attempts the boot and shows an "Unable to boot device in current state: Booted" alert.
    */
-  const { output: activeDeveloperDir } = await spawn('xcode-select', ['-p'], {
-    stdio: 'pipe',
-  });
+  const { output } = await spawn('xcode-select', ['-p'], { stdio: 'pipe' });
+  const developerDir = output.trim();
 
-  const simulatorApp = path.join(activeDeveloperDir.trim(), 'Applications', 'Simulator.app');
+  // Xcode 27 replaces Simulator.app with DeviceHub.app and moves it from
+  // <Xcode>/Contents/Developer/Applications to <Xcode>/Contents/Applications.
+  // Prefer Simulator.app while it exists (Xcode <= 26); fall back to Device Hub.
+  // See https://developer.apple.com/documentation/xcode/device-hub
+  const simulatorApp = path.join(developerDir, 'Applications', 'Simulator.app');
+  const deviceHubApp = path.join(
+    developerDir,
+    '..',
+    'Applications',
+    'DeviceHub.app',
+  );
 
-  if (fs.existsSync(simulatorApp)) {
-    await spawn('open', [
-      simulatorApp,
-      '--args',
-      '-CurrentDeviceUDID',
-      device.udid,
-    ]);
+  if (existsSync(simulatorApp)) {
+    const args =
+      device.state === 'Booted'
+        ? [simulatorApp]
+        : [simulatorApp, '--args', '-CurrentDeviceUDID', device.udid];
+    await spawn('open', args);
+  } else if (existsSync(deviceHubApp)) {
+    try {
+      // Device Hub registers the `devices://` URL scheme which focuses a device by UDID.
+      await spawn('open', [`devices://device/open?id=${device.udid}`]);
+    } catch (error) {
+      logger.debug(
+        `Failed to open Device Hub via URL scheme, opening the app directly: ${(error as SubprocessError).stderr}`,
+      );
+      await spawn('open', [deviceHubApp]);
+    }
   } else {
-    await spawn('open', [`devices://device/open?id=${device.udid}`]);
+    logger.warn(
+      `Neither Simulator.app nor DeviceHub.app was found under ${developerDir}. The app will be installed and launched, but the simulator window may not be shown.`,
+    );
   }
 
   if (device.state !== 'Booted') {
