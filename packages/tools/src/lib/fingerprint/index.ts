@@ -65,7 +65,7 @@ export async function nativeFingerprint(
       { key: 'scripts', json: scripts },
       {
         key: 'autolinkingSources',
-        json: parseAutolinkingSources(autolinkingConfig),
+        json: await parseAutolinkingSources(autolinkingConfig),
       },
       {
         key: 'reactNativeVersion',
@@ -95,10 +95,16 @@ function toPosixPath(filePath: string): string {
   return filePath.replace(/\\/g, '/');
 }
 
-function parseAutolinkingSources(config: any): Record<string, any> {
+async function parseAutolinkingSources(
+  config: any,
+): Promise<Record<string, any>> {
   const { root } = config;
   for (const [depName, depData] of Object.entries<any>(config.dependencies)) {
     try {
+      // Autolinking reports only names and paths. Native sources live under
+      // node_modules, which is not hashed, so the installed version is the
+      // signal that a native dependency was upgraded.
+      depData.version = await readDependencyVersion(depData.root);
       stripAutolinkingAbsolutePaths(depData, root);
     } catch (e) {
       logger.debug(
@@ -107,6 +113,19 @@ function parseAutolinkingSources(config: any): Record<string, any> {
     }
   }
   return config.dependencies;
+}
+
+async function readDependencyVersion(
+  dependencyRoot: string,
+): Promise<string | undefined> {
+  try {
+    const packageJSON = await readPackageJSON(
+      path.join(dependencyRoot, 'package.json'),
+    );
+    return packageJSON['version'];
+  } catch {
+    return undefined;
+  }
 }
 
 function stripAutolinkingAbsolutePaths(dependency: any, root: string): void {
