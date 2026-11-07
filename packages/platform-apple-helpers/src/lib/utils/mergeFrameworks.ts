@@ -24,7 +24,11 @@ function copyFile(sourcePath: string, destinationPath: string) {
 // Copy an entire directory tree, overwriting existing content.
 function copyDirectory(sourcePath: string, destinationPath: string) {
   ensureDirectory(path.dirname(destinationPath));
-  fs.cpSync(sourcePath, destinationPath, { recursive: true, force: true });
+  fs.cpSync(sourcePath, destinationPath, {
+    recursive: true,
+    force: true,
+    verbatimSymlinks: true,
+  });
 }
 
 // Generate a minimal Info.plist for a synthesized framework wrapper.

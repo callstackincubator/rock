@@ -31,7 +31,7 @@ export function copyHermesXcframework({
       `Pods/hermes-engine/destroot/Library/Frameworks/universal/${hermesFrameworkName}`,
     ),
     hermesDestination,
-    { recursive: true, force: true },
+    { recursive: true, force: true, verbatimSymlinks: true },
   );
 
   loader.stop(`Copied ${color.bold(hermesFrameworkName)}`);
