@@ -39,7 +39,7 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Create git tags
+      - name: Create git tag and GitHub release
         run: |
           TAG="v$(node -p "require('./packages/cli/package.json').version")"
           if git ls-remote --tags origin | grep -q "refs/tags/$TAG$"; then
@@ -48,3 +48,10 @@ jobs:
             git tag "$TAG"
             git push origin "$TAG"
           fi
+          if gh release view "$TAG" >/dev/null 2>&1; then
+            echo "Release $TAG already exists, skipping"
+          else
+            gh release create "$TAG" --title "$TAG" --generate-notes --verify-tag
+          fi
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
