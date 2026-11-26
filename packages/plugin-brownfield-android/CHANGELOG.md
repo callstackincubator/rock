@@ -1,5 +1,16 @@
 # @rnef/plugin-brownfield-android
 
+## 0.15.5
+
+### Patch Changes
+
+- 4930287: Add `--extra-params` to `package:aar` and `publish-local:aar` to pass extra parameters to Gradle, as `build:android` already does.
+- Updated dependencies [4930287]
+- Updated dependencies [f74284c]
+- Updated dependencies [cb08140]
+  - @rock-js/platform-android@0.15.5
+  - @rock-js/tools@0.15.5
+
 ## 0.15.4
 
 ### Patch Changes

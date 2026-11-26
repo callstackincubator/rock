@@ -1,5 +1,11 @@
 # @rnef/tools
 
+## 0.15.5
+
+### Patch Changes
+
+- cb08140: Strip trailing dots from spinner messages without a regular expression, fixing a CodeQL polynomial ReDoS alert.
+
 ## 0.15.4
 
 ## 0.15.3

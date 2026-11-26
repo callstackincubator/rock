@@ -1,5 +1,14 @@
 # @rnef/platform-android
 
+## 0.15.5
+
+### Patch Changes
+
+- 4930287: Add `--extra-params` to `package:aar` and `publish-local:aar` to pass extra parameters to Gradle, as `build:android` already does.
+- f74284c: Add `--sourcemap-output` to `sign:ios` and `sign:android` to write the source map of the JS bundle built with `--build-jsbundle`.
+- Updated dependencies [cb08140]
+  - @rock-js/tools@0.15.5
+
 ## 0.15.4
 
 ### Patch Changes
